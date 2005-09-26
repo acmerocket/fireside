@@ -31,6 +31,14 @@ package org.zmpp.base;
 public interface MemoryReadAccess {
 
   /**
+   * Reads the unsigned 32 bit word at the specified address.
+   * 
+   * @param address the address
+   * @return the 32 bit unsigned value as long
+   */
+  long readUnsigned32(int address);
+  
+  /**
    * Reads the unsigned 16 bit word at the specified address.
    * 
    * @param address the address

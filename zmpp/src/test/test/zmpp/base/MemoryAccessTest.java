@@ -41,6 +41,7 @@ public class MemoryAccessTest extends TestCase {
     
     memaccess = new MemoryAccess(data);
   }
+    
   public void testReadUnsignedByte() {
     
     assertEquals(3, memaccess.readUnsignedByte(0x00));
@@ -60,5 +61,11 @@ public class MemoryAccessTest extends TestCase {
   public void testGetShortGeneral() {
     
     assertEquals(-1, memaccess.readShort(0x04));
+  }
+  
+  public void testReadUnsigned32(){
+    byte[] data32 = { (byte) 0xd7, (byte) 0x4b, (byte) 0xd7, (byte) 0x53 };
+    MemoryAccess memaccess = new MemoryAccess(data32);
+    assertEquals(0xd74bd753, memaccess.readUnsigned32(0x00));
   }
 }

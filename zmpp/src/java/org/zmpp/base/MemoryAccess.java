@@ -52,6 +52,15 @@ public class MemoryAccess implements MemoryReadAccess {
   /**
    * {@inheritDoc}
    */
+  public long readUnsigned32(int address) {
+  
+    return (data[address] & 0xff) << 24 | (data[address + 1] & 0xff) << 16
+           | (data[address + 2] & 0xff) << 8 | (data[address + 3] & 0xff);
+  }
+  
+  /**
+   * {@inheritDoc}
+   */
   public int readUnsignedShort(int address) {
     
     return (data[address] & 0xff) << 8 | (data[address + 1] & 0xff);
