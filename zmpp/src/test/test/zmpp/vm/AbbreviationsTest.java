@@ -23,7 +23,6 @@
 package test.zmpp.vm;
 
 import org.zmpp.vm.Abbreviations;
-import org.zmpp.vm.StoryFileHeader;
 
 /**
  * This class tests the Abbreviations class.
@@ -53,9 +52,8 @@ public class AbbreviationsTest extends MemoryMapSetup {
   
   protected void setUp() throws Exception {
     super.setUp();
-    StoryFileHeader header = new StoryFileHeader(minizorkmap);
     this.abbrev = new Abbreviations(minizorkmap,
-        header.getAbbreviationsAddress());
+        fileheader.getAbbreviationsAddress(), converter);
   }
   
   public void testGetEntryAddress() {

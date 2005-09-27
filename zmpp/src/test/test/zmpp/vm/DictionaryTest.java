@@ -23,7 +23,6 @@
 package test.zmpp.vm;
 
 import org.zmpp.vm.Dictionary;
-import org.zmpp.vm.StoryFileHeader;
 
 /**
  * This class tests the dictionary view.
@@ -40,19 +39,27 @@ public class DictionaryTest extends MemoryMapSetup {
    */
   protected void setUp() throws Exception {
     super.setUp();
-    StoryFileHeader header = new StoryFileHeader(minizorkmap);
-    dictionary = new Dictionary(minizorkmap, header.getVersion(), header.getDictionaryAddress());
+    dictionary = new Dictionary(minizorkmap,
+                                fileheader.getDictionaryAddress(), converter);
   }
   
   public void testDictionaryInformation() {
     assertEquals(3, dictionary.getNumberOfSeparators());
     assertEquals(7, dictionary.getEntryLength());
     assertEquals(536, dictionary.getNumberOfEntries());
+
+    assertEquals(".", dictionary.getEntryString(1));
+    assertEquals(",", dictionary.getEntryString(2));
+    assertEquals("#comm", dictionary.getEntryString(3));
+    assertEquals("again", dictionary.getEntryString(13));
+    assertEquals("air-p", dictionary.getEntryString(15));
+    assertEquals("$ve", dictionary.getEntryString(0));
   }
   
   public void testGetSeparator() {
     
     //System.out.println("0: " + dictionary.getSeparator(0));
+    //assertEquals('.', dictionary.getSeparator(0));
     assertEquals('.', dictionary.getSeparator(1));
     assertEquals(',', dictionary.getSeparator(2));
   }

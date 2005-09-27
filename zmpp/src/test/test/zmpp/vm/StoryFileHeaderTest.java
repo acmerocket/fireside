@@ -22,7 +22,6 @@
  */
 package test.zmpp.vm;
 
-import org.zmpp.vm.StoryFileHeader;
 
 /**
  * This class is a test for the StoryFileHeader class.
@@ -32,38 +31,26 @@ import org.zmpp.vm.StoryFileHeader;
  */
 public class StoryFileHeaderTest extends MemoryMapSetup {
 
-  private StoryFileHeader header;
-  
-  public void setUp() throws Exception {
-    
-    super.setUp();
-    header = new StoryFileHeader(minizorkmap);
-  }
-  
-  public void tearDown() throws Exception {
-    
-  }
-    
   public void testHeader() throws Exception {
     
-    assertEquals(3, header.getVersion());
-    assertEquals(0, header.getFlags1());
-    assertEquals(0x3709, header.getBaseAddress());
-    assertEquals(0x37d9, header.getProgramStart());
-    assertEquals(0x285a, header.getDictionaryAddress());
-    assertEquals(0x03c6, header.getObjectTableAddress());
-    assertEquals(0x02b4, header.getGlobalsAddress());
-    assertEquals(0x2187, header.getStaticsAddress());
-    assertEquals(0, header.getFlags2());
-    assertEquals(0x01f4, header.getAbbreviationsAddress());
-    assertEquals("871124", header.getSerialNumber());
-    assertEquals(0xd870, header.getChecksum());
-    assertEquals(0, header.getRevision());
-    assertEquals(0, header.getInterpreter());
-    assertEquals(0, header.getInterpreterVersion());
-    assertEquals(0xcbf8, header.getFileLength());
-    int abbraddr = header.getAbbreviationsAddress();
-    int globaddr = header.getGlobalsAddress();
+    assertEquals(3, fileheader.getVersion());
+    assertEquals(0, fileheader.getFlags1());
+    assertEquals(0x3709, fileheader.getHighMemAddress());
+    assertEquals(0x37d9, fileheader.getProgramStart());
+    assertEquals(0x285a, fileheader.getDictionaryAddress());
+    assertEquals(0x03c6, fileheader.getObjectTableAddress());
+    assertEquals(0x02b4, fileheader.getGlobalsAddress());
+    assertEquals(0x2187, fileheader.getStaticsAddress());
+    assertEquals(0, fileheader.getFlags2());
+    assertEquals(0x01f4, fileheader.getAbbreviationsAddress());
+    assertEquals("871124", fileheader.getSerialNumber());
+    assertEquals(0xd870, fileheader.getChecksum());
+    assertEquals(0, fileheader.getRevision());
+    assertEquals(0, fileheader.getInterpreter());
+    assertEquals(0, fileheader.getInterpreterVersion());
+    assertEquals(0xcbf8, fileheader.getFileLength());
+    int abbraddr = fileheader.getAbbreviationsAddress();
+    int globaddr = fileheader.getGlobalsAddress();
     int numAbbrev = (globaddr - abbraddr) / 2;
     assertEquals(96, numAbbrev);
   }  

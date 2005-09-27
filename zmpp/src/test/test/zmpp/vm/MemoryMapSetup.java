@@ -25,9 +25,11 @@ package test.zmpp.vm;
 import java.io.File;
 import java.io.RandomAccessFile;
 
-import org.zmpp.base.MemoryAccess;
-
 import junit.framework.TestCase;
+
+import org.zmpp.base.MemoryAccess;
+import org.zmpp.vm.StoryFileHeader;
+import org.zmpp.vmutil.ZsciiConverter;
 
 /**
  * This class acts as a base test class and sets up testing memory maps.
@@ -38,9 +40,12 @@ import junit.framework.TestCase;
 public abstract class MemoryMapSetup extends TestCase {
 
   protected MemoryAccess minizorkmap;
+  protected ZsciiConverter converter;
+  protected StoryFileHeader fileheader;
   
   protected void setUp() throws Exception {
     
+    converter = new ZsciiConverter(3);
     File zork1 = new File("testfiles/minizork.z3");
     RandomAccessFile file = new RandomAccessFile(zork1, "r");
     int fileSize = (int) file.length();
@@ -48,5 +53,6 @@ public abstract class MemoryMapSetup extends TestCase {
     file.read(zork1data);
     file.close();
     minizorkmap = new MemoryAccess(zork1data);
+    fileheader = new StoryFileHeader(minizorkmap);
   }
 }
