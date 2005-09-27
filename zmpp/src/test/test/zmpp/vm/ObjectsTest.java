@@ -63,4 +63,20 @@ public class ObjectsTest extends MemoryMapSetup {
     
     assertEquals(179, objects.getNumObjects());
   }
+  
+  public void testGetPropertiesTable() {
+    
+    assertEquals("forest", objects.getObjectAt(0).getPropertiesDescription());
+    assertEquals(2, objects.getObjectAt(0).getNumPropertyRows());
+    assertEquals(2, objects.getObjectAt(0).getNumPropertyColumns(0));
+    assertEquals(4, objects.getObjectAt(0).getNumPropertyColumns(1));    
+    
+    assertEquals(0x43, objects.getObjectAt(0).getProperty(0, 0));
+    assertEquals(0xa7, objects.getObjectAt(0).getProperty(0, 1));
+
+    assertEquals(0x2d, objects.getObjectAt(0).getProperty(1, 0));
+    assertEquals(0x23, objects.getObjectAt(0).getProperty(1, 1));
+    assertEquals(0x35, objects.getObjectAt(0).getProperty(1, 2));
+    assertEquals(0x8f, objects.getObjectAt(0).getProperty(1, 3));
+  }
 }
