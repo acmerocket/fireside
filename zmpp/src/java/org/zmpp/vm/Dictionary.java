@@ -35,11 +35,6 @@ import org.zmpp.vmutil.ZsciiConverter.Alphabet;
 public class Dictionary {
 
   /**
-   * The dictionary version.
-   */
-  private int version;
-  
-  /**
    * The memory map.
    */
   private MemoryReadAccess map;
@@ -58,33 +53,54 @@ public class Dictionary {
    * Constructor.
    * 
    * @param map the memory map
-   * @param version the story file version
    * @param address the start address of the dictionary
+   * @param converter a ZsciiConverter object
    */
-  public Dictionary(MemoryReadAccess map, int version, int address) {
+  public Dictionary(MemoryReadAccess map, int address,
+                    ZsciiConverter converter) {
     
     this.map = map;
     this.address = address;
-    this.version = version;
-    this.converter = new ZsciiConverter(this.version);
+    this.converter = converter;
   }  
-  
+
+  /**
+   * Returns the number of separators.
+   * 
+   * @return the number of separators
+   */
   public int getNumberOfSeparators() {
     
     return map.readUnsignedByte(address);
   }
   
+  /**
+   * Returns the separator at position i
+   * 
+   * @param i the separator number, zero-based
+   * @return the separator
+   */
   public int getSeparator(int i) {
     
     byte zchar = (byte) map.readUnsignedByte(address + i);
     return ZsciiConverter.decode(Alphabet.A0, zchar);
   }
   
+  /**
+   * Returns the length of a dictionary entry.
+   * 
+   * @return the entry length
+   */
   public int getEntryLength() {
     
     return map.readUnsignedByte(address + getNumberOfSeparators() + 1);
   }
   
+  /**
+   * Returns the number of dictionary entries.
+   * 
+   * @return the number of entries
+   */
   public int getNumberOfEntries() {
     
     return map.readUnsignedShort(address + getNumberOfSeparators() + 2);
@@ -97,9 +113,9 @@ public class Dictionary {
    * @return
    */
   public String getEntryString(int entryNum) {
-    
-    int entryAddress = address + getNumberOfSeparators() + 4 +
-                       entryNum * getEntryLength();
+   
+    int headerSize = getNumberOfSeparators() + 4;    
+    int entryAddress = address + headerSize + entryNum * getEntryLength();
     return converter.convert(map, entryAddress);
   }
 }
