@@ -56,12 +56,14 @@ public class Abbreviations {
    * Constructor.
    * @param map the memory map
    * @param address the start address of the abbreviations table
+   * @param a ZsciiConverter object
    */
-  public Abbreviations(MemoryReadAccess map, int address) {
+  public Abbreviations(MemoryReadAccess map, int address,
+                       ZsciiConverter converter) {
     
     this.map = map;
     this.address = address;
-    this.converter = new ZsciiConverter(3);
+    this.converter = converter;
   }
   
   /**
