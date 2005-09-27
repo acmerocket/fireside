@@ -66,6 +66,13 @@ public class StoryFileHeader {
   public int getFlags1() { return memaccess.readUnsignedByte(0x01); }
   
   /**
+   * Returns the release number.
+   * 
+   * @return the release number
+   */
+  public int getRelease() { return memaccess.readUnsignedShort(0x02); }
+  
+  /**
    * Returns the high memory start address.
    * 
    * @return the start of the high memory

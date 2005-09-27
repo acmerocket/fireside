@@ -35,6 +35,7 @@ public class StoryFileHeaderTest extends MemoryMapSetup {
     
     assertEquals(3, fileheader.getVersion());
     assertEquals(0, fileheader.getFlags1());
+    assertEquals(34, fileheader.getRelease());
     assertEquals(0x3709, fileheader.getHighMemAddress());
     assertEquals(0x37d9, fileheader.getProgramStart());
     assertEquals(0x285a, fileheader.getDictionaryAddress());
