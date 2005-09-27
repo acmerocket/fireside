@@ -51,27 +51,142 @@ public class StoryFileHeader {
     this.memaccess = memaccess;
   }
   
+  /**
+   * Returns the story file version.
+   * 
+   * @return the story file version
+   */
   public int getVersion() { return memaccess.readUnsignedByte(0x00); }
+  
+  /**
+   * Returns the flags1 field.
+   * 
+   * @return the flags1 field
+   */
   public int getFlags1() { return memaccess.readUnsignedByte(0x01); }
-  public int getBaseAddress() { return memaccess.readUnsignedShort(0x04); }
+  
+  /**
+   * Returns the high memory start address.
+   * 
+   * @return the start of the high memory
+   */
+  public int getHighMemAddress() { return memaccess.readUnsignedShort(0x04); }
+  
+  /**
+   * Returns the program counter start address.
+   * 
+   * @return the PC start address
+   */
   public int getProgramStart() { return memaccess.readUnsignedShort(0x06); }
-  public int getDictionaryAddress() { return memaccess.readUnsignedShort(0x08); }
-  public int getObjectTableAddress() { return memaccess.readUnsignedShort(0x0a); }
+  
+  /**
+   * Returns the dictionary's start address.
+   * 
+   * @return the dictionary start address
+   */  
+  public int getDictionaryAddress() {
+    
+    return memaccess.readUnsignedShort(0x08);
+  }
+  
+  /**
+   * Returns the object table's start address.
+   * 
+   * @return the object table's start address
+   */
+  public int getObjectTableAddress() {
+    
+    return memaccess.readUnsignedShort(0x0a);
+  }
+  
+  /**
+   * Returns the address of the global variables.
+   * 
+   * @return the global variables section
+   */
   public int getGlobalsAddress() { return memaccess.readUnsignedShort(0x0c); }
+  
+  /**
+   * Returns the static memory start address.
+   * 
+   * @return the start address of the static memory
+   */
   public int getStaticsAddress() { return memaccess.readUnsignedShort(0x0e); }
+  
+  /**
+   * Returns the flags2 field.
+   * 
+   * @return the flags2 field
+   */
   public int getFlags2() { return memaccess.readUnsignedByte(0x10); }
+  
+  /**
+   * Returns this game's serial number.
+   * 
+   * @return the serial number
+   */
   public String getSerialNumber() { return extractAscii(0x12, 6); }
-  public int getAbbreviationsAddress() { return memaccess.readUnsignedShort(0x18); }
+  
+  /**
+   * Returns the start address of the abbreviations section.
+   * 
+   * @return the abbreviations start address
+   */
+  public int getAbbreviationsAddress() {
+    
+    return memaccess.readUnsignedShort(0x18);
+  }
+  
+  /**
+   * Returns this story file's length.
+   * 
+   * @return the file length
+   */
   public int getFileLength() {
     int fileLength = memaccess.readUnsignedShort(0x1a);
     if (getVersion() <= 3) fileLength *= 2;      
     return fileLength;
   }
+  
+  /**
+   * Returns the checksum for the story file.
+   * 
+   * @return the checksum
+   */
   public int getChecksum() { return memaccess.readUnsignedShort(0x1c); }
+  
+  /**
+   * Returns the interpreter number.
+   * 
+   * @return the interpreter number
+   */
   public int getInterpreter() { return memaccess.readUnsignedByte(0x1e); }
-  public int getInterpreterVersion() { return memaccess.readUnsignedByte(0x1f); }
+  
+  /**
+   * Returns the interpreter version.
+   * 
+   * @return the interpreter version
+   */
+  public int getInterpreterVersion() {
+    
+    return memaccess.readUnsignedByte(0x1f);
+  }
+  
+  /**
+   * Returns the revision number.
+   * 
+   * @return the revision number
+   */
   public int getRevision() { return memaccess.readUnsignedShort(0x32); }  
 
+  /**
+   * Extract an ASCII string of the specified length starting at the specified
+   * address.
+   * 
+   * @param address the start address
+   * @param length the length of the ASCII string
+   * @return the ASCII string at the specified position
+   */
   private String extractAscii(int address, int length) {
     
     StringBuilder builder = new StringBuilder();
