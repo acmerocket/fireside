@@ -82,7 +82,7 @@ public class Dictionary {
    */
   public int getSeparator(int i) {
     
-    byte zchar = (byte) map.readUnsignedByte(address + i);
+    byte zchar = (byte) map.readUnsignedByte(address + i + 1);
     return ZsciiConverter.decode(Alphabet.A0, zchar);
   }
   

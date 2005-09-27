@@ -58,9 +58,8 @@ public class DictionaryTest extends MemoryMapSetup {
   
   public void testGetSeparator() {
     
-    //System.out.println("0: " + dictionary.getSeparator(0));
-    //assertEquals('.', dictionary.getSeparator(0));
-    assertEquals('.', dictionary.getSeparator(1));
-    assertEquals(',', dictionary.getSeparator(2));
+    assertEquals('.', dictionary.getSeparator(0));
+    assertEquals(',', dictionary.getSeparator(1));
+    assertEquals('\"', dictionary.getSeparator(2));
   }
 }
