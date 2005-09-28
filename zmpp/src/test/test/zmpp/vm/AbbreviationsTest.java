@@ -22,7 +22,6 @@
  */
 package test.zmpp.vm;
 
-import org.zmpp.vm.Abbreviations;
 
 /**
  * This class tests the Abbreviations class.
@@ -32,7 +31,6 @@ import org.zmpp.vm.Abbreviations;
  */
 public class AbbreviationsTest extends MemoryMapSetup {
 
-  private Abbreviations abbrev;
   private static String[] testdata = {
 
     "the ", "The ", "You ", ", ", "your ", "is ", "and ", "There ", "you ",
@@ -52,19 +50,15 @@ public class AbbreviationsTest extends MemoryMapSetup {
   
   protected void setUp() throws Exception {
     super.setUp();
-    this.abbrev = new Abbreviations(minizorkmap,
-        fileheader.getAbbreviationsAddress(), converter);
   }
   
-  public void testGetEntryAddress() {
+  public void testGetWordAddress() {
     
-    assertEquals(0x40, abbrev.getWordAddress(0));
-  }
-  
-  public void testGetEntryString() {
-
+    // Test of the abbreviations in the minizorkmap
     for (int i = 0; i < testdata.length; i++) {
-      assertEquals(testdata[i], abbrev.getEntry(i));
+      
+      assertEquals(testdata[i], converter.convert(minizorkmap,
+         abbreviations.getWordAddress(i)));
     }
-  }
+  }  
 }

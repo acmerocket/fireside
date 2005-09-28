@@ -23,7 +23,7 @@
 package org.zmpp.vm;
 
 import org.zmpp.base.MemoryReadAccess;
-import org.zmpp.vmutil.ZsciiConverter;
+import org.zmpp.vmutil.ZsciiConverter.AbbreviationsTable;
 
 /**
  * This class represents a view to the abbreviations table. The table
@@ -35,7 +35,7 @@ import org.zmpp.vmutil.ZsciiConverter;
  * @author Wei-ju Wu
  * @version 1.0
  */
-public class Abbreviations {
+public class Abbreviations implements AbbreviationsTable {
 
   /**
    * The memory map.
@@ -48,22 +48,15 @@ public class Abbreviations {
   private int address;
   
   /**
-   * The ZsciiConverter object.
-   */
-  private ZsciiConverter converter;
-  
-  /**
    * Constructor.
+   * 
    * @param map the memory map
    * @param address the start address of the abbreviations table
-   * @param a ZsciiConverter object
    */
-  public Abbreviations(MemoryReadAccess map, int address,
-                       ZsciiConverter converter) {
+  public Abbreviations(MemoryReadAccess map, int address) {
     
     this.map = map;
     this.address = address;
-    this.converter = converter;
   }
   
   /**
@@ -76,18 +69,5 @@ public class Abbreviations {
   public int getWordAddress(int entryNum) {
     
     return map.readUnsignedShort(address + entryNum * 2) * 2;
-  }
-  
-  /**
-   * Retrieves the abbreviation string at index <i>entryNum</i> within the
-   * abbreviation table.
-   * 
-   * @param entryNum the entry's abbreviation table index
-   * @return the Unicode representation of the entry at the specified position
-   */
-  public String getEntry(int entryNum) {
-    
-    int wordAddr = getWordAddress(entryNum);
-    return converter.convert(map, wordAddr);
-  }
+  }  
 }
