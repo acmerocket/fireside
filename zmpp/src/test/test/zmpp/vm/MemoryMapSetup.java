@@ -28,11 +28,13 @@ import java.io.RandomAccessFile;
 import junit.framework.TestCase;
 
 import org.zmpp.base.MemoryAccess;
+import org.zmpp.vm.Abbreviations;
 import org.zmpp.vm.StoryFileHeader;
 import org.zmpp.vmutil.ZsciiConverter;
 
 /**
- * This class acts as a base test class and sets up testing memory maps.
+ * This class acts as a base test class and sets up some integrated
+ * testing objects for the minizork game.
  *
  * @author Wei-ju Wu
  * @version 1.0
@@ -42,10 +44,10 @@ public abstract class MemoryMapSetup extends TestCase {
   protected MemoryAccess minizorkmap;
   protected ZsciiConverter converter;
   protected StoryFileHeader fileheader;
+  protected Abbreviations abbreviations;
   
   protected void setUp() throws Exception {
     
-    converter = new ZsciiConverter(3);
     File zork1 = new File("testfiles/minizork.z3");
     RandomAccessFile file = new RandomAccessFile(zork1, "r");
     int fileSize = (int) file.length();
@@ -54,5 +56,8 @@ public abstract class MemoryMapSetup extends TestCase {
     file.close();
     minizorkmap = new MemoryAccess(zork1data);
     fileheader = new StoryFileHeader(minizorkmap);
+    abbreviations = new Abbreviations(minizorkmap,
+        fileheader.getAbbreviationsAddress());
+    converter = new ZsciiConverter(3, abbreviations);
   }
 }
