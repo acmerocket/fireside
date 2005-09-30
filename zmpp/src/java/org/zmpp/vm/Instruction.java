@@ -23,22 +23,50 @@
 package org.zmpp.vm;
 
 /**
- * The definition of an instruction's public interface.
+ * This class represents an instruction's operational portion.
  * 
  * @author Wei-ju Wu
  * @version 1.0
  */
-public interface Instruction {
+public class Instruction {
 
+  /**
+   * The instruction information.
+   */
+  private InstructionInfo info;
+  
+  /**
+   * Constructor.
+   * 
+   * @param info the instruction information
+   */
+  public Instruction(InstructionInfo info) {
+    
+    this.info = info;
+  }
+  
   /**
    * Retrieves the instruction's information.
    * 
    * @return the instruction information
    */
-  InstructionInfo getInfo();
+  public InstructionInfo getInfo() { return info; }
   
   /**
    * Execute the instruction.
    */
-  void execute();
+  public void execute() {
+    
+  }
+  
+  /**
+   * This translates a packed address into a real address.
+   * 
+   * @param packedAddress the packed address
+   * @return the real address
+   */
+  private int translatePackedAddress(int packedAddress) {
+    
+    return packedAddress * 2;
+  }  
 }
