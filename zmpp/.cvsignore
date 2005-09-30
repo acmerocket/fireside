@@ -2,3 +2,4 @@ bin
 cobertura.ser
 velocity.log
 target
+javadoc*
