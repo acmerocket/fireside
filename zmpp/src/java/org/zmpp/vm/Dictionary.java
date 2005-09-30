@@ -110,7 +110,7 @@ public class Dictionary {
    * Returns the entry text at the specified position.
    * 
    * @param entryNum entry number between (0 - getNumberOfEntries() - 1)
-   * @return
+   * @return the entry text
    */
   public String getEntryString(int entryNum) {
    
