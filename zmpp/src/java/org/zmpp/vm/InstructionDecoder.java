@@ -22,6 +22,9 @@
  */
 package org.zmpp.vm;
 
+import java.util.ArrayList;
+import java.util.List;
+
 import org.zmpp.base.MemoryReadAccess;
 import org.zmpp.vm.InstructionInfo.InstructionForm;
 import org.zmpp.vm.InstructionInfo.OperandCount;
@@ -33,123 +36,7 @@ import org.zmpp.vm.InstructionInfo.OperandCount;
  * @version 1.0
  */
 public class InstructionDecoder {
-
-  /**
-   * This instruction info class's objects will be incrementally built
-   * by the decoder.
-   */
-  private class DefaultInstructionInfo implements InstructionInfo {
-  
-    /**
-     * The opcode.
-     */
-    private int opcode;
     
-    /**
-     * The instruction form.
-     */
-    private InstructionForm form;
-    
-    /**
-     * The operand count type.
-     */
-    private OperandCount operandCount;
-    
-    /**
-     * The operands.
-     */    
-    private Operand[] operands;
-    
-    /**
-     * The instruction length in bytes.
-     */
-    private int length;
-    
-    /**
-     * Constructor.
-     * 
-     * @param form the instruction form
-     * @param opcount the operand count type
-     * @param opcode the opcode
-     */
-    public DefaultInstructionInfo(InstructionForm form, OperandCount opcount,
-        int opcode) {
-      
-      this.form = form;
-      this.operandCount = opcount;
-      this.opcode = opcode;
-    }
-    
-    /**
-     * {@inheritDoc}
-     */
-    public int getOpcode() { return opcode; }
-    
-    /**
-     * {@inheritDoc}
-     */
-    public InstructionForm getInstructionForm() { return form; }
-
-    /**
-     * {@inheritDoc}
-     */
-    public OperandCount getOperandCount() { return operandCount; }
-
-    /**
-     * {@inheritDoc}
-     */
-    public Operand[] getOperands() { return operands; }    
-
-    /**
-     * {@inheritDoc}
-     */
-    public int getLength() { return length; }
-
-    /**
-     * Sets the instruction's opcode.
-     * 
-     * @param opcode the opcode
-     */
-    public void setOpcode(int opcode) { this.opcode = opcode; }
-    
-    /**
-     * Sets the instruction's operands.
-     * 
-     * @param operands the operands
-     */
-    public void setOperands(Operand[] operands) { this.operands = operands; }
-    
-    /**
-     * Sets the instruction's length in bytes.
-     * 
-     * @param length the length in bytes
-     */
-    public void setLength(int length) { this.length = length; }
-  }
-  
-  /**
-   * This class is simply a placeholder for experiments.
-   */
-  private class InstructionImpl implements Instruction {
-    
-    private InstructionInfo info;
-    
-    public InstructionImpl(InstructionInfo info) {
-      
-      this.info = info;
-    }
-    
-    public InstructionInfo getInfo() {
-      
-      return info;
-    }
-    
-    public void execute() {
-     
-      // Dummy for now
-    }
-  }
-  
   /**
    * The memory access object.
    */
@@ -174,10 +61,12 @@ public class InstructionDecoder {
   public Instruction decodeInstruction(int instructionAddress) {
   
     short firstByte = memaccess.readUnsignedByte(instructionAddress);
-    DefaultInstructionInfo info = createBasicInstructionInfo(firstByte);
-    extractOperands(info, firstByte, instructionAddress);
-   
-    return new InstructionImpl(info);
+    InstructionInfo info = createBasicInstructionInfo(firstByte);
+    int currentAddress = extractOperands(info, instructionAddress);
+    currentAddress = extractStoreVariable(info, currentAddress);
+    
+    info.setLength(currentAddress - instructionAddress);   
+    return new Instruction(info);
   }
   
   // ***********************************************************************
@@ -193,7 +82,7 @@ public class InstructionDecoder {
    * @param firstByte the instruction's first byte
    * @return a DefaultInstructionInfo object with basic information
    */
-  private DefaultInstructionInfo createBasicInstructionInfo(short firstByte) {
+  private InstructionInfo createBasicInstructionInfo(short firstByte) {
     
     InstructionForm form;
     OperandCount operandCount;
@@ -224,84 +113,88 @@ public class InstructionDecoder {
       form = InstructionForm.VARIABLE;
       operandCount = (firstByte >= 0xe0) ? OperandCount.VAR : OperandCount.C2OP;
     }
-    return new DefaultInstructionInfo(form, operandCount, opcode);
+    return new InstructionInfo(form, operandCount, opcode);
   }
   
   /**
-   * Extracts the operands from the instruction data.
+   * Extracts the operands from the instruction data. At this step of
+   * decoding the some basic information about the instruction is available
+   * and could be used for extraction of parameters.
    * 
    * @param info the instruction info object to write to
-   * @param firstByte the instruction's first byte
    * @param instructionAddress the instruction address
+   * @return the current address in decoding
    */
-  private void extractOperands(DefaultInstructionInfo info, short firstByte,
-      int instructionAddress) {
+  private int extractOperands(InstructionInfo info, int instructionAddress) {
     
     short secondByte = memaccess.readUnsignedByte(instructionAddress + 1);
-    Operand[] operands = null;
+          
+    // operand types in next byte(s)
+    List<Operand> operands = new ArrayList<Operand>();
+    int currentAddress = instructionAddress + 2;
     
-    if (0x00 <= firstByte && firstByte <= 0x1f) {
-      
-      // small constant, small constant
-      
-    } else if (0x20 <= firstByte && firstByte <= 0x3f) {
-      
-      // small constant, variable
-      
-    } else if (0x40 <= firstByte && firstByte <= 0x5f) {
-      
-      // variable, small constant
-      
-    } else if (0x60 <= firstByte && firstByte <= 0x7f) {
-            
-      // variable, variable
-      
-    } else if (0x80 <= firstByte && firstByte <= 0x8f) {
-      
-      // large constant
-    } else if (0x90 <= firstByte && firstByte <= 0x9f) {
-      
-      // small constant
-      
-    } else if (0xa0 <= firstByte && firstByte <= 0xaf) {
-      
-      // variable
-      
-    } else if (0xb0 <= firstByte && firstByte <= 0xbf) {
-      
-      // no operands, NOTE: Handle 0xbe as EXTENDED !!!!
-      
-    } else if (0xc0 <= firstByte && firstByte <= 0xdf) {
-      
-      // operand types in next byte
-      
-    } else if (0xe0 <= firstByte && firstByte <= 0xff) {
-      
-      // FAKED
-      // operand types in next byte(s)
-      operands = new Operand[3];
-      operands[0] = new Operand(secondByte >> 6,
-          translatePackedAddress(memaccess.readUnsignedShort(
-                                 instructionAddress + 2)));
-      
-      operands[1] = new Operand((secondByte >> 4) & 0x03,
-          memaccess.readUnsignedShort(instructionAddress + 4));
-      operands[2] = new Operand((secondByte >> 2) & 0x03,
-          memaccess.readUnsignedShort(instructionAddress + 6));
-      info.setLength(9);
-    }
-    info.setOperands(operands);
+    currentAddress = extractOperandsWithType(operands, secondByte,
+                                             currentAddress);    
+
+    info.setOperands(operands.toArray(new Operand[0]));
+    return currentAddress;
   }
   
   /**
-   * This translates a packed address into a real address, consider this
-   * function to be found elsewhere in the future.
+   * Extract operands for the given optype byte value starting at the given
+   * decoding address. This is outfactored in order to be called at least two
+   * times. The generated operands are added to the specified operand list.
    * 
-   * @param packedAddress the packed address
-   * @return the real address
+   * @param operands the operand list to add to
+   * @param optypeByte the optype byte
+   * @param currentAddress the current decoding address
+   * @return the new decoding address after extracting the operands
    */
-  private int translatePackedAddress(int packedAddress) {
+  private int extractOperandsWithType(List<Operand> operands, int optypeByte,
+                                      int currentAddress) {
     
-    return packedAddress * 2;
+    int nextAddress = currentAddress;
+    int optype = (optypeByte >> 6) & 0x03;
+    for (int i = 0; i < 4; i++) {
+      
+      optype = (optypeByte >> ((3 - i) * 2)) & 0x03;
+      
+      if (optype == Operand.TYPENUM_LARGE_CONSTANT) {
+        
+        operands.add(new Operand(optype,
+            memaccess.readUnsignedShort(nextAddress)));
+        nextAddress += 2;
+        
+      } else if (optype == Operand.TYPENUM_VARIABLE
+          || optype == Operand.TYPENUM_SMALL_CONSTANT) {
+        
+        operands.add(new Operand(optype,
+            memaccess.readUnsignedByte(nextAddress)));
+        
+        nextAddress += 1;
+        
+      } else {
+        
+        break;
+      }
+    }
+    return nextAddress;
   }
+  
+  /**
+   * Extracts a store variable if this instruction has one.
+   * 
+   * @param info the instruction info
+   * @param currentAddress the current address in the decoding
+   * @return the current decoding address after extraction
+   */
+  private int extractStoreVariable(InstructionInfo info, int currentAddress) {
+    
+    if (info.storesResult()) {
+      
+      info.setStoreVariable(memaccess.readUnsignedByte(currentAddress));
+      return currentAddress + 1;
+    }
+    return currentAddress;
+  }  
 }
