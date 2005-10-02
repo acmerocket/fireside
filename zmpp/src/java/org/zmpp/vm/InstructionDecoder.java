@@ -30,7 +30,7 @@ import org.zmpp.vm.InstructionInfo.InstructionForm;
 import org.zmpp.vm.InstructionInfo.OperandCount;
 
 /**
- * The instruction decoder is highly experimental at the moment.
+ * The instruction decoder decodes an instruction at a specified address.
  * 
  * @author Wei-ju Wu
  * @version 1.0
@@ -60,13 +60,14 @@ public class InstructionDecoder {
    */
   public Instruction decodeInstruction(int instructionAddress) {
   
-    short firstByte = memaccess.readUnsignedByte(instructionAddress);
-    InstructionInfo info = createBasicInstructionInfo(firstByte);
+    InstructionInfo info = createBasicInstructionInfo(instructionAddress);
     int currentAddress = extractOperands(info, instructionAddress);
-    currentAddress = extractStoreVariable(info, currentAddress);
+    currentAddress = extractStoreVariable(info, currentAddress);    
+    info.setLength(currentAddress - instructionAddress);
     
-    info.setLength(currentAddress - instructionAddress);   
-    return new Instruction(info);
+    Instruction instr = new Instruction();
+    instr.setInfo(info);
+    return instr;
   }
   
   // ***********************************************************************
@@ -79,14 +80,15 @@ public class InstructionDecoder {
    * operand count type and possibly, the opcode, if it is not an extended
    * opcode.
    * 
-   * @param firstByte the instruction's first byte
+   * @param the instruction's start address
    * @return a DefaultInstructionInfo object with basic information
    */
-  private InstructionInfo createBasicInstructionInfo(short firstByte) {
+  private InstructionInfo createBasicInstructionInfo(int instructionAddress) {
     
     InstructionForm form;
     OperandCount operandCount;
     int opcode;
+    short firstByte = memaccess.readUnsignedByte(instructionAddress);
     
     // Determine form and operand count type
     if (0x00 <= firstByte && firstByte <= 0x7f) {

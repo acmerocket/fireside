@@ -23,7 +23,10 @@
 package org.zmpp.vm;
 
 /**
- * This class represents an instruction's operational portion.
+ * This class represents an instruction's operational portion. The idea is
+ * to create an instruction object which can be shared by simply setting
+ * an InstructionInfo object into its state and execute the instruction
+ * which makes this class the executer of the instruction.
  * 
  * @author Wei-ju Wu
  * @version 1.0
@@ -37,13 +40,8 @@ public class Instruction {
   
   /**
    * Constructor.
-   * 
-   * @param info the instruction information
    */
-  public Instruction(InstructionInfo info) {
-    
-    this.info = info;
-  }
+  public Instruction() { }
   
   /**
    * Retrieves the instruction's information.
@@ -51,6 +49,13 @@ public class Instruction {
    * @return the instruction information
    */
   public InstructionInfo getInfo() { return info; }
+  
+  /**
+   * Sets the instruction info.
+   * 
+   * @param info the instruction info
+   */
+  public void setInfo(InstructionInfo info) { this.info = info; }
   
   /**
    * Execute the instruction.
@@ -65,8 +70,9 @@ public class Instruction {
    * @param packedAddress the packed address
    * @return the real address
    */
+  /*
   private int translatePackedAddress(int packedAddress) {
     
     return packedAddress * 2;
-  }  
+  }*/ 
 }
