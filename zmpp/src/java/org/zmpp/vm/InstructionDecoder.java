@@ -22,9 +22,6 @@
  */
 package org.zmpp.vm;
 
-import java.util.ArrayList;
-import java.util.List;
-
 import org.zmpp.base.MemoryReadAccess;
 import org.zmpp.vm.InstructionInfo.InstructionForm;
 import org.zmpp.vm.InstructionInfo.OperandCount;
@@ -58,16 +55,14 @@ public class InstructionDecoder {
    * @param instructionAddress the current instruction's address
    * @return the instruction at the specified address
    */
-  public Instruction decodeInstruction(int instructionAddress) {
+  public InstructionInfo decodeInstruction(int instructionAddress) {
   
     InstructionInfo info = createBasicInstructionInfo(instructionAddress);
     int currentAddress = extractOperands(info, instructionAddress);
-    currentAddress = extractStoreVariable(info, currentAddress);    
-    info.setLength(currentAddress - instructionAddress);
-    
-    Instruction instr = new Instruction();
-    instr.setInfo(info);
-    return instr;
+    currentAddress = extractStoreVariable(info, currentAddress);
+    currentAddress = extractBranchOffset(info, currentAddress);
+    info.setLength(currentAddress - instructionAddress);    
+    return info;
   }
   
   // ***********************************************************************
@@ -93,19 +88,13 @@ public class InstructionDecoder {
     // Determine form and operand count type
     if (0x00 <= firstByte && firstByte <= 0x7f) {
       
-      opcode = firstByte;
+      opcode = firstByte & 0x1f; // Bottom five bits contain the opcode number
       form = InstructionForm.LONG;
       operandCount = OperandCount.C2OP;
-      
-    } else if (firstByte == 0xbe) {
 
-      form = InstructionForm.EXTENDED;
-      operandCount = OperandCount.VAR;
-      opcode = 0;
-      
     } else if (0x80 <= firstByte && firstByte <= 0xbf) {
       
-      opcode = firstByte;
+      opcode = firstByte & 0x0f; // Bottom four bits contain the opcode number
       form = InstructionForm.SHORT;
       operandCount = (firstByte >= 0xb0) ? OperandCount.C0OP :
                                            OperandCount.C1OP;
@@ -128,17 +117,37 @@ public class InstructionDecoder {
    * @return the current address in decoding
    */
   private int extractOperands(InstructionInfo info, int instructionAddress) {
-    
-    short secondByte = memaccess.readUnsignedByte(instructionAddress + 1);
-          
-    // operand types in next byte(s)
-    List<Operand> operands = new ArrayList<Operand>();
-    int currentAddress = instructionAddress + 2;
-    
-    currentAddress = extractOperandsWithType(operands, secondByte,
-                                             currentAddress);    
 
-    info.setOperands(operands.toArray(new Operand[0]));
+    int currentAddress = instructionAddress;
+    
+    if (info.getInstructionForm() == InstructionForm.SHORT) {
+      
+      if (info.getOperandCount() == OperandCount.C1OP) {
+        
+        short firstByte = memaccess.readUnsignedByte(instructionAddress);
+        //System.out.printf("firstByte: %x\n", firstByte);
+        byte optype = (byte) ((firstByte >> 6) & 0x03);
+        currentAddress = extractOperand(info, optype, instructionAddress + 1);
+      }
+    } else if (info.getInstructionForm() == InstructionForm.LONG) {
+
+      short firstByte = memaccess.readUnsignedByte(instructionAddress);        
+      byte optype1 = ((firstByte & 0x40) > 0) ? Operand.TYPENUM_VARIABLE :
+                                                Operand.TYPENUM_SMALL_CONSTANT;
+      byte optype2 = ((firstByte & 0x20) > 0) ? Operand.TYPENUM_VARIABLE :
+                                                Operand.TYPENUM_SMALL_CONSTANT;
+      currentAddress = extractOperand(info, optype1, instructionAddress + 1);
+      currentAddress = extractOperand(info, optype2, currentAddress);
+      
+    } else if (info.getInstructionForm() == InstructionForm.VARIABLE){
+    
+      short secondByte = memaccess.readUnsignedByte(instructionAddress + 1);
+          
+      // operand types in next byte(s)
+      currentAddress = instructionAddress + 2;    
+      currentAddress = extractOperandsWithTypeByte(info, secondByte,
+                                                 currentAddress);
+    }
     return currentAddress;
   }
   
@@ -147,38 +156,58 @@ public class InstructionDecoder {
    * decoding address. This is outfactored in order to be called at least two
    * times. The generated operands are added to the specified operand list.
    * 
-   * @param operands the operand list to add to
+   * @param info the InstructionInfo to add to
    * @param optypeByte the optype byte
    * @param currentAddress the current decoding address
    * @return the new decoding address after extracting the operands
    */
-  private int extractOperandsWithType(List<Operand> operands, int optypeByte,
-                                      int currentAddress) {
+  private int extractOperandsWithTypeByte(InstructionInfo info,
+                                          int optypeByte, int currentAddress) {
     
     int nextAddress = currentAddress;
-    int optype = (optypeByte >> 6) & 0x03;
+    int oldNumOperands;
+    byte optype = (byte) ((optypeByte >> 6) & 0x03);
+    
     for (int i = 0; i < 4; i++) {
       
-      optype = (optypeByte >> ((3 - i) * 2)) & 0x03;
+      optype = (byte) ((optypeByte >> ((3 - i) * 2)) & 0x03);
+      oldNumOperands = info.getNumOperands();
+      nextAddress = extractOperand(info, optype, nextAddress);
+      if (info.getNumOperands() == oldNumOperands) break;
+    }
+    return nextAddress;
+  }
+  
+  /**
+   * Extracts an operands from the current address with the specified operand
+   * type number. If the type is unknown or OMITTED, no operand will be
+   * added and the returned address will be equal to currentAddress.
+   * 
+   * @param info the instruction info to add to
+   * @param optype the operand type number
+   * @param currentAddress the current address in the instruction
+   * @return the next address
+   */
+  private int extractOperand(InstructionInfo info, byte optype,
+                             int currentAddress) {
+    //if (info.getInstructionForm() == InstructionForm.SHORT)
+    //  System.out.printf("extractOperand() from address: %x, optype: %d\n",
+    //      currentAddress, optype);
+    
+    int nextAddress = currentAddress;
+    if (optype == Operand.TYPENUM_LARGE_CONSTANT) {
       
-      if (optype == Operand.TYPENUM_LARGE_CONSTANT) {
-        
-        operands.add(new Operand(optype,
-            memaccess.readUnsignedShort(nextAddress)));
-        nextAddress += 2;
-        
-      } else if (optype == Operand.TYPENUM_VARIABLE
-          || optype == Operand.TYPENUM_SMALL_CONSTANT) {
-        
-        operands.add(new Operand(optype,
-            memaccess.readUnsignedByte(nextAddress)));
-        
-        nextAddress += 1;
-        
-      } else {
-        
-        break;
-      }
+      info.addOperand(new Operand(optype,
+          memaccess.readUnsignedShort(nextAddress)));
+      nextAddress += 2;
+      
+    } else if (optype == Operand.TYPENUM_VARIABLE
+        || optype == Operand.TYPENUM_SMALL_CONSTANT) {
+      
+      info.addOperand(new Operand(optype,
+          memaccess.readUnsignedByte(nextAddress)));
+      
+      nextAddress += 1; 
     }
     return nextAddress;
   }
@@ -198,5 +227,35 @@ public class InstructionDecoder {
       return currentAddress + 1;
     }
     return currentAddress;
-  }  
+  }
+  
+  /**
+   * Extracts the branch offset if this instruction is a branch.
+   * 
+   * @param info the instruction info object
+   * @param currentAddress the current address in decoding processing
+   * @return the current decoding address after extraction
+   */
+  private int extractBranchOffset(InstructionInfo info, int currentAddress) {
+    
+    if (info.isBranch()) {
+      
+      short offsetByte1 = memaccess.readUnsignedByte(currentAddress);
+      
+      // Bit 6 set -> only one byte needs to be read
+      if ((offsetByte1 & 0x40) > 0) {
+        
+        info.setBranchOffset(offsetByte1 & 0x3f);
+        return currentAddress + 1;
+        
+      } else {
+        
+        // Join two bytes to a 14-bit offset
+        short offsetByte2 = memaccess.readUnsignedByte(currentAddress + 1);
+        info.setBranchOffset(((offsetByte1 & 0x3f) << 8) | offsetByte2);
+        return currentAddress + 2;
+      }
+    }
+    return currentAddress;
+  }
 }
