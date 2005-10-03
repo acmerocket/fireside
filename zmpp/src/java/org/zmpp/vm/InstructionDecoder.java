@@ -100,7 +100,7 @@ public class InstructionDecoder {
                                            OperandCount.C1OP;
     } else {
       
-      opcode = firstByte;
+      opcode = firstByte & 0x1f; // Bottom five bits contain the opcode number
       form = InstructionForm.VARIABLE;
       operandCount = (firstByte >= 0xe0) ? OperandCount.VAR : OperandCount.C2OP;
     }
@@ -241,6 +241,7 @@ public class InstructionDecoder {
     if (info.isBranch()) {
       
       short offsetByte1 = memaccess.readUnsignedByte(currentAddress);
+      info.setBranchIfTrue((offsetByte1 & 0x80) > 0);
       
       // Bit 6 set -> only one byte needs to be read
       if ((offsetByte1 & 0x40) > 0) {
