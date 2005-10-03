@@ -68,4 +68,22 @@ public class MemoryAccessTest extends TestCase {
     MemoryAccess memaccess = new MemoryAccess(data32);
     assertEquals(0xd74bd753, memaccess.readUnsigned32(0x00));
   }
+  
+  public void testWriteUnsignedByte() {
+    
+    memaccess.writeUnsignedByte(0x02, (short) 0xff);
+    assertEquals(0xff, memaccess.readUnsignedByte(0x02));
+    
+    memaccess.writeUnsignedByte(0x03, (short) 0x32);
+    assertEquals(0x32, memaccess.readUnsignedByte(0x03));
+  }
+  
+  public  void testWriteUnsignedShort() {
+    
+    memaccess.writeUnsignedShort(0x02, 0xffff);
+    assertEquals(0xffff, memaccess.readUnsignedShort(0x02));
+    
+    memaccess.writeUnsignedShort(0x04, 0x00ff);
+    assertEquals(0x00ff, memaccess.readUnsignedShort(0x04));
+  }
 }

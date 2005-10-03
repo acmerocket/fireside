@@ -80,5 +80,28 @@ public class MemoryAccess implements MemoryReadAccess {
   public short readUnsignedByte(int address) {
     
     return (short) (data[address] & 0xff);
-  }    
+  }
+  
+  /**
+   * Writes an unsigned 16 bit value to the specified address.
+   * 
+   * @param address the address to write to
+   * @param value the value to write
+   */
+  public void writeUnsignedShort(int address, int value) {
+    
+    data[address] = (byte) ((value & 0xff00) >> 8);
+    data[address + 1] = (byte) (value & 0xff);
+  }
+  
+  /**
+   * Writes an unsigned byte value to the specified address.
+   * 
+   * @param address the address to write to
+   * @param value the value to write
+   */
+  public void writeUnsignedByte(int address, short value) {
+    
+    data[address] = (byte) (value & 0xff);
+  }
 }
