@@ -65,6 +65,32 @@ public class InstructionDecoder {
     return info;
   }
   
+  /**
+   * Decodes the routine at the specified address and returns an
+   * RoutineInfo object which describes the routine.
+   * 
+   * @param routineAddress the start address of the encoded routine
+   * @return a RoutineInfo object describing the routine
+   */
+  public RoutineInfo decodeRoutine(int routineAddress) {
+    
+    short numLocals = memaccess.readUnsignedByte(routineAddress);
+    int[] locals = new int[numLocals];
+    int currentAddress = routineAddress + 1;
+    for (int i = 0; i < numLocals; i++) {
+      
+      locals[i] = memaccess.readUnsignedShort(currentAddress);
+      currentAddress += 2;
+    }
+    
+    RoutineInfo info = new RoutineInfo(currentAddress, numLocals);
+    for (int i = 0; i < numLocals; i++) {
+      
+      info.setLocalVariable(i, locals[i]);
+    }
+    return info;
+  }
+  
   // ***********************************************************************
   // ****** Private functions
   // ******************************************
@@ -125,13 +151,20 @@ public class InstructionDecoder {
       if (info.getOperandCount() == OperandCount.C1OP) {
         
         short firstByte = memaccess.readUnsignedByte(instructionAddress);
-        //System.out.printf("firstByte: %x\n", firstByte);
-        byte optype = (byte) ((firstByte >> 6) & 0x03);
+        /*
+        short secondByte = memaccess.readUnsignedByte(instructionAddress + 1);
+        System.out.printf("opcode: %x, firstByte: %x, secondByte: %x\n",
+            info.getOpcode(), firstByte, secondByte);
+            */
+        byte optype = (byte) ((firstByte & 0x30) >> 4);
+        //System.out.printf("optype: %x\n", optype);
+        
         currentAddress = extractOperand(info, optype, instructionAddress + 1);
       }
     } else if (info.getInstructionForm() == InstructionForm.LONG) {
 
-      short firstByte = memaccess.readUnsignedByte(instructionAddress);        
+      short firstByte = memaccess.readUnsignedByte(instructionAddress);      
+      //System.out.printf("long opcode: %x\n", firstByte);
       byte optype1 = ((firstByte & 0x40) > 0) ? Operand.TYPENUM_VARIABLE :
                                                 Operand.TYPENUM_SMALL_CONSTANT;
       byte optype2 = ((firstByte & 0x20) > 0) ? Operand.TYPENUM_VARIABLE :
