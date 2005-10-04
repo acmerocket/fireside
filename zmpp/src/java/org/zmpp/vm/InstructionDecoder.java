@@ -23,8 +23,8 @@
 package org.zmpp.vm;
 
 import org.zmpp.base.MemoryReadAccess;
-import org.zmpp.vm.InstructionInfo.InstructionForm;
-import org.zmpp.vm.InstructionInfo.OperandCount;
+import org.zmpp.vm.AbstractInstruction.InstructionForm;
+import org.zmpp.vm.AbstractInstruction.OperandCount;
 
 /**
  * The instruction decoder decodes an instruction at a specified address.
@@ -40,13 +40,20 @@ public class InstructionDecoder {
   private MemoryReadAccess memaccess;
   
   /**
+   * The machine state object.
+   */
+  private MachineState machineState;
+  
+  /**
    * Constructor.
    * 
    * @param memaccess the memory access object
    */
-  public InstructionDecoder(MemoryReadAccess memaccess) {
+  public InstructionDecoder(MachineState machineState,
+                            MemoryReadAccess memaccess) {
   
     this.memaccess = memaccess;
+    this.machineState = machineState;
   }
   
   /**
@@ -55,9 +62,9 @@ public class InstructionDecoder {
    * @param instructionAddress the current instruction's address
    * @return the instruction at the specified address
    */
-  public InstructionInfo decodeInstruction(int instructionAddress) {
+  public AbstractInstruction decodeInstruction(int instructionAddress) {
   
-    InstructionInfo info = createBasicInstructionInfo(instructionAddress);
+    AbstractInstruction info = createBasicInstructionInfo(instructionAddress);
     int currentAddress = extractOperands(info, instructionAddress);
     currentAddress = extractStoreVariable(info, currentAddress);
     currentAddress = extractBranchOffset(info, currentAddress);
@@ -104,9 +111,8 @@ public class InstructionDecoder {
    * @param the instruction's start address
    * @return a DefaultInstructionInfo object with basic information
    */
-  private InstructionInfo createBasicInstructionInfo(int instructionAddress) {
+  private AbstractInstruction createBasicInstructionInfo(int instructionAddress) {
     
-    InstructionForm form;
     OperandCount operandCount;
     int opcode;
     short firstByte = memaccess.readUnsignedByte(instructionAddress);
@@ -115,22 +121,25 @@ public class InstructionDecoder {
     if (0x00 <= firstByte && firstByte <= 0x7f) {
       
       opcode = firstByte & 0x1f; // Bottom five bits contain the opcode number
-      form = InstructionForm.LONG;
       operandCount = OperandCount.C2OP;
+      return new LongInstruction(machineState, opcode);
 
     } else if (0x80 <= firstByte && firstByte <= 0xbf) {
       
       opcode = firstByte & 0x0f; // Bottom four bits contain the opcode number
-      form = InstructionForm.SHORT;
       operandCount = (firstByte >= 0xb0) ? OperandCount.C0OP :
                                            OperandCount.C1OP;
+      if (operandCount == OperandCount.C0OP)
+        return new Short0Instruction(machineState, opcode);
+      else
+        return new Short1Instruction(machineState, opcode);
+      
     } else {
       
       opcode = firstByte & 0x1f; // Bottom five bits contain the opcode number
-      form = InstructionForm.VARIABLE;
       operandCount = (firstByte >= 0xe0) ? OperandCount.VAR : OperandCount.C2OP;
+      return new VariableInstruction(machineState, operandCount, opcode);
     }
-    return new InstructionInfo(form, operandCount, opcode);
   }
   
   /**
@@ -142,7 +151,7 @@ public class InstructionDecoder {
    * @param instructionAddress the instruction address
    * @return the current address in decoding
    */
-  private int extractOperands(InstructionInfo info, int instructionAddress) {
+  private int extractOperands(AbstractInstruction info, int instructionAddress) {
 
     int currentAddress = instructionAddress;
     
@@ -160,6 +169,11 @@ public class InstructionDecoder {
         //System.out.printf("optype: %x\n", optype);
         
         currentAddress = extractOperand(info, optype, instructionAddress + 1);
+        
+      } else {
+        
+        // 0 operand instructions of course still occupy 1 byte
+        currentAddress = instructionAddress + 1;
       }
     } else if (info.getInstructionForm() == InstructionForm.LONG) {
 
@@ -194,7 +208,7 @@ public class InstructionDecoder {
    * @param currentAddress the current decoding address
    * @return the new decoding address after extracting the operands
    */
-  private int extractOperandsWithTypeByte(InstructionInfo info,
+  private int extractOperandsWithTypeByte(AbstractInstruction info,
                                           int optypeByte, int currentAddress) {
     
     int nextAddress = currentAddress;
@@ -221,7 +235,7 @@ public class InstructionDecoder {
    * @param currentAddress the current address in the instruction
    * @return the next address
    */
-  private int extractOperand(InstructionInfo info, byte optype,
+  private int extractOperand(AbstractInstruction info, byte optype,
                              int currentAddress) {
     //if (info.getInstructionForm() == InstructionForm.SHORT)
     //  System.out.printf("extractOperand() from address: %x, optype: %d\n",
@@ -252,7 +266,7 @@ public class InstructionDecoder {
    * @param currentAddress the current address in the decoding
    * @return the current decoding address after extraction
    */
-  private int extractStoreVariable(InstructionInfo info, int currentAddress) {
+  private int extractStoreVariable(AbstractInstruction info, int currentAddress) {
     
     if (info.storesResult()) {
       
@@ -269,7 +283,7 @@ public class InstructionDecoder {
    * @param currentAddress the current address in decoding processing
    * @return the current decoding address after extraction
    */
-  private int extractBranchOffset(InstructionInfo info, int currentAddress) {
+  private int extractBranchOffset(AbstractInstruction info, int currentAddress) {
     
     if (info.isBranch()) {
       
