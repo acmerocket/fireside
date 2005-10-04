@@ -79,7 +79,7 @@ public class InstructionDecoder {
    * @param routineAddress the start address of the encoded routine
    * @return a RoutineInfo object describing the routine
    */
-  public RoutineInfo decodeRoutine(int routineAddress) {
+  public RoutineContext decodeRoutine(int routineAddress) {
     
     short numLocals = memaccess.readUnsignedByte(routineAddress);
     int[] locals = new int[numLocals];
@@ -90,7 +90,7 @@ public class InstructionDecoder {
       currentAddress += 2;
     }
     
-    RoutineInfo info = new RoutineInfo(currentAddress, numLocals);
+    RoutineContext info = new RoutineContext(currentAddress, numLocals);
     for (int i = 0; i < numLocals; i++) {
       
       info.setLocalVariable(i, locals[i]);
