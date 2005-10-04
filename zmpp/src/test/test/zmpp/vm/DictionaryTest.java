@@ -23,6 +23,8 @@
 package test.zmpp.vm;
 
 import org.zmpp.vm.Dictionary;
+import org.zmpp.vmutil.ZsciiConverter;
+import org.zmpp.vmutil.ZsciiConverter.Alphabet;
 
 /**
  * This class tests the dictionary view.
@@ -39,27 +41,27 @@ public class DictionaryTest extends MemoryMapSetup {
    */
   protected void setUp() throws Exception {
     super.setUp();
-    dictionary = new Dictionary(minizorkmap,
-                                fileheader.getDictionaryAddress(), converter);
+    dictionary = new Dictionary(minizorkmap, fileheader.getDictionaryAddress());
   }
   
   public void testDictionaryInformation() {
+    
     assertEquals(3, dictionary.getNumberOfSeparators());
     assertEquals(7, dictionary.getEntryLength());
     assertEquals(536, dictionary.getNumberOfEntries());
 
-    assertEquals(".", dictionary.getEntryString(1));
-    assertEquals(",", dictionary.getEntryString(2));
-    assertEquals("#comm", dictionary.getEntryString(3));
-    assertEquals("again", dictionary.getEntryString(13));
-    assertEquals("air-p", dictionary.getEntryString(15));
-    assertEquals("$ve", dictionary.getEntryString(0));
+    assertEquals(".", converter.convert(minizorkmap, dictionary.getEntryAddress(1)));
+    assertEquals(",", converter.convert(minizorkmap, dictionary.getEntryAddress(2)));
+    assertEquals("#comm", converter.convert(minizorkmap, dictionary.getEntryAddress(3)));
+    assertEquals("again", converter.convert(minizorkmap, dictionary.getEntryAddress(13)));
+    assertEquals("air-p", converter.convert(minizorkmap, dictionary.getEntryAddress(15)));
+    assertEquals("$ve", converter.convert(minizorkmap, dictionary.getEntryAddress(0)));
   }
   
   public void testGetSeparator() {
-    
-    assertEquals('.', dictionary.getSeparator(0));
-    assertEquals(',', dictionary.getSeparator(1));
-    assertEquals('\"', dictionary.getSeparator(2));
+
+    assertEquals('.', ZsciiConverter.decode(Alphabet.A0, dictionary.getSeparator(0)));
+    assertEquals(',', ZsciiConverter.decode(Alphabet.A0, dictionary.getSeparator(1)));
+    assertEquals('\"', ZsciiConverter.decode(Alphabet.A0, dictionary.getSeparator(2)));
   }
 }

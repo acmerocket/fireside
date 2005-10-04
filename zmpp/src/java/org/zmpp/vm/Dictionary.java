@@ -23,8 +23,6 @@
 package org.zmpp.vm;
 
 import org.zmpp.base.MemoryReadAccess;
-import org.zmpp.vmutil.ZsciiConverter;
-import org.zmpp.vmutil.ZsciiConverter.Alphabet;
 
 /**
  * This class implements a view on the dictionary within a memory map.
@@ -45,23 +43,16 @@ public class Dictionary {
   private int address;
   
   /**
-   * The converter object.
-   */
-  private ZsciiConverter converter;
-
-  /**
    * Constructor.
    * 
    * @param map the memory map
    * @param address the start address of the dictionary
    * @param converter a ZsciiConverter object
    */
-  public Dictionary(MemoryReadAccess map, int address,
-                    ZsciiConverter converter) {
+  public Dictionary(MemoryReadAccess map, int address) {
     
     this.map = map;
     this.address = address;
-    this.converter = converter;
   }  
 
   /**
@@ -75,15 +66,14 @@ public class Dictionary {
   }
   
   /**
-   * Returns the separator at position i
+   * Returns the separator at position i as a ZSCII character.
    * 
    * @param i the separator number, zero-based
    * @return the separator
    */
-  public int getSeparator(int i) {
+  public byte getSeparator(int i) {
     
-    byte zchar = (byte) map.readUnsignedByte(address + i + 1);
-    return ZsciiConverter.decode(Alphabet.A0, zchar);
+    return (byte) map.readUnsignedByte(address + i + 1);
   }
   
   /**
@@ -112,10 +102,9 @@ public class Dictionary {
    * @param entryNum entry number between (0 - getNumberOfEntries() - 1)
    * @return the entry text
    */
-  public String getEntryString(int entryNum) {
+  public int getEntryAddress(int entryNum) {
    
     int headerSize = getNumberOfSeparators() + 4;    
-    int entryAddress = address + headerSize + entryNum * getEntryLength();
-    return converter.convert(map, entryAddress);
+    return address + headerSize + entryNum * getEntryLength();
   }
 }
