@@ -22,6 +22,7 @@
  */
 package org.zmpp.vm;
 
+
 /**
  * This class represents an instruction's operational portion. The idea is
  * to create an instruction object which can be shared by simply setting
@@ -31,48 +32,10 @@ package org.zmpp.vm;
  * @author Wei-ju Wu
  * @version 1.0
  */
-public class Instruction {
+public interface Instruction {
 
-  /**
-   * The instruction information.
-   */
-  private InstructionInfo info;
-  
-  /**
-   * Constructor.
-   */
-  public Instruction() { }
-  
-  /**
-   * Retrieves the instruction's information.
-   * 
-   * @return the instruction information
-   */
-  public InstructionInfo getInfo() { return info; }
-  
-  /**
-   * Sets the instruction info.
-   * 
-   * @param info the instruction info
-   */
-  public void setInfo(InstructionInfo info) { this.info = info; }
-  
   /**
    * Execute the instruction.
    */
-  public void execute() {
-    
-  }
-  
-  /**
-   * This translates a packed address into a real address.
-   * 
-   * @param packedAddress the packed address
-   * @return the real address
-   */
-  /*
-  private int translatePackedAddress(int packedAddress) {
-    
-    return packedAddress * 2;
-  }*/ 
+  void execute();
 }
