@@ -51,6 +51,11 @@ public class RoutineContext {
   private int returnVarNum;
   
   /**
+   * The stack pointer at invocation time.
+   */
+  private int invocationStackPointer;
+  
+  /**
    * Constructor.
    * 
    * @param startAddress the routine's start address
@@ -145,5 +150,25 @@ public class RoutineContext {
   public void setReturnVariable(short varnum) {
     
     returnVarNum = varnum;
+  }
+  
+  /**
+   * Returns the stack pointer at invocation time.
+   * 
+   * @return the stack pointer at invocation time
+   */
+  public int getInvocationStackPointer() {
+    
+    return invocationStackPointer;
+  }
+  
+  /**
+   * Sets the stack pointer at invocation time.
+   * 
+   * @param stackpointer the stack pointer at invocation time.
+   */
+  public void setInvocationStackPointer(int stackpointer) {
+    
+    invocationStackPointer = stackpointer;
   }
 }
