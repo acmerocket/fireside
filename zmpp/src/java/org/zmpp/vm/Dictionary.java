@@ -47,7 +47,6 @@ public class Dictionary {
    * 
    * @param map the memory map
    * @param address the start address of the dictionary
-   * @param converter a ZsciiConverter object
    */
   public Dictionary(MemoryReadAccess map, int address) {
     
