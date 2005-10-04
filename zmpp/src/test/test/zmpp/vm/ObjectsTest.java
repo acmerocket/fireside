@@ -30,8 +30,7 @@ public class ObjectsTest extends MemoryMapSetup {
   
   protected void setUp() throws Exception {
     super.setUp();
-    this.objects = new Objects(minizorkmap, fileheader.getObjectTableAddress(),
-                               converter);
+    this.objects = new Objects(minizorkmap, fileheader.getObjectTableAddress());
   }
 
   public void testGetPropertyDefault() {
@@ -65,7 +64,8 @@ public class ObjectsTest extends MemoryMapSetup {
   
   public void testGetPropertiesTable() {
     
-    assertEquals("forest", objects.getObjectAt(1).getPropertiesDescription());
+    int propaddress = objects.getObjectAt(1).getPropertiesDescriptionAddress();
+    assertEquals("forest", converter.convert(minizorkmap, propaddress));
     assertEquals(2, objects.getObjectAt(1).getNumPropertyRows());
     assertEquals(2, objects.getObjectAt(1).getNumPropertyColumns(0));
     assertEquals(4, objects.getObjectAt(1).getNumPropertyColumns(1));    
