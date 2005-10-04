@@ -24,10 +24,7 @@ package org.zmpp.vm;
 
 
 /**
- * This class represents an instruction's operational portion. The idea is
- * to create an instruction object which can be shared by simply setting
- * an InstructionInfo object into its state and execute the instruction
- * which makes this class the executer of the instruction.
+ * This interface defines an instruction's public methods.
  * 
  * @author Wei-ju Wu
  * @version 1.0
