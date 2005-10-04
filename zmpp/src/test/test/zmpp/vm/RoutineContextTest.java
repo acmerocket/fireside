@@ -55,7 +55,7 @@ public class RoutineContextTest extends TestCase {
     }
     context.setReturnAddress(0x4711);
     assertEquals(0x4711, context.getReturnAddress());
-    context.setReturnValue(13);
-    assertEquals(13, context.getReturnValue());
+    context.setReturnVariable((short) 0x13);
+    assertEquals(0x13, context.getReturnVariable());
   }
 }

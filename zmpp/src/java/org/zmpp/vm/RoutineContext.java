@@ -46,9 +46,9 @@ public class RoutineContext {
   private int returnAddress;
   
   /**
-   * The return value.
+   * The return variable number to store the return value to.
    */
-  private int returnValue;
+  private int returnVarNum;
   
   /**
    * Constructor.
@@ -128,22 +128,22 @@ public class RoutineContext {
   }
   
   /**
-   * Returns the routine's return value.
+   * Returns the routine's return variable number.
    * 
-   * @return the return value
+   * @return the return variable number
    */
-  public int getReturnValue() {
+  public int getReturnVariable() {
     
-    return returnValue;
+    return returnVarNum;
   }
   
   /**
-   * Sets the routine's return value.
+   * Sets the routine's return variable number.
    * 
-   * @param value the return value
+   * @param varnum the return variable number
    */
-  public void setReturnValue(int value) {
+  public void setReturnVariable(short varnum) {
     
-    returnValue = value;
+    returnVarNum = varnum;
   }
 }
