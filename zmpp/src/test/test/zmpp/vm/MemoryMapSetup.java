@@ -29,6 +29,8 @@ import junit.framework.TestCase;
 
 import org.zmpp.base.MemoryAccess;
 import org.zmpp.vm.Abbreviations;
+import org.zmpp.vm.Machine3;
+import org.zmpp.vm.MachineState;
 import org.zmpp.vm.StoryFileHeader;
 import org.zmpp.vmutil.ZsciiConverter;
 
@@ -45,6 +47,7 @@ public abstract class MemoryMapSetup extends TestCase {
   protected ZsciiConverter converter;
   protected StoryFileHeader fileheader;
   protected Abbreviations abbreviations;
+  protected MachineState machineState;
   
   protected void setUp() throws Exception {
     
@@ -59,5 +62,6 @@ public abstract class MemoryMapSetup extends TestCase {
     abbreviations = new Abbreviations(minizorkmap,
         fileheader.getAbbreviationsAddress());
     converter = new ZsciiConverter(3, abbreviations);
+    machineState = new Machine3(fileheader, minizorkmap);
   }
 }
