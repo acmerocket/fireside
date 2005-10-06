@@ -23,6 +23,7 @@
 package test.zmpp.vm;
 
 import org.zmpp.vm.Objects;
+import org.zmpp.vm.Objects.Zobject;
 
 public class ObjectsTest extends MemoryMapSetup {
 
@@ -57,6 +58,17 @@ public class ObjectsTest extends MemoryMapSetup {
     assertEquals(0, objects.getObjectAt(27).getAttributeFlags());
   }
   
+  public void testObjectSetters() {
+    
+    Zobject obj = objects.getObjectAt(1);
+    obj.setParent((short) 38);
+    assertEquals(38, obj.getParent());
+    obj.setChild((short) 39);
+    assertEquals(39, obj.getChild());
+    obj.setSibling((short) 42);
+    assertEquals(42, obj.getSibling());
+  }
+  
   public void testGetNumObjects() {
     
     assertEquals(179, objects.getNumObjects());
@@ -77,5 +89,7 @@ public class ObjectsTest extends MemoryMapSetup {
     assertEquals(0x23, objects.getObjectAt(1).getProperty(1, 1));
     assertEquals(0x35, objects.getObjectAt(1).getProperty(1, 2));
     assertEquals(0x8f, objects.getObjectAt(1).getProperty(1, 3));
+    
+    assertEquals(13, objects.getObjectAt(1).getPropertyDataLength());
   }
 }
