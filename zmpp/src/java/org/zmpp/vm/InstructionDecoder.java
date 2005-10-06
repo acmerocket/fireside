@@ -129,8 +129,18 @@ public class InstructionDecoder {
       opcode = firstByte & 0x0f; // Bottom four bits contain the opcode number
       operandCount = (firstByte >= 0xb0) ? OperandCount.C0OP :
                                            OperandCount.C1OP;
-      if (operandCount == OperandCount.C0OP)
+      if (operandCount == OperandCount.C0OP) {
+        
+        // Special case: print and print_ret are classified as C0OP, but
+        // in fact have a string literal as their parameter
+        if (opcode == PrintLiteralInstruction.OP_PRINT
+            || opcode == PrintLiteralInstruction.OP_PRINT_RET) {
+          
+          return new PrintLiteralInstruction(machineState, opcode, memaccess,
+                                             instructionAddress);
+        }
         return new Short0Instruction(machineState, opcode);
+      }
       else
         return new Short1Instruction(machineState, opcode);
       
