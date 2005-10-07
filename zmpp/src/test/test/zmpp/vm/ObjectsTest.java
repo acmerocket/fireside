@@ -122,7 +122,14 @@ public class ObjectsTest extends MemoryMapSetup {
     assertEquals(0x2d, objects.getObjectAt(1).getPropertyByte(17, 0));
     assertEquals(0x23, objects.getObjectAt(1).getPropertyByte(17, 1));
     assertEquals(0x35, objects.getObjectAt(1).getPropertyByte(17, 2));
-    assertEquals(0x8f, objects.getObjectAt(1).getPropertyByte(17, 3));
-    
+    assertEquals(0x8f, objects.getObjectAt(1).getPropertyByte(17, 3));    
   }
+  
+  public void testGetNextProperty() {
+    
+    assertEquals(18, objects.getObjectAt(1).getNextProperty(0));
+    assertEquals(17, objects.getObjectAt(1).getNextProperty(18));
+    assertEquals(0, objects.getObjectAt(1).getNextProperty(17));
+  }
+  
 }
