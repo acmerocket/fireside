@@ -104,4 +104,19 @@ public class MemoryAccess implements MemoryReadAccess {
     
     data[address] = (byte) (value & 0xff);
   }
+  
+  /**
+   * Writes an unsigned 32 bit value to the specified address.
+   * 
+   * @param address the address to write to
+   * @param value the value to write
+   */
+  public void writeUnsigned32(int address, long value) {
+    
+    data[address] = (byte) ((value & 0xff000000) >> 24);
+    data[address + 1] = (byte) ((value & 0x00ff0000) >> 16);
+    data[address + 2] = (byte) ((value & 0x0000ff00) >> 8);
+    data[address + 3] = (byte) (value & 0x000000ff);
+  }
+  
 }
