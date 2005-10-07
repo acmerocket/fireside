@@ -72,32 +72,6 @@ public class InstructionDecoder {
     return info;
   }
   
-  /**
-   * Decodes the routine at the specified address and returns an
-   * RoutineInfo object which describes the routine.
-   * 
-   * @param routineAddress the start address of the encoded routine
-   * @return a RoutineInfo object describing the routine
-   */
-  public RoutineContext decodeRoutine(int routineAddress) {
-    
-    short numLocals = memaccess.readUnsignedByte(routineAddress);
-    int[] locals = new int[numLocals];
-    int currentAddress = routineAddress + 1;
-    for (int i = 0; i < numLocals; i++) {
-      
-      locals[i] = memaccess.readUnsignedShort(currentAddress);
-      currentAddress += 2;
-    }
-    
-    RoutineContext info = new RoutineContext(currentAddress, numLocals);
-    for (int i = 0; i < numLocals; i++) {
-      
-      info.setLocalVariable(i, locals[i]);
-    }
-    return info;
-  }
-  
   // ***********************************************************************
   // ****** Private functions
   // ******************************************
