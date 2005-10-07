@@ -47,15 +47,44 @@ public class ObjectsTest extends MemoryMapSetup {
     assertEquals(147, objects.getObjectAt(1).getSibling());
     assertEquals(0, objects.getObjectAt(1).getChild());
     assertEquals(0x0a4f, objects.getObjectAt(1).getPropertiesAddress());
-    assertEquals(33554432, objects.getObjectAt(1).getAttributeFlags());
+    assertTrue(objects.getObjectAt(1).isAttributeSet(6));
     
     assertEquals(27, objects.getObjectAt(2).getParent());
     assertEquals(119, objects.getObjectAt(2).getSibling());
     assertEquals(95, objects.getObjectAt(2).getChild());
     assertEquals(0x0a5d, objects.getObjectAt(2).getPropertiesAddress());    
-    assertEquals(83890176, objects.getObjectAt(2).getAttributeFlags());
+    assertTrue(objects.getObjectAt(2).isAttributeSet(5));
+    assertFalse(objects.getObjectAt(2).isAttributeSet(6));
+    assertTrue(objects.getObjectAt(2).isAttributeSet(7));
+    assertTrue(objects.getObjectAt(2).isAttributeSet(19));
     
-    assertEquals(0, objects.getObjectAt(27).getAttributeFlags());
+    assertFalse(objects.getObjectAt(27).isAttributeSet(0));
+    assertFalse(objects.getObjectAt(27).isAttributeSet(1));
+  }
+  
+  public void testSetAttributes() {
+    
+    assertFalse(objects.getObjectAt(1).isAttributeSet(5));
+    objects.getObjectAt(1).setAttribute(5);
+    assertTrue(objects.getObjectAt(1).isAttributeSet(5));
+  }
+  
+  public void testClearAttributes() {
+    
+    // Set several bits in a row to make sure there will be no arithmetical
+    // shift errors
+    objects.getObjectAt(1).setAttribute(0);
+    objects.getObjectAt(1).setAttribute(1);
+    objects.getObjectAt(1).setAttribute(2);
+    objects.getObjectAt(1).setAttribute(3);
+    
+    assertTrue(objects.getObjectAt(1).isAttributeSet(2));
+    objects.getObjectAt(1).clearAttribute(2);
+    
+    assertTrue(objects.getObjectAt(1).isAttributeSet(0));
+    assertTrue(objects.getObjectAt(1).isAttributeSet(1));
+    assertFalse(objects.getObjectAt(1).isAttributeSet(2));
+    assertTrue(objects.getObjectAt(1).isAttributeSet(3));    
   }
   
   public void testObjectSetters() {
