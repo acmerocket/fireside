@@ -37,7 +37,7 @@ public interface RandomGenerator {
   static final int MAX_VALUE = 32767;
   
   /**
-   * Returns the next random value.
+   * Returns the next random value between 1 and MAX_VALUE.
    * 
    * @return a random int value
    */
