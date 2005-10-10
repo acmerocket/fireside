@@ -96,10 +96,10 @@ public class Dictionary {
   }
   
   /**
-   * Returns the entry text at the specified position.
+   * Returns the entry address at the specified position.
    * 
    * @param entryNum entry number between (0 - getNumberOfEntries() - 1)
-   * @return the entry text
+   * @return the entry address
    */
   public int getEntryAddress(int entryNum) {
    
