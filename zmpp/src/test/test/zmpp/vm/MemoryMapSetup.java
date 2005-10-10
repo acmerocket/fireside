@@ -62,6 +62,7 @@ public abstract class MemoryMapSetup extends TestCase {
     abbreviations = new Abbreviations(minizorkmap,
         fileheader.getAbbreviationsAddress());
     converter = new ZsciiConverter(3, abbreviations);
-    machineState = new Machine3(fileheader, minizorkmap);
+    machineState = new Machine3();
+    machineState.initialize(minizorkmap, fileheader);
   }
 }
