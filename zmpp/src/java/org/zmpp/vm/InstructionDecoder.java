@@ -66,6 +66,15 @@ public class InstructionDecoder {
   
     AbstractInstruction info = createBasicInstructionInfo(instructionAddress);
     int currentAddress = extractOperands(info, instructionAddress);
+    if (info.getInstructionForm() == InstructionForm.VARIABLE
+        && info.getOperandCount() == OperandCount.C2OP) {
+      
+      AbstractInstruction info2 =
+        new LongInstruction(machineState, info.getOpcode());
+      info2.addOperand(info.getOperand(0));
+      info2.addOperand(info.getOperand(1));
+      info = info2;
+    }
     currentAddress = extractStoreVariable(info, currentAddress);
     currentAddress = extractBranchOffset(info, currentAddress);
     info.setLength(currentAddress - instructionAddress);    
