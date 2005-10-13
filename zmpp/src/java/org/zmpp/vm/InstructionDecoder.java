@@ -70,9 +70,12 @@ public class InstructionDecoder {
         && info.getOperandCount() == OperandCount.C2OP) {
       
       AbstractInstruction info2 =
-        new LongInstruction(machineState, info.getOpcode());
-      info2.addOperand(info.getOperand(0));
-      info2.addOperand(info.getOperand(1));
+        new LongInstruction(machineState, OperandCount.VAR, info.getOpcode());
+      
+      for (int i = 0; i < info.getNumOperands(); i++) {
+      
+        info2.addOperand(info.getOperand(i));
+      }
       info = info2;
     }
     currentAddress = extractStoreVariable(info, currentAddress);
@@ -282,6 +285,7 @@ public class InstructionDecoder {
       
       short offsetByte1 = memaccess.readUnsignedByte(currentAddress);
       info.setBranchIfTrue((offsetByte1 & 0x80) > 0);
+      //System.out.printf("offsetByte1: %x\n", offsetByte1);
       
       // Bit 6 set -> only one byte needs to be read
       if ((offsetByte1 & 0x40) > 0) {
@@ -290,10 +294,21 @@ public class InstructionDecoder {
         return currentAddress + 1;
         
       } else {
-        
-        // Join two bytes to a 14-bit offset
+     
         short offsetByte2 = memaccess.readUnsignedByte(currentAddress + 1);
-        info.setBranchOffset(((offsetByte1 & 0x3f) << 8) | offsetByte2);
+        int offset;
+        
+        if ((offsetByte1 & 0x20) != 0) { // Bit 14 set = negative
+          
+          offset = (0xC000 | ((offsetByte1 << 8) | (offsetByte2 & 0xff)));
+          
+        } else {
+          
+          offset = ((offsetByte1 & 0x3F) << 8) | (offsetByte2 & 0xFF);
+        }
+        //System.out.printf("14-bit offset, offsetByte2: %x, offset = %x\n",
+        //    offsetByte2, offset);
+        info.setBranchOffset(offset);
         return currentAddress + 2;
       }
     }
