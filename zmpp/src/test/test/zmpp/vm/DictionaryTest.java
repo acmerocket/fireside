@@ -22,6 +22,7 @@
  */
 package test.zmpp.vm;
 
+import org.zmpp.vm.DefaultDictionary;
 import org.zmpp.vm.Dictionary;
 import org.zmpp.vmutil.ZsciiConverter;
 import org.zmpp.vmutil.ZsciiConverter.Alphabet;
@@ -41,7 +42,7 @@ public class DictionaryTest extends MemoryMapSetup {
    */
   protected void setUp() throws Exception {
     super.setUp();
-    dictionary = new Dictionary(minizorkmap, fileheader.getDictionaryAddress());
+    dictionary = new DefaultDictionary(minizorkmap, fileheader.getDictionaryAddress());
   }
   
   public void testDictionaryInformation() {

@@ -22,47 +22,21 @@
  */
 package org.zmpp.vm;
 
-import org.zmpp.base.MemoryReadAccess;
 
 /**
- * This class implements a view on the dictionary within a memory map.
+ * This is the interface definition for a dictionary.
  *
  * @author Wei-ju Wu
  * @version 1.0
  */
-public class Dictionary {
-
-  /**
-   * The memory map.
-   */
-  private MemoryReadAccess map;
-  
-  /**
-   * The dictionary start address.
-   */
-  private int address;
-  
-  /**
-   * Constructor.
-   * 
-   * @param map the memory map
-   * @param address the start address of the dictionary
-   */
-  public Dictionary(MemoryReadAccess map, int address) {
-    
-    this.map = map;
-    this.address = address;
-  }  
+public interface Dictionary {
 
   /**
    * Returns the number of separators.
    * 
    * @return the number of separators
    */
-  public int getNumberOfSeparators() {
-    
-    return map.readUnsignedByte(address);
-  }
+  int getNumberOfSeparators();
   
   /**
    * Returns the separator at position i as a ZSCII character.
@@ -70,30 +44,21 @@ public class Dictionary {
    * @param i the separator number, zero-based
    * @return the separator
    */
-  public byte getSeparator(int i) {
-    
-    return (byte) map.readUnsignedByte(address + i + 1);
-  }
+  byte getSeparator(int i);
   
   /**
    * Returns the length of a dictionary entry.
    * 
    * @return the entry length
    */
-  public int getEntryLength() {
-    
-    return map.readUnsignedByte(address + getNumberOfSeparators() + 1);
-  }
+  int getEntryLength();
   
   /**
    * Returns the number of dictionary entries.
    * 
    * @return the number of entries
    */
-  public int getNumberOfEntries() {
-    
-    return map.readUnsignedShort(address + getNumberOfSeparators() + 2);
-  }
+  int getNumberOfEntries();
   
   /**
    * Returns the entry address at the specified position.
@@ -101,9 +66,15 @@ public class Dictionary {
    * @param entryNum entry number between (0 - getNumberOfEntries() - 1)
    * @return the entry address
    */
-  public int getEntryAddress(int entryNum) {
-   
-    int headerSize = getNumberOfSeparators() + 4;    
-    return address + headerSize + entryNum * getEntryLength();
-  }
+  int getEntryAddress(int entryNum);
+  
+  /**
+   * Looks up a string in the dictionary. The word will be truncated to
+   * the maximum word length and looked up. The result is the address
+   * of the entry or 0 if it is not found.
+   * 
+   * @param token a token
+   * @return the address of the token or 0
+   */
+  int lookup(String token);
 }
