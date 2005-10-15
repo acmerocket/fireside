@@ -58,42 +58,42 @@ public interface ZObject {
    * 
    * @return the parent object's number
    */
-  short getParent();
+  int getParent();
 
   /**
    * Assigns a new parent object.
    * 
    * @param parent the new parent object
    */
-  void setParent(short parent);
+  void setParent(int parent);
   
   /**
    * Returns the object number of this object's sibling object.
    * 
    * @return the sibling object's object number
    */
-  short getSibling();
+  int getSibling();
   
   /**
    * Assigns a new sibling to this object.
    * 
    * @param sibling the new sibling's object number
    */
-  void setSibling(short sibling);
+  void setSibling(int sibling);
   
   /**
    * Returns the object number of this object's child object.
    * 
    * @return the child object's object number
    */
-  short getChild();
+  int getChild();
   
   /**
    * Assigns a new child to this object.
    * 
    * @param child the new child
    */
-  void setChild(short child);
+  void setChild(int child);
     
   /**
    * Returns this object's property table address. Might be made private
@@ -132,7 +132,7 @@ public interface ZObject {
    * @param bytenum the byte number
    * @return the value of the specified property byte
    */
-  short getPropertyByte(int property, int bytenum);
+  byte getPropertyByte(int property, int bytenum);
   
   /**
    * Returns the address of the specified property.
@@ -167,5 +167,5 @@ public interface ZObject {
    * @param bytenum the byte number
    * @param value the value
    */
-  void setPropertyByte(int property, int bytenum, short value);
+  void setPropertyByte(int property, int bytenum, byte value);
 }

@@ -38,7 +38,7 @@ public class RoutineContext {
   /**
    * The local variables.
    */
-  private int[] locals;
+  private short[] locals;
   
   /**
    * The return address.
@@ -66,7 +66,7 @@ public class RoutineContext {
     this.startAddress = startAddress;
     if (numLocalVariables > 0) {
       
-      locals = new int[numLocalVariables];
+      locals = new short[numLocalVariables];
     }
   }
   
@@ -86,7 +86,7 @@ public class RoutineContext {
    * @param localNum the local variable number, starting with 0
    * @param value the value
    */
-  public void setLocalVariable(int localNum, int value) {
+  public void setLocalVariable(int localNum, short value) {
     
     locals[localNum] = value;
   }
@@ -97,7 +97,7 @@ public class RoutineContext {
    * @param localNum the local variable number, starting at 0
    * @return the value of the specified variable
    */
-  public int getLocalVariable(int localNum) {
+  public short getLocalVariable(int localNum) {
     
     return locals[localNum];
   }
@@ -147,7 +147,7 @@ public class RoutineContext {
    * 
    * @param varnum the return variable number
    */
-  public void setReturnVariable(short varnum) {
+  public void setReturnVariable(int varnum) {
     
     returnVarNum = varnum;
   }

@@ -48,6 +48,20 @@ public class DefaultZObjectTest extends MemoryMapSetup {
     assertEquals(42, object.getSibling());
   }
   
+  public void testMinizorkAttributes() {
+    
+    assertFalse(object.isAttributeSet(5));
+    assertTrue(object.isAttributeSet(6));
+    assertFalse(object.isAttributeSet(7));
+    
+    ZObject obj2 = objectTree.getObject((short)2);
+    assertTrue(obj2.isAttributeSet(5));
+    assertTrue(obj2.isAttributeSet(7));
+    assertTrue(obj2.isAttributeSet(19));
+    obj2.clearAttribute(19);
+    assertFalse(obj2.isAttributeSet(19));
+  }
+  
   public void testSetAttributes() {
     
     assertFalse(object.isAttributeSet(5));
@@ -88,12 +102,12 @@ public class DefaultZObjectTest extends MemoryMapSetup {
     assertFalse(object.isPropertyAvailable(5));
     
     assertEquals(0x43, object.getPropertyByte(18, 0));
-    assertEquals(0xa7, object.getPropertyByte(18, 1));
+    assertEquals(-89, object.getPropertyByte(18, 1));
 
     assertEquals(0x2d, object.getPropertyByte(17, 0));
     assertEquals(0x23, object.getPropertyByte(17, 1));
     assertEquals(0x35, object.getPropertyByte(17, 2));
-    assertEquals(0x8f, object.getPropertyByte(17, 3));    
+    assertEquals((byte) (0x8f), object.getPropertyByte(17, 3));    
   }
   
   public void testGetNextProperty() {
@@ -105,7 +119,7 @@ public class DefaultZObjectTest extends MemoryMapSetup {
   
   public void testSetPropertyByte() {
     
-    object.setPropertyByte(18, 0, (short) 0x12);
+    object.setPropertyByte(18, 0, (byte) 0x12);
     assertEquals(0x12, object.getPropertyByte(18, 0));
   }
 }

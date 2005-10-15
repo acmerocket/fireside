@@ -83,6 +83,14 @@ public class MemoryAccess implements MemoryReadAccess {
   }
   
   /**
+   * {@inheritDoc}
+   */
+  public byte readByte(int address) {
+    
+    return data[address];
+  }
+  
+  /**
    * Writes an unsigned 16 bit value to the specified address.
    * 
    * @param address the address to write to
@@ -95,6 +103,18 @@ public class MemoryAccess implements MemoryReadAccess {
   }
   
   /**
+   * Writes a short value to the memory.
+   * 
+   * @param address the address
+   * @param value the value
+   */
+  public void writeShort(int address, short value) {
+    
+    data[address] = (byte) ((value & 0xff00) >>> 8);
+    data[address + 1] = (byte) (value & 0xff);
+  }
+  
+  /**
    * Writes an unsigned byte value to the specified address.
    * 
    * @param address the address to write to
@@ -103,6 +123,17 @@ public class MemoryAccess implements MemoryReadAccess {
   public void writeUnsignedByte(int address, short value) {
     
     data[address] = (byte) (value & 0xff);
+  }
+  
+  /**
+   * Writes a byte value to the specified address.
+   * 
+   * @param address the address
+   * @param value the value
+   */
+  public void writeByte(int address, byte value) {
+    
+    data[address] = value;
   }
   
   /**

@@ -58,7 +58,15 @@ public interface MemoryReadAccess {
    * Returns the unsigned 8 bit value at the specified address.
    * 
    * @param address the address
-   * @return the 8 bit signed value
+   * @return the 8 bit unsigned value
    */
   short readUnsignedByte(int address); 
+  
+  /**
+   * Returns the signed 8 bit value at specified address.
+   * 
+   * @param address the byte address
+   * @return the 8 bit signed value
+   */
+  byte readByte(int address);
 }

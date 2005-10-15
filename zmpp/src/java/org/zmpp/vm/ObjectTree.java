@@ -37,7 +37,7 @@ public interface ObjectTree {
    * @param index the default entry's index
    * @return the property default value at index <i>index</i>
    */
-  int getPropertyDefault(int propertyNum);
+  short getPropertyDefault(int propertyNum);
   
   /**
    * Returns the Z-object with the specified object number. The index is
@@ -46,7 +46,7 @@ public interface ObjectTree {
    * @param objectNum object number
    * @return the z object with the specified number
    */
-  ZObject getObject(short objectNum);
+  ZObject getObject(int objectNum);
   
   /**
    * Returns the total number of objects.
@@ -60,7 +60,7 @@ public interface ObjectTree {
    * 
    * @param objectNum the object number
    */
-  void removeObject(short objectNum);
+  void removeObject(int objectNum);
     
   /**
    * Inserts an object to a new parent.
@@ -68,5 +68,5 @@ public interface ObjectTree {
    * @param parentNum the parent number
    * @param objectNum the object number
    */
-  void insertObject(short parentObj, short objectNum);
+  void insertObject(int parentObj, int objectNum);
 }

@@ -43,12 +43,12 @@ public class RoutineContextTest extends TestCase {
   
   public void testSetters() {
     
-    context.setLocalVariable(0, 72);
+    context.setLocalVariable(0, (short) 72);
     assertEquals(72, context.getLocalVariable(0));
-    context.setLocalVariable(1, 76);
+    context.setLocalVariable(1, (short) 76);
     assertEquals(76, context.getLocalVariable(1));
     try {
-      context.setLocalVariable(2, 815);
+      context.setLocalVariable(2, (short) 815);
       fail();
     } catch (IndexOutOfBoundsException expected) {
             

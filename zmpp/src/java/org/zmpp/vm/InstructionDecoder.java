@@ -241,7 +241,7 @@ public class InstructionDecoder {
     if (optype == Operand.TYPENUM_LARGE_CONSTANT) {
       
       info.addOperand(new Operand(optype,
-          memaccess.readUnsignedShort(nextAddress)));
+          memaccess.readShort(nextAddress)));
       nextAddress += 2;
       
     } else if (optype == Operand.TYPENUM_VARIABLE
@@ -290,21 +290,23 @@ public class InstructionDecoder {
       // Bit 6 set -> only one byte needs to be read
       if ((offsetByte1 & 0x40) > 0) {
         
-        info.setBranchOffset(offsetByte1 & 0x3f);
+        info.setBranchOffset((short) (offsetByte1 & 0x3f));
         return currentAddress + 1;
         
       } else {
      
         short offsetByte2 = memaccess.readUnsignedByte(currentAddress + 1);
-        int offset;
+        short offset;
         
         if ((offsetByte1 & 0x20) != 0) { // Bit 14 set = negative
           
-          offset = (0xC000 | ((offsetByte1 << 8) | (offsetByte2 & 0xff)));
+          offset = (short)
+            ((0xC000 | ((offsetByte1 << 8) | (offsetByte2 & 0xff))));
           
         } else {
           
-          offset = ((offsetByte1 & 0x3F) << 8) | (offsetByte2 & 0xFF);
+          offset = (short)
+            (((offsetByte1 & 0x3f) << 8) | (offsetByte2 & 0xff));
         }
         //System.out.printf("14-bit offset, offsetByte2: %x, offset = %x\n",
         //    offsetByte2, offset);
