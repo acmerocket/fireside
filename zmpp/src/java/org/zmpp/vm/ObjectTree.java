@@ -46,14 +46,21 @@ public interface ObjectTree {
    * @param objectNum object number
    * @return the z object with the specified number
    */
-  ZObject getObject(int objectNum);  
+  ZObject getObject(short objectNum);
+  
+  /**
+   * Returns the total number of objects.
+   * 
+   * @return the number of objects
+   */
+  int getNumObjects();
   
   /**
    * Removes an object from its parent.
    * 
    * @param objectNum the object number
    */
-  void removeObject(int objectNum);
+  void removeObject(short objectNum);
     
   /**
    * Inserts an object to a new parent.
@@ -61,5 +68,5 @@ public interface ObjectTree {
    * @param parentNum the parent number
    * @param objectNum the object number
    */
-  void insertObject(int parentObj, int objectNum);
+  void insertObject(short parentObj, short objectNum);
 }

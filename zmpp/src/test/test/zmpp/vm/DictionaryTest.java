@@ -65,4 +65,10 @@ public class DictionaryTest extends MemoryMapSetup {
     assertEquals(',', ZsciiConverter.decode(Alphabet.A0, dictionary.getSeparator(1)));
     assertEquals('\"', ZsciiConverter.decode(Alphabet.A0, dictionary.getSeparator(2)));
   }
+  
+  public void testLookup() {
+        
+    assertEquals(12297, dictionary.lookup("mailbox"));
+    assertEquals(0, dictionary.lookup("nonsense"));
+  }
 }

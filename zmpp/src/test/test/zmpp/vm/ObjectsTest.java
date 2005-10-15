@@ -41,100 +41,117 @@ public class ObjectsTest extends MemoryMapSetup {
     }
   }
   
-  public void testGetObjectAt() {
+  public void testGetObject() {
     
-    assertEquals(36, objects.getObject(1).getParent());
-    assertEquals(147, objects.getObject(1).getSibling());
-    assertEquals(0, objects.getObject(1).getChild());
-    assertEquals(0x0a4f, objects.getObject(1).getPropertyTableAddress());
-    assertTrue(objects.getObject(1).isAttributeSet(6));
-    
-    assertEquals(27, objects.getObject(2).getParent());
-    assertEquals(119, objects.getObject(2).getSibling());
-    assertEquals(95, objects.getObject(2).getChild());
-    assertEquals(0x0a5d, objects.getObject(2).getPropertyTableAddress());    
-    assertTrue(objects.getObject(2).isAttributeSet(5));
-    assertFalse(objects.getObject(2).isAttributeSet(6));
-    assertTrue(objects.getObject(2).isAttributeSet(7));
-    assertTrue(objects.getObject(2).isAttributeSet(19));
-    
-    assertFalse(objects.getObject(27).isAttributeSet(0));
-    assertFalse(objects.getObject(27).isAttributeSet(1));    
-  }
-  
-  public void testSetAttributes() {
-    
-    assertFalse(objects.getObject(1).isAttributeSet(5));
-    objects.getObject(1).setAttribute(5);
-    assertTrue(objects.getObject(1).isAttributeSet(5));
-  }
-  
-  public void testClearAttributes() {
-    
-    // Set several bits in a row to make sure there will be no arithmetical
-    // shift errors
-    objects.getObject(1).setAttribute(0);
-    objects.getObject(1).setAttribute(1);
-    objects.getObject(1).setAttribute(2);
-    objects.getObject(1).setAttribute(3);
-    
-    assertTrue(objects.getObject(1).isAttributeSet(2));
-    objects.getObject(1).clearAttribute(2);
-    
-    assertTrue(objects.getObject(1).isAttributeSet(0));
-    assertTrue(objects.getObject(1).isAttributeSet(1));
-    assertFalse(objects.getObject(1).isAttributeSet(2));
-    assertTrue(objects.getObject(1).isAttributeSet(3));    
-  }
-  
-  public void testObjectSetters() {
-    
-    ZObject obj = objects.getObject(1);
-    obj.setParent((short) 38);
-    assertEquals(38, obj.getParent());
-    obj.setChild((short) 39);
-    assertEquals(39, obj.getChild());
-    obj.setSibling((short) 42);
-    assertEquals(42, obj.getSibling());
+    ZObject obj1 = objects.getObject((short) 1);
+    assertNotNull(obj1);
+    assertEquals(36, obj1.getParent());
+    assertEquals(147, obj1.getSibling());
+    assertEquals(0, obj1.getChild());
   }
   
   public void testGetNumObjects() {
     
     assertEquals(179, objects.getNumObjects());
   }
-  
-  public void testGetPropertiesTable() {
-    
-    int propaddress = objects.getObject(1).getPropertiesDescriptionAddress();
-    assertEquals("forest", converter.convert(minizorkmap, propaddress));
-    assertEquals(2, objects.getObject(1).getNumProperties());
-    assertEquals(2, objects.getObject(1).getPropertySize(18));
-    assertEquals(4, objects.getObject(1).getPropertySize(17));
-    assertEquals(2644, objects.getObject(1).getPropertyAddress(18));
-    assertEquals(2647, objects.getObject(1).getPropertyAddress(17));
-    assertTrue(objects.getObject(1).isPropertyAvailable(18));
-    assertTrue(objects.getObject(1).isPropertyAvailable(17));
-    assertFalse(objects.getObject(1).isPropertyAvailable(5));
-    
-    assertEquals(0x43, objects.getObject(1).getPropertyByte(18, 0));
-    assertEquals(0xa7, objects.getObject(1).getPropertyByte(18, 1));
 
-    assertEquals(0x2d, objects.getObject(1).getPropertyByte(17, 0));
-    assertEquals(0x23, objects.getObject(1).getPropertyByte(17, 1));
-    assertEquals(0x35, objects.getObject(1).getPropertyByte(17, 2));
-    assertEquals(0x8f, objects.getObject(1).getPropertyByte(17, 3));    
+  public void testRemoveObjectFirstChild() {
+    
+    // remove a thief's lair - object 170
+    ZObject thiefslair = objects.getObject((short) 170);
+    assertEquals(27, thiefslair.getParent());
+    assertEquals(175, thiefslair.getChild());
+    assertEquals(56, thiefslair.getSibling());
+    
+    objects.removeObject((short) 170);
+    
+    ZObject obj27 = objects.getObject((short) 27);
+    
+    // parent needs to be 0
+    assertEquals(0, thiefslair.getParent());
+    
+    // the old parent needs to point to the next child
+    assertEquals(56, obj27.getChild());
   }
   
-  public void testGetNextProperty() {
+  public void testRemoveObjectNotFirstChild() {
     
-    assertEquals(18, objects.getObject(1).getNextProperty(0));
-    assertEquals(17, objects.getObject(1).getNextProperty(18));
-    assertEquals(0, objects.getObject(1).getNextProperty(17));
+    // remove a cyclops room - object 56
+    ZObject cyclopsroom = objects.getObject((short) 56);
+    assertEquals(27, cyclopsroom.getParent());
+    assertEquals(137, cyclopsroom.getChild());
+    assertEquals(154, cyclopsroom.getSibling());
+    
+    objects.removeObject((short) 56);
+    
+    // parent needs to be 0
+    assertEquals(0, cyclopsroom.getParent());
+    
+    // the old parent does not need to change its child, but the
+    // sibling chain needs to be corrected, so after 170 there will
+    // follow 154 instead of 56
+    ZObject obj27 = objects.getObject((short) 27);
+    assertEquals(170, obj27.getChild());
+    ZObject obj170 = objects.getObject((short) 170);
+    assertEquals(154, obj170.getSibling());
+  }
+
+  public void testRemoveObjectNotFirstButLastChild() {
+    
+    // remove a burnt out lantern - object 62
+    ZObject lantern = objects.getObject((short) 62);
+    assertEquals(157, lantern.getParent());
+    assertEquals(0, lantern.getChild());
+    assertEquals(0, lantern.getSibling());
+    
+    objects.removeObject((short) 62);
+    
+    // parent needs to be 0
+    assertEquals(0, lantern.getParent());
+    
+    // the old parent does not need to change its child, but object 66
+    // will have 0 as its sibling
+    ZObject obj27 = objects.getObject((short) 27);
+    assertEquals(170, obj27.getChild());
+    ZObject obj66 = objects.getObject((short) 66);
+    assertEquals(0, obj66.getSibling());
   }
   
-  public void testSetPropertyByte() {
+  public void testInsertObjectSimple() {
     
-    objects.getObject(1).setPropertyByte(18, 0, (short) 0x12);
-    assertEquals(0x12, objects.getObject(1).getPropertyByte(18, 0));
+    // Simplest and first case: Move a single object without any relationship
+    // to a new parent, in this case object 30 ("you") to object 46
+    // ("West of house")
+    ZObject you = objects.getObject((short) 30);
+    ZObject westofhouse = objects.getObject((short) 46);
+    
+    objects.insertObject((short) 46, (short) 30);
+    
+    // object becomes direct child of the parent
+    assertEquals(46, you.getParent());
+    assertEquals(30, westofhouse.getChild());
+    
+    // and the former direct child becomes the first sibling
+    assertEquals(82, you.getSibling());
+  }
+  
+  public void testInsertObjectHasSiblingsAndChild() {
+    
+    // In this case, the object to insert has siblings and we do not
+    // want to move them with it, furthermore it has a child, and we
+    // want to move it
+    // move obj 158 ("studio") to obj 46 ("west of house")
+    ZObject studio = objects.getObject((short) 158);
+    ZObject westofhouse = objects.getObject((short) 46);
+    objects.insertObject((short) 46, (short) 158);
+    assertEquals(46, studio.getParent());
+    assertEquals(158, westofhouse.getChild());
+    assertEquals(61, studio.getChild());
+    
+    assertEquals(82, studio.getSibling());
+    
+    // The old siblings line up correctly, i.e. 87 -> 22 instead of 158
+    ZObject obj87 = objects.getObject((short) 87);
+    assertEquals(22, obj87.getSibling());
   }
 }
