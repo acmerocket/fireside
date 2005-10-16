@@ -64,10 +64,7 @@ public class RoutineContext {
   public RoutineContext(int startAddress, int numLocalVariables) {
     
     this.startAddress = startAddress;
-    if (numLocalVariables > 0) {
-      
-      locals = new short[numLocalVariables];
-    }
+    locals = new short[numLocalVariables];
   }
   
   /**
