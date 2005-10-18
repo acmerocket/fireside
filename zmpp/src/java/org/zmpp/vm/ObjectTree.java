@@ -34,8 +34,8 @@ public interface ObjectTree {
    * Returns the property default value at the specified position in the
    * property defaults table.
    * 
-   * @param index the default entry's index
-   * @return the property default value at index <i>index</i>
+   * @param propertyNum the default entry's propery number
+   * @return the property default value
    */
   short getPropertyDefault(int propertyNum);
   
@@ -68,5 +68,5 @@ public interface ObjectTree {
    * @param parentNum the parent number
    * @param objectNum the object number
    */
-  void insertObject(int parentObj, int objectNum);
+  void insertObject(int parentNum, int objectNum);
 }

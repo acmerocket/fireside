@@ -95,8 +95,8 @@ public class DefaultZObjectTest extends MemoryMapSetup {
     assertEquals(2, object.getNumProperties());
     assertEquals(2, object.getPropertySize(18));
     assertEquals(4, object.getPropertySize(17));
-    assertEquals(2644, object.getPropertyAddress(18));
-    assertEquals(2647, object.getPropertyAddress(17));
+    assertEquals(2645, object.getPropertyAddress(18));
+    assertEquals(2648, object.getPropertyAddress(17));
     assertTrue(object.isPropertyAvailable(18));
     assertTrue(object.isPropertyAvailable(17));
     assertFalse(object.isPropertyAvailable(5));

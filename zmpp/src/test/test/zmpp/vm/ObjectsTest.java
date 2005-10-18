@@ -36,9 +36,12 @@ public class ObjectsTest extends MemoryMapSetup {
 
   public void testGetPropertyDefault() {
 
-    for (int i = 0; i < 12; i ++) {
+    for (int i = 1; i <= 12; i ++) {
+      
       assertEquals(0, objects.getPropertyDefault(i));
     }
+    
+    assertEquals(5, objects.getPropertyDefault(13));
   }
   
   public void testGetObject() {
