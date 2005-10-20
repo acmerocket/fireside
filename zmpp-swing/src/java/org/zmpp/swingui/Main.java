@@ -26,8 +26,6 @@ import java.io.File;
 import java.io.IOException;
 import java.io.RandomAccessFile;
 
-import javax.swing.JFrame;
-
 import org.zmpp.base.MemoryAccess;
 import org.zmpp.vm.Abbreviations;
 import org.zmpp.vm.Machine3;
@@ -69,9 +67,16 @@ public class Main {
       Machine3 machineState = new Machine3();
       machineState.initialize(memaccess, fileheader);
       
-      JFrame frame = new Screen3(machineState);
-      frame.pack();
-      frame.setVisible(true);
+      Screen3 screen = new Screen3(machineState);
+
+      machineState.setInputStream(0, screen);
+      machineState.setInputStream(1, screen);
+      machineState.setOutputStream(1, screen);
+      machineState.enableOutputStream(1, true);
+      machineState.setStatusLine(screen);
+      
+      screen.pack();
+      screen.setVisible(true);
             
     } catch (IOException ex) {
       
