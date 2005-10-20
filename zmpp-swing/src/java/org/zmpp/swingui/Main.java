@@ -22,16 +22,6 @@
  */
 package org.zmpp.swingui;
 
-import java.io.File;
-import java.io.IOException;
-import java.io.RandomAccessFile;
-
-import org.zmpp.base.MemoryAccess;
-import org.zmpp.vm.Abbreviations;
-import org.zmpp.vm.Machine3;
-import org.zmpp.vm.StoryFileHeader;
-import org.zmpp.vmutil.ZsciiConverter;
-import org.zmpp.vmutil.ZsciiString;
 
 /**
  * This class starts the ZMPP swing interface.
@@ -47,40 +37,8 @@ public class Main {
    */
   public static void main(String[] args) {
     
-    if (args.length == 0) {
-      
-      System.out.println("usage: java org.zmpp.swingui.Main <storyfile>");
-    }
-    try {
-      File storyfile = new File(args[0]);
-      RandomAccessFile file = new RandomAccessFile(storyfile, "r");
-      int fileSize = (int) file.length();
-      byte[] buffer = new byte[fileSize];    
-      file.read(buffer);
-      file.close();
-      MemoryAccess memaccess = new MemoryAccess(buffer);
-      StoryFileHeader fileheader = new StoryFileHeader(memaccess);
-      Abbreviations abbreviations = new Abbreviations(memaccess,
-        fileheader.getAbbreviationsAddress());
-      ZsciiConverter converter = new ZsciiConverter(3, abbreviations);
-      ZsciiString.setZsciiConverter(converter);      
-      Machine3 machineState = new Machine3();
-      machineState.initialize(memaccess, fileheader);
-      
-      Screen3 screen = new Screen3(machineState);
-
-      machineState.setInputStream(0, screen);
-      machineState.setInputStream(1, screen);
-      machineState.setOutputStream(1, screen);
-      machineState.enableOutputStream(1, true);
-      machineState.setStatusLine(screen);
-      
-      screen.pack();
-      screen.setVisible(true);
-            
-    } catch (IOException ex) {
-      
-      ex.printStackTrace();
-    }
+    Screen3 screen = new Screen3();
+    screen.pack();
+    screen.setVisible(true);
   }
 }
