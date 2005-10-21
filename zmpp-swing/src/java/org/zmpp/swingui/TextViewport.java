@@ -150,6 +150,15 @@ public class TextViewport extends JViewport {
     x = getOffsetX();
   }
   
+  public void clear() {
+    
+    Graphics g = imageBuffer.getGraphics();
+    g.setColor(getBackground());
+    g.fillRect(0, 0, getWidth(), getHeight());
+    x = getOffsetX();
+    y = getOffsetY();
+  }
+  
   private void drawCaret(boolean clearCaret) {
     
     Graphics g = imageBuffer.getGraphics();
