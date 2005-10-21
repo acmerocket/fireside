@@ -61,6 +61,7 @@ public class TextViewport extends JViewport {
         
   public void scrollUp() {
     
+    //System.out.println("scrollUp()");
     Graphics g = imageBuffer.getGraphics();
     g.setClip(3, 3, getWidth() - 6, getHeight() - 6);
     FontMetrics fm = g.getFontMetrics();
@@ -74,13 +75,14 @@ public class TextViewport extends JViewport {
       imageBuffer = new BufferedImage(getWidth(), getHeight(),
           BufferedImage.TYPE_INT_RGB);
       Graphics g_img = imageBuffer.getGraphics();
-      FontMetrics fm = g_img.getFontMetrics();        
-      y = getOffsetY() + fm.getHeight();
-      x = getOffsetX();
-              
       g_img.setColor(getBackground());
       g_img.fillRect(0, 0, getWidth(), getHeight());
       
+      FontMetrics fm = g.getFontMetrics();
+      //System.out.println("fm.height: " + fm.getHeight());
+      y = getOffsetY() + fm.getHeight();
+      x = getOffsetX();
+              
       initialized = true;
     }
     
@@ -123,6 +125,7 @@ public class TextViewport extends JViewport {
     g.setColor(getForeground());
 
     int width = getWidth();
+    //System.out.println("height: " + getHeight());
     int lineLength = width - getOffsetX() * 2;
     g.setClip(3, 3, getWidth() - 6, getHeight() - 6);
     

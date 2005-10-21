@@ -37,6 +37,10 @@ public class Main {
    */
   public static void main(String[] args) {
     
+    String mrjVersion = System.getProperty("mrj.version");
+    if (mrjVersion != null) {
+      System.setProperty("apple.laf.useScreenMenuBar", "true");
+    }
     Screen3 screen = new Screen3();
     screen.pack();
     screen.setVisible(true);
