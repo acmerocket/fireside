@@ -40,6 +40,8 @@ public class Main {
     String mrjVersion = System.getProperty("mrj.version");
     if (mrjVersion != null) {
       System.setProperty("apple.laf.useScreenMenuBar", "true");
+      System.setProperty("com.apple.eawt.CocoaComponent.CompatibilityMode",
+          "false");
     }
     Screen3 screen = new Screen3();
     screen.pack();

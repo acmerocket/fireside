@@ -170,7 +170,13 @@ public class TextViewport extends JViewport {
   public void newline() {
     
     logger.info("newline() thread: " + Thread.currentThread().getName());
-    y += imageBuffer.getGraphics().getFontMetrics().getHeight();
+    FontMetrics fm = imageBuffer.getGraphics().getFontMetrics();
+    while (y + fm.getHeight() > getHeight()) {
+      
+      scrollUp();
+      y -= fm.getHeight();
+    }
+    y += fm.getHeight();
     x = getOffsetX();
   }
   
