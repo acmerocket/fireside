@@ -25,8 +25,7 @@ package test.zmpp.vm;
 import java.io.File;
 import java.io.RandomAccessFile;
 
-import junit.framework.TestCase;
-
+import org.jmock.MockObjectTestCase;
 import org.zmpp.base.MemoryAccess;
 import org.zmpp.vm.Abbreviations;
 import org.zmpp.vm.Machine3;
@@ -41,7 +40,7 @@ import org.zmpp.vmutil.ZsciiConverter;
  * @author Wei-ju Wu
  * @version 1.0
  */
-public abstract class MemoryMapSetup extends TestCase {
+public abstract class MemoryMapSetup extends MockObjectTestCase {
 
   protected MemoryAccess minizorkmap;
   protected ZsciiConverter converter;
