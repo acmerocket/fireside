@@ -42,14 +42,14 @@ public class InstructionDecoder {
   /**
    * The machine state object.
    */
-  private MachineState machineState;
+  private Machine machineState;
   
   /**
    * Constructor.
    * 
    * @param memaccess the memory access object
    */
-  public InstructionDecoder(MachineState machineState,
+  public InstructionDecoder(Machine machineState,
                             MemoryReadAccess memaccess) {
   
     this.memaccess = memaccess;

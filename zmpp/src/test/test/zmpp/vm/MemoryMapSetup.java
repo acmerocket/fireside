@@ -29,7 +29,7 @@ import org.jmock.MockObjectTestCase;
 import org.zmpp.base.MemoryAccess;
 import org.zmpp.vm.Abbreviations;
 import org.zmpp.vm.Machine3;
-import org.zmpp.vm.MachineState;
+import org.zmpp.vm.Machine;
 import org.zmpp.vm.StoryFileHeader;
 import org.zmpp.vmutil.ZsciiConverter;
 
@@ -46,7 +46,7 @@ public abstract class MemoryMapSetup extends MockObjectTestCase {
   protected ZsciiConverter converter;
   protected StoryFileHeader fileheader;
   protected Abbreviations abbreviations;
-  protected MachineState machineState;
+  protected Machine machineState;
   
   protected void setUp() throws Exception {
     
