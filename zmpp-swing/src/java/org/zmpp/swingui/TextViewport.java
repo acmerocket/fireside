@@ -25,14 +25,13 @@ package org.zmpp.swingui;
 import java.awt.FontMetrics;
 import java.awt.Graphics;
 import java.awt.image.BufferedImage;
-import java.util.logging.Logger;
 
 import javax.swing.JViewport;
 
 public class TextViewport extends JViewport {
 
   private static final long serialVersionUID = 1L;
-  private static Logger logger = Logger.getLogger("TextViewport");
+  //private static Logger logger = Logger.getLogger("TextViewport");
   
   private BufferedImage imageBuffer;
   private int y;
@@ -77,7 +76,7 @@ public class TextViewport extends JViewport {
         
   public void scrollUp() {
     
-    logger.info("scrollUp() thread: " + Thread.currentThread().getName());
+    //logger.info("scrollUp() thread: " + Thread.currentThread().getName());
     Graphics g = imageBuffer.getGraphics();
     g.setClip(3, 3, getWidth() - 6, getHeight() - 6);
     FontMetrics fm = g.getFontMetrics();
@@ -86,7 +85,7 @@ public class TextViewport extends JViewport {
   
   public void paint(Graphics g) {
 
-    logger.info("paint() thread: " + Thread.currentThread().getName());
+    //logger.info("paint() thread: " + Thread.currentThread().getName());
     if (imageBuffer == null) {
       
       imageBuffer = new BufferedImage(getWidth(), getHeight(),
@@ -108,7 +107,7 @@ public class TextViewport extends JViewport {
   
   public void printChar(char c) {
     
-    logger.info("printChar() thread: " + Thread.currentThread().getName());
+    //logger.info("printChar() thread: " + Thread.currentThread().getName());
     drawCaret(true);
     
     Graphics g = imageBuffer.getGraphics();
@@ -123,7 +122,7 @@ public class TextViewport extends JViewport {
   
   public void backSpace(char c) {
     
-    logger.info("backSpace() thread: " + Thread.currentThread().getName());
+    //logger.info("backSpace() thread: " + Thread.currentThread().getName());
     drawCaret(true);
     
     Graphics g = imageBuffer.getGraphics();
@@ -139,7 +138,7 @@ public class TextViewport extends JViewport {
 
   public void printString(String str) {
     
-    logger.info("printString() thread: " + Thread.currentThread().getName());
+    //logger.info("printString() thread: " + Thread.currentThread().getName());
     Graphics g = imageBuffer.getGraphics();
     FontMetrics fm = g.getFontMetrics();
     g.setColor(getForeground());
@@ -169,7 +168,7 @@ public class TextViewport extends JViewport {
   
   public void newline() {
     
-    logger.info("newline() thread: " + Thread.currentThread().getName());
+    //logger.info("newline() thread: " + Thread.currentThread().getName());
     FontMetrics fm = imageBuffer.getGraphics().getFontMetrics();
     while (y + fm.getHeight() > getHeight()) {
       
@@ -182,7 +181,7 @@ public class TextViewport extends JViewport {
   
   public void clear() {
     
-    logger.info("clear() thread: " + Thread.currentThread().getName());
+    //logger.info("clear() thread: " + Thread.currentThread().getName());
     Graphics g = imageBuffer.getGraphics();
     g.setColor(getBackground());
     g.fillRect(0, 0, getWidth(), getHeight());
@@ -201,13 +200,13 @@ public class TextViewport extends JViewport {
   
   public void stopEditing() {
     
-    logger.info("stopEditing() thread: " + Thread.currentThread().getName());
+    //logger.info("stopEditing() thread: " + Thread.currentThread().getName());
     drawCaret(true);
   }
   
   public void startEditing() {
     
-    logger.info("startEditing() thread" + Thread.currentThread().getName());
+    //logger.info("startEditing() thread" + Thread.currentThread().getName());
     drawCaret(false);
   }
 }
