@@ -59,6 +59,9 @@ public interface Machine {
    */
   void setProgramCounter(int address);
   
+  // ********************************************************************
+  // ***** Stack operations
+  // ***************************************
   /**
    * Returns the global stack pointer.
    * 
@@ -72,6 +75,13 @@ public interface Machine {
    * @param stackpointer the new stack pointer value
    */
   void setStackPointer(int stackpointer);
+  
+  /**
+   * Returns the value at the top of the stack without removing it.
+   * 
+   * @return the stack top element
+   */
+  short getStackTopElement();
   
   /**
    * Returns the reference to the memory access object.
