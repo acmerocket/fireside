@@ -24,6 +24,7 @@ package test.zmpp.base;
 
 import junit.framework.TestCase;
 
+import org.zmpp.base.DefaultMemoryAccess;
 import org.zmpp.base.MemoryAccess;
 
 /**
@@ -39,7 +40,7 @@ public class MemoryAccessTest extends TestCase {
   
   protected void setUp() throws Exception {
     
-    memaccess = new MemoryAccess(data);
+    memaccess = new DefaultMemoryAccess(data);
   }
     
   public void testReadUnsignedByte() {
@@ -65,7 +66,7 @@ public class MemoryAccessTest extends TestCase {
   
   public void testReadUnsigned32(){
     byte[] data32 = { (byte) 0xd7, (byte) 0x4b, (byte) 0xd7, (byte) 0x53 };
-    MemoryAccess memaccess = new MemoryAccess(data32);
+    MemoryAccess memaccess = new DefaultMemoryAccess(data32);
     assertEquals(0xd74bd753, memaccess.readUnsigned32(0x00));
   }
   
