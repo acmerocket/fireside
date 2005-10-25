@@ -22,8 +22,6 @@
  */
 package org.zmpp.base;
 
-
-
 /**
  * This class manages read and write access to the byte array which contains
  * the story file data. It is the only means to read and manipulate the
@@ -32,75 +30,15 @@ package org.zmpp.base;
  * @author Wei-ju Wu
  * @version 1.0
  */
-public class MemoryAccess implements MemoryReadAccess {
+public interface MemoryAccess extends MemoryReadAccess {
 
-  /**
-   * The data array containing the story file.
-   */
-  private byte[] data;  
-  
-  /**
-   * Constructor.
-   * 
-   * @param data the story file data
-   */
-  public MemoryAccess(byte[] data) {
-    
-    this.data = data;    
-  }
-  
-  /**
-   * {@inheritDoc}
-   */
-  public long readUnsigned32(int address) {
-  
-    return (data[address] & 0xff) << 24 | (data[address + 1] & 0xff) << 16
-           | (data[address + 2] & 0xff) << 8 | (data[address + 3] & 0xff);
-  }
-  
-  /**
-   * {@inheritDoc}
-   */
-  public int readUnsignedShort(int address) {
-    
-    return (data[address] & 0xff) << 8 | (data[address + 1] & 0xff);
-  }
-  
-  /**
-   * {@inheritDoc}
-   */
-  public short readShort(int address) {
-    
-    return (short) (data[address] << 8 | (data[address + 1] & 0xff));
-  }
-  
-  /**
-   * {@inheritDoc}
-   */
-  public short readUnsignedByte(int address) {
-    
-    return (short) (data[address] & 0xff);
-  }
-  
-  /**
-   * {@inheritDoc}
-   */
-  public byte readByte(int address) {
-    
-    return data[address];
-  }
-  
   /**
    * Writes an unsigned 16 bit value to the specified address.
    * 
    * @param address the address to write to
    * @param value the value to write
    */
-  public void writeUnsignedShort(int address, int value) {
-    
-    data[address] = (byte) ((value & 0xff00) >> 8);
-    data[address + 1] = (byte) (value & 0xff);
-  }
+  void writeUnsignedShort(int address, int value);
   
   /**
    * Writes a short value to the memory.
@@ -108,22 +46,15 @@ public class MemoryAccess implements MemoryReadAccess {
    * @param address the address
    * @param value the value
    */
-  public void writeShort(int address, short value) {
-    
-    data[address] = (byte) ((value & 0xff00) >>> 8);
-    data[address + 1] = (byte) (value & 0xff);
-  }
-  
+  void writeShort(int address, short value);
+
   /**
    * Writes an unsigned byte value to the specified address.
    * 
    * @param address the address to write to
    * @param value the value to write
    */
-  public void writeUnsignedByte(int address, short value) {
-    
-    data[address] = (byte) (value & 0xff);
-  }
+  void writeUnsignedByte(int address, short value);
   
   /**
    * Writes a byte value to the specified address.
@@ -131,10 +62,7 @@ public class MemoryAccess implements MemoryReadAccess {
    * @param address the address
    * @param value the value
    */
-  public void writeByte(int address, byte value) {
-    
-    data[address] = value;
-  }
+  void writeByte(int address, byte value);
   
   /**
    * Writes an unsigned 32 bit value to the specified address.
@@ -142,12 +70,5 @@ public class MemoryAccess implements MemoryReadAccess {
    * @param address the address to write to
    * @param value the value to write
    */
-  public void writeUnsigned32(int address, long value) {
-    
-    data[address] = (byte) ((value & 0xff000000) >> 24);
-    data[address + 1] = (byte) ((value & 0x00ff0000) >> 16);
-    data[address + 2] = (byte) ((value & 0x0000ff00) >> 8);
-    data[address + 3] = (byte) (value & 0x000000ff);
-  }
-  
+  void writeUnsigned32(int address, long value);
 }
