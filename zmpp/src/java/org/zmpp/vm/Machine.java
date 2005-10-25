@@ -268,12 +268,12 @@ public interface Machine {
   /**
    * Saves the current state.
    */
-  void save();
+  boolean save();
   
   /**
    * Restores a previously saved state.
    */
-  void restore();
+  boolean restore();
   
   /**
    * Restarts the virtual machine.

@@ -157,4 +157,9 @@ public class ObjectsTest extends MemoryMapSetup {
     ZObject obj87 = objects.getObject((short) 87);
     assertEquals(22, obj87.getSibling());
   }
+  
+  public void testGetPropertyLength() {
+    
+    assertEquals(4, objects.getPropertyLength(0x1889));    
+  }
 }

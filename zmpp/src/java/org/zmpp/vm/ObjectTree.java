@@ -69,4 +69,14 @@ public interface ObjectTree {
    * @param objectNum the object number
    */
   void insertObject(int parentNum, int objectNum);
+  
+  /**
+   * Determines the length of the property at the specified address.
+   * The address is an address returned by ZObject.getPropertyAddress,
+   * i.e. it is starting after the length byte.
+   * 
+   * @param propertyAddress the property address
+   * @return the length
+   */
+  int getPropertyLength(int propertyAddress);
 }

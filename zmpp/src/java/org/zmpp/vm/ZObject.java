@@ -135,7 +135,8 @@ public interface ZObject {
   byte getPropertyByte(int property, int bytenum);
   
   /**
-   * Returns the address of the specified property.
+   * Returns the address of the specified property. Note that this will not
+   * include the length byte.
    * 
    * @param property the property
    * @return the specified property's address
