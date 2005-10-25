@@ -162,4 +162,9 @@ public class ObjectsTest extends MemoryMapSetup {
     
     assertEquals(4, objects.getPropertyLength(0x1889));    
   }
+  
+  public void testGetPropertyLengthAddress0() {
+    
+    assertEquals(0, objects.getPropertyLength(0));
+  }
 }

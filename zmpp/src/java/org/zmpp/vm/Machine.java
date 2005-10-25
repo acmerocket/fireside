@@ -84,6 +84,14 @@ public interface Machine {
   short getStackTopElement();
   
   /**
+   * Sets the value of the element at the top of the stack without
+   * incrementing the stack pointer.
+   * 
+   * @param value the value to set
+   */
+  void setStackTopElement(short value);
+  
+  /**
    * Returns the reference to the memory access object.
    * 
    * @return the reference to the MemoryAccess object
