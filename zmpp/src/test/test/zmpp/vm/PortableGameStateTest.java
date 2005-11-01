@@ -31,6 +31,7 @@ import org.zmpp.base.MemoryAccess;
 import org.zmpp.iff.DefaultFormChunk;
 import org.zmpp.iff.FormChunk;
 import org.zmpp.vm.PortableGameState;
+import org.zmpp.vm.PortableGameState.StackFrame;
 
 /**
  * This tests simply analyzes a given Quetzal file.
@@ -57,6 +58,11 @@ public class PortableGameStateTest extends MockObjectTestCase {
     saveFile.close();
   }
   
+  int[] pcs = { 0, 25108, 25132, 25377, 26137, 26457, 26499 };
+  int[] retvars = { 0, 0, 1, 7, 0, 4, 0 };
+  int[] localLengths = { 0, 1, 11, 2, 7, 4, 0 };
+  int[] stackSizes = { 4, 0, 0, 0, 2, 0, 0 };
+  
   public void testReadSaveGame() {
     
     assertTrue(gameState.readSaveGame(formChunk));
@@ -64,5 +70,17 @@ public class PortableGameStateTest extends MockObjectTestCase {
     assertEquals("860730", gameState.getSerialNumber());
     assertEquals(53360, gameState.getChecksum());
     assertEquals(35298, gameState.getProgramCounter());
+    
+    assertEquals(7, gameState.getStackFrames().size());
+  
+    for (int i = 0; i < gameState.getStackFrames().size(); i++) {
+    
+      StackFrame sfi = gameState.getStackFrames().get(i);
+      assertEquals(pcs[i], sfi.getProgramCounter());
+      assertEquals(retvars[i], sfi.getReturnVariable());
+      assertEquals(localLengths[i], sfi.getLocals().length);
+      assertEquals(stackSizes[i], sfi.getEvalStack().length);
+    }
+    assertEquals(10030, gameState.getDeltaBytes().length);
   }
 }
