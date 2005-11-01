@@ -264,7 +264,7 @@ public interface Machine {
   /**
    * Sets the Z-machine's status line.
    * 
-   * @param statusLine the status line
+   * @param statusline the status line
    */
   void setStatusLine(StatusLine statusline);
   

@@ -50,7 +50,7 @@ public class DefaultChunk implements Chunk {
   /**
    * Constructor.
    * 
-   * @param data a byte array containing a form chunk
+   * @param memaccess a memory access object to the chunk data
    */
   public DefaultChunk(MemoryAccess memaccess) {
     

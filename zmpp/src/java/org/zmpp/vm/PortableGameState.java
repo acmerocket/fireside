@@ -42,8 +42,6 @@ public class PortableGameState {
   
   /**
    * Constructor.
-   * 
-   * @param machine a machine reference
    */
   public PortableGameState() {
     
