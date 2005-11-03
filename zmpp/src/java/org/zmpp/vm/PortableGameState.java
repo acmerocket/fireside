@@ -149,6 +149,15 @@ public class PortableGameState {
     return delta;
   }
   
+  /**
+   * Returns the current dump of dynamic memory captured from a Machine object.
+   * 
+   * @return the dynamic memory dump
+   */
+  public byte[] getDynamicMemoryDump() {
+    
+    return dynamicMem;
+  }
   
   // **********************************************************************
   // ***** Reading the state from a file
@@ -337,13 +346,20 @@ public class PortableGameState {
   // ***** Reading the state from a Machine
   // *******************************************
   
-  public void captureMachineState(Machine machine) {
+  /**
+   * Makes a snapshot of the current machine state. The savePc argument
+   * is taken as the restore program counter.
+   * 
+   * @param machine a Machine
+   * @param savePc the program counter restore value
+   */
+  public void captureMachineState(Machine machine, int savePc) {
     
     StoryFileHeader fileheader = machine.getStoryFileHeader();
     release = fileheader.getRelease();
     checksum = fileheader.getChecksum();
     serialBytes = fileheader.getSerialNumber().getBytes();
-    pc = machine.getProgramCounter();
+    pc = savePc;
     
     // capture dynamic memory which ends at address(staticsMem) - 1
     // uncompressed
@@ -361,6 +377,7 @@ public class PortableGameState {
   
   private void captureStackFrames(Machine machine) {
     
+    //machine.getR
     // TODO: Write out stack frames
   }
 

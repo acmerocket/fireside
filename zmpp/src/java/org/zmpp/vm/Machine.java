@@ -138,12 +138,13 @@ public interface Machine {
   /**
    * Pops the current routine context from the stack. It will also
    * restore the state before the invocation of the routine, i.e. it
-   * will restore the program counter and the stack pointers.
+   * will restore the program counter and the stack pointers and set
+   * the specfied return value to the return variable.
    * 
-   * @return the last routine context
+   * @param returnValue the return value
    * @throws IllegalStateException if no RoutineContext exists
    */
-  RoutineContext popRoutineContext();
+  void popRoutineContext(short returnValue);
   
   /**
    * Returns the current routine context without affecting the state
