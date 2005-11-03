@@ -22,6 +22,7 @@
  */
 package org.zmpp.iff;
 
+import org.zmpp.base.DefaultMemoryAccess;
 import org.zmpp.base.MemoryAccess;
 
 /**
@@ -56,6 +57,20 @@ public class DefaultChunk implements Chunk {
     
     this.memaccess = memaccess;
     initBaseInfo();
+  }
+  
+  /**
+   * Constructor. Initialize from byte data.
+   * 
+   * @param id the id
+   * @param chunkdata the data without header information, number of bytes
+   * needs to be even
+   */
+  public DefaultChunk(byte[] id, byte[] chunkdata) {
+    
+    this.id = id;
+    this.chunkSize = chunkdata.length;
+    this.memaccess = new DefaultMemoryAccess(chunkdata);
   }
   
   /**
