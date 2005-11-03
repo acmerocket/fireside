@@ -62,6 +62,7 @@ public class PortableGameStateTest extends MockObjectTestCase {
   int[] retvars = { 0, 0, 1, 7, 0, 4, 0 };
   int[] localLengths = { 0, 1, 11, 2, 7, 4, 0 };
   int[] stackSizes = { 4, 0, 0, 0, 2, 0, 0 };
+  int[] numArgs = { 0, 1, 4, 2, 4, 4, 0 };
   
   public void testReadSaveGame() {
     
@@ -80,6 +81,7 @@ public class PortableGameStateTest extends MockObjectTestCase {
       assertEquals(retvars[i], sfi.getReturnVariable());
       assertEquals(localLengths[i], sfi.getLocals().length);
       assertEquals(stackSizes[i], sfi.getEvalStack().length);
+      assertEquals(numArgs[i], sfi.getArgs().length);
     }
     assertEquals(10030, gameState.getDeltaBytes().length);
   }

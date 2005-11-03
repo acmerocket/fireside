@@ -227,7 +227,6 @@ public class PortableGameState {
       stackFrame.returnVariable = chunkMem.readByte(offset++);
     
       byte argSpec = chunkMem.readByte(offset++);
-      //System.out.println("argSpec: " + argSpec);
       stackFrame.args = getArgs(argSpec);
     
       int evalStackSize = chunkMem.readUnsignedShort(offset);
@@ -342,7 +341,22 @@ public class PortableGameState {
    */
   private int[] getArgs(byte argspec) {
     
-    return new int[0];
+    //System.out.println("argSpec: " + argspec);
+    int andBit;
+    List<Integer> result = new ArrayList<Integer>();
+    
+    for (int i = 0; i < 7; i++) {
+      
+      andBit = 1 << i;
+      if ((andBit & argspec) > 0) result.add(i);
+      
+    }
+    int[] intArray = new int[result.size()];
+    for (int i = 0; i < result.size(); i++) {
+      
+      intArray[i] = result.get(i);
+    }
+    return intArray;
   }
   
   /**
