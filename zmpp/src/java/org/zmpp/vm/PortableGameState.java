@@ -149,6 +149,10 @@ public class PortableGameState {
     return delta;
   }
   
+  
+  // **********************************************************************
+  // ***** Reading the state from a file
+  // *******************************************
   /**
    * Initialize the state from an IFF form.
    * 
@@ -327,6 +331,37 @@ public class PortableGameState {
      
       dynamicMem[i] = chunkMem.readByte(i + Chunk.CHUNK_HEADER_LENGTH); 
     }    
+  }
+  
+  // **********************************************************************
+  // ***** Reading the state from a Machine
+  // *******************************************
+  
+  public void captureMachineState(Machine machine) {
+    
+    StoryFileHeader fileheader = machine.getStoryFileHeader();
+    release = fileheader.getRelease();
+    checksum = fileheader.getChecksum();
+    serialBytes = fileheader.getSerialNumber().getBytes();
+    pc = machine.getProgramCounter();
+    
+    // capture dynamic memory which ends at address(staticsMem) - 1
+    // uncompressed
+    MemoryAccess memaccess = machine.getMemoryAccess();
+    int staticMemStart = fileheader.getStaticsAddress();
+    dynamicMem = new byte[staticMemStart];
+    
+    for (int i = 0; i < staticMemStart; i++) {
+      
+      dynamicMem[i] = memaccess.readByte(i);
+    }
+
+    captureStackFrames(machine);
+  }
+  
+  private void captureStackFrames(Machine machine) {
+    
+    // TODO: Write out stack frames
   }
 
   // ***********************************************************************
