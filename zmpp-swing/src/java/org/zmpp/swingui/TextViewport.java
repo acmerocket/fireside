@@ -25,13 +25,14 @@ package org.zmpp.swingui;
 import java.awt.FontMetrics;
 import java.awt.Graphics;
 import java.awt.image.BufferedImage;
+import java.util.logging.Logger;
 
 import javax.swing.JViewport;
 
 public class TextViewport extends JViewport {
 
   private static final long serialVersionUID = 1L;
-  //private static Logger logger = Logger.getLogger("TextViewport");
+  private static Logger logger = Logger.getLogger("TextViewport");
   
   private BufferedImage imageBuffer;
   private int y;
