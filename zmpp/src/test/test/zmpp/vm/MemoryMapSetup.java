@@ -23,15 +23,14 @@
 package test.zmpp.vm;
 
 import java.io.File;
-import java.io.RandomAccessFile;
 
 import org.jmock.MockObjectTestCase;
-import org.zmpp.base.DefaultMemoryAccess;
 import org.zmpp.base.MemoryAccess;
 import org.zmpp.vm.Abbreviations;
-import org.zmpp.vm.DefaultStoryFileHeader;
+import org.zmpp.vm.DefaultMachineConfig;
 import org.zmpp.vm.Machine;
 import org.zmpp.vm.Machine3;
+import org.zmpp.vm.MachineConfig;
 import org.zmpp.vm.StoryFileHeader;
 import org.zmpp.vmutil.ZsciiConverter;
 
@@ -45,6 +44,7 @@ import org.zmpp.vmutil.ZsciiConverter;
 public abstract class MemoryMapSetup extends MockObjectTestCase {
 
   protected MemoryAccess minizorkmap;
+  protected MachineConfig config;
   protected ZsciiConverter converter;
   protected StoryFileHeader fileheader;
   protected Abbreviations abbreviations;
@@ -53,17 +53,16 @@ public abstract class MemoryMapSetup extends MockObjectTestCase {
   protected void setUp() throws Exception {
     
     File zork1 = new File("testfiles/minizork.z3");
-    RandomAccessFile file = new RandomAccessFile(zork1, "r");
-    int fileSize = (int) file.length();
-    byte[] zork1data = new byte[fileSize];    
-    file.read(zork1data);
-    file.close();
-    minizorkmap = new DefaultMemoryAccess(zork1data);
-    fileheader = new DefaultStoryFileHeader(minizorkmap);
+    config = new DefaultMachineConfig(zork1);
+    config.reset();
+    minizorkmap = config.getMemoryAccess();
+    fileheader = config.getFileHeader();
+    
     abbreviations = new Abbreviations(minizorkmap,
         fileheader.getAbbreviationsAddress());
     converter = new ZsciiConverter(3, abbreviations);
+    
     machineState = new Machine3();
-    machineState.initialize(minizorkmap, fileheader);
+    machineState.initialize(config);
   }
 }

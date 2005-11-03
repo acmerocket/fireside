@@ -22,6 +22,8 @@
  */
 package org.zmpp.vm;
 
+import java.util.List;
+
 import org.zmpp.base.MemoryAccess;
 
 /**
@@ -70,18 +72,11 @@ public interface Machine {
   // ***** Stack operations
   // ***************************************
   /**
-   * Returns the global stack pointer.
+   * Returns the global stack pointer. Equals the stack size.
    * 
    * @return the stack pointer
    */
   int getStackPointer();
-  
-  /**
-   * Sets the global stack pointer to the specified value.
-   * 
-   * @param stackpointer the new stack pointer value
-   */
-  void setStackPointer(int stackpointer);
   
   /**
    * Returns the value at the top of the stack without removing it.
@@ -97,6 +92,14 @@ public interface Machine {
    * @param value the value to set
    */
   void setStackTopElement(short value);
+  
+  /**
+   * Returns the evaluation stack element at the specified index.
+   * 
+   * @param index an index
+   * @return the stack value at the specified index
+   */
+  short getStackElement(int index);
   
   /**
    * Returns the reference to the memory access object.
@@ -145,6 +148,15 @@ public interface Machine {
    * @throws IllegalStateException if no RoutineContext exists
    */
   void popRoutineContext(short returnValue);
+  
+  /**
+   * Returns the state of the current routine context stack as a non-
+   * modifiable List. This is exposed to PortableGameState to take a
+   * machine state snapshot.
+   * 
+   * @return the list of routine contexts
+   */
+  List<RoutineContext> getRoutineContexts();
   
   /**
    * Returns the current routine context without affecting the state
@@ -279,10 +291,9 @@ public interface Machine {
   /**
    * Initialization function.
    * 
-   * @param memaccess the MemoryAccess object
-   * @param fileheader the story file header
+   * @param machineConfig a configuration object
    */
-  void initialize(MemoryAccess memaccess, StoryFileHeader fileheader);
+  void initialize(MachineConfig machineConfig);
   
   /**
    * Halts the machine with the specified error message.
