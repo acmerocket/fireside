@@ -29,6 +29,7 @@ import org.jmock.MockObjectTestCase;
 import org.zmpp.base.DefaultMemoryAccess;
 import org.zmpp.base.MemoryAccess;
 import org.zmpp.vm.Abbreviations;
+import org.zmpp.vm.DefaultStoryFileHeader;
 import org.zmpp.vm.Machine;
 import org.zmpp.vm.Machine3;
 import org.zmpp.vm.StoryFileHeader;
@@ -58,7 +59,7 @@ public abstract class MemoryMapSetup extends MockObjectTestCase {
     file.read(zork1data);
     file.close();
     minizorkmap = new DefaultMemoryAccess(zork1data);
-    fileheader = new StoryFileHeader(minizorkmap);
+    fileheader = new DefaultStoryFileHeader(minizorkmap);
     abbreviations = new Abbreviations(minizorkmap,
         fileheader.getAbbreviationsAddress());
     converter = new ZsciiConverter(3, abbreviations);

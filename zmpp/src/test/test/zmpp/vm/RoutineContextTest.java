@@ -59,5 +59,7 @@ public class RoutineContextTest extends TestCase {
     assertEquals(0x13, context.getReturnVariable());
     context.setInvocationStackPointer(1234);
     assertEquals(1234, context.getInvocationStackPointer());
+    context.setNumArguments(3);
+    assertEquals(3, context.getNumArguments());
   }
 }

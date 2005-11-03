@@ -25,12 +25,15 @@ package test.zmpp.vm;
 import java.io.File;
 import java.io.RandomAccessFile;
 
+import org.jmock.Mock;
 import org.jmock.MockObjectTestCase;
 import org.zmpp.base.DefaultMemoryAccess;
 import org.zmpp.base.MemoryAccess;
 import org.zmpp.iff.DefaultFormChunk;
 import org.zmpp.iff.FormChunk;
+import org.zmpp.vm.Machine;
 import org.zmpp.vm.PortableGameState;
+import org.zmpp.vm.StoryFileHeader;
 import org.zmpp.vm.PortableGameState.StackFrame;
 
 /**
@@ -43,9 +46,20 @@ public class PortableGameStateTest extends MockObjectTestCase {
 
   private PortableGameState gameState;
   private FormChunk formChunk;
+  private Mock mockMachine, mockFileheader, mockMemAccess;
+  private Machine machine;
+  private StoryFileHeader fileheader;
+  private MemoryAccess memaccess;
   
   protected void setUp() throws Exception {
   
+    mockMachine = mock(Machine.class);
+    machine = (Machine) mockMachine.proxy();
+    mockFileheader = mock(StoryFileHeader.class);
+    fileheader = (StoryFileHeader) mockFileheader.proxy();
+    mockMemAccess = mock(MemoryAccess.class);
+    memaccess = (MemoryAccess) mockMemAccess.proxy();
+    
     File testSaveFile = new File("testfiles/leathersave.ifzs");
     RandomAccessFile saveFile = new RandomAccessFile(testSaveFile, "r");
     int length = (int) saveFile.length();
@@ -84,5 +98,24 @@ public class PortableGameStateTest extends MockObjectTestCase {
       assertEquals(numArgs[i], sfi.getArgs().length);
     }
     assertEquals(10030, gameState.getDeltaBytes().length);
+  }
+  
+  public void testCaptureMachineState() {
+
+    // Expectations
+    mockMachine.expects(atLeastOnce()).method("getStoryFileHeader").will(returnValue(fileheader));
+    mockMachine.expects(once()).method("getMemoryAccess").will(returnValue(memaccess));
+    mockFileheader.expects(once()).method("getRelease").will(returnValue(42));
+    mockFileheader.expects(once()).method("getChecksum").will(returnValue(4712));
+    mockFileheader.expects(once()).method("getSerialNumber").will(returnValue("850101"));
+    mockFileheader.expects(once()).method("getStaticsAddress").will(returnValue(12345));
+    mockMemAccess.expects(atLeastOnce()).method("readByte").withAnyArguments().will(returnValue((byte) 0));
+    
+    gameState.captureMachineState(machine, 4711);
+    assertEquals(4711, gameState.getProgramCounter());
+    assertEquals(42, gameState.getRelease());
+    assertEquals(4712, gameState.getChecksum());
+    assertEquals("850101", gameState.getSerialNumber());
+    assertEquals(12345, gameState.getDynamicMemoryDump().length);
   }
 }

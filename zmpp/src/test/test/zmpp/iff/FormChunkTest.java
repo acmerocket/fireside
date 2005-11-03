@@ -48,6 +48,7 @@ public class FormChunkTest extends MockObjectTestCase {
     while (iter.hasNext()) {
       
       Chunk chunk = iter.next();
+      assertTrue(chunk.isValid());
       result.add(chunk);
     }
     
