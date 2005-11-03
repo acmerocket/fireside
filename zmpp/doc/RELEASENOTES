@@ -1,0 +1,55 @@
+Project: The Z-machine Preservation Project
+Author: Wei-ju Wu (2005)
+License: GNU public license
+
+About
+-----
+
+The Z-machine Preservation Project is an attempt to capture
+and document the Z-machine's architecture and design principles
+and to provide a modern Java implementation that can be easily
+maintained and extended.
+
+For remarks and suggestions for improvements, please contact
+me using the ZMPP project homepage:
+
+http://sourceforge.net/projects/zmpp
+
+Running
+-------
+
+java -jar zmpp.jar
+
+Select a version 3 game using the File menu
+
+Version 0.7 Preview 2
+------------------
+
+- fixed a problem with keyboard event handling on Mac OS X
+
+
+Version 0.7 Preview 1 (2005-11-02)
+-------------------------------
+
+This is the first public file release. It implements an almost
+complete implementation of the instruction set for the story
+file version 3.
+
+These games could be successfully started so far:
+
+- Minizork
+- Zork I
+- Zork II
+- Leather Godesses Of Phobos
+
+Operating systems tested on:
+
+- Linux
+- Windows XP
+- Mac OS X
+
+Known issues:
+
+- screen model not fully implemented yet
+- split_screen, split_window not implemented yet
+- save/restore/restart not implemented
