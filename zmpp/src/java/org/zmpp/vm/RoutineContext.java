@@ -56,6 +56,11 @@ public class RoutineContext {
   private int invocationStackPointer;
   
   /**
+   * The number of arguments.
+   */
+  private int numArgs;
+  
+  /**
    * Constructor.
    * 
    * @param startAddress the routine's start address
@@ -65,6 +70,26 @@ public class RoutineContext {
     
     this.startAddress = startAddress;
     locals = new short[numLocalVariables];
+  }
+  
+  /**
+   * Sets the number of arguments.
+   * 
+   * @param numArgs the number of arguments
+   */
+  public void setNumArguments(int numArgs) {
+    
+    this.numArgs = numArgs;
+  }
+  
+  /**
+   * Returns the number of arguments.
+   * 
+   * @return the number of arguments
+   */
+  public int getNumArguments() {
+    
+    return numArgs;
   }
   
   /**
