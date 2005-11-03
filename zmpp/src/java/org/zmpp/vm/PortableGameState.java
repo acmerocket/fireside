@@ -25,9 +25,12 @@ package org.zmpp.vm;
 import java.util.ArrayList;
 import java.util.List;
 
+import org.zmpp.base.DefaultMemoryAccess;
 import org.zmpp.base.MemoryAccess;
 import org.zmpp.iff.Chunk;
+import org.zmpp.iff.DefaultChunk;
 import org.zmpp.iff.FormChunk;
+import org.zmpp.iff.WritableFormChunk;
 
 /**
  * This class represents the state of the Z machine in an external format,
@@ -43,10 +46,29 @@ public class PortableGameState {
    */
   public static class StackFrame {
   
+    /**
+     * The return program counter.
+     */
     int pc;
+    
+    /**
+     * The return variable.
+     */
     int returnVariable;
+    
+    /**
+     * The local variables.
+     */
     short[] locals;
+    
+    /**
+     * The evaluation stack.
+     */
     short[] evalStack;
+    
+    /**
+     * The arguments.
+     */
     int[] args;
     
     public int getProgramCounter() { return pc; }    
@@ -471,12 +493,77 @@ public class PortableGameState {
    * 
    * @return the state as a FormChunk
    */
-  public FormChunk exportToFormChunk() {
+  public WritableFormChunk exportToFormChunk() {
     
-    // TODO
-    return null;
+    byte[] id = "IFZS".getBytes();
+    WritableFormChunk formChunk = new WritableFormChunk(id);
+    formChunk.addChunk(createIfhdChunk());
+    formChunk.addChunk(createUMemChunk());
+    formChunk.addChunk(createStksChunk());
+    
+    return formChunk;
   }
+  
+  private Chunk createIfhdChunk() {
 
+    byte[] id = "IFhd".getBytes();
+    byte[] data = new byte[14];
+    MemoryAccess memaccess = new DefaultMemoryAccess(data);
+    memaccess.writeShort(0, (short) release);
+    for (int i = 0; i < serialBytes.length; i++) {
+      
+      memaccess.writeByte(i + 2, serialBytes[i]);
+    }
+    memaccess.writeShort(8, (short) checksum);
+
+    memaccess.writeByte(10, (byte) ((pc >>> 16) & 0xff));
+    memaccess.writeByte(11, (byte) ((pc >>> 8) & 0xff));
+    memaccess.writeByte(12, (byte) (pc & 0xff));
+    
+    return new DefaultChunk(id, data);
+  }
+  
+  private Chunk createUMemChunk() {
+    
+    byte[] id = "UMem".getBytes();
+    return new DefaultChunk(id, dynamicMem);
+  }
+  
+  private Chunk createStksChunk() {
+    
+    byte[] id = "Stks".getBytes();
+    List<Byte> byteBuffer = new ArrayList<Byte>();
+    
+    for (StackFrame stackFrame : stackFrames) {
+     
+      // returnpc
+      int pc = stackFrame.pc;
+      byteBuffer.add((byte) ((pc >>> 16) & 0xff));
+      byteBuffer.add((byte) ((pc >>> 8) & 0xff));
+      byteBuffer.add((byte) (pc & 0xff));
+      
+      // TODO: locals flag
+      
+      // TODO: returnvar
+      byteBuffer.add((byte) stackFrame.returnVariable);
+      
+      // TODO: argspec
+      
+      // TODO: eval stack size
+      
+      // TODO: local variables
+      
+      // TODO: stack values
+    }
+    
+    byte[] data = new byte[byteBuffer.size()];
+    for (int i = 0; i < data.length; i++) {
+      
+      data[i] = byteBuffer.get(i);
+    }    
+    return new DefaultChunk(id, data);
+  }
+  
   // ***********************************************************************
   // ******* Transfer to Machine object
   // *****************************************
