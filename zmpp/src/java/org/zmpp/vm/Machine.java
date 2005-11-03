@@ -39,6 +39,13 @@ public interface Machine {
   enum VariableType { STACK, LOCAL, GLOBAL };
   
   /**
+   * Returns the story file header.
+   * 
+   * @return the story file header
+   */
+  StoryFileHeader getStoryFileHeader();
+  
+  /**
    * Returns true, if the checksum validation was successful.
    * 
    * @return true if checksum is valid
