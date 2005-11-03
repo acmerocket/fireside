@@ -24,6 +24,8 @@ package test.zmpp.vm;
 
 import java.io.File;
 import java.io.RandomAccessFile;
+import java.util.ArrayList;
+import java.util.List;
 
 import org.jmock.Mock;
 import org.jmock.MockObjectTestCase;
@@ -33,6 +35,7 @@ import org.zmpp.iff.DefaultFormChunk;
 import org.zmpp.iff.FormChunk;
 import org.zmpp.vm.Machine;
 import org.zmpp.vm.PortableGameState;
+import org.zmpp.vm.RoutineContext;
 import org.zmpp.vm.StoryFileHeader;
 import org.zmpp.vm.PortableGameState.StackFrame;
 
@@ -102,9 +105,15 @@ public class PortableGameStateTest extends MockObjectTestCase {
   
   public void testCaptureMachineState() {
 
+    List<RoutineContext> emptyContexts = new ArrayList<RoutineContext>();
+    
     // Expectations
     mockMachine.expects(atLeastOnce()).method("getStoryFileHeader").will(returnValue(fileheader));
     mockMachine.expects(once()).method("getMemoryAccess").will(returnValue(memaccess));
+    mockMachine.expects(once()).method("getRoutineContexts").will(returnValue(emptyContexts));
+    mockMachine.expects(once()).method("getStackPointer").will(returnValue(4));
+    mockMachine.expects(atLeastOnce()).method("getStackElement").will(returnValue((short) 42));
+    
     mockFileheader.expects(once()).method("getRelease").will(returnValue(42));
     mockFileheader.expects(once()).method("getChecksum").will(returnValue(4712));
     mockFileheader.expects(once()).method("getSerialNumber").will(returnValue("850101"));
@@ -117,5 +126,8 @@ public class PortableGameStateTest extends MockObjectTestCase {
     assertEquals(4712, gameState.getChecksum());
     assertEquals("850101", gameState.getSerialNumber());
     assertEquals(12345, gameState.getDynamicMemoryDump().length);
+    assertEquals(1, gameState.getStackFrames().size());
+    StackFrame stackFrame = gameState.getStackFrames().get(0);
+    assertEquals(4, stackFrame.getEvalStack().length);
   }
 }

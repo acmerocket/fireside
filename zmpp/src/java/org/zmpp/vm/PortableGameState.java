@@ -375,12 +375,122 @@ public class PortableGameState {
     captureStackFrames(machine);
   }
   
+  /**
+   * Read the list of RoutineContexts in Machine, convert them to StackFrames,
+   * prepending a dummy stack frame.
+   * 
+   * @param machine the machine object
+   */
   private void captureStackFrames(Machine machine) {
     
-    //machine.getR
-    // TODO: Write out stack frames
+    List<RoutineContext> contexts = machine.getRoutineContexts();
+
+    // Put in initial dummy stack frame
+    StackFrame dummyFrame = new StackFrame();
+    dummyFrame.args = new int[0];
+    dummyFrame.locals = new short[0];
+    int numElements = calculateNumStackElements(machine, contexts, 0, 0);
+    dummyFrame.evalStack = new short[numElements];
+    for (int i = 0; i < numElements; i++) {
+      
+      dummyFrame.evalStack[i] = machine.getStackElement(i);
+    }
+    stackFrames.add(dummyFrame);
+    
+    // Write out stack frames
+    for (int c = 0; c < contexts.size(); c++) {
+
+      RoutineContext context = contexts.get(c);
+      
+      StackFrame stackFrame = new StackFrame();
+      stackFrame.pc = context.getReturnAddress();
+      stackFrame.returnVariable = context.getReturnVariable();
+      
+      // Copy local variables
+      stackFrame.locals = new short[context.getNumLocalVariables()];
+      for (int i = 0; i < stackFrame.locals.length; i++) {
+        
+        stackFrame.locals[i] = context.getLocalVariable(i);
+      }
+      
+      // Create argument array
+      stackFrame.args = new int[context.getNumArguments()];
+      for (int i = 0; i < stackFrame.args.length; i++) {
+        
+        stackFrame.args[i] = i;
+      }
+      
+      // Transfer evaluation stack
+      int localStackStart = context.getInvocationStackPointer();
+      numElements = calculateNumStackElements(machine, contexts, c + 1,
+          localStackStart);
+      stackFrame.evalStack = new short[numElements];
+      for (int i = 0; i < numElements; i++) {
+        
+        stackFrame.evalStack[i] = machine.getStackElement(localStackStart + i);
+      }
+      
+      stackFrames.add(stackFrame);
+    }
+  }
+  
+  /**
+   * Determines the number of stack elements between localStackStart and
+   * the invocation stack pointer of the specified routine context.
+   * If contextIndex is greater than the size of the List contexts, the
+   * functions assumes this is the top routine context and therefore
+   * calculates the difference between the current stack pointer and
+   * localStackStart.
+   *  
+   * @param machine the Machine object
+   * @param contexts a list of RoutineContext
+   * @param contextIndex the index of the context to calculate the difference
+   * @param localStackStart the local stack start pointer
+   * @return the number of stack elements in the specified stack frame
+   */
+  private int calculateNumStackElements(Machine machine,
+      List<RoutineContext> contexts, int contextIndex, int localStackStart) {
+    
+    if (contextIndex < contexts.size()) {
+      
+      RoutineContext context = contexts.get(contextIndex);
+      return context.getInvocationStackPointer() - localStackStart;
+      
+    } else {
+      
+      return machine.getStackPointer() - localStackStart; 
+    }
+  }
+  
+  // ***********************************************************************
+  // ******* Export to an IFF FORM chunk
+  // *****************************************
+  
+  /**
+   * Exports the current object state to a FormChunk.
+   * 
+   * @return the state as a FormChunk
+   */
+  public FormChunk exportToFormChunk() {
+    
+    // TODO
+    return null;
   }
 
+  // ***********************************************************************
+  // ******* Transfer to Machine object
+  // *****************************************
+  
+  /**
+   * Transfers the current object state to the specified Machine object.
+   * 
+   * @param machine a Machine object
+   */
+  public void transferStateToMachine(Machine machine) {
+    
+    // TODO
+  }
+  
   // ***********************************************************************
   // ******* Helpers
   // *****************************************
