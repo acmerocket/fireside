@@ -296,6 +296,13 @@ public interface Machine {
   void initialize(MachineConfig machineConfig);
   
   /**
+   * Sets the save game data store.
+   * 
+   * @param datastore the data store
+   */
+  void setSaveGameDataStore(SaveGameDataStore datastore);
+  
+  /**
    * Halts the machine with the specified error message.
    * 
    * @param errormsg the error message
@@ -305,7 +312,7 @@ public interface Machine {
   /**
    * Saves the current state.
    */
-  boolean save();
+  boolean save(int savepc);
   
   /**
    * Restores a previously saved state.

@@ -542,18 +542,30 @@ public class PortableGameState {
       byteBuffer.add((byte) ((pc >>> 8) & 0xff));
       byteBuffer.add((byte) (pc & 0xff));
       
-      // TODO: locals flag
+      // locals flag, is simply the number of local variables
+      byteBuffer.add((byte) (stackFrame.locals.length & 0x0f));
       
-      // TODO: returnvar
+      // returnvar
       byteBuffer.add((byte) stackFrame.returnVariable);
       
-      // TODO: argspec
+      // argspec
+      byteBuffer.add(createArgSpecByte(stackFrame.args));
       
-      // TODO: eval stack size
+      // eval stack size
+      int stacksize = stackFrame.evalStack.length;
+      addUnsignedShortToByteBuffer(byteBuffer, stacksize);
       
-      // TODO: local variables
+      // local variables
+      for (short local : stackFrame.locals) {
+        
+        addShortToByteBuffer(byteBuffer, local);
+      }
       
-      // TODO: stack values
+      // stack values
+      for (short stackValue : stackFrame.evalStack) {
+        
+        addShortToByteBuffer(byteBuffer, stackValue);
+      }
     }
     
     byte[] data = new byte[byteBuffer.size()];
@@ -562,6 +574,28 @@ public class PortableGameState {
       data[i] = byteBuffer.get(i);
     }    
     return new DefaultChunk(id, data);
+  }
+  
+  private void addUnsignedShortToByteBuffer(List<Byte> buffer, int value) {
+    
+    buffer.add((byte) ((value & 0xff00) >> 8));
+    buffer.add((byte) (value & 0xff));
+  }
+  
+  private void addShortToByteBuffer(List<Byte> buffer, short value) {
+    
+    buffer.add((byte) ((value & 0xff00) >>> 8));
+    buffer.add((byte) (value & 0xff));
+  }
+  
+  private byte createArgSpecByte(int[] args) {
+    
+    byte result = 0;
+    for (int arg : args) {
+      
+      result |= (1 << arg);
+    }
+    return result;
   }
   
   // ***********************************************************************

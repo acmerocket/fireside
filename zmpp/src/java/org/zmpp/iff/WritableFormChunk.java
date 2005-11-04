@@ -134,7 +134,9 @@ public class WritableFormChunk implements FormChunk {
    */
   public byte[] getBytes() {
     
+    System.out.println("getBytes()");
     int datasize = Chunk.CHUNK_HEADER_LENGTH + getSize();
+    System.out.println("datasize: " + datasize);
     
     byte[] data = new byte[datasize];
     MemoryAccess memaccess = new DefaultMemoryAccess(data);
@@ -151,10 +153,12 @@ public class WritableFormChunk implements FormChunk {
      
       memaccess.writeByte(offset++, subId[i]);
     }
+    System.out.println("sub id written");
     
     // Write sub chunk data
     for (Chunk chunk : subChunks) {
-      
+     
+      System.out.println("Chunk: " + (new String(chunk.getId())));
       byte[] chunkId = chunk.getId();
       int chunkSize = chunk.getSize();
       
