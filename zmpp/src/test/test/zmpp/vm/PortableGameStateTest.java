@@ -25,14 +25,17 @@ package test.zmpp.vm;
 import java.io.File;
 import java.io.RandomAccessFile;
 import java.util.ArrayList;
+import java.util.Arrays;
 import java.util.List;
 
 import org.jmock.Mock;
 import org.jmock.MockObjectTestCase;
 import org.zmpp.base.DefaultMemoryAccess;
 import org.zmpp.base.MemoryAccess;
+import org.zmpp.iff.Chunk;
 import org.zmpp.iff.DefaultFormChunk;
 import org.zmpp.iff.FormChunk;
+import org.zmpp.iff.WritableFormChunk;
 import org.zmpp.vm.Machine;
 import org.zmpp.vm.PortableGameState;
 import org.zmpp.vm.RoutineContext;
@@ -129,5 +132,135 @@ public class PortableGameStateTest extends MockObjectTestCase {
     assertEquals(1, gameState.getStackFrames().size());
     StackFrame stackFrame = gameState.getStackFrames().get(0);
     assertEquals(4, stackFrame.getEvalStack().length);
+  }
+  
+  public void testExportToFormChunk() {
+    
+    short[] dummyStack = { (short) 1, (short) 2, (short) 3 };
+    StackFrame dummyFrame = new StackFrame();
+    dummyFrame.setArgs(new int[0]);
+    dummyFrame.setEvalStack(dummyStack);
+    dummyFrame.setLocals(new short[0]);
+    
+    byte[] dynamicMem = new byte[99];
+    dynamicMem[35] = (byte) 12;
+    dynamicMem[49] = (byte) 13;
+    dynamicMem[51] = (byte) 21;
+    dynamicMem[72] = (byte) 72;
+    dynamicMem[98] = (byte) 1;
+
+    gameState.setRelease(42);
+    gameState.setChecksum(4712);
+    gameState.setSerialNumber("850101");
+    gameState.setDynamicMem(dynamicMem);
+    gameState.setProgramCounter(4711);
+    gameState.getStackFrames().add(dummyFrame);
+    
+    // Export our mock machine to a FormChunk verify some basic information
+    WritableFormChunk formChunk = gameState.exportToFormChunk();
+    assertTrue(Arrays.equals("FORM".getBytes(), formChunk.getId()));
+    assertEquals(156, formChunk.getSize());
+    assertTrue(Arrays.equals("IFZS".getBytes(), formChunk.getSubId()));
+    assertNotNull(formChunk.getSubChunk("IFhd".getBytes()));    
+    assertNotNull(formChunk.getSubChunk("UMem".getBytes()));
+    assertNotNull(formChunk.getSubChunk("Stks".getBytes()));
+    
+    // Read IFhd information
+    Chunk ifhdChunk = formChunk.getSubChunk("IFhd".getBytes());
+    MemoryAccess memaccess = ifhdChunk.getMemoryAccess();
+    assertEquals(13, ifhdChunk.getSize());
+    assertEquals(gameState.getRelease(), memaccess.readUnsignedShort(8));
+    byte[] serial = new byte[6];
+    for (int i = 0; i < 6; i++) serial[i] = memaccess.readByte(10 + i);
+    assertTrue(Arrays.equals(gameState.getSerialNumber().getBytes(), serial));
+    assertEquals(gameState.getChecksum(), memaccess.readUnsignedShort(16));
+    assertEquals(gameState.getProgramCounter(),
+        decodePcBytes(memaccess.readByte(18), memaccess.readByte(19), memaccess.readByte(20)));
+    
+    // Read the UMem information
+    Chunk umemChunk = formChunk.getSubChunk("UMem".getBytes());
+    memaccess = umemChunk.getMemoryAccess();
+    assertEquals(dynamicMem.length, umemChunk.getSize());
+    for (int i = 0; i < dynamicMem.length; i++) {
+      
+      assertEquals(dynamicMem[i], memaccess.readByte(8 + i));
+    }
+    
+    // Read the Stks information
+    Chunk stksChunk = formChunk.getSubChunk("Stks".getBytes());
+    memaccess = stksChunk.getMemoryAccess();
+    
+    // There is only one frame at the moment
+    assertEquals(14, stksChunk.getSize());
+    int retpc0 = decodePcBytes(memaccess.readByte(8), memaccess.readByte(9), memaccess.readByte(10));
+    assertEquals(0, retpc0);
+    assertEquals(0, memaccess.readByte(11)); // pv flags
+    assertEquals(0, memaccess.readByte(12)); // retvar
+    assertEquals(0, memaccess.readByte(13)); // argspec
+    assertEquals(3, memaccess.readUnsignedShort(14)); // stack size
+    assertEquals(1, memaccess.readShort(16)); // stack val 0
+    assertEquals(2, memaccess.readShort(18)); // stack val 1
+    assertEquals(3, memaccess.readShort(20)); // stack val 2
+    
+    // Now read the form chunk into another gamestate and compare
+    PortableGameState gameState2 = new PortableGameState();
+    gameState2.readSaveGame(formChunk);
+    assertEquals(gameState.getRelease(), gameState2.getRelease());
+    assertEquals(gameState.getChecksum(), gameState2.getChecksum());
+    assertEquals(gameState.getSerialNumber(), gameState2.getSerialNumber());
+    assertEquals(gameState.getProgramCounter(), gameState2.getProgramCounter());
+    assertEquals(gameState.getStackFrames().size(), gameState2.getStackFrames().size());
+    StackFrame dummyFrame1 = gameState.getStackFrames().get(0);
+    StackFrame dummyFrame2 = gameState2.getStackFrames().get(0);
+    assertEquals(dummyFrame1.getProgramCounter(), dummyFrame2.getProgramCounter());
+    assertEquals(dummyFrame1.getReturnVariable(), dummyFrame2.getReturnVariable());
+    assertEquals(0, dummyFrame2.getArgs().length);
+    assertEquals(0, dummyFrame2.getLocals().length);
+    assertEquals(3, dummyFrame2.getEvalStack().length);
+        
+    // Convert to byte array and reconstruct
+    // This is in fact a test for WritableFormChunk and should be put
+    // in a separate test
+    byte[] data = formChunk.getBytes();
+    FormChunk formChunk2 = new DefaultFormChunk(new DefaultMemoryAccess(data));
+    assertTrue(Arrays.equals(formChunk2.getId(), "FORM".getBytes()));
+    assertTrue(Arrays.equals(formChunk2.getSubId(), "IFZS".getBytes()));
+    assertEquals(formChunk.getSize(), formChunk2.getSize());
+
+    // IFhd chunk
+    Chunk ifhd2 = formChunk2.getSubChunk("IFhd".getBytes());
+    assertEquals(13, ifhd2.getSize());
+    MemoryAccess ifhd1mem = formChunk.getSubChunk("IFhd".getBytes()).getMemoryAccess();
+    MemoryAccess ifhd2mem = ifhd2.getMemoryAccess();
+    for (int i = 0; i < 21; i++) {
+      
+      assertEquals(ifhd2mem.readByte(i), ifhd1mem.readByte(i));
+    }
+
+    // UMem chunk
+    Chunk umem2 = formChunk2.getSubChunk("UMem".getBytes());
+    assertEquals(dynamicMem.length, umem2.getSize());
+    MemoryAccess umem1mem = formChunk.getSubChunk("UMem".getBytes()).getMemoryAccess();
+    MemoryAccess umem2mem = umem2.getMemoryAccess();
+    for (int i = 0; i < umem2.getSize() + Chunk.CHUNK_HEADER_LENGTH; i++) {
+      
+      assertEquals(umem2mem.readByte(i), umem1mem.readByte(i));
+    }
+    
+    // Stks chunk
+    Chunk stks2 = formChunk2.getSubChunk("Stks".getBytes());
+    assertEquals(14, stks2.getSize());
+    MemoryAccess stks1mem = formChunk.getSubChunk("Stks".getBytes()).getMemoryAccess();
+    MemoryAccess stks2mem = stks2.getMemoryAccess();
+    for (int i = 0; i < stks2.getSize() + Chunk.CHUNK_HEADER_LENGTH; i++) {
+      
+      assertEquals(stks2mem.readByte(i), stks1mem.readByte(i));
+    }
+    
+  }
+  
+  private int decodePcBytes(byte b0, byte b1, byte b2) {
+    
+    return ((b0 & 0xff) << 16) | ((b1 & 0xff) << 8) | (b2 & 0xff);
   }
 }

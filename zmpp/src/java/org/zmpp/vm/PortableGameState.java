@@ -25,7 +25,6 @@ package org.zmpp.vm;
 import java.util.ArrayList;
 import java.util.List;
 
-import org.zmpp.base.DefaultMemoryAccess;
 import org.zmpp.base.MemoryAccess;
 import org.zmpp.iff.Chunk;
 import org.zmpp.iff.DefaultChunk;
@@ -76,6 +75,12 @@ public class PortableGameState {
     public short[] getEvalStack() { return evalStack; }
     public short[] getLocals() { return locals; }
     public int[] getArgs() { return args; }
+    
+    public void setProgramCounter(int pc) { this.pc = pc; }
+    public void setReturnVariable(int varnum) { this.returnVariable = varnum; }
+    public void setEvalStack(short[] stack) { this.evalStack = stack; }
+    public void setLocals(short[] locals) { this.locals = locals; }
+    public void setArgs(int[] args) { this.args = args; }
   }
 
   /**
@@ -121,6 +126,10 @@ public class PortableGameState {
     serialBytes = new byte[6];
     stackFrames = new ArrayList<StackFrame>();
   }
+  
+  // **********************************************************************
+  // ***** Accessing the state
+  // *******************************************
   
   /**
    * Returns the game release number.
@@ -179,6 +188,31 @@ public class PortableGameState {
   public byte[] getDynamicMemoryDump() {
     
     return dynamicMem;
+  }
+  
+  public void setRelease(int release) {
+    
+    this.release = release;
+  }
+  
+  public void setChecksum(int checksum) {
+    
+    this.checksum = checksum;
+  }
+  
+  public void setSerialNumber(String serial) {
+    
+    this.serialBytes = serial.getBytes();
+  }
+  
+  public void setProgramCounter(int pc) {
+    
+    this.pc = pc;
+  }
+  
+  public void setDynamicMem(byte[] memdata) {
+    
+    this.dynamicMem = memdata;
   }
   
   // **********************************************************************
@@ -507,20 +541,24 @@ public class PortableGameState {
   private Chunk createIfhdChunk() {
 
     byte[] id = "IFhd".getBytes();
-    byte[] data = new byte[14];
-    MemoryAccess memaccess = new DefaultMemoryAccess(data);
-    memaccess.writeShort(0, (short) release);
+    byte[] data = new byte[13];
+    Chunk chunk = new DefaultChunk(id, data);    
+    MemoryAccess chunkmem = chunk.getMemoryAccess();
+    
+    // Write release number
+    chunkmem.writeUnsignedShort(8, (short) release);
+    
     for (int i = 0; i < serialBytes.length; i++) {
       
-      memaccess.writeByte(i + 2, serialBytes[i]);
+      chunkmem.writeByte(10 + i, serialBytes[i]);
     }
-    memaccess.writeShort(8, (short) checksum);
+    chunkmem.writeUnsignedShort(16, checksum);
 
-    memaccess.writeByte(10, (byte) ((pc >>> 16) & 0xff));
-    memaccess.writeByte(11, (byte) ((pc >>> 8) & 0xff));
-    memaccess.writeByte(12, (byte) (pc & 0xff));
+    chunkmem.writeByte(18, (byte) ((pc >>> 16) & 0xff));
+    chunkmem.writeByte(19, (byte) ((pc >>> 8) & 0xff));
+    chunkmem.writeByte(20, (byte) (pc & 0xff));
     
-    return new DefaultChunk(id, data);
+    return chunk;
   }
   
   private Chunk createUMemChunk() {
