@@ -23,6 +23,7 @@
 package org.zmpp.iff;
 
 import java.util.ArrayList;
+import java.util.Arrays;
 import java.util.Iterator;
 import java.util.List;
 
@@ -33,6 +34,7 @@ public class WritableFormChunk implements FormChunk {
 
   private byte[] subId;
   private static final byte[] FORM_ID = "FORM".getBytes();
+  
   private List<Chunk> subChunks;
   
   /**
@@ -79,7 +81,7 @@ public class WritableFormChunk implements FormChunk {
     
     for (Chunk chunk : subChunks) {
     
-      if (chunk.getId().equals(id)) {
+      if (Arrays.equals(chunk.getId(), id)) {
         
         return chunk;
       }
@@ -134,9 +136,7 @@ public class WritableFormChunk implements FormChunk {
    */
   public byte[] getBytes() {
     
-    System.out.println("getBytes()");
     int datasize = Chunk.CHUNK_HEADER_LENGTH + getSize();
-    System.out.println("datasize: " + datasize);
     
     byte[] data = new byte[datasize];
     MemoryAccess memaccess = new DefaultMemoryAccess(data);
@@ -153,12 +153,11 @@ public class WritableFormChunk implements FormChunk {
      
       memaccess.writeByte(offset++, subId[i]);
     }
-    System.out.println("sub id written");
     
     // Write sub chunk data
     for (Chunk chunk : subChunks) {
      
-      System.out.println("Chunk: " + (new String(chunk.getId())));
+      //System.out.println("Chunk: " + (new String(chunk.getId())));
       byte[] chunkId = chunk.getId();
       int chunkSize = chunk.getSize();
       
@@ -176,7 +175,8 @@ public class WritableFormChunk implements FormChunk {
       MemoryAccess chunkMem = chunk.getMemoryAccess();      
       for (int i = 0; i < chunkSize; i++) {
         
-        memaccess.writeByte(offset++, chunkMem.readByte(i));
+        memaccess.writeByte(offset++,
+            chunkMem.readByte(Chunk.CHUNK_HEADER_LENGTH + i));
       }
       
       // Pad if necessary

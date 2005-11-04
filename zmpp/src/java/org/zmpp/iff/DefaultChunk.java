@@ -70,7 +70,24 @@ public class DefaultChunk implements Chunk {
     
     this.id = id;
     this.chunkSize = chunkdata.length;
-    this.memaccess = new DefaultMemoryAccess(chunkdata);
+    
+    byte[] chunkDataWithHeader =
+      new byte[chunkSize + Chunk.CHUNK_HEADER_LENGTH];
+    this.memaccess = new DefaultMemoryAccess(chunkDataWithHeader);
+    int offset = 0;
+    
+    // Copy the data
+    for (int i = 0; i < id.length; i++) {
+      
+      memaccess.writeByte(offset++, id[i]);
+    }
+    memaccess.writeUnsigned32(offset, chunkSize);
+    offset += 4;
+    
+    for (int i = 0; i < chunkdata.length; i++) {
+      
+      memaccess.writeByte(offset++, chunkdata[i]);
+    }
   }
   
   /**
