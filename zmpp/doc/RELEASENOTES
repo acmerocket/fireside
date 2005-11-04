@@ -5,10 +5,9 @@ License: GNU public license
 About
 -----
 
-The Z-machine Preservation Project is an attempt to capture
-and document the Z-machine's architecture and design principles
-and to provide a modern Java implementation that can be easily
-maintained and extended.
+The Z-machine Preservation Project is an attempt to capture and document the
+Z-machine's architecture and design principles and to provide a modern Java
+implementation that can be easily maintained and extended.
 
 For remarks and suggestions for improvements, please contact
 me using the ZMPP project homepage:
@@ -18,18 +17,28 @@ http://sourceforge.net/projects/zmpp
 Running
 -------
 
+Command line:
+
 java -jar zmpp.jar
+
+On most systems, double clicking on the application jar file should start
+the software as well.
 
 Select a version 3 game using the File menu
 
-Version 0.7 Preview 2
-------------------
+Version 0.7 Preview 2 (2005-11-??)
+-----------------------------------
 
-- fixed a problem with keyboard event handling on Mac OS X
+- fixed an issue with keyboard event handling on Mac OS X
+- routine stack and evaluation stack are changed to be lists, the stack
+  pointers are implicit, so there is no fixed stack size anymore
+- call and return scheme simplified
+- restart implemented
+- save and restore implemented (Quetzal 1.4)
 
 
 Version 0.7 Preview 1 (2005-11-02)
--------------------------------
+----------------------------------
 
 This is the first public file release. It implements an almost
 complete implementation of the instruction set for the story
@@ -52,4 +61,4 @@ Known issues:
 
 - screen model not fully implemented yet
 - split_screen, split_window not implemented yet
-- save/restore/restart not implemented
+- save/restore/restart/sound not implemented
