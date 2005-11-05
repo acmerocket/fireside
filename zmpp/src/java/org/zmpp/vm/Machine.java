@@ -159,6 +159,14 @@ public interface Machine {
   List<RoutineContext> getRoutineContexts();
   
   /**
+   * Copies the list of routine contexts into this machine's routine context
+   * stack. This is a consequence of a restore operation.
+   * 
+   * @param contexts a list of routine contexts
+   */
+  void setRoutineContexts(List<RoutineContext> contexts);
+  
+  /**
    * Returns the current routine context without affecting the state
    * of the machine.
    * 
@@ -260,6 +268,13 @@ public interface Machine {
    * @return the translated byte address
    */
   int translatePackedAddress(int packedAddress);
+  
+  /**
+   * Computes a branch target from an offset.
+   * 
+   * @return the resulting branch target
+   */
+  int computeBranchTarget(short offset, int instructionLength);
   
   /**
    * Generates a number in the range between 1 and range. If range is

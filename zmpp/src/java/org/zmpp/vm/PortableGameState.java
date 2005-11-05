@@ -642,12 +642,81 @@ public class PortableGameState {
   
   /**
    * Transfers the current object state to the specified Machine object.
+   * The machine needs to be in a reset state in order to function correctly.
    * 
    * @param machine a Machine object
    */
   public void transferStateToMachine(Machine machine) {
     
-    // TODO
+    // In version 3 this is a branch target that needs to be read
+    // Execution is continued at the first instruction after the branch offset
+    int branchOffsetAddress = getProgramCounter();    
+    int pc = branchOffsetAddress +
+      getBranchOffsetLength(machine.getMemoryAccess(), branchOffsetAddress);
+    machine.setProgramCounter(pc);
+    
+    // Dynamic memory
+    for (int i = 0; i < dynamicMem.length; i++) {
+      
+      MemoryAccess memaccess = machine.getMemoryAccess();
+      memaccess.writeByte(i, dynamicMem[i]);
+    }
+    
+    // Stack frames
+    List<RoutineContext> contexts = new ArrayList<RoutineContext>();
+            
+    // Dummy frame, only the stack is interesting
+    if (stackFrames.size() > 0) {
+      
+      StackFrame dummyFrame = stackFrames.get(0);
+      
+      // Stack
+      for (int s = 0; s < dummyFrame.getEvalStack().length; s++) {
+        
+        machine.setVariable(0, dummyFrame.getEvalStack()[s]);
+      }
+    }
+    
+    // Now iterate through all real stack frames
+    for (int i = 1; i < stackFrames.size(); i++) {
+    
+      StackFrame stackFrame = stackFrames.get(i);
+      // ignore the start address
+      RoutineContext context = new RoutineContext(0, stackFrame.locals.length);
+      context.setReturnVariable(stackFrame.returnVariable);
+      context.setReturnAddress(stackFrame.pc);
+      context.setNumArguments(stackFrame.args.length);
+      
+      // local variables
+      for (int l = 0; l < stackFrame.locals.length; l++) {
+        
+        context.setLocalVariable(l, stackFrame.locals[l]);
+      }
+      
+      // Stack
+      for (int s = 0; s < stackFrame.evalStack.length; s++) {
+        
+        machine.setVariable(0, stackFrame.evalStack[s]);
+      }
+      contexts.add(context);      
+    }    
+    machine.setRoutineContexts(contexts);
+  }
+
+  /**
+   * Determine if the branch offset is one or two bytes long.
+   * 
+   * @param memaccess the MemoryAccess object of the current story
+   * @param offsetAddress the branch offset address
+   * @return 1 or 2, depending on the value of the branch offset
+   */
+  private static int getBranchOffsetLength(MemoryAccess memaccess,
+      int offsetAddress) {
+    
+    short offsetByte1 = memaccess.readUnsignedByte(offsetAddress);
+      
+    // Bit 6 set -> only one byte needs to be read
+    return ((offsetByte1 & 0x40) > 0) ? 1 : 2;
   }
   
   // ***********************************************************************
@@ -662,7 +731,6 @@ public class PortableGameState {
    */
   private int[] getArgs(byte argspec) {
     
-    //System.out.println("argSpec: " + argspec);
     int andBit;
     List<Integer> result = new ArrayList<Integer>();
     
