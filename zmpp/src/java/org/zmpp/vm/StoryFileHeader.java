@@ -219,4 +219,11 @@ public interface StoryFileHeader {
    * @return true if fixed font forced, false, otherwise
    */
   boolean forceFixedFont();
+  
+  /**
+   * Set to true if force fixed font bit should be set.
+   * 
+   * @param flag true to set fixed font bit, false to clear it
+   */
+  void setForceFixedFont(boolean flag);
 }

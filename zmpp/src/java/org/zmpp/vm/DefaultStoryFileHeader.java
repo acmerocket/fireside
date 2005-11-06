@@ -237,4 +237,11 @@ public class DefaultStoryFileHeader implements StoryFileHeader {
     
     return (getFlags2() & 2) > 0;
   }
+  
+  public void setForceFixedFont(boolean flag) {
+    
+    int flags = memaccess.readUnsignedByte(0x10);
+    flags = flag ? (flags | 2) : (flags & 0xfd);
+    memaccess.writeUnsignedByte(0x10, (short) flags);
+  }
 }

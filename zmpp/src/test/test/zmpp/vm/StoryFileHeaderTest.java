@@ -89,6 +89,10 @@ public class StoryFileHeaderTest extends MemoryMapSetup {
     assertTrue((fileheader.getFlags2() & 1) == 0);
     assertFalse(fileheader.isTranscriptingOn());
     
+    fileheader.setForceFixedFont(true);
+    assertTrue(fileheader.forceFixedFont());
+    
+    fileheader.setForceFixedFont(false);
     assertFalse(fileheader.forceFixedFont());
   }
 }
