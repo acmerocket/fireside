@@ -54,5 +54,41 @@ public class StoryFileHeaderTest extends MemoryMapSetup {
     int globaddr = fileheader.getGlobalsAddress();
     int numAbbrev = (globaddr - abbraddr) / 2;
     assertEquals(96, numAbbrev);
-  }  
+  }
+  
+  public void testFlags1() {
+    
+    assertTrue(fileheader.isScoreGame());
+    
+    fileheader.setStatusLineAvailable(true);
+    assertTrue((fileheader.getFlags1() & 16) > 0);
+    fileheader.setStatusLineAvailable(false);
+    assertTrue((fileheader.getFlags1() & 16) == 0);
+    
+    fileheader.setScreenSplittingAvailable(true);
+    assertTrue((fileheader.getFlags1() & 32) > 0);
+    fileheader.setScreenSplittingAvailable(false);
+    assertTrue((fileheader.getFlags1() & 32) == 0);
+    
+    fileheader.setDefaultFontIsVariablePitch(true);
+    assertTrue((fileheader.getFlags1() & 64) > 0);
+    assertTrue(fileheader.defaultFontIsVariablePitch());
+    
+    fileheader.setDefaultFontIsVariablePitch(false);
+    assertTrue((fileheader.getFlags1() & 64) == 0);
+    assertFalse(fileheader.defaultFontIsVariablePitch());
+  }
+  
+  public void testFlags2() {
+   
+    fileheader.setTranscripting(true);
+    assertTrue((fileheader.getFlags2() & 1) > 0);
+    assertTrue(fileheader.isTranscriptingOn());
+
+    fileheader.setTranscripting(false);
+    assertTrue((fileheader.getFlags2() & 1) == 0);
+    assertFalse(fileheader.isTranscriptingOn());
+    
+    assertFalse(fileheader.forceFixedFont());
+  }
 }

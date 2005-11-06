@@ -153,5 +153,70 @@ public interface StoryFileHeader {
    * 
    * @return the revision number
    */
-  int getRevision();  
+  int getRevision();
+  
+  // ********************************************************************
+  // ****** Flags 1 bits
+  // **********************************
+  
+  /**
+   * Returns true if the game is a score game.
+   * 
+   * @return true if score game
+   */
+  boolean isScoreGame();
+
+  /**
+   * Set by the interpreter to indicate if a status line is supported.
+   * 
+   * @param flag true if status line is supported, false, otherwise
+   */
+  void setStatusLineAvailable(boolean flag);
+  
+  /**
+   * Set by the interpreter to indicate if screen splitting is supported.
+   * 
+   * @param flag true if splitting is supported, false, otherwise
+   */
+  void setScreenSplittingAvailable(boolean flag);
+  
+  /**
+   * Set by the interpreter to indicate if the default font is variable
+   * pitch.
+   * 
+   * @param flag true if default font is variable pitch, false otherwise
+   */
+  void setDefaultFontIsVariablePitch(boolean flag);
+  
+  /**
+   * Returns if default font is variable pitch.
+   * 
+   * @return true if variable pitch, false, otherwise
+   */
+  boolean defaultFontIsVariablePitch();
+
+  // ********************************************************************
+  // ****** Flags 2 bits
+  // **********************************
+  
+  /**
+   * Set to true if transcripting is on.
+   * 
+   * @param flag true if transcripting on
+   */
+  void setTranscripting(boolean flag);
+  
+  /**
+   * Returns true if transcripting is on.
+   * 
+   * @return true if transcripting is on, false, otherwise
+   */
+  boolean isTranscriptingOn();
+
+  /**
+   * Returns true if fixed font is forced by the game.
+   * 
+   * @return true if fixed font forced, false, otherwise
+   */
+  boolean forceFixedFont();
 }

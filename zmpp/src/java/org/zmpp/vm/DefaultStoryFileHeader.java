@@ -22,7 +22,7 @@
  */
 package org.zmpp.vm;
 
-import org.zmpp.base.MemoryReadAccess;
+import org.zmpp.base.MemoryAccess;
 
 /**
  * This is the default implementation of the StoryFileHeader interface.
@@ -35,14 +35,14 @@ public class DefaultStoryFileHeader implements StoryFileHeader {
   /**
    * The memory map.
    */
-  private MemoryReadAccess memaccess;
+  private MemoryAccess memaccess;
   
   /**
    * Constructor.
    * 
    * @param memaccess a MemoryReadAccess object
    */
-  public DefaultStoryFileHeader(MemoryReadAccess memaccess) {
+  public DefaultStoryFileHeader(MemoryAccess memaccess) {
     
     this.memaccess = memaccess;
   }
@@ -164,5 +164,77 @@ public class DefaultStoryFileHeader implements StoryFileHeader {
       builder.append((char) memaccess.readUnsignedByte(i));
     }
     return builder.toString();
+  }
+  
+  /**
+   * {@inheritDoc}
+   */
+  public boolean isScoreGame() {
+    
+    return (getFlags1() & 2) == 0;
+  }
+  
+  /**
+   * {@inheritDoc}
+   */
+  public void setStatusLineAvailable(boolean flag) {
+    
+    int flags = memaccess.readUnsignedByte(0x01);
+    flags = flag ? (flags | 16) : (flags & 0xef);
+    memaccess.writeUnsignedByte(0x01, (short) flags);
+  }
+  
+  /**
+   * {@inheritDoc}
+   */
+  public void setScreenSplittingAvailable(boolean flag) {
+   
+    int flags = memaccess.readUnsignedByte(0x01);
+    flags = flag ? (flags | 32) : (flags & 0xdf);
+    memaccess.writeUnsignedByte(0x01, (short) flags);
+  }
+  
+  /**
+   * {@inheritDoc}
+   */
+  public void setDefaultFontIsVariablePitch(boolean flag) {
+    
+    int flags = memaccess.readUnsignedByte(0x01);
+    flags = flag ? (flags | 64) : (flags & 0xbf);
+    memaccess.writeUnsignedByte(0x01, (short) flags);
+  }
+  
+  /**
+   * {@inheritDoc}
+   */
+  public boolean defaultFontIsVariablePitch() {
+    
+    return (getFlags1() & 64) > 0;
+  }
+  
+  /**
+   * {@inheritDoc}
+   */
+  public void setTranscripting(boolean flag) {
+    
+    int flags = memaccess.readUnsignedByte(0x10);
+    flags = flag ? (flags | 1) : (flags & 0xfe);
+    memaccess.writeUnsignedByte(0x10, (short) flags);
+  }
+  
+  /**
+   * {@inheritDoc}
+   */
+  public boolean isTranscriptingOn() {
+    
+    return (getFlags2() & 1) > 0;
+  }
+  
+  /**
+   * {@inheritDoc}
+   */
+  public boolean forceFixedFont() {
+    
+    return (getFlags2() & 2) > 0;
   }
 }
