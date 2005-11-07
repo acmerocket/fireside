@@ -304,6 +304,31 @@ public interface Machine {
   void setStatusLine(StatusLine statusline);
   
   /**
+   * Plays a sound effect.
+   * 
+   * @param soundnum the sound number
+   * @param effect the effect
+   * @param volume the volume
+   * @param routine the routine
+   */
+  void playSoundEffect(int soundnum, int effect, int volume, int routine);  
+  
+  /**
+   * Splits the screen so that the upper window will have the specified
+   * number of lines.
+   * 
+   * @param numLines the number of lines for the upper window
+   */
+  void splitWindow(int numLines);
+  
+  /**
+   * Selects the specified window for text output.
+   * 
+   * @param window the window to output to
+   */
+  void setWindow(int window);
+  
+  /**
    * Initialization function.
    * 
    * @param machineConfig a configuration object
