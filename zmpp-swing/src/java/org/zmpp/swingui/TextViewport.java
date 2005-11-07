@@ -96,8 +96,8 @@ public class TextViewport extends JViewport {
       g_img.fillRect(0, 0, getWidth(), getHeight());
       
       FontMetrics fm = g.getFontMetrics();
-      //System.out.println("fm.height: " + fm.getHeight());
       y = getOffsetY() + fm.getHeight();
+      //System.out.println("fm.height: " + fm.getHeight() + " y: " + y);
       x = getOffsetX();
               
       setInitialized();
@@ -139,7 +139,7 @@ public class TextViewport extends JViewport {
 
   public void printString(String str) {
     
-    //logger.info("printString() thread: " + Thread.currentThread().getName());
+    //logger.info("printString() x: " + x + " y: " + y + " str: " + str);
     Graphics g = imageBuffer.getGraphics();
     FontMetrics fm = g.getFontMetrics();
     g.setColor(getForeground());
@@ -186,8 +186,10 @@ public class TextViewport extends JViewport {
     Graphics g = imageBuffer.getGraphics();
     g.setColor(getBackground());
     g.fillRect(0, 0, getWidth(), getHeight());
+    FontMetrics fm = g.getFontMetrics();
+    
     x = getOffsetX();
-    y = getOffsetY();
+    y = getOffsetY() + fm.getHeight();
   }
   
   private void drawCaret(boolean clearCaret) {
