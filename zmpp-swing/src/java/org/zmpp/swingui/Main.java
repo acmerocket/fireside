@@ -42,6 +42,8 @@ public class Main {
       System.setProperty("apple.laf.useScreenMenuBar", "true");
       System.setProperty("com.apple.eawt.CocoaComponent.CompatibilityMode",
           "false");
+      System.setProperty("com.apple.mrj.application.apple.menu.about.name",
+          "ZMPP");
     }
     Screen3 screen = new Screen3();
     screen.pack();
