@@ -34,7 +34,7 @@ public class StoryFileHeaderTest extends MemoryMapSetup {
   public void testHeader() throws Exception {
     
     assertEquals(3, fileheader.getVersion());
-    assertEquals(0, fileheader.getFlags1());
+    assertEquals(112, fileheader.getFlags1());
     assertEquals(34, fileheader.getRelease());
     assertEquals(0x3709, fileheader.getHighMemAddress());
     assertEquals(0x37d9, fileheader.getProgramStart());
@@ -42,7 +42,7 @@ public class StoryFileHeaderTest extends MemoryMapSetup {
     assertEquals(0x03c6, fileheader.getObjectTableAddress());
     assertEquals(0x02b4, fileheader.getGlobalsAddress());
     assertEquals(0x2187, fileheader.getStaticsAddress());
-    assertEquals(0, fileheader.getFlags2());
+    assertEquals(1, fileheader.getFlags2());
     assertEquals(0x01f4, fileheader.getAbbreviationsAddress());
     assertEquals("871124", fileheader.getSerialNumber());
     assertEquals(0xd870, fileheader.getChecksum());
