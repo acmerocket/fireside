@@ -22,6 +22,8 @@
  */
 package org.zmpp.vm;
 
+import java.io.File;
+
 /**
  * This interface defines the access to the screen model.
  * 
@@ -50,4 +52,18 @@ public interface ScreenModel {
    * @param window the active window
    */
   void setWindow(int window);
+  
+  /**
+   * Returns the transcript output file.
+   * 
+   * @return the transcript file
+   */
+  File getTranscriptFile();
+  
+  /**
+   * Returns the file for the file input stream (input stream 1)
+   * 
+   * @return the input stream file
+   */
+  File getFileInputStreamFile();
 }

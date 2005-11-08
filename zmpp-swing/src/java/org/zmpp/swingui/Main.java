@@ -27,6 +27,8 @@ import java.io.File;
 import javax.swing.JFileChooser;
 
 import org.zmpp.vm.DefaultMachineConfig;
+import org.zmpp.vm.FileInputStream;
+import org.zmpp.vm.FileOutputStream;
 import org.zmpp.vm.Machine;
 import org.zmpp.vm.Machine3;
 import org.zmpp.vm.MachineConfig;
@@ -66,10 +68,20 @@ public class Main {
       Screen3 screen = new Screen3(machine);
       
       // Machine initialization
+      
+      // Input streams
+      FileInputStream fileIs = new FileInputStream(screen);      
       machine.setInputStream(0, screen);
-      //machine.setInputStream(1, screen);
+      machine.setInputStream(1, fileIs);
+      //machine.selectInputStream(1);
+      
+      // Output streams
       machine.setOutputStream(1, screen);
       machine.enableOutputStream(1, true);
+      FileOutputStream transcriptStream = new FileOutputStream(machine);
+      machine.setOutputStream(2, transcriptStream);
+      machine.enableOutputStream(2, false);
+      
       machine.setStatusLine(screen);
       machine.setScreen(screen);
       machine.setSaveGameDataStore(screen);
