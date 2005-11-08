@@ -22,6 +22,16 @@
  */
 package org.zmpp.swingui;
 
+import java.io.File;
+
+import javax.swing.JFileChooser;
+
+import org.zmpp.vm.DefaultMachineConfig;
+import org.zmpp.vm.Machine;
+import org.zmpp.vm.Machine3;
+import org.zmpp.vm.MachineConfig;
+import org.zmpp.vm.StoryFileHeader;
+
 
 /**
  * This class starts the ZMPP swing interface.
@@ -31,7 +41,6 @@ package org.zmpp.swingui;
  */
 public class Main {
 
-  
   /**
    * @param args
    */
@@ -45,8 +54,41 @@ public class Main {
       System.setProperty("com.apple.mrj.application.apple.menu.about.name",
           "ZMPP");
     }
-    Screen3 screen = new Screen3();
-    screen.pack();
-    screen.setVisible(true);
+    
+    File currentdir = new File(System.getProperty("user.dir"));    
+    JFileChooser fileChooser = new JFileChooser(currentdir);
+    fileChooser.setDialogTitle("Open story file...");
+    if (fileChooser.showOpenDialog(null) == JFileChooser.APPROVE_OPTION) {
+      
+      File storyfile = fileChooser.getSelectedFile();
+      
+      Machine machine = openStoryFile(storyfile);
+      Screen3 screen = new Screen3(machine);
+      
+      // Machine initialization
+      machine.setInputStream(0, screen);
+      //machine.setInputStream(1, screen);
+      machine.setOutputStream(1, screen);
+      machine.enableOutputStream(1, true);
+      machine.setStatusLine(screen);
+      machine.setScreen(screen);
+      machine.setSaveGameDataStore(screen);
+          
+      screen.startMachine();
+      screen.pack();
+      screen.setVisible(true);
+    }
+  }
+  
+  private static Machine openStoryFile(File storyfile) {
+    
+    MachineConfig config = new DefaultMachineConfig(storyfile);
+    config.reset();
+    StoryFileHeader fileheader = config.getFileHeader();
+    System.out.println("Story file Version: " + fileheader.getVersion());
+        
+    Machine machine = new Machine3();      
+    machine.initialize(config);
+    return machine;
   }
 }

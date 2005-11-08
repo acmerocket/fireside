@@ -25,14 +25,13 @@ package org.zmpp.swingui;
 import java.awt.FontMetrics;
 import java.awt.Graphics;
 import java.awt.image.BufferedImage;
-import java.util.logging.Logger;
 
 import javax.swing.JViewport;
 
 public class TextViewport extends JViewport {
 
   private static final long serialVersionUID = 1L;
-  private static Logger logger = Logger.getLogger("TextViewport");
+  //private static Logger logger = Logger.getLogger("TextViewport");
   
   private BufferedImage imageBuffer;
   private int y;
@@ -96,7 +95,7 @@ public class TextViewport extends JViewport {
       g_img.fillRect(0, 0, getWidth(), getHeight());
       
       FontMetrics fm = g.getFontMetrics();
-      y = getOffsetY() + fm.getHeight();
+      setInitialY(fm.getHeight(), getHeight());
       //System.out.println("fm.height: " + fm.getHeight() + " y: " + y);
       x = getOffsetX();
               
@@ -106,13 +105,27 @@ public class TextViewport extends JViewport {
     g.drawImage(imageBuffer, 0, 0, this);
   }
   
+  /**
+   * Sets the initial y position in the window. According to the specification
+   * this is the last line in the current window.
+   * 
+   * @param fontHeight the current font height
+   * @param windowHeight the window height
+   */
+  private void setInitialY(int fontHeight, int windowHeight) {
+   
+    // calculate the available lines first
+    int availableLines = (windowHeight - 2 * OFFSET_Y) / fontHeight;
+    y = getOffsetY() + fontHeight * availableLines;
+  }
+  
   public void printChar(char c) {
     
     //logger.info("printChar() thread: " + Thread.currentThread().getName());
     drawCaret(true);
     
     Graphics g = imageBuffer.getGraphics();
-    FontMetrics fm = g.getFontMetrics();            
+    FontMetrics fm = g.getFontMetrics();          
     g.setColor(getForeground());
     int charWidth = fm.charWidth(c);
     g.drawString(String.valueOf(c), x, y);
@@ -189,7 +202,7 @@ public class TextViewport extends JViewport {
     FontMetrics fm = g.getFontMetrics();
     
     x = getOffsetX();
-    y = getOffsetY() + fm.getHeight();
+    setInitialY(fm.getHeight(), getHeight());
   }
   
   private void drawCaret(boolean clearCaret) {
