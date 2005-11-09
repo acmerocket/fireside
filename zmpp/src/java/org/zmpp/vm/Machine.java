@@ -36,6 +36,16 @@ import org.zmpp.base.MemoryAccess;
 public interface Machine {
 
   /**
+   * The output stream number for the screen.
+   */
+  final static int OUTPUTSTREAM_SCREEN = 1;
+  
+  /**
+   * The output stream number for the transcript.
+   */
+  final static int OUTPUTSTREAM_TRANSCRIPT = 2;
+  
+  /**
    * The possible variable types.
    */
   enum VariableType { STACK, LOCAL, GLOBAL };
