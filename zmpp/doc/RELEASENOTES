@@ -78,7 +78,7 @@ Known issues:
 //// History
 ///////////////////////
 
-Version 0.7 Preview 3 (2005-11-??)
+Version 0.7 Preview 3 (2005-11-09)
 -----------------------------------
 
 - fixed an issue with removing objects from inconsistent trees, which caused
