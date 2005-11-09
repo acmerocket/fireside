@@ -24,12 +24,17 @@ http://sourceforge.net/projects/zmpp
 
 TODO:
 
+Streams
+
+- change streams to handle Z-characters only, one by one
 - handle z characters instead of strings in output streams, currently normal strings
 - echo input to activated streams, is currently directly painted on the screen for keyboard input
+
+Screen model
+
 - implement paging in screen model
 - implement non-word-wrapping scheme (continue on next line)
 - implement split_screen, split_window
-- handle force fixed font
 
 Running
 -------
@@ -52,6 +57,7 @@ These games could be successfully started so far:
 - Zork I
 - Zork II
 - Leather Godesses Of Phobos
+- Hitchhiker's Guide To The Galaxy
 
 These games have been successfully played through so far:
 
