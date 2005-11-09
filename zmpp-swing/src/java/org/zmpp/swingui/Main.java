@@ -25,6 +25,7 @@ package org.zmpp.swingui;
 import java.io.File;
 
 import javax.swing.JFileChooser;
+import javax.swing.JOptionPane;
 
 import org.zmpp.vm.DefaultMachineConfig;
 import org.zmpp.vm.FileInputStream;
@@ -98,8 +99,15 @@ public class Main {
     config.reset();
     StoryFileHeader fileheader = config.getFileHeader();
     System.out.println("Story file Version: " + fileheader.getVersion());
-        
-    Machine machine = new Machine3();      
+    
+    if (fileheader.getVersion() != 3) {
+      
+      JOptionPane.showMessageDialog(null,
+          "ZMPP V 0.7 currently only supports story file version 3.",
+          "Story file read error", JOptionPane.ERROR_MESSAGE);
+      System.exit(0);
+    }
+    Machine machine = new Machine3();
     machine.initialize(config);
     return machine;
   }
