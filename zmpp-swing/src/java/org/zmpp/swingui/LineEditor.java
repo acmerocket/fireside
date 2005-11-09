@@ -140,7 +140,6 @@ public class LineEditor implements KeyListener {
   
   private boolean isPrintable(char c) {
     
-    return Character.isLetterOrDigit(c) || c == ' ' || c == ','
-      || c == '\"';
+    return Character.isLetterOrDigit(c) || c == ',' || c == '\"';
   }  
 }

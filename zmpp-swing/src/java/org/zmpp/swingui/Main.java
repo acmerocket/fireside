@@ -86,6 +86,7 @@ public class Main {
       machine.setStatusLine(screen);
       machine.setScreen(screen);
       machine.setSaveGameDataStore(screen);
+      //machine.getStoryFileHeader().setForceFixedFont(true);
           
       screen.startMachine();
       screen.pack();

@@ -22,6 +22,7 @@
  */
 package org.zmpp.swingui;
 
+import java.awt.Font;
 import java.awt.FontMetrics;
 import java.awt.Graphics;
 import java.awt.image.BufferedImage;
@@ -39,10 +40,25 @@ public class TextViewport extends JViewport {
   private boolean initialized;
   
   private static final int OFFSET_X = 3;
-  private static final int OFFSET_Y = 3;
+  private static final int OFFSET_Y = 3;  
+  
+  private Font[] fonts;
   
   public TextViewport() {
     
+    fonts = new Font[4];
+    fonts[0] = getFont();
+    fonts[3] = new Font("Courier New", Font.PLAIN, fonts[0].getSize());
+  }
+  
+  /**
+   * Set the current font.
+   * 
+   * @param fontNumber the font number 
+   */
+  public void setFont(int fontNumber) {
+    
+    setFont(fonts[fontNumber - 1]);
   }
   
   public synchronized boolean isInitialized() {
@@ -73,11 +89,19 @@ public class TextViewport extends JViewport {
     
     return OFFSET_X;
   }
+  
+  private Graphics getViewGraphics() {
+    
+    Graphics g = imageBuffer.getGraphics();
+    g.setFont(getFont());
+    return g;
+  }
         
   public void scrollUp() {
     
     //logger.info("scrollUp() thread: " + Thread.currentThread().getName());
-    Graphics g = imageBuffer.getGraphics();
+    Graphics g = getViewGraphics();
+    
     g.setClip(3, 3, getWidth() - 6, getHeight() - 6);
     FontMetrics fm = g.getFontMetrics();
     g.copyArea(0, 0, getWidth(), getHeight(), 0, -fm.getHeight());
@@ -90,11 +114,11 @@ public class TextViewport extends JViewport {
       
       imageBuffer = new BufferedImage(getWidth(), getHeight(),
           BufferedImage.TYPE_INT_RGB);
-      Graphics g_img = imageBuffer.getGraphics();
+      Graphics g_img = getViewGraphics();
       g_img.setColor(getBackground());
       g_img.fillRect(0, 0, getWidth(), getHeight());
       
-      FontMetrics fm = g.getFontMetrics();
+      FontMetrics fm = g_img.getFontMetrics();
       setInitialY(fm.getHeight(), getHeight());
       //System.out.println("fm.height: " + fm.getHeight() + " y: " + y);
       x = getOffsetX();
@@ -123,8 +147,8 @@ public class TextViewport extends JViewport {
     
     //logger.info("printChar() thread: " + Thread.currentThread().getName());
     drawCaret(true);
-    
-    Graphics g = imageBuffer.getGraphics();
+
+    Graphics g = getViewGraphics();
     FontMetrics fm = g.getFontMetrics();          
     g.setColor(getForeground());
     int charWidth = fm.charWidth(c);
@@ -139,7 +163,7 @@ public class TextViewport extends JViewport {
     //logger.info("backSpace() thread: " + Thread.currentThread().getName());
     drawCaret(true);
     
-    Graphics g = imageBuffer.getGraphics();
+    Graphics g = getViewGraphics();
     FontMetrics fm = g.getFontMetrics();
     
     int charWidth = fm.charWidth(c);
@@ -153,7 +177,7 @@ public class TextViewport extends JViewport {
   public void printString(String str) {
     
     //logger.info("printString() x: " + x + " y: " + y + " str: " + str);
-    Graphics g = imageBuffer.getGraphics();
+    Graphics g = getViewGraphics();
     FontMetrics fm = g.getFontMetrics();
     g.setColor(getForeground());
 
@@ -183,7 +207,7 @@ public class TextViewport extends JViewport {
   public void newline() {
     
     //logger.info("newline() thread: " + Thread.currentThread().getName());
-    FontMetrics fm = imageBuffer.getGraphics().getFontMetrics();
+    FontMetrics fm = getViewGraphics().getFontMetrics();
     while (y + fm.getHeight() > getHeight()) {
       
       scrollUp();
@@ -196,7 +220,7 @@ public class TextViewport extends JViewport {
   public void clear() {
     
     //logger.info("clear() thread: " + Thread.currentThread().getName());
-    Graphics g = imageBuffer.getGraphics();
+    Graphics g = getViewGraphics();
     g.setColor(getBackground());
     g.fillRect(0, 0, getWidth(), getHeight());
     FontMetrics fm = g.getFontMetrics();
@@ -207,7 +231,7 @@ public class TextViewport extends JViewport {
   
   private void drawCaret(boolean clearCaret) {
     
-    Graphics g = imageBuffer.getGraphics();
+    Graphics g = getViewGraphics();
     FontMetrics fm = g.getFontMetrics();
     g.setColor(clearCaret ? getBackground() : getForeground());
     int charWidth = fm.charWidth('B');
