@@ -33,6 +33,16 @@ import java.io.File;
 public interface ScreenModel {
 
   /**
+   * Font number for the standard font.
+   */
+  static final int FONT_NORMAL  = 1;
+  
+  /**
+   * Font number for the fixed pitch font.
+   */
+  static final int FONT_FIXED   = 4;
+  
+  /**
    * Clears the screen.
    */
   void clear();
