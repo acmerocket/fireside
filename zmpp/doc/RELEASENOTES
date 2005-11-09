@@ -14,11 +14,22 @@ Features:
 - Written from scratch using Java 5
 - Currently supports story file version 3
 - Save and reads games in Quetzal 1.4 format
+- Supports input stream 0 and 1 (keyboard and file)
+- Supports output streams 1 and 2 (screen and transcript)
 
 For remarks and suggestions for improvements, please contact
 me using the ZMPP project homepage:
 
 http://sourceforge.net/projects/zmpp
+
+TODO:
+
+- handle z characters instead of strings in output streams, currently normal strings
+- echo input to activated streams, is currently directly painted on the screen for keyboard input
+- implement paging in screen model
+- implement non-word-wrapping scheme (continue on next line)
+- implement split_screen, split_window
+- handle force fixed font
 
 Running
 -------
@@ -30,7 +41,7 @@ java -jar zmpp.jar
 On most systems, double clicking on the application jar file should start
 the software as well.
 
-Select a version 3 game using the File menu
+Select a version 3 game
 
 Supported Infocom games
 ----------------------
@@ -55,9 +66,7 @@ Operating systems tested on:
 
 Known issues:
 
-- screen model not fully implemented yet
-- split_screen, split_window not implemented yet
-- save/restore/restart/sound not implemented
+- sound_effect not implemented
 
 /////////////////////////////////////////
 //// History
@@ -70,7 +79,7 @@ Version 0.7 Preview 3 (2005-11-??)
   "Leather goddesses" to freeze at a certain point
 - improvements to the interface
 - handling for header flags 1 and 2
-
+- file input stream and transcript stream added
 
 Version 0.7 Preview 2 (2005-11-04)
 -----------------------------------
