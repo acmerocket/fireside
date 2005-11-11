@@ -24,8 +24,8 @@ package test.zmpp.vm;
 
 import org.zmpp.vm.DefaultDictionary;
 import org.zmpp.vm.Dictionary;
-import org.zmpp.vmutil.ZsciiConverter;
-import org.zmpp.vmutil.ZsciiConverter.Alphabet;
+import org.zmpp.vmutil.ZCharConverter;
+import org.zmpp.vmutil.ZCharConverter.Alphabet;
 
 /**
  * This class tests the dictionary view.
@@ -61,9 +61,9 @@ public class DictionaryTest extends MemoryMapSetup {
   
   public void testGetSeparator() {
 
-    assertEquals('.', ZsciiConverter.decode(Alphabet.A0, dictionary.getSeparator(0)));
-    assertEquals(',', ZsciiConverter.decode(Alphabet.A0, dictionary.getSeparator(1)));
-    assertEquals('\"', ZsciiConverter.decode(Alphabet.A0, dictionary.getSeparator(2)));
+    assertEquals('.', ZCharConverter.decode(Alphabet.A0, dictionary.getSeparator(0)));
+    assertEquals(',', ZCharConverter.decode(Alphabet.A0, dictionary.getSeparator(1)));
+    assertEquals('\"', ZCharConverter.decode(Alphabet.A0, dictionary.getSeparator(2)));
   }
   
   public void testLookup() {

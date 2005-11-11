@@ -23,7 +23,7 @@
 package org.zmpp.vm;
 
 import org.zmpp.base.MemoryReadAccess;
-import org.zmpp.vmutil.ZsciiConverter.AbbreviationsTable;
+import org.zmpp.vmutil.ZCharConverter.AbbreviationsTable;
 
 /**
  * This class represents a view to the abbreviations table. The table

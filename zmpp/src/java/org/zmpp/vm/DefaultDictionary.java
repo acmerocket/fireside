@@ -26,7 +26,7 @@ import java.util.HashMap;
 import java.util.Map;
 
 import org.zmpp.base.MemoryReadAccess;
-import org.zmpp.vmutil.ZsciiString;
+import org.zmpp.vmutil.ZString;
 
 /**
  * This class implements a view on the dictionary within a memory map.
@@ -136,13 +136,13 @@ public class DefaultDictionary implements Dictionary {
   private void createLookupMap() {
     
     lookupMap = new HashMap<String, Integer>();
-    ZsciiString zstr;
+    ZString zstr;
     int entryAddress;
     
     for (int i = 0, n = getNumberOfEntries(); i < n; i++) {
       
       entryAddress = getEntryAddress(i);
-      zstr = new ZsciiString(memaccess, entryAddress);
+      zstr = new ZString(memaccess, entryAddress);
       lookupMap.put(zstr.toString(), entryAddress);
     }
   }  
