@@ -49,6 +49,12 @@ public class LineEditor implements KeyListener {
     notifyAll();
   }
 
+  public synchronized void enterInputMode() {
+    
+    this.inputMode = true;
+    notifyAll();
+  }
+  
   public synchronized void enterInputMode(MemoryAccess memaccess,
       int address, int bufferlen) {
   
@@ -97,7 +103,7 @@ public class LineEditor implements KeyListener {
     case KeyEvent.VK_ENTER:
       if (isInputMode()) {
         
-        viewport.stopEditing();
+        viewport.drawCaret(false);
         viewport.newline();
         viewport.repaint();
         

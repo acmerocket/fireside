@@ -146,22 +146,20 @@ public class TextViewport extends JViewport {
   public void printChar(char c) {
     
     //logger.info("printChar() thread: " + Thread.currentThread().getName());
-    drawCaret(true);
-
+    drawCaret(false);    
     Graphics g = getViewGraphics();
     FontMetrics fm = g.getFontMetrics();          
     g.setColor(getForeground());
     int charWidth = fm.charWidth(c);
     g.drawString(String.valueOf(c), x, y);
-    x += charWidth;
-    
-    drawCaret(false);
+    x += charWidth;    
+    drawCaret(true);
   }
   
   public void backSpace(char c) {
     
     //logger.info("backSpace() thread: " + Thread.currentThread().getName());
-    drawCaret(true);
+    drawCaret(false);
     
     Graphics g = getViewGraphics();
     FontMetrics fm = g.getFontMetrics();
@@ -171,7 +169,7 @@ public class TextViewport extends JViewport {
     x -= charWidth;
     g.fillRect(x, y - fm.getMaxAscent(), charWidth, fm.getHeight());
     
-    drawCaret(false);
+    drawCaret(true);
   }
 
   public void printString(String str) {
@@ -206,7 +204,7 @@ public class TextViewport extends JViewport {
   
   public void newline() {
     
-    //logger.info("newline() thread: " + Thread.currentThread().getName());
+    drawCaret(false);
     FontMetrics fm = getViewGraphics().getFontMetrics();
     while (y + fm.getHeight() > getHeight()) {
       
@@ -229,24 +227,12 @@ public class TextViewport extends JViewport {
     setInitialY(fm.getHeight(), getHeight());
   }
   
-  private void drawCaret(boolean clearCaret) {
+  public void drawCaret(boolean showCaret) {
     
     Graphics g = getViewGraphics();
     FontMetrics fm = g.getFontMetrics();
-    g.setColor(clearCaret ? getBackground() : getForeground());
+    g.setColor(showCaret ? getForeground() : getBackground());
     int charWidth = fm.charWidth('B');
     g.fillRect(x, y - fm.getMaxAscent(), charWidth, fm.getHeight());
-  }
-  
-  public void stopEditing() {
-    
-    //logger.info("stopEditing() thread: " + Thread.currentThread().getName());
-    drawCaret(true);
-  }
-  
-  public void startEditing() {
-    
-    //logger.info("startEditing() thread" + Thread.currentThread().getName());
-    drawCaret(false);
-  }
+  }  
 }

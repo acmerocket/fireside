@@ -258,11 +258,11 @@ public interface Machine {
   void newline();
   
   /**
-   * Prints the specified ZSCII character.
+   * Prints the specified ZSCII characoter.
    * 
    * @param zchar the ZSCII character to print
    */
-  void printZchar(short zchar);
+  void printZsciiChar(short zchar);
   
   /**
    * Prints the specified signed number.
