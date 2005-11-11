@@ -243,7 +243,7 @@ public interface Machine {
    * 
    * @param stringAddress the address of an ZSCII string
    */
-  void printZsciiString(int stringAddress);
+  void printZString(int stringAddress);
   
   /**
    * Prints the specified string to the active output streams.
