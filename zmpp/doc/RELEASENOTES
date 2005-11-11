@@ -27,7 +27,6 @@ TODO:
 Streams
 
 - change streams to handle Z-characters only, one by one
-- handle z characters instead of strings in output streams, currently normal strings
 - echo input to activated streams, is currently directly painted on the screen for keyboard input
 
 Screen model
@@ -35,6 +34,11 @@ Screen model
 - implement paging in screen model
 - implement non-word-wrapping scheme (continue on next line)
 - implement split_screen, split_window
+
+Other:
+
+- sound_effect not implemented
+
 
 Running
 -------
@@ -69,37 +73,3 @@ Operating systems tested on:
 - Linux
 - Windows XP
 - Mac OS X
-
-Known issues:
-
-- sound_effect not implemented
-
-/////////////////////////////////////////
-//// History
-///////////////////////
-
-Version 0.7 Preview 3 (2005-11-09)
------------------------------------
-
-- fixed an issue with removing objects from inconsistent trees, which caused
-  "Leather goddesses" to freeze at a certain point
-- improvements to the interface
-- handling for header flags 1 and 2
-- file input stream and transcript stream added
-
-Version 0.7 Preview 2 (2005-11-04)
------------------------------------
-
-- fixed an issue with keyboard event handling on Mac OS X
-- routine stack and evaluation stack are changed to be lists, the stack
-  pointers are implicit, so there is no fixed stack size anymore
-- call and return scheme simplified
-- restart, save and restore implemented (Quetzal 1.4)
-
-
-Version 0.7 Preview 1 (2005-11-02)
-----------------------------------
-
-This is the first public file release. It implements an almost
-complete implementation of the instruction set for the story
-file version 3.

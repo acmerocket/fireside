@@ -1,5 +1,14 @@
 Changelog
 
+Version 0.7 Release (2005-11-??)
+--------------------------------
+
+- finally understood the difference between Z characters and ZSCII and
+  added ZSCII encoding
+- reduced stream output functions to one that puts out one ZSCII character
+- reduced stream input functions to one that reads one ZSCII character
+- added per-character stream output
+
 Version 0.7 Preview 3 (2005-11-09)
 -----------------------------------
 
