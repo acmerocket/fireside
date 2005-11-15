@@ -16,6 +16,7 @@ Features:
 - Save and reads games in Quetzal 1.4 format
 - Supports input stream 0 and 1 (keyboard and file)
 - Supports output streams 1 and 2 (screen and transcript)
+- can be run as a Java applet within the web browser
 
 For remarks and suggestions for improvements, please contact
 me using the ZMPP project homepage:
@@ -23,11 +24,6 @@ me using the ZMPP project homepage:
 http://sourceforge.net/projects/zmpp
 
 TODO:
-
-Streams
-
-- change streams to handle Z-characters only, one by one
-- echo input to activated streams, is currently directly painted on the screen for keyboard input
 
 Screen model
 
@@ -40,8 +36,8 @@ Other:
 - sound_effect not implemented
 
 
-Running
--------
+Running as an application
+-------------------------
 
 Command line:
 
@@ -51,6 +47,12 @@ On most systems, double clicking on the application jar file should start
 the software as well.
 
 Select a version 3 game
+
+Running as an applet
+--------------------
+
+TODO
+
 
 Supported Infocom games
 ----------------------
