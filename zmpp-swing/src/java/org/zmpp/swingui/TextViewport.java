@@ -28,8 +28,14 @@ import java.awt.Graphics;
 import java.awt.image.BufferedImage;
 
 import javax.swing.JViewport;
+import javax.swing.SwingUtilities;
 
-public class TextViewport extends JViewport {
+import org.zmpp.vm.Machine;
+import org.zmpp.vm.OutputStream;
+import org.zmpp.vm.ScreenModel;
+import org.zmpp.vmutil.ZsciiEncoding;
+
+public class TextViewport extends JViewport implements OutputStream {
 
   private static final long serialVersionUID = 1L;
   
@@ -42,13 +48,78 @@ public class TextViewport extends JViewport {
   private static final int OFFSET_Y = 3;  
   
   private Font[] fonts;
+  private StringBuilder streambuffer;
+  private StringBuilder textbuffer;
+  private Machine machine;
   
-  public TextViewport() {
+  private boolean editMode;
+  private int charsTyped; 
+  
+  public TextViewport(Machine machine) {
     
     fonts = new Font[4];
     fonts[0] = getFont();
     fonts[3] = new Font("Courier New", Font.PLAIN, fonts[0].getSize());
+    this.machine = machine;
+    streambuffer = new StringBuilder();
+    textbuffer = new StringBuilder();
   }
+  
+  public void setEditMode(final boolean flag) {
+    
+    try {
+      
+      // It is very important that the output is flushed before entering
+      // input mode. SwingUtilities.invokeAndWait() blocks the whole
+      // processing (probably a deadlock between input events and the
+      // rendering), so we notify a waiting thread after the rendering
+      SwingUtilities.invokeLater(new Runnable() {
+        
+        public void run() {
+
+          determineFont();
+        
+          // Flush the output stream
+          if (flag) {
+          
+            printString(streambuffer.toString());
+            streambuffer = new StringBuilder();
+          }
+          
+          drawCaret(flag);
+          repaint();
+         
+          synchronized (TextViewport.this) {
+            
+            // Set status variables
+            editMode = flag;
+            charsTyped = 0;
+            TextViewport.this.notifyAll();
+          }
+        }
+      });
+    } catch (Exception ex) {
+      
+      ex.printStackTrace();
+    }
+  }
+  
+  public synchronized boolean isEditMode() {
+    
+    return editMode;
+  }
+  
+  public void clear() {
+    
+    determineFont();    
+    Graphics g = getViewGraphics();
+    g.setColor(getBackground());
+    g.fillRect(0, 0, getWidth(), getHeight());
+    FontMetrics fm = g.getFontMetrics();
+    
+    x = getOffsetX();
+    setInitialY(fm.getHeight(), getHeight());
+  }  
   
   /**
    * Set the current font.
@@ -79,23 +150,6 @@ public class TextViewport extends JViewport {
     }
   }
   
-  private int getOffsetY() {
-    
-    return OFFSET_Y;
-  }
-  
-  private int getOffsetX() {
-    
-    return OFFSET_X;
-  }
-  
-  private Graphics getViewGraphics() {
-    
-    Graphics g = imageBuffer.getGraphics();
-    g.setFont(getFont());
-    return g;
-  }
-        
   public void scrollUp() {
     
     Graphics g = getViewGraphics();
@@ -125,6 +179,78 @@ public class TextViewport extends JViewport {
     g.drawImage(imageBuffer, 0, 0, this);
   }
   
+  public void print(final short zsciiChar) {
+        
+    SwingUtilities.invokeLater(new Runnable() {
+      
+      public void run() {
+
+        determineFont();
+        if (isEditMode()) drawCaret(false);
+        
+        if (zsciiChar == ZsciiEncoding.NEWLINE) {
+          
+          printChar('\n');
+          
+        } else if (zsciiChar == ZsciiEncoding.DELETE && isEditMode()) {
+          
+          backSpace();
+          
+        } else {
+          
+          ZsciiEncoding encoding = ZsciiEncoding.getInstance();
+          printChar(encoding.getUnicodeChar(zsciiChar));
+          
+          // Count chars for backspace
+          if (isEditMode()) charsTyped++;
+        }
+        
+        if (isEditMode()) {
+          
+          drawCaret(true);
+          repaint();
+        }
+      }
+    });
+  }
+  
+  private void printChar(char c) {
+
+    textbuffer.append(c);
+    
+    if (isEditMode()) {
+      
+      printString(String.valueOf(c));
+      
+    } else {
+      
+      streambuffer.append(c);
+    }
+  }
+    
+  public void close() { }
+  
+  // **********************************************************************
+  // ******** Private functions
+  // *************************************************
+
+  private int getOffsetY() {
+    
+    return OFFSET_Y;
+  }
+  
+  private int getOffsetX() {
+    
+    return OFFSET_X;
+  }
+  
+  private Graphics getViewGraphics() {
+    
+    Graphics g = imageBuffer.getGraphics();
+    g.setFont(getFont());
+    return g;
+  }        
+  
   /**
    * Sets the initial y position in the window. According to the specification
    * this is the last line in the current window.
@@ -137,35 +263,7 @@ public class TextViewport extends JViewport {
     // calculate the available lines first
     int availableLines = (windowHeight - 2 * OFFSET_Y) / fontHeight;
     y = getOffsetY() + fontHeight * availableLines;
-  }
-  
-  public void backSpace(char c) {
-    
-    drawCaret(false);
-    
-    Graphics g = getViewGraphics();
-    FontMetrics fm = g.getFontMetrics();
-    
-    int charWidth = fm.charWidth(c);
-    g.setColor(getBackground());
-    x -= charWidth;
-    g.fillRect(x, y - fm.getMaxAscent(), charWidth, fm.getHeight());
-    
-    drawCaret(true);
-  }
-
-  StringBuilder lineBuffer = new StringBuilder();
-  
-  public void printChar(char c) {
-    
-    lineBuffer.append(c);
-  }
-  
-  public void flush() {
-    
-    printString(lineBuffer.toString());
-    lineBuffer = new StringBuilder();
-  }
+  }  
   
   private void printString(String str) {
     
@@ -188,16 +286,36 @@ public class TextViewport extends JViewport {
       }
       g.drawString(lines[i], x, y);
       x += fm.stringWidth(lines[i]);
+      
       if (i < lines.length - 1) {
         
         newline();
       }
-    }    
+    }
+  }
+
+  private void backSpace() {
+    
+    if (charsTyped > 0) {
+      
+      Graphics g = getViewGraphics();
+      FontMetrics fm = g.getFontMetrics();
+    
+      int lastIndex = textbuffer.length() - 1;
+      char lastChar = textbuffer.charAt(lastIndex);
+      
+      int charWidth = fm.charWidth(lastChar);
+      g.setColor(getBackground());
+      x -= charWidth;
+      g.fillRect(x, y - fm.getMaxAscent(), charWidth, fm.getHeight());
+      
+      textbuffer.deleteCharAt(lastIndex);
+      charsTyped--;
+    }
   }
   
-  public void newline() {
+  private void newline() {
     
-    drawCaret(false);
     FontMetrics fm = getViewGraphics().getFontMetrics();
     while (y + fm.getHeight() > getHeight()) {
       
@@ -208,23 +326,26 @@ public class TextViewport extends JViewport {
     x = getOffsetX();
   }
   
-  public void clear() {
+  private void drawCaret(boolean showCaret) {
     
-    Graphics g = getViewGraphics();
-    g.setColor(getBackground());
-    g.fillRect(0, 0, getWidth(), getHeight());
-    FontMetrics fm = g.getFontMetrics();
-    
-    x = getOffsetX();
-    setInitialY(fm.getHeight(), getHeight());
-  }
-  
-  public void drawCaret(boolean showCaret) {
+    determineFont();
     
     Graphics g = getViewGraphics();
     FontMetrics fm = g.getFontMetrics();
     g.setColor(showCaret ? getForeground() : getBackground());
     int charWidth = fm.charWidth('B');
     g.fillRect(x, y - fm.getMaxAscent(), charWidth, fm.getHeight());
-  }  
+  }
+  
+  private void determineFont() {
+    
+    if (machine.getStoryFileHeader().forceFixedFont()) {
+      
+      setFont(ScreenModel.FONT_FIXED);
+      
+    } else {
+      
+      setFont(ScreenModel.FONT_NORMAL);
+    }
+  }    
 }

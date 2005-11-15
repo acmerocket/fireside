@@ -24,45 +24,40 @@ package org.zmpp.swingui;
 
 import java.awt.event.KeyEvent;
 import java.awt.event.KeyListener;
+import java.util.LinkedList;
+import java.util.List;
 
-import org.zmpp.base.MemoryAccess;
+import org.zmpp.vmutil.ZsciiEncoding;
 
 public class LineEditor implements KeyListener {
 
-  //private Logger editlogger = Logger.getLogger("LineEditor");
   private boolean inputMode;
-  private MemoryAccess memaccess;
-  private int bufferaddress;
-  private int bufferlength;
-  private StringBuilder editbuffer = new StringBuilder();
-  private TextViewport viewport;
+  private List<Short> editbuffer;
   
+  public LineEditor() {
   
-  public LineEditor(TextViewport viewport) {
-  
-    this.viewport = viewport;
+    editbuffer = new LinkedList<Short>();
   }
   
-  public synchronized void leaveInputMode() {
+  public void setInputMode(boolean flag) {
     
-    this.inputMode = false;
-    notifyAll();
+    inputMode = flag;
+    editbuffer.clear();
   }
 
-  public synchronized void enterInputMode() {
-    
-    this.inputMode = true;
-    notifyAll();
-  }
-  
-  public synchronized void enterInputMode(MemoryAccess memaccess,
-      int address, int bufferlen) {
-  
-    this.memaccess = memaccess;
-    this.bufferaddress = address;
-    this.bufferlength = bufferlen;
-    this.inputMode = true;
-    notifyAll();
+  public short nextZsciiChar() {
+
+    short zsciiChar = 0;
+    synchronized (editbuffer) { 
+      while (editbuffer.size() == 0) {
+      
+        try {
+          editbuffer.wait();
+        } catch (Exception ex) { }
+      }
+      zsciiChar = editbuffer.remove(0);
+    }
+    return zsciiChar;
   }
   
   public synchronized boolean isInputMode() {
@@ -73,79 +68,51 @@ public class LineEditor implements KeyListener {
   public void keyPressed(KeyEvent e) {
     
     switch (e.getKeyCode()) {
-    case KeyEvent.VK_BACK_SPACE:
-      if (isInputMode() && editbuffer.length() > 0) {
+      case KeyEvent.VK_BACK_SPACE:
+      case KeyEvent.VK_DELETE:
+      
+        if (isInputMode()) {
         
-        char lastchar = editbuffer.charAt(editbuffer.length() - 1);
-        editbuffer.deleteCharAt(editbuffer.length() - 1);
-        viewport.backSpace(lastchar);
-        viewport.repaint();
-      }
-      break;
-    case KeyEvent.VK_SPACE:
-      if (isInputMode() && editbuffer.length() > 0) {
-        
-        if (editbuffer.length() < (bufferlength - 1)) {
+          synchronized (editbuffer) {
           
-          editbuffer.append(' ');
-          viewport.printChar(' ');
-          viewport.repaint();
-        } 
-      }
-      break;
-    }
-  }
-  
-  public void keyReleased(KeyEvent e) {
-  
-    //editlogger.info("keyReleased(), thread: " + Thread.currentThread().getName());
-    switch (e.getKeyCode()) {
-    case KeyEvent.VK_ENTER:
-      if (isInputMode()) {
+            editbuffer.add(ZsciiEncoding.DELETE);
+            editbuffer.notifyAll();
+          }
+        }
+        break;
+      case KeyEvent.VK_SPACE:
+        if (isInputMode()) {
         
-        viewport.drawCaret(false);
-        viewport.newline();
-        viewport.repaint();
-        
-        transferEditBuffer();
-        leaveInputMode();
-      }
-      break;      
-    default:
-      break;
+          synchronized (editbuffer) {
+          
+            editbuffer.add((short) ' ');
+            editbuffer.notifyAll();
+          }
+        }
+        break;
     }
   }
-
-  private void transferEditBuffer() {
-    
-    String editstring = editbuffer.toString();
-    int n = editstring.length();
-    for (int i = 0; i < n; i++) {
-
-      memaccess.writeByte(bufferaddress + i, (byte) editstring.charAt(i));
-    }
-    memaccess.writeByte(bufferaddress + n, (byte) 0);
-    editbuffer = new StringBuilder();
-  }
-  
   
   public void keyTyped(KeyEvent e) {
   
-    //editlogger.info("keyTyped(), thread: " + Thread.currentThread().getName());
-    char c = e.getKeyChar();
-    if (isInputMode()) {
-      
-      if (isPrintable(c) && editbuffer.length() < (bufferlength - 1)) {
+    char c = e.getKeyChar();    
+    ZsciiEncoding encoding = ZsciiEncoding.getInstance();
+    if (isInputMode() && encoding.isConvertableToZscii(c)
+        && !handledInKeyPressed(c)) {
         
-        editbuffer.append(c);
-        viewport.printChar(c);
-        viewport.repaint();
-      } 
+      synchronized (editbuffer) {
+        
+        editbuffer.add(encoding.getZsciiChar(c));
+        editbuffer.notifyAll();
+      }
     }
   }
   
-  private boolean isPrintable(char c) {
+  public void keyReleased(KeyEvent e) { }
+
+  
+  private boolean handledInKeyPressed(char c) {
     
-    return Character.isLetterOrDigit(c) || c == ',' || c == '\"';
-  }  
+    return c == ' ' || c == KeyEvent.VK_BACK_SPACE || c == KeyEvent.VK_DELETE;
+  }
 }

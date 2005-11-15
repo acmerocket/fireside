@@ -77,7 +77,7 @@ public class Main {
       //machine.selectInputStream(1);
       
       // Output streams
-      machine.setOutputStream(1, screen);
+      machine.setOutputStream(1, screen.getOutputStream());
       machine.enableOutputStream(1, true);
       FileOutputStream transcriptStream = new FileOutputStream(machine);
       machine.setOutputStream(2, transcriptStream);
