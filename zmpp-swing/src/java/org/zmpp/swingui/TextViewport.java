@@ -32,7 +32,6 @@ import javax.swing.JViewport;
 public class TextViewport extends JViewport {
 
   private static final long serialVersionUID = 1L;
-  //private static Logger logger = Logger.getLogger("TextViewport");
   
   private BufferedImage imageBuffer;
   private int y;
@@ -99,7 +98,6 @@ public class TextViewport extends JViewport {
         
   public void scrollUp() {
     
-    //logger.info("scrollUp() thread: " + Thread.currentThread().getName());
     Graphics g = getViewGraphics();
     
     g.setClip(3, 3, getWidth() - 6, getHeight() - 6);
@@ -109,7 +107,6 @@ public class TextViewport extends JViewport {
   
   public void paint(Graphics g) {
 
-    //logger.info("paint() thread: " + Thread.currentThread().getName());
     if (imageBuffer == null) {
       
       imageBuffer = new BufferedImage(getWidth(), getHeight(),
@@ -120,7 +117,6 @@ public class TextViewport extends JViewport {
       
       FontMetrics fm = g_img.getFontMetrics();
       setInitialY(fm.getHeight(), getHeight());
-      //System.out.println("fm.height: " + fm.getHeight() + " y: " + y);
       x = getOffsetX();
               
       setInitialized();
@@ -143,22 +139,8 @@ public class TextViewport extends JViewport {
     y = getOffsetY() + fontHeight * availableLines;
   }
   
-  public void printChar(char c) {
-    
-    //logger.info("printChar() thread: " + Thread.currentThread().getName());
-    drawCaret(false);    
-    Graphics g = getViewGraphics();
-    FontMetrics fm = g.getFontMetrics();          
-    g.setColor(getForeground());
-    int charWidth = fm.charWidth(c);
-    g.drawString(String.valueOf(c), x, y);
-    x += charWidth;    
-    drawCaret(true);
-  }
-  
   public void backSpace(char c) {
     
-    //logger.info("backSpace() thread: " + Thread.currentThread().getName());
     drawCaret(false);
     
     Graphics g = getViewGraphics();
@@ -172,15 +154,26 @@ public class TextViewport extends JViewport {
     drawCaret(true);
   }
 
-  public void printString(String str) {
+  StringBuilder lineBuffer = new StringBuilder();
+  
+  public void printChar(char c) {
     
-    //logger.info("printString() x: " + x + " y: " + y + " str: " + str);
+    lineBuffer.append(c);
+  }
+  
+  public void flush() {
+    
+    printString(lineBuffer.toString());
+    lineBuffer = new StringBuilder();
+  }
+  
+  private void printString(String str) {
+    
     Graphics g = getViewGraphics();
     FontMetrics fm = g.getFontMetrics();
     g.setColor(getForeground());
 
     int width = getWidth();
-    //System.out.println("height: " + getHeight());
     int lineLength = width - getOffsetX() * 2;
     g.setClip(3, 3, getWidth() - 6, getHeight() - 6);
     
@@ -217,7 +210,6 @@ public class TextViewport extends JViewport {
   
   public void clear() {
     
-    //logger.info("clear() thread: " + Thread.currentThread().getName());
     Graphics g = getViewGraphics();
     g.setColor(getBackground());
     g.fillRect(0, 0, getWidth(), getHeight());
