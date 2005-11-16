@@ -1,0 +1,39 @@
+Roadmap:
+
+Version 0.80:
+-------------
+
+- support story file version 5
+- TODO
+
+Version 0.75:
+-------------
+
+- support story file version 4
+- support font styles, toggable buffering
+- extend object table
+- support timed input
+- translate packed addresses differently
+- opcodes:
+  - new:                  - changed:                 - illegal:
+    1. call_2s              1. save                    show_status
+    2. call_1s              2. restore
+    3. call_vs2             3. call (-> call_vs)
+    4. erase_window         4. sread
+    5. erase_line
+    6. set_cursor
+    7. get_cursor
+    8. set_text_style
+    9. buffer_mode
+    10. read_char
+    11. scan_table        
+    
+Version 0.70
+-------------
+
+- support story file version 3
+- provide Swing application and applet interfaces
+- support streams and screen model 3
+- support ZSCII and encoded ZSCII
+- support Quetzal save game format
+
