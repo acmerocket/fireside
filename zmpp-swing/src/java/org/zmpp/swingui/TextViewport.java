@@ -32,7 +32,6 @@ import javax.swing.SwingUtilities;
 
 import org.zmpp.vm.Machine;
 import org.zmpp.vm.OutputStream;
-import org.zmpp.vm.ScreenModel;
 import org.zmpp.vmutil.ZsciiEncoding;
 
 public class TextViewport extends JViewport implements OutputStream {
@@ -45,24 +44,77 @@ public class TextViewport extends JViewport implements OutputStream {
   private boolean initialized;
   
   private static final int OFFSET_X = 3;
-  private static final int OFFSET_Y = 3;  
+  private static final int OFFSET_Y = 3;
   
-  private Font[] fonts;
+  private static final int TEXTSTYLE_REVERSE_VIDEO  = 1;
+  private static final int TEXTSTYLE_BOLD           = 2;
+  private static final int TEXTSTYLE_ITALIC         = 4;
+  private static final int TEXTSTYLE_FIXED          = 8;
+  
+  private Font standardFont, fixedFont, currentFont;
+  
   private StringBuilder streambuffer;
   private StringBuilder textbuffer;
   private Machine machine;
   
   private boolean editMode;
-  private int charsTyped; 
+  private int charsTyped;
+  private boolean isReverseVideo;
+  private boolean isBuffered;
   
   public TextViewport(Machine machine) {
     
-    fonts = new Font[4];
-    fonts[0] = getFont();
-    fonts[3] = new Font("Courier New", Font.PLAIN, fonts[0].getSize());
     this.machine = machine;
+    
+    isBuffered = true;
+    standardFont = getFont();
+    fixedFont = new Font("Courier New", Font.PLAIN, standardFont.getSize());
+    currentFont = standardFont;
+    
     streambuffer = new StringBuilder();
     textbuffer = new StringBuilder();
+  }
+
+  /**
+   * This function implements text styles in our screen model.
+   * 
+   * @param style the style mask as defined in the standards document
+   */
+  public void setTextStyle(int style) {
+
+    // Flush the output before setting a new style
+    try {
+      SwingUtilities.invokeLater(new Runnable() {
+
+        public void run() {
+          
+          determineFont();
+          flushOutput();
+        }
+      });
+      
+    } catch (Exception ex) { ex.printStackTrace(); }
+    
+    int fontStyle = Font.PLAIN;    
+    if ((style & TEXTSTYLE_FIXED) > 0) {
+      
+      currentFont = fixedFont;
+      
+    } else {
+      
+      currentFont = standardFont;
+    }
+    
+    isReverseVideo = ((style & TEXTSTYLE_REVERSE_VIDEO ) > 0);
+    fontStyle |= ((style & TEXTSTYLE_BOLD) > 0) ? Font.BOLD : 0;
+    fontStyle |= ((style & TEXTSTYLE_ITALIC) > 0) ? Font.ITALIC : 0;
+    currentFont = currentFont.deriveFont(fontStyle);
+    setFont(currentFont);
+  }
+  
+  public void setBufferMode(boolean flag) {
+    
+    this.isBuffered = flag;
   }
   
   public void setEditMode(final boolean flag) {
@@ -80,11 +132,7 @@ public class TextViewport extends JViewport implements OutputStream {
           determineFont();
         
           // Flush the output stream
-          if (flag) {
-          
-            printString(streambuffer.toString());
-            streambuffer = new StringBuilder();
-          }
+          if (flag) flushOutput();
           
           drawCaret(flag);
           repaint();
@@ -104,6 +152,12 @@ public class TextViewport extends JViewport implements OutputStream {
     }
   }
   
+  private void flushOutput() {
+    
+    printString(streambuffer.toString());
+    streambuffer = new StringBuilder();
+  }
+  
   public synchronized boolean isEditMode() {
     
     return editMode;
@@ -120,16 +174,6 @@ public class TextViewport extends JViewport implements OutputStream {
     x = getOffsetX();
     setInitialY(fm.getHeight(), getHeight());
   }  
-  
-  /**
-   * Set the current font.
-   * 
-   * @param fontNumber the font number 
-   */
-  public void setFont(int fontNumber) {
-    
-    setFont(fonts[fontNumber - 1]);
-  }
   
   public synchronized boolean isInitialized() {
     
@@ -265,16 +309,24 @@ public class TextViewport extends JViewport implements OutputStream {
     y = getOffsetY() + fontHeight * availableLines;
   }  
   
+  /**
+   * This is the function that does the actual printing to the screen.
+   * 
+   * @param str a string to pring
+   */
   private void printString(String str) {
     
     Graphics g = getViewGraphics();
     FontMetrics fm = g.getFontMetrics();
+    
+    // TODO: Handle reverse video !!
     g.setColor(getForeground());
 
     int width = getWidth();
     int lineLength = width - getOffsetX() * 2;
     g.setClip(3, 3, getWidth() - 6, getHeight() - 6);
     
+    // TODO: Handle the isBuffered flag !!!!
     WordWrapper wordWrapper = new WordWrapper(lineLength, fm);
     String[] lines = wordWrapper.wrap(x, str);
     for (int i = 0; i < lines.length; i++) {
@@ -341,11 +393,12 @@ public class TextViewport extends JViewport implements OutputStream {
     
     if (machine.getStoryFileHeader().forceFixedFont()) {
       
-      setFont(ScreenModel.FONT_FIXED);
+      currentFont = fixedFont;
       
     } else {
       
-      setFont(ScreenModel.FONT_NORMAL);
+      currentFont = standardFont;
     }
-  }    
+    setFont(currentFont);
+  }  
 }
