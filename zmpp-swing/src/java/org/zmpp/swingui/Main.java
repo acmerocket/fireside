@@ -104,7 +104,7 @@ public class Main {
     if (fileheader.getVersion() < 3 || fileheader.getVersion() > 4) {
       
       JOptionPane.showMessageDialog(null,
-          "ZMPP V 0.75 currently only supports story file versions 3 and 4.",
+          "ZMPP V 0.72 currently only supports story file versions 3 and 4.",
           "Story file read error", JOptionPane.ERROR_MESSAGE);
       System.exit(0);
     }
