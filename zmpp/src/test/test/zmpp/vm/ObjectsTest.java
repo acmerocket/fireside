@@ -31,7 +31,7 @@ public class ObjectsTest extends MemoryMapSetup {
   
   protected void setUp() throws Exception {
     super.setUp();
-    this.objects = new Objects(minizorkmap, fileheader.getObjectTableAddress());
+    this.objects = new Objects(fileheader.getVersion(), minizorkmap, fileheader.getObjectTableAddress());
   }
 
   public void testGetPropertyDefault() {
