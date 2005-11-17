@@ -64,6 +64,20 @@ public interface ScreenModel {
   void setWindow(int window);
   
   /**
+   * Sets the text style.
+   * 
+   * @param style the text style
+   */
+  void setTextStyle(int style);
+  
+  /**
+   * Sets the buffer mode.
+   * 
+   * @param flag true if should be buffered, false otherwise
+   */
+  void setBufferMode(boolean flag);
+  
+  /**
    * Returns the transcript output file.
    * 
    * @return the transcript file

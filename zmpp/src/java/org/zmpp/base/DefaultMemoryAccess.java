@@ -57,6 +57,33 @@ public class DefaultMemoryAccess implements MemoryAccess {
   /**
    * {@inheritDoc}
    */
+  public long readUnsigned48(int address) {
+    
+    return (data[address + 0] & 0xff) << 40
+         | (data[address + 1] & 0xff) << 32
+         | (data[address + 2] & 0xff) << 24
+         | (data[address + 3] & 0xff) << 16
+         | (data[address + 4] & 0xff) << 8
+         | (data[address + 5] & 0xff)
+         ;
+  }
+  
+  /**
+   * {@inheritDoc}
+   */
+  public void writeUnsigned48(int address, long value) {
+    
+    data[address + 0] = (byte) ((value & 0xff0000000000l) >> 40);
+    data[address + 1] = (byte) ((value & 0x00ff00000000l) >> 32);
+    data[address + 2] = (byte) ((value & 0x0000ff000000l) >> 24);
+    data[address + 3] = (byte) ((value & 0x000000ff0000l) >> 16);
+    data[address + 4] = (byte) ((value & 0x00000000ff00l) >> 8);
+    data[address + 5] = (byte)  (value & 0x0000000000ffl);
+  }
+  
+  /**
+   * {@inheritDoc}
+   */
   public int readUnsignedShort(int address) {
     
     return (data[address] & 0xff) << 8 | (data[address + 1] & 0xff);

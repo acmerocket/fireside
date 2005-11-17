@@ -53,6 +53,22 @@ public class MemorySection implements MemoryAccess {
     
     return length;
   }
+    
+  /**
+   * {@inheritDoc}
+   */
+  public long readUnsigned48(int address) {
+  
+    return memaccess.readUnsigned48(address);
+  }
+  
+  /**
+   * {@inheritDoc}
+   */
+  public void writeUnsigned48(int address, long value) {
+    
+    memaccess.writeUnsigned48(address, value);
+  }
   
   /**
    * {@inheritDoc}

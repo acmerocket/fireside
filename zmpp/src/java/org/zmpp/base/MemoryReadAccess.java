@@ -29,7 +29,16 @@ package org.zmpp.base;
  * @version 1.0
  */
 public interface MemoryReadAccess {
-
+  
+  /**
+   * Reads the 48-bit unsigned word at the specified address. From the
+   * specified address, 6 bytes are read and or'ed together.
+   *  
+   * @param address the address to read from
+   * @return the word at the specified address
+   */
+  long readUnsigned48(int address);  
+  
   /**
    * Reads the unsigned 32 bit word at the specified address.
    * 

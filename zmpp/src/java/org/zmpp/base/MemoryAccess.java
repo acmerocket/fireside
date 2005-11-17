@@ -71,4 +71,13 @@ public interface MemoryAccess extends MemoryReadAccess {
    * @param value the value to write
    */
   void writeUnsigned32(int address, long value);
+  
+  /**
+   * Writes the specified unsigned 48 bit value to the specified address.
+   * The value is written in 6 consecutive bytes.
+   * 
+   * @param address the address
+   * @param value the value
+   */
+  void writeUnsigned48(int address, long value);
 }
