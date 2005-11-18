@@ -156,13 +156,7 @@ public class InstructionDecoder {
       if (info.getOperandCount() == OperandCount.C1OP) {
         
         short firstByte = memaccess.readUnsignedByte(instructionAddress);
-        /*
-        short secondByte = memaccess.readUnsignedByte(instructionAddress + 1);
-        System.out.printf("opcode: %x, firstByte: %x, secondByte: %x\n",
-            info.getOpcode(), firstByte, secondByte);
-            */
         byte optype = (byte) ((firstByte & 0x30) >> 4);
-        //System.out.printf("optype: %x\n", optype);
         
         currentAddress = extractOperand(info, optype, instructionAddress + 1);
         
@@ -174,7 +168,6 @@ public class InstructionDecoder {
     } else if (info.getInstructionForm() == InstructionForm.LONG) {
 
       short firstByte = memaccess.readUnsignedByte(instructionAddress);      
-      //System.out.printf("long opcode: %x\n", firstByte);
       byte optype1 = ((firstByte & 0x40) > 0) ? Operand.TYPENUM_VARIABLE :
                                                 Operand.TYPENUM_SMALL_CONSTANT;
       byte optype2 = ((firstByte & 0x20) > 0) ? Operand.TYPENUM_VARIABLE :
@@ -184,12 +177,26 @@ public class InstructionDecoder {
       
     } else if (info.getInstructionForm() == InstructionForm.VARIABLE){
     
-      short secondByte = memaccess.readUnsignedByte(instructionAddress + 1);
+      // The operand types start after the opcode byte in variable form
+      short optypeByte1 = memaccess.readUnsignedByte(instructionAddress + 1);
           
       // operand types in next byte(s)
       currentAddress = instructionAddress + 2;    
-      currentAddress = extractOperandsWithTypeByte(info, secondByte,
-                                                 currentAddress);
+      currentAddress = extractOperandsWithTypeByte(info, optypeByte1,
+                                                   currentAddress);
+      
+      // Extract more operands if necessary, if the opcode
+      // is call_vs2 or call_vn2 and there are four operands already,
+      // there is a need to check out the second op type byte
+      // (Standards document 1.0, S 4.4.3.1 and S 4.5.1)
+      if (info.getOpcode() == VariableInstruction.OP_CALL_VS2
+          && info.getNumOperands() == 4) {
+        
+        // There is a second op type byte
+        short optypeByte2 = memaccess.readUnsignedByte(instructionAddress + 2);
+        currentAddress = extractOperandsWithTypeByte(info, optypeByte2,
+                                                     currentAddress);
+      }
     }
     return currentAddress;
   }
@@ -285,7 +292,6 @@ public class InstructionDecoder {
       
       short offsetByte1 = memaccess.readUnsignedByte(currentAddress);
       info.setBranchIfTrue((offsetByte1 & 0x80) > 0);
-      //System.out.printf("offsetByte1: %x\n", offsetByte1);
       
       // Bit 6 set -> only one byte needs to be read
       if ((offsetByte1 & 0x40) > 0) {
@@ -308,8 +314,6 @@ public class InstructionDecoder {
           offset = (short)
             (((offsetByte1 & 0x3f) << 8) | (offsetByte2 & 0xff));
         }
-        //System.out.printf("14-bit offset, offsetByte2: %x, offset = %x\n",
-        //    offsetByte2, offset);
         info.setBranchOffset(offset);
         return currentAddress + 2;
       }
