@@ -22,8 +22,8 @@
  */
 package org.zmpp.swingui;
 
+import java.awt.Color;
 import java.awt.Font;
-import java.awt.FontMetrics;
 import java.awt.Graphics;
 import java.awt.image.BufferedImage;
 
@@ -39,12 +39,8 @@ public class TextViewport extends JViewport implements OutputStream {
   private static final long serialVersionUID = 1L;
   
   private BufferedImage imageBuffer;
-  private int y;
-  private int x;
   private boolean initialized;
   
-  private static final int OFFSET_X = 3;
-  private static final int OFFSET_Y = 3;
   
   private static final int TEXTSTYLE_REVERSE_VIDEO  = 1;
   private static final int TEXTSTYLE_BOLD           = 2;
@@ -59,20 +55,43 @@ public class TextViewport extends JViewport implements OutputStream {
   
   private boolean editMode;
   private int charsTyped;
-  private boolean isReverseVideo;
-  private boolean isBuffered;
+  private SubWindow[] windows;
+  private int activeWindow;
+  private static final boolean DEBUG = true;
   
   public TextViewport(Machine machine) {
     
     this.machine = machine;
     
-    isBuffered = true;
     standardFont = getFont();
     fixedFont = new Font("Courier New", Font.PLAIN, standardFont.getSize());
     currentFont = standardFont;
     
     streambuffer = new StringBuilder();
     textbuffer = new StringBuilder();
+    windows = new SubWindow[2];
+    activeWindow = 1;
+  }
+  
+  public void setFont(Font font) {
+    
+    super.setFont(font);
+    if (initialized) windows[activeWindow].setFont(font);
+  }
+  
+  public void splitWindow(int linesUpperWindow) {
+    
+    windows[0].resize(linesUpperWindow);
+    int heightWindow0 = windows[0].getHeight();
+    windows[1].setVerticalBounds(heightWindow0 - 1,
+                                 getHeight() - heightWindow0);
+    windows[0].clear();
+    windows[1].clear();
+  }
+  
+  public void setWindow(int window) {
+    
+    activeWindow = window;
   }
 
   /**
@@ -105,7 +124,9 @@ public class TextViewport extends JViewport implements OutputStream {
       currentFont = standardFont;
     }
     
-    isReverseVideo = ((style & TEXTSTYLE_REVERSE_VIDEO ) > 0);
+    windows[activeWindow].setReverseVideo(
+        (style & TEXTSTYLE_REVERSE_VIDEO ) > 0);
+    
     fontStyle |= ((style & TEXTSTYLE_BOLD) > 0) ? Font.BOLD : 0;
     fontStyle |= ((style & TEXTSTYLE_ITALIC) > 0) ? Font.ITALIC : 0;
     currentFont = currentFont.deriveFont(fontStyle);
@@ -113,8 +134,8 @@ public class TextViewport extends JViewport implements OutputStream {
   }
   
   public void setBufferMode(boolean flag) {
-    
-    this.isBuffered = flag;
+
+    windows[activeWindow].setBufferMode(flag);
   }
   
   public void setEditMode(final boolean flag) {
@@ -154,7 +175,7 @@ public class TextViewport extends JViewport implements OutputStream {
   
   private void flushOutput() {
     
-    printString(streambuffer.toString());
+    windows[activeWindow].printString(streambuffer.toString());
     streambuffer = new StringBuilder();
   }
   
@@ -165,14 +186,8 @@ public class TextViewport extends JViewport implements OutputStream {
   
   public void clear() {
     
-    determineFont();    
-    Graphics g = getViewGraphics();
-    g.setColor(getBackground());
-    g.fillRect(0, 0, getWidth(), getHeight());
-    FontMetrics fm = g.getFontMetrics();
-    
-    x = getOffsetX();
-    setInitialY(fm.getHeight(), getHeight());
+    determineFont();
+    windows[activeWindow].clear();
   }  
   
   public synchronized boolean isInitialized() {
@@ -194,33 +209,38 @@ public class TextViewport extends JViewport implements OutputStream {
     }
   }
   
-  public void scrollUp() {
-    
-    Graphics g = getViewGraphics();
-    
-    g.setClip(3, 3, getWidth() - 6, getHeight() - 6);
-    FontMetrics fm = g.getFontMetrics();
-    g.copyArea(0, 0, getWidth(), getHeight(), 0, -fm.getHeight());
-  }
-  
   public void paint(Graphics g) {
 
     if (imageBuffer == null) {
       
       imageBuffer = new BufferedImage(getWidth(), getHeight(),
           BufferedImage.TYPE_INT_RGB);
-      Graphics g_img = getViewGraphics();
-      g_img.setColor(getBackground());
-      g_img.fillRect(0, 0, getWidth(), getHeight());
       
-      FontMetrics fm = g_img.getFontMetrics();
-      setInitialY(fm.getHeight(), getHeight());
-      x = getOffsetX();
-              
+      // Create the two sub windows
+      windows[0] = new SubWindow(imageBuffer);
+      windows[1] = new SubWindow(imageBuffer);
+      
+      windows[0].setVerticalBounds(0, 180);
+      windows[0].setBackground(getBackground());
+      windows[0].setForeground(getForeground());
+      windows[0].setFont(fixedFont);
+      
+      windows[1].setVerticalBounds(180, getHeight() - 180);
+      windows[1].setBackground(getBackground());
+      windows[1].setForeground(getForeground());
+      windows[1].setFont(standardFont);
+      
+      windows[0].clear();
+      windows[1].clear();      
       setInitialized();
     }
-    
     g.drawImage(imageBuffer, 0, 0, this);
+    
+    if (DEBUG) {
+      g.setColor(Color.BLACK);
+      g.drawLine(0, windows[0].getHeight() - 1, getWidth(),
+                 windows[0].getHeight() - 1);
+    }
   }
   
   public void print(final short zsciiChar) {
@@ -264,7 +284,7 @@ public class TextViewport extends JViewport implements OutputStream {
     
     if (isEditMode()) {
       
-      printString(String.valueOf(c));
+      windows[activeWindow].printString(String.valueOf(c));
       
     } else {
       
@@ -278,115 +298,22 @@ public class TextViewport extends JViewport implements OutputStream {
   // ******** Private functions
   // *************************************************
 
-  private int getOffsetY() {
-    
-    return OFFSET_Y;
-  }
-  
-  private int getOffsetX() {
-    
-    return OFFSET_X;
-  }
-  
-  private Graphics getViewGraphics() {
-    
-    Graphics g = imageBuffer.getGraphics();
-    g.setFont(getFont());
-    return g;
-  }        
-  
-  /**
-   * Sets the initial y position in the window. According to the specification
-   * this is the last line in the current window.
-   * 
-   * @param fontHeight the current font height
-   * @param windowHeight the window height
-   */
-  private void setInitialY(int fontHeight, int windowHeight) {
-   
-    // calculate the available lines first
-    int availableLines = (windowHeight - 2 * OFFSET_Y) / fontHeight;
-    y = getOffsetY() + fontHeight * availableLines;
-  }  
-  
-  /**
-   * This is the function that does the actual printing to the screen.
-   * 
-   * @param str a string to pring
-   */
-  private void printString(String str) {
-    
-    Graphics g = getViewGraphics();
-    FontMetrics fm = g.getFontMetrics();
-    
-    // TODO: Handle reverse video !!
-    g.setColor(getForeground());
-
-    int width = getWidth();
-    int lineLength = width - getOffsetX() * 2;
-    g.setClip(3, 3, getWidth() - 6, getHeight() - 6);
-    
-    // TODO: Handle the isBuffered flag !!!!
-    WordWrapper wordWrapper = new WordWrapper(lineLength, fm);
-    String[] lines = wordWrapper.wrap(x, str);
-    for (int i = 0; i < lines.length; i++) {
-     
-      while (y + fm.getHeight() > getHeight()) {
-        
-        scrollUp();
-        y -= fm.getHeight();
-      }
-      g.drawString(lines[i], x, y);
-      x += fm.stringWidth(lines[i]);
-      
-      if (i < lines.length - 1) {
-        
-        newline();
-      }
-    }
-  }
-
   private void backSpace() {
     
     if (charsTyped > 0) {
       
-      Graphics g = getViewGraphics();
-      FontMetrics fm = g.getFontMetrics();
-    
       int lastIndex = textbuffer.length() - 1;
       char lastChar = textbuffer.charAt(lastIndex);
-      
-      int charWidth = fm.charWidth(lastChar);
-      g.setColor(getBackground());
-      x -= charWidth;
-      g.fillRect(x, y - fm.getMaxAscent(), charWidth, fm.getHeight());
-      
+      windows[activeWindow].backSpace(lastChar);
       textbuffer.deleteCharAt(lastIndex);
       charsTyped--;
     }
   }
-  
-  private void newline() {
     
-    FontMetrics fm = getViewGraphics().getFontMetrics();
-    while (y + fm.getHeight() > getHeight()) {
-      
-      scrollUp();
-      y -= fm.getHeight();
-    }
-    y += fm.getHeight();
-    x = getOffsetX();
-  }
-  
   private void drawCaret(boolean showCaret) {
     
     determineFont();
-    
-    Graphics g = getViewGraphics();
-    FontMetrics fm = g.getFontMetrics();
-    g.setColor(showCaret ? getForeground() : getBackground());
-    int charWidth = fm.charWidth('B');
-    g.fillRect(x, y - fm.getMaxAscent(), charWidth, fm.getHeight());
+    windows[activeWindow].drawCaret(showCaret);
   }
   
   private void determineFont() {
