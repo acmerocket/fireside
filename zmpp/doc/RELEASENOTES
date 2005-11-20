@@ -12,10 +12,12 @@ implementation that can be easily maintained and extended.
 Features:
 
 - Written from scratch using Java 5
-- Currently supports story file version 3
+- Currently supports story file version 3 and 4
 - Save and reads games in Quetzal 1.4 format
 - Supports input stream 0 and 1 (keyboard and file)
 - Supports output streams 1 and 2 (screen and transcript)
+- Supports split windows
+- Supports multiple font styles
 - can be run as a Java applet within the web browser
 
 For remarks and suggestions for improvements, please contact
@@ -29,7 +31,6 @@ Screen model
 
 - implement paging in screen model
 - implement non-word-wrapping scheme (continue on next line)
-- implement split_screen, split_window
 
 Other:
 
