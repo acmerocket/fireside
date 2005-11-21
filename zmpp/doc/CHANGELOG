@@ -11,13 +11,18 @@ Version 0.72 preview
 - translate_packed_address is multiplied by factor 4 in version 4
 - dictionary is created and stored in MachineConfig
 - show_status made illegal for version 4
+- save and restore behaviour changed for version 4
 - text styles added to the screen model
 - object model extended
 - toggable text buffering
 - instruction decoder extended to allow for up to 8 parameters (evaluate the
   second optype byte)
-- call_2s, call_1s, call_vs2, set_text_style, buffer_mode implemented
+- call_2s, call_1s, call_vs2, set_text_style, buffer_mode, erase_window,
+  erase_line, set_cursor implemented
 - screen splitting implemented using a sub window model
+- window erase implemented
+- line erase implemented
+- set cursor implemented
 
 Version 0.7 Release (2005-11-16)
 --------------------------------

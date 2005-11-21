@@ -41,12 +41,14 @@ public class TextViewport extends JViewport implements OutputStream {
   
   private BufferedImage imageBuffer;
   private boolean initialized;
-  
-  
+    
   private static final int TEXTSTYLE_REVERSE_VIDEO  = 1;
   private static final int TEXTSTYLE_BOLD           = 2;
   private static final int TEXTSTYLE_ITALIC         = 4;
   private static final int TEXTSTYLE_FIXED          = 8;
+  
+  private static final int WINDOW_BOTTOM  = 0;
+  private static final int WINDOW_TOP     = 1;
   
   private Font standardFont, fixedFont, currentFont;
   
@@ -71,7 +73,14 @@ public class TextViewport extends JViewport implements OutputStream {
     streambuffer = new StringBuilder();
     textbuffer = new StringBuilder();
     windows = new SubWindow[2];
-    activeWindow = 1;
+    activeWindow = WINDOW_BOTTOM;
+  }
+  
+  public void reset() {
+    
+    windows[WINDOW_TOP].clear();
+    resizeWindows(0);
+    windows[WINDOW_BOTTOM].clear();
   }
   
   public void setFont(Font font) {
@@ -80,19 +89,65 @@ public class TextViewport extends JViewport implements OutputStream {
     if (initialized) windows[activeWindow].setFont(font);
   }
   
-  public void splitWindow(int linesUpperWindow) {
+  public void eraseWindow(int window) {
     
-    windows[0].resize(linesUpperWindow);
-    int heightWindow0 = windows[0].getHeight();
-    windows[1].setVerticalBounds(heightWindow0 - 1,
-                                 getHeight() - heightWindow0);
-    windows[0].clear();
-    windows[1].clear();
+    if (window == -1) {
+      
+      windows[WINDOW_TOP].setBackground(windows[WINDOW_BOTTOM].getBackground());
+      windows[WINDOW_TOP].clear();
+      windows[WINDOW_BOTTOM].clear();
+      resizeWindows(0);
+      
+    } else if (window == -2) {
+      
+      windows[WINDOW_TOP].clear();
+      windows[WINDOW_BOTTOM].clear();
+      
+    } else {
+      
+      // Note: The specification leaves unclear if the cursor position
+      // should be reset in this case
+      windows[window].clear();
+    }
+  }
+  
+  public void eraseLine(int value) {
+
+    if (value == 1) {
+      
+      windows[activeWindow].eraseLine();
+    }
+  }
+  
+  public void setCursor(int line, int column) {
+   
+    windows[activeWindow].setCursor(line, column);
+  }
+  
+  public void splitWindow(int linesUpperWindow) {
+   
+    // Only works if lower window is selected (S 8.7.2.1)
+    if (activeWindow == WINDOW_BOTTOM) {
+
+      resizeWindows(linesUpperWindow);
+      
+      // S 8.6.1.1.2: Top window is cleared in version 3
+      if (machine.getStoryFileHeader().getVersion() == 3) {
+        
+        windows[WINDOW_TOP].clear();
+      }
+    }
   }
   
   public void setWindow(int window) {
     
     activeWindow = window;
+    
+    // S 8.7.2: If the top window is set active, reset the cursor position
+    if (activeWindow == WINDOW_TOP) {
+
+      windows[activeWindow].resetCursorPosition();
+    }
   }
 
   /**
@@ -115,8 +170,10 @@ public class TextViewport extends JViewport implements OutputStream {
       
     } catch (Exception ex) { ex.printStackTrace(); }
     
-    int fontStyle = Font.PLAIN;    
-    if ((style & TEXTSTYLE_FIXED) > 0) {
+    int fontStyle = Font.PLAIN;
+    
+    // Ensure that the top window is always set in a fixed font
+    if ((style & TEXTSTYLE_FIXED) > 0 || activeWindow == WINDOW_TOP) {
       
       currentFont = fixedFont;
       
@@ -136,7 +193,8 @@ public class TextViewport extends JViewport implements OutputStream {
   
   public void setBufferMode(boolean flag) {
 
-    windows[activeWindow].setBufferMode(flag);
+    // only affects bottom window
+    windows[WINDOW_BOTTOM].setBufferMode(flag);
   }
   
   public void setEditMode(final boolean flag) {
@@ -218,46 +276,59 @@ public class TextViewport extends JViewport implements OutputStream {
           BufferedImage.TYPE_INT_RGB);
       
       // Create the two sub windows
-      windows[0] = new SubWindow(imageBuffer);
-      windows[1] = new SubWindow(imageBuffer);
+      windows[WINDOW_TOP] = new SubWindow(imageBuffer);
+      windows[WINDOW_TOP].setBackground(getBackground());
+      windows[WINDOW_TOP].setForeground(getForeground());
+      // S. 8.7.2.4: use fixed font for upper window
+      windows[WINDOW_TOP].setFont(fixedFont);
+      windows[WINDOW_TOP].setHomeYPosition(HomeYPosition.TOP);
+      // S. 8.7.2.5: top window is unbuffered
+      windows[WINDOW_TOP].setBufferMode(false);
       
-      windows[0].setVerticalBounds(0, 180);
-      windows[0].setBackground(getBackground());
-      windows[0].setForeground(getForeground());
-      windows[0].setFont(fixedFont);
-      windows[0].setHomeYPosition(HomeYPosition.TOP);
-      
-      windows[1].setVerticalBounds(180, getHeight() - 180);
-      windows[1].setBackground(getBackground());
-      windows[1].setForeground(getForeground());
-      windows[1].setFont(standardFont);
-      
-      windows[0].clear();
-      windows[1].clear();
+      windows[WINDOW_BOTTOM] = new SubWindow(imageBuffer);           
+      windows[WINDOW_BOTTOM].setBackground(getBackground());
+      windows[WINDOW_BOTTOM].setForeground(getForeground());
+      windows[WINDOW_BOTTOM].setFont(standardFont);
+      windows[WINDOW_BOTTOM].setHomeYPosition(HomeYPosition.BOTTOM);
+      windows[WINDOW_BOTTOM].setBufferMode(true);
+
+      activeWindow = WINDOW_BOTTOM;
+
+      resizeWindows(6);      
+      windows[WINDOW_TOP].clear();
+      windows[WINDOW_BOTTOM].clear();
 
       setInitialized();
 
       // For debugging only
-      windows[0].setReverseVideo(true);
-      windows[1].setReverseVideo(true);
-      this.setWindow(0);
-      this.setTextStyle(TEXTSTYLE_REVERSE_VIDEO | TEXTSTYLE_FIXED | TEXTSTYLE_BOLD | TEXTSTYLE_ITALIC);
-      windows[0].printString("Xiaoru darling");
-      this.setWindow(1);
-      this.setTextStyle(TEXTSTYLE_ITALIC);
-      windows[1].printString("Xiaoru darling");
-      windows[1].newline();
-      //windows[1].printString("Hallo Xiaoru\nXiaoru");
-      windows[1].newline();
+      windows[WINDOW_TOP].setReverseVideo(true);
+      windows[WINDOW_BOTTOM].setReverseVideo(true);
+      
+      setWindow(WINDOW_TOP);
+      setTextStyle(TEXTSTYLE_REVERSE_VIDEO | TEXTSTYLE_FIXED | TEXTSTYLE_BOLD | TEXTSTYLE_ITALIC);
+      windows[WINDOW_TOP].printString("Xiaoru darling");
+      windows[WINDOW_TOP].setCursor(2, 10);
+      windows[WINDOW_TOP].printString("Xiaoru darling");
+      windows[WINDOW_TOP].setCursor(2, 15);
+      windows[WINDOW_TOP].eraseLine();
+      
+      setWindow(WINDOW_BOTTOM);
+      setTextStyle(TEXTSTYLE_BOLD);
+      windows[WINDOW_BOTTOM].printString("Xiaoru darling");
+      //windows[WINDOW_BOTTOM].newline();
+      //windows[WINDOW_BOTTOM].printString("Hallo Xiaoru\nXiaoru");
+      //windows[WINDOW_BOTTOM].newline();
     }
     g.drawImage(imageBuffer, 0, 0, this);
     
     if (DEBUG) {
+      
+      // Draw separator lines
       g.setColor(Color.BLACK);
-      g.drawLine(0, windows[0].getHeight() - 1, getWidth(),
-                 windows[0].getHeight() - 1);
-      g.drawLine(0, 180 + windows[1].getHeight() - 1, getWidth(),
-          180 + windows[1].getHeight() - 1);
+      g.drawLine(0, windows[WINDOW_TOP].getHeight() - 1, getWidth(),
+                 windows[WINDOW_TOP].getHeight() - 1);
+      g.drawLine(0, 180 + windows[WINDOW_BOTTOM].getHeight() - 1, getWidth(),
+          180 + windows[WINDOW_BOTTOM].getHeight() - 1);
     }
   }
   
@@ -296,6 +367,12 @@ public class TextViewport extends JViewport implements OutputStream {
     });
   }
   
+  public void close() { }
+  
+  // **********************************************************************
+  // ******** Private functions
+  // *************************************************
+
   private void printChar(char c) {
 
     textbuffer.append(c);
@@ -308,14 +385,8 @@ public class TextViewport extends JViewport implements OutputStream {
       
       streambuffer.append(c);
     }
-  }
-    
-  public void close() { }
+  }    
   
-  // **********************************************************************
-  // ******** Private functions
-  // *************************************************
-
   private void backSpace() {
     
     if (charsTyped > 0) {
@@ -345,5 +416,13 @@ public class TextViewport extends JViewport implements OutputStream {
       currentFont = standardFont;
     }
     setFont(currentFont);
+  }  
+
+  private void resizeWindows(int linesUpperWindow) {
+    
+    windows[WINDOW_TOP].resize(linesUpperWindow);
+    int heightWindowTop = windows[WINDOW_TOP].getHeight();
+    windows[WINDOW_BOTTOM].setVerticalBounds(heightWindowTop - 1,
+                                             getHeight() - heightWindowTop);      
   }  
 }

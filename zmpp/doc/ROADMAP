@@ -6,6 +6,8 @@ Version 0.75:
 Reference games: Border Zone, Beyond Zork
 
 - support story file version 5
+- timed input (introduced here, since Border Zone is the first Infocom game
+  using this feature)
 - TODO
 
 Version 0.72:
@@ -21,20 +23,19 @@ Reference games: Seastalker (V3, for screen splitting), A mind forever voyaging,
 - toggable text buffering
 - support screen splitting
 - support paging
-- timed input
 - opcodes:
   - new:                  - changed:                 - illegal:
     1. call_2s              1. save                    show_status
     2. call_1s              2. restore
-    3. call_vs2             3. sread
-    4. erase_window
-    5. erase_line
-    6. set_cursor
-    7. get_cursor
-    8. set_text_style
-    9. buffer_mode
-    10. read_char
-    11. scan_table        
+    3. call_vs2             3. sread (will not modify for timed input)
+    4. set_text_style
+    5. buffer_mode
+    6. erase_window
+    7. erase_line
+    8. set_cursor
+    9. get_cursor
+    10. read_char (no timed input in this version)
+    11. scan_table
     
 Version 0.70
 -------------

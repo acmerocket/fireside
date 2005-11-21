@@ -54,7 +54,13 @@ public class SubWindow {
   private Font font;
   private boolean isReverseVideo;
   private boolean isBuffered;
+  private boolean isPaged;
  
+  /**
+   * Constructor.
+   * 
+   * @param img the buffer image
+   */
   public SubWindow(BufferedImage img) {
     
     this.image = img;
@@ -62,20 +68,52 @@ public class SubWindow {
     yHomePos = HomeYPosition.BOTTOM;
   }
   
+  /**
+   * Sets the home position, which can be either TOP or BOTTOM.
+   * 
+   * @param pos a home position.
+   */
   public void setHomeYPosition(HomeYPosition pos) {
     
     yHomePos = pos;
   }
 
+  /**
+   * Sets the reverse video text mode.
+   * 
+   * @param flag true or false to activate or deactivate reverse video
+   */
   public void setReverseVideo(boolean flag) {
     
     this.isReverseVideo = flag;
   }
   
+  /**
+   * One-based set cursor function. (1, 1) means the left upper corner of
+   * this window.
+   * 
+   * @param line the line
+   * @param column the column
+   */
+  public void setCursor(int line, int column) {
+    
+    Graphics g = getGraphics();
+    FontMetrics fm = g.getFontMetrics();
+    int meanCharWidth = fm.charWidth('G');
+    currentX = OFFSET_X + (column - 1) * meanCharWidth;
+    currentY = top + (line - 1) * fm.getHeight()
+               + (fm.getHeight() - fm.getMaxDescent());
+  }
+  
   public void setBufferMode(boolean flag) {
     
     this.isBuffered = flag;
-  }  
+  }
+  
+  public void setIsPagingEnabled(boolean flag) {
+    
+    this.isPaged = flag;
+  }
   
   public int getHeight() {
     
@@ -110,6 +148,19 @@ public class SubWindow {
     Graphics g_img = getGraphics();
     g_img.setColor(background);
     g_img.fillRect(0, top, image.getWidth(), height);
+    resetCursorPosition();
+  }
+  
+  public void eraseLine() {
+    
+    Graphics g = getGraphics();
+    FontMetrics fm = g.getFontMetrics();
+    g.setColor(background);
+    g.fillRect(currentX, currentY - fm.getMaxAscent(),
+               image.getWidth() - currentX, fm.getHeight());
+  }
+  
+  public void resetCursorPosition() {
     
     setInitialY();
     currentX = OFFSET_X;
@@ -118,6 +169,11 @@ public class SubWindow {
   public void setBackground(Color color) {
     
     background = color;
+  }
+  
+  public Color getBackground() {
+    
+    return background;
   }
   
   public void setForeground(Color color) {
@@ -168,9 +224,9 @@ public class SubWindow {
 
     int width = image.getWidth();
     int lineLength = width - OFFSET_X * 2;
-    //g.setClip(0, top, image.getWidth(), height);
     
     // TODO: Handle the isBuffered flag !!!!
+    // TODO: Handle the isPaged flag !!!!
     WordWrapper wordWrapper = new WordWrapper(lineLength, fm);
     String[] lines = wordWrapper.wrap(currentX, str);
     for (int i = 0; i < lines.length; i++) {
@@ -181,9 +237,9 @@ public class SubWindow {
         currentY -= fm.getHeight();
       }
       
-      //g.setColor(textbackColor);
-      //g.fillRect(currentX, currentY - fm.getHeight() + fm.getMaxDescent(),
-      //           fm.stringWidth(lines[i]), fm.getHeight());
+      g.setColor(textbackColor);
+      g.fillRect(currentX, currentY - fm.getHeight() + fm.getMaxDescent(),
+                 fm.stringWidth(lines[i]), fm.getHeight());
       g.setColor(textColor);
       g.drawString(lines[i], currentX, currentY);
       currentX += fm.stringWidth(lines[i]);
@@ -204,10 +260,11 @@ public class SubWindow {
     FontMetrics fm = getGraphics().getFontMetrics();
     if (yHomePos == HomeYPosition.BOTTOM) {
     
-      currentY = top + height - fm.getMaxDescent();
       // calculate the available lines first
-      //int availableLines = height / fm.getHeight();
-      //currentY = top + fm.getHeight() * availableLines;
+      int availableLines = height / fm.getHeight();
+      currentY = top + (fm.getHeight() * availableLines)
+                 + (fm.getHeight() - fm.getMaxDescent());
+
     } else if (yHomePos == HomeYPosition.TOP) {
       
       currentY = top + (fm.getHeight() - fm.getMaxDescent());
@@ -218,7 +275,6 @@ public class SubWindow {
   public void scrollUp() {
     
     Graphics g = getGraphics();
-    //g.setClip(0, top, image.getWidth(), height);
     FontMetrics fm = g.getFontMetrics();
     g.copyArea(0, top + fm.getHeight(), image.getWidth(),
                height - fm.getHeight(), 0, -fm.getHeight());
