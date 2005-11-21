@@ -30,6 +30,7 @@ import java.awt.image.BufferedImage;
 import javax.swing.JViewport;
 import javax.swing.SwingUtilities;
 
+import org.zmpp.swingui.SubWindow.HomeYPosition;
 import org.zmpp.vm.Machine;
 import org.zmpp.vm.OutputStream;
 import org.zmpp.vmutil.ZsciiEncoding;
@@ -224,6 +225,7 @@ public class TextViewport extends JViewport implements OutputStream {
       windows[0].setBackground(getBackground());
       windows[0].setForeground(getForeground());
       windows[0].setFont(fixedFont);
+      windows[0].setHomeYPosition(HomeYPosition.TOP);
       
       windows[1].setVerticalBounds(180, getHeight() - 180);
       windows[1].setBackground(getBackground());
@@ -231,8 +233,22 @@ public class TextViewport extends JViewport implements OutputStream {
       windows[1].setFont(standardFont);
       
       windows[0].clear();
-      windows[1].clear();      
+      windows[1].clear();
+
       setInitialized();
+
+      // For debugging only
+      windows[0].setReverseVideo(true);
+      windows[1].setReverseVideo(true);
+      this.setWindow(0);
+      this.setTextStyle(TEXTSTYLE_REVERSE_VIDEO | TEXTSTYLE_FIXED | TEXTSTYLE_BOLD | TEXTSTYLE_ITALIC);
+      windows[0].printString("Xiaoru darling");
+      this.setWindow(1);
+      this.setTextStyle(TEXTSTYLE_ITALIC);
+      windows[1].printString("Xiaoru darling");
+      windows[1].newline();
+      //windows[1].printString("Hallo Xiaoru\nXiaoru");
+      windows[1].newline();
     }
     g.drawImage(imageBuffer, 0, 0, this);
     
@@ -240,6 +256,8 @@ public class TextViewport extends JViewport implements OutputStream {
       g.setColor(Color.BLACK);
       g.drawLine(0, windows[0].getHeight() - 1, getWidth(),
                  windows[0].getHeight() - 1);
+      g.drawLine(0, 180 + windows[1].getHeight() - 1, getWidth(),
+          180 + windows[1].getHeight() - 1);
     }
   }
   

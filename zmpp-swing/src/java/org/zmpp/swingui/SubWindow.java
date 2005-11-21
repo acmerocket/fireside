@@ -38,6 +38,10 @@ import java.awt.image.BufferedImage;
 public class SubWindow {
 
   private static final int OFFSET_X = 3;
+  public enum HomeYPosition {
+    
+    TOP, BOTTOM
+  }
   
   private BufferedImage image;
   private int top;
@@ -46,6 +50,7 @@ public class SubWindow {
   private Color background;
   private int currentX;
   private int currentY;
+  private HomeYPosition yHomePos;
   private Font font;
   private boolean isReverseVideo;
   private boolean isBuffered;
@@ -54,6 +59,12 @@ public class SubWindow {
     
     this.image = img;
     isBuffered = true;
+    yHomePos = HomeYPosition.BOTTOM;
+  }
+  
+  public void setHomeYPosition(HomeYPosition pos) {
+    
+    yHomePos = pos;
   }
 
   public void setReverseVideo(boolean flag) {
@@ -100,10 +111,8 @@ public class SubWindow {
     g_img.setColor(background);
     g_img.fillRect(0, top, image.getWidth(), height);
     
-    FontMetrics fm = g_img.getFontMetrics();
-    setInitialY(fm.getHeight());
+    setInitialY();
     currentX = OFFSET_X;
-    
   }
   
   public void setBackground(Color color) {
@@ -148,23 +157,34 @@ public class SubWindow {
     Graphics g = getGraphics();
     FontMetrics fm = g.getFontMetrics();
     
-    // TODO: Handle reverse video !!
-    g.setColor(foreground);
+    // Handle reverse video !!
+    Color textColor = foreground;
+    Color textbackColor = background;
+    if (isReverseVideo) {
+
+      textColor = background;
+      textbackColor = foreground;
+    }
 
     int width = image.getWidth();
     int lineLength = width - OFFSET_X * 2;
-    g.setClip(0, top, image.getWidth(), height);
+    //g.setClip(0, top, image.getWidth(), height);
     
     // TODO: Handle the isBuffered flag !!!!
     WordWrapper wordWrapper = new WordWrapper(lineLength, fm);
     String[] lines = wordWrapper.wrap(currentX, str);
     for (int i = 0; i < lines.length; i++) {
      
-      while (currentY + fm.getHeight() > (top + height)) {
+      while (currentY > (top + height)) {
         
         scrollUp();
         currentY -= fm.getHeight();
       }
+      
+      //g.setColor(textbackColor);
+      //g.fillRect(currentX, currentY - fm.getHeight() + fm.getMaxDescent(),
+      //           fm.stringWidth(lines[i]), fm.getHeight());
+      g.setColor(textColor);
       g.drawString(lines[i], currentX, currentY);
       currentX += fm.stringWidth(lines[i]);
       
@@ -178,38 +198,44 @@ public class SubWindow {
   /**
    * Sets the initial y position in the window. According to the specification
    * this is the last line in the current window.
-   * 
-   * @param fontHeight the current font height
    */
-  private void setInitialY(int fontHeight) {
-   
-    // calculate the available lines first
-    int availableLines = height / fontHeight;
-    currentY = top + fontHeight * availableLines;
-    //System.out.println("height: " + height + " lines: " + availableLines
-    //    + " currentY = " + currentY + " top: " + top);
+  private void setInitialY() {
+  
+    FontMetrics fm = getGraphics().getFontMetrics();
+    if (yHomePos == HomeYPosition.BOTTOM) {
+    
+      currentY = top + height - fm.getMaxDescent();
+      // calculate the available lines first
+      //int availableLines = height / fm.getHeight();
+      //currentY = top + fm.getHeight() * availableLines;
+    } else if (yHomePos == HomeYPosition.TOP) {
+      
+      currentY = top + (fm.getHeight() - fm.getMaxDescent());
+    }
+    
   }
   
   public void scrollUp() {
     
     Graphics g = getGraphics();
-    
-    g.setClip(0, top, image.getWidth(), height);
+    //g.setClip(0, top, image.getWidth(), height);
     FontMetrics fm = g.getFontMetrics();
     g.copyArea(0, top + fm.getHeight(), image.getWidth(),
                height - fm.getHeight(), 0, -fm.getHeight());
+    g.setColor(background);
+    g.fillRect(0, top + height - fm.getHeight(),
+               image.getWidth(), fm.getHeight());
   }
   
   public void newline() {
     
     FontMetrics fm = getGraphics().getFontMetrics();
-    while (currentY + fm.getHeight() > (top + height)) {
+    currentY += fm.getHeight();
+    currentX = OFFSET_X;
+    while (currentY > (top + height)) {
       
       scrollUp();
       currentY -= fm.getHeight();
     }
-    currentY += fm.getHeight();
-    currentX = OFFSET_X;
   }
-
 }
