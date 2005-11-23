@@ -145,5 +145,30 @@ public class DefaultDictionary implements Dictionary {
       zstr = new ZString(memaccess, entryAddress);
       lookupMap.put(zstr.toString(), entryAddress);
     }
-  }  
+  }
+
+  /**
+   * Creates a string presentation of this dictionary.
+   * 
+   * @return the string presentation
+   */
+  public String toString() {
+
+    StringBuilder buffer = new StringBuilder();
+    ZString zstr;
+    int entryAddress;
+    int i = 0;
+    int n = getNumberOfEntries();
+    
+    while (true) {
+      
+      entryAddress = getEntryAddress(i);
+      zstr = new ZString(memaccess, entryAddress);
+      buffer.append(String.format("[%4d] %-9s ", (i + 1), zstr.toString()));
+      i++;
+      if ((i % 4) == 0) buffer.append("\n");
+      if (i == n) break;
+    }
+    return buffer.toString();
+  }
 }

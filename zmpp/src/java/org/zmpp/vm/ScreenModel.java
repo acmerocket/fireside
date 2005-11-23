@@ -104,6 +104,13 @@ public interface ScreenModel {
   void setCursor(int line, int column);
   
   /**
+   * Retrieves the active window's cursor.
+   * 
+   * @return the current window's cursor
+   */
+  TextCursor getTextCursor();
+  
+  /**
    * Returns the transcript output file.
    * 
    * @return the transcript file

@@ -129,7 +129,7 @@ public interface ZObject {
    * Returns the the specified property byte.
    *  
    * @param property the property number
-   * @param bytenum the byte number
+   * @param bytenum the byte number, starting with 0
    * @return the value of the specified property byte
    */
   byte getPropertyByte(int property, int bytenum);
@@ -153,7 +153,7 @@ public interface ZObject {
   
   /**
    * Returns the next property in the list. If property is 0, this
-   * will return the first propery number, if propery is the last
+   * will return the first property number, if property is the last
    * element in the list, it will return 0.
    * 
    * @param property the property number

@@ -47,8 +47,6 @@ public class StoryFileHeaderTest extends MemoryMapSetup {
     assertEquals("871124", fileheader.getSerialNumber());
     assertEquals(0xd870, fileheader.getChecksum());
     assertEquals(0, fileheader.getRevision());
-    assertEquals(0, fileheader.getInterpreter());
-    assertEquals(0, fileheader.getInterpreterVersion());
     assertEquals(0xcbf8, fileheader.getFileLength());
     int abbraddr = fileheader.getAbbreviationsAddress();
     int globaddr = fileheader.getGlobalsAddress();

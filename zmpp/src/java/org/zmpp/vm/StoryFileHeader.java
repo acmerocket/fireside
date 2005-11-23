@@ -133,20 +133,20 @@ public interface StoryFileHeader {
    * @return the checksum
    */
   int getChecksum();
+
+  /**
+   * Sets the interpreter number.
+   * 
+   * @param number the interpreter number
+   */
+  void setInterpreterNumber(int number);
   
   /**
-   * Returns the interpreter number.
+   * Sets the interpreter version.
    * 
-   * @return the interpreter number
+   * @param version the version
    */
-  int getInterpreter();
-  
-  /**
-   * Returns the interpreter version.
-   * 
-   * @return the interpreter version
-   */
-  int getInterpreterVersion();
+  void setInterpreterVersion(int version);
   
   /**
    * Returns the revision number.
@@ -155,8 +155,22 @@ public interface StoryFileHeader {
    */
   int getRevision();
   
+  /**
+   * Sets the screen width in number of characters.
+   * 
+   * @param numChars the number of characters
+   */
+  void setScreenWidth(int numChars);
+  
+  /**
+   * Sets the screen height in number of lines.
+   * 
+   * @param numLines the number of lines
+   */
+  void setScreenHeight(int numLines);
+  
   // ********************************************************************
-  // ****** Flags 1 bits
+  // ****** Flags 1 bits, Version 1-3
   // **********************************
   
   /**
@@ -195,6 +209,38 @@ public interface StoryFileHeader {
    */
   boolean defaultFontIsVariablePitch();
 
+  // ********************************************************************
+  // ****** Flags 1 bits, Version 4-8
+  // **********************************
+
+  /**
+   * Sets the bold face available flag.
+   * 
+   * @param flag true if available, false, else
+   */
+  void setBoldFaceAvailable(boolean flag);
+  
+  /**
+   * Sets the italic available flag.
+   * 
+   * @param flag true if available, false, else
+   */
+  void setItalicAvailable(boolean flag);
+  
+  /**
+   * Sets the fixed available flag.
+   * 
+   * @param flag true if available, false, else
+   */
+  void setFixedFontAvailable(boolean flag);
+  
+  /**
+   * Sets the timed input flag.
+   * 
+   * @param flag true if timed input available, false, otherwise
+   */
+  void setTimedInputAvailable(boolean flag);
+  
   // ********************************************************************
   // ****** Flags 2 bits
   // **********************************

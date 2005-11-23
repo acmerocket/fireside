@@ -24,6 +24,7 @@ package org.zmpp.swingui;
 
 import java.awt.Color;
 import java.awt.Font;
+import java.awt.FontMetrics;
 import java.awt.Graphics;
 import java.awt.image.BufferedImage;
 
@@ -33,6 +34,8 @@ import javax.swing.SwingUtilities;
 import org.zmpp.swingui.SubWindow.HomeYPosition;
 import org.zmpp.vm.Machine;
 import org.zmpp.vm.OutputStream;
+import org.zmpp.vm.StoryFileHeader;
+import org.zmpp.vm.TextCursor;
 import org.zmpp.vmutil.ZsciiEncoding;
 
 public class TextViewport extends JViewport implements OutputStream {
@@ -78,9 +81,17 @@ public class TextViewport extends JViewport implements OutputStream {
   
   public void reset() {
     
-    windows[WINDOW_TOP].clear();
-    resizeWindows(0);
-    windows[WINDOW_BOTTOM].clear();
+    System.out.println("reset()");
+    setScreenProperties();
+    SwingUtilities.invokeLater(new Runnable() {
+      
+      public void run() {
+        windows[WINDOW_TOP].clear();
+        resizeWindows(0);
+        windows[WINDOW_BOTTOM].clear();
+        repaint();
+      }
+    });
   }
   
   public void setFont(Font font) {
@@ -119,34 +130,63 @@ public class TextViewport extends JViewport implements OutputStream {
     }
   }
   
-  public void setCursor(int line, int column) {
-   
-    windows[activeWindow].setCursor(line, column);
+  public TextCursor getTextCursor() {
+  
+    return windows[activeWindow].getCursor();
   }
   
-  public void splitWindow(int linesUpperWindow) {
+  public void setTextCursor(int line, int column) {
    
-    // Only works if lower window is selected (S 8.7.2.1)
-    if (activeWindow == WINDOW_BOTTOM) {
-
-      resizeWindows(linesUpperWindow);
+    windows[activeWindow].getCursor().setPosition(line, column);
+  }
+  
+  public void splitWindow(final int linesUpperWindow) {
+   
+    System.out.println("splitWindow(): " + linesUpperWindow);
+    try {
+    SwingUtilities.invokeAndWait(new Runnable() {
       
-      // S 8.6.1.1.2: Top window is cleared in version 3
-      if (machine.getStoryFileHeader().getVersion() == 3) {
+      public void run() {
+        // Only works if lower window is selected (S 8.7.2.1)
+        if (activeWindow == WINDOW_BOTTOM) {
+
+          resizeWindows(linesUpperWindow);
+      
+          // S 8.6.1.1.2: Top window is cleared in version 3
+          if (machine.getStoryFileHeader().getVersion() == 3) {
         
-        windows[WINDOW_TOP].clear();
+            windows[WINDOW_TOP].clear();
+          }
+        }
+        repaint();
       }
+    });
+    } catch (Exception ex) {
+      
+      ex.printStackTrace();
     }
   }
   
-  public void setWindow(int window) {
+  public void setWindow(final int window) {
     
-    activeWindow = window;
+    System.out.println("setWindow(): " + window);
+    try {
+    SwingUtilities.invokeAndWait(new Runnable() {
+      
+      public void run() {
+        activeWindow = window;
     
-    // S 8.7.2: If the top window is set active, reset the cursor position
-    if (activeWindow == WINDOW_TOP) {
+        // S 8.7.2: If the top window is set active, reset the cursor position
+        if (activeWindow == WINDOW_TOP) {
 
-      windows[activeWindow].resetCursorPosition();
+          windows[activeWindow].getCursor().reset();
+        }
+        repaint();
+      }
+    });
+    } catch (Exception ex) {
+      
+      ex.printStackTrace();
     }
   }
 
@@ -157,9 +197,10 @@ public class TextViewport extends JViewport implements OutputStream {
    */
   public void setTextStyle(int style) {
 
+    System.out.println("setTextStyle()");
     // Flush the output before setting a new style
     try {
-      SwingUtilities.invokeLater(new Runnable() {
+      SwingUtilities.invokeAndWait(new Runnable() {
 
         public void run() {
           
@@ -199,6 +240,7 @@ public class TextViewport extends JViewport implements OutputStream {
   
   public void setEditMode(final boolean flag) {
     
+    //System.out.println("setEditMode()");
     try {
       
       // It is very important that the output is flushed before entering
@@ -234,6 +276,8 @@ public class TextViewport extends JViewport implements OutputStream {
   
   private void flushOutput() {
     
+    System.out.println("flushOutput(), activeWindow: " + activeWindow
+        + " str: [" + streambuffer.toString() + "]");
     windows[activeWindow].printString(streambuffer.toString());
     streambuffer = new StringBuilder();
   }
@@ -294,12 +338,17 @@ public class TextViewport extends JViewport implements OutputStream {
 
       activeWindow = WINDOW_BOTTOM;
 
-      resizeWindows(6);      
-      windows[WINDOW_TOP].clear();
-      windows[WINDOW_BOTTOM].clear();
+      Graphics g_img = imageBuffer.getGraphics();
+      g_img.setColor(getBackground());
+      g_img.fillRect(0, 0, getWidth(), getHeight());
+      resizeWindows(0);
+      windows[WINDOW_TOP].getCursor().reset();
+      windows[WINDOW_BOTTOM].getCursor().reset();
 
+      setScreenProperties();      
       setInitialized();
 
+      /*
       // For debugging only
       windows[WINDOW_TOP].setReverseVideo(true);
       windows[WINDOW_BOTTOM].setReverseVideo(true);
@@ -307,9 +356,9 @@ public class TextViewport extends JViewport implements OutputStream {
       setWindow(WINDOW_TOP);
       setTextStyle(TEXTSTYLE_REVERSE_VIDEO | TEXTSTYLE_FIXED | TEXTSTYLE_BOLD | TEXTSTYLE_ITALIC);
       windows[WINDOW_TOP].printString("Xiaoru darling");
-      windows[WINDOW_TOP].setCursor(2, 10);
+      windows[WINDOW_TOP].getCursor().setPosition(2, 10);
       windows[WINDOW_TOP].printString("Xiaoru darling");
-      windows[WINDOW_TOP].setCursor(2, 15);
+      windows[WINDOW_TOP].getCursor().setPosition(2, 15);
       windows[WINDOW_TOP].eraseLine();
       
       setWindow(WINDOW_BOTTOM);
@@ -318,7 +367,10 @@ public class TextViewport extends JViewport implements OutputStream {
       //windows[WINDOW_BOTTOM].newline();
       //windows[WINDOW_BOTTOM].printString("Hallo Xiaoru\nXiaoru");
       //windows[WINDOW_BOTTOM].newline();
+       *
+       */
     }
+
     g.drawImage(imageBuffer, 0, 0, this);
     
     if (DEBUG) {
@@ -383,6 +435,7 @@ public class TextViewport extends JViewport implements OutputStream {
       
     } else {
       
+      //System.out.println("printChar: '" + c + "'");
       streambuffer.append(c);
     }
   }    
@@ -393,7 +446,7 @@ public class TextViewport extends JViewport implements OutputStream {
       
       int lastIndex = textbuffer.length() - 1;
       char lastChar = textbuffer.charAt(lastIndex);
-      windows[activeWindow].backSpace(lastChar);
+      windows[activeWindow].getCursor().backspace(lastChar);
       textbuffer.deleteCharAt(lastIndex);
       charsTyped--;
     }
@@ -402,7 +455,7 @@ public class TextViewport extends JViewport implements OutputStream {
   private void drawCaret(boolean showCaret) {
     
     determineFont();
-    windows[activeWindow].drawCaret(showCaret);
+    windows[activeWindow].getCursor().draw(showCaret);
   }
   
   private void determineFont() {
@@ -425,4 +478,32 @@ public class TextViewport extends JViewport implements OutputStream {
     windows[WINDOW_BOTTOM].setVerticalBounds(heightWindowTop - 1,
                                              getHeight() - heightWindowTop);      
   }  
+
+  private void setScreenProperties() {
+    
+    StoryFileHeader fileheader = machine.getStoryFileHeader();
+    if (fileheader.getVersion() <= 3) {
+      
+      fileheader.setDefaultFontIsVariablePitch(true);    
+      fileheader.setStatusLineAvailable(true);
+      fileheader.setScreenSplittingAvailable(true);
+      
+    } else if (fileheader.getVersion() >= 4) {
+      
+      fileheader.setBoldFaceAvailable(true);
+      fileheader.setFixedFontAvailable(true);
+      fileheader.setItalicAvailable(true);
+      
+      FontMetrics fm = imageBuffer.getGraphics().getFontMetrics(fixedFont);
+      int screenWidth = (imageBuffer.getWidth() - 2 * SubWindow.OFFSET_X) /
+                        fm.charWidth('G');
+      int screenHeight = imageBuffer.getHeight() / fm.getHeight();
+      fileheader.setScreenWidth(screenWidth);
+      fileheader.setScreenHeight(screenHeight);      
+      
+      // Is not really a screen property, put it into machine later
+      fileheader.setTimedInputAvailable(false);
+    }
+  }
+  
 }

@@ -28,6 +28,8 @@ import java.awt.FontMetrics;
 import java.awt.Graphics;
 import java.awt.image.BufferedImage;
 
+import org.zmpp.vm.TextCursor;
+
 
 /**
  * The class SubWindow manages a sub window within the screen model.
@@ -37,10 +39,93 @@ import java.awt.image.BufferedImage;
  */
 public class SubWindow {
 
-  private static final int OFFSET_X = 3;
+  public static final int OFFSET_X = 3;
   public enum HomeYPosition {
     
     TOP, BOTTOM
+  }
+  
+  public class TextCursorImpl implements TextCursor {
+    
+    private int currentX;
+    private int currentY;
+    private int line;
+    private int column;
+    
+    public int getLine() { return line; }    
+    public int getColumn() { return column; }
+    public void setPosition(int line, int column) {
+      
+      System.out.println("setPosition(), line: " + line + " column: " + column);
+      FontMetrics fm = getGraphics().getFontMetrics();
+      int meanCharWidth = fm.charWidth('G');      
+      this.line = line;
+      this.column = column;
+      currentX = OFFSET_X + (column - 1) * meanCharWidth;
+      currentY = top + (line - 1) * fm.getHeight()
+                 + (fm.getHeight() - fm.getMaxDescent());
+    }
+    
+    public void backspace(char c) {
+    
+      Graphics g = getGraphics();
+      FontMetrics fm = g.getFontMetrics();
+      int charWidth = fm.charWidth(c);
+      cursor.column--;
+      cursor.currentX -= charWidth;
+      
+      // Clears the text under the cursor
+      g.setColor(background);      
+      g.fillRect(currentX, currentY - fm.getMaxAscent(),
+                 charWidth, fm.getHeight());
+    }
+
+    public void advanceColumnPos(String text) {
+      
+      FontMetrics fm = getGraphics().getFontMetrics();
+      currentX += fm.stringWidth(text);
+      column += text.length();
+    }
+        
+    public void newline() {
+      
+      FontMetrics fm = getGraphics().getFontMetrics();
+      line++;
+      column = 1;
+      currentX = OFFSET_X;
+      currentY += fm.getHeight();
+    }
+
+    public void decrementLinePos(int num) {
+      
+      FontMetrics fm = getGraphics().getFontMetrics();
+      cursor.currentY -= (fm.getHeight() * num);
+      cursor.line -= num;
+    }
+    
+    public void reset() {
+
+      FontMetrics fm = getGraphics().getFontMetrics();
+      if (yHomePos == HomeYPosition.BOTTOM) {
+
+        int availableLines = height / fm.getHeight();
+        setPosition(availableLines, 1);
+
+      } else if (yHomePos == HomeYPosition.TOP) {
+
+        setPosition(1, 1);
+      }
+    }
+    
+    public void draw(boolean flag) {
+      
+      Graphics g = getGraphics();
+      FontMetrics fm = g.getFontMetrics();
+      g.setColor(flag ? foreground : background);
+      int charWidth = fm.charWidth('B');
+      g.fillRect(currentX, currentY - fm.getMaxAscent(),
+                 charWidth, fm.getHeight());
+    }
   }
   
   private BufferedImage image;
@@ -48,8 +133,9 @@ public class SubWindow {
   private int height;
   private Color foreground;
   private Color background;
-  private int currentX;
-  private int currentY;
+
+  private TextCursorImpl cursor;
+  
   private HomeYPosition yHomePos;
   private Font font;
   private boolean isReverseVideo;
@@ -65,6 +151,7 @@ public class SubWindow {
     
     this.image = img;
     isBuffered = true;
+    this.cursor = new TextCursorImpl();
     yHomePos = HomeYPosition.BOTTOM;
   }
   
@@ -85,24 +172,18 @@ public class SubWindow {
    */
   public void setReverseVideo(boolean flag) {
     
+    System.out.println("setReverseVideo() : " + flag);
     this.isReverseVideo = flag;
   }
-  
+
   /**
-   * One-based set cursor function. (1, 1) means the left upper corner of
-   * this window.
+   * Access to this window's cursor.
    * 
-   * @param line the line
-   * @param column the column
+   * @return the cursor
    */
-  public void setCursor(int line, int column) {
-    
-    Graphics g = getGraphics();
-    FontMetrics fm = g.getFontMetrics();
-    int meanCharWidth = fm.charWidth('G');
-    currentX = OFFSET_X + (column - 1) * meanCharWidth;
-    currentY = top + (line - 1) * fm.getHeight()
-               + (fm.getHeight() - fm.getMaxDescent());
+  public TextCursorImpl getCursor() {
+   
+    return cursor;
   }
   
   public void setBufferMode(boolean flag) {
@@ -128,6 +209,7 @@ public class SubWindow {
   
   public void resize(int numLines) {
     
+    //System.out.println("resize()");
     this.height = getGraphics().getFontMetrics().getHeight() * numLines;
   }
   
@@ -148,26 +230,23 @@ public class SubWindow {
     Graphics g_img = getGraphics();
     g_img.setColor(background);
     g_img.fillRect(0, top, image.getWidth(), height);
-    resetCursorPosition();
+    cursor.reset();
   }
   
   public void eraseLine() {
     
+    //System.out.println("eraseLine()");
     Graphics g = getGraphics();
     FontMetrics fm = g.getFontMetrics();
     g.setColor(background);
-    g.fillRect(currentX, currentY - fm.getMaxAscent(),
-               image.getWidth() - currentX, fm.getHeight());
-  }
-  
-  public void resetCursorPosition() {
-    
-    setInitialY();
-    currentX = OFFSET_X;
+    g.fillRect(cursor.currentX,
+               cursor.currentY - fm.getMaxAscent(),
+               image.getWidth() - cursor.currentX, fm.getHeight());
   }
   
   public void setBackground(Color color) {
     
+    //System.out.println("background: " + color);
     background = color;
   }
   
@@ -178,29 +257,8 @@ public class SubWindow {
   
   public void setForeground(Color color) {
     
+    //System.out.println("foreground: " + color);
     foreground = color;
-  }
-  
-  public void drawCaret(boolean showCaret) {
-    
-    Graphics g = getGraphics();
-    FontMetrics fm = g.getFontMetrics();
-    g.setColor(showCaret ? foreground : background);
-    int charWidth = fm.charWidth('B');
-    g.fillRect(currentX, currentY - fm.getMaxAscent(), charWidth,
-               fm.getHeight());
-  }
-  
-  public void backSpace(char lastChar) {
-    
-    Graphics g = getGraphics();
-    FontMetrics fm = g.getFontMetrics();
-    
-    int charWidth = fm.charWidth(lastChar);
-    g.setColor(background);
-    currentX -= charWidth;
-    g.fillRect(currentX, currentY - fm.getMaxAscent(), charWidth,
-               fm.getHeight());
   }
   
   /**
@@ -210,6 +268,7 @@ public class SubWindow {
    */
   public void printString(String str) {
     
+    //System.out.println("printString(): [" + str + "]");
     Graphics g = getGraphics();
     FontMetrics fm = g.getFontMetrics();
     
@@ -228,21 +287,23 @@ public class SubWindow {
     // TODO: Handle the isBuffered flag !!!!
     // TODO: Handle the isPaged flag !!!!
     WordWrapper wordWrapper = new WordWrapper(lineLength, fm);
-    String[] lines = wordWrapper.wrap(currentX, str);
+    String[] lines = wordWrapper.wrap(cursor.currentX, str);
     for (int i = 0; i < lines.length; i++) {
      
-      while (currentY > (top + height)) {
+      while (cursor.currentY > (top + height)) {
         
         scrollUp();
-        currentY -= fm.getHeight();
+        cursor.decrementLinePos(1);
       }
       
+      //System.out.println("textbackColor: " + textbackColor + " textColor: " + textColor);
       g.setColor(textbackColor);
-      g.fillRect(currentX, currentY - fm.getHeight() + fm.getMaxDescent(),
+      g.fillRect(cursor.currentX,
+                 cursor.currentY - fm.getHeight() + fm.getMaxDescent(),
                  fm.stringWidth(lines[i]), fm.getHeight());
       g.setColor(textColor);
-      g.drawString(lines[i], currentX, currentY);
-      currentX += fm.stringWidth(lines[i]);
+      g.drawString(lines[i], cursor.currentX, cursor.currentY);
+      cursor.advanceColumnPos(lines[i]);
       
       if (i < lines.length - 1) {
         
@@ -251,29 +312,9 @@ public class SubWindow {
     }
   }
   
-  /**
-   * Sets the initial y position in the window. According to the specification
-   * this is the last line in the current window.
-   */
-  private void setInitialY() {
-  
-    FontMetrics fm = getGraphics().getFontMetrics();
-    if (yHomePos == HomeYPosition.BOTTOM) {
-    
-      // calculate the available lines first
-      int availableLines = height / fm.getHeight();
-      currentY = top + (fm.getHeight() * availableLines)
-                 + (fm.getHeight() - fm.getMaxDescent());
-
-    } else if (yHomePos == HomeYPosition.TOP) {
-      
-      currentY = top + (fm.getHeight() - fm.getMaxDescent());
-    }
-    
-  }
-  
   public void scrollUp() {
     
+    System.out.println("scrollUp()");
     Graphics g = getGraphics();
     FontMetrics fm = g.getFontMetrics();
     g.copyArea(0, top + fm.getHeight(), image.getWidth(),
@@ -285,13 +326,13 @@ public class SubWindow {
   
   public void newline() {
     
-    FontMetrics fm = getGraphics().getFontMetrics();
-    currentY += fm.getHeight();
-    currentX = OFFSET_X;
-    while (currentY > (top + height)) {
+    //System.out.println("newline()");
+    cursor.newline();
+    
+    while (cursor.currentY > (top + height)) {
       
       scrollUp();
-      currentY -= fm.getHeight();
+      cursor.decrementLinePos(1);
     }
   }
 }

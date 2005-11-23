@@ -28,11 +28,14 @@ import jozart.swingutils.SwingWorker;
 
 import org.zmpp.vm.Instruction;
 import org.zmpp.vm.Machine;
+import org.zmpp.vm.ObjectTree;
+import org.zmpp.vm.ZObject;
 
 public class GameThread extends SwingWorker<Boolean> {
 
   private TextViewport viewport;
   private Machine machine;
+  private static final boolean DEBUG = true;
   
   public GameThread(Machine machine, TextViewport viewport) {
     
@@ -60,6 +63,19 @@ public class GameThread extends SwingWorker<Boolean> {
       });
     } catch (Exception ex) { }
     
+    if (DEBUG) {
+      
+      System.out.println("Object tree:\n");
+      ObjectTree objTree = machine.getObjectTree();
+      int numObjects = objTree.getNumObjects();
+      for (int i = 1; i <= numObjects; i++) {
+      
+        ZObject obj = objTree.getObject(i);
+        System.out.println(i + ": " + obj.toString());      
+      }
+      
+      System.out.println("Dictionary:\n" + machine.getDictionary().toString());
+    }
     while (machine.isRunning()) {
       
       Instruction instr = machine.nextStep();

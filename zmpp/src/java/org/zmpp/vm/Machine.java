@@ -238,6 +238,13 @@ public interface Machine {
   void readLine(int address, int bufferlen);
   
   /**
+   * Reads a ZSCII char from the selected input stream.
+   * 
+   * @return the selected ZSCII char
+   */
+  short readChar();
+  
+  /**
    * Prints the ZSCII string at the specified address to the active
    * output streams.
    * 
