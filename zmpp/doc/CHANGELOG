@@ -18,11 +18,13 @@ Version 0.72 preview
 - instruction decoder extended to allow for up to 8 parameters (evaluate the
   second optype byte)
 - call_2s, call_1s, call_vs2, set_text_style, buffer_mode, erase_window,
-  erase_line, set_cursor implemented
+  erase_line, set_cursor, get_cursor, read_char, scan_table implemented
 - screen splitting implemented using a sub window model
 - window erase implemented
 - line erase implemented
 - set cursor implemented
+- reading single character implemented
+- different interpretation of the story file header
 
 Version 0.7 Release (2005-11-16)
 --------------------------------

@@ -1,15 +1,51 @@
 Roadmap:
 
+Version 0.76:
+-------------
+
+Reference games: Border Zone
+
+- timed input (introduced here, since Border Zone is the first Infocom game
+  using this feature)
+- extended opcodes:
+  1. print_unicode
+  2. check_unicode
+
+
 Version 0.75:
 -------------
 
-Reference games: Border Zone, Beyond Zork
+Reference games: Beyond Zork
 
 - support story file version 5
-- timed input (introduced here, since Border Zone is the first Infocom game
-  using this feature)
-- TODO
-
+- output to table
+- opcodes:
+  - new:               - changed:                - illegal
+    1. call_2n           1. outputstream (table    1. save (0OP)
+    2. set_colour                                  2. restore (0OP)
+    3. throw
+    4. call_1n (was not)
+    5. catch
+    6. "extended"
+    7. piracy
+    8. aread
+    9. not (VAR)
+    10.call_vn
+    11.call_vn2
+    12.tokenise
+    13.encode_text
+    14.copy_table
+    15.print_table
+    16.check_arg_count
+- extended opcodes:
+  1. save
+  2. restore
+  3. log_shift
+  4. art_shift
+  5. set_font
+  6. save_undo
+  7. restore_undo
+ 
 Version 0.72:
 -------------
 
