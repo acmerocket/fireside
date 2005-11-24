@@ -213,7 +213,6 @@ public class TextViewport extends JViewport implements OutputStream {
 
         public void run() {
           
-          determineFont();
           flushOutput();
         }
       });
@@ -261,8 +260,6 @@ public class TextViewport extends JViewport implements OutputStream {
       SwingUtilities.invokeLater(new Runnable() {
         
         public void run() {
-
-          determineFont();
         
           // Flush the output stream
           if (flag) flushOutput();
@@ -414,7 +411,6 @@ public class TextViewport extends JViewport implements OutputStream {
       
       public void run() {
 
-        determineFont();
         if (isEditMode()) drawCaret(false);
         
         if (zsciiChar == ZsciiEncoding.NEWLINE) {
@@ -478,21 +474,17 @@ public class TextViewport extends JViewport implements OutputStream {
     
   private void drawCaret(boolean showCaret) {
     
-    determineFont();
     windows[activeWindow].getCursor().draw(showCaret);
   }
   
-  private void determineFont() {
+  private void determineStandardFont() {
     
+    // Sets the fixed font as the standard
     if (machine.getStoryFileHeader().forceFixedFont()) {
       
-      currentFont = fixedFont;
+      currentFont = standardFont = fixedFont;
       
-    } else {
-      
-      currentFont = standardFont;
     }
-    setFont(currentFont);
   }  
 
   private void resizeWindows(int linesUpperWindow) {
@@ -528,6 +520,7 @@ public class TextViewport extends JViewport implements OutputStream {
       // Is not really a screen property, put it into machine later
       fileheader.setTimedInputAvailable(false);
     }
+    determineStandardFont();
   }
   
 }
