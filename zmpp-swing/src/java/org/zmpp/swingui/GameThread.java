@@ -63,6 +63,7 @@ public class GameThread extends SwingWorker<Boolean> {
       });
     } catch (Exception ex) { }
     
+    /*
     if (DEBUG) {
       
       System.out.println("Object tree:\n");
@@ -75,10 +76,13 @@ public class GameThread extends SwingWorker<Boolean> {
       }
       
       System.out.println("Dictionary:\n" + machine.getDictionary().toString());
-    }
+    }*/
+    
     while (machine.isRunning()) {
       
       Instruction instr = machine.nextStep();
+      System.out.println(String.format("%04x: %s", machine.getProgramCounter(),
+          instr.toString()));
       instr.execute();
     }
     return Boolean.TRUE;

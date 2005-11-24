@@ -59,6 +59,8 @@ Reference games: Seastalker (V3, for screen splitting), A mind forever voyaging,
 - toggable text buffering
 - support screen splitting
 - support paging
+- need to support stream 3 (this was discovered during testing of "A mind
+  forever voyaging")
 - opcodes:
   - new:                  - changed:                 - illegal:
     1. call_2s              1. save                    show_status

@@ -73,6 +73,8 @@ public class TextViewport extends JViewport implements OutputStream {
     fixedFont = new Font("Courier New", Font.PLAIN, standardFont.getSize());
     currentFont = standardFont;
     
+    System.out.println("fixed font: " + fixedFont);
+    System.out.println("standard font: " + standardFont);
     streambuffer = new StringBuilder();
     textbuffer = new StringBuilder();
     windows = new SubWindow[2];
@@ -96,12 +98,14 @@ public class TextViewport extends JViewport implements OutputStream {
   
   public void setFont(Font font) {
     
+    System.out.println("setFont(), activewindow: " + activeWindow + " font: " + font);    
     super.setFont(font);
     if (initialized) windows[activeWindow].setFont(font);
   }
   
   public void eraseWindow(int window) {
     
+    System.out.println("eraseWindow(): " + window);    
     if (window == -1) {
       
       windows[WINDOW_TOP].setBackground(windows[WINDOW_BOTTOM].getBackground());
@@ -124,6 +128,7 @@ public class TextViewport extends JViewport implements OutputStream {
   
   public void eraseLine(int value) {
 
+    System.out.println("eraseLine(), value: " + value + " active: " + activeWindow);
     if (value == 1) {
       
       windows[activeWindow].eraseLine();
@@ -131,12 +136,14 @@ public class TextViewport extends JViewport implements OutputStream {
   }
   
   public TextCursor getTextCursor() {
-  
+
+    System.out.println("getTextCursor(), active: " + activeWindow);
     return windows[activeWindow].getCursor();
   }
   
   public void setTextCursor(int line, int column) {
    
+    System.out.println("getTextCursor(), active: " + activeWindow + " line: " + line + " column: " + column);
     windows[activeWindow].getCursor().setPosition(line, column);
   }
   
@@ -144,50 +151,52 @@ public class TextViewport extends JViewport implements OutputStream {
    
     System.out.println("splitWindow(): " + linesUpperWindow);
     try {
-    SwingUtilities.invokeAndWait(new Runnable() {
-      
-      public void run() {
-        // Only works if lower window is selected (S 8.7.2.1)
-        if (activeWindow == WINDOW_BOTTOM) {
-
-          resizeWindows(linesUpperWindow);
-      
-          // S 8.6.1.1.2: Top window is cleared in version 3
-          if (machine.getStoryFileHeader().getVersion() == 3) {
+      SwingUtilities.invokeAndWait(new Runnable() {
         
-            windows[WINDOW_TOP].clear();
+        public void run() {
+          // Only works if lower window is selected (S 8.7.2.1)
+          if (activeWindow == WINDOW_BOTTOM) {
+            
+            resizeWindows(linesUpperWindow);
+            
+            // S 8.6.1.1.2: Top window is cleared in version 3
+            if (machine.getStoryFileHeader().getVersion() == 3) {
+              
+              windows[WINDOW_TOP].clear();
+            }
           }
+          repaint();
         }
-        repaint();
-      }
-    });
+      });
     } catch (Exception ex) {
       
       ex.printStackTrace();
     }
+    System.out.println("splitWindow(): done");
   }
   
   public void setWindow(final int window) {
     
     System.out.println("setWindow(): " + window);
     try {
-    SwingUtilities.invokeAndWait(new Runnable() {
-      
-      public void run() {
-        activeWindow = window;
-    
-        // S 8.7.2: If the top window is set active, reset the cursor position
-        if (activeWindow == WINDOW_TOP) {
-
-          windows[activeWindow].getCursor().reset();
+      SwingUtilities.invokeAndWait(new Runnable() {
+        
+        public void run() {
+          activeWindow = window;
+          
+          // S 8.7.2: If the top window is set active, reset the cursor position
+          if (activeWindow == WINDOW_TOP) {
+            
+            windows[activeWindow].getCursor().reset();
+          }
+          repaint();
         }
-        repaint();
-      }
-    });
+      });
     } catch (Exception ex) {
       
       ex.printStackTrace();
     }
+    System.out.println("setWindow() done");
   }
 
   /**
@@ -197,7 +206,7 @@ public class TextViewport extends JViewport implements OutputStream {
    */
   public void setTextStyle(int style) {
 
-    System.out.println("setTextStyle()");
+    System.out.println("setTextStyle() style: " + style + " active: " + activeWindow);
     // Flush the output before setting a new style
     try {
       SwingUtilities.invokeAndWait(new Runnable() {
@@ -230,6 +239,8 @@ public class TextViewport extends JViewport implements OutputStream {
     fontStyle |= ((style & TEXTSTYLE_ITALIC) > 0) ? Font.ITALIC : 0;
     currentFont = currentFont.deriveFont(fontStyle);
     setFont(currentFont);
+    
+    System.out.println("setTextStyle() done");
   }
   
   public void setBufferMode(boolean flag) {
@@ -240,7 +251,7 @@ public class TextViewport extends JViewport implements OutputStream {
   
   public void setEditMode(final boolean flag) {
     
-    //System.out.println("setEditMode()");
+    System.out.println("TextViewport.setEditMode(): " + flag);
     try {
       
       // It is very important that the output is flushed before entering
@@ -272,6 +283,24 @@ public class TextViewport extends JViewport implements OutputStream {
       
       ex.printStackTrace();
     }
+    System.out.println("TextViewport.setEditMode(): done");
+  }
+  
+  public void flush() {
+    
+    try {
+      
+      SwingUtilities.invokeAndWait(new Runnable() {
+      
+        public void run() {
+      
+          flushOutput();
+        }
+      });
+    } catch (Exception ex) {
+        
+      ex.printStackTrace();
+    }
   }
   
   private void flushOutput() {
@@ -286,12 +315,6 @@ public class TextViewport extends JViewport implements OutputStream {
     
     return editMode;
   }
-  
-  public void clear() {
-    
-    determineFont();
-    windows[activeWindow].clear();
-  }  
   
   public synchronized boolean isInitialized() {
     
@@ -385,7 +408,8 @@ public class TextViewport extends JViewport implements OutputStream {
   }
   
   public void print(final short zsciiChar) {
-        
+
+    System.out.println("print() char: " + zsciiChar + " activeWindow: " + activeWindow);
     SwingUtilities.invokeLater(new Runnable() {
       
       public void run() {
@@ -429,7 +453,7 @@ public class TextViewport extends JViewport implements OutputStream {
 
     textbuffer.append(c);
     
-    if (isEditMode()) {
+    if (isEditMode() || activeWindow == WINDOW_TOP) {
       
       windows[activeWindow].printString(String.valueOf(c));
       

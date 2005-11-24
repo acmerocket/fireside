@@ -39,7 +39,7 @@ import org.zmpp.vm.TextCursor;
  */
 public class SubWindow {
 
-  public static final int OFFSET_X = 3;
+  public static final int OFFSET_X = 0;
   public enum HomeYPosition {
     
     TOP, BOTTOM
