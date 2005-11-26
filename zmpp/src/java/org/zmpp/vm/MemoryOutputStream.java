@@ -25,6 +25,8 @@ package org.zmpp.vm;
 import java.util.ArrayList;
 import java.util.List;
 
+import org.zmpp.base.MemoryAccess;
+
 /**
  * This class implements output stream 3. This stream writes to dynamic
  * memory. The stream contains a table address stack in order to
@@ -36,20 +38,52 @@ import java.util.List;
 public class MemoryOutputStream implements OutputStream {
 
   /**
-   * Support nested
+   * Maximum nesting depth for this stream.
    */
-  private List<Integer> tableStack;
-    
-  public MemoryOutputStream() {
+  private static final int MAX_NESTING_DEPTH = 16;
   
-    tableStack = new ArrayList<Integer>();
+  class TablePosition {
+    
+    int tableAddress;
+    int bytesWritten;
+    
+    TablePosition(int tableAddress) {
+      
+      this.tableAddress = tableAddress;
+    }
+  }
+  
+  /**
+   * The memory access object.
+   */
+  private MemoryAccess memaccess;
+  
+  /**
+   * The machine object.
+   */
+  private Machine machine;
+  
+  /**
+   * Support nested selections.
+   */
+  private List<TablePosition> tableStack;
+    
+  public MemoryOutputStream(Machine machine) {
+  
+    tableStack = new ArrayList<TablePosition>();
+    this.memaccess = machine.getMemoryAccess();
+    this.machine = machine;
   }
   
   /**
    * {@inheritDoc}
    */
-  public void print(short zchar) {
+  public void print(short zsciiChar) {
 
+    TablePosition tablePos = tableStack.get(tableStack.size() - 1);
+    int position = tablePos.tableAddress + 2 + tablePos.bytesWritten;
+    memaccess.writeUnsignedByte(position, zsciiChar);
+    tablePos.bytesWritten++;
   }
 
   /**
@@ -62,24 +96,39 @@ public class MemoryOutputStream implements OutputStream {
   /**
    * {@inheritDoc}
    */
-  public void setEnabled(boolean flag) {
+  public void select(boolean flag) {
     
-    if (!flag) {
+    if (!flag && tableStack.size() > 0) {
       
-      // TODO: Do what needs to be done before popping the last element off
-      tableStack.remove(tableStack.size() - 1);
+      // Write the total number of written bytes to the first word
+      // of the table
+      TablePosition tablePos = tableStack.remove(tableStack.size() - 1);
+      memaccess.writeUnsignedShort(tablePos.tableAddress,
+                                   tablePos.bytesWritten);
     }
   }
   
+  /**
+   * Selects this memory stream.
+   * 
+   * @param tableAddress the table address
+   */
   public void select(int tableAddress) {
 
-    tableStack.add(tableAddress);
+    if (tableStack.size() < MAX_NESTING_DEPTH) {
+      
+      tableStack.add(new TablePosition(tableAddress));
+      
+    } else {
+      
+      machine.halt("maximum nesting depth (16) for stream 3 exceeded");
+    }
   }
 
   /**
    * {@inheritDoc}
    */
-  public boolean isEnabled() {
+  public boolean isSelected() {
 
     return !tableStack.isEmpty();
   }
