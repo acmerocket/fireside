@@ -314,7 +314,7 @@ public class SubWindow {
   
   public void scrollUp() {
     
-    System.out.println("scrollUp()");
+    //System.out.println("scrollUp()");
     Graphics g = getGraphics();
     FontMetrics fm = g.getFontMetrics();
     g.copyArea(0, top + fm.getHeight(), image.getWidth(),

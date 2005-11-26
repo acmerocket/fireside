@@ -83,7 +83,7 @@ public class Main {
       FileOutputStream transcriptStream = new FileOutputStream(screen);
       machine.setOutputStream(2, transcriptStream);
       machine.selectOutputStream(2, false);
-      machine.setOutputStream(3, new MemoryOutputStream());
+      machine.setOutputStream(3, new MemoryOutputStream(machine));
       machine.selectOutputStream(3, false);
       
       machine.setStatusLine(screen);

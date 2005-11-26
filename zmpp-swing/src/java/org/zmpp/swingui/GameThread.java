@@ -33,7 +33,6 @@ public class GameThread extends SwingWorker<Boolean> {
 
   private TextViewport viewport;
   private Machine machine;
-  private static final boolean DEBUG = true;
   
   public GameThread(Machine machine, TextViewport viewport) {
     

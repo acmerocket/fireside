@@ -61,6 +61,7 @@ ScreenModel {
   private StringBuilder textbuffer;
   private Machine machine;
   
+  private boolean isSelected;
   private boolean editMode;
   private int charsTyped;
   private SubWindow[] windows;
@@ -215,6 +216,9 @@ ScreenModel {
         
         public void run() {
           
+          // Flush out the current active window
+          flushOutput();
+          
           activeWindow = window;
           
           // S 8.7.2: If the top window is set active, reset the cursor position
@@ -229,7 +233,6 @@ ScreenModel {
       
       ex.printStackTrace();
     }
-    System.out.println("setWindow() done");
   }
 
   /**
@@ -338,8 +341,8 @@ ScreenModel {
   
   private void flushOutput() {
     
-    System.out.println("flushOutput(), activeWindow: " + activeWindow
-        + " str: [" + streambuffer.toString() + "]");
+    //System.out.println("flushOutput(), activeWindow: " + activeWindow
+    //    + " str: [" + streambuffer.toString() + "]");
     windows[activeWindow].printString(streambuffer.toString());
     streambuffer = new StringBuilder();
   }
@@ -440,9 +443,19 @@ ScreenModel {
     }
   }
   
+  public boolean isSelected() {
+    
+    return isSelected;
+  }
+  
+  public void select(boolean flag) {
+  
+    isSelected = flag;
+  }
+  
   public void print(final short zsciiChar) {
 
-    System.out.println("print() char: " + zsciiChar + " activeWindow: " + activeWindow);
+    //System.out.println("print() char: " + zsciiChar + " activeWindow: " + activeWindow);
     try {
       SwingUtilities.invokeAndWait(new Runnable() {
       
