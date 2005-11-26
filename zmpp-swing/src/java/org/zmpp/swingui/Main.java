@@ -33,6 +33,7 @@ import org.zmpp.vm.FileOutputStream;
 import org.zmpp.vm.Machine;
 import org.zmpp.vm.Machine3;
 import org.zmpp.vm.MachineConfig;
+import org.zmpp.vm.MemoryOutputStream;
 import org.zmpp.vm.StoryFileHeader;
 
 
@@ -78,13 +79,15 @@ public class Main {
       
       // Output streams
       machine.setOutputStream(1, screen.getOutputStream());
-      machine.enableOutputStream(1, true);
-      FileOutputStream transcriptStream = new FileOutputStream(machine);
+      machine.selectOutputStream(1, true);
+      FileOutputStream transcriptStream = new FileOutputStream(screen);
       machine.setOutputStream(2, transcriptStream);
-      machine.enableOutputStream(2, false);
+      machine.selectOutputStream(2, false);
+      machine.setOutputStream(3, new MemoryOutputStream());
+      machine.selectOutputStream(3, false);
       
       machine.setStatusLine(screen);
-      machine.setScreen(screen);
+      machine.setScreen(screen.getScreenModel());
       machine.setSaveGameDataStore(screen);
       //machine.getStoryFileHeader().setForceFixedFont(true);
           

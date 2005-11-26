@@ -28,8 +28,6 @@ import jozart.swingutils.SwingWorker;
 
 import org.zmpp.vm.Instruction;
 import org.zmpp.vm.Machine;
-import org.zmpp.vm.ObjectTree;
-import org.zmpp.vm.ZObject;
 
 public class GameThread extends SwingWorker<Boolean> {
 
@@ -81,8 +79,8 @@ public class GameThread extends SwingWorker<Boolean> {
     while (machine.isRunning()) {
       
       Instruction instr = machine.nextStep();
-      System.out.println(String.format("%04x: %s", machine.getProgramCounter(),
-          instr.toString()));
+      //System.out.println(String.format("%05x: %s", machine.getProgramCounter(),
+      //    instr.toString()));
       instr.execute();
     }
     return Boolean.TRUE;

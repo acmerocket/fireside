@@ -34,11 +34,13 @@ import javax.swing.SwingUtilities;
 import org.zmpp.swingui.SubWindow.HomeYPosition;
 import org.zmpp.vm.Machine;
 import org.zmpp.vm.OutputStream;
+import org.zmpp.vm.ScreenModel;
 import org.zmpp.vm.StoryFileHeader;
 import org.zmpp.vm.TextCursor;
 import org.zmpp.vmutil.ZsciiEncoding;
 
-public class TextViewport extends JViewport implements OutputStream {
+public class TextViewport extends JViewport implements OutputStream,
+ScreenModel {
 
   private static final long serialVersionUID = 1L;
   
@@ -53,7 +55,7 @@ public class TextViewport extends JViewport implements OutputStream {
   private static final int WINDOW_BOTTOM  = 0;
   private static final int WINDOW_TOP     = 1;
   
-  private Font standardFont, fixedFont, currentFont;
+  private Font standardFont, fixedFont;
   
   private StringBuilder streambuffer;
   private StringBuilder textbuffer;
@@ -71,7 +73,6 @@ public class TextViewport extends JViewport implements OutputStream {
     
     standardFont = getFont();
     fixedFont = new Font("Courier New", Font.PLAIN, standardFont.getSize());
-    currentFont = standardFont;
     
     System.out.println("fixed font: " + fixedFont);
     System.out.println("standard font: " + standardFont);
@@ -95,34 +96,40 @@ public class TextViewport extends JViewport implements OutputStream {
       }
     });
   }
-  
-  public void setFont(Font font) {
     
-    System.out.println("setFont(), activewindow: " + activeWindow + " font: " + font);    
-    super.setFont(font);
-    if (initialized) windows[activeWindow].setFont(font);
-  }
-  
-  public void eraseWindow(int window) {
+  public void eraseWindow(final int window) {
     
-    System.out.println("eraseWindow(): " + window);    
-    if (window == -1) {
+    System.out.println("eraseWindow(): " + window);
+    try {
       
-      windows[WINDOW_TOP].setBackground(windows[WINDOW_BOTTOM].getBackground());
-      windows[WINDOW_TOP].clear();
-      windows[WINDOW_BOTTOM].clear();
-      resizeWindows(0);
+      SwingUtilities.invokeAndWait(new Runnable() {
+        
+        public void run() {
+          
+          if (window == -1) {
+            
+            windows[WINDOW_TOP].setBackground(windows[WINDOW_BOTTOM].getBackground());
+            windows[WINDOW_TOP].clear();
+            windows[WINDOW_BOTTOM].clear();
+            resizeWindows(0);
+            
+          } else if (window == -2) {
+            
+            windows[WINDOW_TOP].clear();
+            windows[WINDOW_BOTTOM].clear();
+            
+          } else {
+            
+            // Note: The specification leaves unclear if the cursor position
+            // should be reset in this case
+            windows[window].clear();
+          }
+          repaint();
+        }
+      });
+    } catch (Exception ex) {
       
-    } else if (window == -2) {
-      
-      windows[WINDOW_TOP].clear();
-      windows[WINDOW_BOTTOM].clear();
-      
-    } else {
-      
-      // Note: The specification leaves unclear if the cursor position
-      // should be reset in this case
-      windows[window].clear();
+      ex.printStackTrace();
     }
   }
   
@@ -130,8 +137,20 @@ public class TextViewport extends JViewport implements OutputStream {
 
     System.out.println("eraseLine(), value: " + value + " active: " + activeWindow);
     if (value == 1) {
-      
-      windows[activeWindow].eraseLine();
+
+      try {
+        SwingUtilities.invokeAndWait(new Runnable() {
+          
+          public void run() {
+            
+            windows[activeWindow].eraseLine();
+            repaint();
+          }
+        });
+      } catch (Exception ex) {
+        
+        ex.printStackTrace();
+      }
     }
   }
   
@@ -141,10 +160,24 @@ public class TextViewport extends JViewport implements OutputStream {
     return windows[activeWindow].getCursor();
   }
   
-  public void setTextCursor(int line, int column) {
+  public void setTextCursor(final int line, final int column) {
    
-    System.out.println("getTextCursor(), active: " + activeWindow + " line: " + line + " column: " + column);
-    windows[activeWindow].getCursor().setPosition(line, column);
+    System.out.println("getTextCursor(), active: " + activeWindow
+                       + " line: " + line + " column: " + column);
+    try {
+      
+      SwingUtilities.invokeAndWait(new Runnable() {
+        
+        public void run() {
+          
+          windows[activeWindow].getCursor().setPosition(line, column);
+          repaint();
+        }
+      });
+    } catch (Exception ex) {
+   
+      ex.printStackTrace();
+    }
   }
   
   public void splitWindow(final int linesUpperWindow) {
@@ -172,7 +205,6 @@ public class TextViewport extends JViewport implements OutputStream {
       
       ex.printStackTrace();
     }
-    System.out.println("splitWindow(): done");
   }
   
   public void setWindow(final int window) {
@@ -182,6 +214,7 @@ public class TextViewport extends JViewport implements OutputStream {
       SwingUtilities.invokeAndWait(new Runnable() {
         
         public void run() {
+          
           activeWindow = window;
           
           // S 8.7.2: If the top window is set active, reset the cursor position
@@ -214,21 +247,23 @@ public class TextViewport extends JViewport implements OutputStream {
         public void run() {
           
           flushOutput();
+          repaint();
         }
       });
       
     } catch (Exception ex) { ex.printStackTrace(); }
     
     int fontStyle = Font.PLAIN;
+    Font windowFont;
     
     // Ensure that the top window is always set in a fixed font
     if ((style & TEXTSTYLE_FIXED) > 0 || activeWindow == WINDOW_TOP) {
       
-      currentFont = fixedFont;
+      windowFont = fixedFont;
       
     } else {
       
-      currentFont = standardFont;
+      windowFont = standardFont;
     }
     
     windows[activeWindow].setReverseVideo(
@@ -236,8 +271,8 @@ public class TextViewport extends JViewport implements OutputStream {
     
     fontStyle |= ((style & TEXTSTYLE_BOLD) > 0) ? Font.BOLD : 0;
     fontStyle |= ((style & TEXTSTYLE_ITALIC) > 0) ? Font.ITALIC : 0;
-    currentFont = currentFont.deriveFont(fontStyle);
-    setFont(currentFont);
+    
+    windows[activeWindow].setFont(windowFont.deriveFont(fontStyle));
     
     System.out.println("setTextStyle() done");
   }
@@ -292,6 +327,7 @@ public class TextViewport extends JViewport implements OutputStream {
         public void run() {
       
           flushOutput();
+          repaint();
         }
       });
     } catch (Exception ex) {
@@ -407,36 +443,41 @@ public class TextViewport extends JViewport implements OutputStream {
   public void print(final short zsciiChar) {
 
     System.out.println("print() char: " + zsciiChar + " activeWindow: " + activeWindow);
-    SwingUtilities.invokeLater(new Runnable() {
+    try {
+      SwingUtilities.invokeAndWait(new Runnable() {
       
-      public void run() {
+        public void run() {
 
-        if (isEditMode()) drawCaret(false);
+          if (isEditMode()) drawCaret(false);
         
-        if (zsciiChar == ZsciiEncoding.NEWLINE) {
+          if (zsciiChar == ZsciiEncoding.NEWLINE) {
           
-          printChar('\n');
+            printChar('\n');
           
-        } else if (zsciiChar == ZsciiEncoding.DELETE && isEditMode()) {
+          } else if (zsciiChar == ZsciiEncoding.DELETE && isEditMode()) {
           
-          backSpace();
+            backSpace();
           
-        } else {
+          } else {
           
-          ZsciiEncoding encoding = ZsciiEncoding.getInstance();
-          printChar(encoding.getUnicodeChar(zsciiChar));
+            ZsciiEncoding encoding = ZsciiEncoding.getInstance();
+            printChar(encoding.getUnicodeChar(zsciiChar));
           
-          // Count chars for backspace
-          if (isEditMode()) charsTyped++;
-        }
+            // Count chars for backspace
+            if (isEditMode()) charsTyped++;
+          }
         
-        if (isEditMode()) {
+          if (isEditMode()) {
           
-          drawCaret(true);
-          repaint();
+            drawCaret(true);
+            repaint();
+          }
         }
-      }
-    });
+      });
+    } catch (Exception ex) {
+      
+      ex.printStackTrace();
+    }
   }
   
   public void close() { }
@@ -482,7 +523,7 @@ public class TextViewport extends JViewport implements OutputStream {
     // Sets the fixed font as the standard
     if (machine.getStoryFileHeader().forceFixedFont()) {
       
-      currentFont = standardFont = fixedFont;
+      standardFont = fixedFont;
       
     }
   }  
@@ -521,6 +562,5 @@ public class TextViewport extends JViewport implements OutputStream {
       fileheader.setTimedInputAvailable(false);
     }
     determineStandardFont();
-  }
-  
+  }  
 }
