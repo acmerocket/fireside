@@ -22,7 +22,6 @@
  */
 package org.zmpp.vm;
 
-import java.io.File;
 
 /**
  * This interface defines the access to the screen model.
@@ -101,7 +100,7 @@ public interface ScreenModel {
    * @param line the line
    * @param column the column
    */
-  void setCursor(int line, int column);
+  void setTextCursor(int line, int column);
   
   /**
    * Retrieves the active window's cursor.
@@ -109,19 +108,5 @@ public interface ScreenModel {
    * @return the current window's cursor
    */
   TextCursor getTextCursor();
-  
-  /**
-   * Returns the transcript output file.
-   * 
-   * @return the transcript file
-   */
-  File getTranscriptFile();
-  
-  /**
-   * Returns the file for the file input stream (input stream 1)
-   * 
-   * @return the input stream file
-   */
-  File getFileInputStreamFile();
   
 }

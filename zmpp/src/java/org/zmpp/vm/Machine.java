@@ -46,6 +46,11 @@ public interface Machine {
   final static int OUTPUTSTREAM_TRANSCRIPT = 2;
   
   /**
+   * The output stream number for the memory stream.
+   */
+  final static int OUTPUTSTREAM_MEMORY = 3;
+  
+  /**
    * The possible variable types.
    */
   enum VariableType { STACK, LOCAL, GLOBAL };
@@ -207,12 +212,22 @@ public interface Machine {
   void setOutputStream(int streamnumber, OutputStream stream);
   
   /**
-   * Enables or disables the specified output stream.
+   * Selects/unselects the specified output stream. If the streamnumber
+   * is negative, |streamnumber| is deselected, if positive, it is selected.
+   * Stream 3 (the memory stream) can not be selected by this function,
+   * but can be deselected here.
    * 
    * @param streamnumber the output stream number
    * @param flag true to enable, false to disable
    */
-  void enableOutputStream(int streamnumber, boolean flag);
+  void selectOutputStream(int streamnumber, boolean flag);
+  
+  /**
+   * Selects the output stream 3 which writes to memory.
+   * 
+   * @param tableAddress the table address to write to
+   */
+  void selectOutputStream3(int tableAddress);
   
   /**
    * Sets an input stream to the specified number.
