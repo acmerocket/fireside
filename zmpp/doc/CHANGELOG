@@ -1,18 +1,13 @@
 Changelog
 
-Version 0.72 final
-------------------
-
-- (TODO: will support timed input)
-
-Version 0.72 preview
+Version 0.72 beta
 --------------------
 
 - translate_packed_address is multiplied by factor 4 in version 4
 - dictionary is created and stored in MachineConfig
 - show_status made illegal for version 4
 - save and restore behaviour changed for version 4
-- text styles added to the screen model
+- text styles added to the screen model, reverse video also added
 - object model extended
 - toggable text buffering
 - instruction decoder extended to allow for up to 8 parameters (evaluate the
@@ -25,6 +20,8 @@ Version 0.72 preview
 - set cursor implemented
 - reading single character implemented
 - different interpretation of the story file header
+- memory stream 3 with nesting implemented
+- cleaned up stream and screen model related stuff a little
 
 Version 0.7 Release (2005-11-16)
 --------------------------------

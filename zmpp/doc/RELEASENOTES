@@ -15,7 +15,7 @@ Features:
 - Currently supports story file version 3 and 4
 - Save and reads games in Quetzal 1.4 format
 - Supports input stream 0 and 1 (keyboard and file)
-- Supports output streams 1 and 2 (screen and transcript)
+- Supports output streams 1, 2 and 3 (screen, transcript, memory with nesting)
 - Supports split windows
 - Supports multiple font styles
 - can be run as a Java applet within the web browser
