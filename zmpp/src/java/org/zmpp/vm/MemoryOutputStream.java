@@ -80,6 +80,7 @@ public class MemoryOutputStream implements OutputStream {
    */
   public void print(short zsciiChar) {
 
+    //System.out.println("memory.print: " + ((char) zsciiChar));
     TablePosition tablePos = tableStack.get(tableStack.size() - 1);
     int position = tablePos.tableAddress + 2 + tablePos.bytesWritten;
     memaccess.writeUnsignedByte(position, zsciiChar);
@@ -103,6 +104,9 @@ public class MemoryOutputStream implements OutputStream {
       // Write the total number of written bytes to the first word
       // of the table
       TablePosition tablePos = tableStack.remove(tableStack.size() - 1);
+      //System.out.println("deselect stream 3, popping off: "
+      //                   + tablePos.tableAddress + " # bytes: "
+      //                   + tablePos.bytesWritten);
       memaccess.writeUnsignedShort(tablePos.tableAddress,
                                    tablePos.bytesWritten);
     }

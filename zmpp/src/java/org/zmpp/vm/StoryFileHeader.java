@@ -156,6 +156,12 @@ public interface StoryFileHeader {
   int getRevision();
   
   /**
+   * Returns the screen width.
+   * 
+   * @return the screen width
+   */
+  int getScreenWidth();
+  /**
    * Sets the screen width in number of characters.
    * 
    * @param numChars the number of characters

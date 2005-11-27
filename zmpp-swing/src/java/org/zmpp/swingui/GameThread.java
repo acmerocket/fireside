@@ -42,8 +42,7 @@ public class GameThread extends SwingWorker<Boolean> {
   
   public Boolean construct() {
     
-    viewport.waitInitialized();
-    
+    viewport.waitInitialized();  
     machine.start();
     
     // on MacOS X, after running the thread keyboard input is suspended
@@ -78,8 +77,8 @@ public class GameThread extends SwingWorker<Boolean> {
     while (machine.isRunning()) {
       
       Instruction instr = machine.nextStep();
-      //System.out.println(String.format("%05x: %s", machine.getProgramCounter(),
-      //    instr.toString()));
+      System.out.println(String.format("%05x: %s", machine.getProgramCounter(),
+          instr.toString()));
       instr.execute();
     }
     return Boolean.TRUE;

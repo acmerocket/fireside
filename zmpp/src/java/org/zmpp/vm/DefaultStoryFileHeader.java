@@ -162,8 +162,16 @@ public class DefaultStoryFileHeader implements StoryFileHeader {
    * {@inheritDoc}
    */
   public void setScreenWidth(int numChars) {
+
+    memaccess.writeUnsignedByte(0x21, (short) numChars);
+  }
+  
+  /**
+   * {@inheritDoc}
+   */
+  public int getScreenWidth() {
     
-    memaccess.writeUnsignedShort(0x21, numChars);
+    return memaccess.readUnsignedByte(0x21);
   }
   
   /**
@@ -171,7 +179,7 @@ public class DefaultStoryFileHeader implements StoryFileHeader {
    */
   public void setScreenHeight(int numLines) {
     
-    memaccess.writeUnsignedShort(0x20, numLines);
+    memaccess.writeUnsignedByte(0x20, (short) numLines);
   }
 
   /**

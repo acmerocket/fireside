@@ -276,8 +276,6 @@ ScreenModel {
     fontStyle |= ((style & TEXTSTYLE_ITALIC) > 0) ? Font.ITALIC : 0;
     
     windows[activeWindow].setFont(windowFont.deriveFont(fontStyle));
-    
-    System.out.println("setTextStyle() done");
   }
   
   public void setBufferMode(boolean flag) {
@@ -403,8 +401,9 @@ ScreenModel {
       resizeWindows(0);
       windows[WINDOW_TOP].getCursor().reset();
       windows[WINDOW_BOTTOM].getCursor().reset();
-
-      setScreenProperties();      
+      setScreenProperties();
+      System.out.println("screen width upon START: "
+          + machine.getStoryFileHeader().getScreenWidth());
       setInitialized();
 
       /*
@@ -455,7 +454,15 @@ ScreenModel {
   
   public void print(final short zsciiChar) {
 
-    //System.out.println("print() char: " + zsciiChar + " activeWindow: " + activeWindow);
+    /*
+    if (activeWindow == TextViewport.WINDOW_TOP) {
+      
+      ZsciiEncoding encoding = ZsciiEncoding.getInstance();
+      System.out.println("print() char: '"
+                         + encoding.getUnicodeChar(zsciiChar)
+                         + "' activeWindow: " + activeWindow
+                         + " screenwidth: " + machine.getStoryFileHeader().getScreenWidth());
+    }*/
     try {
       SwingUtilities.invokeAndWait(new Runnable() {
       
@@ -566,7 +573,7 @@ ScreenModel {
       
       FontMetrics fm = imageBuffer.getGraphics().getFontMetrics(fixedFont);
       int screenWidth = (imageBuffer.getWidth() - 2 * SubWindow.OFFSET_X) /
-                        fm.charWidth('G');
+                        fm.charWidth('0');
       int screenHeight = imageBuffer.getHeight() / fm.getHeight();
       fileheader.setScreenWidth(screenWidth);
       fileheader.setScreenHeight(screenHeight);      

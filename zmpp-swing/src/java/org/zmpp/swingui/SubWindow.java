@@ -58,7 +58,7 @@ public class SubWindow {
       
       System.out.println("setPosition(), line: " + line + " column: " + column);
       FontMetrics fm = getGraphics().getFontMetrics();
-      int meanCharWidth = fm.charWidth('G');      
+      int meanCharWidth = fm.charWidth('0');      
       this.line = line;
       this.column = column;
       currentX = OFFSET_X + (column - 1) * meanCharWidth;
@@ -122,7 +122,7 @@ public class SubWindow {
       Graphics g = getGraphics();
       FontMetrics fm = g.getFontMetrics();
       g.setColor(flag ? foreground : background);
-      int charWidth = fm.charWidth('B');
+      int charWidth = fm.charWidth('0');
       g.fillRect(currentX, currentY - fm.getMaxAscent(),
                  charWidth, fm.getHeight());
     }
