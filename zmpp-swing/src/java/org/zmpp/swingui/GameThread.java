@@ -28,6 +28,8 @@ import jozart.swingutils.SwingWorker;
 
 import org.zmpp.vm.Instruction;
 import org.zmpp.vm.Machine;
+import org.zmpp.vm.ObjectTree;
+import org.zmpp.vm.ZObject;
 
 public class GameThread extends SwingWorker<Boolean> {
 
@@ -59,9 +61,9 @@ public class GameThread extends SwingWorker<Boolean> {
       });
     } catch (Exception ex) { }
     
-    /*
-    if (DEBUG) {
-      
+    
+    //if (DEBUG) {
+      /*
       System.out.println("Object tree:\n");
       ObjectTree objTree = machine.getObjectTree();
       int numObjects = objTree.getNumObjects();
@@ -70,9 +72,10 @@ public class GameThread extends SwingWorker<Boolean> {
         ZObject obj = objTree.getObject(i);
         System.out.println(i + ": " + obj.toString());      
       }
+      */
       
-      System.out.println("Dictionary:\n" + machine.getDictionary().toString());
-    }*/
+      //System.out.println("Dictionary:\n" + machine.getDictionary().toString());
+    //}
     
     while (machine.isRunning()) {
       
