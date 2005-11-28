@@ -177,23 +177,26 @@ public class InstructionDecoder {
       
     } else if (info.getInstructionForm() == InstructionForm.VARIABLE){
     
+      int numOpTypeBytes = 1;
       // The operand types start after the opcode byte in variable form
       short optypeByte1 = memaccess.readUnsignedByte(instructionAddress + 1);
-          
-      // operand types in next byte(s)
-      currentAddress = instructionAddress + 2;    
-      currentAddress = extractOperandsWithTypeByte(info, optypeByte1,
-                                                   currentAddress);
-      
+      short optypeByte2 = 0;
+                
       // Extract more operands if necessary, if the opcode
       // is call_vs2 or call_vn2 and there are four operands already,
       // there is a need to check out the second op type byte
       // (Standards document 1.0, S 4.4.3.1 and S 4.5.1)
-      if (info.getOpcode() == VariableInstruction.OP_CALL_VS2
-          && info.getNumOperands() == 4) {
+      if (info.getOpcode() == VariableInstruction.OP_CALL_VS2) {
         
         // There is a second op type byte
-        short optypeByte2 = memaccess.readUnsignedByte(instructionAddress + 2);
+        numOpTypeBytes = 2;
+        optypeByte2 = memaccess.readUnsignedByte(instructionAddress + 2);
+      }
+      currentAddress = instructionAddress + 1 + numOpTypeBytes;    
+      currentAddress = extractOperandsWithTypeByte(info, optypeByte1,
+                                                   currentAddress);
+      if (numOpTypeBytes == 2 && info.getNumOperands() == 4) {
+        
         currentAddress = extractOperandsWithTypeByte(info, optypeByte2,
                                                      currentAddress);
       }

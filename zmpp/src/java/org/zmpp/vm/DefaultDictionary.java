@@ -111,14 +111,20 @@ public class DefaultDictionary implements Dictionary {
   public int lookup(String token) {
     
     String entry = token;
+    int entryLength = this.getEntryLength();
+    //System.out.println("lookup(), token: '" + token + "' entrylen: "
+    //                  + entryLength);
     
     // The lookup token can only be 6 characters long in version 3
-    if (token.length() > 6) {
+    // and 9 in versions >= 4
+    if (token.length() > entryLength) {
       
-      entry = token.substring(0, 6);
+      entry = token.substring(0, entryLength);
     }
     
     if (lookupMap.containsKey(entry)) {
+      
+      //System.out.println("Found, entry: " + lookupMap.get(entry));
       return lookupMap.get(entry);
     }
     return 0;
