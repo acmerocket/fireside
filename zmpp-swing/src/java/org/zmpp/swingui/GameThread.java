@@ -70,8 +70,14 @@ public class GameThread extends SwingWorker<Boolean> {
       for (int i = 1; i <= numObjects; i++) {
       
         ZObject obj = objTree.getObject(i);
-        System.out.println(i + ": " + obj.toString());      
+        if (i == 113) {
+          System.out.println(i + ": " + obj.toString());
+        }
       }
+      ZObject obj113 = objTree.getObject(113);
+      System.out.printf("Property address of 113:52: %04x\n", obj113.getPropertyAddress(52));
+      ZObject obj146 = objTree.getObject(146);
+      System.out.printf("Property address of 146:55: %04x\n", obj146.getPropertyAddress(55));
       */
       
       //System.out.println("Dictionary:\n" + machine.getDictionary().toString());
@@ -80,8 +86,8 @@ public class GameThread extends SwingWorker<Boolean> {
     while (machine.isRunning()) {
       
       Instruction instr = machine.nextStep();
-      System.out.println(String.format("%05x: %s", machine.getProgramCounter(),
-          instr.toString()));
+      //System.out.println(String.format("%05x: %s", machine.getProgramCounter(),
+      //                   instr.toString()));
       instr.execute();
     }
     return Boolean.TRUE;

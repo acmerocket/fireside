@@ -90,6 +90,13 @@ public class MemoryOutputStream implements OutputStream {
   /**
    * {@inheritDoc}
    */
+  public void flush() {
+    
+  }
+  
+  /**
+   * {@inheritDoc}
+   */
   public void close() {
 
   }

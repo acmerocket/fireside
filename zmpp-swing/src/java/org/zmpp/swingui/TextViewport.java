@@ -75,8 +75,8 @@ ScreenModel {
     standardFont = getFont();
     fixedFont = new Font("Courier New", Font.PLAIN, standardFont.getSize());
     
-    System.out.println("fixed font: " + fixedFont);
-    System.out.println("standard font: " + standardFont);
+    //System.out.println("fixed font: " + fixedFont);
+    //System.out.println("standard font: " + standardFont);
     streambuffer = new StringBuilder();
     textbuffer = new StringBuilder();
     windows = new SubWindow[2];
@@ -85,7 +85,7 @@ ScreenModel {
   
   public void reset() {
     
-    System.out.println("reset()");
+    //System.out.println("reset()");
     setScreenProperties();
     SwingUtilities.invokeLater(new Runnable() {
       
@@ -100,7 +100,7 @@ ScreenModel {
     
   public void eraseWindow(final int window) {
     
-    System.out.println("eraseWindow(): " + window);
+    //System.out.println("eraseWindow(): " + window);
     try {
       
       SwingUtilities.invokeAndWait(new Runnable() {
@@ -136,7 +136,7 @@ ScreenModel {
   
   public void eraseLine(int value) {
 
-    System.out.println("eraseLine(), value: " + value + " active: " + activeWindow);
+    //System.out.println("eraseLine(), value: " + value + " active: " + activeWindow);
     if (value == 1) {
 
       try {
@@ -157,14 +157,14 @@ ScreenModel {
   
   public TextCursor getTextCursor() {
 
-    System.out.println("getTextCursor(), active: " + activeWindow);
+    //System.out.println("getTextCursor(), active: " + activeWindow);
     return windows[activeWindow].getCursor();
   }
   
   public void setTextCursor(final int line, final int column) {
    
-    System.out.println("getTextCursor(), active: " + activeWindow
-                       + " line: " + line + " column: " + column);
+    //System.out.println("getTextCursor(), active: " + activeWindow
+    //                   + " line: " + line + " column: " + column);
     try {
       
       SwingUtilities.invokeAndWait(new Runnable() {
@@ -183,7 +183,7 @@ ScreenModel {
   
   public void splitWindow(final int linesUpperWindow) {
    
-    System.out.println("splitWindow(): " + linesUpperWindow);
+    //System.out.println("splitWindow(): " + linesUpperWindow);
     try {
       SwingUtilities.invokeAndWait(new Runnable() {
         
@@ -210,7 +210,7 @@ ScreenModel {
   
   public void setWindow(final int window) {
     
-    System.out.println("setWindow(): " + window);
+    //System.out.println("setWindow(): " + window);
     try {
       SwingUtilities.invokeAndWait(new Runnable() {
         
@@ -242,7 +242,7 @@ ScreenModel {
    */
   public void setTextStyle(int style) {
 
-    System.out.println("setTextStyle() style: " + style + " active: " + activeWindow);
+    //System.out.println("setTextStyle() style: " + style + " active: " + activeWindow);
     // Flush the output before setting a new style
     try {
       SwingUtilities.invokeAndWait(new Runnable() {
@@ -286,7 +286,7 @@ ScreenModel {
   
   public void setEditMode(final boolean flag) {
     
-    System.out.println("TextViewport.setEditMode(): " + flag);
+    //System.out.println("TextViewport.setEditMode(): " + flag);
     try {
       
       // It is very important that the output is flushed before entering
@@ -316,7 +316,6 @@ ScreenModel {
       
       ex.printStackTrace();
     }
-    System.out.println("TextViewport.setEditMode(): done");
   }
   
   public void flush() {
@@ -402,8 +401,8 @@ ScreenModel {
       windows[WINDOW_TOP].getCursor().reset();
       windows[WINDOW_BOTTOM].getCursor().reset();
       setScreenProperties();
-      System.out.println("screen width upon START: "
-          + machine.getStoryFileHeader().getScreenWidth());
+      //System.out.println("screen width upon START: "
+      //    + machine.getStoryFileHeader().getScreenWidth());
       setInitialized();
 
       /*

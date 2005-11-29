@@ -56,7 +56,7 @@ public class SubWindow {
     public int getColumn() { return column; }
     public void setPosition(int line, int column) {
       
-      System.out.println("setPosition(), line: " + line + " column: " + column);
+      //System.out.println("setPosition(), line: " + line + " column: " + column);
       FontMetrics fm = getGraphics().getFontMetrics();
       int meanCharWidth = fm.charWidth('0');      
       this.line = line;
@@ -172,7 +172,7 @@ public class SubWindow {
    */
   public void setReverseVideo(boolean flag) {
     
-    System.out.println("setReverseVideo() : " + flag);
+    //System.out.println("setReverseVideo() : " + flag);
     this.isReverseVideo = flag;
   }
 
