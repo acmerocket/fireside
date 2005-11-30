@@ -41,32 +41,40 @@ public class LineEditor implements KeyListener {
   
   public void setInputMode(boolean flag) {
     
-    inputMode = flag;
-    editbuffer.clear();
+    synchronized (editbuffer) {
+      
+      inputMode = flag;
+      editbuffer.clear();
+      editbuffer.notifyAll();
+    }
   }
 
   public short nextZsciiChar() {
-
+    
     short zsciiChar = 0;
-    synchronized (editbuffer) { 
-      while (editbuffer.size() == 0) {
+    synchronized (editbuffer) {
       
+      while (editbuffer.size() == 0) {
+
         try {
+          
           editbuffer.wait();
+          
         } catch (Exception ex) { }
       }
       zsciiChar = editbuffer.remove(0);
+      editbuffer.notifyAll();
     }
     return zsciiChar;
   }
   
-  public synchronized boolean isInputMode() {
+  public boolean isInputMode() {
     
     return inputMode;
   }
   
   public void keyPressed(KeyEvent e) {
-    
+
     switch (e.getKeyCode()) {
       case KeyEvent.VK_BACK_SPACE:
       case KeyEvent.VK_DELETE:

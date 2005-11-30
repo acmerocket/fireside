@@ -27,18 +27,42 @@ import java.util.ArrayList;
 import java.util.List;
 import java.util.StringTokenizer;
 
+/**
+ * A WordWrapper object lines out a given string using the specified algorithm.
+ * If buffered, whole words will be wrapped to the next line if too long,
+ * otherwise the strings will be written until the end of line is reachend and
+ * continued on the next one.
+ * 
+ * @author Wei-ju Wu
+ * @version 1.0
+ */
 public class WordWrapper {
 
   private int lineLength;
   private FontMetrics fontMetrics;
+  private boolean buffered;
   
-  public WordWrapper(int lineLength, FontMetrics fontMetrics) {
+  public WordWrapper(int lineLength, FontMetrics fontMetrics,
+                     boolean isBuffered) {
     
     this.lineLength = lineLength;
     this.fontMetrics = fontMetrics;
+    this.buffered = isBuffered;
   }
   
   public String[] wrap(int currentX, String input) {
+   
+    if (buffered) {
+      
+      return wrapBuffered(currentX, input);
+      
+    } else {
+      
+      return wrapUnbuffered(currentX, input);
+    }
+  }
+  
+  private String[] wrapBuffered(int currentX, String input) {
     
     List<String> result =  new ArrayList<String>();    
     StringTokenizer tok = new StringTokenizer(input, " \t\n\r", true);
@@ -81,6 +105,41 @@ public class WordWrapper {
       }
       result.add(lineBuffer.toString());
       currentWidth = 0;
+    }
+    return result.toArray(new String[0]);
+  }
+  
+  private String[] wrapUnbuffered(int currentX, String input) {
+    
+    //System.out.println("wrapUnbuffered(), input: '" + input + "'");
+    List<String> result =  new ArrayList<String>();
+    StringBuilder linebuffer = new StringBuilder();
+    int currentWidth = currentX;
+    
+    for (int i = 0; i < input.length(); i++) {
+      
+      char c = input.charAt(i);
+      int charWidth = fontMetrics.charWidth(c);
+      
+      // new line
+      if ((currentWidth + charWidth > lineLength) || c == '\n') {
+        
+        result.add(linebuffer.toString());
+        linebuffer = new StringBuilder();
+        currentWidth = 0;
+        
+      }
+      if (c != '\n') {
+        
+        linebuffer.append(c);
+        currentWidth += charWidth;
+
+        if (i == input.length() - 1) {
+          
+          // last character in input, flush the buffer
+          result.add(linebuffer.toString());
+        }
+      }      
     }
     return result.toArray(new String[0]);
   }

@@ -245,6 +245,13 @@ public interface Machine {
   void selectInputStream(int streamnumber);
   
   /**
+   * Returns the selected input stream.
+   * 
+   * @return the selected input stream
+   */
+  InputStream getSelectedInputStream();
+  
+  /**
    * Reads a string from the selected input stream.
    * 
    * @param address the start address in memory

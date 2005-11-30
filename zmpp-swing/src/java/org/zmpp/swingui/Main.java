@@ -29,7 +29,7 @@ import javax.swing.JOptionPane;
 
 import org.zmpp.vm.DefaultMachineConfig;
 import org.zmpp.vm.FileInputStream;
-import org.zmpp.vm.FileOutputStream;
+import org.zmpp.vm.TranscriptOutputStream;
 import org.zmpp.vm.Machine;
 import org.zmpp.vm.Machine3;
 import org.zmpp.vm.MachineConfig;
@@ -80,7 +80,7 @@ public class Main {
       // Output streams
       machine.setOutputStream(1, screen.getOutputStream());
       machine.selectOutputStream(1, true);
-      FileOutputStream transcriptStream = new FileOutputStream(screen);
+      TranscriptOutputStream transcriptStream = new TranscriptOutputStream(screen);
       machine.setOutputStream(2, transcriptStream);
       machine.selectOutputStream(2, false);
       machine.setOutputStream(3, new MemoryOutputStream(machine));

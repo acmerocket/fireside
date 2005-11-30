@@ -1,9 +1,11 @@
 Changelog
 
-Version 0.72 beta
---------------------
+Version 0.72 Preview (2005-11-30)
+-----------------------------------
 
 - translate_packed_address is multiplied by factor 4 in version 4
+- dictionary updated for version 4
+- objects updated for version 4
 - dictionary is created and stored in MachineConfig
 - show_status made illegal for version 4
 - save and restore behaviour changed for version 4
@@ -22,6 +24,11 @@ Version 0.72 beta
 - different interpretation of the story file header
 - memory stream 3 with nesting implemented
 - cleaned up stream and screen model related stuff a little
+- played a few thousand lines of "A Mind Forever Voyaging", validating with
+  Frotz
+- non-wordwrapping scheme added
+- paging added
+- non-scrolling added
 
 Version 0.7 Release (2005-11-16)
 --------------------------------

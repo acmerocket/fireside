@@ -23,10 +23,13 @@
 package org.zmpp.swingui;
 
 import java.awt.Color;
+import java.awt.Component;
 import java.awt.Font;
 import java.awt.FontMetrics;
 import java.awt.Graphics;
 import java.awt.image.BufferedImage;
+
+import javax.swing.SwingUtilities;
 
 import org.zmpp.vm.TextCursor;
 
@@ -141,15 +144,24 @@ public class SubWindow {
   private boolean isReverseVideo;
   private boolean isBuffered;
   private boolean isPaged;
+  private boolean isScrolled;
+  private LineEditor editor;
+  private Component parentComponent;
  
   /**
    * Constructor.
    * 
+   * @param parentComponent the parent component
+   * @param editor the line editor
+   * @param windowNumber the window number
    * @param img the buffer image
    */
-  public SubWindow(BufferedImage img) {
+  public SubWindow(Component parentComponent, LineEditor editor,
+                   BufferedImage img) {
     
     this.image = img;
+    this.editor = editor;
+    this.parentComponent = parentComponent;
     isBuffered = true;
     this.cursor = new TextCursorImpl();
     yHomePos = HomeYPosition.BOTTOM;
@@ -172,7 +184,6 @@ public class SubWindow {
    */
   public void setReverseVideo(boolean flag) {
     
-    //System.out.println("setReverseVideo() : " + flag);
     this.isReverseVideo = flag;
   }
 
@@ -187,13 +198,18 @@ public class SubWindow {
   }
   
   public void setBufferMode(boolean flag) {
-    
+   
     this.isBuffered = flag;
   }
   
   public void setIsPagingEnabled(boolean flag) {
     
     this.isPaged = flag;
+  }
+  
+  public void setIsScrolled(boolean flag) {
+    
+    this.isScrolled = flag;
   }
   
   public int getHeight() {
@@ -209,7 +225,6 @@ public class SubWindow {
   
   public void resize(int numLines) {
     
-    //System.out.println("resize()");
     this.height = getGraphics().getFontMetrics().getHeight() * numLines;
   }
   
@@ -235,7 +250,6 @@ public class SubWindow {
   
   public void eraseLine() {
     
-    //System.out.println("eraseLine()");
     Graphics g = getGraphics();
     FontMetrics fm = g.getFontMetrics();
     g.setColor(background);
@@ -246,7 +260,6 @@ public class SubWindow {
   
   public void setBackground(Color color) {
     
-    //System.out.println("background: " + color);
     background = color;
   }
   
@@ -257,7 +270,6 @@ public class SubWindow {
   
   public void setForeground(Color color) {
     
-    //System.out.println("foreground: " + color);
     foreground = color;
   }
   
@@ -268,7 +280,60 @@ public class SubWindow {
    */
   public void printString(String str) {
     
-    //System.out.println("printString(): [" + str + "]");
+    Graphics g = getGraphics();
+    FontMetrics fm = g.getFontMetrics();
+    
+    int width = image.getWidth();
+    int lineLength = width - OFFSET_X * 2;
+    int numLines = height / fm.getHeight(); 
+    
+    WordWrapper wordWrapper = new WordWrapper(lineLength, fm, isBuffered);
+    Pager pager = new Pager(numLines - 1);
+    
+    String[] lines = wordWrapper.wrap(cursor.currentX, str);
+    
+    //printLines(lines);
+    String[][] pages = pager.createPages(lines);    
+    
+    for (int i = 0; i < pages.length; i++) {
+      
+      String[] currentPage = pages[i];
+      printLines(currentPage);
+      
+      if (isPaged && i < (pages.length - 1)) {
+        
+        doMeMore();
+      }
+    }
+  }
+  
+  private void doMeMore() {
+        
+    String[] more = { "", "<MORE> (Press key to continue)", "" };
+    printLines(more);
+    
+    // Rendering in the UI thread
+    try {
+      SwingUtilities.invokeAndWait(new Runnable() {
+        public void run() {
+        
+          parentComponent.repaint();
+        }
+      });
+    } catch (Exception ex) {
+      
+      ex.printStackTrace();
+    }
+    
+    // Do this exclusively to have better thread control, we need to stay
+    // in the application thread
+    editor.setInputMode(true);
+    editor.nextZsciiChar();
+    editor.setInputMode(false);
+  }
+  
+  private void printLines(String lines[]) {
+    
     Graphics g = getGraphics();
     FontMetrics fm = g.getFontMetrics();
     
@@ -280,23 +345,15 @@ public class SubWindow {
       textColor = background;
       textbackColor = foreground;
     }
-
-    int width = image.getWidth();
-    int lineLength = width - OFFSET_X * 2;
     
-    // TODO: Handle the isBuffered flag !!!!
-    // TODO: Handle the isPaged flag !!!!
-    WordWrapper wordWrapper = new WordWrapper(lineLength, fm);
-    String[] lines = wordWrapper.wrap(cursor.currentX, str);
     for (int i = 0; i < lines.length; i++) {
-     
+      
       while (cursor.currentY > (top + height)) {
         
-        scrollUp();
+        if (isScrolled) scrollUp();
         cursor.decrementLinePos(1);
       }
       
-      //System.out.println("textbackColor: " + textbackColor + " textColor: " + textColor);
       g.setColor(textbackColor);
       g.fillRect(cursor.currentX,
                  cursor.currentY - fm.getHeight() + fm.getMaxDescent(),
@@ -314,7 +371,6 @@ public class SubWindow {
   
   public void scrollUp() {
     
-    //System.out.println("scrollUp()");
     Graphics g = getGraphics();
     FontMetrics fm = g.getFontMetrics();
     g.copyArea(0, top + fm.getHeight(), image.getWidth(),
@@ -326,12 +382,11 @@ public class SubWindow {
   
   public void newline() {
     
-    //System.out.println("newline()");
     cursor.newline();
     
     while (cursor.currentY > (top + height)) {
       
-      scrollUp();
+      if (isScrolled) scrollUp();
       cursor.decrementLinePos(1);
     }
   }

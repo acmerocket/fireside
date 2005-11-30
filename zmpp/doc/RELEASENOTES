@@ -16,7 +16,7 @@ Features:
 - Save and reads games in Quetzal 1.4 format
 - Supports input stream 0 and 1 (keyboard and file)
 - Supports output streams 1, 2 and 3 (screen, transcript, memory with nesting)
-- Supports split windows
+- Supports split subwindows (paging, buffering, scrolling)
 - Supports multiple font styles
 - can be run as a Java applet within the web browser
 
@@ -30,7 +30,6 @@ TODO:
 Screen model
 
 - implement paging in screen model
-- implement non-word-wrapping scheme (continue on next line)
 
 Other:
 
@@ -60,11 +59,18 @@ Supported Infocom games
 
 These games could be successfully started so far:
 
+Version 3:
+
 - Minizork
 - Zork I
 - Zork II
 - Leather Godesses Of Phobos
 - Hitchhiker's Guide To The Galaxy
+- Seastalker
+
+Version 4:
+
+- A Mind Forever Voyaging
 
 These games have been successfully played through so far:
 

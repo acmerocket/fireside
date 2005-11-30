@@ -59,6 +59,7 @@ Reference games: Seastalker (V3, for screen splitting), A mind forever voyaging,
 - toggable text buffering
 - support screen splitting
 - support paging
+- toggable scrolling
 - need to support stream 3 (this was discovered during testing of "A mind
   forever voyaging")
 - adjust quetzal start pc for version >= 4 games

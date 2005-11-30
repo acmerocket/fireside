@@ -60,6 +60,7 @@ ScreenModel {
   private StringBuilder streambuffer;
   private StringBuilder textbuffer;
   private Machine machine;
+  private LineEditor editor;
   
   private boolean isSelected;
   private boolean editMode;
@@ -68,15 +69,13 @@ ScreenModel {
   private int activeWindow;
   private static final boolean DEBUG = true;
   
-  public TextViewport(Machine machine) {
+  public TextViewport(Machine machine, LineEditor editor) {
     
     this.machine = machine;
+    this.editor = editor;
     
     standardFont = getFont();
-    fixedFont = new Font("Courier New", Font.PLAIN, standardFont.getSize());
-    
-    //System.out.println("fixed font: " + fixedFont);
-    //System.out.println("standard font: " + standardFont);
+    fixedFont = new Font("Courier New", Font.PLAIN, standardFont.getSize());    
     streambuffer = new StringBuilder();
     textbuffer = new StringBuilder();
     windows = new SubWindow[2];
@@ -85,7 +84,6 @@ ScreenModel {
   
   public void reset() {
     
-    //System.out.println("reset()");
     setScreenProperties();
     SwingUtilities.invokeLater(new Runnable() {
       
@@ -100,139 +98,76 @@ ScreenModel {
     
   public void eraseWindow(final int window) {
     
-    //System.out.println("eraseWindow(): " + window);
-    try {
+    if (window == -1) {
       
-      SwingUtilities.invokeAndWait(new Runnable() {
-        
-        public void run() {
-          
-          if (window == -1) {
-            
-            windows[WINDOW_TOP].setBackground(windows[WINDOW_BOTTOM].getBackground());
-            windows[WINDOW_TOP].clear();
-            windows[WINDOW_BOTTOM].clear();
-            resizeWindows(0);
-            
-          } else if (window == -2) {
-            
-            windows[WINDOW_TOP].clear();
-            windows[WINDOW_BOTTOM].clear();
-            
-          } else {
-            
-            // Note: The specification leaves unclear if the cursor position
-            // should be reset in this case
-            windows[window].clear();
-          }
-          repaint();
-        }
-      });
-    } catch (Exception ex) {
+      windows[WINDOW_TOP].setBackground(windows[WINDOW_BOTTOM].getBackground());
+      windows[WINDOW_TOP].clear();
+      windows[WINDOW_BOTTOM].clear();
+      resizeWindows(0);
       
-      ex.printStackTrace();
+    } else if (window == -2) {
+      
+      windows[WINDOW_TOP].clear();
+      windows[WINDOW_BOTTOM].clear();
+      
+    } else {
+      
+      // Note: The specification leaves unclear if the cursor position
+      // should be reset in this case
+      windows[window].clear();
     }
+    repaintInUiThread();
   }
   
   public void eraseLine(int value) {
 
-    //System.out.println("eraseLine(), value: " + value + " active: " + activeWindow);
     if (value == 1) {
 
-      try {
-        SwingUtilities.invokeAndWait(new Runnable() {
-          
-          public void run() {
-            
-            windows[activeWindow].eraseLine();
-            repaint();
-          }
-        });
-      } catch (Exception ex) {
-        
-        ex.printStackTrace();
-      }
+      windows[activeWindow].eraseLine();
+      repaintInUiThread();
     }
   }
   
   public TextCursor getTextCursor() {
 
-    //System.out.println("getTextCursor(), active: " + activeWindow);
     return windows[activeWindow].getCursor();
   }
   
   public void setTextCursor(final int line, final int column) {
    
-    //System.out.println("getTextCursor(), active: " + activeWindow
-    //                   + " line: " + line + " column: " + column);
-    try {
-      
-      SwingUtilities.invokeAndWait(new Runnable() {
-        
-        public void run() {
-          
-          windows[activeWindow].getCursor().setPosition(line, column);
-          repaint();
-        }
-      });
-    } catch (Exception ex) {
-   
-      ex.printStackTrace();
-    }
+    windows[activeWindow].getCursor().setPosition(line, column);
+    repaintInUiThread();
   }
   
   public void splitWindow(final int linesUpperWindow) {
    
-    //System.out.println("splitWindow(): " + linesUpperWindow);
-    try {
-      SwingUtilities.invokeAndWait(new Runnable() {
-        
-        public void run() {
-          // Only works if lower window is selected (S 8.7.2.1)
-          if (activeWindow == WINDOW_BOTTOM) {
-            
-            resizeWindows(linesUpperWindow);
-            
-            // S 8.6.1.1.2: Top window is cleared in version 3
-            if (machine.getStoryFileHeader().getVersion() == 3) {
-              
-              windows[WINDOW_TOP].clear();
-            }
-          }
-          repaint();
-        }
-      });
-    } catch (Exception ex) {
+    // Only works if lower window is selected (S 8.7.2.1)
+    if (activeWindow == WINDOW_BOTTOM) {
       
-      ex.printStackTrace();
+      resizeWindows(linesUpperWindow);
+      
+      // S 8.6.1.1.2: Top window is cleared in version 3
+      if (machine.getStoryFileHeader().getVersion() == 3) {
+        
+        windows[WINDOW_TOP].clear();
+      }
+      repaintInUiThread();
     }
   }
   
   public void setWindow(final int window) {
     
-    //System.out.println("setWindow(): " + window);
-    try {
-      SwingUtilities.invokeAndWait(new Runnable() {
-        
-        public void run() {
-          
-          // Flush out the current active window
-          flushOutput();
-          
-          activeWindow = window;
-          
-          // S 8.7.2: If the top window is set active, reset the cursor position
-          if (activeWindow == WINDOW_TOP) {
-            
-            windows[activeWindow].getCursor().reset();
-          }
-          repaint();
-        }
-      });
-    } catch (Exception ex) {
+    // Flush out the current active window
+    flushOutput();
+    
+    activeWindow = window;
+    
+    // S 8.7.2: If the top window is set active, reset the cursor position
+    if (activeWindow == WINDOW_TOP) {
       
-      ex.printStackTrace();
+      windows[activeWindow].getCursor().reset();
     }
+    repaintInUiThread();
   }
 
   /**
@@ -242,19 +177,8 @@ ScreenModel {
    */
   public void setTextStyle(int style) {
 
-    //System.out.println("setTextStyle() style: " + style + " active: " + activeWindow);
     // Flush the output before setting a new style
-    try {
-      SwingUtilities.invokeAndWait(new Runnable() {
-
-        public void run() {
-          
-          flushOutput();
-          repaint();
-        }
-      });
-      
-    } catch (Exception ex) { ex.printStackTrace(); }
+    flush();
     
     int fontStyle = Font.PLAIN;
     Font windowFont;
@@ -281,65 +205,33 @@ ScreenModel {
   public void setBufferMode(boolean flag) {
 
     // only affects bottom window
+    flush();
     windows[WINDOW_BOTTOM].setBufferMode(flag);
   }
   
-  public void setEditMode(final boolean flag) {
+  public synchronized void setEditMode(final boolean flag) {
     
-    //System.out.println("TextViewport.setEditMode(): " + flag);
-    try {
+    if (flag) {
       
-      // It is very important that the output is flushed before entering
-      // input mode. SwingUtilities.invokeAndWait() blocks the whole
-      // processing (probably a deadlock between input events and the
-      // rendering), so we notify a waiting thread after the rendering
-      SwingUtilities.invokeLater(new Runnable() {
-        
-        public void run() {
-        
-          // Flush the output stream
-          if (flag) flushOutput();
-          
-          drawCaret(flag);
-          repaint();
-         
-          synchronized (TextViewport.this) {
-            
-            // Set status variables
-            editMode = flag;
-            charsTyped = 0;
-            TextViewport.this.notifyAll();
-          }
-        }
-      });
-    } catch (Exception ex) {
-      
-      ex.printStackTrace();
+      flushOutput();
     }
+    drawCaret(flag);
+    repaintInUiThread();
+    
+    // Set status variables
+    editMode = flag;
+    charsTyped = 0;
+    notifyAll();    
   }
   
   public void flush() {
     
-    try {
-      
-      SwingUtilities.invokeAndWait(new Runnable() {
-      
-        public void run() {
-      
-          flushOutput();
-          repaint();
-        }
-      });
-    } catch (Exception ex) {
-        
-      ex.printStackTrace();
-    }
+    flushOutput();
+    repaintInUiThread();
   }
   
   private void flushOutput() {
     
-    //System.out.println("flushOutput(), activeWindow: " + activeWindow
-    //    + " str: [" + streambuffer.toString() + "]");
     windows[activeWindow].printString(streambuffer.toString());
     streambuffer = new StringBuilder();
   }
@@ -376,7 +268,7 @@ ScreenModel {
           BufferedImage.TYPE_INT_RGB);
       
       // Create the two sub windows
-      windows[WINDOW_TOP] = new SubWindow(imageBuffer);
+      windows[WINDOW_TOP] = new SubWindow(this, editor, imageBuffer);
       windows[WINDOW_TOP].setBackground(getBackground());
       windows[WINDOW_TOP].setForeground(getForeground());
       // S. 8.7.2.4: use fixed font for upper window
@@ -384,13 +276,16 @@ ScreenModel {
       windows[WINDOW_TOP].setHomeYPosition(HomeYPosition.TOP);
       // S. 8.7.2.5: top window is unbuffered
       windows[WINDOW_TOP].setBufferMode(false);
+      windows[WINDOW_TOP].setIsScrolled(false);
       
-      windows[WINDOW_BOTTOM] = new SubWindow(imageBuffer);           
+      windows[WINDOW_BOTTOM] = new SubWindow(this, editor, imageBuffer);           
       windows[WINDOW_BOTTOM].setBackground(getBackground());
       windows[WINDOW_BOTTOM].setForeground(getForeground());
       windows[WINDOW_BOTTOM].setFont(standardFont);
       windows[WINDOW_BOTTOM].setHomeYPosition(HomeYPosition.BOTTOM);
       windows[WINDOW_BOTTOM].setBufferMode(true);
+      windows[WINDOW_BOTTOM].setIsPagingEnabled(true);
+      windows[WINDOW_BOTTOM].setIsScrolled(true);
 
       activeWindow = WINDOW_BOTTOM;
 
@@ -401,31 +296,8 @@ ScreenModel {
       windows[WINDOW_TOP].getCursor().reset();
       windows[WINDOW_BOTTOM].getCursor().reset();
       setScreenProperties();
-      //System.out.println("screen width upon START: "
-      //    + machine.getStoryFileHeader().getScreenWidth());
       setInitialized();
 
-      /*
-      // For debugging only
-      windows[WINDOW_TOP].setReverseVideo(true);
-      windows[WINDOW_BOTTOM].setReverseVideo(true);
-      
-      setWindow(WINDOW_TOP);
-      setTextStyle(TEXTSTYLE_REVERSE_VIDEO | TEXTSTYLE_FIXED | TEXTSTYLE_BOLD | TEXTSTYLE_ITALIC);
-      windows[WINDOW_TOP].printString("Xiaoru darling");
-      windows[WINDOW_TOP].getCursor().setPosition(2, 10);
-      windows[WINDOW_TOP].printString("Xiaoru darling");
-      windows[WINDOW_TOP].getCursor().setPosition(2, 15);
-      windows[WINDOW_TOP].eraseLine();
-      
-      setWindow(WINDOW_BOTTOM);
-      setTextStyle(TEXTSTYLE_BOLD);
-      windows[WINDOW_BOTTOM].printString("Xiaoru darling");
-      //windows[WINDOW_BOTTOM].newline();
-      //windows[WINDOW_BOTTOM].printString("Hallo Xiaoru\nXiaoru");
-      //windows[WINDOW_BOTTOM].newline();
-       *
-       */
     }
 
     g.drawImage(imageBuffer, 0, 0, this);
@@ -453,49 +325,28 @@ ScreenModel {
   
   public void print(final short zsciiChar) {
 
-    /*
-    if (activeWindow == TextViewport.WINDOW_TOP) {
-      
+    if (isEditMode()) drawCaret(false);
+    
+    if (zsciiChar == ZsciiEncoding.NEWLINE) {
+    
+      printChar('\n');
+    
+    } else if (zsciiChar == ZsciiEncoding.DELETE && isEditMode()) {
+    
+      backSpace();
+    
+    } else {
+    
       ZsciiEncoding encoding = ZsciiEncoding.getInstance();
-      System.out.println("print() char: '"
-                         + encoding.getUnicodeChar(zsciiChar)
-                         + "' activeWindow: " + activeWindow
-                         + " screenwidth: " + machine.getStoryFileHeader().getScreenWidth());
-    }*/
-    try {
-      SwingUtilities.invokeAndWait(new Runnable() {
+      printChar(encoding.getUnicodeChar(zsciiChar));
+    
+      // Count chars for backspace
+      if (isEditMode()) charsTyped++;
+    }
+    if (isEditMode()) {
       
-        public void run() {
-
-          if (isEditMode()) drawCaret(false);
-        
-          if (zsciiChar == ZsciiEncoding.NEWLINE) {
-          
-            printChar('\n');
-          
-          } else if (zsciiChar == ZsciiEncoding.DELETE && isEditMode()) {
-          
-            backSpace();
-          
-          } else {
-          
-            ZsciiEncoding encoding = ZsciiEncoding.getInstance();
-            printChar(encoding.getUnicodeChar(zsciiChar));
-          
-            // Count chars for backspace
-            if (isEditMode()) charsTyped++;
-          }
-        
-          if (isEditMode()) {
-          
-            drawCaret(true);
-            repaint();
-          }
-        }
-      });
-    } catch (Exception ex) {
-      
-      ex.printStackTrace();
+      drawCaret(true);
+      repaintInUiThread();
     }
   }
   
@@ -515,7 +366,6 @@ ScreenModel {
       
     } else {
       
-      //System.out.println("printChar: '" + c + "'");
       streambuffer.append(c);
     }
   }    
@@ -581,5 +431,23 @@ ScreenModel {
       fileheader.setTimedInputAvailable(false);
     }
     determineStandardFont();
-  }  
+  }
+  
+  private void repaintInUiThread() {
+    
+    
+    try {
+      
+      SwingUtilities.invokeAndWait(new Runnable() {
+        
+        public void run() {
+          
+          repaint();
+        }
+      });
+    } catch (Exception ex) {
+      
+      ex.printStackTrace();
+    }
+  }
 }
