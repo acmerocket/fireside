@@ -1,7 +1,7 @@
 Changelog
 
-Version 0.72 Preview (2005-11-30)
------------------------------------
+Version 0.72 Beta (2005-11-30)
+------------------------------
 
 - translate_packed_address is multiplied by factor 4 in version 4
 - dictionary updated for version 4
