@@ -52,6 +52,11 @@ public class DefaultDictionary implements Dictionary {
   private Map<String, Integer> lookupMap;
   
   /**
+   * The maximum entry size.
+   */
+  private int maxEntrySize;
+  
+  /**
    * Constructor.
    * 
    * @param map the memory map
@@ -111,7 +116,12 @@ public class DefaultDictionary implements Dictionary {
   public int lookup(String token) {
     
     String entry = token;
-    int entryLength = this.getEntryLength();
+    
+    // Unfortunately it seems that the maximum size of an entry is not equal 
+    // to the size declared in the dictionary header, therefore we take
+    // the maximum length of any token in the dictionary
+    int entryLength = getEntryLength();
+    entryLength = (maxEntrySize < entryLength) ? maxEntrySize : entryLength;
     //System.out.println("lookup(), token: '" + token + "' entrylen: "
     //                  + entryLength);
     
@@ -121,12 +131,14 @@ public class DefaultDictionary implements Dictionary {
       
       entry = token.substring(0, entryLength);
     }
+    //System.out.println("Truncated to entry: '" + entry + "'");
     
     if (lookupMap.containsKey(entry)) {
       
       //System.out.println("Found, entry: " + lookupMap.get(entry));
       return lookupMap.get(entry);
     }
+    //System.out.println("Not found, token: '" + token + "'");
     return 0;
   }
   
@@ -149,7 +161,9 @@ public class DefaultDictionary implements Dictionary {
       
       entryAddress = getEntryAddress(i);
       zstr = new ZString(memaccess, entryAddress);
-      lookupMap.put(zstr.toString(), entryAddress);
+      String str = zstr.toString();
+      maxEntrySize = Math.max(str.length(), maxEntrySize);
+      lookupMap.put(str, entryAddress);
     }
   }
 
@@ -170,7 +184,8 @@ public class DefaultDictionary implements Dictionary {
       
       entryAddress = getEntryAddress(i);
       zstr = new ZString(memaccess, entryAddress);
-      buffer.append(String.format("[%4d] %-9s ", (i + 1), zstr.toString()));
+      //buffer.append(String.format("[%4d] '%s' ", (i + 1), zstr.toString()));
+      buffer.append(String.format("[%4d] '%-9s' ", (i + 1), zstr.toString()));
       i++;
       if ((i % 4) == 0) buffer.append("\n");
       if (i == n) break;

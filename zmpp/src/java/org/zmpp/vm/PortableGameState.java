@@ -645,20 +645,15 @@ public class PortableGameState {
    * The machine needs to be in a reset state in order to function correctly.
    * 
    * @param machine a Machine object
+   * @return true
    */
   public void transferStateToMachine(Machine machine) {
     
-    // In version 3 this is a branch target that needs to be read
-    // Execution is continued at the first instruction after the branch offset
-    int branchOffsetAddress = getProgramCounter();    
-    int pc = branchOffsetAddress +
-      getBranchOffsetLength(machine.getMemoryAccess(), branchOffsetAddress);
-    machine.setProgramCounter(pc);
+    MemoryAccess memaccess = machine.getMemoryAccess();
     
     // Dynamic memory
     for (int i = 0; i < dynamicMem.length; i++) {
       
-      MemoryAccess memaccess = machine.getMemoryAccess();
       memaccess.writeByte(i, dynamicMem[i]);
     }
     
@@ -701,6 +696,26 @@ public class PortableGameState {
       contexts.add(context);      
     }    
     machine.setRoutineContexts(contexts);
+
+    // Prepare the machine continue
+    // In version 3 this is a branch target that needs to be read
+    // Execution is continued at the first instruction after the branch offset
+    int branchOffsetAddress = getProgramCounter();    
+    int pc = branchOffsetAddress +
+      getBranchOffsetLength(machine.getMemoryAccess(), branchOffsetAddress);
+    machine.setProgramCounter(pc);
+  }
+  
+  /**
+   * For versions >= 4. Returns the store variable
+   * 
+   * @param machine the machine
+   * @return the store variable
+   */
+  public int getStoreVariable(Machine machine) {
+    
+    int storeVarAddress = getProgramCounter();
+    return machine.getMemoryAccess().readUnsignedByte(storeVarAddress);
   }
 
   /**

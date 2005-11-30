@@ -90,6 +90,7 @@ public class GameThread extends SwingWorker<Boolean> {
       //                   instr.toString()));
       instr.execute();
     }
+    System.out.printf("und tschuess ! pc: %4x\n", machine.getProgramCounter());
     return Boolean.TRUE;
   }
   

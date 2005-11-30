@@ -387,8 +387,10 @@ public interface Machine {
   
   /**
    * Restores a previously saved state.
+   * 
+   * @return the portable game state
    */
-  boolean restore();
+  PortableGameState restore();
   
   /**
    * Restarts the virtual machine.
