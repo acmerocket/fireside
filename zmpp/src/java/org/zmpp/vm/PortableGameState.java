@@ -645,7 +645,6 @@ public class PortableGameState {
    * The machine needs to be in a reset state in order to function correctly.
    * 
    * @param machine a Machine object
-   * @return true
    */
   public void transferStateToMachine(Machine machine) {
     
