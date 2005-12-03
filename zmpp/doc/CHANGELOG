@@ -1,5 +1,13 @@
 Changelog
 
+Version 0.72 final (2005-12-??)
+-------------------------------
+
+- played Seastalker, Trinity, Bureaucracy and A Mind Forever Voyaging
+- fixed broken tests
+- verified screen model
+- TODO: fix paging: <MORE> has to disappear
+
 Version 0.72 Beta (2005-11-30)
 ------------------------------
 
