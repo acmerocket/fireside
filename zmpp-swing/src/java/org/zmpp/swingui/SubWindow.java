@@ -57,9 +57,9 @@ public class SubWindow {
     
     public int getLine() { return line; }    
     public int getColumn() { return column; }
+    public void setHomeX() { line = 0; }
     public void setPosition(int line, int column) {
       
-      //System.out.println("setPosition(), line: " + line + " column: " + column);
       FontMetrics fm = getGraphics().getFontMetrics();
       int meanCharWidth = fm.charWidth('0');      
       this.line = line;
@@ -288,12 +288,9 @@ public class SubWindow {
     int numLines = height / fm.getHeight(); 
     
     WordWrapper wordWrapper = new WordWrapper(lineLength, fm, isBuffered);
-    Pager pager = new Pager(numLines - 1);
-    
-    String[] lines = wordWrapper.wrap(cursor.currentX, str);
-    
-    //printLines(lines);
-    String[][] pages = pager.createPages(lines);    
+    Pager pager = new Pager(numLines - 1, isPaged);
+    String[] lines = wordWrapper.wrap(cursor.currentX, str);    
+    String[][] pages = pager.createPages(lines);
     
     for (int i = 0; i < pages.length; i++) {
       
@@ -330,6 +327,8 @@ public class SubWindow {
     editor.setInputMode(true);
     editor.nextZsciiChar();
     editor.setInputMode(false);
+    getCursor().setHomeX();
+    eraseLine();
   }
   
   private void printLines(String lines[]) {

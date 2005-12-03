@@ -224,6 +224,11 @@ ScreenModel {
     notifyAll();    
   }
   
+  public void setPaging(boolean flag) {
+    
+    windows[WINDOW_BOTTOM].setIsPagingEnabled(flag);
+  }
+  
   public void flush() {
     
     flushOutput();
