@@ -109,4 +109,10 @@ public interface ScreenModel {
    */
   TextCursor getTextCursor();
   
+  /**
+   * Sets the paging mode. This is useful if the input stream is a file.
+   * 
+   * @param flag true to enable paging, false to disable
+   */
+  void setPaging(boolean flag);
 }

@@ -51,6 +51,16 @@ public interface Machine {
   final static int OUTPUTSTREAM_MEMORY = 3;
   
   /**
+   * The input stream number for the keyboard.
+   */
+  final static int INPUTSTREAM_KEYBOARD = 0;
+  
+  /**
+   * The input stream number for file input.
+   */
+  final static int INPUTSTREAM_FILE = 1;
+  
+  /**
    * The possible variable types.
    */
   enum VariableType { STACK, LOCAL, GLOBAL };
