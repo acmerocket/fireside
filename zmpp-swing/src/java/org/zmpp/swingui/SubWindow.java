@@ -38,7 +38,7 @@ import org.zmpp.vm.TextCursor;
  * The class SubWindow manages a sub window within the screen model.
  * 
  * @author Wei-ju Wu
- *
+ * @version 1.0
  */
 public class SubWindow {
 
@@ -252,7 +252,8 @@ public class SubWindow {
     
     Graphics g = getGraphics();
     FontMetrics fm = g.getFontMetrics();
-    g.setColor(background);
+    //g.setColor(background);
+    g.setColor(Color.BLUE);
     g.fillRect(cursor.currentX,
                cursor.currentY - fm.getMaxAscent(),
                image.getWidth() - cursor.currentX, fm.getHeight());
@@ -346,13 +347,8 @@ public class SubWindow {
     }
     
     for (int i = 0; i < lines.length; i++) {
-      
-      while (cursor.currentY > (top + height)) {
-        
-        if (isScrolled) scrollUp();
-        cursor.decrementLinePos(1);
-      }
-      
+
+      scrollIfNeeded();      
       g.setColor(textbackColor);
       g.fillRect(cursor.currentX,
                  cursor.currentY - fm.getHeight() + fm.getMaxDescent(),
@@ -382,6 +378,10 @@ public class SubWindow {
   public void newline() {
     
     cursor.newline();
+    scrollIfNeeded();
+  }
+  
+  private void scrollIfNeeded() {
     
     while (cursor.currentY > (top + height)) {
       
