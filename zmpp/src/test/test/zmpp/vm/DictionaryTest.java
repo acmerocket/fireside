@@ -71,4 +71,9 @@ public class DictionaryTest extends MemoryMapSetup {
     assertEquals(12297, dictionary.lookup("mailbox"));
     assertEquals(0, dictionary.lookup("nonsense"));
   }
+  
+  public void testToString() {
+    
+    assertNotNull(dictionary.toString());
+  }
 }

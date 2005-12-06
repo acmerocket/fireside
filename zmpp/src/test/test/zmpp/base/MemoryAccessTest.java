@@ -96,4 +96,10 @@ public class MemoryAccessTest extends TestCase {
     memaccess.writeUnsigned32(0x00, 0xf0f00f0f);
     assertEquals(0x00000000f0f00f0f, memaccess.readUnsigned32(0x00));
   }
+  
+  public void testWriteUnsigned48() {
+    
+    memaccess.writeUnsigned48(0, 12345678l);
+    assertEquals(12345678l, memaccess.readUnsigned48(0));
+  }
 }

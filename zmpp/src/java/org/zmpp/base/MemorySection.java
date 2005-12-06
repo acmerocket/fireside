@@ -59,7 +59,7 @@ public class MemorySection implements MemoryAccess {
    */
   public long readUnsigned48(int address) {
   
-    return memaccess.readUnsigned48(address);
+    return memaccess.readUnsigned48(address + start);
   }
   
   /**
@@ -67,7 +67,7 @@ public class MemorySection implements MemoryAccess {
    */
   public void writeUnsigned48(int address, long value) {
     
-    memaccess.writeUnsigned48(address, value);
+    memaccess.writeUnsigned48(address + start, value);
   }
   
   /**

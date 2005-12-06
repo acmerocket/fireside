@@ -122,4 +122,9 @@ public class DefaultZObjectTest extends MemoryMapSetup {
     object.setPropertyByte(18, 0, (byte) 0x12);
     assertEquals(0x12, object.getPropertyByte(18, 0));
   }
+  
+  public void testToString() {
+    
+    assertNotNull(object.toString());
+  }
 }
