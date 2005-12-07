@@ -1,5 +1,15 @@
 Changelog
 
+Version 0.72
+------------
+
+- test for translate_packed_address in version 5
+- save (0OP) and restore (0OP) made illegal for version 5
+- sread changed to aread functionality (storing a result)
+- "not" changed to call_1n
+- VAR version of "not" added
+- call_2n, call_vn, call_vn2 added
+
 Version 0.72 final (2005-12-07)
 -------------------------------
 
