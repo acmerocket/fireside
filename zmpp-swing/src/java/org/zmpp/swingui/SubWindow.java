@@ -62,6 +62,7 @@ public class SubWindow {
       line = 0;
       currentX = OFFSET_X;
     }
+    
     public void setPosition(int line, int column) {
       
       FontMetrics fm = getGraphics().getFontMetrics();
@@ -115,7 +116,9 @@ public class SubWindow {
       FontMetrics fm = getGraphics().getFontMetrics();
       if (yHomePos == HomeYPosition.BOTTOM) {
 
-        int availableLines = height / fm.getHeight();
+        // We calulate an available height with a correction amount
+        // of fm.getMaxDescent() to reserve enough scrolling space
+        int availableLines = (height - fm.getMaxDescent()) / fm.getHeight();
         setPosition(availableLines, 1);
 
       } else if (yHomePos == HomeYPosition.TOP) {
@@ -386,7 +389,12 @@ public class SubWindow {
   
   private void scrollIfNeeded() {
     
-    while (cursor.currentY > (top + height)) {
+    Graphics g = getGraphics();
+    FontMetrics fm = g.getFontMetrics();
+    
+    // We calulate an available height with a correction amount
+    // of fm.getMaxDescent() to reserve enough scrolling space
+    while (cursor.currentY > (top + height - fm.getMaxDescent())) {
       
       if (isScrolled) scrollUp();
       cursor.decrementLinePos(1);
