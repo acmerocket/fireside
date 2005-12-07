@@ -228,11 +228,13 @@ public class SubWindow {
     
     this.top = top;
     this.height = height;
+    cursor.reset();
   }
   
   public void resize(int numLines) {
     
     this.height = getGraphics().getFontMetrics().getHeight() * numLines;
+    cursor.reset();
   }
   
   public void setFont(Font font) {
@@ -292,12 +294,13 @@ public class SubWindow {
     
     int width = image.getWidth();
     int lineLength = width - OFFSET_X * 2;
-    int numLines = height / fm.getHeight(); 
+    int numLines = height / fm.getHeight();
     
     WordWrapper wordWrapper = new WordWrapper(lineLength, fm, isBuffered);
     Pager pager = new Pager(numLines - 1, isPaged);
-    String[] lines = wordWrapper.wrap(cursor.currentX, str);    
+    String[] lines = wordWrapper.wrap(cursor.currentX, str);
     String[][] pages = pager.createPages(lines);
+    //System.out.println("# lines available: " + numLines + " lines in output: " + lines.length + " # pages: " + pages.length);
     
     for (int i = 0; i < pages.length; i++) {
       

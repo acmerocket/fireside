@@ -141,18 +141,18 @@ ScreenModel {
   
   public void splitWindow(final int linesUpperWindow) {
    
-    // Only works if lower window is selected (S 8.7.2.1)
-    if (activeWindow == WINDOW_BOTTOM) {
+    // The standard document suggests that a split should only take part 
+    // if the lower window is selected (S 8.7.2.1), but Bureaucracy does
+    // the split with the upper window selected, so we do that resizing
+    // always
+    resizeWindows(linesUpperWindow);
       
-      resizeWindows(linesUpperWindow);
-      
-      // S 8.6.1.1.2: Top window is cleared in version 3
-      if (machine.getStoryFileHeader().getVersion() == 3) {
+    // S 8.6.1.1.2: Top window is cleared in version 3
+    if (machine.getStoryFileHeader().getVersion() == 3) {
         
-        windows[WINDOW_TOP].clear();
-      }
-      repaintInUiThread();
+      windows[WINDOW_TOP].clear();
     }
+    repaintInUiThread();
   }
   
   public void setWindow(final int window) {
@@ -407,8 +407,8 @@ ScreenModel {
     windows[WINDOW_TOP].resize(linesUpperWindow);
     int heightWindowTop = windows[WINDOW_TOP].getHeight();
     windows[WINDOW_BOTTOM].setVerticalBounds(heightWindowTop - 1,
-                                             getHeight() - heightWindowTop);      
-  }  
+                                             getHeight() - heightWindowTop);
+  }
 
   private void setScreenProperties() {
     
