@@ -93,4 +93,21 @@ public class StoryFileHeaderTest extends MemoryMapSetup {
     fileheader.setForceFixedFont(false);
     assertFalse(fileheader.forceFixedFont());
   }
+
+  public void testSetFlags1V4() {
+ 
+    fileheader.setBoldFaceAvailable(true);
+    fileheader.setItalicAvailable(true);
+    fileheader.setFixedFontAvailable(true);
+    fileheader.setInterpreterNumber(3);
+    fileheader.setInterpreterVersion(3);
+    fileheader.setTimedInputAvailable(false);
+  }
+  
+  public void testSetScreenDimensions() {
+    
+    fileheader.setScreenHeight(255);
+    fileheader.setScreenWidth(82);
+    assertEquals(82, fileheader.getScreenWidth());
+  }
 }

@@ -106,6 +106,15 @@ public class PortableGameStateTest extends MockObjectTestCase {
     assertEquals(10030, gameState.getDeltaBytes().length);
   }
   
+  public void testGetStackFrameStatusVars() {
+    
+    StackFrame stackFrame = new StackFrame();
+    stackFrame.setProgramCounter(4711);
+    assertEquals(4711, stackFrame.getProgramCounter());
+    stackFrame.setReturnVariable(5);
+    assertEquals(5, stackFrame.getReturnVariable());
+  }
+  
   public void testCaptureMachineState() {
 
     List<RoutineContext> emptyContexts = new ArrayList<RoutineContext>();

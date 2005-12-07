@@ -1,7 +1,7 @@
 /*
  * $Id$
  * 
- * Created on 24.09.2005
+ * Created on 2005/12/06
  * Copyright 2005 by Wei-ju Wu
  *
  * This file is part of The Z-machine Preservation Project (ZMPP).
@@ -27,50 +27,44 @@ import java.io.FileInputStream;
 
 import org.jmock.MockObjectTestCase;
 import org.zmpp.base.MemoryAccess;
-import org.zmpp.vm.Abbreviations;
 import org.zmpp.vm.DefaultMachineConfig;
-import org.zmpp.vm.Machine;
-import org.zmpp.vm.Machine3;
-import org.zmpp.vm.MachineConfig;
+import org.zmpp.vm.Dictionary;
+import org.zmpp.vm.ObjectTree;
 import org.zmpp.vm.StoryFileHeader;
-import org.zmpp.vmutil.ZCharConverter;
 
-/**
- * This class acts as a base test class and sets up some integrated
- * testing objects for the minizork game.
- *
- * @author Wei-ju Wu
- * @version 1.0
- */
-public abstract class MemoryMapSetup extends MockObjectTestCase {
+public class DefaultMachineConfigTest extends MockObjectTestCase {
 
-  protected MemoryAccess minizorkmap;
-  protected MachineConfig config;
-  protected ZCharConverter converter;
-  protected StoryFileHeader fileheader;
-  protected Abbreviations abbreviations;
-  protected Machine machineState;
-  protected FileInputStream fileInput; 
+  private java.io.InputStream input;
   
   protected void setUp() throws Exception {
     
     File zork1 = new File("testfiles/minizork.z3");
-    fileInput = new FileInputStream(zork1);
-    config = new DefaultMachineConfig(fileInput);
-    config.reset();
-    minizorkmap = config.getMemoryAccess();
-    fileheader = config.getFileHeader();
-    
-    abbreviations = new Abbreviations(minizorkmap,
-        fileheader.getAbbreviationsAddress());
-    converter = new ZCharConverter(3, abbreviations);
-    
-    machineState = new Machine3();
-    machineState.initialize(config);
+    input = new FileInputStream(zork1);
   }
   
   protected void tearDown() throws Exception {
     
-    fileInput.close();
+    input.close();
   }
+  
+  public void testCreate() throws Exception {
+    
+    DefaultMachineConfig config = new DefaultMachineConfig(input);
+    StoryFileHeader fileheader = config.getFileHeader();
+    Dictionary dictionary = config.getDictionary();
+    MemoryAccess memaccess = config.getMemoryAccess();
+    ObjectTree objectTree = config.getObjectTree();
+    
+    assertNotNull(memaccess);
+    assertNotNull(dictionary);
+    assertNotNull(fileheader);
+    assertNotNull(objectTree);
+    
+    config.reset();
+    
+    assertNotSame(fileheader, config.getFileHeader());
+    assertNotSame(dictionary, config.getDictionary());
+    assertNotSame(memaccess, config.getMemoryAccess());
+    assertNotSame(objectTree, config.getObjectTree());
+  }  
 }
