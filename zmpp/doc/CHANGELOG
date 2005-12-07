@@ -1,12 +1,15 @@
 Changelog
 
-Version 0.72 final (2005-12-??)
+Version 0.72 final (2005-12-07)
 -------------------------------
 
-- played Seastalker, Trinity, Bureaucracy and A Mind Forever Voyaging
+- played Seastalker, Trinity, Bureaucracy, Plundered Hearts, A Mind Forever Voyaging
 - fixed broken tests, added several more
 - verified screen model
+- paging is disabled if input is from file
 - fix paging: <MORE> had to disappear after key press
+- fixed scrolling issue in Trinity
+- TODO: fix Bureaucracy behaviour
 
 Version 0.72 Beta (2005-11-30)
 ------------------------------
