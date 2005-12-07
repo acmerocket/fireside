@@ -57,7 +57,11 @@ public class SubWindow {
     
     public int getLine() { return line; }    
     public int getColumn() { return column; }
-    public void setHomeX() { line = 0; }
+    public void setHomeX() {
+      
+      line = 0;
+      currentX = OFFSET_X;
+    }
     public void setPosition(int line, int column) {
       
       FontMetrics fm = getGraphics().getFontMetrics();
@@ -252,8 +256,7 @@ public class SubWindow {
     
     Graphics g = getGraphics();
     FontMetrics fm = g.getFontMetrics();
-    //g.setColor(background);
-    g.setColor(Color.BLUE);
+    g.setColor(background);
     g.fillRect(cursor.currentX,
                cursor.currentY - fm.getMaxAscent(),
                image.getWidth() - cursor.currentX, fm.getHeight());
@@ -307,7 +310,7 @@ public class SubWindow {
   
   private void doMeMore() {
         
-    String[] more = { "", "<MORE> (Press key to continue)", "" };
+    String[] more = { "", "<MORE> (Press key to continue)" };
     printLines(more);
     
     // Rendering in the UI thread
@@ -326,10 +329,10 @@ public class SubWindow {
     // Do this exclusively to have better thread control, we need to stay
     // in the application thread
     editor.setInputMode(true);
-    editor.nextZsciiChar();
-    editor.setInputMode(false);
+    editor.nextZsciiChar();    
     getCursor().setHomeX();
-    eraseLine();
+    eraseLine();        
+    editor.setInputMode(false);
   }
   
   private void printLines(String lines[]) {
