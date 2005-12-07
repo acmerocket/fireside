@@ -4,9 +4,9 @@ Version 0.72 final (2005-12-??)
 -------------------------------
 
 - played Seastalker, Trinity, Bureaucracy and A Mind Forever Voyaging
-- fixed broken tests
+- fixed broken tests, added several more
 - verified screen model
-- TODO: fix paging: <MORE> has to disappear
+- fix paging: <MORE> had to disappear after key press
 
 Version 0.72 Beta (2005-11-30)
 ------------------------------
