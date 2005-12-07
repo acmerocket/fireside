@@ -29,12 +29,12 @@ import javax.swing.JOptionPane;
 
 import org.zmpp.vm.DefaultMachineConfig;
 import org.zmpp.vm.FileInputStream;
-import org.zmpp.vm.TranscriptOutputStream;
 import org.zmpp.vm.Machine;
 import org.zmpp.vm.Machine3;
 import org.zmpp.vm.MachineConfig;
 import org.zmpp.vm.MemoryOutputStream;
 import org.zmpp.vm.StoryFileHeader;
+import org.zmpp.vm.TranscriptOutputStream;
 
 
 /**
@@ -99,20 +99,41 @@ public class Main {
   
   private static Machine openStoryFile(File storyfile) {
     
-    MachineConfig config = new DefaultMachineConfig(storyfile);
-    config.reset();
-    StoryFileHeader fileheader = config.getFileHeader();
-    System.out.println("Story file Version: " + fileheader.getVersion());
+    java.io.InputStream inputstream = null;
     
-    if (fileheader.getVersion() < 3 || fileheader.getVersion() > 4) {
+    try {
       
-      JOptionPane.showMessageDialog(null,
+      inputstream = new java.io.FileInputStream(storyfile);
+      MachineConfig config = new DefaultMachineConfig(inputstream);
+      StoryFileHeader fileheader = config.getFileHeader();
+      System.out.println("Story file Version: " + fileheader.getVersion());
+    
+      if (fileheader.getVersion() < 3 || fileheader.getVersion() > 4) {
+      
+        JOptionPane.showMessageDialog(null,
           "ZMPP V 0.72 currently only supports story file versions 3 and 4.",
           "Story file read error", JOptionPane.ERROR_MESSAGE);
-      System.exit(0);
+        System.exit(0);
+      }
+      Machine machine = new Machine3();
+      machine.initialize(config);
+      return machine;
+      
+    } catch (Exception ex) {
+      
+      ex.printStackTrace();
+      
+    } finally {
+      
+      try {
+        
+        if (inputstream != null) inputstream.close();
+        
+      } catch (Exception ex) {
+        
+        ex.printStackTrace();
+      }
     }
-    Machine machine = new Machine3();
-    machine.initialize(config);
-    return machine;
+    return null;
   }
 }
