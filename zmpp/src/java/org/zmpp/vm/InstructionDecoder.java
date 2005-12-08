@@ -69,6 +69,7 @@ public class InstructionDecoder {
     if (info.getInstructionForm() == InstructionForm.VARIABLE
         && info.getOperandCount() == OperandCount.C2OP) {
       
+      // Handle the VAR form of C2OP instructions here
       AbstractInstruction info2 =
         new LongInstruction(machineState, OperandCount.VAR, info.getOpcode());
       
@@ -104,7 +105,12 @@ public class InstructionDecoder {
     short firstByte = memaccess.readUnsignedByte(instructionAddress);
     
     // Determine form and operand count type
-    if (0x00 <= firstByte && firstByte <= 0x7f) {
+    if (firstByte == 0xbe) {
+            
+      opcode = memaccess.readUnsignedByte(instructionAddress + 1);
+      return new ExtendedInstruction(machineState, opcode);
+      
+    } else if (0x00 <= firstByte && firstByte <= 0x7f) {
       
       opcode = firstByte & 0x1f; // Bottom five bits contain the opcode number
       operandCount = OperandCount.C2OP;
@@ -126,9 +132,11 @@ public class InstructionDecoder {
                                              instructionAddress);
         }
         return new Short0Instruction(machineState, opcode);
-      }
-      else
+        
+      } else {
+        
         return new Short1Instruction(machineState, opcode);
+      }
       
     } else {
       
@@ -175,24 +183,31 @@ public class InstructionDecoder {
       currentAddress = extractOperand(info, optype1, instructionAddress + 1);
       currentAddress = extractOperand(info, optype2, currentAddress);
       
-    } else if (info.getInstructionForm() == InstructionForm.VARIABLE){
+    } else if (info.getInstructionForm() == InstructionForm.VARIABLE) {
     
       int numOpTypeBytes = 1;
-      // The operand types start after the opcode byte in variable form
-      short optypeByte1 = memaccess.readUnsignedByte(instructionAddress + 1);
+      
+      // The operand types start after the first opcode byte in variable form,
+      // and after the second in ext form
+      int operandOffset =
+        info.getOperandCount() == OperandCount.EXT ? 2 : 1;      
+      short optypeByte1 =
+        memaccess.readUnsignedByte(instructionAddress + operandOffset);
       short optypeByte2 = 0;
                 
       // Extract more operands if necessary, if the opcode
       // is call_vs2 or call_vn2 and there are four operands already,
       // there is a need to check out the second op type byte
       // (Standards document 1.0, S 4.4.3.1 and S 4.5.1)
-      if (info.getOpcode() == VariableInstruction.OP_CALL_VS2) {
+      if (info.getOpcode() == VariableInstruction.OP_CALL_VS2
+          || info.getOpcode() == VariableInstruction.OP_CALL_VN2) {
         
         // There is a second op type byte
         numOpTypeBytes = 2;
         optypeByte2 = memaccess.readUnsignedByte(instructionAddress + 2);
       }
-      currentAddress = instructionAddress + 1 + numOpTypeBytes;    
+      
+      currentAddress = instructionAddress + operandOffset + numOpTypeBytes;    
       currentAddress = extractOperandsWithTypeByte(info, optypeByte1,
                                                    currentAddress);
       if (numOpTypeBytes == 2 && info.getNumOperands() == 4) {
