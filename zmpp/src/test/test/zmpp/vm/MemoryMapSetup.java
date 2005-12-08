@@ -57,7 +57,6 @@ public abstract class MemoryMapSetup extends MockObjectTestCase {
     File zork1 = new File("testfiles/minizork.z3");
     fileInput = new FileInputStream(zork1);
     config = new DefaultMachineConfig(fileInput);
-    config.reset();
     minizorkmap = config.getMemoryAccess();
     fileheader = config.getFileHeader();
     

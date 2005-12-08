@@ -22,7 +22,15 @@
  */
 package test.zmpp.vm;
 
+import java.io.File;
+import java.io.FileInputStream;
+
+import org.zmpp.base.MemoryAccess;
+import org.zmpp.vm.DefaultMachineConfig;
+import org.zmpp.vm.MachineConfig;
+import org.zmpp.vm.ObjectTree;
 import org.zmpp.vm.Objects;
+import org.zmpp.vm.StoryFileHeader;
 import org.zmpp.vm.ZObject;
 
 public class ObjectsTest extends MemoryMapSetup {
@@ -172,5 +180,17 @@ public class ObjectsTest extends MemoryMapSetup {
   public void testGetPropertyLengthAddress0() {
     
     assertEquals(0, objects.getPropertyLength(0));
+  }
+  
+  public void testCursesObjects() throws Exception {
+    
+    File curses = new File("testfiles/curses.z5");
+    FileInputStream fileInput = new FileInputStream(curses);
+    MachineConfig config = new DefaultMachineConfig(fileInput);
+    MemoryAccess cursesmap = config.getMemoryAccess();
+    StoryFileHeader fileheader = config.getFileHeader();
+    ObjectTree objectTree = new Objects(fileheader.getVersion(), cursesmap, fileheader.getObjectTableAddress());
+    ZObject obj502 = objectTree.getObject(502);
+    assertTrue(obj502.isPropertyAvailable(2));
   }
 }
