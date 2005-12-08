@@ -78,25 +78,10 @@ public class LineEditor implements KeyListener {
     switch (e.getKeyCode()) {
       case KeyEvent.VK_BACK_SPACE:
       case KeyEvent.VK_DELETE:
-      
-        if (isInputMode()) {
-        
-          synchronized (editbuffer) {
-          
-            editbuffer.add(ZsciiEncoding.DELETE);
-            editbuffer.notifyAll();
-          }
-        }
+        addToBuffer(ZsciiEncoding.DELETE);
         break;
       case KeyEvent.VK_SPACE:
-        if (isInputMode()) {
-        
-          synchronized (editbuffer) {
-          
-            editbuffer.add((short) ' ');
-            editbuffer.notifyAll();
-          }
-        }
+        addToBuffer((short) ' ');
         break;
     }
   }
@@ -105,22 +90,52 @@ public class LineEditor implements KeyListener {
   
     char c = e.getKeyChar();    
     ZsciiEncoding encoding = ZsciiEncoding.getInstance();
-    if (isInputMode() && encoding.isConvertableToZscii(c)
-        && !handledInKeyPressed(c)) {
+    if (encoding.isConvertableToZscii(c)
+        && !handledInKeyPressed(c)
+        && !handledInKeyReleased(c)) {
         
+      addToBuffer(encoding.getZsciiChar(c));
+    }
+  }
+  
+  public void keyReleased(KeyEvent e) {
+    
+    switch (e.getKeyCode()) {
+      case KeyEvent.VK_UP:
+        addToBuffer(ZsciiEncoding.CURSOR_UP);
+        break;
+      case KeyEvent.VK_DOWN:
+        addToBuffer(ZsciiEncoding.CURSOR_DOWN);
+        break;
+      case KeyEvent.VK_LEFT:
+        addToBuffer(ZsciiEncoding.CURSOR_LEFT);
+        break;
+      case KeyEvent.VK_RIGHT:
+        addToBuffer(ZsciiEncoding.CURSOR_RIGHT);
+        break;
+    }
+  }
+
+  private void addToBuffer(short zsciiChar) {
+    
+    if (isInputMode()) {
+      
       synchronized (editbuffer) {
-        
-        editbuffer.add(encoding.getZsciiChar(c));
+      
+        editbuffer.add(zsciiChar);
         editbuffer.notifyAll();
       }
     }
   }
   
-  public void keyReleased(KeyEvent e) { }
-
-  
   private boolean handledInKeyPressed(char c) {
     
     return c == ' ' || c == KeyEvent.VK_BACK_SPACE || c == KeyEvent.VK_DELETE;
+  }
+  
+  private boolean handledInKeyReleased(char c) {
+    
+    return c == KeyEvent.VK_UP || c == KeyEvent.VK_DOWN
+           || c == KeyEvent.VK_LEFT || c == KeyEvent.VK_RIGHT;
   }
 }
