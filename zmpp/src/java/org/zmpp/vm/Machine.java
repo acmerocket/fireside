@@ -399,8 +399,19 @@ public interface Machine {
   
   /**
    * Saves the current state.
+
+   * @param savepc the save pc
+   * @return true on success, false otherwise
    */
   boolean save(int savepc);
+  
+  /**
+   * Saves the current state in memory.
+   * 
+   * @param savepc the save pc
+   * @return true on success, false otherwise
+   */
+  boolean save_undo(int savepc);
   
   /**
    * Restores a previously saved state.
@@ -408,6 +419,13 @@ public interface Machine {
    * @return the portable game state
    */
   PortableGameState restore();
+  
+  /**
+   * Restores a previously saved state from memory.
+   * 
+   * @return the portable game state
+   */
+  PortableGameState restore_undo();
   
   /**
    * Restarts the virtual machine.

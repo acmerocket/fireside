@@ -43,6 +43,12 @@ public class ObjectsTest extends MemoryMapSetup {
     
     assertEquals(5, objects.getPropertyDefault(13));
   }
+
+  public void testGetObject0() {
+    
+    ZObject obj = objects.getObject((short) 0);
+    assertNull(obj);
+  }
   
   public void testGetObject() {
     

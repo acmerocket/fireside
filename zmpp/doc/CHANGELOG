@@ -1,6 +1,6 @@
 Changelog
 
-Version 0.72
+Version 0.74
 ------------
 
 - test for translate_packed_address in version 5
@@ -10,6 +10,9 @@ Version 0.72
 - VAR version of "not" added
 - call_2n, call_vn, call_vn2 added
 - decoding extended instructions added
+- save_undo, restore_undo added
+- art_shift, log_shift added
+- regular save and restore are now available in ExtendedInstruction
 
 Version 0.72 final (2005-12-07)
 -------------------------------

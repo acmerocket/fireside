@@ -5,22 +5,22 @@ Version 0.78:
 
 Reference games: Border Zone
 
-- timed input (introduced here, since Border Zone is the first Infocom game
-  using this feature)
+- save and restore saving regions
 - opcodes:
   1. throw
   2. catch
-  3. set_colour
+  1. print_unicode (EXT)
+  2. check_unicode (EXT)
 
 Version 0.77:
 -------------
 
+- timed input (introduced here, since Border Zone is the first Infocom game
+  using this feature)
 - different alphabet tables
 - opcodes:
-  1. print_unicode (EXT)
-  2. check_unicode (EXT)
-  3. copy_table
-  4. print_table
+  1. copy_table
+  2. print_table
 
 Version 0.76:
 -------------
@@ -31,7 +31,8 @@ Version 0.76:
   2. encode_text
   3. piracy
   4. check_arg_count
-
+  5. set_colour
+  6. set_font
 
 Version 0.74:
 -------------
@@ -43,19 +44,18 @@ Reference games: Curses
 	flexibility
 - opcodes:
   - new:               - changed:                          - illegal
-    1. not (VAR)       1. sread -> aread (is store)  1. save (0OP)
-    2. call_2n           2. not -> call_1n                 2. restore (0OP)
+    1. not (VAR)         1. sread -> aread (is store)        1. save (0OP)
+    2. call_2n           2. not -> call_1n                   2. restore (0OP)
     3. call_vn
     4. call_vn2
     
 - extended opcodes:
-  1. save
-  2. restore
+  1. save (regular)
+  2. restore (regular)
   3. save_undo
   4. restore_undo
   5. log_shift
   6. art_shift
-  7. set_font
  
 Version 0.72:
 -------------

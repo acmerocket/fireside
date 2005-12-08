@@ -30,7 +30,7 @@ import javax.swing.JOptionPane;
 import org.zmpp.vm.DefaultMachineConfig;
 import org.zmpp.vm.FileInputStream;
 import org.zmpp.vm.Machine;
-import org.zmpp.vm.Machine3;
+import org.zmpp.vm.MachineImpl;
 import org.zmpp.vm.MachineConfig;
 import org.zmpp.vm.MemoryOutputStream;
 import org.zmpp.vm.StoryFileHeader;
@@ -115,7 +115,7 @@ public class Main {
           "Story file read error", JOptionPane.ERROR_MESSAGE);
         System.exit(0);
       }
-      Machine machine = new Machine3();
+      Machine machine = new MachineImpl();
       machine.initialize(config);
       return machine;
       

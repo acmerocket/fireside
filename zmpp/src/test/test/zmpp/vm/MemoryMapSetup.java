@@ -30,7 +30,7 @@ import org.zmpp.base.MemoryAccess;
 import org.zmpp.vm.Abbreviations;
 import org.zmpp.vm.DefaultMachineConfig;
 import org.zmpp.vm.Machine;
-import org.zmpp.vm.Machine3;
+import org.zmpp.vm.MachineImpl;
 import org.zmpp.vm.MachineConfig;
 import org.zmpp.vm.StoryFileHeader;
 import org.zmpp.vmutil.ZCharConverter;
@@ -65,7 +65,7 @@ public abstract class MemoryMapSetup extends MockObjectTestCase {
         fileheader.getAbbreviationsAddress());
     converter = new ZCharConverter(3, abbreviations);
     
-    machineState = new Machine3();
+    machineState = new MachineImpl();
     machineState.initialize(config);
   }
   

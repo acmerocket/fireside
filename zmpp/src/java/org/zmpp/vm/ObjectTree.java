@@ -41,10 +41,10 @@ public interface ObjectTree {
   
   /**
    * Returns the Z-object with the specified object number. The index is
-   * 1 based
+   * 1 based.
    * 
    * @param objectNum object number
-   * @return the z object with the specified number
+   * @return the z object with the specified number or null if objectNum == 0
    */
   ZObject getObject(int objectNum);
   

@@ -163,16 +163,17 @@ public class InstructionDecoder {
       
       if (info.getOperandCount() == OperandCount.C1OP) {
         
-        short firstByte = memaccess.readUnsignedByte(instructionAddress);
+        short firstByte = memaccess.readUnsignedByte(currentAddress);
         byte optype = (byte) ((firstByte & 0x30) >> 4);
         
-        currentAddress = extractOperand(info, optype, instructionAddress + 1);
+        currentAddress = extractOperand(info, optype, currentAddress + 1);
         
       } else {
         
         // 0 operand instructions of course still occupy 1 byte
-        currentAddress = instructionAddress + 1;
+        currentAddress++;
       }
+      
     } else if (info.getInstructionForm() == InstructionForm.LONG) {
 
       short firstByte = memaccess.readUnsignedByte(instructionAddress);      
@@ -180,37 +181,39 @@ public class InstructionDecoder {
                                                 Operand.TYPENUM_SMALL_CONSTANT;
       byte optype2 = ((firstByte & 0x20) > 0) ? Operand.TYPENUM_VARIABLE :
                                                 Operand.TYPENUM_SMALL_CONSTANT;
-      currentAddress = extractOperand(info, optype1, instructionAddress + 1);
+      currentAddress = extractOperand(info, optype1, currentAddress + 1);
       currentAddress = extractOperand(info, optype2, currentAddress);
       
     } else if (info.getInstructionForm() == InstructionForm.VARIABLE) {
     
-      int numOpTypeBytes = 1;
-      
-      // The operand types start after the first opcode byte in variable form,
-      // and after the second in ext form
-      int operandOffset =
-        info.getOperandCount() == OperandCount.EXT ? 2 : 1;      
-      short optypeByte1 =
-        memaccess.readUnsignedByte(instructionAddress + operandOffset);
+      // The operand types start after the second opcode byte in EXT form,
+      // and after the first otherwise
+      currentAddress += (info.getOperandCount() == OperandCount.EXT) ? 2 : 1;      
+      short optypeByte1 = memaccess.readUnsignedByte(currentAddress++);
       short optypeByte2 = 0;
                 
       // Extract more operands if necessary, if the opcode
       // is call_vs2 or call_vn2 and there are four operands already,
       // there is a need to check out the second op type byte
       // (Standards document 1.0, S 4.4.3.1 and S 4.5.1)
-      if (info.getOpcode() == VariableInstruction.OP_CALL_VS2
-          || info.getOpcode() == VariableInstruction.OP_CALL_VN2) {
+      // Note: we need to make sure that OperandCount is VAR, because
+      // ----- the opcode for CALL_VN2 overlaps with CALL_2N
+      boolean isVcall = false;      
+      if (info.getOperandCount() == OperandCount.VAR
+          && (info.getOpcode() == VariableInstruction.OP_CALL_VS2
+              || info.getOpcode() == VariableInstruction.OP_CALL_VN2)) {
         
         // There is a second op type byte
-        numOpTypeBytes = 2;
-        optypeByte2 = memaccess.readUnsignedByte(instructionAddress + 2);
+        isVcall = true;
+        optypeByte2 = memaccess.readUnsignedByte(currentAddress++);
       }
       
-      currentAddress = instructionAddress + operandOffset + numOpTypeBytes;    
+      // Extract first operand half
       currentAddress = extractOperandsWithTypeByte(info, optypeByte1,
                                                    currentAddress);
-      if (numOpTypeBytes == 2 && info.getNumOperands() == 4) {
+      
+      // Extract second operand half
+      if (isVcall && info.getNumOperands() == 4) {
         
         currentAddress = extractOperandsWithTypeByte(info, optypeByte2,
                                                      currentAddress);
@@ -258,9 +261,6 @@ public class InstructionDecoder {
    */
   private int extractOperand(AbstractInstruction info, byte optype,
                              int currentAddress) {
-    //if (info.getInstructionForm() == InstructionForm.SHORT)
-    //  System.out.printf("extractOperand() from address: %x, optype: %d\n",
-    //      currentAddress, optype);
     
     int nextAddress = currentAddress;
     if (optype == Operand.TYPENUM_LARGE_CONSTANT) {
