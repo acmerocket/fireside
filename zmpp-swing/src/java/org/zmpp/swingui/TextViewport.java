@@ -36,6 +36,7 @@ import org.zmpp.vm.Machine;
 import org.zmpp.vm.OutputStream;
 import org.zmpp.vm.ScreenModel;
 import org.zmpp.vm.StoryFileHeader;
+import org.zmpp.vm.StoryFileHeader.Attribute;
 import org.zmpp.vm.TextCursor;
 import org.zmpp.vmutil.ZsciiEncoding;
 
@@ -395,12 +396,11 @@ ScreenModel {
   private void determineStandardFont() {
     
     // Sets the fixed font as the standard
-    if (machine.getStoryFileHeader().forceFixedFont()) {
+    if (machine.getStoryFileHeader().isEnabled(Attribute.FORCE_FIXED_FONT)) {
       
-      standardFont = fixedFont;
-      
+      standardFont = fixedFont;      
     }
-  }  
+  }
 
   private void resizeWindows(int linesUpperWindow) {
     
@@ -415,15 +415,15 @@ ScreenModel {
     StoryFileHeader fileheader = machine.getStoryFileHeader();
     if (fileheader.getVersion() <= 3) {
       
-      fileheader.setDefaultFontIsVariablePitch(true);    
-      fileheader.setStatusLineAvailable(true);
-      fileheader.setScreenSplittingAvailable(true);
+      fileheader.setEnabled(Attribute.DEFAULT_FONT_IS_VARIABLE, true);    
+      fileheader.setEnabled(Attribute.SUPPORTS_STATUSLINE, true);
+      fileheader.setEnabled(Attribute.SUPPORTS_SCREEN_SPLITTING, true);
       
     } else if (fileheader.getVersion() >= 4) {
       
-      fileheader.setBoldFaceAvailable(true);
-      fileheader.setFixedFontAvailable(true);
-      fileheader.setItalicAvailable(true);
+      fileheader.setEnabled(Attribute.SUPPORTS_BOLD, true);
+      fileheader.setEnabled(Attribute.SUPPORTS_FIXED_FONT, true);
+      fileheader.setEnabled(Attribute.SUPPORTS_ITALIC, true);
       
       FontMetrics fm = imageBuffer.getGraphics().getFontMetrics(fixedFont);
       int screenWidth = (imageBuffer.getWidth() - 2 * SubWindow.OFFSET_X) /
@@ -431,9 +431,6 @@ ScreenModel {
       int screenHeight = imageBuffer.getHeight() / fm.getHeight();
       fileheader.setScreenWidth(screenWidth);
       fileheader.setScreenHeight(screenHeight);      
-      
-      // Is not really a screen property, put it into machine later
-      fileheader.setTimedInputAvailable(false);
     }
     determineStandardFont();
   }

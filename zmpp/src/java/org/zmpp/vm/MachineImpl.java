@@ -29,6 +29,7 @@ import java.util.List;
 import org.zmpp.base.MemoryAccess;
 import org.zmpp.iff.FormChunk;
 import org.zmpp.iff.WritableFormChunk;
+import org.zmpp.vm.StoryFileHeader.Attribute;
 import org.zmpp.vmutil.PredictableRandomGenerator;
 import org.zmpp.vmutil.RandomGenerator;
 import org.zmpp.vmutil.UnpredictableRandomGenerator;
@@ -185,7 +186,7 @@ public class MachineImpl implements Machine {
     
     if (fileHeader.getVersion() >= 4) {
             
-      fileHeader.setTimedInputAvailable(false);
+      fileHeader.setEnabled(Attribute.SUPPORTS_TIMED_INPUT, false);
       fileHeader.setInterpreterNumber(6); // IBM PC
       fileHeader.setInterpreterVersion(1);
     }
@@ -563,7 +564,7 @@ public class MachineImpl implements Machine {
     if (outputStream[OUTPUTSTREAM_TRANSCRIPT - 1] != null) {
         
       outputStream[OUTPUTSTREAM_TRANSCRIPT - 1].select(
-          fileHeader.isTranscriptingOn());
+          fileHeader.isEnabled(Attribute.TRANSCRIPTING));
     }
   }
   
@@ -578,7 +579,7 @@ public class MachineImpl implements Machine {
     if (streamnumber == OUTPUTSTREAM_TRANSCRIPT) {
       
       //System.out.println("ENABLE_TRANSCRIPT_STREAM: " + flag);
-      fileHeader.setTranscripting(flag);
+      fileHeader.setEnabled(Attribute.TRANSCRIPTING, flag);
       
     } else if (streamnumber == OUTPUTSTREAM_MEMORY && flag) {
       
@@ -712,7 +713,7 @@ public class MachineImpl implements Machine {
       
       int global2 = getVariable(0x11);
       int global3 = getVariable(0x12);
-      if (fileHeader.isScoreGame()) {
+      if (fileHeader.isEnabled(Attribute.SCORE_GAME)) {
         
         statusLine.updateStatusScore(objectName, global2, global3);
       } else {
@@ -772,6 +773,16 @@ public class MachineImpl implements Machine {
   }
   
   /**
+   * {@inheritDoc}
+   */
+  public boolean save_undo(int savepc) {
+    
+    undoGameState = new PortableGameState();
+    undoGameState.captureMachineState(this, savepc);
+    return true;
+  }
+
+  /**
    * {@inheritDoc} 
    */
   public PortableGameState restore() {
@@ -789,21 +800,11 @@ public class MachineImpl implements Machine {
         // current window state
         restart(false);
         gamestate.transferStateToMachine(this);
-        System.out.printf("restore(), pc is: %4x\n", getProgramCounter());
+        System.out.printf("restore(), pc is: %4x running: %b\n", getProgramCounter(), isRunning());
         return gamestate;
       }
     }
     return null;
-  }
-
-  /**
-   * {@inheritDoc}
-   */
-  public boolean save_undo(int savepc) {
-    
-    undoGameState = new PortableGameState();
-    undoGameState.captureMachineState(this, savepc);
-    return true;
   }
 
   /**
@@ -843,13 +844,13 @@ public class MachineImpl implements Machine {
   private void restart(boolean resetScreenModel) {
     
     // Transcripting and fixed font bits survive the restart
-    boolean fixedFontForced = fileHeader.forceFixedFont();
-    boolean transcripting = fileHeader.isTranscriptingOn();
+    boolean fixedFontForced = fileHeader.isEnabled(Attribute.FORCE_FIXED_FONT);
+    boolean transcripting = fileHeader.isEnabled(Attribute.TRANSCRIPTING);
     config.reset();
     resetState();
     if (resetScreenModel) screenModel.reset();    
-    fileHeader.setTranscripting(transcripting);
-    fileHeader.setForceFixedFont(fixedFontForced);
+    fileHeader.setEnabled(Attribute.TRANSCRIPTING, transcripting);
+    fileHeader.setEnabled(Attribute.FORCE_FIXED_FONT, fixedFontForced);
   }
   
   /**

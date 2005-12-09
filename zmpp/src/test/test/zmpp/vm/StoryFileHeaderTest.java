@@ -22,6 +22,13 @@
  */
 package test.zmpp.vm;
 
+import org.jmock.Mock;
+import org.jmock.MockObjectTestCase;
+import org.zmpp.base.MemoryAccess;
+import org.zmpp.vm.DefaultStoryFileHeader;
+import org.zmpp.vm.StoryFileHeader;
+import org.zmpp.vm.StoryFileHeader.Attribute;
+
 
 /**
  * This class is a test for the StoryFileHeader class.
@@ -29,85 +36,291 @@ package test.zmpp.vm;
  * @author Wei-ju Wu
  * @version 1.0
  */
-public class StoryFileHeaderTest extends MemoryMapSetup {
+public class StoryFileHeaderTest extends MockObjectTestCase {
 
-  public void testHeader() throws Exception {
+  private Mock mockMemAccess;
+  private MemoryAccess memaccess;
+  private StoryFileHeader fileHeader;
+  
+  protected void setUp() throws Exception {
     
-    assertEquals(3, fileheader.getVersion());
-    assertEquals(0, fileheader.getFlags1());
-    assertEquals(34, fileheader.getRelease());
-    assertEquals(0x3709, fileheader.getHighMemAddress());
-    assertEquals(0x37d9, fileheader.getProgramStart());
-    assertEquals(0x285a, fileheader.getDictionaryAddress());
-    assertEquals(0x03c6, fileheader.getObjectTableAddress());
-    assertEquals(0x02b4, fileheader.getGlobalsAddress());
-    assertEquals(0x2187, fileheader.getStaticsAddress());
-    assertEquals(0, fileheader.getFlags2());
-    assertEquals(0x01f4, fileheader.getAbbreviationsAddress());
-    assertEquals("871124", fileheader.getSerialNumber());
-    assertEquals(0xd870, fileheader.getChecksum());
-    assertEquals(0, fileheader.getRevision());
-    assertEquals(0xcbf8, fileheader.getFileLength());
-    int abbraddr = fileheader.getAbbreviationsAddress();
-    int globaddr = fileheader.getGlobalsAddress();
-    int numAbbrev = (globaddr - abbraddr) / 2;
-    assertEquals(96, numAbbrev);
+    mockMemAccess = mock(MemoryAccess.class);
+    memaccess = (MemoryAccess) mockMemAccess.proxy();
+    fileHeader = new DefaultStoryFileHeader(memaccess); 
   }
   
-  public void testFlags1() {
+  public void testGetVersion() {
     
-    assertTrue(fileheader.isScoreGame());
-    
-    fileheader.setStatusLineAvailable(true);
-    assertTrue((fileheader.getFlags1() & 16) > 0);
-    fileheader.setStatusLineAvailable(false);
-    assertTrue((fileheader.getFlags1() & 16) == 0);
-    
-    fileheader.setScreenSplittingAvailable(true);
-    assertTrue((fileheader.getFlags1() & 32) > 0);
-    fileheader.setScreenSplittingAvailable(false);
-    assertTrue((fileheader.getFlags1() & 32) == 0);
-    
-    fileheader.setDefaultFontIsVariablePitch(true);
-    assertTrue((fileheader.getFlags1() & 64) > 0);
-    assertTrue(fileheader.defaultFontIsVariablePitch());
-    
-    fileheader.setDefaultFontIsVariablePitch(false);
-    assertTrue((fileheader.getFlags1() & 64) == 0);
-    assertFalse(fileheader.defaultFontIsVariablePitch());
+    mockMemAccess.expects(atLeastOnce()).method("readUnsignedByte").with(eq(0x00)).will(returnValue((short) 3));
+    assertEquals(3, fileHeader.getVersion());
   }
   
-  public void testFlags2() {
-   
-    fileheader.setTranscripting(true);
-    assertTrue((fileheader.getFlags2() & 1) > 0);
-    assertTrue(fileheader.isTranscriptingOn());
-
-    fileheader.setTranscripting(false);
-    assertTrue((fileheader.getFlags2() & 1) == 0);
-    assertFalse(fileheader.isTranscriptingOn());
+  public void testGetRelease() {
     
-    fileheader.setForceFixedFont(true);
-    assertTrue(fileheader.forceFixedFont());
+    mockMemAccess.expects(atLeastOnce()).method("readUnsignedShort").with(eq(0x02)).will(returnValue(35));    
+    assertEquals(35, fileHeader.getRelease());
+  }
+  
+  public void testGetHighMemAddress() {
+  
+    mockMemAccess.expects(atLeastOnce()).method("readUnsignedShort").with(eq(0x04)).will(returnValue(4711));    
+    assertEquals(4711, fileHeader.getHighMemAddress());
+  }
+  
+  public void testGetInitialPC() {
     
-    fileheader.setForceFixedFont(false);
-    assertFalse(fileheader.forceFixedFont());
+    mockMemAccess.expects(atLeastOnce()).method("readUnsignedShort").with(eq(0x06)).will(returnValue(4712));    
+    assertEquals(4712, fileHeader.getProgramStart());
   }
 
-  public void testSetFlags1V4() {
+  public void testGetDictionaryAddress() {
+    
+    mockMemAccess.expects(atLeastOnce()).method("readUnsignedShort").with(eq(0x08)).will(returnValue(4713));    
+    assertEquals(4713, fileHeader.getDictionaryAddress());
+  }
+  
+  public void testGetObjectTableAddress() {
+    
+    mockMemAccess.expects(atLeastOnce()).method("readUnsignedShort").with(eq(0x0a)).will(returnValue(4714));    
+    assertEquals(4714, fileHeader.getObjectTableAddress());
+  }
+
+  public void testGetGlobalsAddress() {
+    
+    mockMemAccess.expects(atLeastOnce()).method("readUnsignedShort").with(eq(0x0c)).will(returnValue(4715));    
+    assertEquals(4715, fileHeader.getGlobalsAddress());
+  }
+
+  public void testGetStaticMemAddress() {
+    
+    mockMemAccess.expects(atLeastOnce()).method("readUnsignedShort").with(eq(0x0e)).will(returnValue(4716));    
+    assertEquals(4716, fileHeader.getStaticsAddress());
+  }
+  
+  public void testGetSerialNumber() {
+    
+    mockMemAccess.expects(once()).method("readUnsignedByte").with(eq(0x12)).will(returnValue((short) '0'));    
+    mockMemAccess.expects(once()).method("readUnsignedByte").with(eq(0x13)).will(returnValue((short) '5'));    
+    mockMemAccess.expects(once()).method("readUnsignedByte").with(eq(0x14)).will(returnValue((short) '1'));    
+    mockMemAccess.expects(once()).method("readUnsignedByte").with(eq(0x15)).will(returnValue((short) '2'));    
+    mockMemAccess.expects(once()).method("readUnsignedByte").with(eq(0x16)).will(returnValue((short) '0'));    
+    mockMemAccess.expects(once()).method("readUnsignedByte").with(eq(0x17)).will(returnValue((short) '9'));    
+    assertEquals("051209", fileHeader.getSerialNumber());
+  }
+
+  public void testGetAbbreviationsAddress() {
+    
+    mockMemAccess.expects(atLeastOnce()).method("readUnsignedShort").with(eq(0x18)).will(returnValue(4717));    
+    assertEquals(4717, fileHeader.getAbbreviationsAddress());
+  }
+  
+  public void testGetFileLengthV3() {
+    
+    mockMemAccess.expects(atLeastOnce()).method("readUnsignedByte").with(eq(0x00)).will(returnValue((short) 3));
+    mockMemAccess.expects(atLeastOnce()).method("readUnsignedShort").with(eq(0x1a)).will(returnValue(4718));
+    
+    assertEquals(4718 * 2, fileHeader.getFileLength());
+  }
+
+  public void testGetFileLengthV4() {
+    
+    mockMemAccess.expects(atLeastOnce()).method("readUnsignedByte").with(eq(0x00)).will(returnValue((short) 4));
+    mockMemAccess.expects(atLeastOnce()).method("readUnsignedShort").with(eq(0x1a)).will(returnValue(4718));
+    
+    assertEquals(4718, fileHeader.getFileLength());
+  }
+
+  public void testGetChecksum() {
+    
+    mockMemAccess.expects(atLeastOnce()).method("readUnsignedShort").with(eq(0x1c)).will(returnValue(4719));    
+    assertEquals(4719, fileHeader.getChecksum());
+  }
+  
+  public void testSetScreenHeightV4() {
+    
+    mockMemAccess.expects(atLeastOnce()).method("readUnsignedByte").with(eq(0x00)).will(returnValue((short) 4));
+    mockMemAccess.expects(once()).method("writeUnsignedByte").with(eq(0x20), eq((short) 255));
+    fileHeader.setScreenHeight(255);
+  }
+
+  public void testSetScreenHeightV5() {
+    
+    mockMemAccess.expects(atLeastOnce()).method("readUnsignedByte").with(eq(0x00)).will(returnValue((short) 5));
+    mockMemAccess.expects(once()).method("writeUnsignedByte").with(eq(0x20), eq((short) 255));
+    mockMemAccess.expects(once()).method("writeUnsignedShort").with(eq(0x24), eq(255));
+    fileHeader.setScreenHeight(255);
+  }
+  
+  public void testSetScreenWidthV4() {
+    
+    mockMemAccess.expects(atLeastOnce()).method("readUnsignedByte").with(eq(0x00)).will(returnValue((short) 4));
+    mockMemAccess.expects(once()).method("writeUnsignedByte").with(eq(0x21), eq((short) 82));
+    fileHeader.setScreenWidth(82);
+  }  
+
+  public void testSetScreenWidthV5() {
+    
+    mockMemAccess.expects(atLeastOnce()).method("readUnsignedByte").with(eq(0x00)).will(returnValue((short) 5));
+    mockMemAccess.expects(once()).method("writeUnsignedByte").with(eq(0x21), eq((short) 82));
+    mockMemAccess.expects(once()).method("writeUnsignedShort").with(eq(0x22), eq(82));
+    
+    fileHeader.setScreenWidth(82);
+  }  
+  
+  public void testSetInterpreterVersionV5() {
+    
+    // Story file version 4 or 5: version number as string
+    mockMemAccess.expects(atLeastOnce()).method("readUnsignedByte").with(eq(0x00)).will(returnValue((short) 5));
+    mockMemAccess.expects(once()).method("writeUnsignedByte").with(eq(0x1f), eq((short) '4'));
+    fileHeader.setInterpreterVersion(4);
+  }
+  
+  public void testSetInterpreterVersionV8() {
+    
+    // Story file version > 5: version number as value
+    mockMemAccess.expects(atLeastOnce()).method("readUnsignedByte").with(eq(0x00)).will(returnValue((short) 8));
+    mockMemAccess.expects(once()).method("writeUnsignedByte").with(eq(0x1f), eq((short) 4));
+    fileHeader.setInterpreterVersion(4);
+  }
+  
+  public void testSetInterpreterNumber() {
  
-    fileheader.setBoldFaceAvailable(true);
-    fileheader.setItalicAvailable(true);
-    fileheader.setFixedFontAvailable(true);
-    fileheader.setInterpreterNumber(3);
-    fileheader.setInterpreterVersion(3);
-    fileheader.setTimedInputAvailable(false);
+    mockMemAccess.expects(once()).method("writeUnsignedByte").with(eq(0x1e), eq((short) 3));
+    fileHeader.setInterpreterNumber(3);
   }
   
-  public void testSetScreenDimensions() {
+  // *************************************************************************
+  // ****** ATTRIBUTES
+  // **************************
+  
+  public void testSetTranscripting() {
+   
+    mockMemAccess.expects(atLeastOnce()).method("readUnsignedByte").with(eq(0x10)).will(returnValue((short) 0));
+    mockMemAccess.expects(once()).method("writeUnsignedByte").with(eq(0x10), eq((short) 1));
+    mockMemAccess.expects(once()).method("writeUnsignedByte").with(eq(0x10), eq((short) 0));
     
-    fileheader.setScreenHeight(255);
-    fileheader.setScreenWidth(82);
-    assertEquals(82, fileheader.getScreenWidth());
+    fileHeader.setEnabled(Attribute.TRANSCRIPTING, true);
+    fileHeader.setEnabled(Attribute.TRANSCRIPTING, false);
+  }
+  
+  public void testIsTranscriptingEnabled() {
+    
+    mockMemAccess.expects(atLeastOnce()).method("readUnsignedByte").with(eq(0x10)).will(
+        onConsecutiveCalls( returnValue((short) 1), returnValue((short) 0) ));
+    
+    assertTrue(fileHeader.isEnabled(Attribute.TRANSCRIPTING));
+    assertFalse(fileHeader.isEnabled(Attribute.TRANSCRIPTING));
+  }
+  
+  public void testSetForceFixedFont() {
+   
+    mockMemAccess.expects(atLeastOnce()).method("readUnsignedByte").with(eq(0x10)).will(returnValue((short) 1));
+    mockMemAccess.expects(once()).method("writeUnsignedByte").with(eq(0x10), eq((short) 3));
+    mockMemAccess.expects(once()).method("writeUnsignedByte").with(eq(0x10), eq((short) 1));
+
+    fileHeader.setEnabled(Attribute.FORCE_FIXED_FONT, true);
+    fileHeader.setEnabled(Attribute.FORCE_FIXED_FONT, false);
+  }
+  
+  public void testIsForceFixedFont() {
+    
+    mockMemAccess.expects(atLeastOnce()).method("readUnsignedByte").with(eq(0x10)).will(
+        onConsecutiveCalls( returnValue((short) 6), returnValue((short) 5) ));
+    
+    assertTrue(fileHeader.isEnabled(Attribute.FORCE_FIXED_FONT));
+    assertFalse(fileHeader.isEnabled(Attribute.FORCE_FIXED_FONT));
+  }
+
+  public void testSetSupportsTimedInput() {
+    
+    mockMemAccess.expects(atLeastOnce()).method("readUnsignedByte").with(eq(0x01)).will(
+        onConsecutiveCalls( returnValue((short) 3), returnValue((short) 131) ));
+    mockMemAccess.expects(once()).method("writeUnsignedByte").with(eq(0x01), eq((short) 131));
+    mockMemAccess.expects(once()).method("writeUnsignedByte").with(eq(0x01), eq((short) 3));
+    
+    fileHeader.setEnabled(Attribute.SUPPORTS_TIMED_INPUT, true);
+    fileHeader.setEnabled(Attribute.SUPPORTS_TIMED_INPUT, false);
+  }
+
+  public void testIsScoreGame() {
+    
+    mockMemAccess.expects(atLeastOnce()).method("readUnsignedByte").with(eq(0x01)).will(
+        onConsecutiveCalls( returnValue((short) 5), returnValue((short) 7) ));    
+    assertTrue(fileHeader.isEnabled(Attribute.SCORE_GAME));
+    assertFalse(fileHeader.isEnabled(Attribute.SCORE_GAME));
+  }
+
+  public void testSetSupportsFixed() {
+    
+    mockMemAccess.expects(atLeastOnce()).method("readUnsignedByte").with(eq(0x01)).will(
+        onConsecutiveCalls( returnValue((short) 1), returnValue((short) 17) ));
+    mockMemAccess.expects(once()).method("writeUnsignedByte").with(eq(0x01), eq((short) 17));
+    mockMemAccess.expects(once()).method("writeUnsignedByte").with(eq(0x01), eq((short) 1));
+
+    fileHeader.setEnabled(Attribute.SUPPORTS_FIXED_FONT, true);
+    fileHeader.setEnabled(Attribute.SUPPORTS_FIXED_FONT, false);
+  }
+
+  public void testSetSupportsBold() {
+    
+    mockMemAccess.expects(atLeastOnce()).method("readUnsignedByte").with(eq(0x01)).will(
+        onConsecutiveCalls( returnValue((short) 1), returnValue((short) 5) ));
+    mockMemAccess.expects(once()).method("writeUnsignedByte").with(eq(0x01), eq((short) 5));
+    mockMemAccess.expects(once()).method("writeUnsignedByte").with(eq(0x01), eq((short) 1));
+
+    fileHeader.setEnabled(Attribute.SUPPORTS_BOLD, true);
+    fileHeader.setEnabled(Attribute.SUPPORTS_BOLD, false);
+  }
+  
+  public void testSetSupportsItalic() {
+    
+    mockMemAccess.expects(atLeastOnce()).method("readUnsignedByte").with(eq(0x01)).will(
+        onConsecutiveCalls( returnValue((short) 1), returnValue((short) 9) ));
+    mockMemAccess.expects(once()).method("writeUnsignedByte").with(eq(0x01), eq((short) 9));
+    mockMemAccess.expects(once()).method("writeUnsignedByte").with(eq(0x01), eq((short) 1));
+
+    fileHeader.setEnabled(Attribute.SUPPORTS_ITALIC, true);
+    fileHeader.setEnabled(Attribute.SUPPORTS_ITALIC, false);
+  }
+
+  public void testSetSupportsScreenSplitting() {
+    
+    mockMemAccess.expects(atLeastOnce()).method("readUnsignedByte").with(eq(0x01)).will(
+        onConsecutiveCalls( returnValue((short) 1), returnValue((short) 33) ));
+    mockMemAccess.expects(once()).method("writeUnsignedByte").with(eq(0x01), eq((short) 33));
+    mockMemAccess.expects(once()).method("writeUnsignedByte").with(eq(0x01), eq((short) 1));
+
+    fileHeader.setEnabled(Attribute.SUPPORTS_SCREEN_SPLITTING, true);
+    fileHeader.setEnabled(Attribute.SUPPORTS_SCREEN_SPLITTING, false);
+  }
+
+  public void testSetSupportsStatusLine() {
+    
+    mockMemAccess.expects(atLeastOnce()).method("readUnsignedByte").with(eq(0x01)).will(
+        onConsecutiveCalls( returnValue((short) 17), returnValue((short) 1) ));
+    mockMemAccess.expects(once()).method("writeUnsignedByte").with(eq(0x01), eq((short) 1));
+    mockMemAccess.expects(once()).method("writeUnsignedByte").with(eq(0x01), eq((short) 17));
+
+    fileHeader.setEnabled(Attribute.SUPPORTS_STATUSLINE, true);
+    fileHeader.setEnabled(Attribute.SUPPORTS_STATUSLINE, false);
+  }
+
+  public void testSetDefaultFontIsVariable() {
+    
+    mockMemAccess.expects(atLeastOnce()).method("readUnsignedByte").with(eq(0x01)).will(
+        onConsecutiveCalls( returnValue((short) 1), returnValue((short) 65) ));
+    mockMemAccess.expects(once()).method("writeUnsignedByte").with(eq(0x01), eq((short) 65));
+    mockMemAccess.expects(once()).method("writeUnsignedByte").with(eq(0x01), eq((short) 1));
+
+    fileHeader.setEnabled(Attribute.DEFAULT_FONT_IS_VARIABLE, true);
+    fileHeader.setEnabled(Attribute.DEFAULT_FONT_IS_VARIABLE, false);
+  }
+
+  public void testIsDefaultFontVariable() {
+    
+    mockMemAccess.expects(atLeastOnce()).method("readUnsignedByte").with(eq(0x01)).will(
+        onConsecutiveCalls( returnValue((short) 69), returnValue((short) 7) ));    
+    assertTrue(fileHeader.isEnabled(Attribute.DEFAULT_FONT_IS_VARIABLE));
+    assertFalse(fileHeader.isEnabled(Attribute.DEFAULT_FONT_IS_VARIABLE));
   }
 }

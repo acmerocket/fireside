@@ -697,11 +697,18 @@ public class PortableGameState {
     machine.setRoutineContexts(contexts);
 
     // Prepare the machine continue
-    // In version 3 this is a branch target that needs to be read
-    // Execution is continued at the first instruction after the branch offset
-    int branchOffsetAddress = getProgramCounter();    
-    int pc = branchOffsetAddress +
-      getBranchOffsetLength(machine.getMemoryAccess(), branchOffsetAddress);
+    int pc = getProgramCounter();
+    if (machine.getStoryFileHeader().getVersion() <= 3) {
+      
+      // In version 3 this is a branch target that needs to be read
+      // Execution is continued at the first instruction after the branch offset
+      pc += getBranchOffsetLength(machine.getMemoryAccess(), pc);
+      
+    } else if (machine.getStoryFileHeader().getVersion() >= 4) {
+
+      // in version 4 and later, this is always 1
+      pc++;
+    }
     machine.setProgramCounter(pc);
   }
   

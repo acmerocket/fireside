@@ -62,8 +62,11 @@ public class GameThread extends SwingWorker<Boolean> {
     while (machine.isRunning()) {
       
       Instruction instr = machine.nextStep();
-      //System.out.println(String.format("%05x: %s", machine.getProgramCounter(),
-      //                   instr.toString()));
+      boolean debug = false;
+      if (debug) {
+        System.out.println(String.format("%05x: %s", machine.getProgramCounter(),
+                           instr.toString()));
+      }
       instr.execute();
     }
     System.out.printf("und tschuess ! pc: %4x\n", machine.getProgramCounter());

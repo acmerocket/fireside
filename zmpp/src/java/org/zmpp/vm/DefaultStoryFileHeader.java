@@ -55,11 +55,6 @@ public class DefaultStoryFileHeader implements StoryFileHeader {
   /**
    * {@inheritDoc}
    */
-  public int getFlags1() { return memaccess.readUnsignedByte(0x01); }
-  
-  /**
-   * {@inheritDoc}
-   */
   public int getRelease() { return memaccess.readUnsignedShort(0x02); }
   
   /**
@@ -101,11 +96,6 @@ public class DefaultStoryFileHeader implements StoryFileHeader {
   /**
    * {@inheritDoc}
    */
-  public int getFlags2() { return memaccess.readUnsignedByte(0x10); }
-  
-  /**
-   * {@inheritDoc}
-   */
   public String getSerialNumber() { return extractAscii(0x12, 6); }
   
   /**
@@ -120,6 +110,7 @@ public class DefaultStoryFileHeader implements StoryFileHeader {
    * {@inheritDoc}
    */
   public int getFileLength() {
+    
     int fileLength = memaccess.readUnsignedShort(0x1a);
     if (getVersion() <= 3) fileLength *= 2;      
     return fileLength;
@@ -156,14 +147,14 @@ public class DefaultStoryFileHeader implements StoryFileHeader {
   /**
    * {@inheritDoc}
    */
-  public int getRevision() { return memaccess.readUnsignedShort(0x32); }
-  
-  /**
-   * {@inheritDoc}
-   */
   public void setScreenWidth(int numChars) {
 
     memaccess.writeUnsignedByte(0x21, (short) numChars);
+    
+    if (getVersion() >= 5) {
+      
+      memaccess.writeUnsignedShort(0x22, numChars);
+    }
   }
   
   /**
@@ -180,7 +171,72 @@ public class DefaultStoryFileHeader implements StoryFileHeader {
   public void setScreenHeight(int numLines) {
     
     memaccess.writeUnsignedByte(0x20, (short) numLines);
+    
+    if (getVersion() >= 5) {
+      
+      memaccess.writeUnsignedShort(0x24, numLines);
+    }
   }
+
+  /**
+   * {@inheritDoc}
+   */
+  public void setEnabled(Attribute attribute, boolean flag) {
+    
+    switch (attribute) {
+
+    case DEFAULT_FONT_IS_VARIABLE:
+      setDefaultFontIsVariablePitch(flag);
+      break;
+    case TRANSCRIPTING:
+      setTranscripting(flag);
+      break;
+    case FORCE_FIXED_FONT:
+      setForceFixedFont(flag);
+      break;
+    case SUPPORTS_TIMED_INPUT:
+      setTimedInputAvailable(flag);
+      break;
+    case SUPPORTS_FIXED_FONT:
+      setFixedFontAvailable(flag);
+      break;
+    case SUPPORTS_BOLD:
+      setBoldFaceAvailable(flag);
+      break;
+    case SUPPORTS_ITALIC:
+      setItalicAvailable(flag);
+      break;
+    case SUPPORTS_SCREEN_SPLITTING:
+      setScreenSplittingAvailable(flag);
+      break;
+    case SUPPORTS_STATUSLINE:
+      setStatusLineAvailable(flag);
+      break;
+    }
+  }
+  
+  /**
+   * {@inheritDoc}
+   */
+  public boolean isEnabled(Attribute attribute) {
+    
+    switch (attribute) {
+    
+    case TRANSCRIPTING:
+      return isTranscriptingOn();
+    case FORCE_FIXED_FONT:
+      return forceFixedFont();
+    case SCORE_GAME:
+      return isScoreGame();
+    case DEFAULT_FONT_IS_VARIABLE:
+      return defaultFontIsVariablePitch();
+    }
+    return false;
+  }
+
+  // ************************************************************************
+  // ****** Private section
+  // *******************************
 
   /**
    * Extract an ASCII string of the specified length starting at the specified
@@ -199,128 +255,87 @@ public class DefaultStoryFileHeader implements StoryFileHeader {
     }
     return builder.toString();
   }
-  
-  /**
-   * {@inheritDoc}
-   */
-  public boolean isScoreGame() {
     
-    return (getFlags1() & 2) == 0;
-  }
-  
-  /**
-   * {@inheritDoc}
-   */
-  public void setStatusLineAvailable(boolean flag) {
-    
-    int flags = memaccess.readUnsignedByte(0x01);
-    flags = flag ? (flags | 16) : (flags & 0xef);
-    memaccess.writeUnsignedByte(0x01, (short) flags);
-  }
-  
-  /**
-   * {@inheritDoc}
-   */
-  public void setScreenSplittingAvailable(boolean flag) {
-   
-    int flags = memaccess.readUnsignedByte(0x01);
-    flags = flag ? (flags | 32) : (flags & 0xdf);
-    memaccess.writeUnsignedByte(0x01, (short) flags);
-  }
-  
-  /**
-   * {@inheritDoc}
-   */
-  public void setDefaultFontIsVariablePitch(boolean flag) {
-    
-    int flags = memaccess.readUnsignedByte(0x01);
-    flags = flag ? (flags | 64) : (flags & 0xbf);
-    memaccess.writeUnsignedByte(0x01, (short) flags);
-  }
-  
-  /**
-   * {@inheritDoc}
-   */
-  public boolean defaultFontIsVariablePitch() {
-    
-    return (getFlags1() & 64) > 0;
-  }
-  
-  /**
-   * {@inheritDoc}
-   */
-  public void setTranscripting(boolean flag) {
+  private void setTranscripting(boolean flag) {
     
     int flags = memaccess.readUnsignedByte(0x10);
     flags = flag ? (flags | 1) : (flags & 0xfe);
     memaccess.writeUnsignedByte(0x10, (short) flags);
   }
   
-  /**
-   * {@inheritDoc}
-   */
-  public boolean isTranscriptingOn() {
-    
-    return (getFlags2() & 1) > 0;
+  private boolean isTranscriptingOn() {
+
+    return (memaccess.readUnsignedByte(0x10) & 1) > 0;
   }
   
-  /**
-   * {@inheritDoc}
-   */
-  public boolean forceFixedFont() {
+  private boolean forceFixedFont() {
     
-    return (getFlags2() & 2) > 0;
+    return (memaccess.readUnsignedByte(0x10) & 2) > 0;
   }
   
-  /**
-   * {@inheritDoc}
-   */
-  public void setForceFixedFont(boolean flag) {
+  private void setForceFixedFont(boolean flag) {
     
     int flags = memaccess.readUnsignedByte(0x10);
     flags = flag ? (flags | 2) : (flags & 0xfd);
     memaccess.writeUnsignedByte(0x10, (short) flags);
   }
   
-  // **********************************************************************
-  
-  /**
-   * {@inheritDoc}
-   */
-  public void setBoldFaceAvailable(boolean flag) {
+  private void setTimedInputAvailable(boolean flag) {
     
     int flags = memaccess.readUnsignedByte(0x01);
-    flags = flag ? (flags | 4) : (flags & 0xfb);
+    flags = flag ? (flags | 128) : (flags & 0x7f);
     memaccess.writeUnsignedByte(0x01, (short) flags);
   }
   
-  /**
-   * {@inheritDoc}
-   */
-  public void setItalicAvailable(boolean flag) {
+  private boolean isScoreGame() {
     
-    int flags = memaccess.readUnsignedByte(0x01);
-    flags = flag ? (flags | 8) : (flags & 0xf7);
-    memaccess.writeUnsignedByte(0x01, (short) flags);
+    return (memaccess.readUnsignedByte(0x01) & 2) == 0;
   }
   
-  /**
-   * {@inheritDoc}
-   */
-  public void setFixedFontAvailable(boolean flag) {
+  private void setFixedFontAvailable(boolean flag) {
     
     int flags = memaccess.readUnsignedByte(0x01);
     flags = flag ? (flags | 16) : (flags & 0xef);
     memaccess.writeUnsignedByte(0x01, (short) flags);
   }
   
-  /**
-   * {@inheritDoc}
-   */
-  public void setTimedInputAvailable(boolean flag) {
+  private void setBoldFaceAvailable(boolean flag) {
     
     int flags = memaccess.readUnsignedByte(0x01);
-    flags = flag ? (flags | 128) : (flags & 0x7f);
+    flags = flag ? (flags | 4) : (flags & 0xfb);
     memaccess.writeUnsignedByte(0x01, (short) flags);
+  }  
+
+  private void setItalicAvailable(boolean flag) {
+    
+    int flags = memaccess.readUnsignedByte(0x01);
+    flags = flag ? (flags | 8) : (flags & 0xf7);
+    memaccess.writeUnsignedByte(0x01, (short) flags);
+  }
+  
+  private void setScreenSplittingAvailable(boolean flag) {
+    
+    int flags = memaccess.readUnsignedByte(0x01);
+    flags = flag ? (flags | 32) : (flags & 0xdf);
+    memaccess.writeUnsignedByte(0x01, (short) flags);
+  }
+  
+  private void setStatusLineAvailable(boolean flag) {
+    
+    int flags = memaccess.readUnsignedByte(0x01);
+    flags = flag ? (flags | 16) : (flags & 0xef);
+    memaccess.writeUnsignedByte(0x01, (short) flags);
+  }  
+
+  private void setDefaultFontIsVariablePitch(boolean flag) {
+    
+    int flags = memaccess.readUnsignedByte(0x01);
+    flags = flag ? (flags | 64) : (flags & 0xbf);
+    memaccess.writeUnsignedByte(0x01, (short) flags);
+  }
+
+  private boolean defaultFontIsVariablePitch() {
+    
+    return (memaccess.readUnsignedByte(0x01) & 64) > 0;
   }
 }

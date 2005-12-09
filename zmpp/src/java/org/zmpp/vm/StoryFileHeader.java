@@ -36,19 +36,19 @@ package org.zmpp.vm;
  */
 public interface StoryFileHeader {
 
+  enum Attribute {
+    
+    DEFAULT_FONT_IS_VARIABLE,
+    SCORE_GAME, SUPPORTS_STATUSLINE, SUPPORTS_SCREEN_SPLITTING, // V3 only
+    TRANSCRIPTING, FORCE_FIXED_FONT, SUPPORTS_TIMED_INPUT,
+    SUPPORTS_FIXED_FONT, SUPPORTS_ITALIC, SUPPORTS_BOLD
+  };
   /**
    * Returns the story file version.
    * 
    * @return the story file version
    */
   int getVersion();
-  
-  /**
-   * Returns the flags1 field.
-   * 
-   * @return the flags1 field
-   */
-  int getFlags1();
   
   /**
    * Returns the release number.
@@ -100,13 +100,6 @@ public interface StoryFileHeader {
   int getStaticsAddress();
   
   /**
-   * Returns the flags2 field.
-   * 
-   * @return the flags2 field
-   */
-  int getFlags2();
-  
-  /**
    * Returns this game's serial number.
    * 
    * @return the serial number
@@ -149,13 +142,6 @@ public interface StoryFileHeader {
   void setInterpreterVersion(int version);
   
   /**
-   * Returns the revision number.
-   * 
-   * @return the revision number
-   */
-  int getRevision();
-  
-  /**
    * Returns the screen width.
    * 
    * @return the screen width
@@ -176,106 +162,22 @@ public interface StoryFileHeader {
   void setScreenHeight(int numLines);
   
   // ********************************************************************
-  // ****** Flags 1 bits, Version 1-3
+  // ****** Attributes
   // **********************************
   
   /**
-   * Returns true if the game is a score game.
+   * Enables the specified attribute.
    * 
-   * @return true if score game
+   * @param attribute the attribute to set
+   * @param flag the value
    */
-  boolean isScoreGame();
-
-  /**
-   * Set by the interpreter to indicate if a status line is supported.
-   * 
-   * @param flag true if status line is supported, false, otherwise
-   */
-  void setStatusLineAvailable(boolean flag);
+  void setEnabled(Attribute attribute, boolean flag);
   
   /**
-   * Set by the interpreter to indicate if screen splitting is supported.
+   * Checks the enabled status of the specified attribute
    * 
-   * @param flag true if splitting is supported, false, otherwise
+   * @param attribute the attribute name
+   * @return true if enabled, false otherwise
    */
-  void setScreenSplittingAvailable(boolean flag);
-  
-  /**
-   * Set by the interpreter to indicate if the default font is variable
-   * pitch.
-   * 
-   * @param flag true if default font is variable pitch, false otherwise
-   */
-  void setDefaultFontIsVariablePitch(boolean flag);
-  
-  /**
-   * Returns if default font is variable pitch.
-   * 
-   * @return true if variable pitch, false, otherwise
-   */
-  boolean defaultFontIsVariablePitch();
-
-  // ********************************************************************
-  // ****** Flags 1 bits, Version 4-8
-  // **********************************
-
-  /**
-   * Sets the bold face available flag.
-   * 
-   * @param flag true if available, false, else
-   */
-  void setBoldFaceAvailable(boolean flag);
-  
-  /**
-   * Sets the italic available flag.
-   * 
-   * @param flag true if available, false, else
-   */
-  void setItalicAvailable(boolean flag);
-  
-  /**
-   * Sets the fixed available flag.
-   * 
-   * @param flag true if available, false, else
-   */
-  void setFixedFontAvailable(boolean flag);
-  
-  /**
-   * Sets the timed input flag.
-   * 
-   * @param flag true if timed input available, false, otherwise
-   */
-  void setTimedInputAvailable(boolean flag);
-  
-  // ********************************************************************
-  // ****** Flags 2 bits
-  // **********************************
-  
-  /**
-   * Set to true if transcripting is on.
-   * 
-   * @param flag true if transcripting on
-   */
-  void setTranscripting(boolean flag);
-  
-  /**
-   * Returns true if transcripting is on.
-   * 
-   * @return true if transcripting is on, false, otherwise
-   */
-  boolean isTranscriptingOn();
-
-  /**
-   * Returns true if fixed font is forced by the game.
-   * 
-   * @return true if fixed font forced, false, otherwise
-   */
-  boolean forceFixedFont();
-  
-  /**
-   * Set to true if force fixed font bit should be set.
-   * 
-   * @param flag true to set fixed font bit, false to clear it
-   */
-  void setForceFixedFont(boolean flag);
+  boolean isEnabled(Attribute attribute);
 }
