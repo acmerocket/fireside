@@ -13,6 +13,9 @@ Version 0.74
 - save_undo, restore_undo added
 - art_shift, log_shift added
 - regular save and restore are now available in ExtendedInstruction
+- fixed object attribute bug
+- cursor key support added
+- flexible attributes in story file header
 
 Version 0.72 final (2005-12-07)
 -------------------------------
