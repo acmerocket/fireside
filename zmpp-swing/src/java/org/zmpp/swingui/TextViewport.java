@@ -136,6 +136,7 @@ ScreenModel {
   
   public void setTextCursor(final int line, final int column) {
    
+    //System.out.println("setTextCursor, line: " + line + " column: " + column + " active: " + activeWindow);
     windows[activeWindow].getCursor().setPosition(line, column);
     repaintInUiThread();
   }
@@ -238,8 +239,12 @@ ScreenModel {
   
   private void flushOutput() {
     
-    windows[activeWindow].printString(streambuffer.toString());
-    streambuffer = new StringBuilder();
+    // save some unnecessary flushes
+    if (streambuffer.length() > 0) {
+      
+      windows[activeWindow].printString(streambuffer.toString());
+      streambuffer = new StringBuilder();
+    }
   }
   
   public synchronized boolean isEditMode() {
@@ -364,6 +369,7 @@ ScreenModel {
 
   private void printChar(char c) {
 
+    //System.out.println("printChar: " + c + " active: " + activeWindow);
     textbuffer.append(c);
     
     if (isEditMode() || activeWindow == WINDOW_TOP) {

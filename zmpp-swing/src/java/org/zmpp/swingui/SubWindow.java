@@ -288,7 +288,8 @@ public class SubWindow {
    * @param str a string to pring
    */
   public void printString(String str) {
-    
+
+    //System.out.printf("printString(): [%s]\n", str);
     Graphics g = getGraphics();
     FontMetrics fm = g.getFontMetrics();
     
@@ -300,7 +301,6 @@ public class SubWindow {
     Pager pager = new Pager(numLines - 1, isPaged);
     String[] lines = wordWrapper.wrap(cursor.currentX, str);
     String[][] pages = pager.createPages(lines);
-    //System.out.println("# lines available: " + numLines + " lines in output: " + lines.length + " # pages: " + pages.length);
     
     for (int i = 0; i < pages.length; i++) {
       
@@ -357,16 +357,19 @@ public class SubWindow {
     
     for (int i = 0; i < lines.length; i++) {
 
-      scrollIfNeeded();      
+      String line = lines[i];
+      scrollIfNeeded();
       g.setColor(textbackColor);
       g.fillRect(cursor.currentX,
                  cursor.currentY - fm.getHeight() + fm.getMaxDescent(),
-                 fm.stringWidth(lines[i]), fm.getHeight());
+                 fm.stringWidth(line), fm.getHeight());
       g.setColor(textColor);
-      g.drawString(lines[i], cursor.currentX, cursor.currentY);
-      cursor.advanceColumnPos(lines[i]);
+      g.drawString(line, cursor.currentX, cursor.currentY);
+      cursor.advanceColumnPos(line);
       
-      if (i < lines.length - 1) {
+      // Ends with newline or is not last line
+      if ((line.length() > 0 && line.charAt(line.length() - 1) == '\n')
+          || i < lines.length - 1) {
         
         newline();
       }

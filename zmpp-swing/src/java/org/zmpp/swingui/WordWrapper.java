@@ -52,6 +52,7 @@ public class WordWrapper {
   
   public String[] wrap(int currentX, String input) {
    
+    // Do this if not empty
     if (buffered) {
       
       return wrapBuffered(currentX, input);
@@ -114,8 +115,7 @@ public class WordWrapper {
   }
   
   private String[] wrapUnbuffered(int currentX, String input) {
-    
-    //System.out.println("wrapUnbuffered(), input: '" + input + "'");
+
     List<String> result =  new ArrayList<String>();
     StringBuilder linebuffer = new StringBuilder();
     int currentWidth = currentX;
@@ -128,10 +128,10 @@ public class WordWrapper {
       // new line
       if ((currentWidth + charWidth > lineLength) || c == '\n') {
         
+        if (c == '\n') linebuffer.append('\n');
         result.add(linebuffer.toString());
         linebuffer = new StringBuilder();
-        currentWidth = 0;
-        
+        currentWidth = 0;        
       }
       if (c != '\n') {
         
@@ -145,6 +145,7 @@ public class WordWrapper {
         }
       }      
     }
+    //System.out.println("# lines: " + result.size());
     return result.toArray(new String[0]);
   }
 }
