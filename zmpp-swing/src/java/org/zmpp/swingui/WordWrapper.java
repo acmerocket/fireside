@@ -106,6 +106,10 @@ public class WordWrapper {
       result.add(lineBuffer.toString());
       currentWidth = 0;
     }
+    if (words.length > 1 && words[words.length - 1].equals("\n")) {
+      
+      result.add("");
+    }
     return result.toArray(new String[0]);
   }
   
