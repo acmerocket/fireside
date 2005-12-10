@@ -390,7 +390,11 @@ public class MachineImpl implements Machine {
       // Restore stack pointer and pc
       setStackPointer(popped.getInvocationStackPointer());
       programCounter = popped.getReturnAddress();
-      setVariable(popped.getReturnVariable(), returnValue);
+      int returnVariable = popped.getReturnVariable();
+      if (returnVariable != RoutineContext.DISCARD_RESULT) {
+        
+        setVariable(returnVariable, returnValue);
+      }
     } else {
       
       throw new IllegalStateException("no routine context active");

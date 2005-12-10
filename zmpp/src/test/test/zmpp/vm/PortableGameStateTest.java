@@ -36,7 +36,11 @@ import org.zmpp.iff.Chunk;
 import org.zmpp.iff.DefaultFormChunk;
 import org.zmpp.iff.FormChunk;
 import org.zmpp.iff.WritableFormChunk;
+import org.zmpp.vm.Dictionary;
 import org.zmpp.vm.Machine;
+import org.zmpp.vm.MachineConfig;
+import org.zmpp.vm.MachineImpl;
+import org.zmpp.vm.ObjectTree;
 import org.zmpp.vm.PortableGameState;
 import org.zmpp.vm.RoutineContext;
 import org.zmpp.vm.StoryFileHeader;
@@ -52,10 +56,14 @@ public class PortableGameStateTest extends MockObjectTestCase {
 
   private PortableGameState gameState;
   private FormChunk formChunk;
-  private Mock mockMachine, mockFileheader, mockMemAccess;
+  private Mock mockMachine, mockFileheader, mockMemAccess, mockMachineConfig;
+  private Mock mockDictionary, mockObjectTree;
   private Machine machine;
+  private MachineConfig machineConfig;
   private StoryFileHeader fileheader;
   private MemoryAccess memaccess;
+  private Dictionary dictionary;
+  private ObjectTree objectTree;
   
   protected void setUp() throws Exception {
   
@@ -65,6 +73,12 @@ public class PortableGameStateTest extends MockObjectTestCase {
     fileheader = (StoryFileHeader) mockFileheader.proxy();
     mockMemAccess = mock(MemoryAccess.class);
     memaccess = (MemoryAccess) mockMemAccess.proxy();
+    mockMachineConfig = mock(MachineConfig.class);
+    machineConfig = (MachineConfig) mockMachineConfig.proxy();
+    mockDictionary = mock(Dictionary.class);
+    dictionary = (Dictionary) mockDictionary.proxy();
+    mockObjectTree = mock(ObjectTree.class);
+    objectTree = (ObjectTree) mockObjectTree.proxy();
     
     File testSaveFile = new File("testfiles/leathersave.ifzs");
     RandomAccessFile saveFile = new RandomAccessFile(testSaveFile, "r");
@@ -271,5 +285,233 @@ public class PortableGameStateTest extends MockObjectTestCase {
   private int decodePcBytes(byte b0, byte b1, byte b2) {
     
     return ((b0 & 0xff) << 16) | ((b1 & 0xff) << 8) | (b2 & 0xff);
+  }
+  
+  // ******************************************************************
+  // ****
+  public void testTransferState() {
+
+    byte[] dynMem = {
+        (byte) 0x10, (byte) 0x11, (byte) 0x12, (byte) 0x13  
+    };
+    PortableGameState gamestate = new PortableGameState();
+    List<StackFrame> stackframes = gamestate.getStackFrames();
+    
+    StackFrame stackFrame0 = new StackFrame();
+    int[] args0 = { 1, 2 };
+    short[] locals0 = { (short) 1, (short) 2 };
+    short[] stack0 = { (short) 11, (short) 21 };
+    stackFrame0.setProgramCounter(4711);
+    
+    // what do we do with "N" calls which do not have return variables ?
+    stackFrame0.setReturnVariable(0x20);
+    stackFrame0.setLocals(locals0);
+    stackFrame0.setEvalStack(stack0);
+    stackFrame0.setArgs(args0);
+    stackframes.add(stackFrame0);
+    
+    gamestate.setDynamicMem(dynMem);
+   
+    mockMachineConfig.expects(atLeastOnce()).method("getMemoryAccess").will(returnValue(memaccess));
+    mockMachineConfig.expects(atLeastOnce()).method("getFileHeader").will(returnValue(fileheader));
+    mockMachineConfig.expects(atLeastOnce()).method("getDictionary").will(returnValue(dictionary));
+    mockMachineConfig.expects(atLeastOnce()).method("getObjectTree").will(returnValue(objectTree));
+    mockFileheader.expects(once()).method("getProgramStart").will(returnValue(4711));
+    mockFileheader.expects(once()).method("getGlobalsAddress").will(returnValue(5711));
+    mockFileheader.expects(once()).method("getFileLength").will(returnValue(0));
+    mockFileheader.expects(once()).method("getChecksum").will(returnValue(0));
+    mockFileheader.expects(atLeastOnce()).method("getVersion").will(returnValue(5));
+    mockFileheader.expects(once()).method("setEnabled").withAnyArguments();
+    mockFileheader.expects(once()).method("setInterpreterNumber").withAnyArguments();
+    mockFileheader.expects(once()).method("setInterpreterVersion").withAnyArguments();
+    
+    for (int i = 0; i < dynMem.length; i++) {
+      mockMemAccess.expects(once()).method("writeByte").with(eq(i), eq((byte) dynMem[i]));
+    }
+    
+    // Tests if the dynamic memory and the stack frames are
+    // completely copied
+    Machine machine = new MachineImpl();
+    machine.initialize(machineConfig);
+        
+    gamestate.transferStateToMachine(machine);
+  }
+  
+  public void testReadStackFrameFromChunkDiscardResult() {
+    
+    // PC
+    mockMemAccess.expects(once()).method("readByte").with(eq(0)).will(returnValue((byte) 0));
+    mockMemAccess.expects(once()).method("readByte").with(eq(1)).will(returnValue((byte) 0x12));
+    mockMemAccess.expects(once()).method("readByte").with(eq(2)).will(returnValue((byte) 0x20));
+    
+    // Return variable/locals flag: discard result/3 locals (0x13)
+    mockMemAccess.expects(once()).method("readByte").with(eq(3)).will(returnValue((byte) 0x13));
+
+    // return variable is always 0 if discard result
+    mockMemAccess.expects(once()).method("readByte").with(eq(4)).will(returnValue((byte) 0));
+    
+    // supplied arguments, we define a and b
+    mockMemAccess.expects(once()).method("readByte").with(eq(5)).will(returnValue((byte) 3));
+
+    // stack size, we define 2
+    mockMemAccess.expects(once()).method("readUnsignedShort").with(eq(6)).will(returnValue(2));
+    
+    // local variables
+    for (int i = 0; i < 3; i++) {
+      
+      mockMemAccess.expects(once()).method("readShort").with(eq(8 + i * 2)).will(returnValue((short) i));
+    }
+
+    // stack variables
+    for (int i = 0; i < 2; i++) {
+      
+      mockMemAccess.expects(once()).method("readShort").with(eq(8 + 6 + i * 2)).will(returnValue((short) i));
+    }
+    
+    StackFrame stackFrame = new StackFrame();
+    PortableGameState gamestate = new PortableGameState();
+    gamestate.readStackFrame(stackFrame, memaccess, 0);
+    assertEquals(0x1220, stackFrame.getProgramCounter());
+    assertEquals(PortableGameState.DISCARD_RESULT, stackFrame.getReturnVariable());
+    assertEquals(3, stackFrame.getLocals().length);
+    assertEquals(2, stackFrame.getEvalStack().length);
+    assertEquals(2, stackFrame.getArgs().length);
+  }
+
+  public void testReadStackFrameFromChunkWithReturnVar() {
+    
+    // PC
+    mockMemAccess.expects(once()).method("readByte").with(eq(0)).will(returnValue((byte) 0));
+    mockMemAccess.expects(once()).method("readByte").with(eq(1)).will(returnValue((byte) 0x12));
+    mockMemAccess.expects(once()).method("readByte").with(eq(2)).will(returnValue((byte) 0x21));
+    
+    // Return variable/locals flag: has return value/2 locals (0x13)
+    mockMemAccess.expects(once()).method("readByte").with(eq(3)).will(returnValue((byte) 0x02));
+
+    // return variable is 5
+    mockMemAccess.expects(once()).method("readByte").with(eq(4)).will(returnValue((byte) 5));
+    
+    // supplied arguments, we define a, b and c
+    mockMemAccess.expects(once()).method("readByte").with(eq(5)).will(returnValue((byte) 7));
+
+    // stack size, we define 3
+    mockMemAccess.expects(once()).method("readUnsignedShort").with(eq(6)).will(returnValue(3));
+    
+    // local variables
+    for (int i = 0; i < 2; i++) {
+      
+      mockMemAccess.expects(once()).method("readShort").with(eq(8 + i * 2)).will(returnValue((short) i));
+    }
+
+    // stack variables
+    for (int i = 0; i < 3; i++) {
+      
+      mockMemAccess.expects(once()).method("readShort").with(eq(8 + 4 + i * 2)).will(returnValue((short) i));
+    }
+    
+    StackFrame stackFrame = new StackFrame();
+    PortableGameState gamestate = new PortableGameState();
+    gamestate.readStackFrame(stackFrame, memaccess, 0);
+    assertEquals(0x1221, stackFrame.getProgramCounter());
+    assertEquals(5, stackFrame.getReturnVariable());
+    assertEquals(2, stackFrame.getLocals().length);
+    assertEquals(3, stackFrame.getEvalStack().length);
+    assertEquals(3, stackFrame.getArgs().length);
+  }
+  
+  public void testWriteStackFrameToChunkDiscardResult() {
+    
+    Mock mockByteBuffer = mock(List.class);
+    List<Byte> byteBuffer = (List<Byte>) mockByteBuffer.proxy();
+    
+    // pc
+    mockByteBuffer.expects(once()).method("add").with(eq((byte) 0)).will(returnValue(true));
+    mockByteBuffer.expects(once()).method("add").with(eq((byte) 0x12)).will(returnValue(true));
+    mockByteBuffer.expects(once()).method("add").with(eq((byte) 0x20)).will(returnValue(true));
+    
+    // pvflag
+    mockByteBuffer.expects(once()).method("add").with(eq((byte) 0x11)).will(returnValue(true));
+
+    // return var
+    mockByteBuffer.expects(once()).method("add").with(eq((byte) 0x00)).will(returnValue(true));
+    
+    // argspec
+    mockByteBuffer.expects(once()).method("add").with(eq((byte) 0x03)).will(returnValue(true));
+
+    // stack size
+    mockByteBuffer.expects(once()).method("add").with(eq((byte) 0x00)).will(returnValue(true));
+    mockByteBuffer.expects(once()).method("add").with(eq((byte) 0x02)).will(returnValue(true));
+   
+    // locals
+    mockByteBuffer.expects(once()).method("add").with(eq((byte) 0x00)).will(returnValue(true));
+    mockByteBuffer.expects(once()).method("add").with(eq((byte) 0x01)).will(returnValue(true));
+    
+    // stack
+    mockByteBuffer.expects(once()).method("add").with(eq((byte) 0x00)).will(returnValue(true));
+    mockByteBuffer.expects(once()).method("add").with(eq((byte) 0x05)).will(returnValue(true));
+    mockByteBuffer.expects(once()).method("add").with(eq((byte) 0x00)).will(returnValue(true));
+    mockByteBuffer.expects(once()).method("add").with(eq((byte) 0x06)).will(returnValue(true));
+    
+    int[] args = { 0, 1 };
+    short[] locals = { (short) 1 };
+    short[] stack = { (short) 5, (short) 6 };
+    
+    StackFrame stackFrame = new StackFrame();
+    stackFrame.setProgramCounter(0x1220);
+    stackFrame.setReturnVariable(PortableGameState.DISCARD_RESULT);
+    stackFrame.setArgs(args);
+    stackFrame.setLocals(locals);
+    stackFrame.setEvalStack(stack);
+    
+    PortableGameState gamestate = new PortableGameState();
+    gamestate.writeStackFrameToByteBuffer(byteBuffer, stackFrame);
+  }
+
+  public void testWriteStackFrameToChunkWithReturnVar() {
+    
+    Mock mockByteBuffer = mock(List.class);
+    List<Byte> byteBuffer = (List<Byte>) mockByteBuffer.proxy();
+    
+    // pc
+    mockByteBuffer.expects(once()).method("add").with(eq((byte) 0)).will(returnValue(true));
+    mockByteBuffer.expects(once()).method("add").with(eq((byte) 0x12)).will(returnValue(true));
+    mockByteBuffer.expects(once()).method("add").with(eq((byte) 0x21)).will(returnValue(true));
+    
+    // pvflag
+    mockByteBuffer.expects(once()).method("add").with(eq((byte) 0x01)).will(returnValue(true));
+
+    // return var
+    mockByteBuffer.expects(once()).method("add").with(eq((byte) 0x06)).will(returnValue(true));
+    
+    // argspec
+    mockByteBuffer.expects(once()).method("add").with(eq((byte) 0x03)).will(returnValue(true));
+
+    // stack size
+    mockByteBuffer.expects(once()).method("add").with(eq((byte) 0x00)).will(returnValue(true));
+    mockByteBuffer.expects(once()).method("add").with(eq((byte) 0x02)).will(returnValue(true));
+   
+    // locals
+    mockByteBuffer.expects(once()).method("add").with(eq((byte) 0x00)).will(returnValue(true));
+    mockByteBuffer.expects(once()).method("add").with(eq((byte) 0x01)).will(returnValue(true));
+    
+    // stack
+    mockByteBuffer.expects(once()).method("add").with(eq((byte) 0x00)).will(returnValue(true));
+    mockByteBuffer.expects(once()).method("add").with(eq((byte) 0x05)).will(returnValue(true));
+    mockByteBuffer.expects(once()).method("add").with(eq((byte) 0x00)).will(returnValue(true));
+    mockByteBuffer.expects(once()).method("add").with(eq((byte) 0x06)).will(returnValue(true));
+    
+    int[] args = { 0, 1 };
+    short[] locals = { (short) 1 };
+    short[] stack = { (short) 5, (short) 6 };
+    
+    StackFrame stackFrame = new StackFrame();
+    stackFrame.setProgramCounter(0x1221);
+    stackFrame.setReturnVariable(6);
+    stackFrame.setArgs(args);
+    stackFrame.setLocals(locals);
+    stackFrame.setEvalStack(stack);
+    
+    PortableGameState gamestate = new PortableGameState();
+    gamestate.writeStackFrameToByteBuffer(byteBuffer, stackFrame);
   }
 }

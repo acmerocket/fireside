@@ -41,6 +41,11 @@ import org.zmpp.iff.WritableFormChunk;
 public class PortableGameState {
 
   /**
+   * The return variable value for discard result.
+   */
+  public static final int DISCARD_RESULT = -1;
+  
+  /**
    * This class represents a stack frame in the portable game state model.
    */
   public static class StackFrame {
@@ -271,7 +276,7 @@ public class PortableGameState {
   }
   
   /**
-   * Evalutate the contents of the Stks chunk.
+   * Evaluate the contents of the Stks chunk.
    * 
    * @param formChunk the FORM chunk
    */
@@ -285,43 +290,60 @@ public class PortableGameState {
     while (offset < chunksize) {
       
       StackFrame stackFrame = new StackFrame();
-      stackFrame.pc = decodePcBytes(chunkMem.readByte(offset),
-        chunkMem.readByte(offset + 1), chunkMem.readByte(offset + 2));
-      offset += 3;
-    
-      byte pvFlags = chunkMem.readByte(offset++);
-      int numLocals = getNumLocals(pvFlags);
-      stackFrame.locals = new short[numLocals];
-    
-      stackFrame.returnVariable = chunkMem.readByte(offset++);
-    
-      byte argSpec = chunkMem.readByte(offset++);
-      stackFrame.args = getArgs(argSpec);
-    
-      int evalStackSize = chunkMem.readUnsignedShort(offset);
-      /*
-      System.out.println("pc: " + stackFrame.pc + " numLocals: " + numLocals + ", evalStackSize: " + evalStackSize
-          + " retvar: " + stackFrame.returnVariable);
-          */
-      stackFrame.evalStack = new short[evalStackSize];
-      offset += 2;
-    
-      // Read local variables
-      for (int i = 0; i < numLocals; i++) {
-      
-        stackFrame.locals[i] = chunkMem.readShort(offset);
-        offset += 2;
-      }
-    
-      // Read evaluation stack values
-      for (int i = 0; i < evalStackSize; i++) {
-      
-        stackFrame.evalStack[i] = chunkMem.readShort(offset);
-        offset += 2;
-      }
+      offset = readStackFrame(stackFrame, chunkMem, offset);
       stackFrames.add(stackFrame);
     }    
-  }    
+  }
+
+  /**
+   * Reads a stack frame from the specified chunk at the specified
+   * offset.
+   *  
+   * @param stackFrame the stack frame to set the data into
+   * @param chunkMem the Stks chunk to read from
+   * @param offset the offset to read the stack
+   * @return the offset after reading the stack frame
+   */
+  public int readStackFrame(StackFrame stackFrame, 
+      MemoryAccess chunkMem, int offset) {
+    
+    stackFrame.pc = decodePcBytes(chunkMem.readByte(offset),
+      chunkMem.readByte(offset + 1), chunkMem.readByte(offset + 2));
+    offset += 3;
+  
+    byte pvFlags = chunkMem.readByte(offset++);
+    int numLocals = pvFlags & 0x0f;
+    boolean discardResult = (pvFlags & 0x10) > 0;
+    stackFrame.locals = new short[numLocals];
+  
+    // Read the return variable, ignore the result if DISCARD_RESULT
+    int returnVar = chunkMem.readByte(offset++);
+    stackFrame.returnVariable = discardResult ? DISCARD_RESULT :
+                                                returnVar;
+  
+    byte argSpec = chunkMem.readByte(offset++);
+    stackFrame.args = getArgs(argSpec);
+  
+    int evalStackSize = chunkMem.readUnsignedShort(offset);
+    stackFrame.evalStack = new short[evalStackSize];
+    offset += 2;
+  
+    // Read local variables
+    for (int i = 0; i < numLocals; i++) {
+    
+      stackFrame.locals[i] = chunkMem.readShort(offset);
+      offset += 2;
+    }
+  
+    // Read evaluation stack values
+    for (int i = 0; i < evalStackSize; i++) {
+    
+      stackFrame.evalStack[i] = chunkMem.readShort(offset);
+      offset += 2;
+    }
+    return offset;
+  }
+  
   
   /**
    * Evaluate the contents of the Cmem and the UMem chunks.
@@ -574,36 +596,7 @@ public class PortableGameState {
     
     for (StackFrame stackFrame : stackFrames) {
      
-      // returnpc
-      int pc = stackFrame.pc;
-      byteBuffer.add((byte) ((pc >>> 16) & 0xff));
-      byteBuffer.add((byte) ((pc >>> 8) & 0xff));
-      byteBuffer.add((byte) (pc & 0xff));
-      
-      // locals flag, is simply the number of local variables
-      byteBuffer.add((byte) (stackFrame.locals.length & 0x0f));
-      
-      // returnvar
-      byteBuffer.add((byte) stackFrame.returnVariable);
-      
-      // argspec
-      byteBuffer.add(createArgSpecByte(stackFrame.args));
-      
-      // eval stack size
-      int stacksize = stackFrame.evalStack.length;
-      addUnsignedShortToByteBuffer(byteBuffer, stacksize);
-      
-      // local variables
-      for (short local : stackFrame.locals) {
-        
-        addShortToByteBuffer(byteBuffer, local);
-      }
-      
-      // stack values
-      for (short stackValue : stackFrame.evalStack) {
-        
-        addShortToByteBuffer(byteBuffer, stackValue);
-      }
+      writeStackFrameToByteBuffer(byteBuffer, stackFrame);
     }
     
     byte[] data = new byte[byteBuffer.size()];
@@ -612,6 +605,53 @@ public class PortableGameState {
       data[i] = byteBuffer.get(i);
     }    
     return new DefaultChunk(id, data);
+  }
+  
+  /**
+   * Writes the specified stackframe to the given byte buffer.
+   * 
+   * @param byteBuffer a byte buffer
+   * @param stackFrame the stack frame
+   */
+  public void writeStackFrameToByteBuffer(List<Byte> byteBuffer,
+      StackFrame stackFrame) {
+    
+    // returnpc
+    int pc = stackFrame.pc;
+    byteBuffer.add((byte) ((pc >>> 16) & 0xff));
+    byteBuffer.add((byte) ((pc >>> 8) & 0xff));
+    byteBuffer.add((byte) (pc & 0xff));
+    
+    // locals flag, is simply the number of local variables
+    boolean discardResult = stackFrame.returnVariable == DISCARD_RESULT;
+    byte pvFlag = (byte) (stackFrame.locals.length & 0x0f);
+    if (discardResult) {
+      
+      pvFlag |= 0x10;
+    }
+    byteBuffer.add(pvFlag);
+    
+    // returnvar
+    byteBuffer.add((byte) (discardResult ? 0 : stackFrame.returnVariable));
+    
+    // argspec
+    byteBuffer.add(createArgSpecByte(stackFrame.args));
+    
+    // eval stack size
+    int stacksize = stackFrame.evalStack.length;
+    addUnsignedShortToByteBuffer(byteBuffer, stacksize);
+    
+    // local variables
+    for (short local : stackFrame.locals) {
+      
+      addShortToByteBuffer(byteBuffer, local);
+    }
+    
+    // stack values
+    for (short stackValue : stackFrame.evalStack) {
+      
+      addShortToByteBuffer(byteBuffer, stackValue);
+    }
   }
   
   private void addUnsignedShortToByteBuffer(List<Byte> buffer, int value) {
@@ -769,21 +809,6 @@ public class PortableGameState {
     return intArray;
   }
   
-  /**
-   * Mask out the lower 4 bits if Bit 5 is cleared.
-   * 
-   * @param pvFlags a bit mask of the form xxxpvvvv
-   * @return 0000vvvv if p is cleared, 0 otherwise
-   */
-  private int getNumLocals(byte pvFlags) {
-   
-    if ((pvFlags & 0x10) == 0) {
-     
-      return pvFlags & 0x0f;
-    }
-    return 0;
-  }
-
   /**
    * Joins three bytes to a program counter value.
    * 

@@ -31,6 +31,11 @@ package org.zmpp.vm;
 public class RoutineContext {
 
   /**
+   * Set as return variable value if the call is a call_nx.
+   */
+  public static final int DISCARD_RESULT = -1;
+  
+  /**
    * The start address of the routine's code.
    */
   private int startAddress;
@@ -157,7 +162,7 @@ public class RoutineContext {
   /**
    * Returns the routine's return variable number.
    * 
-   * @return the return variable number
+   * @return the return variable number or DISCARD_RESULT
    */
   public int getReturnVariable() {
     
@@ -167,7 +172,7 @@ public class RoutineContext {
   /**
    * Sets the routine's return variable number.
    * 
-   * @param varnum the return variable number
+   * @param varnum the return variable number or DISCARD_RESULT
    */
   public void setReturnVariable(int varnum) {
     
