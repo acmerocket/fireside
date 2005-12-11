@@ -634,7 +634,8 @@ public class MachineImpl implements Machine {
     boolean isAtLeastV5 = getStoryFileHeader().getVersion() >= 5;
     
     // From V5, the first byte contains the number of characters typed
-    int pointer = isAtLeastV5 ? 1 : 0;
+    int pointerstart = isAtLeastV5 ? 1 : 0;
+    int pointer = pointerstart;
     
     if (isAtLeastV5) {
       
@@ -643,6 +644,7 @@ public class MachineImpl implements Machine {
       // function will then calculate the total
       int numCharactersTyped = memaccess.readByte(address);
       if (numCharactersTyped < 0) numCharactersTyped = 0;
+      if (numCharactersTyped > 0) System.out.println("leftover input: " + numCharactersTyped);
       pointer += numCharactersTyped;
     }
 
@@ -653,7 +655,7 @@ public class MachineImpl implements Machine {
       // Decrement the buffer pointer
       if (zsciiChar == ZsciiEncoding.DELETE) {
         
-        if (pointer > 0) pointer--;
+        if (pointer > pointerstart) pointer--;
         
       } else if (zsciiChar != ZsciiEncoding.NEWLINE) {
         
@@ -668,7 +670,7 @@ public class MachineImpl implements Machine {
     if (isAtLeastV5) {
     
       // Write the number of characters typed in byte 1
-      memaccess.writeByte(address, (byte) (pointer - 1));
+      memaccess.writeUnsignedByte(address, (byte) (pointer - 1));
       
     } else {
       
@@ -678,6 +680,19 @@ public class MachineImpl implements Machine {
     
     // Echo a newline into the streams
     printZsciiChar(ZsciiEncoding.NEWLINE);
+    
+    // debug output:
+    /*
+    StringBuilder outputbuffer = new StringBuilder();
+    if (isAtLeastV5) {
+      
+      int numCharacters = memaccess.readUnsignedByte(address);
+      for (int i = 0; i < numCharacters; i++) {
+
+        outputbuffer.append((char) memaccess.readUnsignedByte(address + i + 1));
+      }
+      System.out.printf("# chars typed: %d: '%s'\n", numCharacters, outputbuffer.toString());
+    }*/
   }
   
   /**
