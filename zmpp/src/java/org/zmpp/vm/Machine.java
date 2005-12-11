@@ -314,9 +314,11 @@ public interface Machine {
    * Translates a packed address into a byte address.
    * 
    * @param packedAddress the packed address
+   * @param isCall if true then this is a call address, if false, this is
+   * a string address
    * @return the translated byte address
    */
-  int translatePackedAddress(int packedAddress);
+  int translatePackedAddress(int packedAddress, boolean isCall);
   
   /**
    * Computes a branch target from an offset.

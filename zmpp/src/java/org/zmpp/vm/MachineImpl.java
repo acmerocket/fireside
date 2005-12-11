@@ -670,15 +670,24 @@ public class MachineImpl implements Machine {
   /**
    * {@inheritDoc}
    */
-  public int translatePackedAddress(int packedAddress) {
+  public int translatePackedAddress(int packedAddress, boolean isCall) {
   
     // Version specific packed address translation
     switch (getStoryFileHeader().getVersion()) {
     
       case 1: case 2: case 3:  
         return packedAddress * 2;
-      case 4: default:
+      case 4:
+      case 5:
         return packedAddress * 4;
+      case 6:
+      case 7:
+        return packedAddress * 4 + 8 *
+          (isCall ? getStoryFileHeader().getRoutineOffset() :
+                    getStoryFileHeader().getStaticStringOffset());
+      case 8:
+      default:
+        return packedAddress * 8;
     }
   }
   

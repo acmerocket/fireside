@@ -177,7 +177,23 @@ public class DefaultStoryFileHeader implements StoryFileHeader {
       memaccess.writeUnsignedShort(0x24, numLines);
     }
   }
+    
+  /**
+   * {@inheritDoc}
+   */
+  public int getRoutineOffset() {
+    
+    return memaccess.readUnsignedShort(0x28);
+  }
 
+  /**
+   * {@inheritDoc}
+   */
+  public int getStaticStringOffset() {
+    
+    return memaccess.readUnsignedShort(0x2a);
+  }
+  
   /**
    * {@inheritDoc}
    */

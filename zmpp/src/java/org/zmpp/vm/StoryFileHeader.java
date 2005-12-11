@@ -162,6 +162,20 @@ public interface StoryFileHeader {
    */
   void setScreenHeight(int numLines);
   
+  /**
+   * Only for V6 and V7 games: the routine offset.
+   * 
+   * @return the routine offset
+   */
+  int getRoutineOffset();
+  
+  /**
+   * Only in V6 and V7: the static string offset.
+   * 
+   * @return the static string offset
+   */
+  int getStaticStringOffset();
+  
   // ********************************************************************
   // ****** Attributes
   // **********************************
