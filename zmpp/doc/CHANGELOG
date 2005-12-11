@@ -25,7 +25,8 @@ Version 0.74
 - "Jigsaw" runs
 - check_arg_count, piracy and tokenise
 - V7 and V8 addressing added
-- TODO: make read and tokenise comply to V5 specification
+- object 0 access checks
+- made read and tokenise comply to >= V5 specification
 
 Version 0.72 final (2005-12-07)
 -------------------------------
