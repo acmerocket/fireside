@@ -400,6 +400,13 @@ public interface Machine {
   void halt(String errormsg);
   
   /**
+   * Outputs a warning message.
+   *  
+   * @param msg
+   */
+  void warn(String msg);
+  
+  /**
    * Saves the current state.
 
    * @param savepc the save pc

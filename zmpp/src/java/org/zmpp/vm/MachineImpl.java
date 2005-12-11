@@ -630,10 +630,21 @@ public class MachineImpl implements Machine {
    */
   public void readLine(int address, int bufferlen) {
     
-    // Behavior needs to be fixed here, characters are read byte-by-byte
-    // and should be echoed to the output streams
-    int pointer = 0;
     short zsciiChar;
+    boolean isAtLeastV5 = getStoryFileHeader().getVersion() >= 5;
+    
+    // From V5, the first byte contains the number of characters typed
+    int pointer = isAtLeastV5 ? 1 : 0;
+    
+    if (isAtLeastV5) {
+      
+      // The clunky feature to include previous input into the current input
+      // Simply adjust the pointer, the differencing at the end of the
+      // function will then calculate the total
+      int numCharactersTyped = memaccess.readByte(address);
+      if (numCharactersTyped < 0) numCharactersTyped = 0;
+      pointer += numCharactersTyped;
+    }
 
     do {
       
@@ -645,7 +656,8 @@ public class MachineImpl implements Machine {
         if (pointer > 0) pointer--;
         
       } else if (zsciiChar != ZsciiEncoding.NEWLINE) {
-          
+        
+        // Do not include the terminator in the buffer
         memaccess.writeByte(address + pointer, (byte) zsciiChar);        
         pointer++;
       }      
@@ -653,7 +665,16 @@ public class MachineImpl implements Machine {
       
     } while (zsciiChar != ZsciiEncoding.NEWLINE && pointer < bufferlen - 1);
 
-    memaccess.writeByte(address + pointer, (byte) 0);
+    if (isAtLeastV5) {
+    
+      // Write the number of characters typed in byte 1
+      memaccess.writeByte(address, (byte) (pointer - 1));
+      
+    } else {
+      
+      // Terminate with 0 byte in versions < 5      
+      memaccess.writeByte(address + pointer, (byte) 0);
+    }
     
     // Echo a newline into the streams
     printZsciiChar(ZsciiEncoding.NEWLINE);
@@ -767,6 +788,14 @@ public class MachineImpl implements Machine {
   
     print(errormsg);
     running = false;
+  }
+  
+  /**
+   * {@inheritDoc}
+   */
+  public void warn(String msg) {
+    
+    System.err.println("WARNING: " + msg);
   }
   
   /**
