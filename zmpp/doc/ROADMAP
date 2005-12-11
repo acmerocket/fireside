@@ -2,53 +2,53 @@ Roadmap:
 
 TODO:
 
-- support version 7
-- support version 8
 - support version 1 and 2
 - save and restore saving regions
 - different alphabet tables
-- different dictionaries
 - opcodes:
   1. throw
   2. catch
   3. print_unicode (EXT)
   4. check_unicode (EXT)  
+  5. encode_text
 - support version 6
 
-Version 0.76:
+Version 0.77:
 -------------
 
 - timed input (introduced here, since Border Zone is the first Infocom game
   using this feature)
+- different dictionaries
+- extend tokenise using user dictionary
 
 Version 0.75:
 -------------
 
+- revisit Z-decoding
+- try more V5 games
 - implement opcodes:
-  1. encode_text
-  2. piracy
-  3. check_arg_count
-  4. copy_table
-  5. print_table
-  6. set_colour
-  7. set_font
-  8. tokenise
-
+  1. copy_table
+  2. print_table
+  3. set_colour
+  4. set_font
+ 
 Version 0.74:
 -------------
 
-Reference games: Curses
-
-- support story file version 5
+- runs "Curses" (V5)
 - change header attribute setting model, string or enum based for more
 	flexibility
 - allow cursor keys as input for read_char
+- add V7 and V8 addressing
 - opcodes:
   - new:               - changed:                          - illegal
     1. not (VAR)         1. sread -> aread (is store)        1. save (0OP)
     2. call_2n           2. not -> call_1n                   2. restore (0OP)
     3. call_vn
     4. call_vn2
+    5. piracy
+    6. tokenise
+    7. check_arg_count
     
 - extended opcodes:
   1. save (regular)
