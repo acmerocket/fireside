@@ -212,6 +212,9 @@ public class DefaultStoryFileHeader implements StoryFileHeader {
     case SUPPORTS_STATUSLINE:
       setStatusLineAvailable(flag);
       break;
+    case SUPPORTS_COLOURS:
+      setSupportsColours(flag);
+      break;
     }
   }
   
@@ -337,5 +340,12 @@ public class DefaultStoryFileHeader implements StoryFileHeader {
   private boolean defaultFontIsVariablePitch() {
     
     return (memaccess.readUnsignedByte(0x01) & 64) > 0;
+  }
+  
+  private void setSupportsColours(boolean flag) {
+    
+    int flags = memaccess.readUnsignedByte(0x01);
+    flags = flag ? (flags | 1) : (flags & 0xfe);
+    memaccess.writeUnsignedByte(0x01, (short) flags);
   }
 }

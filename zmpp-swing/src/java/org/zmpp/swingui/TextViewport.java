@@ -425,7 +425,8 @@ ScreenModel {
       fileheader.setEnabled(Attribute.SUPPORTS_STATUSLINE, true);
       fileheader.setEnabled(Attribute.SUPPORTS_SCREEN_SPLITTING, true);
       
-    } else if (fileheader.getVersion() >= 4) {
+    }
+    if (fileheader.getVersion() >= 4) {
       
       fileheader.setEnabled(Attribute.SUPPORTS_BOLD, true);
       fileheader.setEnabled(Attribute.SUPPORTS_FIXED_FONT, true);
@@ -436,7 +437,13 @@ ScreenModel {
                         fm.charWidth('0');
       int screenHeight = imageBuffer.getHeight() / fm.getHeight();
       fileheader.setScreenWidth(screenWidth);
-      fileheader.setScreenHeight(screenHeight);      
+      fileheader.setScreenHeight(screenHeight);
+      
+    }
+    
+    if (fileheader.getVersion() >= 5) {
+
+      fileheader.setEnabled(Attribute.SUPPORTS_COLOURS, false);
     }
     determineStandardFont();
   }

@@ -151,6 +151,12 @@ public class StoryFileHeaderTest extends MockObjectTestCase {
     fileHeader.setScreenHeight(255);
   }
   
+  public void testGetScreenWidth() {
+    
+    mockMemAccess.expects(once()).method("readUnsignedByte").with(eq(0x21)).will(returnValue((short) 82));
+    assertEquals(82, fileHeader.getScreenWidth());
+  }
+  
   public void testSetScreenWidthV4() {
     
     mockMemAccess.expects(atLeastOnce()).method("readUnsignedByte").with(eq(0x00)).will(returnValue((short) 4));
@@ -192,6 +198,12 @@ public class StoryFileHeaderTest extends MockObjectTestCase {
   // *************************************************************************
   // ****** ATTRIBUTES
   // **************************
+  
+  public void testIsEnabledNull() {
+  
+    // This is not matched in the code
+    assertFalse(fileHeader.isEnabled(Attribute.SUPPORTS_STATUSLINE));    
+  }
   
   public void testSetTranscripting() {
    
@@ -322,5 +334,16 @@ public class StoryFileHeaderTest extends MockObjectTestCase {
         onConsecutiveCalls( returnValue((short) 69), returnValue((short) 7) ));    
     assertTrue(fileHeader.isEnabled(Attribute.DEFAULT_FONT_IS_VARIABLE));
     assertFalse(fileHeader.isEnabled(Attribute.DEFAULT_FONT_IS_VARIABLE));
+  }
+  
+  public void testSetSupportsColors() {
+    
+    mockMemAccess.expects(atLeastOnce()).method("readUnsignedByte").with(eq(0x01)).will(
+        onConsecutiveCalls( returnValue((short) 4), returnValue((short) 5) ));
+    mockMemAccess.expects(once()).method("writeUnsignedByte").with(eq(0x01), eq((short) 5));
+    mockMemAccess.expects(once()).method("writeUnsignedByte").with(eq(0x01), eq((short) 4));
+
+    fileHeader.setEnabled(Attribute.SUPPORTS_COLOURS, true);
+    fileHeader.setEnabled(Attribute.SUPPORTS_COLOURS, false);
   }
 }
