@@ -68,7 +68,7 @@ ScreenModel {
   private int charsTyped;
   private SubWindow[] windows;
   private int activeWindow;
-  private static final boolean DEBUG = true;
+  private static final boolean DEBUG = false;
   
   public TextViewport(Machine machine, LineEditor editor) {
     
@@ -143,6 +143,7 @@ ScreenModel {
   
   public void splitWindow(final int linesUpperWindow) {
    
+    //System.out.println("splitWindow(): " + linesUpperWindow);
     // The standard document suggests that a split should only take part 
     // if the lower window is selected (S 8.7.2.1), but Bureaucracy does
     // the split with the upper window selected, so we do that resizing

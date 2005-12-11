@@ -108,10 +108,11 @@ public class Main {
       StoryFileHeader fileheader = config.getFileHeader();
       System.out.println("Story file Version: " + fileheader.getVersion());
     
-      if (fileheader.getVersion() < 3 || fileheader.getVersion() > 5) {
+      if (fileheader.getVersion() < 3 || fileheader.getVersion() == 6
+          || fileheader.getVersion() > 8) {
       
         JOptionPane.showMessageDialog(null,
-          "ZMPP V 0.74 currently only supports story file versions 3, 4 and 5.",
+          "ZMPP V 0.74 does not support story file versions 1, 2 or 6.",
           "Story file read error", JOptionPane.ERROR_MESSAGE);
         System.exit(0);
       }
