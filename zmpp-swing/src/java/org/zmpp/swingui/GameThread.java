@@ -24,12 +24,10 @@ package org.zmpp.swingui;
 
 import javax.swing.SwingUtilities;
 
-import jozart.swingutils.SwingWorker;
-
 import org.zmpp.vm.Instruction;
 import org.zmpp.vm.Machine;
 
-public class GameThread extends SwingWorker<Boolean> {
+public class GameThread extends Thread {
 
   private TextViewport viewport;
   private Machine machine;
@@ -40,7 +38,7 @@ public class GameThread extends SwingWorker<Boolean> {
     this.viewport = viewport;
   }
   
-  public Boolean construct() {
+  public void run() {
     
     viewport.waitInitialized();  
     machine.start();
@@ -70,11 +68,5 @@ public class GameThread extends SwingWorker<Boolean> {
       instr.execute();
     }
     System.out.printf("und tschuess ! pc: %4x\n", machine.getProgramCounter());
-    return Boolean.TRUE;
-  }
-  
-  protected void finished() {
-    
-    System.exit(0);
   }
 }
