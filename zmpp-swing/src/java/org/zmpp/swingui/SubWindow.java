@@ -405,5 +405,5 @@ public class SubWindow {
       if (isScrolled) scrollUp();
       cursor.decrementLinePos(1);
     }
-  }
+  }  
 }

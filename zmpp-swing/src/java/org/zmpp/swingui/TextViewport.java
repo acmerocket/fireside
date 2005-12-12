@@ -67,6 +67,7 @@ ScreenModel {
   private boolean editMode;
   private int charsTyped;
   private SubWindow[] windows;
+  private int[] fontnumbers;
   private int activeWindow;
   private static final boolean DEBUG = false;
   
@@ -80,6 +81,7 @@ ScreenModel {
     streambuffer = new StringBuilder();
     textbuffer = new StringBuilder();
     windows = new SubWindow[2];
+    fontnumbers = new int[2];
     activeWindow = WINDOW_BOTTOM;
   }
   
@@ -364,6 +366,77 @@ ScreenModel {
   
   public void close() { }
   
+  /**
+   * {@inheritDoc}
+   */
+  public void setForegroundColor(int colornum) {
+   
+    if (colornum > 0) {
+      
+      flushOutput();
+      windows[activeWindow].setForeground(translateColornum(colornum, true));
+    }
+  }
+  
+  /**
+   * {@inheritDoc}
+   */
+  public void setBackgroundColor(int colornum) {
+    
+    if (colornum > 0) {
+      
+      flushOutput();
+      windows[activeWindow].setBackground(translateColornum(colornum, false));
+    }
+  }
+  
+  private Color translateColornum(int colornum, boolean foreground) {
+    
+    switch (colornum) {
+    
+    case COLOR_DEFAULT:
+      return (foreground) ? getForeground() : getBackground();
+    case COLOR_BLACK:
+      return Color.BLACK;
+    case COLOR_RED:
+      return Color.BLACK;
+    case COLOR_GREEN:
+      return Color.GREEN;
+    case COLOR_YELLOW:
+      return Color.YELLOW;
+    case COLOR_BLUE:
+      return Color.BLUE;
+    case COLOR_MAGENTA:
+      return Color.MAGENTA;
+    case COLOR_CYAN:
+      return Color.CYAN;
+    case COLOR_WHITE:
+      return Color.WHITE;
+    case COLOR_MS_DOS_DARKISH_GREY:
+      return Color.DARK_GRAY;
+    }
+    return Color.BLACK;
+  }
+  
+  /**
+   * {@inheritDoc}
+   */
+  public int setFont(int fontnum) {
+    
+    flushOutput();
+    int previous = fontnumbers[activeWindow];
+    fontnumbers[activeWindow] = fontnum;
+    switch (fontnum) {
+    case FONT_FIXED:
+      windows[activeWindow].setFont(fixedFont);
+      return previous;
+    case FONT_NORMAL:
+      windows[activeWindow].setFont(standardFont);
+      return previous;
+    }
+    return 0;
+  }
+  
   // **********************************************************************
   // ******** Private functions
   // *************************************************
@@ -444,7 +517,7 @@ ScreenModel {
     
     if (fileheader.getVersion() >= 5) {
 
-      fileheader.setEnabled(Attribute.SUPPORTS_COLOURS, false);
+      fileheader.setEnabled(Attribute.SUPPORTS_COLOURS, true);
     }
     determineStandardFont();
   }

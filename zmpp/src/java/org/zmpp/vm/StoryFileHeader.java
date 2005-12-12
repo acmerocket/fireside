@@ -176,6 +176,34 @@ public interface StoryFileHeader {
    */
   int getStaticStringOffset();
   
+  /**
+   * Returns the default background color.
+   * 
+   * @return the default background color
+   */
+  int getDefaultBackgroundColor();
+  
+  /**
+   * Returns the default foreground color.
+   * 
+   * @return the default foreground color
+   */
+  int getDefaultForegroundColor();
+  
+  /**
+   * Sets the default background color.
+   * 
+   * @param color the default background color.
+   */
+  void setDefaultBackgroundColor(int color);
+  
+  /**
+   * Sets the default foreground color.
+   * 
+   * @param color the default foreground color
+   */
+  void setDefaultForegroundColor(int color);
+  
   // ********************************************************************
   // ****** Attributes
   // **********************************

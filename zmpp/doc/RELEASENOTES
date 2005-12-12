@@ -11,14 +11,15 @@ implementation that can be easily maintained and extended.
 
 Features:
 
-- Written from scratch using Java 5
-- Currently supports story file version 3 and 4
-- Save and reads games in Quetzal 1.4 format
-- Supports input stream 0 and 1 (keyboard and file)
-- Supports output streams 1, 2 and 3 (screen, transcript, memory with nesting)
-- Supports split subwindows (paging, buffering, scrolling)
-- Supports multiple font styles
+- written from scratch using Java 5
+- currently supports story file version 3, 4, 5, 7 and 8
 - can be run as a Java applet within the web browser
+- saves and reads games in Quetzal 1.4 format
+- supports input stream 0 and 1 (keyboard and file)
+- supports output streams 1, 2 and 3 (screen, transcript, memory with nesting)
+- supports split subwindows (paging, buffering, scrolling)
+- supports multiple font styles and colors
+- supports undo
 
 For remarks and suggestions for improvements, please contact
 me using the ZMPP project homepage:
@@ -27,7 +28,18 @@ http://sourceforge.net/projects/zmpp
 
 TODO:
 
-- sound_effect not implemented
+- less frequent opcodes (throw/catch, print_unicode, check_unicode, encode_text,
+  copy_table, print_table)
+- timed input
+- user dictionaries
+- custom alphabet tables
+- save/restore regions
+- successfully terpetude to reach and state standard compliance
+- optimization of perceived performance (user interface)
+- sound_effects
+- character graphics
+- version 6
+- version 1 and 2 (low priority)
 
 
 Running as an application
@@ -68,6 +80,14 @@ Version 4:
 - A Mind Forever Voyaging
 - Bureaucracy
 - Trinity
+
+Version 5:
+
+- Curses
+
+Version 8:
+
+- Jigsaw
 
 These games have been successfully played through so far:
 

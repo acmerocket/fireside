@@ -14,6 +14,7 @@ TODO:
 - support version 6
 - sound
 - character graphics
+- run terpetude successfully
 
 Version 0.77:
 -------------
@@ -27,17 +28,16 @@ Version 0.75:
 -------------
 
 - revisit Z-decoding
-- try more V5 games
+- improve tests
+- play some games
 - implement opcodes:
   1. copy_table
   2. print_table
-  3. set_colour
-  4. set_font
  
 Version 0.74:
 -------------
 
-- runs "Curses" (V5)
+- runs "Curses" and some other V5, V7 and V8 games
 - change header attribute setting model, string or enum based for more
 	flexibility
 - allow cursor keys as input for read_char
@@ -59,6 +59,8 @@ Version 0.74:
   4. restore_undo
   5. log_shift
   6. art_shift
+  7. set_colour
+  8. set_font
  
 Version 0.72:
 -------------

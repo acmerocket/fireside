@@ -22,11 +22,12 @@ Version 0.74
 - applet saves games to memory
 - fixed a bug that ignored newlines in unbuffered mode
 - "Curses" runs
-- "Jigsaw" runs
+- "Jigsaw" runs (but no character graphics supported)
 - check_arg_count, piracy and tokenise
 - V7 and V8 addressing added
 - object 0 access checks
 - made read and tokenise comply to >= V5 specification
+- set_font and set_colour added
 
 Version 0.72 final (2005-12-07)
 -------------------------------

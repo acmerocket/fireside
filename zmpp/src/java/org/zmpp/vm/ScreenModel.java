@@ -37,9 +37,27 @@ public interface ScreenModel {
   static final int FONT_NORMAL  = 1;
   
   /**
+   * Font number for the character graphics font.
+   */
+  static final int FONT_CHARACTER_GRAPHICS  = 3;
+  
+  /**
    * Font number for the fixed pitch font.
    */
   static final int FONT_FIXED   = 4;
+  
+  static final int COLOR_UNDER_CURSOR   =  -1;
+  static final int COLOR_CURRENT        =   0;
+  static final int COLOR_DEFAULT        =   1;
+  static final int COLOR_BLACK          =   2;
+  static final int COLOR_RED            =   3;
+  static final int COLOR_GREEN          =   4;
+  static final int COLOR_YELLOW         =   5;
+  static final int COLOR_BLUE           =   6;
+  static final int COLOR_MAGENTA        =   7;
+  static final int COLOR_CYAN           =   8;
+  static final int COLOR_WHITE          =   9;
+  static final int COLOR_MS_DOS_DARKISH_GREY  =   10;
   
   /**
    * Resets the screen model.
@@ -115,4 +133,26 @@ public interface ScreenModel {
    * @param flag true to enable paging, false to disable
    */
   void setPaging(boolean flag);
+  
+  /**
+   * Sets the font in the current window.
+   * 
+   * @param fontnumber the font number
+   * @boolean the previous font number
+   */
+  int setFont(int fontnumber);
+  
+  /**
+   * Sets the background color.
+   * 
+   * @param colornumber the color number
+   */
+  void setBackgroundColor(int colornumber);
+  
+  /**
+   * Sets the foreground color.
+   * 
+   * @param colornumber a color number
+   */
+  void setForegroundColor(int colornumber);
 }

@@ -197,6 +197,42 @@ public class DefaultStoryFileHeader implements StoryFileHeader {
   /**
    * {@inheritDoc}
    */
+  public int getDefaultBackgroundColor() {
+    
+    return memaccess.readUnsignedByte(0x2c);
+  }
+  
+  /**
+   * {@inheritDoc}
+   */
+  public int getDefaultForegroundColor() {
+    
+    return memaccess.readUnsignedByte(0x2d);
+  }
+  
+  /**
+   * {@inheritDoc}
+   */
+  public void setDefaultBackgroundColor(int color) {
+    
+    memaccess.writeUnsignedByte(0x2c, (short) color);
+  }
+  
+  /**
+   * {@inheritDoc}
+   */
+  public void setDefaultForegroundColor(int color) {
+    
+    memaccess.writeUnsignedByte(0x2d, (short) color);
+  }
+  
+  // ***********************************************************************
+  // ****** Attributes
+  // **********************************
+  
+  /**
+   * {@inheritDoc}
+   */
   public void setEnabled(Attribute attribute, boolean flag) {
     
     switch (attribute) {
