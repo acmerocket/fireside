@@ -134,6 +134,14 @@ public class ObjectsTest extends MemoryMapSetup {
     assertEquals(0, obj66.getSibling());
   }
   
+  public void testRemoveObjectHasNoParent() {
+    
+    ZObject lantern = objects.getObject(62);
+    lantern.setParent(0);
+    objects.removeObject(62);
+    assertEquals(0, lantern.getParent());
+  }
+  
   public void testInsertObjectSimple() {
     
     // Simplest and first case: Move a single object without any relationship
