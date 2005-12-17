@@ -119,7 +119,7 @@ ScreenModel {
       // should be reset in this case
       windows[window].clear();
     }
-    repaintInUiThread();
+    //repaintInUiThread();
   }
   
   public void eraseLine(int value) {
@@ -127,7 +127,7 @@ ScreenModel {
     if (value == 1) {
 
       windows[activeWindow].eraseLine();
-      repaintInUiThread();
+      //repaintInUiThread();
     }
   }
   
@@ -140,7 +140,7 @@ ScreenModel {
    
     //System.out.println("setTextCursor, line: " + line + " column: " + column + " active: " + activeWindow);
     windows[activeWindow].getCursor().setPosition(line, column);
-    repaintInUiThread();
+    if (isEditMode()) repaintInUiThread();
   }
   
   public void splitWindow(final int linesUpperWindow) {
@@ -157,7 +157,7 @@ ScreenModel {
         
       windows[WINDOW_TOP].clear();
     }
-    repaintInUiThread();
+    //repaintInUiThread();
   }
   
   public void setWindow(final int window) {
@@ -172,7 +172,7 @@ ScreenModel {
       
       windows[activeWindow].getCursor().reset();
     }
-    repaintInUiThread();
+    //repaintInUiThread();
   }
 
   /**
@@ -237,7 +237,7 @@ ScreenModel {
   public void flush() {
     
     flushOutput();
-    repaintInUiThread();
+    //repaintInUiThread();
   }
   
   private void flushOutput() {
