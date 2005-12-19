@@ -4,6 +4,12 @@ Version 0.75
 ------------
 
 - added handling for removing objects without a parent
+- redesigned the decoding code for z encoded strings
+- added support for special charactes using the standard translation table, input and output
+- reduced number of repaints resulting in faster output
+- changed instruction design and moved instructions to org.zmpp.instructions package
+- moved i/o stuff from vm package to io package
+- copy_table implemented
 
 Version 0.74
 ------------

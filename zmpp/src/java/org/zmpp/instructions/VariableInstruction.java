@@ -399,6 +399,7 @@ public class VariableInstruction extends AbstractInstruction {
       
       String token = tokens.get(i);      
       int entryAddress = dictionary.lookup(token);
+      //System.out.println("token: " + token + " entryAddress: " + entryAddress);
       
       int startIndex = 0;
       if (parsedTokens.containsKey(token)) {
@@ -416,6 +417,7 @@ public class VariableInstruction extends AbstractInstruction {
           
         parsedTokens.put(token, 1);          
       }
+      
       int tokenIndex = input.indexOf(token, startIndex);    
       tokenIndex = tokenIndex + 1; // because of the length byte
       
