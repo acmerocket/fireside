@@ -1,7 +1,7 @@
 /*
  * $Id$
  * 
- * Created on 24.09.2005
+ * Created on 2005/12/19
  * Copyright 2005 by Wei-ju Wu
  *
  * This file is part of The Z-machine Preservation Project (ZMPP).
@@ -20,26 +20,12 @@
  * along with ZMPP; if not, write to the Free Software
  * Foundation, Inc., 51 Franklin St, Fifth Floor, Boston, MA  02110-1301  USA
  */
-package org.zmpp.vm;
+package org.zmpp.instructions;
 
-import org.zmpp.base.MemoryReadAccess;
-import org.zmpp.instructions.AbstractInstruction;
+public interface InstructionStaticInfo {
 
-/**
- * The instruction decoder decodes an instruction at a specified address.
- * 
- * @author Wei-ju Wu
- * @version 1.0
- */
-public interface InstructionDecoder {
-    
-  public void initialize(Machine machine, MemoryReadAccess memaccess);
-  
-  /**
-   * Decode the instruction at the specified address.
-   * 
-   * @param instructionAddress the current instruction's address
-   * @return the instruction at the specified address
-   */
-  public AbstractInstruction decodeInstruction(int instructionAddress);
+  int[] getValidVersions(int opcode);
+  boolean isBranch(int opcode, int version);
+  boolean storesResult(int opcode, int version);
+  String getOpName(int opcode, int version);
 }

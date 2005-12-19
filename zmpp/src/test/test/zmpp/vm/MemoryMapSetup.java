@@ -27,11 +27,12 @@ import java.io.FileInputStream;
 
 import org.jmock.MockObjectTestCase;
 import org.zmpp.base.MemoryAccess;
+import org.zmpp.instructions.DefaultInstructionDecoder;
 import org.zmpp.vm.Abbreviations;
 import org.zmpp.vm.DefaultMachineConfig;
 import org.zmpp.vm.Machine;
-import org.zmpp.vm.MachineImpl;
 import org.zmpp.vm.MachineConfig;
+import org.zmpp.vm.MachineImpl;
 import org.zmpp.vm.StoryFileHeader;
 import org.zmpp.vmutil.ZCharConverter;
 
@@ -65,7 +66,7 @@ public abstract class MemoryMapSetup extends MockObjectTestCase {
     converter = new ZCharConverter(3, abbreviations);
     
     machineState = new MachineImpl();
-    machineState.initialize(config);
+    machineState.initialize(config, new DefaultInstructionDecoder());
   }
   
   protected void tearDown() throws Exception {

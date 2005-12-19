@@ -154,9 +154,10 @@ public class MachineImpl implements Machine {
   /**
    * {@inheritDoc}
    */
-  public void initialize(MachineConfig config) {
+  public void initialize(MachineConfig config, InstructionDecoder decoder) {
   
     this.config = config;
+    this.decoder = decoder;
     this.outputStream = new OutputStream[3];
     this.inputStream = new InputStream[2];    
     this.selectedInputStreamIndex = 0;
@@ -180,7 +181,7 @@ public class MachineImpl implements Machine {
     this.routineContextStack = new ArrayList<RoutineContext>();
     this.programCounter = fileHeader.getProgramStart();
     this.globalsAddress = fileHeader.getGlobalsAddress();
-    this.decoder = new InstructionDecoder(this, memaccess);
+    this.decoder.initialize(this, memaccess);
     int checksum = calculateChecksum(fileHeader);
     hasValidChecksum = fileHeader.getChecksum() == checksum;
     

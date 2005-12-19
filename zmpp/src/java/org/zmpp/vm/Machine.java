@@ -382,8 +382,9 @@ public interface Machine {
    * Initialization function.
    * 
    * @param machineConfig a configuration object
+   * @param decoder the instruction decoder
    */
-  void initialize(MachineConfig machineConfig);
+  void initialize(MachineConfig machineConfig, InstructionDecoder decoder);
   
   /**
    * Sets the save game data store.

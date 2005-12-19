@@ -27,11 +27,13 @@ import java.io.File;
 import javax.swing.JFileChooser;
 import javax.swing.JOptionPane;
 
+import org.zmpp.instructions.DefaultInstructionDecoder;
 import org.zmpp.vm.DefaultMachineConfig;
 import org.zmpp.vm.FileInputStream;
+import org.zmpp.vm.InstructionDecoder;
 import org.zmpp.vm.Machine;
-import org.zmpp.vm.MachineImpl;
 import org.zmpp.vm.MachineConfig;
+import org.zmpp.vm.MachineImpl;
 import org.zmpp.vm.MemoryOutputStream;
 import org.zmpp.vm.StoryFileHeader;
 import org.zmpp.vm.TranscriptOutputStream;
@@ -112,12 +114,13 @@ public class Main {
           || fileheader.getVersion() > 8) {
       
         JOptionPane.showMessageDialog(null,
-          "ZMPP V 0.74 does not support story file versions 1, 2 or 6.",
+          "ZMPP V 0.75 does not support story file versions 1, 2 or 6.",
           "Story file read error", JOptionPane.ERROR_MESSAGE);
         System.exit(0);
       }
       Machine machine = new MachineImpl();
-      machine.initialize(config);
+      InstructionDecoder decoder = new DefaultInstructionDecoder();
+      machine.initialize(config, decoder);
       return machine;
       
     } catch (Exception ex) {

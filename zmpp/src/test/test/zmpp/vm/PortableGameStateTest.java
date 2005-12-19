@@ -36,6 +36,7 @@ import org.zmpp.iff.Chunk;
 import org.zmpp.iff.DefaultFormChunk;
 import org.zmpp.iff.FormChunk;
 import org.zmpp.iff.WritableFormChunk;
+import org.zmpp.instructions.DefaultInstructionDecoder;
 import org.zmpp.vm.Dictionary;
 import org.zmpp.vm.Machine;
 import org.zmpp.vm.MachineConfig;
@@ -332,7 +333,7 @@ public class PortableGameStateTest extends MockObjectTestCase {
     // Tests if the dynamic memory and the stack frames are
     // completely copied
     Machine machine = new MachineImpl();
-    machine.initialize(machineConfig);
+    machine.initialize(machineConfig, new DefaultInstructionDecoder());
         
     gamestate.transferStateToMachine(machine);
   }
