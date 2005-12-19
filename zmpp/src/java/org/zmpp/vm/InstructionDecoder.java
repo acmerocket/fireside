@@ -125,8 +125,8 @@ public class InstructionDecoder {
         
         // Special case: print and print_ret are classified as C0OP, but
         // in fact have a string literal as their parameter
-        if (opcode == PrintLiteralInstruction.OP_PRINT
-            || opcode == PrintLiteralInstruction.OP_PRINT_RET) {
+        if (opcode == Short1StaticInfo.OP_PRINT
+            || opcode == Short1StaticInfo.OP_PRINT_RET) {
           
           return new PrintLiteralInstruction(machineState, opcode, memaccess,
                                              instructionAddress);
@@ -200,8 +200,8 @@ public class InstructionDecoder {
       // ----- the opcode for CALL_VN2 overlaps with CALL_2N
       boolean isVcall = false;      
       if (info.getOperandCount() == OperandCount.VAR
-          && (info.getOpcode() == VariableInstruction.OP_CALL_VS2
-              || info.getOpcode() == VariableInstruction.OP_CALL_VN2)) {
+          && (info.getOpcode() == VariableStaticInfo.OP_CALL_VS2
+              || info.getOpcode() == VariableStaticInfo.OP_CALL_VN2)) {
         
         // There is a second op type byte
         isVcall = true;
