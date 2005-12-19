@@ -25,6 +25,8 @@ package org.zmpp.vm;
 import java.util.List;
 
 import org.zmpp.base.MemoryAccess;
+import org.zmpp.io.InputStream;
+import org.zmpp.io.OutputStream;
 
 /**
  * This interface gives the instructions an abstract access to the current

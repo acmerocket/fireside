@@ -29,6 +29,8 @@ import java.util.List;
 import org.zmpp.base.MemoryAccess;
 import org.zmpp.iff.FormChunk;
 import org.zmpp.iff.WritableFormChunk;
+import org.zmpp.io.InputStream;
+import org.zmpp.io.OutputStream;
 import org.zmpp.vm.StoryFileHeader.Attribute;
 import org.zmpp.vmutil.PredictableRandomGenerator;
 import org.zmpp.vmutil.RandomGenerator;

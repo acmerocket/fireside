@@ -31,9 +31,9 @@ import java.awt.image.BufferedImage;
 import javax.swing.JViewport;
 import javax.swing.SwingUtilities;
 
+import org.zmpp.io.OutputStream;
 import org.zmpp.swingui.SubWindow.HomeYPosition;
 import org.zmpp.vm.Machine;
-import org.zmpp.vm.OutputStream;
 import org.zmpp.vm.ScreenModel;
 import org.zmpp.vm.StoryFileHeader;
 import org.zmpp.vm.StoryFileHeader.Attribute;

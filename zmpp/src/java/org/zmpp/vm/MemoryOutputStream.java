@@ -26,6 +26,7 @@ import java.util.ArrayList;
 import java.util.List;
 
 import org.zmpp.base.MemoryAccess;
+import org.zmpp.io.OutputStream;
 
 /**
  * This class implements output stream 3. This stream writes to dynamic

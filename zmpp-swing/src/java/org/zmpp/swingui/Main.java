@@ -28,15 +28,15 @@ import javax.swing.JFileChooser;
 import javax.swing.JOptionPane;
 
 import org.zmpp.instructions.DefaultInstructionDecoder;
+import org.zmpp.io.FileInputStream;
+import org.zmpp.io.TranscriptOutputStream;
 import org.zmpp.vm.DefaultMachineConfig;
-import org.zmpp.vm.FileInputStream;
 import org.zmpp.vm.InstructionDecoder;
 import org.zmpp.vm.Machine;
 import org.zmpp.vm.MachineConfig;
 import org.zmpp.vm.MachineImpl;
 import org.zmpp.vm.MemoryOutputStream;
 import org.zmpp.vm.StoryFileHeader;
-import org.zmpp.vm.TranscriptOutputStream;
 
 
 /**
