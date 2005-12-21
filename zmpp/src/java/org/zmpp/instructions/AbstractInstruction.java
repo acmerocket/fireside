@@ -25,7 +25,6 @@ package org.zmpp.instructions;
 import java.util.ArrayList;
 import java.util.List;
 
-import org.zmpp.base.MemoryReadAccess;
 import org.zmpp.vm.Instruction;
 import org.zmpp.vm.Machine;
 import org.zmpp.vm.Operand;
@@ -108,7 +107,7 @@ public abstract class AbstractInstruction implements Instruction {
   /**
    * The store variable.
    */
-  private int storeVariable;
+  private short storeVariable;
   
   /**
    * If this is a branch instruction, this flag indicates whether to branch
@@ -209,7 +208,7 @@ public abstract class AbstractInstruction implements Instruction {
    * 
    * @return the store variable
    */
-  public int getStoreVariable() { return storeVariable; }
+  public short getStoreVariable() { return storeVariable; }
   
   /**
    * Returns the branch offset.
@@ -244,7 +243,7 @@ public abstract class AbstractInstruction implements Instruction {
    * 
    * @param var the store variable
    */
-  public void setStoreVariable(int var) { this.storeVariable = var; }
+  public void setStoreVariable(short var) { this.storeVariable = var; }
   
   /**
    * Sets the branch offset.
@@ -529,40 +528,6 @@ public abstract class AbstractInstruction implements Instruction {
   }
   
   /**
-   * Decodes the routine at the specified address.
-   * 
-   * @param routineAddress the routine address
-   * @return a RoutineContext object
-   */
-  protected RoutineContext decodeRoutine(int routineAddress) {
-
-    MemoryReadAccess memaccess = getMachine().getMemoryAccess();
-    int numLocals = memaccess.readUnsignedByte(routineAddress);
-    short[] locals = new short[numLocals];
-    int currentAddress = routineAddress + 1;
-    
-    if (getMachine().getStoryFileHeader().getVersion() <= 4) {
-      
-      // Only story files <= 4 actually store default values here,
-      // after V5 they are assumed as being 0 (standard document 1.0, S.5.2.1) 
-      for (int i = 0; i < numLocals; i++) {
-      
-        locals[i] = memaccess.readShort(currentAddress);
-        currentAddress += 2;
-      }
-    }
-    //System.out.printf("setting routine start to: %x\n", currentAddress);
-    
-    RoutineContext info = new RoutineContext(currentAddress, numLocals);
-    
-    for (int i = 0; i < numLocals; i++) {
-      
-      info.setLocalVariable(i, locals[i]);
-    }
-    return info;
-  }
-  
-  /**
    * Calls in the Z-machine are all very similar and only differ in the
    * number of arguments.
    * 
@@ -572,52 +537,24 @@ public abstract class AbstractInstruction implements Instruction {
   protected void call(int numArgs) {
 
     int packedAddress = getUnsignedValue(0);
-    int routineAddress =
-      getMachine().translatePackedAddress(packedAddress, true);
-    
-    if (routineAddress != 0) {
-      
-      RoutineContext routineContext = decodeRoutine(routineAddress);
-      
-      // Sets the number of arguments
-      routineContext.setNumArguments(numArgs);
-    
-      // Save return parameters
-      routineContext.setReturnAddress(getMachine().getProgramCounter()
-                                      + getLength());
-      
-      // Only if this instruction stores a result
-      if (storesResult()) {
-        
-        routineContext.setReturnVariable(getStoreVariable());
+    short[] args = new short[numArgs];
+    for (int i = 0; i < numArgs; i++) {
 
-      } else {
-        
-        routineContext.setReturnVariable(RoutineContext.DISCARD_RESULT);
-      }
-      
-      
-      // Set call parameters into the local variables
-      // if there are more parameters than local variables,
-      // those are thrown away
-      int numToCopy = Math.min(routineContext.getNumLocalVariables(),
-                               numArgs);
-      
-      for (int i = 0; i < numToCopy; i++) {
-     
-        routineContext.setLocalVariable(i, getValue(i + 1));
-      }
-    
-      // save invocation stack pointer
-      routineContext.setInvocationStackPointer(
-          getMachine().getStackPointer());
-      
-      // Pushes the routine context onto the routine stack
-      getMachine().pushRoutineContext(routineContext);
+      args[i] = getValue(i + 1);
+    }
+    call(packedAddress, args);
+  }
+  
+  protected void call(int packedRoutineAddress, short[] args) {
 
-      // Jump to the address
-      getMachine().setProgramCounter(routineContext.getStartAddress());
-      //System.out.printf("pc is now: %x\n", getMachine().getProgramCounter());
+    if (packedRoutineAddress != 0) {
+      
+      int returnAddress = getMachine().getProgramCounter() + getLength();
+      short returnVariable = storesResult() ? getStoreVariable() :
+        RoutineContext.DISCARD_RESULT;
+      
+      getMachine().call(packedRoutineAddress, returnAddress, args,
+                        returnVariable);
       
     } else {
       

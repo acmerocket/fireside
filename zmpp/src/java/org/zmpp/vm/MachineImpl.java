@@ -631,7 +631,8 @@ public class MachineImpl implements Machine {
   /**
    * {@inheritDoc}
    */
-  public void readLine(int address, int bufferlen) {
+  public void readLine(int address, int bufferlen, int time,
+      int routineAddress) {
     
     short zsciiChar;
     boolean isAtLeastV5 = getStoryFileHeader().getVersion() >= 5;
@@ -682,26 +683,13 @@ public class MachineImpl implements Machine {
     }
     
     // Echo a newline into the streams
-    printZsciiChar(ZsciiEncoding.NEWLINE);
-    
-    // debug output:
-    /*
-    StringBuilder outputbuffer = new StringBuilder();
-    if (isAtLeastV5) {
-      
-      int numCharacters = memaccess.readUnsignedByte(address);
-      for (int i = 0; i < numCharacters; i++) {
-
-        outputbuffer.append((char) memaccess.readUnsignedByte(address + i + 1));
-      }
-      System.out.printf("# chars typed: %d: '%s'\n", numCharacters, outputbuffer.toString());
-    }*/
+    printZsciiChar(ZsciiEncoding.NEWLINE);    
   }
   
   /**
    * {@inheritDoc}
    */
-  public short readChar() {
+  public short readChar(int time, int routineAddress) {
     
     return inputStream[selectedInputStreamIndex].getZsciiChar();
   }
@@ -979,9 +967,90 @@ public class MachineImpl implements Machine {
     this.datastore = datastore;
   }
   
+  public RoutineContext call(int packedRoutineAddress, int returnAddress,
+      short[] args, short returnVariable) {
+    
+    int routineAddress =
+      translatePackedAddress(packedRoutineAddress, true);
+    int numArgs = args != null ? args.length : 0;
+    
+    RoutineContext routineContext = decodeRoutine(routineAddress);
+    
+    // Sets the number of arguments
+    routineContext.setNumArguments(numArgs);
+    
+    // Save return parameters
+    routineContext.setReturnAddress(returnAddress);
+    
+    // Only if this instruction stores a result
+    if (returnVariable != RoutineContext.DISCARD_RESULT) {
+      
+      routineContext.setReturnVariable(returnVariable);
+      
+    } else {
+      
+      routineContext.setReturnVariable(RoutineContext.DISCARD_RESULT);
+    }      
+    
+    // Set call parameters into the local variables
+    // if there are more parameters than local variables,
+    // those are thrown away
+    int numToCopy = Math.min(routineContext.getNumLocalVariables(),
+        numArgs);
+    
+    for (int i = 0; i < numToCopy; i++) {
+      
+      routineContext.setLocalVariable(i, args[i]);
+    }
+    
+    // save invocation stack pointer
+    routineContext.setInvocationStackPointer(getStackPointer());
+    
+    // Pushes the routine context onto the routine stack
+    pushRoutineContext(routineContext);
+    
+    // Jump to the address
+    setProgramCounter(routineContext.getStartAddress());
+    return routineContext;
+  }
+  
   // ************************************************************************
   // ****** Private functions
   // ************************************************
+  
+  /**
+   * Decodes the routine at the specified address.
+   * 
+   * @param routineAddress the routine address
+   * @return a RoutineContext object
+   */
+  protected RoutineContext decodeRoutine(int routineAddress) {
+
+    int numLocals = memaccess.readUnsignedByte(routineAddress);
+    short[] locals = new short[numLocals];
+    int currentAddress = routineAddress + 1;
+    
+    if (getStoryFileHeader().getVersion() <= 4) {
+      
+      // Only story files <= 4 actually store default values here,
+      // after V5 they are assumed as being 0 (standard document 1.0, S.5.2.1) 
+      for (int i = 0; i < numLocals; i++) {
+      
+        locals[i] = memaccess.readShort(currentAddress);
+        currentAddress += 2;
+      }
+    }
+    //System.out.printf("setting routine start to: %x\n", currentAddress);
+    
+    RoutineContext info = new RoutineContext(currentAddress, numLocals);
+    
+    for (int i = 0; i < numLocals; i++) {
+      
+      info.setLocalVariable(i, locals[i]);
+    }
+    return info;
+  }
+    
   /**
    * Returns the local variable number for a specified variable number.
    * 

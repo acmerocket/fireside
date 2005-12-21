@@ -156,7 +156,6 @@ public class ExtendedInstruction extends AbstractInstruction {
   
   private void restore() {
 
-    System.out.println("restore");
     // Reading from tables is not supported yet, this is the standard 
     // restore feature
     restoreFromStorage();

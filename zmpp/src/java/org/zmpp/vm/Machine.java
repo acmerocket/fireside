@@ -268,15 +268,19 @@ public interface Machine {
    * 
    * @param address the start address in memory
    * @param bufferlen the length of the buffer
+   * @param time the time interval to call routine
+   * @param routineAddress the packed routine address
    */
-  void readLine(int address, int bufferlen);
+  void readLine(int address, int bufferlen, int time, int routineAddress);
   
   /**
    * Reads a ZSCII char from the selected input stream.
    * 
+   * @param time the time interval to call routine (timed input)
+   * @param routineAddress the packed routine address to call (timed input)
    * @return the selected ZSCII char
    */
-  short readChar();
+  short readChar(int time, int routineAddress);
   
   /**
    * Prints the ZSCII string at the specified address to the active
@@ -467,4 +471,16 @@ public interface Machine {
    * @return true if the machine is running, false, otherwise
    */
   boolean isRunning();
+  
+  /**
+   * Performs a routine call.
+   * 
+   * @param routineAddress the packed routine address
+   * @param returnAddress the return address
+   * @param args the argument list
+   * @param returnVariable the return variable or DISCARD_RESULT
+   * @return the routine context created
+   */
+  RoutineContext call(int routineAddress, int returnAddress, short[] args,
+      short returnVariable);
 }
