@@ -91,6 +91,7 @@ ScreenModel {
     SwingUtilities.invokeLater(new Runnable() {
       
       public void run() {
+        
         windows[WINDOW_TOP].clear();
         resizeWindows(0);
         windows[WINDOW_BOTTOM].clear();
@@ -119,7 +120,6 @@ ScreenModel {
       // should be reset in this case
       windows[window].clear();
     }
-    //repaintInUiThread();
   }
   
   public void eraseLine(int value) {
@@ -127,7 +127,6 @@ ScreenModel {
     if (value == 1) {
 
       windows[activeWindow].eraseLine();
-      //repaintInUiThread();
     }
   }
   
@@ -157,13 +156,12 @@ ScreenModel {
         
       windows[WINDOW_TOP].clear();
     }
-    //repaintInUiThread();
   }
   
   public void setWindow(final int window) {
     
     // Flush out the current active window
-    flushOutput();
+    flush();
     
     activeWindow = window;
     
@@ -172,7 +170,6 @@ ScreenModel {
       
       windows[activeWindow].getCursor().reset();
     }
-    //repaintInUiThread();
   }
 
   /**
@@ -218,7 +215,7 @@ ScreenModel {
     
     if (flag) {
       
-      flushOutput();
+      flush();
     }
     drawCaret(flag);
     repaintInUiThread();
@@ -235,12 +232,6 @@ ScreenModel {
   }
   
   public void flush() {
-    
-    flushOutput();
-    //repaintInUiThread();
-  }
-  
-  private void flushOutput() {
     
     // save some unnecessary flushes
     if (streambuffer.length() > 0) {
@@ -287,6 +278,7 @@ ScreenModel {
       windows[WINDOW_TOP].setForeground(getForeground());
       // S. 8.7.2.4: use fixed font for upper window
       windows[WINDOW_TOP].setFont(fixedFont);
+      fontnumbers[WINDOW_TOP] = ScreenModel.FONT_FIXED;
       windows[WINDOW_TOP].setHomeYPosition(HomeYPosition.TOP);
       // S. 8.7.2.5: top window is unbuffered
       windows[WINDOW_TOP].setBufferMode(false);
@@ -296,6 +288,7 @@ ScreenModel {
       windows[WINDOW_BOTTOM].setBackground(getBackground());
       windows[WINDOW_BOTTOM].setForeground(getForeground());
       windows[WINDOW_BOTTOM].setFont(standardFont);
+      fontnumbers[WINDOW_TOP] = ScreenModel.FONT_NORMAL;
       windows[WINDOW_BOTTOM].setHomeYPosition(HomeYPosition.BOTTOM);
       windows[WINDOW_BOTTOM].setBufferMode(true);
       windows[WINDOW_BOTTOM].setIsPagingEnabled(true);
@@ -311,7 +304,6 @@ ScreenModel {
       windows[WINDOW_BOTTOM].getCursor().reset();
       setScreenProperties();
       setInitialized();
-
     }
 
     g.drawImage(imageBuffer, 0, 0, this);
@@ -373,7 +365,7 @@ ScreenModel {
    
     if (colornum > 0) {
       
-      flushOutput();
+      flush();
       windows[activeWindow].setForeground(translateColornum(colornum, true));
     }
   }
@@ -385,7 +377,7 @@ ScreenModel {
     
     if (colornum > 0) {
       
-      flushOutput();
+      flush();
       windows[activeWindow].setBackground(translateColornum(colornum, false));
     }
   }
@@ -399,7 +391,7 @@ ScreenModel {
     case COLOR_BLACK:
       return Color.BLACK;
     case COLOR_RED:
-      return Color.BLACK;
+      return Color.RED;
     case COLOR_GREEN:
       return Color.GREEN;
     case COLOR_YELLOW:
@@ -423,15 +415,16 @@ ScreenModel {
    */
   public int setFont(int fontnum) {
     
-    flushOutput();
+    flush();
     int previous = fontnumbers[activeWindow];
-    fontnumbers[activeWindow] = fontnum;
     switch (fontnum) {
     case FONT_FIXED:
       windows[activeWindow].setFont(fixedFont);
+      fontnumbers[activeWindow] = fontnum;
       return previous;
     case FONT_NORMAL:
       windows[activeWindow].setFont(standardFont);
+      fontnumbers[activeWindow] = fontnum;
       return previous;
     }
     return 0;
@@ -523,7 +516,6 @@ ScreenModel {
   }
   
   private void repaintInUiThread() {
-    
     
     try {
       
