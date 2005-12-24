@@ -79,7 +79,7 @@ public class MemoryOutputStream implements OutputStream {
   /**
    * {@inheritDoc}
    */
-  public void print(short zsciiChar) {
+  public void print(short zsciiChar, boolean isInput) {
 
     //System.out.println("memory.print: " + ((char) zsciiChar));
     TablePosition tablePos = tableStack.get(tableStack.size() - 1);

@@ -264,23 +264,11 @@ public interface Machine {
   InputStream getSelectedInputStream();
   
   /**
-   * Reads a string from the selected input stream.
+   * Returns an input functions object.
    * 
-   * @param address the start address in memory
-   * @param bufferlen the length of the buffer
-   * @param time the time interval to call routine
-   * @param routineAddress the packed routine address
+   * @return an input functions object
    */
-  void readLine(int address, int bufferlen, int time, int routineAddress);
-  
-  /**
-   * Reads a ZSCII char from the selected input stream.
-   * 
-   * @param time the time interval to call routine (timed input)
-   * @param routineAddress the packed routine address to call (timed input)
-   * @return the selected ZSCII char
-   */
-  short readChar(int time, int routineAddress);
+  InputFunctions getInputFunctions();
   
   /**
    * Prints the ZSCII string at the specified address to the active
@@ -306,8 +294,9 @@ public interface Machine {
    * Prints the specified ZSCII characoter.
    * 
    * @param zchar the ZSCII character to print
+   * @param isInput true if this is echoing input
    */
-  void printZsciiChar(short zchar);
+  void printZsciiChar(short zchar, boolean isInput);
   
   /**
    * Prints the specified signed number.
@@ -315,6 +304,11 @@ public interface Machine {
    * @param num the number to print§
    */
   void printNumber(short num);
+  
+  /**
+   * Flushes the active output streams.
+   */
+  void flushOutput();
   
   /**
    * Translates a packed address into a byte address.

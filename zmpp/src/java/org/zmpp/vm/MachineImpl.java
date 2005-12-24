@@ -147,10 +147,16 @@ public class MachineImpl implements Machine {
   private PortableGameState undoGameState;
   
   /**
+   * The input functions object.
+   */
+  private InputFunctions inputFunctions;
+  
+  /**
    * Constructor.
    */
   public MachineImpl() {
 
+    this.inputFunctions = new InputFunctions(this);
   }
   
   /**
@@ -189,7 +195,7 @@ public class MachineImpl implements Machine {
     
     if (fileHeader.getVersion() >= 4) {
             
-      fileHeader.setEnabled(Attribute.SUPPORTS_TIMED_INPUT, false);
+      fileHeader.setEnabled(Attribute.SUPPORTS_TIMED_INPUT, true);
       fileHeader.setInterpreterNumber(6); // IBM PC
       fileHeader.setInterpreterVersion(1);
     }
@@ -389,6 +395,7 @@ public class MachineImpl implements Machine {
 
       RoutineContext popped =
         routineContextStack.remove(routineContextStack.size() - 1);
+      popped.setReturnValue(returnValue);
     
       // Restore stack pointer and pc
       setStackPointer(popped.getInvocationStackPointer());
@@ -499,7 +506,7 @@ public class MachineImpl implements Machine {
    */
   public void print(String str) {
 
-    printZsciiChars(ZsciiEncoding.getInstance().convertToZscii(str));
+    printZsciiChars(ZsciiEncoding.getInstance().convertToZscii(str), false);
   }
   
   /**
@@ -507,7 +514,7 @@ public class MachineImpl implements Machine {
    */
   public void newline() {
     
-    printZsciiChar(ZsciiEncoding.NEWLINE);
+    printZsciiChar(ZsciiEncoding.NEWLINE, false);
   }
   
   private short[] zchars = new short[1];
@@ -515,10 +522,10 @@ public class MachineImpl implements Machine {
   /**
    * {@inheritDoc}
    */
-  public void printZsciiChar(short zchar) {
+  public void printZsciiChar(short zchar, boolean isInput) {
     
     zchars[0] = zchar;
-    printZsciiChars(zchars);
+    printZsciiChars(zchars, isInput);
   }
 
   /**
@@ -527,7 +534,7 @@ public class MachineImpl implements Machine {
    * 
    * @param zchars the array of ZSCII characters.
    */
-  private void printZsciiChars(short[] zchars) {
+  private void printZsciiChars(short[] zchars, boolean isInput) {
     
     checkTranscriptFlag();
     
@@ -535,7 +542,7 @@ public class MachineImpl implements Machine {
       
       for (short zchar : zchars) {
         
-        outputStream[OUTPUTSTREAM_MEMORY - 1].print(zchar);
+        outputStream[OUTPUTSTREAM_MEMORY - 1].print(zchar, isInput);
       }
       
     } else {
@@ -546,7 +553,7 @@ public class MachineImpl implements Machine {
       
           for (short zchar : zchars) {
           
-            outputStream[i].print(zchar);
+            outputStream[i].print(zchar, isInput);
           }
         }
       }
@@ -559,6 +566,22 @@ public class MachineImpl implements Machine {
   public void printNumber(short number) {
     
     print(String.valueOf(number));
+  }
+  
+  public void flushOutput() {
+    
+    // At the moment flushing only makes sense for screen
+    if (!outputStream[OUTPUTSTREAM_MEMORY - 1].isSelected()) {
+      
+      
+      for (int i = 0; i < outputStream.length; i++) {
+      
+        if (outputStream[i] != null && outputStream[i].isSelected()) {
+      
+          outputStream[i].flush();
+        }
+      }
+    }
   }
 
   /**
@@ -631,67 +654,9 @@ public class MachineImpl implements Machine {
   /**
    * {@inheritDoc}
    */
-  public void readLine(int address, int bufferlen, int time,
-      int routineAddress) {
+  public InputFunctions getInputFunctions() {
     
-    short zsciiChar;
-    boolean isAtLeastV5 = getStoryFileHeader().getVersion() >= 5;
-    
-    // From V5, the first byte contains the number of characters typed
-    int pointerstart = isAtLeastV5 ? 1 : 0;
-    int pointer = pointerstart;
-    
-    if (isAtLeastV5) {
-      
-      // The clunky feature to include previous input into the current input
-      // Simply adjust the pointer, the differencing at the end of the
-      // function will then calculate the total
-      int numCharactersTyped = memaccess.readByte(address);
-      if (numCharactersTyped < 0) numCharactersTyped = 0;
-      if (numCharactersTyped > 0) System.out.println("leftover input: " + numCharactersTyped);
-      pointer += numCharactersTyped;
-    }
-
-    do {
-      
-      zsciiChar = inputStream[selectedInputStreamIndex].readZsciiChar();
-      
-      // Decrement the buffer pointer
-      if (zsciiChar == ZsciiEncoding.DELETE) {
-        
-        if (pointer > pointerstart) pointer--;
-        
-      } else if (zsciiChar != ZsciiEncoding.NEWLINE) {
-        
-        // Do not include the terminator in the buffer
-        memaccess.writeByte(address + pointer, (byte) zsciiChar);        
-        pointer++;
-      }      
-      printZsciiChar(zsciiChar);
-      
-    } while (zsciiChar != ZsciiEncoding.NEWLINE && pointer < bufferlen - 1);
-
-    if (isAtLeastV5) {
-    
-      // Write the number of characters typed in byte 1
-      memaccess.writeUnsignedByte(address, (byte) (pointer - 1));
-      
-    } else {
-      
-      // Terminate with 0 byte in versions < 5      
-      memaccess.writeByte(address + pointer, (byte) 0);
-    }
-    
-    // Echo a newline into the streams
-    printZsciiChar(ZsciiEncoding.NEWLINE);    
-  }
-  
-  /**
-   * {@inheritDoc}
-   */
-  public short readChar(int time, int routineAddress) {
-    
-    return inputStream[selectedInputStreamIndex].getZsciiChar();
+    return inputFunctions;
   }
   
   /**
@@ -1024,7 +989,7 @@ public class MachineImpl implements Machine {
    * @param routineAddress the routine address
    * @return a RoutineContext object
    */
-  protected RoutineContext decodeRoutine(int routineAddress) {
+  private RoutineContext decodeRoutine(int routineAddress) {
 
     int numLocals = memaccess.readUnsignedByte(routineAddress);
     short[] locals = new short[numLocals];

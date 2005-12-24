@@ -49,6 +49,15 @@ public class LineEditor implements KeyListener {
     }
   }
 
+  public void cancelInput() {
+  
+    synchronized (editbuffer) {
+  
+      editbuffer.add(ZsciiEncoding.NULL);
+      editbuffer.notifyAll();
+    }
+  }
+  
   public short nextZsciiChar() {
     
     short zsciiChar = 0;

@@ -103,8 +103,8 @@ public class DefaultInstructionDecoder implements InstructionDecoder {
         
         // Special case: print and print_ret are classified as C0OP, but
         // in fact have a string literal as their parameter
-        if (opcode == Short1StaticInfo.OP_PRINT
-            || opcode == Short1StaticInfo.OP_PRINT_RET) {
+        if (opcode == PrintLiteralStaticInfo.OP_PRINT
+            || opcode == PrintLiteralStaticInfo.OP_PRINT_RET) {
           
           return new PrintLiteralInstruction(machineState, opcode, memaccess,
                                              instructionAddress);

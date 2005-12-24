@@ -35,4 +35,11 @@ public interface Instruction {
    * Execute the instruction.
    */
   void execute();
+  
+  /**
+   * Returns true if this instruction prints output.
+   * 
+   * @return true if prints output, false otherwise
+   */
+  boolean isOutput();
 }

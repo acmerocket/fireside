@@ -33,6 +33,10 @@ public class PrintLiteralStaticInfo implements InstructionStaticInfo {
     { 1, 2, 3, 4, 5, 6, 7, 8 }  // PRINT_RET
   };  
 
+  public static final int OP_PRINT              = 0x02;
+  public static final int OP_PRINT_RET          = 0x03;
+
+  
   private static final PrintLiteralStaticInfo instance =
     new PrintLiteralStaticInfo();
   
@@ -57,13 +61,21 @@ public class PrintLiteralStaticInfo implements InstructionStaticInfo {
     
     return false;
   }
+
+  /**
+   * {@inheritDoc}
+   */
+  public boolean isOutput(int opcode, int version) {
+    
+    return true;
+  }
   
   public String getOpName(int opcode, int version) {
     
     switch (opcode) {
     
-    case Short1StaticInfo.OP_PRINT_RET: return "PRINT_RET";
-    case Short1StaticInfo.OP_PRINT: return "PRINT";
+    case OP_PRINT_RET: return "PRINT_RET";
+    case OP_PRINT: return "PRINT";
     }
     return "unknown";
   }  

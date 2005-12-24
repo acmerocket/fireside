@@ -169,6 +169,14 @@ public class LongStaticInfo implements InstructionStaticInfo {
         return false;
     }
   }
+
+  /**
+   * {@inheritDoc}
+   */
+  public boolean isOutput(int opcode, int version) {
+    
+    return false;
+  }
   
   public String getOpName(int opcode, int version) {
     

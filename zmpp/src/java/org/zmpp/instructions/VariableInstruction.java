@@ -22,21 +22,11 @@
  */
 package org.zmpp.instructions;
 
-import java.util.ArrayList;
-import java.util.HashMap;
-import java.util.List;
-import java.util.Map;
-import java.util.StringTokenizer;
-
 import org.zmpp.base.MemoryAccess;
-import org.zmpp.vm.Dictionary;
 import org.zmpp.vm.Machine;
 import org.zmpp.vm.ScreenModel;
 import org.zmpp.vm.TextCursor;
 import org.zmpp.vm.ZObject;
-import org.zmpp.vmutil.ZCharConverter;
-import org.zmpp.vmutil.ZsciiEncoding;
-import org.zmpp.vmutil.ZCharConverter.Alphabet;
 
 
 /**
@@ -262,7 +252,7 @@ public class VariableInstruction extends AbstractInstruction {
   private void printChar() {
     
     short zchar = getValue(0);
-    getMachine().printZsciiChar(zchar);
+    getMachine().printZsciiChar(zchar, false);
     nextInstruction();
   }
   
@@ -355,154 +345,25 @@ public class VariableInstruction extends AbstractInstruction {
     
     int bufferlen = memaccess.readUnsignedByte(textbuffer);
     
-    getMachine().readLine(textbuffer + 1, bufferlen, time, packedAddress);
+    short terminal = getMachine().getInputFunctions().readLine(
+        textbuffer + 1, bufferlen, time, packedAddress);
     
     if (version < 5 || (version >= 5 && parsebuffer > 0)) {
       
       // Do not tokenise if parsebuffer is 0 (See specification of read)
-      tokeniseAfterRead(textbuffer, parsebuffer);
+      getMachine().getInputFunctions().tokenize(textbuffer, parsebuffer);
     }
     
     if (storesResult()) {
 
       // The specification suggests that we store the terminating character
-      // here, we will assume it as being NEWLINE (Character 13) always
-      storeResult(ZsciiEncoding.NEWLINE);
+      // here, this can be NULL or NEWLINE at the moment
+      storeResult(terminal);
     }
     
     nextInstruction();
   }
   
-  private void tokeniseAfterRead(int textbuffer, int parsebuffer) {
-    
-    MemoryAccess memaccess = getMachine().getMemoryAccess();
-    Dictionary dictionary = getMachine().getDictionary();
-    int version = getMachine().getStoryFileHeader().getVersion();
-    int bufferlen = memaccess.readUnsignedByte(textbuffer);
-    int charsTyped = (version >= 5) ?
-                      memaccess.readUnsignedByte(textbuffer + 1) :
-                      0;
-    
-    // from version 5, text starts at position 2
-    int textoffset = (version < 5) ? 1 : 2; 
-    String input = bufferToString(textbuffer + textoffset, bufferlen,
-                                  charsTyped);
-    List<String> tokens = tokenize(input);
-    
-    Map<String, Integer> parsedTokens = new HashMap<String, Integer>();
-    
-    // Write the number of tokens in byte 1 of the parse buffer
-    int maxwords = memaccess.readUnsignedByte(parsebuffer);
-    
-    // Do not go beyond the limit of maxwords
-    int numParsedTokens = Math.min(maxwords, tokens.size());
-    
-    // Write the number of parsed tokens into byte 1 of the parse buffer
-    memaccess.writeUnsignedByte(parsebuffer + 1, (short) numParsedTokens);
-    
-    int parseaddr = parsebuffer + 2;
-    
-    for (int i = 0; i < numParsedTokens; i++) {
-      
-      String token = tokens.get(i);      
-      int entryAddress = dictionary.lookup(token);
-      //System.out.println("token: " + token + " entryAddress: " + entryAddress);
-      
-      int startIndex = 0;
-      if (parsedTokens.containsKey(token)) {
-          
-        int timesContained = parsedTokens.get(token);
-        parsedTokens.put(token, timesContained + 1);
-          
-        for (int j = 0; j < timesContained; j++) {
-          
-          int found = input.indexOf(token, startIndex);
-          startIndex = found + token.length();
-        }
-          
-      } else {
-          
-        parsedTokens.put(token, 1);          
-      }
-      
-      int tokenIndex = input.indexOf(token, startIndex);    
-      tokenIndex = tokenIndex + 1; // because of the length byte
-      
-      // write out the entry to the parse buffer
-      memaccess.writeUnsignedShort(parseaddr, entryAddress);     
-      memaccess.writeUnsignedByte(parseaddr + 2, (short) token.length());
-      memaccess.writeUnsignedByte(parseaddr + 3, (short) tokenIndex);
-      parseaddr += 4;
-    }
-  }
-  
-  /**
-   * Turns the buffer into a Java string. This function reads at most
-   * |bufferlen| bytes and treats each byte as an ASCII character.
-   * The characters will be concatenated to the result string.
-   * 
-   * @param address the buffer address
-   * @param bufferlen the buffer length
-   * @param charsTyped from version 5, this is the number of characters
-   * to include in the input
-   * @return the string contained in the buffer
-   */
-  private String bufferToString(int address, int bufferlen, int charsTyped) {
-    
-    MemoryAccess memaccess = getMachine().getMemoryAccess();
-    
-    // If charsTyped is set, use that value as the limit
-    int numChars = (charsTyped > 0) ? charsTyped : bufferlen;
-    
-    // read input from text buffer
-    StringBuilder buffer = new StringBuilder();
-    for (int i = 0; i < numChars; i++) {
-      
-      short charByte = memaccess.readUnsignedByte(address + i);
-      if (charByte == 0) break;
-      buffer.append((char) charByte);
-    }
-    
-    return buffer.toString().toLowerCase();
-  }
-  
-  /**
-   * Turns the specified input string into tokens. It will take whitespace
-   * implicitly and dictionary separators explicitly to tokenize the
-   * stream, dictionary specified separators are included in the result list.
-   * 
-   * @param input the input string
-   * @return the tokens
-   */
-  private List<String> tokenize(String input) {
-    
-    List<String> result = new ArrayList<String>();
-    String whitespace = " \n\t\r\f";
-    
-    // Retrieve the defined separators
-    StringBuilder separators = new StringBuilder();
-    Dictionary dictionary = getMachine().getDictionary();
-    for (int i = 0, n = dictionary.getNumberOfSeparators(); i < n; i++) {
-      
-      byte delim = dictionary.getSeparator(i);
-      separators.append(ZCharConverter.decode(Alphabet.A0, delim));
-    }
-    
-    // The tokenizer will also return the delimiters
-    String delim = whitespace + separators.toString();
-    StringTokenizer tok = new StringTokenizer(input, delim, true);
-    
-    while (tok.hasMoreTokens()) {
-      
-      String token = tok.nextToken();
-      if (!Character.isWhitespace(token.charAt(0))) {
-        
-        result.add(token);
-      }
-    }
-    //System.out.println("tokens: " + result);
-    return result;
-  }
   
   /**
    * Implements the sound_effect instruction.
@@ -663,7 +524,18 @@ public class VariableInstruction extends AbstractInstruction {
 
   private void readChar() {
     
-    storeResult(getMachine().readChar(0, 0));
+    int time = 0;
+    int routineAddress = 0;
+    if (getNumOperands() >= 2) {
+     
+      time = getUnsignedValue(1);
+    }
+    if (getNumOperands() >= 3) {
+      
+      routineAddress = getValue(2);
+    }
+    storeResult(getMachine().getInputFunctions().readChar(time,
+        routineAddress));
     nextInstruction();
   }
   
@@ -683,7 +555,13 @@ public class VariableInstruction extends AbstractInstruction {
     //System.out.println("tokenise()");
     int textbuffer = getUnsignedValue(0);
     int parsebuffer = getUnsignedValue(1);
-    tokeniseAfterRead(textbuffer, parsebuffer);
+    int dictionary = 0;
+    int flag = 0;
+    if (getNumOperands() >= 3) dictionary = getUnsignedValue(2);
+    if (getNumOperands() >= 4) flag = getUnsignedValue(3);
+    if (dictionary != 0) System.out.println("use user dictionary");
+    if (flag != 0) System.out.println("tokenise flag is set");
+    getMachine().getInputFunctions().tokenize(textbuffer, parsebuffer);
     nextInstruction();
   }
   

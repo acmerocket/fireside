@@ -90,28 +90,6 @@ public class Short1StaticInfo implements InstructionStaticInfo {
 
   public static final int OP_CALL_1N            = 0x0f; // Versions >= 5
 
-  public static final int OP_PRINT              = 0x02;
-
-  public static final int OP_PRINT_RET          = 0x03;
-
-  /**
-   * List of opcodes. See Z-Machine Standards document 1.0 for
-   * explanations.
-   */
-  public static final int OP_SAVE                 = 0x00;
-
-  public static final int OP_RESTORE              = 0x01;
-
-  public static final int OP_LOG_SHIFT            = 0x02;
-
-  public static final int OP_ART_SHIFT            = 0x03;
-
-  public static final int OP_SET_FONT             = 0x04;
-
-  public static final int OP_SAVE_UNDO            = 0x09;
-
-  public static final int OP_RESTORE_UNDO         = 0x0a;
-  
   public int[] getValidVersions(int opcode) {
 
     return (opcode < VALID_VERSIONS.length) ? VALID_VERSIONS[opcode] :
@@ -158,7 +136,15 @@ public class Short1StaticInfo implements InstructionStaticInfo {
         return false;
     }
   }
+
+  /**
+   * {@inheritDoc}
+   */
+  public boolean isOutput(int opcode, int version) {
     
+    return opcode == OP_PRINT_ADDR || opcode == OP_PRINT_PADDR;
+  }
+  
   public String getOpName(int opcode, int version) {
 
     switch (opcode) {

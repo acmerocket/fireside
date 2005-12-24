@@ -33,6 +33,15 @@ public class WordWrapperTest extends TestCase {
     assertEquals("A line that is to be", lines[0]);
     assertEquals(" wrapped", lines[1]);
   }
+
+  public void testWrapBufferedSingleNewline() {
+
+    String line = "\n";
+    assertEquals(5, fontMetrics.stringWidth(line));
+    String[] lines = bufferedWordWrapper.wrap(0, line);
+    assertEquals(1, lines.length);
+    assertEquals("", lines[0]);
+  }
   
   public void testWrapBufferedWithNewLine() {
     
@@ -53,6 +62,18 @@ public class WordWrapperTest extends TestCase {
     assertEquals("is to", lines[1]);
     assertEquals("be wrapped", lines[2]);
     assertEquals("", lines[3]);
+  }
+
+  public void testWrapBufferedWithNewLineStartsWithNewLine() {
+    
+    String line =  "\nA line that\nis to\nbe wrapped\n";
+    String[] lines = bufferedWordWrapper.wrap(0, line);
+    assertEquals(5, lines.length);
+    assertEquals("", lines[0]);
+    assertEquals("A line that", lines[1]);
+    assertEquals("is to", lines[2]);
+    assertEquals("be wrapped", lines[3]);
+    assertEquals("", lines[4]);
   }
   
   public void testWrapBufferedNewLine() {

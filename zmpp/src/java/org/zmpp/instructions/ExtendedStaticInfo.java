@@ -46,6 +46,24 @@ public class ExtendedStaticInfo implements InstructionStaticInfo {
     
     return instance;
   }
+
+  /**
+   * List of opcodes. See Z-Machine Standards document 1.0 for
+   * explanations.
+   */
+  public static final int OP_SAVE                 = 0x00;
+
+  public static final int OP_RESTORE              = 0x01;
+
+  public static final int OP_LOG_SHIFT            = 0x02;
+
+  public static final int OP_ART_SHIFT            = 0x03;
+
+  public static final int OP_SET_FONT             = 0x04;
+
+  public static final int OP_SAVE_UNDO            = 0x09;
+
+  public static final int OP_RESTORE_UNDO         = 0x0a;
   
   public int[] getValidVersions(int opcode) {
 
@@ -60,13 +78,13 @@ public class ExtendedStaticInfo implements InstructionStaticInfo {
     
     switch (opcode) {
     
-    case Short1StaticInfo.OP_SAVE:
-    case Short1StaticInfo.OP_RESTORE:
-    case Short1StaticInfo.OP_LOG_SHIFT:
-    case Short1StaticInfo.OP_ART_SHIFT:
-    case Short1StaticInfo.OP_SET_FONT:
-    case Short1StaticInfo.OP_SAVE_UNDO:
-    case Short1StaticInfo.OP_RESTORE_UNDO:
+    case ExtendedStaticInfo.OP_SAVE:
+    case ExtendedStaticInfo.OP_RESTORE:
+    case ExtendedStaticInfo.OP_LOG_SHIFT:
+    case ExtendedStaticInfo.OP_ART_SHIFT:
+    case ExtendedStaticInfo.OP_SET_FONT:
+    case ExtendedStaticInfo.OP_SAVE_UNDO:
+    case ExtendedStaticInfo.OP_RESTORE_UNDO:
       return true;
     }
     return false;
@@ -75,7 +93,15 @@ public class ExtendedStaticInfo implements InstructionStaticInfo {
   /**
    * {@inheritDoc}
    */
-  public boolean isBranch(int opcode, int versio) {
+  public boolean isBranch(int opcode, int version) {
+    
+    return false;
+  }
+  
+  /**
+   * {@inheritDoc}
+   */
+  public boolean isOutput(int opcode, int version) {
     
     return false;
   }
@@ -87,19 +113,19 @@ public class ExtendedStaticInfo implements InstructionStaticInfo {
 
     switch (opcode) {
     
-    case Short1StaticInfo.OP_SAVE:
+    case ExtendedStaticInfo.OP_SAVE:
       return "SAVE";
-    case Short1StaticInfo.OP_RESTORE:
+    case ExtendedStaticInfo.OP_RESTORE:
       return "RESTORE";
-    case Short1StaticInfo.OP_LOG_SHIFT:
+    case ExtendedStaticInfo.OP_LOG_SHIFT:
       return "LOG_SHIFT";
-    case Short1StaticInfo.OP_ART_SHIFT:
+    case ExtendedStaticInfo.OP_ART_SHIFT:
       return "ART_SHIFT";
-    case Short1StaticInfo.OP_SET_FONT:
+    case ExtendedStaticInfo.OP_SET_FONT:
       return "SET_FONT";
-    case Short1StaticInfo.OP_SAVE_UNDO:
+    case ExtendedStaticInfo.OP_SAVE_UNDO:
       return "SAVE_UNDO";
-    case Short1StaticInfo.OP_RESTORE_UNDO:
+    case ExtendedStaticInfo.OP_RESTORE_UNDO:
       return "RESTORE_UNDO";
     }
     return "unknown";

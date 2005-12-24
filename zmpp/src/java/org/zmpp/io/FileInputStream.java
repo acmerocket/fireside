@@ -51,6 +51,10 @@ public class FileInputStream implements InputStream {
     this.iosys = iosys;
   }
 
+  public void cancelInput() {
+    
+  }
+  
   /**
    * {@inheritDoc}
    */
@@ -120,5 +124,12 @@ public class FileInputStream implements InputStream {
       filereader = iosys.getInputStreamReader();
       input = new BufferedReader(filereader);
     }
+  }
+  
+  /**
+   * {@inheritDoc}
+   */
+  public void forceEditMode(String initstring) { 
+    
   }
 }

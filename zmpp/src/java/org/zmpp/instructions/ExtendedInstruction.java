@@ -67,25 +67,25 @@ public class ExtendedInstruction extends AbstractInstruction {
 
     switch (getOpcode()) {    
 
-    case Short1StaticInfo.OP_SAVE:
+    case ExtendedStaticInfo.OP_SAVE:
       save();
       break;
-    case Short1StaticInfo.OP_RESTORE:
+    case ExtendedStaticInfo.OP_RESTORE:
       restore();
       break;
-    case Short1StaticInfo.OP_LOG_SHIFT:
+    case ExtendedStaticInfo.OP_LOG_SHIFT:
       log_shift();
       break;
-    case Short1StaticInfo.OP_ART_SHIFT:
+    case ExtendedStaticInfo.OP_ART_SHIFT:
       art_shift();
       break;
-    case Short1StaticInfo.OP_SET_FONT:
+    case ExtendedStaticInfo.OP_SET_FONT:
       set_font();
       break;
-    case Short1StaticInfo.OP_SAVE_UNDO:
+    case ExtendedStaticInfo.OP_SAVE_UNDO:
       save_undo();
       break;
-    case Short1StaticInfo.OP_RESTORE_UNDO:
+    case ExtendedStaticInfo.OP_RESTORE_UNDO:
       restore_undo();
       break;
     default:

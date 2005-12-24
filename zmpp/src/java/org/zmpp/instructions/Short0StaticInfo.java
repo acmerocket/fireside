@@ -118,13 +118,19 @@ public class Short0StaticInfo implements InstructionStaticInfo {
     }
   }
   
+  /**
+   * {@inheritDoc}
+   */
+  public boolean isOutput(int opcode, int version) {
+    
+    return opcode == OP_NEW_LINE;
+  }
+  
   public String getOpName(int opcode, int version) {
     
     switch (opcode) {
     
     case Short0StaticInfo.OP_NEW_LINE: return "NEW_LINE";
-    case Short1StaticInfo.OP_PRINT: return "PRINT";
-    case Short1StaticInfo.OP_PRINT_RET: return "PRINT_RET";
     case Short0StaticInfo.OP_NOP: return "NOP";
     case Short0StaticInfo.OP_POP: return "POP";
     case Short0StaticInfo.OP_QUIT: return "QUIT";

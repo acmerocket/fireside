@@ -278,6 +278,15 @@ public abstract class AbstractInstruction implements Instruction {
   }
   
   /**
+   * {@inheritDoc}
+   */
+  public boolean isOutput() {
+
+    return getStaticInfo().isOutput(getOpcode(),
+        getMachine().getStoryFileHeader().getVersion());
+  }
+  
+  /**
    * Returns true, if this instruction is a branch, false, otherwise.
    * 
    * @return true if branch, false otherwise

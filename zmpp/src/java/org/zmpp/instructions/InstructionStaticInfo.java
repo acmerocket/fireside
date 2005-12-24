@@ -27,5 +27,6 @@ public interface InstructionStaticInfo {
   int[] getValidVersions(int opcode);
   boolean isBranch(int opcode, int version);
   boolean storesResult(int opcode, int version);
+  boolean isOutput(int opcode, int version);
   String getOpName(int opcode, int version);
 }

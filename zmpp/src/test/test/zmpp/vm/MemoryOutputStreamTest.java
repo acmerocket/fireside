@@ -55,7 +55,7 @@ public class MemoryOutputStreamTest extends MockObjectTestCase {
     
     // Selection has to be performed prior to printing - ALWAYS !!!
     output.select(4711);    
-    output.print((short) 65);
+    output.print((short) 65, false);
     output.select(false);
   }
   

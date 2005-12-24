@@ -58,14 +58,22 @@ ScreenModel {
   
   private Font standardFont, fixedFont;
   
+  /**
+   * This buffer holds the current text within the output stream.
+   */
   private StringBuilder streambuffer;
-  private StringBuilder textbuffer;
+  
+  /**
+   * This buffer holds the current input.
+   */ 
+  private StringBuilder inputbuffer;
+  
   private Machine machine;
   private LineEditor editor;
   
   private boolean isSelected;
   private boolean editMode;
-  private int charsTyped;
+  //private int charsTyped;
   private SubWindow[] windows;
   private int[] fontnumbers;
   private int activeWindow;
@@ -79,7 +87,6 @@ ScreenModel {
     standardFont = getFont();
     fixedFont = new Font("Courier New", Font.PLAIN, standardFont.getSize());    
     streambuffer = new StringBuilder();
-    textbuffer = new StringBuilder();
     windows = new SubWindow[2];
     fontnumbers = new int[2];
     activeWindow = WINDOW_BOTTOM;
@@ -211,7 +218,7 @@ ScreenModel {
     windows[WINDOW_BOTTOM].setBufferMode(flag);
   }
   
-  public synchronized void setEditMode(final boolean flag) {
+  public synchronized void setEditMode(boolean flag, String initstring) {
     
     if (flag) {
       
@@ -222,8 +229,12 @@ ScreenModel {
     
     // Set status variables
     editMode = flag;
-    charsTyped = 0;
-    notifyAll();    
+    
+    if (flag) {
+      
+      inputbuffer = new StringBuilder(initstring);
+    }
+    notifyAll();  
   }
   
   public void setPaging(boolean flag) {
@@ -238,6 +249,7 @@ ScreenModel {
       
       windows[activeWindow].printString(streambuffer.toString());
       streambuffer = new StringBuilder();
+      if (isEditMode()) repaintInUiThread();
     }
   }
   
@@ -329,27 +341,29 @@ ScreenModel {
     isSelected = flag;
   }
   
-  public void print(final short zsciiChar) {
+  /**
+   * {@inheritDoc}
+   */
+  public void print(final short zsciiChar, boolean isInput) {
 
-    if (isEditMode()) drawCaret(false);
+    //System.out.println("print: " + (char) zsciiChar + " isInput: " + isInput);
+    if (isInput) drawCaret(false);
     
     if (zsciiChar == ZsciiEncoding.NEWLINE) {
     
-      printChar('\n');
+      printChar('\n', isInput);
     
-    } else if (zsciiChar == ZsciiEncoding.DELETE && isEditMode()) {
+    } else if (zsciiChar == ZsciiEncoding.DELETE && isInput) {
     
       backSpace();
     
     } else {
     
       ZsciiEncoding encoding = ZsciiEncoding.getInstance();
-      printChar(encoding.getUnicodeChar(zsciiChar));
-    
-      // Count chars for backspace
-      if (isEditMode()) charsTyped++;
+      printChar(encoding.getUnicodeChar(zsciiChar), isInput);
+
     }
-    if (isEditMode()) {
+    if (isInput) {
       
       drawCaret(true);
       repaintInUiThread();
@@ -434,30 +448,43 @@ ScreenModel {
   // ******** Private functions
   // *************************************************
 
-  private void printChar(char c) {
+  private void printChar(char c, boolean isInput) {
 
     //System.out.println("printChar: " + c + " active: " + activeWindow);
-    textbuffer.append(c);
-    
-    if (isEditMode() || activeWindow == WINDOW_TOP) {
+
+    if (isInput || !windows[activeWindow].isBuffered()) {
       
       windows[activeWindow].printString(String.valueOf(c));
+
+      // Count chars for backspace
+      if (isInput) {
+        
+        // Be careful: !!! timed input is in conflict with this since it
+        // allows to print during input !!!
+        // We need to tell the difference between characters echoed
+        // from input and characters printed regular.
+        inputbuffer.append(c);
+        //charsTyped++;
+      }
       
     } else {
       
       streambuffer.append(c);
     }
   }    
-  
+
+  /**
+   * Implements backspace. Only can be invoked in edit mode.
+   */
   private void backSpace() {
     
-    if (charsTyped > 0) {
+    if (inputbuffer.length() > 0) {
       
-      int lastIndex = textbuffer.length() - 1;
-      char lastChar = textbuffer.charAt(lastIndex);
+      int lastIndex = inputbuffer.length() - 1;
+      char lastChar = inputbuffer.charAt(lastIndex);
       windows[activeWindow].getCursor().backspace(lastChar);
-      textbuffer.deleteCharAt(lastIndex);
-      charsTyped--;
+      inputbuffer.deleteCharAt(lastIndex);
+      //charsTyped--;
     }
   }
     
@@ -523,7 +550,13 @@ ScreenModel {
         
         public void run() {
           
-          repaint();
+          // replace the expensive repaint() call with a fast copying of
+          // the double buffer
+          //repaint();
+          if (imageBuffer != null) {
+            
+            getGraphics().drawImage(imageBuffer, 0, 0, TextViewport.this);
+          }
         }
       });
     } catch (Exception ex) {

@@ -31,11 +31,13 @@ package org.zmpp.io;
 public interface OutputStream {
 
   /**
-   * Prints a ZSCII character to the stream.
+   * Prints a ZSCII character to the stream. The isInput parameter is
+   * needed to implement edit buffers.
    * 
    * @param zchar the ZSCII character to print
+   * @param isInput is true if the character is an echo to the input
    */
-  void print(short zchar);
+  void print(short zchar, boolean isInput);
   
   /**
    * Close underlying resources.

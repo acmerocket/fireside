@@ -209,6 +209,11 @@ public class SubWindow {
     this.isBuffered = flag;
   }
   
+  public boolean isBuffered() {
+    
+    return isBuffered;
+  }
+  
   public void setIsPagingEnabled(boolean flag) {
     
     this.isPaged = flag;

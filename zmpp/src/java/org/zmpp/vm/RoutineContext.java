@@ -66,6 +66,11 @@ public class RoutineContext {
   private int numArgs;
   
   /**
+   * The return value.
+   */
+  private short returnValue;
+  
+  /**
    * Constructor.
    * 
    * @param startAddress the routine's start address
@@ -197,5 +202,25 @@ public class RoutineContext {
   public void setInvocationStackPointer(int stackpointer) {
     
     invocationStackPointer = stackpointer;
+  }
+  
+  /**
+   * Returns the return value.
+   * 
+   * @return the return value
+   */
+  public short getReturnValue() {
+    
+    return returnValue;
+  }
+  
+  /**
+   * Sets the return value.
+   * 
+   * @param value the return value
+   */
+  public void setReturnValue(short value) {
+    
+    returnValue = value;
   }
 }

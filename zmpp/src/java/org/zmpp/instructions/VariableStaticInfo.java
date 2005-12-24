@@ -189,6 +189,23 @@ public class VariableStaticInfo implements InstructionStaticInfo {
     }
   }
 
+  /**
+   * {@inheritDoc}
+   */
+  public boolean isOutput(int opcode, int version) {
+    
+    switch (opcode) {
+    
+    case OP_PRINT_CHAR:
+    case OP_PRINT_NUM:
+    case OP_PRINT_TABLE:
+    case OP_ERASE_WINDOW:
+    case OP_ERASE_LINE:
+      return true;
+    }
+    return false;
+  }
+  
   public String getOpName(int opcode, int version) {
     
     switch (opcode) {
