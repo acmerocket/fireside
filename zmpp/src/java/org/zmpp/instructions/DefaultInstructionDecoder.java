@@ -5,7 +5,6 @@ import org.zmpp.instructions.AbstractInstruction.InstructionForm;
 import org.zmpp.instructions.AbstractInstruction.OperandCount;
 import org.zmpp.vm.InstructionDecoder;
 import org.zmpp.vm.Machine;
-import org.zmpp.vm.Operand;
 
 public class DefaultInstructionDecoder implements InstructionDecoder {
   

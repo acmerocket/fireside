@@ -156,7 +156,7 @@ public class MachineImpl implements Machine {
    */
   public MachineImpl() {
 
-    this.inputFunctions = new InputFunctions(this);
+    this.inputFunctions = new InputFunctionsImpl(this);
   }
   
   /**

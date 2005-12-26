@@ -22,9 +22,17 @@
  */
 package org.zmpp.instructions;
 
-
+/**
+ * The static aspects of a PrintLiteralInstruction are stored here.
+ * 
+ * @author Wei-ju Wu
+ * @version 1.0
+ */
 public class PrintLiteralStaticInfo implements InstructionStaticInfo {
 
+  /**
+   * The valid versions.
+   */
   private static final int[][] VALID_VERSIONS = {
     
     {}, // 0x00
@@ -33,18 +41,32 @@ public class PrintLiteralStaticInfo implements InstructionStaticInfo {
     { 1, 2, 3, 4, 5, 6, 7, 8 }  // PRINT_RET
   };  
 
+  /**
+   * Opcodes.
+   */
   public static final int OP_PRINT              = 0x02;
   public static final int OP_PRINT_RET          = 0x03;
 
   
+  /**
+   * Singleton instance.
+   */
   private static final PrintLiteralStaticInfo instance =
     new PrintLiteralStaticInfo();
   
+  /**
+   * Returns an instance of PrintLiteralStaticInfo.
+   * 
+   * @return a PrintLiteralStaticInfo object
+   */
   public static PrintLiteralStaticInfo getInstance() {
   
     return instance;
   }
   
+  /**
+   * {@inheritDoc}
+   */
   public int[] getValidVersions(int opcode) {
 
     return (opcode < VALID_VERSIONS.length) ? VALID_VERSIONS[opcode] :
@@ -52,11 +74,17 @@ public class PrintLiteralStaticInfo implements InstructionStaticInfo {
   }
 
 
+  /**
+   * {@inheritDoc}
+   */
   public boolean storesResult(int opcode, int version) {
 
     return false;
   }
   
+  /**
+   * {@inheritDoc}
+   */
   public boolean isBranch(int opcode, int version) {
     
     return false;
@@ -70,6 +98,9 @@ public class PrintLiteralStaticInfo implements InstructionStaticInfo {
     return true;
   }
   
+  /**
+   * {@inheritDoc}
+   */
   public String getOpName(int opcode, int version) {
     
     switch (opcode) {

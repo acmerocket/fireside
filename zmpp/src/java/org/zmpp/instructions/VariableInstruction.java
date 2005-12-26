@@ -333,7 +333,6 @@ public class VariableInstruction extends AbstractInstruction {
       getMachine().updateStatusLine();
     }
     
-    MemoryAccess memaccess = getMachine().getMemoryAccess();
     int textbuffer = getUnsignedValue(0);
     int parsebuffer = 0;
     int time = 0;
@@ -343,10 +342,8 @@ public class VariableInstruction extends AbstractInstruction {
     if (getNumOperands() >= 3) time = getUnsignedValue(2);
     if (getNumOperands() >= 4) packedAddress = getValue(3);
     
-    int bufferlen = memaccess.readUnsignedByte(textbuffer);
-    
     short terminal = getMachine().getInputFunctions().readLine(
-        textbuffer + 1, bufferlen, time, packedAddress);
+        textbuffer + 1, time, packedAddress);
     
     if (version < 5 || (version >= 5 && parsebuffer > 0)) {
       

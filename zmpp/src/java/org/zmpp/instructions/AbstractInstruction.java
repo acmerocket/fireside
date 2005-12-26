@@ -27,7 +27,6 @@ import java.util.List;
 
 import org.zmpp.vm.Instruction;
 import org.zmpp.vm.Machine;
-import org.zmpp.vm.Operand;
 import org.zmpp.vm.PortableGameState;
 import org.zmpp.vm.RoutineContext;
 
