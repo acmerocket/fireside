@@ -29,7 +29,6 @@ import org.zmpp.instructions.VariableInstruction;
 import org.zmpp.instructions.AbstractInstruction.InstructionForm;
 import org.zmpp.instructions.AbstractInstruction.OperandCount;
 import org.zmpp.vm.Machine;
-import org.zmpp.vm.RoutineContext;
 
 /**
  * This class tests the InstructionInfo class.
@@ -81,7 +80,7 @@ public class AbstractInstructionTest extends InstructionTestBase {
   
   public void testGetValue() {
     
-    machine.setVariable(0x11, (short) 1234);
+    mockMachine.expects(once()).method("getVariable").with(eq(17)).will(returnValue((short) 1234));
     Operand varOperand = new Operand(Operand.TYPENUM_VARIABLE, (short) 0x11);
     Operand constOperand = new Operand(Operand.TYPENUM_SMALL_CONSTANT, (byte) 0x11);
     info.addOperand(varOperand);
@@ -92,7 +91,7 @@ public class AbstractInstructionTest extends InstructionTestBase {
   
   public void testGetUnsignedValueNegative() {
     
-    machine.setVariable(0x11, (short) -2);
+    mockMachine.expects(once()).method("getVariable").with(eq(17)).will(returnValue((short) -2));
     Operand varOperand = new Operand(Operand.TYPENUM_VARIABLE, (short) 0x11);
     Operand largeOperand = new Operand(Operand.TYPENUM_SMALL_CONSTANT, (short) -4);
     Operand smallOperand = new Operand(Operand.TYPENUM_SMALL_CONSTANT, (byte) -3);
@@ -107,7 +106,7 @@ public class AbstractInstructionTest extends InstructionTestBase {
   
   public void testGetUnsignedValueMaxPositive() {
     
-    machine.setVariable(0x11, (short) 32767);
+    mockMachine.expects(once()).method("getVariable").with(eq(17)).will(returnValue((short) 32767));
     Operand varOperand = new Operand(Operand.TYPENUM_VARIABLE, (short) 0x11);
     Operand largeOperand = new Operand(Operand.TYPENUM_SMALL_CONSTANT, (short) 32767);
     Operand smallOperand = new Operand(Operand.TYPENUM_SMALL_CONSTANT, (byte) 127);
@@ -122,7 +121,7 @@ public class AbstractInstructionTest extends InstructionTestBase {
   
   public void testGetUnsignedValueMinNegative() {
     
-    machine.setVariable(0x11, (short) -32768);
+    mockMachine.expects(once()).method("getVariable").with(eq(17)).will(returnValue((short) -32768));
     Operand varOperand = new Operand(Operand.TYPENUM_VARIABLE, (short) 0x11);
     Operand largeOperand = new Operand(Operand.TYPENUM_SMALL_CONSTANT, (short) -32768);
     Operand smallOperand = new Operand(Operand.TYPENUM_SMALL_CONSTANT, (byte) -128);
@@ -137,7 +136,7 @@ public class AbstractInstructionTest extends InstructionTestBase {
   
   public void testConvertToSigned16() {
    
-    machine.setVariable(0x11, (short) 0xfff9);
+    mockMachine.expects(once()).method("getVariable").with(eq(17)).will(returnValue((short) -7));
     Operand operandLargeConstant = new Operand(Operand.TYPENUM_LARGE_CONSTANT, (short) 0xfffd);
     Operand operandVariable = new Operand(Operand.TYPENUM_VARIABLE, (short) 0x11);
     Operand operandByte = new Operand(Operand.TYPENUM_SMALL_CONSTANT, (byte) 0xfb);
@@ -223,60 +222,16 @@ public class AbstractInstructionTest extends InstructionTestBase {
   /**
    * Test positive offset branch.
    */
-  public void testBranchPositiveOffset() {
+  public void testBranchConditionTrue() {
     
+    mockMachine.expects(once()).method("computeBranchTarget").with(eq((short) 42), eq(12)).will(returnValue(321));
+    mockMachine.expects(once()).method("setProgramCounter").with(eq(321));
+
     AbstractInstruction branchInstr = new BranchInstruction(machine);
     branchInstr.setLength(12);
-    int oldpc = machine.getProgramCounter();
     branchInstr.setBranchOffset((short) 42);
     branchInstr.setBranchIfTrue(true);
     branchInstr.execute();
-    checkBranchFormula(oldpc, 12, 42);
-  }
-  
-  /**
-   * Test negative offset branch. 
-   */
-  public void testBranchNegativeOffset() {
-    
-    AbstractInstruction branchInstr = new BranchInstruction(machine);
-    branchInstr.setLength(12);
-    int oldpc = machine.getProgramCounter();
-    branchInstr.setBranchOffset((short) -48);
-    branchInstr.setBranchIfTrue(true);
-    branchInstr.execute();
-    checkBranchFormula(oldpc, 12, -48);
-  }
-  
-  /**
-   * Test offset = 0 -> return FALSE from current routine.
-   *
-   */
-  public void testBranchZeroOffset() {
-    
-    RoutineContext routineContext = prepareForReturn();
-    AbstractInstruction branchInstr = new BranchInstruction(machine);
-    branchInstr.setLength(12);
-    branchInstr.setBranchOffset((short) 0);
-    branchInstr.setBranchIfTrue(true);
-    branchInstr.setStoreVariable((short) 0x05);
-    branchInstr.execute();
-    checkReturnedWith(routineContext.getReturnAddress(), AbstractInstruction.FALSE);
-  }
-  
-  /**
-   * Test offset = 1 -> return TRUE from current routine.
-   */
-  public void testBranchOneOffset() {
-    
-    RoutineContext routineContext = prepareForReturn();
-    AbstractInstruction branchInstr = new BranchInstruction(machine);
-    branchInstr.setLength(12);
-    branchInstr.setBranchOffset((short) 1);
-    branchInstr.setBranchIfTrue(true);
-    branchInstr.setStoreVariable((short) 0x00);
-    branchInstr.execute();
-    checkReturnedWith(routineContext.getReturnAddress(), AbstractInstruction.TRUE);
   }
   
   /**
@@ -285,6 +240,9 @@ public class AbstractInstructionTest extends InstructionTestBase {
    */
   public void testBranchIfTrueBranchConditionIsFalse() {
     
+    mockMachine.expects(once()).method("getProgramCounter").will(returnValue(4711));
+    mockMachine.expects(once()).method("setProgramCounter").with(eq(4711 + 12));
+ 
     AbstractInstruction branchInstr = new BranchInstruction(machine) {
       
       public void execute() {
@@ -292,12 +250,11 @@ public class AbstractInstructionTest extends InstructionTestBase {
         super.branchOnTest(false);
       }
     };
+    
     branchInstr.setLength(12);
     branchInstr.setBranchOffset((short) 42);
     branchInstr.setBranchIfTrue(true);
-    int oldpc = machine.getProgramCounter();
     branchInstr.execute();
-    assertEquals(oldpc + 12, machine.getProgramCounter());
   }
 
   /**
@@ -305,6 +262,9 @@ public class AbstractInstructionTest extends InstructionTestBase {
    *
    */
   public void testBranchIfFalseBranchConditionIsTrue() {
+
+    mockMachine.expects(atLeastOnce()).method("getProgramCounter").will(returnValue(4711));
+    mockMachine.expects(once()).method("setProgramCounter").with(eq(4711 + 12));
     
     AbstractInstruction branchInstr = new BranchInstruction(machine) {
       
@@ -316,9 +276,7 @@ public class AbstractInstructionTest extends InstructionTestBase {
     branchInstr.setLength(12);
     branchInstr.setBranchOffset((short) 42);
     branchInstr.setBranchIfTrue(false);
-    int oldpc = machine.getProgramCounter();
     branchInstr.execute();
-    assertEquals(oldpc + 12, machine.getProgramCounter());
   }
   
   /**
@@ -327,6 +285,9 @@ public class AbstractInstructionTest extends InstructionTestBase {
    */
   public void testBranchIfFalseBranchConditionIsFalse() {
     
+    mockMachine.expects(once()).method("computeBranchTarget").with(eq((short) 42), eq(12)).will(returnValue(321));
+    mockMachine.expects(once()).method("setProgramCounter").with(eq(321));
+
     AbstractInstruction branchInstr = new BranchInstruction(machine) {
       
       public void execute() {
@@ -337,13 +298,13 @@ public class AbstractInstructionTest extends InstructionTestBase {
     branchInstr.setLength(12);
     branchInstr.setBranchOffset((short) 42);
     branchInstr.setBranchIfTrue(false);
-    int oldpc = machine.getProgramCounter();
     branchInstr.execute();
-    checkBranchFormula(oldpc, 12, 42);
   }
   
   public void testToString() {
     
+    mockMachine.expects(atLeastOnce()).method("getStoryFileHeader").will(returnValue(storyfileHeader));
+    mockFileHeader.expects(atLeastOnce()).method("getVersion").will(returnValue(3));
     AbstractInstruction branchInstr = new BranchInstruction(machine) {
       
       public void execute() {
@@ -361,10 +322,11 @@ public class AbstractInstructionTest extends InstructionTestBase {
    * @param oldpc the original program counter
    * @param offset the branch offset
    */
+  /*
   protected void checkBranchFormula(int oldpc, int length, int offset) {
     
     assertEquals(oldpc + length + offset - 2, machine.getProgramCounter());
-  }
+  }*/
   
   /**
    * Pushes a simple routine context on the stack. Define two local
@@ -372,6 +334,7 @@ public class AbstractInstructionTest extends InstructionTestBase {
    * 
    * @return a routine context
    */
+  /*
   protected RoutineContext prepareForReturn() {
     
     machine.setVariable(0x01, (short) 32); // just to be sure it was set
@@ -382,7 +345,7 @@ public class AbstractInstructionTest extends InstructionTestBase {
     routineContext.setReturnAddress(0x0815);
     routineContext.setReturnVariable((byte) 0x01);
     return routineContext;
-  }
+  }*/
   
   /**
    * Checks if the machine returned from a routine with the specified value.
@@ -390,10 +353,11 @@ public class AbstractInstructionTest extends InstructionTestBase {
    * @param returnAddress the return address to check
    * @param returnValue the return value to check
    */
+  /*
   protected void checkReturnedWith(int returnAddress, int returnValue) {
     
     assertEquals(returnAddress, machine.getProgramCounter());
     assertEquals(returnValue, machine.getVariable(0x01));
-  }
+  }*/
     
 }

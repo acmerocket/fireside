@@ -38,6 +38,9 @@ public class LongInstructionTest extends InstructionTestBase {
 
   public void testIsBranch() {
     
+    mockMachine.expects(atLeastOnce()).method("getStoryFileHeader").will(returnValue(storyfileHeader));
+    mockFileHeader.expects(atLeastOnce()).method("getVersion").will(returnValue(3));
+    
     LongInstruction info;
     info = new LongInstruction(machine, LongStaticInfo.OP_JE);
     assertTrue(info.isBranch());    
@@ -63,6 +66,9 @@ public class LongInstructionTest extends InstructionTestBase {
   
   public void testStoresResultV4() {
     
+    mockMachine.expects(atLeastOnce()).method("getStoryFileHeader").will(returnValue(storyfileHeader));
+    mockFileHeader.expects(atLeastOnce()).method("getVersion").will(returnValue(4));
+
     LongInstruction info;
     info = new LongInstruction(machine, LongStaticInfo.OP_OR);
     assertTrue(info.storesResult());
@@ -326,7 +332,7 @@ public class LongInstructionTest extends InstructionTestBase {
     
     mockMachine.expects(atLeastOnce()).method("getStoryFileHeader").will(returnValue(storyfileHeader));
     mockFileHeader.expects(atLeastOnce()).method("getVersion").will(returnValue(3));
-    machine.setVariable(0x11, (short) 5);
+
     LongInstructionMock dec_chk_branch = createInstructionMock(
         LongStaticInfo.OP_DEC_CHK,
         Operand.TYPENUM_SMALL_CONSTANT, (short) 0x11,
@@ -672,48 +678,69 @@ public class LongInstructionTest extends InstructionTestBase {
   
   public void testGetProp2Bytes() {
     
+    mockMachine.expects(atLeastOnce()).method("getStoryFileHeader").will(returnValue(storyfileHeader));
+    mockFileHeader.expects(atLeastOnce()).method("getVersion").will(returnValue(3));
+    mockMachine.expects(once()).method("getObjectTree").will(returnValue(objectTree));
+    mockObjectTree.expects(once()).method("getObject").with(eq(1)).will(returnValue(zobject));
+    mockZObject.expects(once()).method("getPropertySize").with(eq(18)).will(returnValue(2));
+    mockZObject.expects(once()).method("isPropertyAvailable").with(eq(18)).will(returnValue(true));
+    mockZObject.expects(once()).method("getPropertyByte").with(eq(18), eq(0)).will(returnValue((byte) 0x01));
+    mockZObject.expects(once()).method("getPropertyByte").with(eq(18), eq(1)).will(returnValue((byte) 0xee));
+    mockMachine.expects(once()).method("setVariable").with(eq(17), eq((short) 494));
+    mockMachine.expects(once()).method("getProgramCounter").will(returnValue(4711));
+    mockMachine.expects(once()).method("setProgramCounter").with(eq(4717));
+    
     // Two-byte property, Object 1, property 18
     LongInstruction get_prop_two = createInstruction(
         LongStaticInfo.OP_GET_PROP,
         Operand.TYPENUM_SMALL_CONSTANT, (short) 1,
         Operand.TYPENUM_SMALL_CONSTANT, (short) 18, 6);
-    get_prop_two.setStoreVariable((short) 0x11);
-    
-    int oldpc = machine.getProgramCounter();
-    get_prop_two.execute();
-    
-    assertEquals((short) (0x43a7), machine.getVariable(0x11));
-    assertEquals(oldpc + get_prop_two.getLength(), machine.getProgramCounter());    
+    get_prop_two.setStoreVariable((short) 0x11);    
+    get_prop_two.execute();    
   }
   
-  public void testGetProp() {
+  public void testGetPropOneByte() {
+    
+    mockMachine.expects(atLeastOnce()).method("getStoryFileHeader").will(returnValue(storyfileHeader));
+    mockFileHeader.expects(atLeastOnce()).method("getVersion").will(returnValue(3));
+    mockMachine.expects(once()).method("getObjectTree").will(returnValue(objectTree));
+    mockObjectTree.expects(once()).method("getObject").with(eq(2)).will(returnValue(zobject));
+    mockZObject.expects(once()).method("getPropertySize").with(eq(22)).will(returnValue(1));
+    mockZObject.expects(once()).method("isPropertyAvailable").with(eq(22)).will(returnValue(true));
+    mockZObject.expects(once()).method("getPropertyByte").with(eq(22), eq(0)).will(returnValue((byte) 0x77));
+    mockMachine.expects(once()).method("setVariable").with(eq(17), eq((short) 0x77));
+    mockMachine.expects(once()).method("getProgramCounter").will(returnValue(4711));
+    mockMachine.expects(once()).method("setProgramCounter").with(eq(4717));
     
     // One-byte property, Object 2, property 22
     LongInstruction get_prop_one = createInstruction(
         LongStaticInfo.OP_GET_PROP,
         Operand.TYPENUM_SMALL_CONSTANT, (short) 2,
         Operand.TYPENUM_SMALL_CONSTANT, (short) 22, 6);
-    get_prop_one.setStoreVariable((short) 0x11);
-    
-    int oldpc = machine.getProgramCounter();
+    get_prop_one.setStoreVariable((short) 0x11);    
     get_prop_one.execute();
-    
-    assertEquals(0x77, machine.getVariable(0x11));
-    assertEquals(oldpc + get_prop_one.getLength(), machine.getProgramCounter());
-    
+  }
+  
+  public void testGetPropFail() {
+
     // No defined property, take default, Object 1, property 1
-    machine.setVariable(0x11, (short) 1234);
+    mockMachine.expects(atLeastOnce()).method("getStoryFileHeader").will(returnValue(storyfileHeader));
+    mockFileHeader.expects(atLeastOnce()).method("getVersion").will(returnValue(3));
+    mockMachine.expects(atLeastOnce()).method("getObjectTree").will(returnValue(objectTree));
+    mockObjectTree.expects(once()).method("getObject").with(eq(1)).will(returnValue(zobject));
+    mockZObject.expects(once()).method("getPropertySize").with(eq(1)).will(returnValue(0));
+    mockZObject.expects(once()).method("isPropertyAvailable").with(eq(1)).will(returnValue(false));
+    mockObjectTree.expects(once()).method("getPropertyDefault").with(eq(1)).will(returnValue((short) 2));
+    mockMachine.expects(once()).method("setVariable").with(eq(17), eq((short) 0x02));
+    mockMachine.expects(once()).method("getProgramCounter").will(returnValue(4711));
+    mockMachine.expects(once()).method("setProgramCounter").with(eq(4717));
+    
     LongInstruction get_prop_default = createInstruction(
         LongStaticInfo.OP_GET_PROP,
         Operand.TYPENUM_SMALL_CONSTANT, (short) 1,
         Operand.TYPENUM_SMALL_CONSTANT, (short) 1, 6);
     get_prop_default.setStoreVariable((short) 0x11);
-    
-    oldpc = machine.getProgramCounter();
     get_prop_default.execute();
-    
-    assertEquals(0x00, machine.getVariable(0x11));
-    assertEquals(oldpc + get_prop_one.getLength(), machine.getProgramCounter());
   }
 
   // ***********************************************************************
@@ -742,26 +769,43 @@ public class LongInstructionTest extends InstructionTestBase {
   
   public void testGetPropAddr() {
    
+    mockMachine.expects(atLeastOnce()).method("getStoryFileHeader").will(returnValue(storyfileHeader));
+    mockFileHeader.expects(atLeastOnce()).method("getVersion").will(returnValue(3));
+    mockMachine.expects(atLeastOnce()).method("getObjectTree").will(returnValue(objectTree));
+    mockObjectTree.expects(once()).method("getObject").with(eq(1)).will(returnValue(zobject));
+    mockZObject.expects(once()).method("isPropertyAvailable").with(eq(18)).will(returnValue(true));
+    mockZObject.expects(once()).method("getPropertyAddress").with(eq(18)).will(returnValue(0x0a55));
+    mockMachine.expects(once()).method("setVariable").with(eq(17), eq((short) 0x0a55));
+    mockMachine.expects(once()).method("getProgramCounter").will(returnValue(4711));
+    mockMachine.expects(once()).method("setProgramCounter").with(eq(4717));
+
     LongInstruction get_prop_addr_exists = createInstruction(
         LongStaticInfo.OP_GET_PROP_ADDR,
         Operand.TYPENUM_SMALL_CONSTANT, (short) 1,
         Operand.TYPENUM_SMALL_CONSTANT, (short) 18, 6);
+
     get_prop_addr_exists.setStoreVariable((short) 0x11);    
-    int oldpc = machine.getProgramCounter();
     get_prop_addr_exists.execute();
-    assertEquals(0x0a55, machine.getVariable(0x11));
-    assertEquals(oldpc + get_prop_addr_exists.getLength(), machine.getProgramCounter());
+  }
+  
+  public void testGetPropAddrNotExists() {
     
+    mockMachine.expects(atLeastOnce()).method("getStoryFileHeader").will(returnValue(storyfileHeader));
+    mockFileHeader.expects(atLeastOnce()).method("getVersion").will(returnValue(3));
+    mockMachine.expects(atLeastOnce()).method("getObjectTree").will(returnValue(objectTree));
+    mockObjectTree.expects(once()).method("getObject").with(eq(1)).will(returnValue(zobject));
+    mockZObject.expects(once()).method("isPropertyAvailable").with(eq(2)).will(returnValue(false));
+    mockMachine.expects(once()).method("setVariable").with(eq(17), eq((short) 0x00));
+    mockMachine.expects(once()).method("getProgramCounter").will(returnValue(4711));
+    mockMachine.expects(once()).method("setProgramCounter").with(eq(4717));
+
     LongInstruction get_prop_addr_notexists = createInstruction(
         LongStaticInfo.OP_GET_PROP_ADDR,
         Operand.TYPENUM_SMALL_CONSTANT, (short) 1,
         Operand.TYPENUM_SMALL_CONSTANT, (short) 2, 6);
+
     get_prop_addr_notexists.setStoreVariable((short) 0x11);    
-    oldpc = machine.getProgramCounter();
     get_prop_addr_notexists.execute();
-    assertEquals(0x00, machine.getVariable(0x11));
-    assertEquals(oldpc + get_prop_addr_notexists.getLength(), machine.getProgramCounter());
-    
   }
   // ***********************************************************************
   // ********* GET_NEXT_PROP
@@ -771,15 +815,16 @@ public class LongInstructionTest extends InstructionTestBase {
     
     mockMachine.expects(atLeastOnce()).method("getStoryFileHeader").will(returnValue(storyfileHeader));
     mockFileHeader.expects(atLeastOnce()).method("getVersion").will(returnValue(3));
-    LongInstructionMock get_next_prop = createInstructionMock(
-        LongStaticInfo.OP_GET_NEXT_PROP,
-        Operand.TYPENUM_SMALL_CONSTANT, (short) 1,
-        Operand.TYPENUM_SMALL_CONSTANT, (short) 12);
     mockMachine.expects(once()).method("getObjectTree").will(returnValue(objectTree));
     mockObjectTree.expects(once()).method("getObject").with(eq(1)).will(returnValue(zobject));
     mockZObject.expects(once()).method("getNextProperty").with(eq(12)).will(returnValue(15));
     mockZObject.expects(once()).method("isPropertyAvailable").with(eq(12)).will(returnValue(true));
     mockMachine.expects(once()).method("setVariable").with(eq(0x11), eq((short) 15));
+
+    LongInstructionMock get_next_prop = createInstructionMock(
+        LongStaticInfo.OP_GET_NEXT_PROP,
+        Operand.TYPENUM_SMALL_CONSTANT, (short) 1,
+        Operand.TYPENUM_SMALL_CONSTANT, (short) 12);
     
     get_next_prop.setStoreVariable((short) 0x11);    
     get_next_prop.execute();
@@ -792,15 +837,16 @@ public class LongInstructionTest extends InstructionTestBase {
     
     mockMachine.expects(atLeastOnce()).method("getStoryFileHeader").will(returnValue(storyfileHeader));
     mockFileHeader.expects(atLeastOnce()).method("getVersion").will(returnValue(3));
-    LongInstructionMock get_next_prop = createInstructionMock(
-        LongStaticInfo.OP_GET_NEXT_PROP,
-        Operand.TYPENUM_SMALL_CONSTANT, (short) 1,
-        Operand.TYPENUM_SMALL_CONSTANT, (short) 0);
     mockMachine.expects(once()).method("getObjectTree").will(returnValue(objectTree));
     mockObjectTree.expects(once()).method("getObject").with(eq(1)).will(returnValue(zobject));
     mockZObject.expects(once()).method("getNextProperty").with(eq(0)).will(returnValue(15));
     mockMachine.expects(once()).method("setVariable").with(eq(0x11), eq((short) 15));
-    
+
+    LongInstructionMock get_next_prop = createInstructionMock(
+        LongStaticInfo.OP_GET_NEXT_PROP,
+        Operand.TYPENUM_SMALL_CONSTANT, (short) 1,
+        Operand.TYPENUM_SMALL_CONSTANT, (short) 0);
+   
     get_next_prop.setStoreVariable((short) 0x11);    
     get_next_prop.execute();
     
@@ -812,14 +858,15 @@ public class LongInstructionTest extends InstructionTestBase {
     
     mockMachine.expects(atLeastOnce()).method("getStoryFileHeader").will(returnValue(storyfileHeader));
     mockFileHeader.expects(atLeastOnce()).method("getVersion").will(returnValue(3));
-    LongInstructionMock get_next_prop = createInstructionMock(
-        LongStaticInfo.OP_GET_NEXT_PROP,
-        Operand.TYPENUM_SMALL_CONSTANT, (short) 1,
-        Operand.TYPENUM_SMALL_CONSTANT, (short) 13);
     mockMachine.expects(once()).method("getObjectTree").will(returnValue(objectTree));
     mockObjectTree.expects(once()).method("getObject").with(eq(1)).will(returnValue(zobject));
     mockZObject.expects(once()).method("isPropertyAvailable").with(eq(13)).will(returnValue(false));
     mockMachine.expects(once()).method("halt").with(eq("the property [13] of object [1] does not exist"));
+
+    LongInstructionMock get_next_prop = createInstructionMock(
+        LongStaticInfo.OP_GET_NEXT_PROP,
+        Operand.TYPENUM_SMALL_CONSTANT, (short) 1,
+        Operand.TYPENUM_SMALL_CONSTANT, (short) 13);
     
     get_next_prop.setStoreVariable((short) 0x11);    
     get_next_prop.execute();        
@@ -894,8 +941,7 @@ public class LongInstructionTest extends InstructionTestBase {
     LongInstructionMock result = new LongInstructionMock(machine, OperandCount.VAR, opcode);
     result.setLength(5);
     return result;
-  }
-  
+  }  
   
   private LongInstruction createInstruction(int opcode, int typenum1,
       short value1, int typenum2, short value2, int length) {

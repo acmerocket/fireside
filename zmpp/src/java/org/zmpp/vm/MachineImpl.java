@@ -813,7 +813,7 @@ public class MachineImpl implements Machine {
         // current window state
         restart(false);
         gamestate.transferStateToMachine(this);
-        System.out.printf("restore(), pc is: %4x running: %b\n", getProgramCounter(), isRunning());
+        //System.out.printf("restore(), pc is: %4x running: %b\n", getProgramCounter(), isRunning());
         return gamestate;
       }
     }

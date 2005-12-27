@@ -127,7 +127,7 @@ public abstract class AbstractInstruction implements Instruction {
   /**
    * The machine state.
    */
-  private Machine machineState;
+  private Machine machine;
     
   /**
    * Constructor.
@@ -138,7 +138,7 @@ public abstract class AbstractInstruction implements Instruction {
   public AbstractInstruction(Machine machineState, int opcode) {
     
     this.opcode = opcode;
-    this.machineState = machineState;
+    this.machine = machineState;
     this.operands = new ArrayList<Operand>();
     this.branchIfConditionTrue = true;
   }
@@ -150,7 +150,7 @@ public abstract class AbstractInstruction implements Instruction {
    */
   protected Machine getMachine() {
     
-    return machineState;
+    return machine;
   }
     
   /**
@@ -322,7 +322,7 @@ public abstract class AbstractInstruction implements Instruction {
     switch (operand.getType()) {
     
       case VARIABLE:
-        return machineState.getVariable(operand.getValue());
+        return machine.getVariable(operand.getValue());
       case SMALL_CONSTANT:
       case LARGE_CONSTANT:
       default:
@@ -350,7 +350,7 @@ public abstract class AbstractInstruction implements Instruction {
    */
   protected void storeResult(short value) {
     
-    machineState.setVariable(getStoreVariable(), value);
+    machine.setVariable(getStoreVariable(), value);
   }
   
   /**

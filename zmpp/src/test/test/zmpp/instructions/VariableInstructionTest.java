@@ -49,8 +49,6 @@ public class VariableInstructionTest extends InstructionTestBase {
     super.setUp();
 
     // A routine context to have valid local variable access
-    RoutineContext routineInfo = new RoutineContext(0x4711, 2);
-    machine.pushRoutineContext(routineInfo);    
     mockScreen = mock(ScreenModel.class);
     screen = (ScreenModel) mockScreen.proxy();
     mockCursor = mock(TextCursor.class);
@@ -117,6 +115,9 @@ public class VariableInstructionTest extends InstructionTestBase {
   
   public void testIsBranch() {
     
+    mockMachine.expects(atLeastOnce()).method("getStoryFileHeader").will(returnValue(storyfileHeader));
+    mockFileHeader.expects(atLeastOnce()).method("getVersion").will(returnValue(3));
+    
     VariableInstruction info;
     info = new VariableInstruction(machine, OperandCount.VAR,
         VariableStaticInfo.OP_SCAN_TABLE);    
@@ -136,16 +137,32 @@ public class VariableInstructionTest extends InstructionTestBase {
   
   public void testCall() {
     
+    mockMachine.expects(atLeastOnce()).method("getStoryFileHeader").will(returnValue(storyfileHeader));
+    mockFileHeader.expects(atLeastOnce()).method("getVersion").will(returnValue(3));
+    mockMachine.expects(once()).method("setVariable").with(eq(0), eq((short) 0));
+    mockMachine.expects(once()).method("getProgramCounter").will(returnValue(4711));
+    mockMachine.expects(once()).method("setProgramCounter").with(eq(4716));
+
     VariableInstruction call_0 = new VariableInstruction(machine,
         OperandCount.VAR, VariableStaticInfo.OP_CALL);
     call_0.addOperand(new Operand(Operand.TYPENUM_LARGE_CONSTANT, (short) 0x0000));
     call_0.addOperand(new Operand(Operand.TYPENUM_SMALL_CONSTANT, (short) 0x01));
     call_0.setLength(5);    
-    
-    int oldpc = machine.getProgramCounter();
     call_0.execute();
-    assertEquals(oldpc + call_0.getLength(), machine.getProgramCounter());
+  }
+  
+  public void testCallReal() {
     
+    mockMachine.expects(atLeastOnce()).method("getStoryFileHeader").will(returnValue(storyfileHeader));
+    mockFileHeader.expects(atLeastOnce()).method("getVersion").will(returnValue(3));
+    mockMachine.expects(once()).method("getProgramCounter").will(returnValue(4711));
+    
+    short[] args = { 1, 2 };
+    short retval = 17;
+    RoutineContext routineContext = new RoutineContext(1234, 2);
+    mockMachine.expects(once()).method("call").with(eq(7109), eq(4716), eq(args), eq(retval)).will(returnValue(routineContext));
+    
+
     // Real call
     VariableInstruction call = new VariableInstruction(machine,
         OperandCount.VAR, VariableStaticInfo.OP_CALL);
@@ -153,21 +170,8 @@ public class VariableInstructionTest extends InstructionTestBase {
     call.addOperand(new Operand(Operand.TYPENUM_SMALL_CONSTANT, (short) 0x01));
     call.addOperand(new Operand(Operand.TYPENUM_SMALL_CONSTANT, (short) 0x02));
     call.setStoreVariable((short) 0x11);
-    call.setLength(5);
-    
-    oldpc = machine.getProgramCounter();
+    call.setLength(5);    
     call.execute();
-    
-    RoutineContext routineContext = machine.getCurrentRoutineContext();
-    assertEquals(0x3797, machine.getProgramCounter());
-    assertEquals(oldpc + call.getLength(), routineContext.getReturnAddress());
-    assertEquals(0x11, routineContext.getReturnVariable());
-    
-    // Test parameters
-    assertEquals(0x01, routineContext.getLocalVariable(0));
-    assertEquals(0x02, routineContext.getLocalVariable(1));
-    assertEquals(0x01, machine.getVariable(0x01));
-    assertEquals(0x02, machine.getVariable(0x02));
   }
   
   // *******************************************************************
@@ -228,18 +232,20 @@ public class VariableInstructionTest extends InstructionTestBase {
   
   public void testStorew() {
     
-    VariableInstruction storew = new VariableInstruction(machine,
-        OperandCount.VAR, VariableStaticInfo.OP_STOREW);
+    mockMachine.expects(once()).method("getStoryFileHeader").will(returnValue(storyfileHeader));
+    mockFileHeader.expects(once()).method("getVersion").will(returnValue(3));
+    mockMachine.expects(once()).method("getMemoryAccess").will(returnValue(memoryAccess));
+    mockMemAccess.expects(once()).method("writeShort").with(eq(2), eq((short) 0x1000)); 
+    mockMachine.expects(once()).method("getProgramCounter").will(returnValue(4711));
+    mockMachine.expects(once()).method("setProgramCounter").with(eq(4716));
     
+    VariableInstruction storew = new VariableInstruction(machine,
+        OperandCount.VAR, VariableStaticInfo.OP_STOREW);    
     storew.addOperand(new Operand(Operand.TYPENUM_LARGE_CONSTANT, (short) 0x0000));
     storew.addOperand(new Operand(Operand.TYPENUM_SMALL_CONSTANT, (short) 1));
     storew.addOperand(new Operand(Operand.TYPENUM_LARGE_CONSTANT, (short) 0x1000));
-    storew.setLength(5);
-    
-    int oldpc = machine.getProgramCounter();
+    storew.setLength(5);    
     storew.execute();
-    assertEquals(0x1000, memoryAccess.readUnsignedShort(0x0002));
-    assertEquals(oldpc + storew.getLength(), machine.getProgramCounter());
   }
   
   // *******************************************************************
@@ -247,6 +253,13 @@ public class VariableInstructionTest extends InstructionTestBase {
   // *************************
   
   public void testStoreb() {
+
+    mockMachine.expects(once()).method("getStoryFileHeader").will(returnValue(storyfileHeader));
+    mockFileHeader.expects(once()).method("getVersion").will(returnValue(3));
+    mockMachine.expects(once()).method("getMemoryAccess").will(returnValue(memoryAccess));
+    mockMemAccess.expects(once()).method("writeByte").with(eq(1), eq((byte) 0x15)); 
+    mockMachine.expects(atLeastOnce()).method("getProgramCounter").will(returnValue(4711));
+    mockMachine.expects(once()).method("setProgramCounter").with(eq(4716));
     
     VariableInstruction storeb = new VariableInstruction(machine,
         OperandCount.VAR, VariableStaticInfo.OP_STOREB);
@@ -255,11 +268,7 @@ public class VariableInstructionTest extends InstructionTestBase {
     storeb.addOperand(new Operand(Operand.TYPENUM_SMALL_CONSTANT, (short) 1));
     storeb.addOperand(new Operand(Operand.TYPENUM_SMALL_CONSTANT, (short) 0x15));
     storeb.setLength(5);
-    
-    int oldpc = machine.getProgramCounter();
     storeb.execute();
-    assertEquals(0x15, memoryAccess.readUnsignedByte(0x0001));
-    assertEquals(oldpc + storeb.getLength(), machine.getProgramCounter());
   }
   
   // *******************************************************************
@@ -371,14 +380,17 @@ public class VariableInstructionTest extends InstructionTestBase {
   
   public void testPush() {
     
+    mockMachine.expects(once()).method("getStoryFileHeader").will(returnValue(storyfileHeader));
+    mockFileHeader.expects(once()).method("getVersion").will(returnValue(3));
+    mockMachine.expects(once()).method("setVariable").with(eq(0x00), eq((short) 0x13));
+    mockMachine.expects(atLeastOnce()).method("getProgramCounter").will(returnValue(4711));
+    mockMachine.expects(once()).method("setProgramCounter").with(eq(4716));
+
     VariableInstruction push = new VariableInstruction(machine,
         OperandCount.VAR, VariableStaticInfo.OP_PUSH);
     push.addOperand(new Operand(Operand.TYPENUM_LARGE_CONSTANT, (short) 0x13));
     push.setLength(5);
-    int oldpc = machine.getProgramCounter();
     push.execute();
-    assertEquals(0x13, machine.getVariable(0));
-    assertEquals(oldpc + push.getLength(), machine.getProgramCounter());
   }
   
   // *******************************************************************
@@ -387,16 +399,18 @@ public class VariableInstructionTest extends InstructionTestBase {
   
   public void testPull() {
     
+    mockMachine.expects(once()).method("getStoryFileHeader").will(returnValue(storyfileHeader));
+    mockFileHeader.expects(once()).method("getVersion").will(returnValue(3));
+    mockMachine.expects(once()).method("getVariable").with(eq(0x00)).will(returnValue((short) 0x14));;
+    mockMachine.expects(once()).method("setVariable").with(eq(0x13), eq((short) 0x14));
+    mockMachine.expects(atLeastOnce()).method("getProgramCounter").will(returnValue(4711));
+    mockMachine.expects(once()).method("setProgramCounter").with(eq(4716));
+
     VariableInstruction pull = new VariableInstruction(machine,
         OperandCount.VAR, VariableStaticInfo.OP_PULL);
     pull.addOperand(new Operand(Operand.TYPENUM_LARGE_CONSTANT, (short) 0x13));
     pull.setLength(5);
-    
-    machine.setVariable(0, (short) 0x14);
-    int oldpc = machine.getProgramCounter();
     pull.execute();
-    assertEquals(0x14, machine.getVariable(0x13));
-    assertEquals(oldpc + pull.getLength(), machine.getProgramCounter());
   }
   
   // As long as we did not use mock objects here, we have to initialize the
@@ -404,23 +418,18 @@ public class VariableInstructionTest extends InstructionTestBase {
   // stack will not modify the stack pointer
   public void testPullToStack() {
     
-    // Initialize the stack with a value
-    machine.setVariable(0, (short) 0);
+    mockMachine.expects(once()).method("getStoryFileHeader").will(returnValue(storyfileHeader));
+    mockFileHeader.expects(once()).method("getVersion").will(returnValue(3));
+    mockMachine.expects(once()).method("getVariable").with(eq(0)).will(returnValue((short) 0));
+    mockMachine.expects(once()).method("setStackTopElement").with(eq((short) 0));
+    mockMachine.expects(atLeastOnce()).method("getProgramCounter").will(returnValue(4711));
+    mockMachine.expects(once()).method("setProgramCounter").with(eq(4716));
     
     VariableInstruction pull = new VariableInstruction(machine,
         OperandCount.VAR, VariableStaticInfo.OP_PULL);
     pull.addOperand(new Operand(Operand.TYPENUM_LARGE_CONSTANT, (short) 0x00));
     pull.setLength(5);
-    
-    int oldSP = machine.getStackPointer();
-    machine.setVariable(0, (short) 0x14); // will increment oldSP
-    int oldpc = machine.getProgramCounter();
-    
     pull.execute();
-    
-    assertEquals(oldSP, machine.getStackPointer());
-    assertEquals(0x14, machine.getVariable(0x00));
-    assertEquals(oldpc + pull.getLength(), machine.getProgramCounter());
   }
     
   // *******************************************************************
@@ -499,15 +508,19 @@ public class VariableInstructionTest extends InstructionTestBase {
   
   public void testRandom() {
     
+    mockMachine.expects(atLeastOnce()).method("getStoryFileHeader").will(returnValue(storyfileHeader));
+    mockFileHeader.expects(atLeastOnce()).method("getVersion").will(returnValue(3));
+    mockMachine.expects(once()).method("random").with(eq((short) 1234)).will(returnValue((short) 3));
+    mockMachine.expects(once()).method("setVariable").with(eq(0x13), eq((short) 3));
+    mockMachine.expects(once()).method("getProgramCounter").will(returnValue(4711));
+    mockMachine.expects(once()).method("setProgramCounter").with(eq(4716));
+
     VariableInstruction random = new VariableInstruction(machine,
         OperandCount.VAR, VariableStaticInfo.OP_RANDOM);
     random.addOperand(new Operand(Operand.TYPENUM_LARGE_CONSTANT, (short) 1234));
     random.setLength(5);
     random.setStoreVariable((short) 0x13);
-    int oldpc = machine.getProgramCounter();
     random.execute();
-    assertTrue(machine.getVariable(0x13) > 0);
-    assertEquals(oldpc + random.getLength(), machine.getProgramCounter());
   }
   
   // *******************************************************************

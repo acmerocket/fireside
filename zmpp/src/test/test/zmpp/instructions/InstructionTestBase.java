@@ -10,7 +10,7 @@ import org.zmpp.vm.ObjectTree;
 import org.zmpp.vm.StoryFileHeader;
 import org.zmpp.vm.ZObject;
 
-public class InstructionTestBase extends MockObjectTestCase {
+public abstract class InstructionTestBase extends MockObjectTestCase {
 
   protected Mock mockMachine;
   protected Machine machine;
