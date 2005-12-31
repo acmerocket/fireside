@@ -327,6 +327,7 @@ public class VariableInstruction extends AbstractInstruction {
   
   private void sread() {
     
+    //System.out.println("sread()");
     int version = getMachine().getStoryFileHeader().getVersion();
     if (version <= 3) {
       
@@ -343,7 +344,7 @@ public class VariableInstruction extends AbstractInstruction {
     if (getNumOperands() >= 4) packedAddress = getValue(3);
     
     short terminal = getMachine().getInputFunctions().readLine(
-        textbuffer + 1, time, packedAddress);
+        textbuffer, time, packedAddress);
     
     if (version < 5 || (version >= 5 && parsebuffer > 0)) {
       
