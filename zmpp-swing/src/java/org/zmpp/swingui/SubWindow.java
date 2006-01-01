@@ -303,10 +303,13 @@ public class SubWindow {
     int numLines = height / fm.getHeight();
     
     WordWrapper wordWrapper = new WordWrapper(lineLength, fm, isBuffered);
-    Pager pager = new Pager(numLines - 1, isPaged);
+    //Pager pager = new Pager(numLines - 1, isPaged);
     String[] lines = wordWrapper.wrap(cursor.currentX, str);
-    String[][] pages = pager.createPages(lines);
+    //String[][] pages = pager.createPages(lines);
     
+    printLines(lines);
+    
+    /*
     for (int i = 0; i < pages.length; i++) {
       
       String[] currentPage = pages[i];
@@ -316,7 +319,7 @@ public class SubWindow {
         
         doMeMore();
       }
-    }
+    }*/
   }
   
   private void doMeMore() {

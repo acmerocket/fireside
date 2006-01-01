@@ -155,4 +155,9 @@ public interface ScreenModel {
    * @param colornumber a color number
    */
   void setForegroundColor(int colornumber);
+  
+  /**
+   * Forces a redraw.
+   */
+  void redraw();
 }

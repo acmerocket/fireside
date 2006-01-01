@@ -40,7 +40,7 @@ public class TranscriptOutputStream implements OutputStream {
   private BufferedWriter output;
   private Writer transcriptWriter;
   private boolean enabled;
-  private StringBuilder linebuffer = new StringBuilder();
+  private StringBuilder linebuffer;
 
   /**
    * Constructor.
@@ -85,7 +85,7 @@ public class TranscriptOutputStream implements OutputStream {
       } else {
         
         linebuffer.append(encoding.getUnicodeChar(zsciiChar));
-      }      
+      }
     }
   }
   
@@ -111,10 +111,13 @@ public class TranscriptOutputStream implements OutputStream {
   public void flush() {
     
     try {
-      
-      output.write(linebuffer.toString());
-      output.write("\n");
-      linebuffer = new StringBuilder();
+
+      if (output != null) {
+        
+        output.write(linebuffer.toString());
+        output.write("\n");
+        linebuffer = new StringBuilder();
+      }
       
     } catch (IOException ex) {
       

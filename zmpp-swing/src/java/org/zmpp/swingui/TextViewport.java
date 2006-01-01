@@ -73,7 +73,6 @@ ScreenModel {
   
   private boolean isSelected;
   private boolean editMode;
-  //private int charsTyped;
   private SubWindow[] windows;
   private int[] fontnumbers;
   private int activeWindow;
@@ -233,6 +232,10 @@ ScreenModel {
     if (flag) {
       
       inputbuffer = new StringBuilder(initstring);
+      
+    } else {
+      
+      inputbuffer = new StringBuilder();
     }
     notifyAll();  
   }
@@ -361,8 +364,8 @@ ScreenModel {
     
       ZsciiEncoding encoding = ZsciiEncoding.getInstance();
       printChar(encoding.getUnicodeChar(zsciiChar), isInput);
-
     }
+    
     if (isInput) {
       
       drawCaret(true);
@@ -394,6 +397,14 @@ ScreenModel {
       flush();
       windows[activeWindow].setBackground(translateColornum(colornum, false));
     }
+  }
+  
+  /**
+   * {@inheritDoc}
+   */
+  public void redraw() {
+    
+    repaintInUiThread();
   }
   
   private Color translateColornum(int colornum, boolean foreground) {
@@ -464,7 +475,6 @@ ScreenModel {
         // We need to tell the difference between characters echoed
         // from input and characters printed regular.
         inputbuffer.append(c);
-        //charsTyped++;
       }
       
     } else {
@@ -484,7 +494,6 @@ ScreenModel {
       char lastChar = inputbuffer.charAt(lastIndex);
       windows[activeWindow].getCursor().backspace(lastChar);
       inputbuffer.deleteCharAt(lastIndex);
-      //charsTyped--;
     }
   }
     
@@ -552,7 +561,6 @@ ScreenModel {
           
           // replace the expensive repaint() call with a fast copying of
           // the double buffer
-          //repaint();
           if (imageBuffer != null) {
             
             getGraphics().drawImage(imageBuffer, 0, 0, TextViewport.this);

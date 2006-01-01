@@ -874,7 +874,9 @@ public class MachineImpl implements Machine {
     running = false;
     
     // On quit, close the streams
+    print("*Game ended*");
     closeStreams();
+    screenModel.redraw();
   }
   
   /**
@@ -886,7 +888,10 @@ public class MachineImpl implements Machine {
 
       for (int i = 0; i < inputStream.length; i++) {
         
-        if (inputStream[i] != null) inputStream[i].close();
+        if (inputStream[i] != null) {
+          
+          inputStream[i].close();
+        }
       }
     }
     
@@ -894,7 +899,11 @@ public class MachineImpl implements Machine {
 
       for (int i = 0; i < outputStream.length; i++) {
         
-        if (outputStream[i] != null) outputStream[i].close();
+        if (outputStream[i] != null) {
+          
+          outputStream[i].flush();
+          outputStream[i].close();
+        }
       }
     }
   }
