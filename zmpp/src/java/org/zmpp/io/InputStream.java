@@ -32,25 +32,9 @@ package org.zmpp.io;
 public interface InputStream {
 
   /**
-   * Sets this stream into edit mode and possibly initializing it with
-   * an input string.
-   * 
-   * @param initstring the initialization string
-   */
-  //void enterEditMode(String initstring);
-  
-  /**
    * Cancels a wait on the input stream.
    */
   void cancelInput();
-  
-  /**
-   * Reads the next ZSCII character from the stream. The stream must
-   * be in edit mode in order to use this function.
-   * 
-   * @return a ZSCII character
-   */
-  short readZsciiChar();
   
   /**
    * Reads only one ZSCII character from the stream. This is somewhat
@@ -63,13 +47,5 @@ public interface InputStream {
   /**
    * Release underlying resources.
    */
-  void close();
-
-  
-  /**
-   * Forces the stream into edit mode with the given string.
-   * 
-   * @param initstring the init string, must never be null
-   */
-  void forceEditMode(String initstring);
+  void close();  
 }

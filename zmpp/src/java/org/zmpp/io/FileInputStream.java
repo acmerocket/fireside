@@ -59,14 +59,6 @@ public class FileInputStream implements InputStream {
    * {@inheritDoc}
    */
   public short getZsciiChar() {
-
-    return readZsciiChar();
-  }
-  
-  /**
-   * {@inheritDoc}
-   */
-  public short readZsciiChar() {
     
     checkForReader();
     if (input != null) {
@@ -124,12 +116,5 @@ public class FileInputStream implements InputStream {
       filereader = iosys.getInputStreamReader();
       input = new BufferedReader(filereader);
     }
-  }
-  
-  /**
-   * {@inheritDoc}
-   */
-  public void forceEditMode(String initstring) { 
-    
-  }
+  }  
 }

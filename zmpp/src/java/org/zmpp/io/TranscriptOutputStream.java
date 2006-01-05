@@ -150,4 +150,9 @@ public class TranscriptOutputStream implements OutputStream {
       } catch (Exception ex) { }      
     }
   }
+  
+  /**
+   * {@inheritDoc}
+   */
+  public void deletePrevious(short zchar) { }
 }

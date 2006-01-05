@@ -105,6 +105,11 @@ public class MemoryOutputStream implements OutputStream {
   /**
    * {@inheritDoc}
    */
+  public void deletePrevious(short zchar) { }
+  
+  /**
+   * {@inheritDoc}
+   */
   public void select(boolean flag) {
     
     if (!flag && tableStack.size() > 0) {

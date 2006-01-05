@@ -21,9 +21,7 @@
   </path>
   
   <taskdef classpathref="cobertura.path" resource="tasks.properties"/>
-  <!--
   <taskdef resource="checkstyletask.properties" classpath="checkstyle.path"/>
-  -->
   
   <target name="init">
     <!-- Create the time stamp -->
@@ -84,7 +82,6 @@
 			<classpath refid="cobertura.path" />
 		</cobertura-report>
   </target>
-
 
   <target name="dist" depends="compile"
         description="generate the distribution" >

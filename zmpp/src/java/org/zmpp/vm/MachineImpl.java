@@ -527,6 +527,23 @@ public class MachineImpl implements Machine {
     zchars[0] = zchar;
     printZsciiChars(zchars, isInput);
   }
+  
+  /**
+   * {@inheritDoc}
+   */
+  public void deletePreviousZsciiChar(short zchar) {
+    
+    if (!outputStream[OUTPUTSTREAM_MEMORY - 1].isSelected()) {
+          
+      for (int i = 0; i < outputStream.length; i++) {
+      
+        if (outputStream[i] != null && outputStream[i].isSelected()) {
+      
+          outputStream[i].deletePrevious(zchar);
+        }
+      }
+    }
+  }
 
   /**
    * Prints the specified array of ZSCII characters. This is the only function

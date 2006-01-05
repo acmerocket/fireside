@@ -63,11 +63,6 @@ ScreenModel {
    */
   private StringBuilder streambuffer;
   
-  /**
-   * This buffer holds the current input.
-   */ 
-  private StringBuilder inputbuffer;
-  
   private Machine machine;
   private LineEditor editor;
   
@@ -217,7 +212,7 @@ ScreenModel {
     windows[WINDOW_BOTTOM].setBufferMode(flag);
   }
   
-  public synchronized void setEditMode(boolean flag, String initstring) {
+  public synchronized void setEditMode(boolean flag) {
     
     if (flag) {
       
@@ -228,15 +223,7 @@ ScreenModel {
     
     // Set status variables
     editMode = flag;
-    
-    if (flag) {
-      
-      inputbuffer = new StringBuilder(initstring);
-      
-    } else {
-      
-      inputbuffer = new StringBuilder();
-    }
+  
     notifyAll();  
   }
   
@@ -356,10 +343,6 @@ ScreenModel {
     
       printChar('\n', isInput);
     
-    } else if (zsciiChar == ZsciiEncoding.DELETE && isInput) {
-    
-      backSpace();
-    
     } else {
     
       ZsciiEncoding encoding = ZsciiEncoding.getInstance();
@@ -372,7 +355,19 @@ ScreenModel {
       repaintInUiThread();
     }
   }
+
+  /**
+   * {@inheritDoc}
+   */
+  public void deletePrevious(short zchar) {
+    
+    char deleteChar = ZsciiEncoding.getInstance().getUnicodeChar(zchar);
+    windows[activeWindow].getCursor().backspace(deleteChar);
+  }
   
+  /**
+   * {@inheritDoc}
+   */
   public void close() { }
   
   /**
@@ -466,36 +461,12 @@ ScreenModel {
     if (isInput || !windows[activeWindow].isBuffered()) {
       
       windows[activeWindow].printString(String.valueOf(c));
-
-      // Count chars for backspace
-      if (isInput) {
-        
-        // Be careful: !!! timed input is in conflict with this since it
-        // allows to print during input !!!
-        // We need to tell the difference between characters echoed
-        // from input and characters printed regular.
-        inputbuffer.append(c);
-      }
       
     } else {
       
       streambuffer.append(c);
     }
   }    
-
-  /**
-   * Implements backspace. Only can be invoked in edit mode.
-   */
-  private void backSpace() {
-    
-    if (inputbuffer.length() > 0) {
-      
-      int lastIndex = inputbuffer.length() - 1;
-      char lastChar = inputbuffer.charAt(lastIndex);
-      windows[activeWindow].getCursor().backspace(lastChar);
-      inputbuffer.deleteCharAt(lastIndex);
-    }
-  }
     
   private void drawCaret(boolean showCaret) {
     

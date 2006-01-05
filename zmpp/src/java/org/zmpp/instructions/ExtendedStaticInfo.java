@@ -38,6 +38,8 @@ public class ExtendedStaticInfo implements InstructionStaticInfo {
     { },            // 0x08
     { 5, 6, 7, 8 }, // SAVE_UNDO    
     { 5, 6, 7, 8 }, // RESTORE_UNDO
+    { 5, 6, 7, 8 }, // PRINT_UNICODE
+    { 5, 6, 7, 8 }, // CHECK_UNICODE
   };  
 
   private static final ExtendedStaticInfo instance = new ExtendedStaticInfo();
@@ -52,18 +54,14 @@ public class ExtendedStaticInfo implements InstructionStaticInfo {
    * explanations.
    */
   public static final int OP_SAVE                 = 0x00;
-
   public static final int OP_RESTORE              = 0x01;
-
   public static final int OP_LOG_SHIFT            = 0x02;
-
   public static final int OP_ART_SHIFT            = 0x03;
-
   public static final int OP_SET_FONT             = 0x04;
-
   public static final int OP_SAVE_UNDO            = 0x09;
-
   public static final int OP_RESTORE_UNDO         = 0x0a;
+  public static final int OP_PRINT_UNICODE        = 0x0b;
+  public static final int OP_CHECK_UNICODE        = 0x0c;
   
   public int[] getValidVersions(int opcode) {
 
@@ -85,6 +83,7 @@ public class ExtendedStaticInfo implements InstructionStaticInfo {
     case ExtendedStaticInfo.OP_SET_FONT:
     case ExtendedStaticInfo.OP_SAVE_UNDO:
     case ExtendedStaticInfo.OP_RESTORE_UNDO:
+    case ExtendedStaticInfo.OP_CHECK_UNICODE:
       return true;
     }
     return false;
@@ -103,7 +102,7 @@ public class ExtendedStaticInfo implements InstructionStaticInfo {
    */
   public boolean isOutput(int opcode, int version) {
     
-    return false;
+    return opcode == OP_PRINT_UNICODE;
   }
 
   /**
@@ -127,6 +126,10 @@ public class ExtendedStaticInfo implements InstructionStaticInfo {
       return "SAVE_UNDO";
     case ExtendedStaticInfo.OP_RESTORE_UNDO:
       return "RESTORE_UNDO";
+    case ExtendedStaticInfo.OP_PRINT_UNICODE:
+      return "PRINT_UNICODE";
+    case ExtendedStaticInfo.OP_CHECK_UNICODE:
+      return "CHECK_UNICODE";
     }
     return "unknown";
   }

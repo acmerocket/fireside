@@ -88,6 +88,12 @@ public class ExtendedInstruction extends AbstractInstruction {
     case ExtendedStaticInfo.OP_RESTORE_UNDO:
       restore_undo();
       break;
+    case ExtendedStaticInfo.OP_PRINT_UNICODE:
+      print_unicode();
+      break;
+    case ExtendedStaticInfo.OP_CHECK_UNICODE:
+      check_unicode();
+      break;
     default:
       throwInvalidOpcode();
       break;
@@ -159,5 +165,20 @@ public class ExtendedInstruction extends AbstractInstruction {
     // Reading from tables is not supported yet, this is the standard 
     // restore feature
     restoreFromStorage();
+  }
+  
+  private void print_unicode() {
+ 
+    short zchar = getValue(0);
+    getMachine().printZsciiChar(zchar, false);
+    nextInstruction();
+  }
+  
+  private void check_unicode() {
+
+    // always return true, set bit 0 for can print and bit 1 for
+    // can read
+    storeResult((short) 3);
+    nextInstruction();
   }
 }

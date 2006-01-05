@@ -291,12 +291,19 @@ public interface Machine {
   void newline();
   
   /**
-   * Prints the specified ZSCII characoter.
+   * Prints the specified ZSCII character.
    * 
    * @param zchar the ZSCII character to print
    * @param isInput true if this is echoing input
    */
   void printZsciiChar(short zchar, boolean isInput);
+  
+  /**
+   * Deletes the specified ZSCII character. This implements a backspace.
+   * 
+   * @param zchar the character to delete
+   */
+  void deletePreviousZsciiChar(short zchar);
   
   /**
    * Prints the specified signed number.
