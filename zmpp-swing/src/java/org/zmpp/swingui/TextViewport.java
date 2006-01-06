@@ -48,6 +48,7 @@ ScreenModel {
   private BufferedImage imageBuffer;
   private boolean initialized;
     
+  private static final int TEXTSTYLE_ROMAN          = 0;
   private static final int TEXTSTYLE_REVERSE_VIDEO  = 1;
   private static final int TEXTSTYLE_BOLD           = 2;
   private static final int TEXTSTYLE_ITALIC         = 4;
@@ -183,7 +184,11 @@ ScreenModel {
     // Flush the output before setting a new style
     flush();
     
-    int fontStyle = Font.PLAIN;
+    // Reset to plain if style is roman, or get the current font style
+    // otherwise
+    int fontStyle = (style == TEXTSTYLE_ROMAN) ? Font.PLAIN :
+          windows[activeWindow].getFont().getStyle();
+    
     Font windowFont;
     
     // Ensure that the top window is always set in a fixed font

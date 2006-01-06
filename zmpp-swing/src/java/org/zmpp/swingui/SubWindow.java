@@ -242,12 +242,32 @@ public class SubWindow {
     cursor.reset();
   }
   
+  /**
+   * Sets this window's current font.
+   * 
+   * @param font the current font
+   */
   public void setFont(Font font) {
     
     this.font = font;
   }
   
-  public Graphics getGraphics() {
+  /**
+   * Returns this window's current font.
+   * 
+   * @return the current font
+   */
+  public Font getFont() {
+    
+    return font;
+  }
+  
+  /**
+   * Accesses this window's graphics object.
+   * 
+   * @return the graphics object
+   */
+  private Graphics getGraphics() {
     
     Graphics g = image.getGraphics();
     g.setFont(font);
@@ -300,7 +320,7 @@ public class SubWindow {
     
     int width = image.getWidth();
     int lineLength = width - OFFSET_X * 2;
-    int numLines = height / fm.getHeight();
+    //int numLines = height / fm.getHeight();
     
     WordWrapper wordWrapper = new WordWrapper(lineLength, fm, isBuffered);
     //Pager pager = new Pager(numLines - 1, isPaged);
