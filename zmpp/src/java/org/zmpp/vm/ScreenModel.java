@@ -160,4 +160,11 @@ public interface ScreenModel {
    * Forces a redraw.
    */
   void redraw();
+  
+  /**
+   * Displays the cursor.
+   * 
+   * @param flag true if display, false for clear
+   */
+  void displayCursor(boolean flag);
 }
