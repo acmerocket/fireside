@@ -154,6 +154,7 @@ public class SubWindow {
   private boolean isScrolled;
   private LineEditor editor;
   private Component parentComponent;
+  private String position;
  
   /**
    * Constructor.
@@ -164,7 +165,7 @@ public class SubWindow {
    * @param img the buffer image
    */
   public SubWindow(Component parentComponent, LineEditor editor,
-                   BufferedImage img) {
+                   BufferedImage img, String position) {
     
     this.image = img;
     this.editor = editor;
@@ -172,6 +173,7 @@ public class SubWindow {
     isBuffered = true;
     this.cursor = new TextCursorImpl();
     yHomePos = HomeYPosition.BOTTOM;
+    this.position = position;
   }
   
   /**
@@ -314,7 +316,6 @@ public class SubWindow {
    */
   public void printString(String str) {
 
-    //System.out.printf("printString(): [%s]\n", str);
     Graphics g = getGraphics();
     FontMetrics fm = g.getFontMetrics();
     
@@ -396,7 +397,8 @@ public class SubWindow {
       cursor.advanceColumnPos(line);
       
       // Ends with newline or is not last line
-      if ((line.length() > 0 && line.charAt(line.length() - 1) == '\n')
+      if (line.length() == 0
+          || (line.length() > 0 && line.charAt(line.length() - 1) == '\n')
           || i < lines.length - 1) {
         
         newline();
