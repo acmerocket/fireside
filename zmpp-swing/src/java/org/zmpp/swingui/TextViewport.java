@@ -68,7 +68,6 @@ ScreenModel {
   private LineEditor editor;
   
   private boolean isSelected;
-  private boolean editMode;
   private SubWindow[] windows;
   private int[] fontnumbers;
   private int activeWindow;
@@ -139,9 +138,7 @@ ScreenModel {
   
   public void setTextCursor(final int line, final int column) {
    
-    //System.out.println("setTextCursor, line: " + line + " column: " + column + " active: " + activeWindow);
     windows[activeWindow].getCursor().setPosition(line, column);
-    if (isEditMode()) repaintInUiThread();
   }
   
   public void splitWindow(final int linesUpperWindow) {
@@ -217,19 +214,6 @@ ScreenModel {
     windows[WINDOW_BOTTOM].setBufferMode(flag);
   }
   
-  public synchronized void setEditMode(boolean flag) {
-    
-    if (flag) {
-      
-      flush();
-    }
-    
-    // Set status variables
-    editMode = flag;
-  
-    notifyAll();  
-  }
-  
   public void setPaging(boolean flag) {
     
     windows[WINDOW_BOTTOM].setIsPagingEnabled(flag);
@@ -242,13 +226,7 @@ ScreenModel {
       
       windows[activeWindow].printString(streambuffer.toString());
       streambuffer = new StringBuilder();
-      if (isEditMode()) repaintInUiThread();
     }
-  }
-  
-  public synchronized boolean isEditMode() {
-    
-    return editMode;
   }
   
   public synchronized boolean isInitialized() {
