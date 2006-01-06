@@ -223,8 +223,6 @@ ScreenModel {
       
       flush();
     }
-    drawCaret(flag);
-    repaintInUiThread();
     
     // Set status variables
     editMode = flag;
@@ -280,7 +278,7 @@ ScreenModel {
           BufferedImage.TYPE_INT_RGB);
       
       // Create the two sub windows
-      windows[WINDOW_TOP] = new SubWindow(this, editor, imageBuffer);
+      windows[WINDOW_TOP] = new SubWindow(this, editor, imageBuffer, "TOP");
       windows[WINDOW_TOP].setBackground(getBackground());
       windows[WINDOW_TOP].setForeground(getForeground());
       // S. 8.7.2.4: use fixed font for upper window
@@ -291,7 +289,7 @@ ScreenModel {
       windows[WINDOW_TOP].setBufferMode(false);
       windows[WINDOW_TOP].setIsScrolled(false);
       
-      windows[WINDOW_BOTTOM] = new SubWindow(this, editor, imageBuffer);           
+      windows[WINDOW_BOTTOM] = new SubWindow(this, editor, imageBuffer, "BOTTOM");           
       windows[WINDOW_BOTTOM].setBackground(getBackground());
       windows[WINDOW_BOTTOM].setForeground(getForeground());
       windows[WINDOW_BOTTOM].setFont(standardFont);
@@ -341,9 +339,7 @@ ScreenModel {
    */
   public void print(final short zsciiChar, boolean isInput) {
 
-    //System.out.println("print: " + (char) zsciiChar + " isInput: " + isInput);
-    if (isInput) drawCaret(false);
-    
+    //System.out.println("print: " + (char) zsciiChar + " isInput: " + isInput);    
     if (zsciiChar == ZsciiEncoding.NEWLINE) {
     
       printChar('\n', isInput);
@@ -352,12 +348,6 @@ ScreenModel {
     
       ZsciiEncoding encoding = ZsciiEncoding.getInstance();
       printChar(encoding.getUnicodeChar(zsciiChar), isInput);
-    }
-    
-    if (isInput) {
-      
-      drawCaret(true);
-      repaintInUiThread();
     }
   }
 
@@ -455,6 +445,14 @@ ScreenModel {
     return 0;
   }
   
+  /**
+   * {@inheritDoc}
+   */
+  public synchronized void displayCursor(boolean showCaret) {
+    
+    windows[activeWindow].getCursor().draw(showCaret);
+  }
+  
   // **********************************************************************
   // ******** Private functions
   // *************************************************
@@ -473,11 +471,6 @@ ScreenModel {
     }
   }    
     
-  private void drawCaret(boolean showCaret) {
-    
-    windows[activeWindow].getCursor().draw(showCaret);
-  }
-  
   private void determineStandardFont() {
     
     // Sets the fixed font as the standard
