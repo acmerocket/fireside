@@ -387,8 +387,16 @@ public class LongInstruction extends AbstractInstruction {
     
     int obj = getUnsignedValue(0);
     int dest = getUnsignedValue(1);
-    ObjectTree objectTree = getMachine().getObjectTree();
-    objectTree.insertObject(dest, obj);
+    if (obj > 0 && dest > 0) {
+      
+      ObjectTree objectTree = getMachine().getObjectTree();
+      objectTree.insertObject(dest, obj);
+      
+    } else {
+      
+      getMachine().warn("@insert_obj with object 0 called, obj: " + obj
+                        + ", dest: " + dest);
+    }
     nextInstruction();
   }
   
