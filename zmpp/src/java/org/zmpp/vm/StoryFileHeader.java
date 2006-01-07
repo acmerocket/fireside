@@ -204,6 +204,22 @@ public interface StoryFileHeader {
    */
   void setDefaultForegroundColor(int color);
   
+  /**
+   * Sets the standard revision number this machine supports to the
+   * header.
+   * 
+   * @param major major revision number
+   * @param minor minor revision number
+   */
+  void setStandardRevision(int major, int minor);
+  
+  /**
+   * Returns the address of the terminating characters table.
+   * 
+   * @return the address of the terminating characters table
+   */
+  int getTerminatorsAddress();
+  
   // ********************************************************************
   // ****** Attributes
   // **********************************

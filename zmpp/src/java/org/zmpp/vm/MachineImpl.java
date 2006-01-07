@@ -192,6 +192,7 @@ public class MachineImpl implements Machine {
     this.decoder.initialize(this, memaccess);
     int checksum = calculateChecksum(fileHeader);
     hasValidChecksum = fileHeader.getChecksum() == checksum;
+    fileHeader.setStandardRevision(1, 0);
     
     if (fileHeader.getVersion() >= 4) {
             

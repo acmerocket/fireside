@@ -346,4 +346,17 @@ public class StoryFileHeaderTest extends MockObjectTestCase {
     fileHeader.setEnabled(Attribute.SUPPORTS_COLOURS, true);
     fileHeader.setEnabled(Attribute.SUPPORTS_COLOURS, false);
   }
+  
+  public void testGetTerminatorsAddress() {
+    
+    mockMemAccess.expects(once()).method("readUnsignedShort").with(eq(0x2e)).will(returnValue(1234));
+    assertEquals(1234, fileHeader.getTerminatorsAddress());
+  }
+  
+  public void testSetStandardRevision() {
+    
+    mockMemAccess.expects(once()).method("writeUnsignedByte").with(eq(0x32), eq((short) 1));
+    mockMemAccess.expects(once()).method("writeUnsignedByte").with(eq(0x33), eq((short) 2));
+    fileHeader.setStandardRevision(1, 2);
+  }
 }

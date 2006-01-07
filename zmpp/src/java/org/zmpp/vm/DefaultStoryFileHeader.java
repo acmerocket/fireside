@@ -225,6 +225,23 @@ public class DefaultStoryFileHeader implements StoryFileHeader {
     
     memaccess.writeUnsignedByte(0x2d, (short) color);
   }
+ 
+  /**
+   * {@inheritDoc}
+   */
+  public void setStandardRevision(int major, int minor) {
+    
+    memaccess.writeUnsignedByte(0x32, (short) major);
+    memaccess.writeUnsignedByte(0x33, (short) minor);
+  }
+  
+  /**
+   * {@inheritDoc}
+   */
+  public int getTerminatorsAddress() {
+    
+    return memaccess.readUnsignedShort(0x2e);
+  }
   
   // ***********************************************************************
   // ****** Attributes
