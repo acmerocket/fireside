@@ -2,7 +2,7 @@
  * $Id$
  * 
  * Created on 11/25/2005
- * Copyright 2005 by Wei-ju Wu
+ * Copyright 2005-2006 by Wei-ju Wu
  *
  * This file is part of The Z-machine Preservation Project (ZMPP).
  *
