@@ -63,6 +63,7 @@ public class PrintLiteralInstructionTest extends InstructionTestBase {
     mockMachine.expects(atLeastOnce()).method("getStoryFileHeader").will(returnValue(storyfileHeader));
     mockFileHeader.expects(atLeastOnce()).method("getVersion").will(returnValue(3));
     mockMachine.expects(once()).method("printZString").with(eq(4712));
+    mockMachine.expects(once()).method("newline");
     mockMachine.expects(once()).method("popRoutineContext").with(eq((short) 1));
     
     PrintLiteralInstruction print_ret = new PrintLiteralInstruction(

@@ -118,6 +118,7 @@ public class PrintLiteralInstruction extends AbstractInstruction {
     if (getOpcode() == PrintLiteralStaticInfo.OP_PRINT_RET) {
       
       getMachine().printZString(instructionAddress + 1);
+      getMachine().newline();
       returnFromRoutine(TRUE);
       
     } else if (getOpcode() == PrintLiteralStaticInfo.OP_PRINT) {
