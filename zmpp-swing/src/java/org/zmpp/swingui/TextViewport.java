@@ -57,6 +57,8 @@ ScreenModel {
   private static final int WINDOW_BOTTOM  = 0;
   private static final int WINDOW_TOP     = 1;
   
+  private Color defaultForeground;
+  private Color defaultBackground;
   private Font standardFont, fixedFont;
   
   /**
@@ -143,7 +145,7 @@ ScreenModel {
   
   public void splitWindow(final int linesUpperWindow) {
    
-    //System.out.println("splitWindow(): " + linesUpperWindow);
+    //System.out.println("splitWindow(): " + linesUpperWindow + " activeWindow: " + activeWindow);
     // The standard document suggests that a split should only take part 
     // if the lower window is selected (S 8.7.2.1), but Bureaucracy does
     // the split with the upper window selected, so we do that resizing
@@ -159,6 +161,7 @@ ScreenModel {
   
   public void setWindow(final int window) {
     
+    //System.out.println("setWindow(), window: " + window);
     // Flush out the current active window
     flush();
     
@@ -255,10 +258,16 @@ ScreenModel {
       imageBuffer = new BufferedImage(getWidth(), getHeight(),
           BufferedImage.TYPE_INT_RGB);
       
+      // Default colors
+      defaultBackground = Color.WHITE;
+      defaultForeground = Color.BLACK;
+      setBackground(Color.WHITE);
+      setForeground(Color.BLACK);
+      
       // Create the two sub windows
       windows[WINDOW_TOP] = new SubWindow(this, editor, imageBuffer, "TOP");
-      windows[WINDOW_TOP].setBackground(getBackground());
-      windows[WINDOW_TOP].setForeground(getForeground());
+      windows[WINDOW_TOP].setBackground(defaultBackground);
+      windows[WINDOW_TOP].setForeground(defaultForeground);
       // S. 8.7.2.4: use fixed font for upper window
       windows[WINDOW_TOP].setFont(fixedFont);
       fontnumbers[WINDOW_TOP] = ScreenModel.FONT_FIXED;
@@ -268,8 +277,8 @@ ScreenModel {
       windows[WINDOW_TOP].setIsScrolled(false);
       
       windows[WINDOW_BOTTOM] = new SubWindow(this, editor, imageBuffer, "BOTTOM");           
-      windows[WINDOW_BOTTOM].setBackground(getBackground());
-      windows[WINDOW_BOTTOM].setForeground(getForeground());
+      windows[WINDOW_BOTTOM].setBackground(defaultBackground);
+      windows[WINDOW_BOTTOM].setForeground(defaultForeground);
       windows[WINDOW_BOTTOM].setFont(standardFont);
       fontnumbers[WINDOW_TOP] = ScreenModel.FONT_NORMAL;
       windows[WINDOW_BOTTOM].setHomeYPosition(HomeYPosition.BOTTOM);
@@ -280,7 +289,7 @@ ScreenModel {
       activeWindow = WINDOW_BOTTOM;
 
       Graphics g_img = imageBuffer.getGraphics();
-      g_img.setColor(getBackground());
+      g_img.setColor(defaultBackground);
       g_img.fillRect(0, 0, getWidth(), getHeight());
       resizeWindows(0);
       windows[WINDOW_TOP].getCursor().reset();
@@ -310,6 +319,15 @@ ScreenModel {
   public void select(boolean flag) {
   
     isSelected = flag;
+  }
+  
+  /**
+   * Reset the line counters.
+   */
+  public void resetPagers() {
+    
+    windows[WINDOW_TOP].resetPager();
+    windows[WINDOW_BOTTOM].resetPager();
   }
   
   /**
@@ -348,6 +366,9 @@ ScreenModel {
    */
   public void setForegroundColor(int colornum) {
    
+    //if (activeWindow == WINDOW_BOTTOM)
+    //  System.out.println("setForegroundColor(): " + colornum);
+    
     if (colornum > 0) {
       
       flush();
@@ -359,6 +380,9 @@ ScreenModel {
    * {@inheritDoc}
    */
   public void setBackgroundColor(int colornum) {
+    
+    //if (activeWindow == WINDOW_BOTTOM)
+    //  System.out.println("setBackgroundColor(): " + colornum);
     
     if (colornum > 0) {
       
@@ -380,7 +404,7 @@ ScreenModel {
     switch (colornum) {
     
     case COLOR_DEFAULT:
-      return (foreground) ? getForeground() : getBackground();
+      return (foreground) ? defaultForeground : defaultBackground;
     case COLOR_BLACK:
       return Color.BLACK;
     case COLOR_RED:
@@ -437,7 +461,8 @@ ScreenModel {
 
   private void printChar(char c, boolean isInput) {
 
-    //System.out.println("printChar: " + c + " active: " + activeWindow);
+    //if (activeWindow == WINDOW_BOTTOM)
+    //  System.out.println("printChar: " + c + " active: " + activeWindow);
 
     if (isInput || !windows[activeWindow].isBuffered()) {
       
@@ -486,14 +511,18 @@ ScreenModel {
       int screenWidth = (imageBuffer.getWidth() - 2 * SubWindow.OFFSET_X) /
                         fm.charWidth('0');
       int screenHeight = imageBuffer.getHeight() / fm.getHeight();
+      //System.out.println("screenWidth: " + screenWidth
+      //    + " screenHeight: " + screenHeight);
+      
       fileheader.setScreenWidth(screenWidth);
       fileheader.setScreenHeight(screenHeight);
-      
     }
     
     if (fileheader.getVersion() >= 5) {
 
       fileheader.setEnabled(Attribute.SUPPORTS_COLOURS, true);
+      fileheader.setDefaultBackgroundColor(COLOR_WHITE);
+      fileheader.setDefaultForegroundColor(COLOR_BLACK);
     }
     determineStandardFont();
   }

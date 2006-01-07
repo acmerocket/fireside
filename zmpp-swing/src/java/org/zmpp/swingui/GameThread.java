@@ -67,6 +67,5 @@ public class GameThread extends Thread {
       }
       instr.execute();
     }
-    System.out.printf("und tschuess ! pc: %4x\n", machine.getProgramCounter());
   }
 }

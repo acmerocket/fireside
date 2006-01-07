@@ -64,6 +64,9 @@ public class SubWindow {
     }
     
     public void setPosition(int line, int column) {
+     
+      //if (position.equals("BOTTOM"))
+      //  System.out.println("setPosition(), line: " + line + " column: " + column);
       
       FontMetrics fm = getGraphics().getFontMetrics();
       int meanCharWidth = fm.charWidth('0');      
@@ -155,6 +158,8 @@ public class SubWindow {
   private LineEditor editor;
   private Component parentComponent;
   private String position;
+  private int linesPerPage;
+  private int linesPrinted;
  
   /**
    * Constructor.
@@ -235,13 +240,23 @@ public class SubWindow {
     
     this.top = top;
     this.height = height;
+    updatePageSize();
     cursor.reset();
   }
   
   public void resize(int numLines) {
     
-    this.height = getGraphics().getFontMetrics().getHeight() * numLines;
+    height = getGraphics().getFontMetrics().getHeight() * numLines;
+    updatePageSize();
     cursor.reset();
+  }
+  
+  /**
+   * Updates the page size.
+   */
+  private void updatePageSize() {
+    
+    linesPerPage = (height / getGraphics().getFontMetrics().getHeight()) - 1;
   }
   
   /**
@@ -316,37 +331,27 @@ public class SubWindow {
    */
   public void printString(String str) {
 
+    /*
+    if (position.equals("BOTTOM")) {
+      
+      System.out.printf("printString(), str: [%s]", str);
+    }*/
     Graphics g = getGraphics();
     FontMetrics fm = g.getFontMetrics();
     
     int width = image.getWidth();
     int lineLength = width - OFFSET_X * 2;
-    //int numLines = height / fm.getHeight();
     
     WordWrapper wordWrapper = new WordWrapper(lineLength, fm, isBuffered);
-    //Pager pager = new Pager(numLines - 1, isPaged);
-    String[] lines = wordWrapper.wrap(cursor.currentX, str);
-    //String[][] pages = pager.createPages(lines);
-    
-    printLines(lines);
-    
-    /*
-    for (int i = 0; i < pages.length; i++) {
-      
-      String[] currentPage = pages[i];
-      printLines(currentPage);
-      
-      if (isPaged && i < (pages.length - 1)) {
-        
-        doMeMore();
-      }
-    }*/
+    String[] lines = wordWrapper.wrap(cursor.currentX, str);    
+    printLines(lines);    
   }
-  
+ 
   private void doMeMore() {
         
-    String[] more = { "", "<MORE> (Press key to continue)" };
-    printLines(more);
+    printLine("<MORE> (Press key to continue)", getGraphics(),
+        getGraphics().getFontMetrics(),
+        getTextBackground(), getTextColor());
     
     // Rendering in the UI thread
     try {
@@ -368,42 +373,75 @@ public class SubWindow {
     getCursor().setHomeX();
     eraseLine();        
     editor.setInputMode(false);
+    resetPager();
   }
   
   private void printLines(String lines[]) {
     
     Graphics g = getGraphics();
-    FontMetrics fm = g.getFontMetrics();
-    
-    // Handle reverse video !!
-    Color textColor = foreground;
-    Color textbackColor = background;
-    if (isReverseVideo) {
-
-      textColor = background;
-      textbackColor = foreground;
-    }
+    FontMetrics fm = g.getFontMetrics();    
+    Color textColor = getTextColor();
+    Color textbackColor = getTextBackground();
     
     for (int i = 0; i < lines.length; i++) {
 
+      if (isPaged && linesPrinted >= linesPerPage) {
+        
+        doMeMore();
+      }
       String line = lines[i];
-      scrollIfNeeded();
-      g.setColor(textbackColor);
-      g.fillRect(cursor.currentX,
-                 cursor.currentY - fm.getHeight() + fm.getMaxDescent(),
-                 fm.stringWidth(line), fm.getHeight());
-      g.setColor(textColor);
-      g.drawString(line, cursor.currentX, cursor.currentY);
-      cursor.advanceColumnPos(line);
+      //if (position.equals("BOTTOM"))
+      //  System.out.printf("line = '%s', lines printed: %d\n", line, linesPrinted);
+      printLine(line, g, fm, textbackColor, textColor);
       
-      // Ends with newline or is not last line
-      if (line.length() == 0
-          || (line.length() > 0 && line.charAt(line.length() - 1) == '\n')
+      if (isEmptyLine(line) || endsWithNewLine(line)
           || i < lines.length - 1) {
         
         newline();
+        linesPrinted++;
       }
     }
+  }
+  
+  /**
+   * Resets the internal pager.
+   */
+  public void resetPager() {
+    
+    linesPrinted = 0;
+  }
+  
+  private Color getTextBackground() {
+    
+    return isReverseVideo ? foreground : background;
+  }
+  
+  private Color getTextColor() {
+    
+    return isReverseVideo ? background : foreground;
+  }
+  
+  private void printLine(String line, Graphics g, FontMetrics fm,
+      Color textbackColor, Color textColor) {
+    
+    scrollIfNeeded();
+    g.setColor(textbackColor);
+    g.fillRect(cursor.currentX,
+               cursor.currentY - fm.getHeight() + fm.getMaxDescent(),
+               fm.stringWidth(line), fm.getHeight());
+    g.setColor(textColor);
+    g.drawString(line, cursor.currentX, cursor.currentY);
+    cursor.advanceColumnPos(line);
+  }
+  
+  private static boolean isEmptyLine(String str) {
+    
+    return str.length() == 0;
+  }
+  
+  private static boolean endsWithNewLine(String str) {
+  
+    return str.charAt(str.length() - 1) == '\n';
   }
   
   public void scrollUp() {
