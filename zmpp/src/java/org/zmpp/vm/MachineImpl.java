@@ -498,7 +498,7 @@ public class MachineImpl implements Machine {
    */
   public void printZString(int address) {
     
-    print(new ZString(memaccess, address).toString());
+    print(config.getZCharConverter().convert(memaccess, address));
   }
   
   /**
@@ -506,6 +506,7 @@ public class MachineImpl implements Machine {
    */
   public void print(String str) {
 
+    //System.out.println("print: '" + str + "'");
     printZsciiChars(ZsciiEncoding.getInstance().convertToZscii(str), false);
   }
   
@@ -524,6 +525,7 @@ public class MachineImpl implements Machine {
    */
   public void printZsciiChar(short zchar, boolean isInput) {
     
+    //System.out.println("printZsciiChar: '" + (char) zchar + "'");
     zchars[0] = zchar;
     printZsciiChars(zchars, isInput);
   }
