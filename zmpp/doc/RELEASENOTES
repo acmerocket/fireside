@@ -1,5 +1,5 @@
 Project: The Z-machine Preservation Project
-Author: Wei-ju Wu (2005)
+Author: Wei-ju Wu (2005-2006)
 License: GNU public license
 
 About
@@ -7,19 +7,23 @@ About
 
 The Z-machine Preservation Project is an attempt to capture and document the
 Z-machine's architecture and design principles and to provide a modern Java
-implementation that can be easily maintained and extended.
+implementation that can be easily maintained and extended. Its goal is to be the reference
+Java implemetation of the Z-machine specification.
 
 Features:
 
 - written from scratch using Java 5
+- probably the cleanest, fastest and most complete Java implementation of the Z-machine
+   specification to date
 - currently supports story file version 3, 4, 5, 7 and 8
 - can be run as a Java applet within the web browser
 - saves and reads games in Quetzal 1.4 format
-- supports input stream 0 and 1 (keyboard and file)
-- supports output streams 1, 2 and 3 (screen, transcript, memory with nesting)
-- supports split subwindows (paging, buffering, scrolling)
-- supports multiple font styles and colors
-- supports undo
+- input stream 0 and 1 (keyboard and file)
+- output streams 1, 2 and 3 (screen, transcript, memory with nesting)
+- split subwindows (paging, buffering, scrolling)
+- multiple font styles and colors
+- timed input, preinitialized input
+- undo
 
 For remarks and suggestions for improvements, please contact
 me using the ZMPP project homepage:
@@ -28,13 +32,10 @@ http://sourceforge.net/projects/zmpp
 
 TODO:
 
-- less frequent opcodes (throw/catch, print_unicode, check_unicode, encode_text,
-  copy_table, print_table)
-- timed input
+- less frequent opcodes (throw/catch, encode_text, print_table)
 - user dictionaries
 - custom alphabet tables
 - save/restore regions
-- successfully terpetude to reach and state standard compliance
 - optimization of perceived performance (user interface)
 - sound_effects
 - character graphics
@@ -52,7 +53,7 @@ java -jar zmpp.jar
 On most systems, double clicking on the application jar file should start
 the software as well.
 
-Select a version 3 game
+Select a game
 
 Running as an applet
 --------------------
@@ -60,13 +61,14 @@ Running as an applet
 TODO
 
 
-Supported Infocom games
+Supported Z-code games
 ----------------------
 
 These games could be successfully started so far:
 
 Version 3:
 
+- Cutthroats
 - Enchanter
 - Hitchhiker's Guide To The Galaxy
 - Leather Godesses Of Phobos
@@ -84,6 +86,7 @@ Version 4:
 Version 5:
 
 - Curses
+- I-0
 
 Version 8:
 

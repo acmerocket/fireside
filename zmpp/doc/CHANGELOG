@@ -1,5 +1,37 @@
 Changelog
 
+Version 0.78
+-----------
+
+- reorganized the package structure
+- refactoring input and lexical analysis is in an own class now
+- added more tests for input
+- added timed input
+- there is only one character reading function now, management of the the input buffer is
+   now subject to the interpreter
+- check_unicode and print_unicode added
+- fixed a bug in the tokenise function
+- fixed an issue with the input line, after printing a single empty line, the newline was not
+   performed
+- displayCursor() is now under control of the virtual machine core, making it easier to
+   display the correct cursor state within timed input
+- TextViewport has no edit mode anymore, reducing the UI complexity
+- replaced paging scheme, the old one had problems when text was printed as separate lines 
+- set default colors to header
+- prints several unicode characters
+- handles escape key
+- ran etude.z5 for the first time, runs successfully
+   -> fixed one problem with accents
+   -> fixed one problem with fonts
+   -> fixed one problem with colors
+   -> output is flushed before quit
+   -> leftover input is editable
+   -> fixed font style combination issue
+- ran strictz.z5 for the first time, successfully
+   -> fixed one issue in insert_object with object 0
+- ran gntests for the first time
+- ran unicode.z5 for the first time
+
 Version 0.75
 ------------
 

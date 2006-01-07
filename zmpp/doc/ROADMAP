@@ -2,30 +2,30 @@ Roadmap:
 
 TODO:
 
+- user dictionaries, extend tokenise using user dictionary
 - support version 1 and 2
 - save and restore saving regions
 - different alphabet tables
 - opcodes:
   1. throw
   2. catch
-  3. print_unicode (EXT)
-  4. check_unicode (EXT)  
-  5. encode_text
-  6. print_table
+  3. encode_text
+  4. print_table
 - support version 6
 - sound
 - character graphics
-- run terpetude successfully
 - redesign execution scheme (partly done)
-- rework paging scheme, buffering up all output until input is requested
 
-Version 0.77:
--------------
+Version 0.78:
+------------
 
 - timed input (introduced here, since Border Zone is the first Infocom game
   using this feature)
-- different dictionaries
-- extend tokenise using user dictionary
+- print_unicode (EXT)
+- check_unicode (EXT)  
+- rework paging scheme, buffering up all output until input is requested
+- run terpetude successfully
+- ZsciiEncoding supports the full unicode set
 
 Version 0.75:
 -------------
