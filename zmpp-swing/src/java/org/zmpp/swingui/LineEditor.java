@@ -122,6 +122,9 @@ public class LineEditor implements KeyListener {
       case KeyEvent.VK_RIGHT:
         addToBuffer(ZsciiEncoding.CURSOR_RIGHT);
         break;
+      case KeyEvent.VK_ESCAPE:
+        addToBuffer(ZsciiEncoding.ESCAPE);
+        break;
     }
   }
 
@@ -145,6 +148,7 @@ public class LineEditor implements KeyListener {
   private boolean handledInKeyReleased(char c) {
     
     return c == KeyEvent.VK_UP || c == KeyEvent.VK_DOWN
-           || c == KeyEvent.VK_LEFT || c == KeyEvent.VK_RIGHT;
+           || c == KeyEvent.VK_LEFT || c == KeyEvent.VK_RIGHT
+           || c == KeyEvent.VK_ESCAPE;
   }
 }
