@@ -322,7 +322,7 @@ public class LongInstruction extends AbstractInstruction {
     int obj = getUnsignedValue(0);
     int attr = getUnsignedValue(1);
     
-    if (obj > 0) {
+    if (obj > 0 && isValidAttribute(attr)) {
       
       ZObject zobj = getMachine().getObjectTree().getObject(obj);
       branchOnTest(zobj.isAttributeSet(attr));
@@ -338,14 +338,15 @@ public class LongInstruction extends AbstractInstruction {
     
     int obj = getUnsignedValue(0);
     int attr = getUnsignedValue(1);
-    if (obj > 0) {
+    if (obj > 0 && isValidAttribute(attr)) {
       
       ZObject zobj = getMachine().getObjectTree().getObject(obj);
       zobj.setAttribute(attr);
       
     } else {
       
-      getMachine().warn("@set_attr illegal access to object " + obj);
+      getMachine().warn("@set_attr illegal access to object " + obj
+                        + " attr: " + attr);
     }
     nextInstruction();
   }
@@ -354,14 +355,15 @@ public class LongInstruction extends AbstractInstruction {
     
     int obj = getUnsignedValue(0);
     int attr = getUnsignedValue(1);
-    if (obj > 0) {
+    if (obj > 0 && isValidAttribute(attr)) {
       
       ZObject zobj = getMachine().getObjectTree().getObject(obj);
       zobj.clearAttribute(attr);
       
     } else {
       
-      getMachine().warn("@clear_attr illegal access to object " + obj);
+      getMachine().warn("@clear_attr illegal access to object " + obj
+                        + " attr: " + attr);
     }
     nextInstruction();
   }
@@ -512,5 +514,12 @@ public class LongInstruction extends AbstractInstruction {
     getMachine().getScreen().setForegroundColor(getValue(0));
     getMachine().getScreen().setBackgroundColor(getValue(1));
     nextInstruction();
-  }  
+  }
+  
+  private boolean isValidAttribute(int attribute) {
+    
+    int numAttr =
+      getMachine().getStoryFileHeader().getVersion() <= 3 ? 32 : 48;
+    return attribute >= 0 && attribute < numAttr;    
+  }
 }
