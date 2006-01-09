@@ -31,6 +31,7 @@ public class GameThread extends Thread {
 
   private TextViewport viewport;
   private Machine machine;
+  private static final boolean DEBUG = false;
   
   public GameThread(Machine machine, TextViewport viewport) {
     
@@ -60,8 +61,7 @@ public class GameThread extends Thread {
     while (machine.isRunning()) {
       
       Instruction instr = machine.nextStep();
-      boolean debug = false;
-      if (debug) {
+      if (DEBUG) {
         System.out.println(String.format("%05x: %s", machine.getProgramCounter(),
                            instr.toString()));
       }
