@@ -26,7 +26,7 @@ import java.util.HashMap;
 import java.util.Map;
 
 import org.zmpp.base.MemoryReadAccess;
-import org.zmpp.vmutil.ZString;
+import org.zmpp.vmutil.ZCharDecoder;
 
 /**
  * This class implements a view on the dictionary within a memory map.
@@ -47,6 +47,11 @@ public class DefaultDictionary implements Dictionary {
   private int address;
   
   /**
+   * A Z char decoder.
+   */
+  private ZCharDecoder decoder;
+  
+  /**
    * The lookup map.
    */
   private Map<String, Integer> lookupMap;
@@ -61,11 +66,14 @@ public class DefaultDictionary implements Dictionary {
    * 
    * @param map the memory map
    * @param address the start address of the dictionary
+   * @param converter a Z char decoder object
    */
-  public DefaultDictionary(MemoryReadAccess map, int address) {
+  public DefaultDictionary(MemoryReadAccess map, int address,
+                           ZCharDecoder decoder) {
     
     this.memaccess = map;
     this.address = address;
+    this.decoder = decoder;
     createLookupMap();
   }  
 
@@ -154,14 +162,12 @@ public class DefaultDictionary implements Dictionary {
   private void createLookupMap() {
     
     lookupMap = new HashMap<String, Integer>();
-    ZString zstr;
     int entryAddress;
     
     for (int i = 0, n = getNumberOfEntries(); i < n; i++) {
       
-      entryAddress = getEntryAddress(i);
-      zstr = new ZString(memaccess, entryAddress);
-      String str = zstr.toString();
+      entryAddress = getEntryAddress(i);      
+      String str = decoder.decode2Unicode(memaccess, entryAddress);
       maxEntrySize = Math.max(str.length(), maxEntrySize);
       lookupMap.put(str, entryAddress);
     }
@@ -175,7 +181,6 @@ public class DefaultDictionary implements Dictionary {
   public String toString() {
 
     StringBuilder buffer = new StringBuilder();
-    ZString zstr;
     int entryAddress;
     int i = 0;
     int n = getNumberOfEntries();
@@ -183,9 +188,8 @@ public class DefaultDictionary implements Dictionary {
     while (true) {
       
       entryAddress = getEntryAddress(i);
-      zstr = new ZString(memaccess, entryAddress);
-      //buffer.append(String.format("[%4d] '%s' ", (i + 1), zstr.toString()));
-      buffer.append(String.format("[%4d] '%-9s' ", (i + 1), zstr.toString()));
+      String str = decoder.decode2Unicode(memaccess, entryAddress);
+      buffer.append(String.format("[%4d] '%-9s' ", (i + 1), str));
       i++;
       if ((i % 4) == 0) buffer.append("\n");
       if (i == n) break;

@@ -220,6 +220,20 @@ public interface StoryFileHeader {
    */
   int getTerminatorsAddress();
   
+  /**
+   * Sets the font width in width of a '0'.
+   * 
+   * @param units the number of units in widths of a '0'
+   */
+  void setFontWidth(int units);
+  
+  /**
+   * Sets the font height in width of a '0'.
+   * 
+   * @param units the number of units in heights of a '0'
+   */
+  void setFontHeight(int units);
+  
   // ********************************************************************
   // ****** Attributes
   // **********************************

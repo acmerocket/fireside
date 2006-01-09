@@ -27,6 +27,7 @@ import java.util.List;
 import org.zmpp.base.MemoryAccess;
 import org.zmpp.io.InputStream;
 import org.zmpp.io.OutputStream;
+import org.zmpp.vmutil.ZCharDecoder;
 
 /**
  * This interface gives the instructions an abstract access to the current
@@ -73,6 +74,13 @@ public interface Machine {
    * @return the story file header
    */
   StoryFileHeader getStoryFileHeader();
+  
+  /**
+   * Returns the zchar decoder.
+   * 
+   * @return the zchar decoder
+   */
+  ZCharDecoder getZCharDecoder();
   
   /**
    * Returns true, if the checksum validation was successful.

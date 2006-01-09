@@ -34,7 +34,8 @@ import org.zmpp.vm.Machine;
 import org.zmpp.vm.MachineConfig;
 import org.zmpp.vm.MachineImpl;
 import org.zmpp.vm.StoryFileHeader;
-import org.zmpp.vmutil.ZCharConverter;
+import org.zmpp.vmutil.DefaultZCharDecoder;
+import org.zmpp.vmutil.ZCharDecoder;
 
 /**
  * This class acts as a base test class and sets up some integrated
@@ -47,7 +48,7 @@ public abstract class MemoryMapSetup extends MockObjectTestCase {
 
   protected MemoryAccess minizorkmap;
   protected MachineConfig config;
-  protected ZCharConverter converter;
+  protected ZCharDecoder converter;
   protected StoryFileHeader fileheader;
   protected Abbreviations abbreviations;
   protected Machine machineState;
@@ -63,7 +64,7 @@ public abstract class MemoryMapSetup extends MockObjectTestCase {
     
     abbreviations = new Abbreviations(minizorkmap,
         fileheader.getAbbreviationsAddress());
-    converter = new ZCharConverter(3, abbreviations);
+    converter = new DefaultZCharDecoder(3, abbreviations);
     
     machineState = new MachineImpl();
     machineState.initialize(config, new DefaultInstructionDecoder());

@@ -243,6 +243,22 @@ public class DefaultStoryFileHeader implements StoryFileHeader {
     return memaccess.readUnsignedShort(0x2e);
   }
   
+  /**
+   * {@inheritDoc}
+   */
+  public void setFontWidth(int units) {
+
+    memaccess.writeUnsignedByte(0x26, (short) units);
+  }
+  
+  /**
+   * {@inheritDoc}
+   */
+  public void setFontHeight(int units) {
+    
+    memaccess.writeUnsignedByte(0x27, (short) units);
+  }
+  
   // ***********************************************************************
   // ****** Attributes
   // **********************************

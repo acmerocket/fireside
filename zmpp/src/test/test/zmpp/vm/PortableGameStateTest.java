@@ -325,6 +325,7 @@ public class PortableGameStateTest extends MockObjectTestCase {
     mockFileheader.expects(once()).method("setEnabled").withAnyArguments();
     mockFileheader.expects(once()).method("setInterpreterNumber").withAnyArguments();
     mockFileheader.expects(once()).method("setInterpreterVersion").withAnyArguments();
+    mockFileheader.expects(once()).method("setStandardRevision").with(eq(1), eq(0));
     
     for (int i = 0; i < dynMem.length; i++) {
       mockMemAccess.expects(once()).method("writeByte").with(eq(i), eq((byte) dynMem[i]));

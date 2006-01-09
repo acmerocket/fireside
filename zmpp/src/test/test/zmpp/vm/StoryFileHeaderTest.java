@@ -359,4 +359,16 @@ public class StoryFileHeaderTest extends MockObjectTestCase {
     mockMemAccess.expects(once()).method("writeUnsignedByte").with(eq(0x33), eq((short) 2));
     fileHeader.setStandardRevision(1, 2);
   }
+  
+  public void testSetFontWidth() {
+    
+    mockMemAccess.expects(once()).method("writeUnsignedByte").with(eq(0x26), eq((short) 1));
+    fileHeader.setFontWidth(1);
+  }
+  
+  public void testSetFontHeight() {
+    
+    mockMemAccess.expects(once()).method("writeUnsignedByte").with(eq(0x27), eq((short) 2));
+    fileHeader.setFontHeight(2);
+  }
 }

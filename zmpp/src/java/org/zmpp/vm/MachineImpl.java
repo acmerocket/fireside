@@ -35,7 +35,7 @@ import org.zmpp.vm.StoryFileHeader.Attribute;
 import org.zmpp.vmutil.PredictableRandomGenerator;
 import org.zmpp.vmutil.RandomGenerator;
 import org.zmpp.vmutil.UnpredictableRandomGenerator;
-import org.zmpp.vmutil.ZString;
+import org.zmpp.vmutil.ZCharDecoder;
 import org.zmpp.vmutil.ZsciiEncoding;
 
 /**
@@ -208,6 +208,14 @@ public class MachineImpl implements Machine {
   public StoryFileHeader getStoryFileHeader() {
     
     return fileHeader;
+  }
+  
+  /**
+   * {@inheritDoc}
+   */
+  public ZCharDecoder getZCharDecoder() {
+    
+    return config.getZCharConverter();
   }
     
   /**
@@ -499,7 +507,7 @@ public class MachineImpl implements Machine {
    */
   public void printZString(int address) {
     
-    print(config.getZCharConverter().convert(memaccess, address));
+    print(config.getZCharConverter().decode2Unicode(memaccess, address));
   }
   
   /**
@@ -732,10 +740,9 @@ public class MachineImpl implements Machine {
     if (fileHeader.getVersion() <= 3 && statusLine != null) {
       
       int objNum = getVariable(0x10);    
-      ZObject obj = getObjectTree().getObject(objNum);      
-      String objectName = (new ZString(getMemoryAccess(),
-            obj.getPropertiesDescriptionAddress())).toString();
-      
+      ZObject obj = getObjectTree().getObject(objNum);
+      String objectName = config.getZCharConverter().decode2Unicode(
+          getMemoryAccess(), obj.getPropertiesDescriptionAddress());      
       int global2 = getVariable(0x11);
       int global3 = getVariable(0x12);
       if (fileHeader.isEnabled(Attribute.SCORE_GAME)) {

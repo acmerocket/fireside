@@ -24,7 +24,6 @@ package org.zmpp.instructions;
 
 import org.zmpp.base.MemoryReadAccess;
 import org.zmpp.vm.Machine;
-import org.zmpp.vmutil.ZString;
 
 /**
  * This class implements the print and print_ret instructions.
@@ -65,9 +64,10 @@ public class PrintLiteralInstruction extends AbstractInstruction {
    * {@inheritDoc}
    */
   protected String getOperandString() {
-    
-    ZString zstr = new ZString(memaccess, instructionAddress + 1);
-    return "\"" + zstr.toString() + "\"";
+
+    String str = getMachine().getZCharDecoder().decode2Unicode(memaccess,
+        instructionAddress + 1);
+    return "\"" + str + "\"";
   }
   
   /**

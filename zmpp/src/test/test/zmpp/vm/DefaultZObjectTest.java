@@ -91,7 +91,7 @@ public class DefaultZObjectTest extends MemoryMapSetup {
     
     assertEquals(0x0a4f, object.getPropertyTableAddress());
     int propaddress = object.getPropertiesDescriptionAddress();
-    assertEquals("forest", converter.convert(minizorkmap, propaddress));
+    assertEquals("forest", converter.decode2Unicode(minizorkmap, propaddress));
     assertEquals(2, object.getNumProperties());
     assertEquals(2, object.getPropertySize(18));
     assertEquals(4, object.getPropertySize(17));
