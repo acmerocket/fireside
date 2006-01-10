@@ -73,67 +73,37 @@ public class VariableStaticInfo implements InstructionStaticInfo {
    * explanations.
    */
   public static final int OP_CALL               = 0x00; // Versions 1-3
-
   public static final int OP_STOREW             = 0x01;
-
   public static final int OP_STOREB             = 0x02;
-
   public static final int OP_PUT_PROP           = 0x03;
-
   public static final int OP_SREAD              = 0x04; // Versions 1-4
-
   public static final int OP_AREAD              = 0x04; // Versions >= 5
-
   public static final int OP_PRINT_CHAR         = 0x05;
-
   public static final int OP_PRINT_NUM          = 0x06;
-
   public static final int OP_RANDOM             = 0x07;
-
   public static final int OP_PUSH               = 0x08;
-
   public static final int OP_PULL               = 0x09;
-
   public static final int OP_SPLIT_WINDOW       = 0x0a;
-
   public static final int OP_SET_WINDOW         = 0x0b;
-
   public static final int OP_CALL_VS2           = 0x0c;
-
   public static final int OP_ERASE_WINDOW       = 0x0d;
-
   public static final int OP_ERASE_LINE         = 0x0e;
-
   public static final int OP_SET_CURSOR         = 0x0f;
-
   public static final int OP_GET_CURSOR         = 0x10;
-
   public static final int OP_SET_TEXT_STYLE     = 0x11;
-
   public static final int OP_BUFFER_MODE        = 0x12;
-
   public static final int OP_OUTPUTSTREAM       = 0x13;
-
   public static final int OP_INPUTSTREAM        = 0x14;
-
   public static final int OP_SOUND_EFFECT       = 0x15;
-
   public static final int OP_READ_CHAR          = 0x16;
-
   public static final int OP_SCAN_TABLE         = 0x17;
-
   public static final int OP_NOT                = 0x18; // Versions >= 5
-
   public static final int OP_CALL_VN            = 0x19; // Versions >= 5
-
   public static final int OP_CALL_VN2           = 0x1a; // Versions >= 5
-
   public static final int OP_TOKENISE           = 0x1b; // Versions >= 5
-
+  public static final int OP_ENCODE_TEXT        = 0x1c; // Versions >= 5
   public static final int OP_COPY_TABLE         = 0x1d;
-
   public static final int OP_PRINT_TABLE        = 0x1e;
-
   public static final int OP_CHECK_ARG_COUNT    = 0x1f; // Versions >= 5
   
   /**
@@ -244,6 +214,7 @@ public class VariableStaticInfo implements InstructionStaticInfo {
     case VariableStaticInfo.OP_CALL_VN: return "CALL_VN";
     case VariableStaticInfo.OP_CALL_VN2: return "CALL_VN2";
     case VariableStaticInfo.OP_TOKENISE: return "TOKENISE";
+    case VariableStaticInfo.OP_ENCODE_TEXT: return "ENCODE_TEXT";
     case VariableStaticInfo.OP_COPY_TABLE: return "COPY_TABLE";
     case VariableStaticInfo.OP_PRINT_TABLE: return "PRINT_TABLE";
     case VariableStaticInfo.OP_CHECK_ARG_COUNT: return "CHECK_ARG_COUNT";

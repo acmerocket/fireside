@@ -34,7 +34,8 @@ public class DefaultZObjectTest extends MemoryMapSetup {
   public void setUp() throws Exception {
     
     super.setUp();
-    this.objectTree = new Objects(fileheader.getVersion(), minizorkmap, fileheader.getObjectTableAddress());
+    this.objectTree = new Objects(fileheader.getVersion(), minizorkmap,
+        fileheader.getObjectTableAddress(), converter);
     this.object = objectTree.getObject((short) 1);
   }
   

@@ -39,7 +39,8 @@ public class ObjectsTest extends MemoryMapSetup {
   
   protected void setUp() throws Exception {
     super.setUp();
-    this.objects = new Objects(fileheader.getVersion(), minizorkmap, fileheader.getObjectTableAddress());
+    this.objects = new Objects(fileheader.getVersion(), minizorkmap,
+        fileheader.getObjectTableAddress(), converter);
   }
 
   public void testGetPropertyDefault() {
@@ -197,7 +198,8 @@ public class ObjectsTest extends MemoryMapSetup {
     MachineConfig config = new DefaultMachineConfig(fileInput);
     MemoryAccess cursesmap = config.getMemoryAccess();
     StoryFileHeader fileheader = config.getFileHeader();
-    ObjectTree objectTree = new Objects(fileheader.getVersion(), cursesmap, fileheader.getObjectTableAddress());
+    ObjectTree objectTree = new Objects(fileheader.getVersion(), cursesmap,
+        fileheader.getObjectTableAddress(), converter);
     ZObject obj502 = objectTree.getObject(502);
     assertTrue(obj502.isPropertyAvailable(2));
   }

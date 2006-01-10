@@ -215,7 +215,7 @@ public class MachineImpl implements Machine {
    */
   public ZCharDecoder getZCharDecoder() {
     
-    return config.getZCharConverter();
+    return config.getZCharDecoder();
   }
     
   /**
@@ -507,7 +507,7 @@ public class MachineImpl implements Machine {
    */
   public void printZString(int address) {
     
-    print(config.getZCharConverter().decode2Unicode(memaccess, address));
+    print(config.getZCharDecoder().decode2Unicode(memaccess, address));
   }
   
   /**
@@ -741,7 +741,7 @@ public class MachineImpl implements Machine {
       
       int objNum = getVariable(0x10);    
       ZObject obj = getObjectTree().getObject(objNum);
-      String objectName = config.getZCharConverter().decode2Unicode(
+      String objectName = config.getZCharDecoder().decode2Unicode(
           getMemoryAccess(), obj.getPropertiesDescriptionAddress());      
       int global2 = getVariable(0x11);
       int global3 = getVariable(0x12);

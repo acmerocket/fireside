@@ -154,10 +154,10 @@ public class VariableInstruction extends AbstractInstruction {
         getCursor();
         break;
       case VariableStaticInfo.OP_READ_CHAR:
-        readChar();
+        read_char();
         break;
       case VariableStaticInfo.OP_SCAN_TABLE:
-        scanTable();
+        scan_table();
         break;
       case VariableStaticInfo.OP_NOT:
         not();
@@ -169,14 +169,17 @@ public class VariableInstruction extends AbstractInstruction {
       case VariableStaticInfo.OP_TOKENISE:
         tokenise();
         break;
+      case VariableStaticInfo.OP_ENCODE_TEXT:
+        encode_text();
+        break;
       case VariableStaticInfo.OP_COPY_TABLE:
-        copyTable();
+        copy_table();
         break;
       case VariableStaticInfo.OP_PRINT_TABLE:
-        printTable();
+        print_table();
         break;
       case VariableStaticInfo.OP_CHECK_ARG_COUNT:
-        checkArgCount();
+        check_arg_count();
         break;
       default:
         throwInvalidOpcode();
@@ -349,7 +352,8 @@ public class VariableInstruction extends AbstractInstruction {
     if (version < 5 || (version >= 5 && parsebuffer > 0)) {
       
       // Do not tokenise if parsebuffer is 0 (See specification of read)
-      getMachine().getInputFunctions().tokenize(textbuffer, parsebuffer);
+      getMachine().getInputFunctions().tokenize(textbuffer, parsebuffer,
+                                                0, false);
     }
     
     if (storesResult()) {
@@ -483,7 +487,7 @@ public class VariableInstruction extends AbstractInstruction {
     nextInstruction();
   }
   
-  private void scanTable() {
+  private void scan_table() {
     
     MemoryAccess memaccess = getMachine().getMemoryAccess();
     short x = getValue(0);
@@ -520,7 +524,7 @@ public class VariableInstruction extends AbstractInstruction {
     branchOnTest(found);
   }
 
-  private void readChar() {
+  private void read_char() {
     
     int time = 0;
     int routineAddress = 0;
@@ -559,11 +563,12 @@ public class VariableInstruction extends AbstractInstruction {
     if (getNumOperands() >= 4) flag = getUnsignedValue(3);
     if (dictionary != 0) System.out.println("use user dictionary");
     if (flag != 0) System.out.println("tokenise flag is set");
-    getMachine().getInputFunctions().tokenize(textbuffer, parsebuffer);
+    getMachine().getInputFunctions().tokenize(textbuffer, parsebuffer,
+        dictionary, (flag != 0));
     nextInstruction();
   }
   
-  private void checkArgCount() {
+  private void check_arg_count() {
     
     int argumentNumber = getUnsignedValue(0);
     int currentNumArgs =
@@ -571,7 +576,7 @@ public class VariableInstruction extends AbstractInstruction {
     branchOnTest(argumentNumber <= currentNumArgs);
   }
   
-  private void copyTable() {
+  private void copy_table() {
     
     int first = getUnsignedValue(0);
     int second = getUnsignedValue(1);
@@ -611,9 +616,55 @@ public class VariableInstruction extends AbstractInstruction {
     nextInstruction();
   }
   
-  private void printTable() {
+  /**
+   * Do the print_table instruction. This method takes a text and formats
+   * it in a specified format. It requires access to the cursor position
+   * in order to be implemented correctly, otherwise horizontal home
+   * position would always be set to the left position of the window.
+   * Interestingly, the text is not encoded, so the characters should be
+   * accessed one by one in ZSCII format.
+   */
+  private void print_table() {
+    
+    int zsciiText = getUnsignedValue(0);
+    int width = getUnsignedValue(1);
+    int height = 1;
+    int skip = 0;
+    if (getNumOperands() >= 3) height = getUnsignedValue(2);
+    if (getNumOperands() == 4) skip = getUnsignedValue(3);
+    
+    System.out.printf("@print_table, zscii-text = %d, width = %d," +
+        " height = %d, skip = %d\n", zsciiText, width, height, skip);
+    short zchar = 0;
+    MemoryAccess memaccess = getMachine().getMemoryAccess();
+    TextCursor cursor = getMachine().getScreen().getTextCursor();
+    int column = cursor.getColumn();
+    int row = cursor.getLine();
+    
+    for (int i = 0; i < height; i++) {
+      
+      for (int j = 0; j < width; j++) {
+        
+        int offset = (width * i) + j;
+        zchar = memaccess.readUnsignedByte(zsciiText + offset);
+        getMachine().printZsciiChar(zchar, false);
+      }
+      row += skip + 1;
+      getMachine().getScreen().setTextCursor(row, column);
+    }
+    nextInstruction();
+  }
+  
+  private void encode_text() {
     
     // TODO
+    int zsciiText = getUnsignedValue(0);
+    int length = getUnsignedValue(1);
+    int from = getUnsignedValue(2);
+    int codedText = getUnsignedValue(3);
+    
+    System.out.printf("@encode_text, zscii-text = %d, length = %d," +
+        " from = %d, coded-text = %d\n", zsciiText, length, from, codedText);
     nextInstruction();
   }
 }
