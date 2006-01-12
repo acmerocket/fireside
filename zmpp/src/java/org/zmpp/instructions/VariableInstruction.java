@@ -27,6 +27,7 @@ import org.zmpp.vm.Machine;
 import org.zmpp.vm.ScreenModel;
 import org.zmpp.vm.TextCursor;
 import org.zmpp.vm.ZObject;
+import org.zmpp.vmutil.ZCharEncoder;
 
 
 /**
@@ -657,14 +658,16 @@ public class VariableInstruction extends AbstractInstruction {
   
   private void encode_text() {
     
-    // TODO
     int zsciiText = getUnsignedValue(0);
     int length = getUnsignedValue(1);
     int from = getUnsignedValue(2);
     int codedText = getUnsignedValue(3);
-    
     System.out.printf("@encode_text, zscii-text = %d, length = %d," +
         " from = %d, coded-text = %d\n", zsciiText, length, from, codedText);
+    
+    ZCharEncoder encoder = new ZCharEncoder();
+    encoder.encode(getMachine().getMemoryAccess(), zsciiText + from,
+        length, codedText);
     nextInstruction();
   }
 }
