@@ -81,7 +81,7 @@ ScreenModel {
     this.editor = editor;
     
     standardFont = getFont();
-    fixedFont = new Font("Courier New", Font.PLAIN, standardFont.getSize());    
+    fixedFont = new Font("Monospaced", Font.PLAIN, standardFont.getSize());    
     streambuffer = new StringBuilder();
     windows = new SubWindow[2];
     fontnumbers = new int[2];
@@ -523,6 +523,8 @@ ScreenModel {
       fileheader.setEnabled(Attribute.SUPPORTS_COLOURS, true);
       fileheader.setDefaultBackgroundColor(COLOR_WHITE);
       fileheader.setDefaultForegroundColor(COLOR_BLACK);
+      fileheader.setFontWidth(1);
+      fileheader.setFontHeight(1);
     }
     determineStandardFont();
   }
