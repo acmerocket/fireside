@@ -305,16 +305,31 @@ public class LongInstruction extends AbstractInstruction {
     
     short op1 = getValue(0);
     short op2 = getValue(1);
-    storeResult((short) (op1 / op2));
-    nextInstruction();
+    
+    if (op2 == 0) {
+    
+      getMachine().halt("@div division by zero");
+      
+    } else {
+    
+      storeResult((short) (op1 / op2));
+      nextInstruction();
+    }
   }
   
   private void mod() {
     
     short op1 = getValue(0);
     short op2 = getValue(1);
-    storeResult((short) (op1 % op2));
-    nextInstruction();
+    
+    if (op2 == 0) {
+      
+      getMachine().halt("@mod division by zero");
+    } else {
+    
+      storeResult((short) (op1 % op2));
+      nextInstruction();
+    }
   }
   
   private void testAttr() {

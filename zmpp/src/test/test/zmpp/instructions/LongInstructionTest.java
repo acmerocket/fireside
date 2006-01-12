@@ -501,7 +501,7 @@ public class LongInstructionTest extends InstructionTestBase {
     
     mockMachine.expects(atLeastOnce()).method("getStoryFileHeader").will(returnValue(storyfileHeader));
     mockFileHeader.expects(atLeastOnce()).method("getVersion").will(returnValue(3));
-    LongInstructionMock div = createInstructionMock(LongStaticInfo.OP_DIV,
+     LongInstructionMock div = createInstructionMock(LongStaticInfo.OP_DIV,
         Operand.TYPENUM_LARGE_CONSTANT, (short) -7,
         Operand.TYPENUM_LARGE_CONSTANT, (short) 3);
     div.setStoreVariable((short) 0x12);
@@ -510,6 +510,18 @@ public class LongInstructionTest extends InstructionTestBase {
     assertTrue(div.nextInstructionCalled);
   }
 
+  public void testDivBy0() {
+    
+    mockMachine.expects(atLeastOnce()).method("getStoryFileHeader").will(returnValue(storyfileHeader));
+    mockFileHeader.expects(atLeastOnce()).method("getVersion").will(returnValue(3));
+     LongInstructionMock div0 = createInstructionMock(LongStaticInfo.OP_DIV,
+        Operand.TYPENUM_LARGE_CONSTANT, (short) 7,
+        Operand.TYPENUM_LARGE_CONSTANT, (short) 0);
+    div0.setStoreVariable((short) 0x12);
+    mockMachine.expects(once()).method("halt").with(eq("@div division by zero"));
+    div0.execute();
+  }
+  
   // ***********************************************************************
   // ********* MOD
   // ******************************************
@@ -527,6 +539,18 @@ public class LongInstructionTest extends InstructionTestBase {
     assertTrue(mod.nextInstructionCalled);
   }
 
+  public void testModBy0() {
+    
+    mockMachine.expects(atLeastOnce()).method("getStoryFileHeader").will(returnValue(storyfileHeader));
+    mockFileHeader.expects(atLeastOnce()).method("getVersion").will(returnValue(3));
+     LongInstructionMock mod0 = createInstructionMock(LongStaticInfo.OP_MOD,
+        Operand.TYPENUM_LARGE_CONSTANT, (short) 7,
+        Operand.TYPENUM_LARGE_CONSTANT, (short) 0);
+    mod0.setStoreVariable((short) 0x12);
+    mockMachine.expects(once()).method("halt").with(eq("@mod division by zero"));
+    mod0.execute();
+  }
+  
   // ***********************************************************************
   // ********* TEST_ATTR
   // ******************************************
