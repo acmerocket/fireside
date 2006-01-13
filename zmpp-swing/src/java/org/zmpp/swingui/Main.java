@@ -48,6 +48,12 @@ import org.zmpp.vm.StoryFileHeader;
 public class Main {
 
   /**
+   * The application name.
+   */
+  public static final String APPNAME =
+    "Z-Machine Preservation Project Version 0.79";
+  
+  /**
    * @param args
    */
   public static void main(String[] args) {
@@ -114,7 +120,7 @@ public class Main {
           || fileheader.getVersion() > 8) {
       
         JOptionPane.showMessageDialog(null,
-          "ZMPP V 0.75 does not support story file versions 1, 2 or 6.",
+          "Story file versions 1, 2 or 6 are not supported.",
           "Story file read error", JOptionPane.ERROR_MESSAGE);
         System.exit(0);
       }
