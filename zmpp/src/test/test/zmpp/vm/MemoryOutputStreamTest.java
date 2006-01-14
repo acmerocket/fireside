@@ -26,12 +26,14 @@ import org.jmock.Mock;
 import org.jmock.MockObjectTestCase;
 import org.zmpp.base.MemoryAccess;
 import org.zmpp.vm.Machine;
+import org.zmpp.vm.MachineServices;
 import org.zmpp.vm.MemoryOutputStream;
 
 public class MemoryOutputStreamTest extends MockObjectTestCase {
 
-  private Mock mockMachine;
+  private Mock mockMachine, mockServices;
   private Machine machine;
+  private MachineServices services;
   private Mock mockMemAccess;
   private MemoryAccess memaccess;
   private MemoryOutputStream output;
@@ -40,10 +42,13 @@ public class MemoryOutputStreamTest extends MockObjectTestCase {
 
     mockMachine = mock(Machine.class);
     machine = (Machine) mockMachine.proxy();
+    mockServices = mock(MachineServices.class);
+    services = (MachineServices) mockServices.proxy();
     mockMemAccess = mock(MemoryAccess.class);
     memaccess = (MemoryAccess) mockMemAccess.proxy();
 
-    mockMachine.expects(once()).method("getMemoryAccess").will(returnValue(memaccess));
+    mockMachine.expects(once()).method("getServices").will(returnValue(services));
+    mockServices.expects(once()).method("getMemoryAccess").will(returnValue(memaccess));
     
     output = new MemoryOutputStream(machine);
   }

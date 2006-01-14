@@ -225,7 +225,7 @@ public class LongInstruction extends AbstractInstruction {
     
     if (obj1 > 0) {
       
-      parentOfObj1 = getMachine().getObjectTree().getObject(obj1).getParent();
+      parentOfObj1 = getObjectTree().getObject(obj1).getParent();
 
     } else {
       
@@ -339,7 +339,7 @@ public class LongInstruction extends AbstractInstruction {
     
     if (obj > 0 && isValidAttribute(attr)) {
       
-      ZObject zobj = getMachine().getObjectTree().getObject(obj);
+      ZObject zobj = getObjectTree().getObject(obj);
       branchOnTest(zobj.isAttributeSet(attr));
       
     } else {
@@ -355,7 +355,7 @@ public class LongInstruction extends AbstractInstruction {
     int attr = getUnsignedValue(1);
     if (obj > 0 && isValidAttribute(attr)) {
       
-      ZObject zobj = getMachine().getObjectTree().getObject(obj);
+      ZObject zobj = getObjectTree().getObject(obj);
       zobj.setAttribute(attr);
       
     } else {
@@ -372,7 +372,7 @@ public class LongInstruction extends AbstractInstruction {
     int attr = getUnsignedValue(1);
     if (obj > 0 && isValidAttribute(attr)) {
       
-      ZObject zobj = getMachine().getObjectTree().getObject(obj);
+      ZObject zobj = getObjectTree().getObject(obj);
       zobj.clearAttribute(attr);
       
     } else {
@@ -406,7 +406,7 @@ public class LongInstruction extends AbstractInstruction {
     int dest = getUnsignedValue(1);
     if (obj > 0 && dest > 0) {
       
-      ObjectTree objectTree = getMachine().getObjectTree();
+      ObjectTree objectTree = getObjectTree();
       objectTree.insertObject(dest, obj);
       
     } else {
@@ -421,7 +421,7 @@ public class LongInstruction extends AbstractInstruction {
     
     int arrayAddress = getUnsignedValue(0);
     int index = getUnsignedValue(1);
-    MemoryReadAccess memaccess = getMachine().getMemoryAccess();
+    MemoryReadAccess memaccess = getMachine().getServices().getMemoryAccess();
     storeResult(memaccess.readShort(arrayAddress + 2 * index));
     nextInstruction();
   }
@@ -430,7 +430,7 @@ public class LongInstruction extends AbstractInstruction {
     
     int arrayAddress = getUnsignedValue(0);
     int index = getUnsignedValue(1);
-    MemoryReadAccess memaccess = getMachine().getMemoryAccess();
+    MemoryReadAccess memaccess = getMachine().getServices().getMemoryAccess();
     storeResult((short) memaccess.readUnsignedByte(arrayAddress + index));
     nextInstruction();
   }
@@ -442,14 +442,14 @@ public class LongInstruction extends AbstractInstruction {
     
     if (obj > 0) {
       
-      ZObject zobj = getMachine().getObjectTree().getObject(obj);
+      ZObject zobj = getObjectTree().getObject(obj);
       int numBytes = zobj.getPropertySize(property);
       short value;
     
       if (!zobj.isPropertyAvailable(property)) {
      
         // Retrieve and store default
-        value = getMachine().getObjectTree().getPropertyDefault(property);
+        value = getObjectTree().getPropertyDefault(property);
       
       } else if (numBytes == 1) {
       
@@ -478,7 +478,7 @@ public class LongInstruction extends AbstractInstruction {
     if (obj > 0) {
       
       short value = 0;
-      ZObject zobj = getMachine().getObjectTree().getObject(obj);
+      ZObject zobj = getObjectTree().getObject(obj);
     
       if (zobj.isPropertyAvailable(property)) {
       
@@ -502,7 +502,7 @@ public class LongInstruction extends AbstractInstruction {
     
     if (obj > 0) {
       
-      ZObject zobj = getMachine().getObjectTree().getObject(obj);
+      ZObject zobj = getObjectTree().getObject(obj);
     
       if (property == 0 || zobj.isPropertyAvailable(property)) {
       
@@ -533,8 +533,7 @@ public class LongInstruction extends AbstractInstruction {
   
   private boolean isValidAttribute(int attribute) {
     
-    int numAttr =
-      getMachine().getStoryFileHeader().getVersion() <= 3 ? 32 : 48;
+    int numAttr = getStoryFileVersion() <= 3 ? 32 : 48;
     return attribute >= 0 && attribute < numAttr;    
   }
 }

@@ -72,7 +72,7 @@ public class MemoryOutputStream implements OutputStream {
   public MemoryOutputStream(Machine machine) {
   
     tableStack = new ArrayList<TablePosition>();
-    this.memaccess = machine.getMemoryAccess();
+    this.memaccess = machine.getServices().getMemoryAccess();
     this.machine = machine;
   }
   

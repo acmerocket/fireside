@@ -50,7 +50,7 @@ public class DefaultMachineConfigTest extends MockObjectTestCase {
   public void testCreate() throws Exception {
     
     DefaultMachineConfig config = new DefaultMachineConfig(input);
-    StoryFileHeader fileheader = config.getFileHeader();
+    StoryFileHeader fileheader = config.getStoryFileHeader();
     Dictionary dictionary = config.getDictionary();
     MemoryAccess memaccess = config.getMemoryAccess();
     ObjectTree objectTree = config.getObjectTree();
@@ -62,7 +62,7 @@ public class DefaultMachineConfigTest extends MockObjectTestCase {
     
     config.reset();
     
-    assertNotSame(fileheader, config.getFileHeader());
+    assertNotSame(fileheader, config.getStoryFileHeader());
     assertNotSame(dictionary, config.getDictionary());
     assertNotSame(memaccess, config.getMemoryAccess());
     assertNotSame(objectTree, config.getObjectTree());

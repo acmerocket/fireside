@@ -36,6 +36,7 @@ import org.zmpp.vmutil.PredictableRandomGenerator;
 import org.zmpp.vmutil.RandomGenerator;
 import org.zmpp.vmutil.UnpredictableRandomGenerator;
 import org.zmpp.vmutil.ZCharDecoder;
+import org.zmpp.vmutil.ZCharEncoder;
 import org.zmpp.vmutil.ZsciiEncoding;
 
 /**
@@ -44,17 +45,12 @@ import org.zmpp.vmutil.ZsciiEncoding;
  * @author Wei-ju Wu
  * @version 1.0
  */
-public class MachineImpl implements Machine {
+public class MachineImpl implements Machine, MachineServices {
 
   /**
    * The configuration object.
    */
   private MachineConfig config;
-  
-  /**
-   * The memory access object.
-   */
-  private MemoryAccess memaccess;
   
   /**
    * This machine's current program counter.
@@ -75,16 +71,6 @@ public class MachineImpl implements Machine {
    * The start of global variables.
    */
   private int globalsAddress;
-  
-  /**
-   * The object tree.
-   */
-  private ObjectTree objectTree;
-  
-  /**
-   * The dictionary.
-   */
-  private Dictionary dictionary;
   
   /**
    * This is the array of output streams.
@@ -132,11 +118,6 @@ public class MachineImpl implements Machine {
   private boolean hasValidChecksum;
   
   /**
-   * The file header.
-   */
-  private StoryFileHeader fileHeader;
-  
-  /**
    * The save game data store.
    */
   private SaveGameDataStore datastore;
@@ -162,6 +143,14 @@ public class MachineImpl implements Machine {
   /**
    * {@inheritDoc}
    */
+  public MachineServices getServices() {
+    
+    return this;
+  }
+  
+  /**
+   * {@inheritDoc}
+   */
   public void initialize(MachineConfig config, InstructionDecoder decoder) {
   
     this.config = config;
@@ -180,44 +169,23 @@ public class MachineImpl implements Machine {
    */
   private void resetState() {
     
-    this.memaccess = config.getMemoryAccess();
-    this.fileHeader = config.getFileHeader();
-    this.dictionary = config.getDictionary();
-    this.objectTree = config.getObjectTree();
-    
     this.stack = new ArrayList<Short>();
     this.routineContextStack = new ArrayList<RoutineContext>();
-    this.programCounter = fileHeader.getProgramStart();
-    this.globalsAddress = fileHeader.getGlobalsAddress();
-    this.decoder.initialize(this, memaccess);
-    int checksum = calculateChecksum(fileHeader);
-    hasValidChecksum = fileHeader.getChecksum() == checksum;
-    fileHeader.setStandardRevision(1, 0);
+    this.programCounter = getStoryFileHeader().getProgramStart();
+    this.globalsAddress = getStoryFileHeader().getGlobalsAddress();
+    this.decoder.initialize(this, getMemoryAccess());
+    int checksum = calculateChecksum(getStoryFileHeader());
+    hasValidChecksum = getStoryFileHeader().getChecksum() == checksum;
+    getStoryFileHeader().setStandardRevision(1, 0);
     
-    if (fileHeader.getVersion() >= 4) {
+    if (getStoryFileHeader().getVersion() >= 4) {
             
-      fileHeader.setEnabled(Attribute.SUPPORTS_TIMED_INPUT, true);
-      fileHeader.setInterpreterNumber(6); // IBM PC
-      fileHeader.setInterpreterVersion(1);
+      getStoryFileHeader().setEnabled(Attribute.SUPPORTS_TIMED_INPUT, true);
+      getStoryFileHeader().setInterpreterNumber(6); // IBM PC
+      getStoryFileHeader().setInterpreterVersion(1);
     }
   }
   
-  /**
-   * {@inheritDoc}
-   */
-  public StoryFileHeader getStoryFileHeader() {
-    
-    return fileHeader;
-  }
-  
-  /**
-   * {@inheritDoc}
-   */
-  public ZCharDecoder getZCharDecoder() {
-    
-    return config.getZCharDecoder();
-  }
-    
   /**
    * Calculates the checksum of the file.
    * 
@@ -231,7 +199,7 @@ public class MachineImpl implements Machine {
     
     for (int i = 0x40; i < filelen; i++) {
     
-      sum += memaccess.readUnsignedByte(i);
+      sum += getMemoryAccess().readUnsignedByte(i);
     }
     return (sum & 0xffff);
   }
@@ -244,27 +212,6 @@ public class MachineImpl implements Machine {
     return this.hasValidChecksum;
   }
   
-  /**
-   * {@inheritDoc}
-   */
-  public MemoryAccess getMemoryAccess() {
-    
-    return memaccess;
-  }
-  
-  /**
-   * {@inheritDoc}
-   */
-  public Dictionary getDictionary() {
-    
-    return dictionary;
-  }
-  
-  public ObjectTree getObjectTree() {
-    
-    return objectTree;
-  }
-
   /**
    * {@inheritDoc}
    */
@@ -358,7 +305,7 @@ public class MachineImpl implements Machine {
       
     } else { // GLOBAL
       
-      return memaccess.readShort(globalsAddress
+      return getMemoryAccess().readShort(globalsAddress
           + (getGlobalVariableNumber(variableNumber) * 2));
     }
   }
@@ -381,7 +328,7 @@ public class MachineImpl implements Machine {
       
     } else {
       
-      memaccess.writeShort(globalsAddress
+      getMemoryAccess().writeShort(globalsAddress
           + (getGlobalVariableNumber(variableNumber) * 2), value);
     }
   }
@@ -507,7 +454,8 @@ public class MachineImpl implements Machine {
    */
   public void printZString(int address) {
     
-    print(config.getZCharDecoder().decode2Unicode(memaccess, address));
+    print(config.getZCharDecoder().decode2Unicode(getMemoryAccess(),
+        address));
   }
   
   /**
@@ -622,7 +570,7 @@ public class MachineImpl implements Machine {
     if (outputStream[OUTPUTSTREAM_TRANSCRIPT - 1] != null) {
         
       outputStream[OUTPUTSTREAM_TRANSCRIPT - 1].select(
-          fileHeader.isEnabled(Attribute.TRANSCRIPTING));
+          getStoryFileHeader().isEnabled(Attribute.TRANSCRIPTING));
     }
   }
   
@@ -637,7 +585,7 @@ public class MachineImpl implements Machine {
     if (streamnumber == OUTPUTSTREAM_TRANSCRIPT) {
       
       //System.out.println("ENABLE_TRANSCRIPT_STREAM: " + flag);
-      fileHeader.setEnabled(Attribute.TRANSCRIPTING, flag);
+      getStoryFileHeader().setEnabled(Attribute.TRANSCRIPTING, flag);
       
     } else if (streamnumber == OUTPUTSTREAM_MEMORY && flag) {
       
@@ -737,7 +685,7 @@ public class MachineImpl implements Machine {
    */
   public void updateStatusLine() {
   
-    if (fileHeader.getVersion() <= 3 && statusLine != null) {
+    if (getStoryFileHeader().getVersion() <= 3 && statusLine != null) {
       
       int objNum = getVariable(0x10);    
       ZObject obj = getObjectTree().getObject(objNum);
@@ -745,7 +693,7 @@ public class MachineImpl implements Machine {
           getMemoryAccess(), obj.getPropertiesDescriptionAddress());      
       int global2 = getVariable(0x11);
       int global3 = getVariable(0x12);
-      if (fileHeader.isEnabled(Attribute.SCORE_GAME)) {
+      if (getStoryFileHeader().isEnabled(Attribute.SCORE_GAME)) {
         
         statusLine.updateStatusScore(objectName, global2, global3);
       } else {
@@ -866,6 +814,7 @@ public class MachineImpl implements Machine {
   private boolean verifySaveGame(PortableGameState gamestate) {
     
     // Verify the game according to the standard
+    StoryFileHeader fileHeader = getStoryFileHeader();
     int checksum = fileHeader.getChecksum();
     if (checksum == 0) checksum = calculateChecksum(fileHeader);
     return gamestate.getRelease() == fileHeader.getRelease()
@@ -884,6 +833,7 @@ public class MachineImpl implements Machine {
   private void restart(boolean resetScreenModel) {
     
     // Transcripting and fixed font bits survive the restart
+    StoryFileHeader fileHeader = getStoryFileHeader();
     boolean fixedFontForced = fileHeader.isEnabled(Attribute.FORCE_FIXED_FONT);
     boolean transcripting = fileHeader.isEnabled(Attribute.TRANSCRIPTING);
     config.reset();
@@ -1014,6 +964,55 @@ public class MachineImpl implements Machine {
     setProgramCounter(routineContext.getStartAddress());
     return routineContext;
   }
+
+  // ************************************************************************
+  // ****** Machine services
+  // ************************************************
+  
+  /**
+   * {@inheritDoc}
+   */
+  public MemoryAccess getMemoryAccess() {
+    
+    return config.getMemoryAccess();
+  }
+  
+  /**
+   * {@inheritDoc}
+   */
+  public Dictionary getDictionary() {
+    
+    return config.getDictionary();
+  }
+  
+  public ObjectTree getObjectTree() {
+    
+    return config.getObjectTree();
+  }
+
+  /**
+   * {@inheritDoc}
+   */
+  public StoryFileHeader getStoryFileHeader() {
+    
+    return config.getStoryFileHeader();
+  }
+  
+  /**
+   * {@inheritDoc}
+   */
+  public ZCharDecoder getZCharDecoder() {
+    
+    return config.getZCharDecoder();
+  }
+  
+  /**
+   * {@inheritDoc}
+   */
+  public ZCharEncoder getZCharEncoder() {
+    
+    return config.getZCharEncoder();
+  }    
   
   // ************************************************************************
   // ****** Private functions
@@ -1027,6 +1026,7 @@ public class MachineImpl implements Machine {
    */
   private RoutineContext decodeRoutine(int routineAddress) {
 
+    MemoryAccess memaccess = getMemoryAccess();    
     int numLocals = memaccess.readUnsignedByte(routineAddress);
     short[] locals = new short[numLocals];
     int currentAddress = routineAddress + 1;

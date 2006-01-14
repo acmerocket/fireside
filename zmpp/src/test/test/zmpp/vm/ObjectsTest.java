@@ -197,7 +197,7 @@ public class ObjectsTest extends MemoryMapSetup {
     FileInputStream fileInput = new FileInputStream(curses);
     MachineConfig config = new DefaultMachineConfig(fileInput);
     MemoryAccess cursesmap = config.getMemoryAccess();
-    StoryFileHeader fileheader = config.getFileHeader();
+    StoryFileHeader fileheader = config.getStoryFileHeader();
     ObjectTree objectTree = new Objects(fileheader.getVersion(), cursesmap,
         fileheader.getObjectTableAddress(), converter);
     ZObject obj502 = objectTree.getObject(502);

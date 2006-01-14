@@ -37,11 +37,10 @@ import org.zmpp.iff.DefaultFormChunk;
 import org.zmpp.iff.FormChunk;
 import org.zmpp.iff.WritableFormChunk;
 import org.zmpp.instructions.DefaultInstructionDecoder;
-import org.zmpp.vm.Dictionary;
 import org.zmpp.vm.Machine;
 import org.zmpp.vm.MachineConfig;
 import org.zmpp.vm.MachineImpl;
-import org.zmpp.vm.ObjectTree;
+import org.zmpp.vm.MachineServices;
 import org.zmpp.vm.PortableGameState;
 import org.zmpp.vm.RoutineContext;
 import org.zmpp.vm.StoryFileHeader;
@@ -58,13 +57,12 @@ public class PortableGameStateTest extends MockObjectTestCase {
   private PortableGameState gameState;
   private FormChunk formChunk;
   private Mock mockMachine, mockFileheader, mockMemAccess, mockMachineConfig;
-  private Mock mockDictionary, mockObjectTree;
+  private Mock mockServices;
   private Machine machine;
+  private MachineServices services;
   private MachineConfig machineConfig;
   private StoryFileHeader fileheader;
   private MemoryAccess memaccess;
-  private Dictionary dictionary;
-  private ObjectTree objectTree;
   
   protected void setUp() throws Exception {
   
@@ -76,10 +74,8 @@ public class PortableGameStateTest extends MockObjectTestCase {
     memaccess = (MemoryAccess) mockMemAccess.proxy();
     mockMachineConfig = mock(MachineConfig.class);
     machineConfig = (MachineConfig) mockMachineConfig.proxy();
-    mockDictionary = mock(Dictionary.class);
-    dictionary = (Dictionary) mockDictionary.proxy();
-    mockObjectTree = mock(ObjectTree.class);
-    objectTree = (ObjectTree) mockObjectTree.proxy();
+    mockServices = mock(MachineServices.class);
+    services = (MachineServices) mockServices.proxy();
     
     File testSaveFile = new File("testfiles/leathersave.ifzs");
     RandomAccessFile saveFile = new RandomAccessFile(testSaveFile, "r");
@@ -135,8 +131,9 @@ public class PortableGameStateTest extends MockObjectTestCase {
     List<RoutineContext> emptyContexts = new ArrayList<RoutineContext>();
     
     // Expectations
-    mockMachine.expects(atLeastOnce()).method("getStoryFileHeader").will(returnValue(fileheader));
-    mockMachine.expects(once()).method("getMemoryAccess").will(returnValue(memaccess));
+    mockMachine.expects(atLeastOnce()).method("getServices").will(returnValue(services));
+    mockServices.expects(atLeastOnce()).method("getStoryFileHeader").will(returnValue(fileheader));
+    mockServices.expects(once()).method("getMemoryAccess").will(returnValue(memaccess));
     mockMachine.expects(once()).method("getRoutineContexts").will(returnValue(emptyContexts));
     mockMachine.expects(once()).method("getStackPointer").will(returnValue(4));
     mockMachine.expects(atLeastOnce()).method("getStackElement").will(returnValue((short) 42));
@@ -314,9 +311,7 @@ public class PortableGameStateTest extends MockObjectTestCase {
     gamestate.setDynamicMem(dynMem);
    
     mockMachineConfig.expects(atLeastOnce()).method("getMemoryAccess").will(returnValue(memaccess));
-    mockMachineConfig.expects(atLeastOnce()).method("getFileHeader").will(returnValue(fileheader));
-    mockMachineConfig.expects(atLeastOnce()).method("getDictionary").will(returnValue(dictionary));
-    mockMachineConfig.expects(atLeastOnce()).method("getObjectTree").will(returnValue(objectTree));
+    mockMachineConfig.expects(atLeastOnce()).method("getStoryFileHeader").will(returnValue(fileheader));
     mockFileheader.expects(once()).method("getProgramStart").will(returnValue(4711));
     mockFileheader.expects(once()).method("getGlobalsAddress").will(returnValue(5711));
     mockFileheader.expects(once()).method("getFileLength").will(returnValue(0));

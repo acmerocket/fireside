@@ -433,7 +433,7 @@ public class PortableGameState {
    */
   public void captureMachineState(Machine machine, int savePc) {
     
-    StoryFileHeader fileheader = machine.getStoryFileHeader();
+    StoryFileHeader fileheader = machine.getServices().getStoryFileHeader();
     release = fileheader.getRelease();
     checksum = fileheader.getChecksum();
     serialBytes = fileheader.getSerialNumber().getBytes();
@@ -441,7 +441,7 @@ public class PortableGameState {
     
     // capture dynamic memory which ends at address(staticsMem) - 1
     // uncompressed
-    MemoryAccess memaccess = machine.getMemoryAccess();
+    MemoryAccess memaccess = machine.getServices().getMemoryAccess();
     int staticMemStart = fileheader.getStaticsAddress();
     dynamicMem = new byte[staticMemStart];
     
@@ -688,7 +688,7 @@ public class PortableGameState {
    */
   public void transferStateToMachine(Machine machine) {
     
-    MemoryAccess memaccess = machine.getMemoryAccess();
+    MemoryAccess memaccess = machine.getServices().getMemoryAccess();
     
     // Dynamic memory
     for (int i = 0; i < dynamicMem.length; i++) {
@@ -738,13 +738,13 @@ public class PortableGameState {
 
     // Prepare the machine continue
     int pc = getProgramCounter();
-    if (machine.getStoryFileHeader().getVersion() <= 3) {
+    if (machine.getServices().getStoryFileHeader().getVersion() <= 3) {
       
       // In version 3 this is a branch target that needs to be read
       // Execution is continued at the first instruction after the branch offset
-      pc += getBranchOffsetLength(machine.getMemoryAccess(), pc);
+      pc += getBranchOffsetLength(machine.getServices().getMemoryAccess(), pc);
       
-    } else if (machine.getStoryFileHeader().getVersion() >= 4) {
+    } else if (machine.getServices().getStoryFileHeader().getVersion() >= 4) {
 
       // in version 4 and later, this is always 1
       pc++;
@@ -761,7 +761,8 @@ public class PortableGameState {
   public int getStoreVariable(Machine machine) {
     
     int storeVarAddress = getProgramCounter();
-    return machine.getMemoryAccess().readUnsignedByte(storeVarAddress);
+    return machine.getServices().getMemoryAccess().readUnsignedByte(
+        storeVarAddress);
   }
 
   /**

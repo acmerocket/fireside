@@ -36,7 +36,6 @@ public class PrintLiteralInstructionTest extends InstructionTestBase {
   
   public void testIllegalOpcode() {
     
-    mockMachine.expects(atLeastOnce()).method("getStoryFileHeader").will(returnValue(storyfileHeader));
     mockFileHeader.expects(atLeastOnce()).method("getVersion").will(returnValue(3));
     mockMachine.expects(once()).method("halt").with(eq(
       "illegal instruction, type: SHORT operand count: C0OP opcode: 221"));
@@ -47,7 +46,6 @@ public class PrintLiteralInstructionTest extends InstructionTestBase {
   
   public void testPrint() {
     
-    mockMachine.expects(atLeastOnce()).method("getStoryFileHeader").will(returnValue(storyfileHeader));
     mockFileHeader.expects(atLeastOnce()).method("getVersion").will(returnValue(3));
     mockMachine.expects(once()).method("getProgramCounter").will(returnValue(4715));
     mockMachine.expects(once()).method("setProgramCounter").with(eq(4718));
@@ -60,7 +58,6 @@ public class PrintLiteralInstructionTest extends InstructionTestBase {
   
   public void testPrintRet() {
     
-    mockMachine.expects(atLeastOnce()).method("getStoryFileHeader").will(returnValue(storyfileHeader));
     mockFileHeader.expects(atLeastOnce()).method("getVersion").will(returnValue(3));
     mockMachine.expects(once()).method("printZString").with(eq(4712));
     mockMachine.expects(once()).method("newline");
@@ -69,37 +66,5 @@ public class PrintLiteralInstructionTest extends InstructionTestBase {
     PrintLiteralInstruction print_ret = new PrintLiteralInstruction(
         machine, PrintLiteralStaticInfo.OP_PRINT_RET, memoryAccess, 4711);
     print_ret.execute();
-  }
-  
-  public void testStaticInformation() {
-    
-    PrintLiteralStaticInfo info = PrintLiteralStaticInfo.getInstance();
-    assertFalse(info.storesResult(PrintLiteralStaticInfo.OP_PRINT, 3));
-    assertFalse(info.storesResult(PrintLiteralStaticInfo.OP_PRINT_RET, 3));
-    
-    assertFalse(info.isBranch(PrintLiteralStaticInfo.OP_PRINT, 3));
-    assertFalse(info.isBranch(PrintLiteralStaticInfo.OP_PRINT_RET, 3));
-
-    assertTrue(info.isOutput(PrintLiteralStaticInfo.OP_PRINT, 3));
-    assertTrue(info.isOutput(PrintLiteralStaticInfo.OP_PRINT_RET, 3));
-    
-    int[] validVersions1 = info.getValidVersions(PrintLiteralStaticInfo.OP_PRINT);
-    int[] validVersions2 = info.getValidVersions(PrintLiteralStaticInfo.OP_PRINT_RET);
-    assertEquals(8, validVersions1.length);
-    assertEquals(8, validVersions2.length);
-  }
-  
-  // *******************************************************************
-  // ********* GET_OP_NAME
-  // *************************
-  
-  public void testGetOpName() {
-
-    PrintLiteralStaticInfo info = PrintLiteralStaticInfo.getInstance();
-    for (int i = PrintLiteralStaticInfo.OP_PRINT; i <= PrintLiteralStaticInfo.OP_PRINT_RET; i++) {
-      
-      assertNotNull(info.getOpName(i, 3));
-    }
-    assertNotNull(info.getOpName(1234, 3));
   }  
 }

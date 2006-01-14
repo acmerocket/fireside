@@ -27,6 +27,7 @@ import java.util.List;
 
 import org.zmpp.vm.Instruction;
 import org.zmpp.vm.Machine;
+import org.zmpp.vm.ObjectTree;
 import org.zmpp.vm.PortableGameState;
 import org.zmpp.vm.RoutineContext;
 
@@ -193,6 +194,26 @@ public abstract class AbstractInstruction implements Instruction {
   }
   
   /**
+   * Returns the story file version.
+   * 
+   * @return the story file version
+   */
+  protected int getStoryFileVersion() {
+    
+    return getMachine().getServices().getStoryFileHeader().getVersion();
+  }
+  
+  /**
+   * Returns the object tree.
+   * 
+   * @return the object tree
+   */
+  protected ObjectTree getObjectTree() {
+    
+    return getMachine().getServices().getObjectTree();
+  }
+  
+  /**
    * Returns the number of operands.
    * 
    * @return the number of operands
@@ -272,8 +293,7 @@ public abstract class AbstractInstruction implements Instruction {
    */
   public boolean storesResult() {
     
-    return getStaticInfo().storesResult(getOpcode(),
-        getMachine().getStoryFileHeader().getVersion());
+    return getStaticInfo().storesResult(getOpcode(), getStoryFileVersion());
   }
   
   /**
@@ -281,8 +301,7 @@ public abstract class AbstractInstruction implements Instruction {
    */
   public boolean isOutput() {
 
-    return getStaticInfo().isOutput(getOpcode(),
-        getMachine().getStoryFileHeader().getVersion());
+    return getStaticInfo().isOutput(getOpcode(), getStoryFileVersion());
   }
   
   /**
@@ -292,8 +311,7 @@ public abstract class AbstractInstruction implements Instruction {
    */
   public boolean isBranch() {
     
-    return getStaticInfo().isBranch(getOpcode(),
-        getMachine().getStoryFileHeader().getVersion());
+    return getStaticInfo().isBranch(getOpcode(), getStoryFileVersion());
   }
   
   /**
@@ -388,7 +406,7 @@ public abstract class AbstractInstruction implements Instruction {
    */
   private boolean isOpcodeAvailable() {
     
-    int version = getMachine().getStoryFileHeader().getVersion();
+    int version = getStoryFileVersion();
     int[] validVersions = getStaticInfo().getValidVersions(getOpcode());
     for (int validVersion : validVersions) {
       
@@ -401,7 +419,7 @@ public abstract class AbstractInstruction implements Instruction {
     
     StringBuilder buffer = new StringBuilder();
     buffer.append(getStaticInfo().getOpName(getOpcode(),
-        getMachine().getStoryFileHeader().getVersion()));
+                  getStoryFileVersion()));
     buffer.append(" ");
     buffer.append(getOperandString());
     if (storesResult()) {
@@ -583,7 +601,7 @@ public abstract class AbstractInstruction implements Instruction {
     // address is the instruction address + 1
     boolean success = getMachine().save(pc);
     
-    if (getMachine().getStoryFileHeader().getVersion() <= 3) {
+    if (getStoryFileVersion() <= 3) {
       
       //int target = getMachine().getProgramCounter() + getLength();
       //target--; // point to the previous branch offset
@@ -601,7 +619,7 @@ public abstract class AbstractInstruction implements Instruction {
   protected void restoreFromStorage() {
 
     PortableGameState gamestate = getMachine().restore();
-    if (getMachine().getStoryFileHeader().getVersion() <= 3) {
+    if (getStoryFileVersion() <= 3) {
 
       if (gamestate == null) {
 

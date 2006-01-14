@@ -36,9 +36,13 @@ import org.zmpp.vm.Machine;
  */
 public class LongInstructionTest extends InstructionTestBase {
 
+  public void setUp() throws Exception {
+  
+    super.setUp();
+  }
+  
   public void testIsBranch() {
     
-    mockMachine.expects(atLeastOnce()).method("getStoryFileHeader").will(returnValue(storyfileHeader));
     mockFileHeader.expects(atLeastOnce()).method("getVersion").will(returnValue(3));
     
     LongInstruction info;
@@ -66,9 +70,8 @@ public class LongInstructionTest extends InstructionTestBase {
   
   public void testStoresResultV4() {
     
-    mockMachine.expects(atLeastOnce()).method("getStoryFileHeader").will(returnValue(storyfileHeader));
-    mockFileHeader.expects(atLeastOnce()).method("getVersion").will(returnValue(4));
-
+    mockFileHeader.expects(atLeastOnce()).method("getVersion").will(returnValue(3));
+    
     LongInstruction info;
     info = new LongInstruction(machine, LongStaticInfo.OP_OR);
     assertTrue(info.storesResult());
@@ -104,7 +107,6 @@ public class LongInstructionTest extends InstructionTestBase {
   
   public void testStoresResultV5() {
     
-    mockMachine.expects(atLeastOnce()).method("getStoryFileHeader").will(returnValue(storyfileHeader));
     mockFileHeader.expects(atLeastOnce()).method("getVersion").will(returnValue(5));
     LongInstruction info = new LongInstruction(machine, LongStaticInfo.OP_CALL_2N);
     assertFalse(info.storesResult());
@@ -112,7 +114,6 @@ public class LongInstructionTest extends InstructionTestBase {
   
   public void testIllegalOpcode() {
 
-    mockMachine.expects(atLeastOnce()).method("getStoryFileHeader").will(returnValue(storyfileHeader));
     mockFileHeader.expects(atLeastOnce()).method("getVersion").will(returnValue(3));
     LongInstruction illegal = createInstructionMock(0xee,
         Operand.TYPENUM_SMALL_CONSTANT, (short) 1 ,
@@ -125,7 +126,6 @@ public class LongInstructionTest extends InstructionTestBase {
 
   public void testCall2sVersion4() {
 
-    mockMachine.expects(atLeastOnce()).method("getStoryFileHeader").will(returnValue(storyfileHeader));
     mockFileHeader.expects(atLeastOnce()).method("getVersion").will(returnValue(4));
     mockMachine.expects(once()).method("getProgramCounter").will(returnValue(4611));
     short[] args = { 2 };
@@ -140,9 +140,7 @@ public class LongInstructionTest extends InstructionTestBase {
   
   public void testCall2SIllegalInVersion3() {
 
-    mockMachine.expects(once()).method("getStoryFileHeader").will(returnValue(storyfileHeader));
-    mockFileHeader.expects(once()).method("getVersion").will(returnValue(3));
-    
+    mockFileHeader.expects(atLeastOnce()).method("getVersion").will(returnValue(3));
     mockMachine.expects(once()).method("halt").with(eq(
         "illegal instruction, type: LONG operand count: C2OP opcode: 25"        
         ));
@@ -158,9 +156,7 @@ public class LongInstructionTest extends InstructionTestBase {
   
   public void testCall2nIllegalInVersion4() {
 
-    mockMachine.expects(once()).method("getStoryFileHeader").will(returnValue(storyfileHeader));
-    mockFileHeader.expects(once()).method("getVersion").will(returnValue(4));
-    
+    mockFileHeader.expects(atLeastOnce()).method("getVersion").will(returnValue(4));
     mockMachine.expects(once()).method("halt").with(eq(
         "illegal instruction, type: LONG operand count: C2OP opcode: 26"        
         ));
@@ -178,7 +174,6 @@ public class LongInstructionTest extends InstructionTestBase {
   // According to Z-machine standard 1.1, one operand is not allowed
   public void testJe1Operand() {
     
-    mockMachine.expects(atLeastOnce()).method("getStoryFileHeader").will(returnValue(storyfileHeader));
     mockFileHeader.expects(atLeastOnce()).method("getVersion").will(returnValue(3));
     LongInstructionMock je1 = createInstructionMockVarOps(LongStaticInfo.OP_JE);
     je1.addOperand(new Operand(Operand.TYPENUM_SMALL_CONSTANT, (byte) 0x01));
@@ -189,7 +184,6 @@ public class LongInstructionTest extends InstructionTestBase {
   
   public void testJe3Operands() {
   
-    mockMachine.expects(atLeastOnce()).method("getStoryFileHeader").will(returnValue(storyfileHeader));
     mockFileHeader.expects(atLeastOnce()).method("getVersion").will(returnValue(3));
     LongInstructionMock je3 = createInstructionMockVarOps(LongStaticInfo.OP_JE);    
     je3.addOperand(new Operand(Operand.TYPENUM_SMALL_CONSTANT, (short) 0x01));
@@ -205,7 +199,6 @@ public class LongInstructionTest extends InstructionTestBase {
   
   public void testJe2() {
     
-    mockMachine.expects(atLeastOnce()).method("getStoryFileHeader").will(returnValue(storyfileHeader));
     mockFileHeader.expects(atLeastOnce()).method("getVersion").will(returnValue(3));
     LongInstructionMock je_nobranch = createInstructionMock(LongStaticInfo.OP_JE,
         Operand.TYPENUM_SMALL_CONSTANT, (short) 2,
@@ -230,7 +223,6 @@ public class LongInstructionTest extends InstructionTestBase {
   
   public void testJl() {
     
-    mockMachine.expects(atLeastOnce()).method("getStoryFileHeader").will(returnValue(storyfileHeader));
     mockFileHeader.expects(atLeastOnce()).method("getVersion").will(returnValue(3));
     LongInstructionMock jl_nobranch = createInstructionMock(LongStaticInfo.OP_JL,
         Operand.TYPENUM_SMALL_CONSTANT, (short) 5,
@@ -256,7 +248,6 @@ public class LongInstructionTest extends InstructionTestBase {
   
   public void testJg() {
     
-    mockMachine.expects(atLeastOnce()).method("getStoryFileHeader").will(returnValue(storyfileHeader));
     mockFileHeader.expects(atLeastOnce()).method("getVersion").will(returnValue(3));
     LongInstructionMock jg_nobranch = createInstructionMock(LongStaticInfo.OP_JG,
         Operand.TYPENUM_SMALL_CONSTANT, (short) 3,
@@ -279,13 +270,12 @@ public class LongInstructionTest extends InstructionTestBase {
   
   public void testJinNotIn() {
     
-    mockMachine.expects(atLeastOnce()).method("getStoryFileHeader").will(returnValue(storyfileHeader));
     mockFileHeader.expects(atLeastOnce()).method("getVersion").will(returnValue(3));
     LongInstructionMock jin_nobranch = createInstructionMock(LongStaticInfo.OP_JIN,
         Operand.TYPENUM_SMALL_CONSTANT, (short) 1,
         Operand.TYPENUM_SMALL_CONSTANT, (short) 5);
     
-    mockMachine.expects(once()).method("getObjectTree").will(returnValue(objectTree));
+    mockServices.expects(once()).method("getObjectTree").will(returnValue(objectTree));
     mockObjectTree.expects(once()).method("getObject").with(eq(1)).will(returnValue(zobject));
     mockZObject.expects(once()).method("getParent").will(returnValue(12));
     jin_nobranch.execute();
@@ -295,12 +285,11 @@ public class LongInstructionTest extends InstructionTestBase {
   
   public void testJinIn() {
     
-    mockMachine.expects(atLeastOnce()).method("getStoryFileHeader").will(returnValue(storyfileHeader));
     mockFileHeader.expects(atLeastOnce()).method("getVersion").will(returnValue(3));
     LongInstructionMock jin_branch = createInstructionMock(LongStaticInfo.OP_JIN,
         Operand.TYPENUM_SMALL_CONSTANT, (short) 1,
         Operand.TYPENUM_SMALL_CONSTANT, (short) 36);
-    mockMachine.expects(once()).method("getObjectTree").will(returnValue(objectTree));
+    mockServices.expects(once()).method("getObjectTree").will(returnValue(objectTree));
     mockObjectTree.expects(once()).method("getObject").with(eq(1)).will(returnValue(zobject));
     mockZObject.expects(once()).method("getParent").will(returnValue(36));
     
@@ -315,7 +304,6 @@ public class LongInstructionTest extends InstructionTestBase {
   
   public void testDecChkNoBranch() {
     
-    mockMachine.expects(atLeastOnce()).method("getStoryFileHeader").will(returnValue(storyfileHeader));
     mockFileHeader.expects(atLeastOnce()).method("getVersion").will(returnValue(3));
     LongInstructionMock dec_chk_nobranch = createInstructionMock(
         LongStaticInfo.OP_DEC_CHK,
@@ -330,9 +318,7 @@ public class LongInstructionTest extends InstructionTestBase {
   
   public void testDecChkBranch() {
     
-    mockMachine.expects(atLeastOnce()).method("getStoryFileHeader").will(returnValue(storyfileHeader));
     mockFileHeader.expects(atLeastOnce()).method("getVersion").will(returnValue(3));
-
     LongInstructionMock dec_chk_branch = createInstructionMock(
         LongStaticInfo.OP_DEC_CHK,
         Operand.TYPENUM_SMALL_CONSTANT, (short) 0x11,
@@ -351,7 +337,6 @@ public class LongInstructionTest extends InstructionTestBase {
   
   public void testIncChkNoBranch() {
     
-    mockMachine.expects(atLeastOnce()).method("getStoryFileHeader").will(returnValue(storyfileHeader));
     mockFileHeader.expects(atLeastOnce()).method("getVersion").will(returnValue(3));
     LongInstructionMock inc_chk_nobranch = createInstructionMock(
         LongStaticInfo.OP_INC_CHK,
@@ -367,7 +352,6 @@ public class LongInstructionTest extends InstructionTestBase {
   
   public void testIncChkBranch() {
     
-    mockMachine.expects(atLeastOnce()).method("getStoryFileHeader").will(returnValue(storyfileHeader));
     mockFileHeader.expects(atLeastOnce()).method("getVersion").will(returnValue(3));
     LongInstructionMock inc_chk_branch = createInstructionMock(
         LongStaticInfo.OP_INC_CHK,
@@ -386,7 +370,6 @@ public class LongInstructionTest extends InstructionTestBase {
   
   public void testTestNoBranch() {
     
-    mockMachine.expects(atLeastOnce()).method("getStoryFileHeader").will(returnValue(storyfileHeader));
     mockFileHeader.expects(atLeastOnce()).method("getVersion").will(returnValue(3));
     LongInstructionMock test_nobranch = createInstructionMock(LongStaticInfo.OP_TEST,
         Operand.TYPENUM_LARGE_CONSTANT, (short) 0x7c,
@@ -398,7 +381,6 @@ public class LongInstructionTest extends InstructionTestBase {
   
   public void testTestBranch() {
 
-    mockMachine.expects(atLeastOnce()).method("getStoryFileHeader").will(returnValue(storyfileHeader));
     mockFileHeader.expects(atLeastOnce()).method("getVersion").will(returnValue(3));
     LongInstructionMock test_branch = createInstructionMock(LongStaticInfo.OP_TEST,
         Operand.TYPENUM_LARGE_CONSTANT, (short) 0x7c,
@@ -414,7 +396,6 @@ public class LongInstructionTest extends InstructionTestBase {
   
   public void testOr() {
     
-    mockMachine.expects(atLeastOnce()).method("getStoryFileHeader").will(returnValue(storyfileHeader));
     mockFileHeader.expects(atLeastOnce()).method("getVersion").will(returnValue(3));
     LongInstructionMock or = createInstructionMock(LongStaticInfo.OP_OR,
         Operand.TYPENUM_LARGE_CONSTANT, (short) 0x00ff,
@@ -431,7 +412,6 @@ public class LongInstructionTest extends InstructionTestBase {
   
   public void testAnd() {
     
-    mockMachine.expects(atLeastOnce()).method("getStoryFileHeader").will(returnValue(storyfileHeader));
     mockFileHeader.expects(atLeastOnce()).method("getVersion").will(returnValue(3));
     LongInstructionMock and = createInstructionMock(LongStaticInfo.OP_AND,
         Operand.TYPENUM_LARGE_CONSTANT, (short) 0x00ff,
@@ -448,7 +428,6 @@ public class LongInstructionTest extends InstructionTestBase {
   
   public void testAdd() {
     
-    mockMachine.expects(atLeastOnce()).method("getStoryFileHeader").will(returnValue(storyfileHeader));
     mockFileHeader.expects(atLeastOnce()).method("getVersion").will(returnValue(3));
     LongInstructionMock add = createInstructionMock(LongStaticInfo.OP_ADD,
         Operand.TYPENUM_LARGE_CONSTANT, (short) -1,
@@ -465,7 +444,6 @@ public class LongInstructionTest extends InstructionTestBase {
   
   public void testSub() {
     
-    mockMachine.expects(atLeastOnce()).method("getStoryFileHeader").will(returnValue(storyfileHeader));
     mockFileHeader.expects(atLeastOnce()).method("getVersion").will(returnValue(3));
     LongInstructionMock sub = createInstructionMock(LongStaticInfo.OP_SUB,
         Operand.TYPENUM_LARGE_CONSTANT, (short) -1,
@@ -482,7 +460,6 @@ public class LongInstructionTest extends InstructionTestBase {
   
   public void testMul() {
     
-    mockMachine.expects(atLeastOnce()).method("getStoryFileHeader").will(returnValue(storyfileHeader));
     mockFileHeader.expects(atLeastOnce()).method("getVersion").will(returnValue(3));
     LongInstructionMock mul = createInstructionMock(LongStaticInfo.OP_MUL,
         Operand.TYPENUM_LARGE_CONSTANT, (short) -4,
@@ -499,7 +476,6 @@ public class LongInstructionTest extends InstructionTestBase {
   
   public void testDiv() {
     
-    mockMachine.expects(atLeastOnce()).method("getStoryFileHeader").will(returnValue(storyfileHeader));
     mockFileHeader.expects(atLeastOnce()).method("getVersion").will(returnValue(3));
      LongInstructionMock div = createInstructionMock(LongStaticInfo.OP_DIV,
         Operand.TYPENUM_LARGE_CONSTANT, (short) -7,
@@ -512,9 +488,8 @@ public class LongInstructionTest extends InstructionTestBase {
 
   public void testDivBy0() {
     
-    mockMachine.expects(atLeastOnce()).method("getStoryFileHeader").will(returnValue(storyfileHeader));
     mockFileHeader.expects(atLeastOnce()).method("getVersion").will(returnValue(3));
-     LongInstructionMock div0 = createInstructionMock(LongStaticInfo.OP_DIV,
+    LongInstructionMock div0 = createInstructionMock(LongStaticInfo.OP_DIV,
         Operand.TYPENUM_LARGE_CONSTANT, (short) 7,
         Operand.TYPENUM_LARGE_CONSTANT, (short) 0);
     div0.setStoreVariable((short) 0x12);
@@ -528,7 +503,6 @@ public class LongInstructionTest extends InstructionTestBase {
   
   public void testMod() {
     
-    mockMachine.expects(atLeastOnce()).method("getStoryFileHeader").will(returnValue(storyfileHeader));
     mockFileHeader.expects(atLeastOnce()).method("getVersion").will(returnValue(3));
     LongInstructionMock mod = createInstructionMock(LongStaticInfo.OP_MOD,
         Operand.TYPENUM_LARGE_CONSTANT, (short) -7,
@@ -541,9 +515,8 @@ public class LongInstructionTest extends InstructionTestBase {
 
   public void testModBy0() {
     
-    mockMachine.expects(atLeastOnce()).method("getStoryFileHeader").will(returnValue(storyfileHeader));
     mockFileHeader.expects(atLeastOnce()).method("getVersion").will(returnValue(3));
-     LongInstructionMock mod0 = createInstructionMock(LongStaticInfo.OP_MOD,
+    LongInstructionMock mod0 = createInstructionMock(LongStaticInfo.OP_MOD,
         Operand.TYPENUM_LARGE_CONSTANT, (short) 7,
         Operand.TYPENUM_LARGE_CONSTANT, (short) 0);
     mod0.setStoreVariable((short) 0x12);
@@ -557,13 +530,12 @@ public class LongInstructionTest extends InstructionTestBase {
   
   public void testTestAttributeNoBranch() {
     
-    mockMachine.expects(atLeastOnce()).method("getStoryFileHeader").will(returnValue(storyfileHeader));
     mockFileHeader.expects(atLeastOnce()).method("getVersion").will(returnValue(3));
     LongInstructionMock test_attr_nobranch = createInstructionMock(
         LongStaticInfo.OP_TEST_ATTR,
         Operand.TYPENUM_LARGE_CONSTANT, (short) 1,
         Operand.TYPENUM_SMALL_CONSTANT, (byte) 2);
-    mockMachine.expects(once()).method("getObjectTree").will(returnValue(objectTree));
+    mockServices.expects(once()).method("getObjectTree").will(returnValue(objectTree));
     mockObjectTree.expects(once()).method("getObject").with(eq(1)).will(returnValue(zobject));
     mockZObject.expects(once()).method("isAttributeSet").with(eq(2)).will(returnValue(false));    
     test_attr_nobranch.execute();
@@ -573,13 +545,12 @@ public class LongInstructionTest extends InstructionTestBase {
 
   public void testTestAttributeBranch() {
     
-    mockMachine.expects(atLeastOnce()).method("getStoryFileHeader").will(returnValue(storyfileHeader));
     mockFileHeader.expects(atLeastOnce()).method("getVersion").will(returnValue(3));
     LongInstructionMock test_attr_branch = createInstructionMock(
         LongStaticInfo.OP_TEST_ATTR,
         Operand.TYPENUM_LARGE_CONSTANT, (short) 1,
         Operand.TYPENUM_SMALL_CONSTANT, (byte) 2);
-    mockMachine.expects(once()).method("getObjectTree").will(returnValue(objectTree));
+    mockServices.expects(once()).method("getObjectTree").will(returnValue(objectTree));
     mockObjectTree.expects(once()).method("getObject").with(eq(1)).will(returnValue(zobject));
     mockZObject.expects(once()).method("isAttributeSet").with(eq(2)).will(returnValue(true));    
     
@@ -594,13 +565,12 @@ public class LongInstructionTest extends InstructionTestBase {
   
   public void testSetAttr() {
     
-    mockMachine.expects(atLeastOnce()).method("getStoryFileHeader").will(returnValue(storyfileHeader));
     mockFileHeader.expects(atLeastOnce()).method("getVersion").will(returnValue(3));
     LongInstructionMock set_attr = createInstructionMock(
         LongStaticInfo.OP_SET_ATTR,
         Operand.TYPENUM_LARGE_CONSTANT, (short) 1,
         Operand.TYPENUM_SMALL_CONSTANT, (byte) 2);
-    mockMachine.expects(once()).method("getObjectTree").will(returnValue(objectTree));
+    mockServices.expects(once()).method("getObjectTree").will(returnValue(objectTree));
     mockObjectTree.expects(once()).method("getObject").with(eq(1)).will(returnValue(zobject));
     mockZObject.expects(once()).method("setAttribute").with(eq(2));    
     set_attr.execute();    
@@ -613,13 +583,12 @@ public class LongInstructionTest extends InstructionTestBase {
   
   public void testClearAttr() {
     
-    mockMachine.expects(atLeastOnce()).method("getStoryFileHeader").will(returnValue(storyfileHeader));
     mockFileHeader.expects(atLeastOnce()).method("getVersion").will(returnValue(3));
     LongInstructionMock clear_attr = createInstructionMock(
         LongStaticInfo.OP_CLEAR_ATTR,
         Operand.TYPENUM_LARGE_CONSTANT, (short) 1,
         Operand.TYPENUM_SMALL_CONSTANT, (byte) 2);
-    mockMachine.expects(once()).method("getObjectTree").will(returnValue(objectTree));
+    mockServices.expects(once()).method("getObjectTree").will(returnValue(objectTree));
     mockObjectTree.expects(once()).method("getObject").with(eq(1)).will(returnValue(zobject));
     mockZObject.expects(once()).method("clearAttribute").with(eq(2));
     clear_attr.execute();
@@ -632,7 +601,6 @@ public class LongInstructionTest extends InstructionTestBase {
   
   public void testStore() {
     
-    mockMachine.expects(atLeastOnce()).method("getStoryFileHeader").will(returnValue(storyfileHeader));
     mockFileHeader.expects(atLeastOnce()).method("getVersion").will(returnValue(3));
     LongInstructionMock store = createInstructionMock(LongStaticInfo.OP_STORE,
         Operand.TYPENUM_SMALL_CONSTANT, (byte) 0x11,
@@ -645,7 +613,6 @@ public class LongInstructionTest extends InstructionTestBase {
   // see standard 1.1
   public void testStoreOnStack() {
     
-    mockMachine.expects(atLeastOnce()).method("getStoryFileHeader").will(returnValue(storyfileHeader));
     mockFileHeader.expects(atLeastOnce()).method("getVersion").will(returnValue(3));
     LongInstructionMock store = createInstructionMock(LongStaticInfo.OP_STORE,
         Operand.TYPENUM_SMALL_CONSTANT, (byte) 0x00,
@@ -661,14 +628,13 @@ public class LongInstructionTest extends InstructionTestBase {
   
   public void testLoadw() {
     
-    mockMachine.expects(atLeastOnce()).method("getStoryFileHeader").will(returnValue(storyfileHeader));
     mockFileHeader.expects(atLeastOnce()).method("getVersion").will(returnValue(3));
     LongInstructionMock loadw = createInstructionMock(LongStaticInfo.OP_LOADW,
         Operand.TYPENUM_LARGE_CONSTANT, (short) 0x0010,
         Operand.TYPENUM_SMALL_CONSTANT, (short) 1);
     loadw.setStoreVariable((short) 0x11);
     
-    mockMachine.expects(once()).method("getMemoryAccess").will(returnValue(memoryAccess));
+    mockServices.expects(once()).method("getMemoryAccess").will(returnValue(memoryAccess));
     mockMemAccess.expects(once()).method("readShort").with(eq(0x0010 + 2)).will(returnValue((short) 123));
     mockMachine.expects(once()).method("setVariable").with(eq(0x11), eq((short)123));
     loadw.execute();
@@ -682,13 +648,12 @@ public class LongInstructionTest extends InstructionTestBase {
   // To be clarified: read unsigned or signed ? 
   public void testLoadb() {
     
-    mockMachine.expects(atLeastOnce()).method("getStoryFileHeader").will(returnValue(storyfileHeader));
     mockFileHeader.expects(atLeastOnce()).method("getVersion").will(returnValue(3));
     LongInstructionMock loadb = createInstructionMock(LongStaticInfo.OP_LOADB,
         Operand.TYPENUM_LARGE_CONSTANT, (short) 0x0010,
         Operand.TYPENUM_SMALL_CONSTANT, (byte) 1);
     loadb.setStoreVariable((short) 0x11);
-    mockMachine.expects(once()).method("getMemoryAccess").will(returnValue(memoryAccess));
+    mockServices.expects(once()).method("getMemoryAccess").will(returnValue(memoryAccess));
     mockMemAccess.expects(once()).method("readUnsignedByte").with(eq(0x0010 + 1)).will(returnValue((short) 42));
     mockMachine.expects(once()).method("setVariable").with(eq(0x11), eq((short) 42));
     
@@ -702,9 +667,8 @@ public class LongInstructionTest extends InstructionTestBase {
   
   public void testGetProp2Bytes() {
     
-    mockMachine.expects(atLeastOnce()).method("getStoryFileHeader").will(returnValue(storyfileHeader));
     mockFileHeader.expects(atLeastOnce()).method("getVersion").will(returnValue(3));
-    mockMachine.expects(once()).method("getObjectTree").will(returnValue(objectTree));
+    mockServices.expects(once()).method("getObjectTree").will(returnValue(objectTree));
     mockObjectTree.expects(once()).method("getObject").with(eq(1)).will(returnValue(zobject));
     mockZObject.expects(once()).method("getPropertySize").with(eq(18)).will(returnValue(2));
     mockZObject.expects(once()).method("isPropertyAvailable").with(eq(18)).will(returnValue(true));
@@ -725,9 +689,8 @@ public class LongInstructionTest extends InstructionTestBase {
   
   public void testGetPropOneByte() {
     
-    mockMachine.expects(atLeastOnce()).method("getStoryFileHeader").will(returnValue(storyfileHeader));
     mockFileHeader.expects(atLeastOnce()).method("getVersion").will(returnValue(3));
-    mockMachine.expects(once()).method("getObjectTree").will(returnValue(objectTree));
+    mockServices.expects(once()).method("getObjectTree").will(returnValue(objectTree));
     mockObjectTree.expects(once()).method("getObject").with(eq(2)).will(returnValue(zobject));
     mockZObject.expects(once()).method("getPropertySize").with(eq(22)).will(returnValue(1));
     mockZObject.expects(once()).method("isPropertyAvailable").with(eq(22)).will(returnValue(true));
@@ -747,10 +710,9 @@ public class LongInstructionTest extends InstructionTestBase {
   
   public void testGetPropFail() {
 
-    // No defined property, take default, Object 1, property 1
-    mockMachine.expects(atLeastOnce()).method("getStoryFileHeader").will(returnValue(storyfileHeader));
     mockFileHeader.expects(atLeastOnce()).method("getVersion").will(returnValue(3));
-    mockMachine.expects(atLeastOnce()).method("getObjectTree").will(returnValue(objectTree));
+    // No defined property, take default, Object 1, property 1
+    mockServices.expects(atLeastOnce()).method("getObjectTree").will(returnValue(objectTree));
     mockObjectTree.expects(once()).method("getObject").with(eq(1)).will(returnValue(zobject));
     mockZObject.expects(once()).method("getPropertySize").with(eq(1)).will(returnValue(0));
     mockZObject.expects(once()).method("isPropertyAvailable").with(eq(1)).will(returnValue(false));
@@ -773,7 +735,6 @@ public class LongInstructionTest extends InstructionTestBase {
   
   public void testInsertObj() {
     
-    mockMachine.expects(atLeastOnce()).method("getStoryFileHeader").will(returnValue(storyfileHeader));
     mockFileHeader.expects(atLeastOnce()).method("getVersion").will(returnValue(3));
     // Make Object 7 a child of Object 2
     LongInstructionMock insert_obj = createInstructionMock(
@@ -781,7 +742,7 @@ public class LongInstructionTest extends InstructionTestBase {
         Operand.TYPENUM_SMALL_CONSTANT, (short) 7,
         Operand.TYPENUM_SMALL_CONSTANT, (short) 2);
     
-    mockMachine.expects(once()).method("getObjectTree").will(returnValue(objectTree));
+    mockServices.expects(once()).method("getObjectTree").will(returnValue(objectTree));
     mockObjectTree.expects(once()).method("insertObject").with(eq(2), eq(7));
     insert_obj.execute();
     assertTrue(insert_obj.nextInstructionCalled);
@@ -793,9 +754,8 @@ public class LongInstructionTest extends InstructionTestBase {
   
   public void testGetPropAddr() {
    
-    mockMachine.expects(atLeastOnce()).method("getStoryFileHeader").will(returnValue(storyfileHeader));
     mockFileHeader.expects(atLeastOnce()).method("getVersion").will(returnValue(3));
-    mockMachine.expects(atLeastOnce()).method("getObjectTree").will(returnValue(objectTree));
+    mockServices.expects(atLeastOnce()).method("getObjectTree").will(returnValue(objectTree));
     mockObjectTree.expects(once()).method("getObject").with(eq(1)).will(returnValue(zobject));
     mockZObject.expects(once()).method("isPropertyAvailable").with(eq(18)).will(returnValue(true));
     mockZObject.expects(once()).method("getPropertyAddress").with(eq(18)).will(returnValue(0x0a55));
@@ -814,9 +774,8 @@ public class LongInstructionTest extends InstructionTestBase {
   
   public void testGetPropAddrNotExists() {
     
-    mockMachine.expects(atLeastOnce()).method("getStoryFileHeader").will(returnValue(storyfileHeader));
     mockFileHeader.expects(atLeastOnce()).method("getVersion").will(returnValue(3));
-    mockMachine.expects(atLeastOnce()).method("getObjectTree").will(returnValue(objectTree));
+    mockServices.expects(atLeastOnce()).method("getObjectTree").will(returnValue(objectTree));
     mockObjectTree.expects(once()).method("getObject").with(eq(1)).will(returnValue(zobject));
     mockZObject.expects(once()).method("isPropertyAvailable").with(eq(2)).will(returnValue(false));
     mockMachine.expects(once()).method("setVariable").with(eq(17), eq((short) 0x00));
@@ -837,9 +796,8 @@ public class LongInstructionTest extends InstructionTestBase {
   
   public void testGetNextProp() {
     
-    mockMachine.expects(atLeastOnce()).method("getStoryFileHeader").will(returnValue(storyfileHeader));
     mockFileHeader.expects(atLeastOnce()).method("getVersion").will(returnValue(3));
-    mockMachine.expects(once()).method("getObjectTree").will(returnValue(objectTree));
+    mockServices.expects(once()).method("getObjectTree").will(returnValue(objectTree));
     mockObjectTree.expects(once()).method("getObject").with(eq(1)).will(returnValue(zobject));
     mockZObject.expects(once()).method("getNextProperty").with(eq(12)).will(returnValue(15));
     mockZObject.expects(once()).method("isPropertyAvailable").with(eq(12)).will(returnValue(true));
@@ -859,9 +817,8 @@ public class LongInstructionTest extends InstructionTestBase {
   // get_next_prop with 0 returns the first property
   public void testGetNextPropWith0() {
     
-    mockMachine.expects(atLeastOnce()).method("getStoryFileHeader").will(returnValue(storyfileHeader));
     mockFileHeader.expects(atLeastOnce()).method("getVersion").will(returnValue(3));
-    mockMachine.expects(once()).method("getObjectTree").will(returnValue(objectTree));
+    mockServices.expects(once()).method("getObjectTree").will(returnValue(objectTree));
     mockObjectTree.expects(once()).method("getObject").with(eq(1)).will(returnValue(zobject));
     mockZObject.expects(once()).method("getNextProperty").with(eq(0)).will(returnValue(15));
     mockMachine.expects(once()).method("setVariable").with(eq(0x11), eq((short) 15));
@@ -880,9 +837,8 @@ public class LongInstructionTest extends InstructionTestBase {
   // get_next_prop with unavailable property
   public void testGetNextPropNotAvailable() {
     
-    mockMachine.expects(atLeastOnce()).method("getStoryFileHeader").will(returnValue(storyfileHeader));
     mockFileHeader.expects(atLeastOnce()).method("getVersion").will(returnValue(3));
-    mockMachine.expects(once()).method("getObjectTree").will(returnValue(objectTree));
+    mockServices.expects(once()).method("getObjectTree").will(returnValue(objectTree));
     mockObjectTree.expects(once()).method("getObject").with(eq(1)).will(returnValue(zobject));
     mockZObject.expects(once()).method("isPropertyAvailable").with(eq(13)).will(returnValue(false));
     mockMachine.expects(once()).method("halt").with(eq("the property [13] of object [1] does not exist"));
@@ -894,20 +850,6 @@ public class LongInstructionTest extends InstructionTestBase {
     
     get_next_prop.setStoreVariable((short) 0x11);    
     get_next_prop.execute();        
-  }
-  
-  // *******************************************************************
-  // ********* GET_OP_NAME
-  // *************************
-  
-  public void testGetOpName() {
-
-    LongStaticInfo info = LongStaticInfo.getInstance();
-    for (int i = LongStaticInfo.OP_JE; i <= LongStaticInfo.OP_CALL_2S; i++) {
-      
-      assertNotNull(info.getOpName(i, 3));      
-    }    
-    assertNotNull(info.getOpName(1234, 3));      
   }
   
   // **********************************************************************

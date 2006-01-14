@@ -24,10 +24,8 @@ package org.zmpp.vm;
 
 import java.util.List;
 
-import org.zmpp.base.MemoryAccess;
 import org.zmpp.io.InputStream;
 import org.zmpp.io.OutputStream;
-import org.zmpp.vmutil.ZCharDecoder;
 
 /**
  * This interface gives the instructions an abstract access to the current
@@ -69,18 +67,11 @@ public interface Machine {
   enum VariableType { STACK, LOCAL, GLOBAL };
   
   /**
-   * Returns the story file header.
+   * Returns the services interface.
    * 
-   * @return the story file header
+   * @return the services interface
    */
-  StoryFileHeader getStoryFileHeader();
-  
-  /**
-   * Returns the zchar decoder.
-   * 
-   * @return the zchar decoder
-   */
-  ZCharDecoder getZCharDecoder();
+  MachineServices getServices();
   
   /**
    * Returns true, if the checksum validation was successful.
@@ -135,13 +126,6 @@ public interface Machine {
    * @return the stack value at the specified index
    */
   short getStackElement(int index);
-  
-  /**
-   * Returns the reference to the memory access object.
-   * 
-   * @return the reference to the MemoryAccess object
-   */
-  MemoryAccess getMemoryAccess();
   
   /**
    * Returns the value of the specified variable. 0 is the stack pointer,
@@ -208,20 +192,6 @@ public interface Machine {
    * @return the current routine context
    */
   RoutineContext getCurrentRoutineContext();
-  
-  /**
-   * Returns the dictonary.
-   * 
-   * @return the dictionary
-   */
-  Dictionary getDictionary();
-  
-  /**
-   * Returns the object tree.
-   * 
-   * @return the object tree
-   */
-  ObjectTree getObjectTree();
   
   /**  
    * Sets the output stream to the specified number.

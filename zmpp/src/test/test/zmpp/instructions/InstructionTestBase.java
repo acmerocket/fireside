@@ -6,6 +6,7 @@ import org.zmpp.base.MemoryAccess;
 import org.zmpp.io.OutputStream;
 import org.zmpp.vm.Dictionary;
 import org.zmpp.vm.Machine;
+import org.zmpp.vm.MachineServices;
 import org.zmpp.vm.ObjectTree;
 import org.zmpp.vm.StoryFileHeader;
 import org.zmpp.vm.ZObject;
@@ -14,6 +15,8 @@ public abstract class InstructionTestBase extends MockObjectTestCase {
 
   protected Mock mockMachine;
   protected Machine machine;
+  protected Mock mockServices;
+  protected MachineServices services;
   protected Mock mockOutputStream;
   protected OutputStream outputStream;
   protected Mock mockObjectTree;
@@ -36,6 +39,8 @@ public abstract class InstructionTestBase extends MockObjectTestCase {
   
     mockMachine = mock(Machine.class);
     machine = (Machine) mockMachine.proxy();
+    mockServices = mock(MachineServices.class);
+    services = (MachineServices) mockServices.proxy();
     mockOutputStream = mock(OutputStream.class);
     outputStream = (OutputStream) mockOutputStream.proxy();    
     mockObjectTree = mock(ObjectTree.class);
@@ -48,5 +53,9 @@ public abstract class InstructionTestBase extends MockObjectTestCase {
     storyfileHeader = (StoryFileHeader) mockFileHeader.proxy();
     mockDictionary = mock(Dictionary.class);
     dictionary = (Dictionary) mockDictionary.proxy();    
+
+    
+    mockMachine.expects(atLeastOnce()).method("getServices").will(returnValue(services));
+    mockServices.expects(atLeastOnce()).method("getStoryFileHeader").will(returnValue(storyfileHeader));
   }
 }

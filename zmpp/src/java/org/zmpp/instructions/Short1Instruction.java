@@ -94,7 +94,7 @@ public class Short1Instruction extends AbstractInstruction {
         load();
         break;
       case Short1StaticInfo.OP_NOT:
-        if (getMachine().getStoryFileHeader().getVersion() <= 4) {
+        if (getStoryFileVersion() <= 4) {
           
           not();
           
@@ -209,7 +209,7 @@ public class Short1Instruction extends AbstractInstruction {
     int parent = 0;
     if (obj > 0) {
       
-      parent = getMachine().getObjectTree().getObject(obj).getParent();
+      parent = getObjectTree().getObject(obj).getParent();
 
     } else {
       
@@ -225,7 +225,7 @@ public class Short1Instruction extends AbstractInstruction {
     int sibling = 0;
     if (obj > 0) {
       
-      sibling = getMachine().getObjectTree().getObject(obj).getSibling();
+      sibling = getObjectTree().getObject(obj).getSibling();
       
     } else {
       
@@ -241,7 +241,7 @@ public class Short1Instruction extends AbstractInstruction {
     int child = 0;
     if (obj > 0) {
       
-      child = getMachine().getObjectTree().getObject(obj).getChild();
+      child = getObjectTree().getObject(obj).getChild();
 
     } else {
       
@@ -274,7 +274,7 @@ public class Short1Instruction extends AbstractInstruction {
     int obj = getUnsignedValue(0);
     if (obj > 0) {
       
-      ZObject zobj = getMachine().getObjectTree().getObject(obj);
+      ZObject zobj = getObjectTree().getObject(obj);
       getMachine().printZString(zobj.getPropertiesDescriptionAddress());
       
     } else {
@@ -289,7 +289,7 @@ public class Short1Instruction extends AbstractInstruction {
     int obj = getUnsignedValue(0);
     if (obj > 0) {
       
-      getMachine().getObjectTree().removeObject(obj);
+      getObjectTree().removeObject(obj);
     }
     nextInstruction();
   }  
@@ -298,7 +298,7 @@ public class Short1Instruction extends AbstractInstruction {
     
     int propertyAddress = getUnsignedValue(0);    
     short proplen = (short)
-      getMachine().getObjectTree().getPropertyLength(propertyAddress);
+      getObjectTree().getPropertyLength(propertyAddress);
     storeResult(proplen);
     nextInstruction();
   }

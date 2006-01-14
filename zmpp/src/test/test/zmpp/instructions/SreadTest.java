@@ -54,7 +54,6 @@ public class SreadTest extends InstructionTestBase {
   public void testSreadVersion3() {
     
     // common things
-    mockMachine.expects(atLeastOnce()).method("getStoryFileHeader").will(returnValue(storyfileHeader));
     mockFileHeader.expects(atLeastOnce()).method("getVersion").will(returnValue(3));
     mockMachine.expects(once()).method("updateStatusLine");
     mockMachine.expects(atLeastOnce()).method("getInputFunctions").will(returnValue(inputFunctions));

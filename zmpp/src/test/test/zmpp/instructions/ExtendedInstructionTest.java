@@ -35,10 +35,15 @@ import org.zmpp.instructions.Operand;
  */
 public class ExtendedInstructionTest extends InstructionTestBase {
 
+  protected void setUp() throws Exception {
+  
+    super.setUp();
+    
+    mockFileHeader.expects(atLeastOnce()).method("getVersion").will(returnValue(5));
+  }
+  
   public void testStoresResult() {
     
-    mockMachine.expects(atLeastOnce()).method("getStoryFileHeader").will(returnValue(storyfileHeader));
-    mockFileHeader.expects(atLeastOnce()).method("getVersion").will(returnValue(5));
     ExtendedInstruction instr = new ExtendedInstruction(machine, ExtendedStaticInfo.OP_SAVE_UNDO);
     assertTrue(instr.storesResult());
     instr = new ExtendedInstruction(machine, ExtendedStaticInfo.OP_RESTORE_UNDO);
@@ -53,8 +58,6 @@ public class ExtendedInstructionTest extends InstructionTestBase {
   
   public void testSaveUndoSuccess() {
     
-    mockMachine.expects(atLeastOnce()).method("getStoryFileHeader").will(returnValue(storyfileHeader));
-    mockFileHeader.expects(atLeastOnce()).method("getVersion").will(returnValue(5));
     mockMachine.expects(atLeastOnce()).method("getProgramCounter").will(returnValue(4611));    
     mockMachine.expects(atLeastOnce()).method("setProgramCounter").with(eq(4614));
     mockMachine.expects(atLeastOnce()).method("save_undo").will(returnValue(true));
@@ -67,8 +70,6 @@ public class ExtendedInstructionTest extends InstructionTestBase {
 
   public void testSaveUndoFail() {
     
-    mockMachine.expects(atLeastOnce()).method("getStoryFileHeader").will(returnValue(storyfileHeader));
-    mockFileHeader.expects(atLeastOnce()).method("getVersion").will(returnValue(5));
     mockMachine.expects(atLeastOnce()).method("getProgramCounter").will(returnValue(4611));    
     mockMachine.expects(atLeastOnce()).method("setProgramCounter").with(eq(4614));
     mockMachine.expects(atLeastOnce()).method("save_undo").will(returnValue(false));
@@ -85,8 +86,6 @@ public class ExtendedInstructionTest extends InstructionTestBase {
   
   public void testArtShift0() {
     
-    mockMachine.expects(atLeastOnce()).method("getStoryFileHeader").will(returnValue(storyfileHeader));
-    mockFileHeader.expects(atLeastOnce()).method("getVersion").will(returnValue(5));
     mockMachine.expects(atLeastOnce()).method("getProgramCounter").will(returnValue(4611));    
     mockMachine.expects(atLeastOnce()).method("setProgramCounter").with(eq(4614));
     mockMachine.expects(once()).method("setVariable").with(eq(1), eq((short) 12));
@@ -101,8 +100,6 @@ public class ExtendedInstructionTest extends InstructionTestBase {
     
   public void testArtShiftPositivePositiveShift() {
 
-    mockMachine.expects(atLeastOnce()).method("getStoryFileHeader").will(returnValue(storyfileHeader));
-    mockFileHeader.expects(atLeastOnce()).method("getVersion").will(returnValue(5));
     mockMachine.expects(atLeastOnce()).method("getProgramCounter").will(returnValue(4611));    
     mockMachine.expects(atLeastOnce()).method("setProgramCounter").with(eq(4614));
     mockMachine.expects(once()).method("setVariable").with(eq(1), eq((short) 24));
@@ -118,8 +115,6 @@ public class ExtendedInstructionTest extends InstructionTestBase {
 
   public void testArtShiftNegativePositiveShift() {
 
-    mockMachine.expects(atLeastOnce()).method("getStoryFileHeader").will(returnValue(storyfileHeader));
-    mockFileHeader.expects(atLeastOnce()).method("getVersion").will(returnValue(5));
     mockMachine.expects(atLeastOnce()).method("getProgramCounter").will(returnValue(4611));    
     mockMachine.expects(atLeastOnce()).method("setProgramCounter").with(eq(4614));
     mockMachine.expects(once()).method("setVariable").with(eq(1), eq((short) -24));
@@ -134,8 +129,6 @@ public class ExtendedInstructionTest extends InstructionTestBase {
 
   public void testArtShiftPositiveNegativeShift() {
 
-    mockMachine.expects(atLeastOnce()).method("getStoryFileHeader").will(returnValue(storyfileHeader));
-    mockFileHeader.expects(atLeastOnce()).method("getVersion").will(returnValue(5));
     mockMachine.expects(atLeastOnce()).method("getProgramCounter").will(returnValue(4611));    
     mockMachine.expects(atLeastOnce()).method("setProgramCounter").with(eq(4614));
     mockMachine.expects(once()).method("setVariable").with(eq(1), eq((short) 6));
@@ -150,8 +143,6 @@ public class ExtendedInstructionTest extends InstructionTestBase {
 
   public void testArtShiftNegativeNegativeShift() {
 
-    mockMachine.expects(atLeastOnce()).method("getStoryFileHeader").will(returnValue(storyfileHeader));
-    mockFileHeader.expects(atLeastOnce()).method("getVersion").will(returnValue(5));
     mockMachine.expects(atLeastOnce()).method("getProgramCounter").will(returnValue(4611));    
     mockMachine.expects(atLeastOnce()).method("setProgramCounter").with(eq(4614));
     mockMachine.expects(once()).method("setVariable").with(eq(1), eq((short) -6));

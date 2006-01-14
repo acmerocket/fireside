@@ -38,6 +38,7 @@ import org.zmpp.instructions.AbstractInstruction.OperandCount;
 import org.zmpp.instructions.Operand.OperandType;
 import org.zmpp.vm.InstructionDecoder;
 import org.zmpp.vm.Machine;
+import org.zmpp.vm.MachineServices;
 import org.zmpp.vm.StoryFileHeader;
 
 import test.zmpp.vm.MemoryMapSetup;
@@ -52,18 +53,10 @@ public class InstructionDecoderTest extends MemoryMapSetup {
 
   private InstructionDecoder decoder;
   
-  private Mock mockMachine4;
-  private Machine machine4;
-  private Mock mockFileHeader;
-  private StoryFileHeader storyFileHeader;
-  
   private MemoryAccess amfvmap;
-  private InstructionDecoder decoder4;
-  
   private byte[] call_vs2 = {
       (byte) 0xec, 0x25, (byte) 0xbf, 0x3b, (byte) 0xf7, (byte) 0xa0,
-      0x10, 0x20, 0x01, 0x00//, 0x0b, 0x69, 0x1c, (byte) 0xec, 0x15,
-      //(byte) 0xbf
+      0x10, 0x20, 0x01, 0x00
   };
   
   protected void setUp() throws Exception {
@@ -72,14 +65,6 @@ public class InstructionDecoderTest extends MemoryMapSetup {
     decoder = new DefaultInstructionDecoder();
     decoder.initialize(machineState, minizorkmap);
     
-    // Setup for machine 4
-    amfvmap = new DefaultMemoryAccess(call_vs2);
-    mockMachine4 = mock(Machine.class);
-    machine4 = (Machine) mockMachine4.proxy();
-    decoder4 = new DefaultInstructionDecoder();
-    decoder4.initialize(machine4, amfvmap);
-    mockFileHeader = mock(StoryFileHeader.class);
-    storyFileHeader = (StoryFileHeader) mockFileHeader.proxy();
   }
 
   /**
@@ -288,9 +273,23 @@ public class InstructionDecoderTest extends MemoryMapSetup {
   
   
   public void testDecodeCallVs2() {
+
+    // Setup for machine 4
+    amfvmap = new DefaultMemoryAccess(call_vs2);
+    Mock mockMachine4 = mock(Machine.class);
+    Machine machine4 = (Machine) mockMachine4.proxy();
+    Mock mockServices = mock(MachineServices.class);
+    MachineServices services = (MachineServices) mockServices.proxy(); 
+    Mock mockFileHeader = mock(StoryFileHeader.class);
+    StoryFileHeader storyFileHeader = (StoryFileHeader) mockFileHeader.proxy();
     
-    mockMachine4.expects(atLeastOnce()).method("getStoryFileHeader").will(returnValue(storyFileHeader));
+    InstructionDecoder decoder4 = new DefaultInstructionDecoder();
+    decoder4.initialize(machine4, amfvmap);
+    
+    mockMachine4.expects(atLeastOnce()).method("getServices").will(returnValue(services));
+    mockServices.expects(atLeastOnce()).method("getStoryFileHeader").will(returnValue(storyFileHeader));    
     mockFileHeader.expects(atLeastOnce()).method("getVersion").will(returnValue(4));
+
     // Expected:
     // ecf4:  CALL_VS2        efdc (G90,#10,#20,L00) -> -(SP)
     AbstractInstruction call_vs2 = decoder4.decodeInstruction(0);
