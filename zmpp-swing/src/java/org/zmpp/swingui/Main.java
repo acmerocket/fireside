@@ -113,7 +113,7 @@ public class Main {
       
       inputstream = new java.io.FileInputStream(storyfile);
       MachineConfig config = new DefaultMachineConfig(inputstream);
-      StoryFileHeader fileheader = config.getFileHeader();
+      StoryFileHeader fileheader = config.getStoryFileHeader();
       System.out.println("Story file Version: " + fileheader.getVersion());
     
       if (fileheader.getVersion() < 3 || fileheader.getVersion() == 6

@@ -153,7 +153,7 @@ ScreenModel {
     resizeWindows(linesUpperWindow);
       
     // S 8.6.1.1.2: Top window is cleared in version 3
-    if (machine.getStoryFileHeader().getVersion() == 3) {
+    if (machine.getServices().getStoryFileHeader().getVersion() == 3) {
         
       windows[WINDOW_TOP].clear();
     }
@@ -477,7 +477,8 @@ ScreenModel {
   private void determineStandardFont() {
     
     // Sets the fixed font as the standard
-    if (machine.getStoryFileHeader().isEnabled(Attribute.FORCE_FIXED_FONT)) {
+    if (machine.getServices().getStoryFileHeader().isEnabled(
+        Attribute.FORCE_FIXED_FONT)) {
       
       standardFont = fixedFont;      
     }
@@ -493,7 +494,7 @@ ScreenModel {
 
   private void setScreenProperties() {
     
-    StoryFileHeader fileheader = machine.getStoryFileHeader();
+    StoryFileHeader fileheader = machine.getServices().getStoryFileHeader();
     if (fileheader.getVersion() <= 3) {
       
       fileheader.setEnabled(Attribute.DEFAULT_FONT_IS_VARIABLE, true);    
