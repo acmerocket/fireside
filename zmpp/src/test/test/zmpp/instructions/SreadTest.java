@@ -28,6 +28,7 @@ import org.zmpp.instructions.VariableInstruction;
 import org.zmpp.instructions.VariableStaticInfo;
 import org.zmpp.instructions.AbstractInstruction.OperandCount;
 import org.zmpp.vm.InputFunctions;
+import org.zmpp.vm.Tokenizer;
 import org.zmpp.vmutil.ZsciiEncoding;
 
 /**
@@ -39,14 +40,17 @@ import org.zmpp.vmutil.ZsciiEncoding;
  */
 public class SreadTest extends InstructionTestBase {
 
-  Mock mockInputFunctions;
-  InputFunctions inputFunctions;
+  private Mock mockInputFunctions, mockTokenizer;
+  private InputFunctions inputFunctions;
+  private Tokenizer tokenizer;
   
   protected void setUp() throws Exception {
     
     super.setUp();
     mockInputFunctions = mock(InputFunctions.class);
     inputFunctions = (InputFunctions) mockInputFunctions.proxy();
+    mockTokenizer = mock(Tokenizer.class);
+    tokenizer = (Tokenizer) mockTokenizer.proxy();
   }
   
   // This is a first template setup for one of the central functions
@@ -56,9 +60,10 @@ public class SreadTest extends InstructionTestBase {
     // common things
     mockFileHeader.expects(atLeastOnce()).method("getVersion").will(returnValue(3));
     mockMachine.expects(once()).method("updateStatusLine");
-    mockMachine.expects(atLeastOnce()).method("getInputFunctions").will(returnValue(inputFunctions));
+    mockServices.expects(atLeastOnce()).method("getInputFunctions").will(returnValue(inputFunctions));
+    mockServices.expects(atLeastOnce()).method("getTokenizer").will(returnValue(tokenizer));
     mockInputFunctions.expects(once()).method("readLine").with(eq(4711), eq(0), eq(0)).will(returnValue(ZsciiEncoding.NEWLINE));
-    mockInputFunctions.expects(once()).method("tokenize").with(eq(4711), eq(5711), eq(0), eq(false));    
+    mockTokenizer.expects(once()).method("tokenize").with(eq(4711), eq(5711), eq(0), eq(false));    
     mockMachine.expects(once()).method("getProgramCounter").will(returnValue(7711));
     mockMachine.expects(once()).method("setProgramCounter").with(eq(7716));    
     

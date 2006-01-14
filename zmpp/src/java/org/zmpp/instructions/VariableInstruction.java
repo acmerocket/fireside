@@ -357,14 +357,14 @@ public class VariableInstruction extends AbstractInstruction {
     if (getNumOperands() >= 3) time = getUnsignedValue(2);
     if (getNumOperands() >= 4) packedAddress = getValue(3);
     
-    short terminal = getMachine().getInputFunctions().readLine(
+    short terminal = getMachine().getServices().getInputFunctions().readLine(
         textbuffer, time, packedAddress);
     
     if (version < 5 || (version >= 5 && parsebuffer > 0)) {
       
       // Do not tokenise if parsebuffer is 0 (See specification of read)
-      getMachine().getInputFunctions().tokenize(textbuffer, parsebuffer,
-                                                0, false);
+      getMachine().getServices().getTokenizer().tokenize(textbuffer,
+          parsebuffer, 0, false);
     }
     
     if (storesResult()) {
@@ -547,7 +547,7 @@ public class VariableInstruction extends AbstractInstruction {
       
       routineAddress = getValue(2);
     }
-    storeResult(getMachine().getInputFunctions().readChar(time,
+    storeResult(getMachine().getServices().getInputFunctions().readChar(time,
         routineAddress));
     nextInstruction();
   }
@@ -574,8 +574,8 @@ public class VariableInstruction extends AbstractInstruction {
     if (getNumOperands() >= 4) flag = getUnsignedValue(3);
     if (dictionary != 0) System.out.println("use user dictionary");
     if (flag != 0) System.out.println("tokenise flag is set");
-    getMachine().getInputFunctions().tokenize(textbuffer, parsebuffer,
-        dictionary, (flag != 0));
+    getMachine().getServices().getTokenizer().tokenize(textbuffer,
+        parsebuffer, dictionary, (flag != 0));
     nextInstruction();
   }
   

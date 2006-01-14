@@ -48,18 +48,5 @@ public interface InputFunctions {
    * @param routineAddress the packed routine address to call (timed input)
    * @return the selected ZSCII char
    */
-  short readChar(int time, int routineAddress);
-  
-  /**
-   * Tokenizes the text in the text buffer using the specified parse buffer.
-   * 
-   * @param textbuffer the text buffer
-   * @param parsebuffer the parse buffer
-   * @param dictionaryAddress the dictionary address or 0 for the default
-   * dictionary
-   * @param flag if set, unrecognized words are not written into the parse
-   * buffer and their slots are left unchanged
-   */
-  void tokenize(int textbuffer, int parsebuffer, int dictionaryAddress,
-                boolean flag);
+  short readChar(int time, int routineAddress);  
 }

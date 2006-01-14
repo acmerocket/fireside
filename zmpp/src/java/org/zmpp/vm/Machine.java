@@ -242,13 +242,6 @@ public interface Machine {
   InputStream getSelectedInputStream();
   
   /**
-   * Returns an input functions object.
-   * 
-   * @return an input functions object
-   */
-  InputFunctions getInputFunctions();
-  
-  /**
    * Prints the ZSCII string at the specified address to the active
    * output streams.
    * 

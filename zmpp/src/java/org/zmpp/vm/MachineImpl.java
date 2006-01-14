@@ -130,7 +130,7 @@ public class MachineImpl implements Machine, MachineServices {
   /**
    * The input functions object.
    */
-  private InputFunctions inputFunctions;
+  private InputFunctionsImpl inputFunctions;
   
   /**
    * Constructor.
@@ -630,14 +630,6 @@ public class MachineImpl implements Machine, MachineServices {
   /**
    * {@inheritDoc}
    */
-  public InputFunctions getInputFunctions() {
-    
-    return inputFunctions;
-  }
-  
-  /**
-   * {@inheritDoc}
-   */
   public int translatePackedAddress(int packedAddress, boolean isCall) {
   
     // Version specific packed address translation
@@ -1012,7 +1004,23 @@ public class MachineImpl implements Machine, MachineServices {
   public ZCharEncoder getZCharEncoder() {
     
     return config.getZCharEncoder();
-  }    
+  }
+  
+  /**
+   * {@inheritDoc}
+   */
+  public InputFunctions getInputFunctions() {
+    
+    return inputFunctions;
+  }
+  
+  /**
+   * {@inheritDoc}
+   */
+  public Tokenizer getTokenizer() {
+    
+    return inputFunctions;
+  }
   
   // ************************************************************************
   // ****** Private functions
