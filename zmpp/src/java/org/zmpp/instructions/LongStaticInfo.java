@@ -55,6 +55,7 @@ public class LongStaticInfo implements InstructionStaticInfo {
     { 4, 5, 6, 7, 8 }, // CALL_2S
     { 5, 6, 7, 8 }, // CALL_2N
     { 5, 6, 7, 8 }, // SET_COLOUR
+    { 5, 6, 7, 8 }, // THROW
   };
   
   private static final LongStaticInfo instance = new LongStaticInfo();
@@ -69,58 +70,33 @@ public class LongStaticInfo implements InstructionStaticInfo {
    * explanations.
    */
   public static final int OP_JE                 = 0x01;
-
   public static final int OP_JL                 = 0x02;
-
   public static final int OP_JG                 = 0x03;
-
   public static final int OP_DEC_CHK            = 0x04;
-
   public static final int OP_INC_CHK            = 0x05;
-
   public static final int OP_JIN                = 0x06;
-
   public static final int OP_TEST               = 0x07;
-
   public static final int OP_OR                 = 0x08;
-
   public static final int OP_AND                = 0x09;
-
   public static final int OP_TEST_ATTR          = 0x0a;
-
   public static final int OP_SET_ATTR           = 0x0b;
-
   public static final int OP_CLEAR_ATTR         = 0x0c;
-
   public static final int OP_STORE              = 0x0d;
-
   public static final int OP_INSERT_OBJ         = 0x0e;
-
   public static final int OP_LOADW              = 0x0f;
-
   public static final int OP_LOADB              = 0x10;
-
   public static final int OP_GET_PROP           = 0x11;
-
   public static final int OP_GET_PROP_ADDR      = 0x12;
-
   public static final int OP_GET_NEXT_PROP      = 0x13;
-
   public static final int OP_ADD                = 0x14;
-
   public static final int OP_SUB                = 0x15;
-
   public static final int OP_MUL                = 0x16;
-
   public static final int OP_DIV                = 0x17;
-
   public static final int OP_MOD                = 0x18;
-
   public static final int OP_CALL_2S            = 0x19;
-
   public static final int OP_CALL_2N            = 0x1a;
-
   public static final int OP_SET_COLOUR         = 0x1b;
+  public static final int OP_THROW              = 0x1c;
   
   public int[] getValidVersions(int opcode) {
     

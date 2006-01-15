@@ -22,11 +22,15 @@
  */
 package test.zmpp.instructions;
 
+import java.util.ArrayList;
+import java.util.List;
+
 import org.zmpp.instructions.AbstractInstruction;
 import org.zmpp.instructions.Short0Instruction;
 import org.zmpp.instructions.Short0StaticInfo;
 import org.zmpp.vm.Machine;
 import org.zmpp.vm.PortableGameState;
+import org.zmpp.vm.RoutineContext;
 
 /**
  * This class tests the dynamic and static aspects of C0OP instructions.
@@ -79,6 +83,14 @@ public class Short0InstructionTest extends InstructionTestBase {
     assertTrue(info.storesResult());
     info = new Short0Instruction(machine, Short0StaticInfo.OP_RESTORE);
     assertTrue(info.storesResult());    
+  }
+  
+  public void testStoresResultV5() {
+    
+    mockFileHeader.expects(atLeastOnce()).method("getVersion").will(returnValue(5));
+    Short0Instruction info;   
+    info = new Short0Instruction(machine, Short0StaticInfo.OP_POP); // CATCH
+    assertTrue(info.storesResult());
   }
   
   public void testNotStoresResultInV3() {
@@ -351,7 +363,26 @@ public class Short0InstructionTest extends InstructionTestBase {
     mockFileHeader.expects(once()).method("getVersion").will(returnValue(4));
     showstatus.execute();
   }
+  
+  public void testCatch() {
+    
+    List<RoutineContext> routineContexts = new ArrayList<RoutineContext>();
+    routineContexts.add(new RoutineContext(1234, 1));
+    routineContexts.add(new RoutineContext(2345, 0));
+    routineContexts.add(new RoutineContext(3456, 2));
+    
+    mockFileHeader.expects(atLeastOnce()).method("getVersion").will(returnValue(5));
+    
+    mockMachine.expects(once()).method("getRoutineContexts").will(returnValue(routineContexts));
+    mockMachine.expects(once()).method("setVariable").with(eq(0x12), eq((short) 2));
 
+    Short0InstructionMock zcatch = createInstructionMock(Short0StaticInfo.OP_POP);
+    zcatch.setStoreVariable((short) 0x12);
+    
+    zcatch.execute();
+    assertTrue(zcatch.nextInstructionCalled);
+  }
+  
   // ***********************************************************************
   // ********* Private section
   // ******************************************

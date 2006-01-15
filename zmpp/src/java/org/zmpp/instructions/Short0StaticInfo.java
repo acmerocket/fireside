@@ -113,6 +113,8 @@ public class Short0StaticInfo implements InstructionStaticInfo {
       case Short0StaticInfo.OP_SAVE:
       case Short0StaticInfo.OP_RESTORE:
         return version == 4;
+      case Short0StaticInfo.OP_POP:
+        return version >= 5;
       default:
         return false;
     }

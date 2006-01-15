@@ -22,11 +22,15 @@
  */
 package test.zmpp.instructions;
 
+import java.util.ArrayList;
+import java.util.List;
+
 import org.zmpp.instructions.LongInstruction;
 import org.zmpp.instructions.LongStaticInfo;
 import org.zmpp.instructions.Operand;
 import org.zmpp.instructions.AbstractInstruction.OperandCount;
 import org.zmpp.vm.Machine;
+import org.zmpp.vm.RoutineContext;
 
 /**
  * This class tests the LongInstruction class.
@@ -850,6 +854,56 @@ public class LongInstructionTest extends InstructionTestBase {
     
     get_next_prop.setStoreVariable((short) 0x11);    
     get_next_prop.execute();        
+  }
+  
+  /**
+   * We simulate the situation that the current stack is smaller than
+   * it could be handled by throw, we should halt the machine, since it
+   * is not specified how the machine should behave in this case.
+   */
+  public void testThrowInvalid() {
+    
+    List<RoutineContext> contexts = new ArrayList<RoutineContext>();
+    contexts.add(new RoutineContext(1000, 1));
+    contexts.add(new RoutineContext(2000, 2));
+    
+    mockFileHeader.expects(atLeastOnce()).method("getVersion").will(returnValue(5));
+    mockMachine.expects(once()).method("getRoutineContexts").will(returnValue(contexts));
+    mockMachine.expects(once()).method("halt").with(eq("@throw from an invalid stack frame state"));
+    
+    LongInstructionMock z_throw = createInstructionMock(
+        LongStaticInfo.OP_THROW,
+        Operand.TYPENUM_SMALL_CONSTANT, (short) 42,
+        Operand.TYPENUM_SMALL_CONSTANT, (short) 2);
+    z_throw.execute();
+  }
+
+  /**
+   * This is the expected situation, in this case we expect that the
+   * pop routine context is called as many times until the specified
+   * stack frame number is reached and than the function returns with
+   * the specified return value.
+   */
+  public void testThrowUnwind() {
+    
+    List<RoutineContext> contexts = new ArrayList<RoutineContext>();
+    contexts.add(new RoutineContext(1000, 1));
+    contexts.add(new RoutineContext(2000, 2));
+    contexts.add(new RoutineContext(3000, 3));
+    contexts.add(new RoutineContext(4000, 4));
+    contexts.add(new RoutineContext(5000, 5));
+    
+    mockFileHeader.expects(atLeastOnce()).method("getVersion").will(returnValue(5));
+    mockMachine.expects(once()).method("getRoutineContexts").will(returnValue(contexts));
+    mockMachine.expects(exactly(2)).method("popRoutineContext").withAnyArguments();
+    
+    LongInstructionMock z_throw = createInstructionMock(
+        LongStaticInfo.OP_THROW,
+        Operand.TYPENUM_SMALL_CONSTANT, (short) 42,
+        Operand.TYPENUM_SMALL_CONSTANT, (short) 2);
+    z_throw.execute();
+    assertTrue(z_throw.returned);
+    assertEquals((short) 42, z_throw.returnValue);
   }
   
   // **********************************************************************

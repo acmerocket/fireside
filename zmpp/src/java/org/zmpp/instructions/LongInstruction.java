@@ -87,10 +87,10 @@ public class LongInstruction extends AbstractInstruction {
         jin();
         break;
       case LongStaticInfo.OP_DEC_CHK:
-        decChk();
+        dec_chk();
         break;
       case LongStaticInfo.OP_INC_CHK:
-        incChk();
+        inc_chk();
         break;
       case LongStaticInfo.OP_TEST:
         test();
@@ -102,19 +102,19 @@ public class LongInstruction extends AbstractInstruction {
         and();
         break;
       case LongStaticInfo.OP_TEST_ATTR:
-        testAttr();
+        test_attr();
         break;
       case LongStaticInfo.OP_SET_ATTR:
-        setAttr();
+        set_attr();
         break;
       case LongStaticInfo.OP_CLEAR_ATTR:
-        clearAttr();
+        clear_attr();
         break;        
       case LongStaticInfo.OP_STORE:
         store();
         break;
       case LongStaticInfo.OP_INSERT_OBJ:
-        insertObj();
+        insert_obj();
         break;
       case LongStaticInfo.OP_LOADW:
         loadw();
@@ -123,13 +123,13 @@ public class LongInstruction extends AbstractInstruction {
         loadb();
         break;        
       case LongStaticInfo.OP_GET_PROP:
-        getProp();
+        get_prop();
         break;        
       case LongStaticInfo.OP_GET_PROP_ADDR:
-        getPropAddr();
+        get_prop_addr();
         break;        
       case LongStaticInfo.OP_GET_NEXT_PROP:
-        getNextProp();
+        get_next_prop();
         break;        
       case LongStaticInfo.OP_ADD:
         add();
@@ -153,7 +153,10 @@ public class LongInstruction extends AbstractInstruction {
         call(1);
         break;
       case LongStaticInfo.OP_SET_COLOUR:
-        setColour();
+        set_colour();
+        break;
+      case LongStaticInfo.OP_THROW:
+        z_throw();
         break;
       default:
         throwInvalidOpcode();
@@ -234,7 +237,7 @@ public class LongInstruction extends AbstractInstruction {
     branchOnTest(parentOfObj1 == obj2);
   }
   
-  private void decChk() {
+  private void dec_chk() {
     
     int varnum = getUnsignedValue(0);
     short value = getValue(1);
@@ -244,7 +247,7 @@ public class LongInstruction extends AbstractInstruction {
     branchOnTest(varValue < value);
   }
   
-  private void incChk() {
+  private void inc_chk() {
     
     int varnum = getUnsignedValue(0);
     short value = getValue(1);
@@ -332,7 +335,7 @@ public class LongInstruction extends AbstractInstruction {
     }
   }
   
-  private void testAttr() {
+  private void test_attr() {
     
     int obj = getUnsignedValue(0);
     int attr = getUnsignedValue(1);
@@ -349,7 +352,7 @@ public class LongInstruction extends AbstractInstruction {
     }
   }
   
-  private void setAttr() {
+  private void set_attr() {
     
     int obj = getUnsignedValue(0);
     int attr = getUnsignedValue(1);
@@ -366,7 +369,7 @@ public class LongInstruction extends AbstractInstruction {
     nextInstruction();
   }
   
-  private void clearAttr() {
+  private void clear_attr() {
     
     int obj = getUnsignedValue(0);
     int attr = getUnsignedValue(1);
@@ -400,7 +403,7 @@ public class LongInstruction extends AbstractInstruction {
     nextInstruction();
   }
   
-  private void insertObj() {
+  private void insert_obj() {
     
     int obj = getUnsignedValue(0);
     int dest = getUnsignedValue(1);
@@ -435,7 +438,7 @@ public class LongInstruction extends AbstractInstruction {
     nextInstruction();
   }
   
-  private void getProp() {
+  private void get_prop() {
     
     int obj = getUnsignedValue(0);
     int property = getUnsignedValue(1);
@@ -470,7 +473,7 @@ public class LongInstruction extends AbstractInstruction {
     nextInstruction();
   }
   
-  private void getPropAddr() {
+  private void get_prop_addr() {
     
     int obj = getUnsignedValue(0);
     int property = getUnsignedValue(1);    
@@ -494,7 +497,7 @@ public class LongInstruction extends AbstractInstruction {
     nextInstruction();
   }
   
-  private void getNextProp() {
+  private void get_next_prop() {
     
     int obj = getUnsignedValue(0);
     int property = getUnsignedValue(1);
@@ -524,11 +527,36 @@ public class LongInstruction extends AbstractInstruction {
     }
   }
   
-  private void setColour() {
+  private void set_colour() {
     
     getMachine().getScreen().setForegroundColor(getValue(0));
     getMachine().getScreen().setBackgroundColor(getValue(1));
     nextInstruction();
+  }
+  
+  private void z_throw() {
+    
+    short returnValue = getValue(0);
+    int stackFrame = getUnsignedValue(1);
+    
+    // Unwind the stack
+    int currentStackFrame = getMachine().getRoutineContexts().size() - 1;
+    if (currentStackFrame < stackFrame) {
+      
+      getMachine().halt("@throw from an invalid stack frame state");
+    } else {
+     
+      // Pop off the routine contexts until the specified stack frame is
+      // reached
+      int diff = currentStackFrame - stackFrame;
+      for (int i = 0; i < diff; i++) {
+        
+        getMachine().popRoutineContext((short) 0);
+      }
+      
+      // and return with the return value
+      returnFromRoutine(returnValue);
+    }
   }
   
   private boolean isValidAttribute(int attribute) {
