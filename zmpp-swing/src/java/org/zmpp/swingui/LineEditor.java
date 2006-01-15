@@ -24,18 +24,23 @@ package org.zmpp.swingui;
 
 import java.awt.event.KeyEvent;
 import java.awt.event.KeyListener;
+import java.awt.event.MouseEvent;
+import java.awt.event.MouseListener;
 import java.util.LinkedList;
 import java.util.List;
 
+import org.zmpp.vm.StoryFileHeader;
 import org.zmpp.vmutil.ZsciiEncoding;
 
-public class LineEditor implements KeyListener {
+public class LineEditor implements KeyListener, MouseListener {
 
   private boolean inputMode;
   private List<Short> editbuffer;
+  private StoryFileHeader fileheader;
   
-  public LineEditor() {
+  public LineEditor(StoryFileHeader fileheader) {
   
+    this.fileheader = fileheader;
     editbuffer = new LinkedList<Short>();
   }
   
@@ -151,4 +156,23 @@ public class LineEditor implements KeyListener {
            || c == KeyEvent.VK_LEFT || c == KeyEvent.VK_RIGHT
            || c == KeyEvent.VK_ESCAPE;
   }
+  
+  public void mouseClicked(MouseEvent e) {
+    
+    // Only if mouse is used
+    if (fileheader.isEnabled(StoryFileHeader.Attribute.USE_MOUSE)) {
+      
+      fileheader.setMouseCoordinates(e.getX(), e.getY());
+      
+      // Store single clicks and double clicks with different codes
+      addToBuffer((short) ((e.getClickCount() == 1) ?
+          ZsciiEncoding.MOUSE_SINGLE_CLICK :
+          ZsciiEncoding.MOUSE_DOUBLE_CLICK)); 
+    }
+  }
+  
+  public void mouseEntered(MouseEvent e) { }
+  public void mouseExited(MouseEvent e) { }
+  public void mousePressed(MouseEvent e) { }
+  public void mouseReleased(MouseEvent e) { }
 }

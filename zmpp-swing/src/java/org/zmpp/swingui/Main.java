@@ -51,7 +51,7 @@ public class Main {
    * The application name.
    */
   public static final String APPNAME =
-    "Z-Machine Preservation Project Version 0.79";
+    "Z-Machine Preservation Project Version 0.82";
   
   /**
    * @param args
