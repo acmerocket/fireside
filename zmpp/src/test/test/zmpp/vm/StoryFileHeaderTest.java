@@ -371,4 +371,61 @@ public class StoryFileHeaderTest extends MockObjectTestCase {
     mockMemAccess.expects(once()).method("writeUnsignedByte").with(eq(0x27), eq((short) 2));
     fileHeader.setFontHeight(2);
   }
+
+  public void testUseMouseFalse() {
+    
+    mockMemAccess.expects(once()).method("readUnsignedByte").with(eq(0x10)).will(returnValue((short) 2));
+    assertFalse(fileHeader.isEnabled(Attribute.USE_MOUSE));    
+  }
+
+  public void testUseMouseTrue() {
+    
+    mockMemAccess.expects(once()).method("readUnsignedByte").with(eq(0x10)).will(returnValue((short) 63));
+    assertTrue(fileHeader.isEnabled(Attribute.USE_MOUSE));    
+  }
+  
+  public void testGetCustomAlphabetTable() {
+    
+    mockMemAccess.expects(once()).method("readUnsignedShort").with(eq(0x34)).will(returnValue(63));
+    fileHeader.getCustomAlphabetTable();
+  }
+  
+  // Simulate a situation to set mouse coordinates
+  
+  public void testSetMouseCoordinatesNoExtensionTable() {
+    
+    mockMemAccess.expects(once()).method("readUnsignedShort").with(eq(0x36)).will(returnValue(0));
+    fileHeader.setMouseCoordinates(1, 2);
+
+  }
+  
+  public void testSetMouseCoordinatesHasExtensionTable() {
+    
+    mockMemAccess.expects(once()).method("readUnsignedShort").with(eq(0x36)).will(returnValue(100));
+    mockMemAccess.expects(once()).method("readUnsignedShort").with(eq(100)).will(returnValue(2));
+    mockMemAccess.expects(once()).method("writeUnsignedShort").with(eq(101), eq(1));
+    mockMemAccess.expects(once()).method("writeUnsignedShort").with(eq(102), eq(2));
+    fileHeader.setMouseCoordinates(1, 2);
+  }
+  
+  public void testGetUnicodeTranslationTableNoExtensionTable() {
+    
+    mockMemAccess.expects(once()).method("readUnsignedShort").with(eq(0x36)).will(returnValue(0));
+    assertEquals(0, fileHeader.getCustomUnicodeTranslationTable());
+  }
+  
+  public void testGetCustomUnicodeTranslationTableNoTableInExtTable() {
+    
+    mockMemAccess.expects(once()).method("readUnsignedShort").with(eq(0x36)).will(returnValue(100));
+    mockMemAccess.expects(once()).method("readUnsignedShort").with(eq(100)).will(returnValue(2));
+    assertEquals(0, fileHeader.getCustomUnicodeTranslationTable());
+  }
+
+  public void testGetCustomUnicodeTranslationTableHasExtAddress() {
+    
+    mockMemAccess.expects(once()).method("readUnsignedShort").with(eq(0x36)).will(returnValue(100));
+    mockMemAccess.expects(once()).method("readUnsignedShort").with(eq(100)).will(returnValue(3));
+    mockMemAccess.expects(once()).method("readUnsignedShort").with(eq(102)).will(returnValue(1234));
+    assertEquals(1234, fileHeader.getCustomUnicodeTranslationTable());
+  }
 }

@@ -259,6 +259,55 @@ public class DefaultStoryFileHeader implements StoryFileHeader {
     memaccess.writeUnsignedByte(0x27, (short) units);
   }
   
+  /**
+   * {@inheritDoc}
+   */
+  public int getCustomAlphabetTable() {
+    
+    return memaccess.readUnsignedShort(0x34);
+  }
+  
+  /**
+   * {@inheritDoc}
+   */
+  public void setMouseCoordinates(int x, int y) {
+    
+    // check the extension table
+    int extTable = memaccess.readUnsignedShort(0x36);
+    if (extTable > 0) {
+      
+      int numwords = memaccess.readUnsignedShort(extTable);
+      if (numwords >= 1) {
+        
+        memaccess.writeUnsignedShort(extTable + 1, x);
+      }
+      if (numwords >= 2) {
+        
+        memaccess.writeUnsignedShort(extTable + 2, y);
+      }
+    }
+  }
+  
+  /**
+   * {@inheritDoc}
+   */
+  public int getCustomUnicodeTranslationTable() {
+    
+    // check the extension table
+    int result = 0;
+    int extTable = memaccess.readUnsignedShort(0x36);
+    
+    if (extTable > 0) {
+      
+      int numwords = memaccess.readUnsignedShort(extTable);
+      if (numwords >= 3) {
+        
+        result = memaccess.readUnsignedShort(extTable + 2);
+      }
+    }
+    return result;
+  }
+  
   // ***********************************************************************
   // ****** Attributes
   // **********************************
@@ -318,6 +367,8 @@ public class DefaultStoryFileHeader implements StoryFileHeader {
       return isScoreGame();
     case DEFAULT_FONT_IS_VARIABLE:
       return defaultFontIsVariablePitch();
+    case USE_MOUSE:
+      return useMouse();
     }
     return false;
   }
@@ -432,5 +483,10 @@ public class DefaultStoryFileHeader implements StoryFileHeader {
     int flags = memaccess.readUnsignedByte(0x01);
     flags = flag ? (flags | 1) : (flags & 0xfe);
     memaccess.writeUnsignedByte(0x01, (short) flags);
+  }
+  
+  private boolean useMouse() {
+    
+    return (memaccess.readUnsignedByte(0x10) & 32) > 0;
   }
 }

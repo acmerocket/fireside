@@ -42,7 +42,7 @@ public interface StoryFileHeader {
     SCORE_GAME, SUPPORTS_STATUSLINE, SUPPORTS_SCREEN_SPLITTING, // V3 only
     TRANSCRIPTING, FORCE_FIXED_FONT, SUPPORTS_TIMED_INPUT,
     SUPPORTS_FIXED_FONT, SUPPORTS_ITALIC, SUPPORTS_BOLD,
-    SUPPORTS_COLOURS
+    SUPPORTS_COLOURS, USE_MOUSE
   };
   /**
    * Returns the story file version.
@@ -233,6 +233,28 @@ public interface StoryFileHeader {
    * @param units the number of units in heights of a '0'
    */
   void setFontHeight(int units);
+  
+  /**
+   * Returns the address of the custom alphabet table.
+   * 
+   * @return the custom alphabet table
+   */
+  int getCustomAlphabetTable();
+  
+  /**
+   * Sets the mouse coordinates.
+   * 
+   * @param x the x coordinate
+   * @param y the y coordinate
+   */
+  void setMouseCoordinates(int x, int y);
+  
+  /**
+   * Returns the address of the cutom unicode translation table.
+   * 
+   * @return the address of the custom unicode translation table
+   */
+  int getCustomUnicodeTranslationTable();
   
   // ********************************************************************
   // ****** Attributes
