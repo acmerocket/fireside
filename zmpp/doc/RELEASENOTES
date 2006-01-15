@@ -13,16 +13,16 @@ Java implemetation of the Z-machine specification.
 Features:
 
 - written from scratch using Java 5
-- probably the cleanest, fastest and most complete Java implementation of the Z-machine
-   specification to date
 - currently supports story file version 3, 4, 5, 7 and 8
 - can be run as a Java applet within the web browser
 - saves and reads games in Quetzal 1.4 format
-- input stream 0 and 1 (keyboard and file)
+- input stream 0 and 1 (keyboard, mouse and file)
 - output streams 1, 2 and 3 (screen, transcript, memory with nesting)
 - split subwindows (paging, buffering, scrolling)
 - multiple font styles and colors
+- accented characters and unicode
 - timed input, preinitialized input
+- user dictionaries
 - undo
 
 For remarks and suggestions for improvements, please contact
@@ -32,13 +32,10 @@ http://sourceforge.net/projects/zmpp
 
 TODO:
 
-- less frequent opcodes (throw/catch, encode_text, print_table)
-- user dictionaries
+- character graphics
 - custom alphabet tables
 - save/restore regions
-- optimization of perceived performance (user interface)
 - sound_effects
-- character graphics
 - version 6
 - version 1 and 2 (low priority)
 
@@ -59,42 +56,6 @@ Running as an applet
 --------------------
 
 TODO
-
-
-Supported Z-code games
-----------------------
-
-These games could be successfully started so far:
-
-Version 3:
-
-- Cutthroats
-- Enchanter
-- Hitchhiker's Guide To The Galaxy
-- Leather Godesses Of Phobos
-- Minizork
-- Seastalker
-- Zork I
-- Zork II
-
-Version 4:
-
-- A Mind Forever Voyaging
-- Bureaucracy
-- Trinity
-
-Version 5:
-
-- Curses
-- I-0
-
-Version 8:
-
-- Jigsaw
-
-These games have been successfully played through so far:
-
-- Zork I
 
 Operating systems tested on:
 -------------------------

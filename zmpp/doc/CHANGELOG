@@ -1,5 +1,23 @@
 Changelog
 
+Version 0.82
+-----------
+
+- Standard revision number 1.0 is now set to the header
+- added access to the terminator character table in the header
+- fixed the missing newline bug (was a misunderstanding of print_ret)
+- added check in attribute instructions, so the "Sherlock bug" is handled implicitly
+- added font width and height to header
+- user dictionary with linear search added
+- class hierarchy for alphabet tables
+- encoder implemented
+- structure improvements, "machine services"
+- terminator characters support
+- @print_table, @encode_text, @catch and @throw implemented
+- non-V6 opcodes completed (@sound_effect not really implemented)
+- extension table support
+- mouse support
+
 Version 0.78
 -----------
 

@@ -2,19 +2,27 @@ Roadmap:
 
 TODO:
 
-- user dictionaries, extend tokenise using user dictionary
-- support version 1 and 2
-- save and restore saving regions
-- different alphabet tables
-- opcodes:
-  1. throw
-  2. catch
-  3. encode_text
-  4. print_table
+- save and restore with regions
 - support version 6
 - sound
-- character graphics
+- blorb file format
 - redesign execution scheme (partly done)
+- support version 1 and 2
+
+Version 0.85
+-----------
+
+- character graphics
+- opcodes: throw, catch
+
+Version 0.80:
+-----------
+
+- add missing header information
+- user dictionaries, extend tokenise using user dictionary
+- opcode: encode_text, print_table ("Beyond Zork" uses this)
+- different alphabet tables
+- fix screen model bugs (font sizes, color and missing newline "Beyond Zork", "Blue Chairs")
 
 Version 0.78:
 ------------
