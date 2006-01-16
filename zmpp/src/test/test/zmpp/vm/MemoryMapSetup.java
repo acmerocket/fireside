@@ -34,9 +34,11 @@ import org.zmpp.vm.Machine;
 import org.zmpp.vm.MachineConfig;
 import org.zmpp.vm.MachineImpl;
 import org.zmpp.vm.StoryFileHeader;
+import org.zmpp.vmutil.DefaultAccentTable;
 import org.zmpp.vmutil.DefaultAlphabetTable;
 import org.zmpp.vmutil.DefaultZCharDecoder;
 import org.zmpp.vmutil.ZCharDecoder;
+import org.zmpp.vmutil.ZsciiEncoding;
 
 /**
  * This class acts as a base test class and sets up some integrated
@@ -65,7 +67,8 @@ public abstract class MemoryMapSetup extends MockObjectTestCase {
     
     abbreviations = new Abbreviations(minizorkmap,
         fileheader.getAbbreviationsAddress());
-    converter = new DefaultZCharDecoder(new DefaultAlphabetTable(), abbreviations);
+    ZsciiEncoding encoding = new ZsciiEncoding(new DefaultAccentTable());
+    converter = new DefaultZCharDecoder(encoding, new DefaultAlphabetTable(encoding), abbreviations);
     
     machineState = new MachineImpl();
     machineState.initialize(config, new DefaultInstructionDecoder());

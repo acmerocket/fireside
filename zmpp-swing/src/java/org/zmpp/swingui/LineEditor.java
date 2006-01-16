@@ -38,7 +38,7 @@ public class LineEditor implements KeyListener, MouseListener {
   private List<Short> editbuffer;
   private StoryFileHeader fileheader;
   
-  public LineEditor(StoryFileHeader fileheader) {
+  public LineEditor(StoryFileHeader fileheader, ZsciiEncoding encoding) {
   
     this.fileheader = fileheader;
     editbuffer = new LinkedList<Short>();

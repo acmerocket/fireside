@@ -464,7 +464,7 @@ public class MachineImpl implements Machine, MachineServices {
   public void print(String str) {
 
     //System.out.println("print: '" + str + "'");
-    printZsciiChars(ZsciiEncoding.getInstance().convertToZscii(str), false);
+    printZsciiChars(getZsciiEncoding().convertToZscii(str), false);
   }
   
   /**
@@ -1020,6 +1020,14 @@ public class MachineImpl implements Machine, MachineServices {
   public Tokenizer getTokenizer() {
     
     return inputFunctions;
+  }
+  
+  /**
+   * {@inheritDoc}
+   */
+  public ZsciiEncoding getZsciiEncoding() {
+    
+    return config.getZsciiEncoding();
   }
   
   // ************************************************************************

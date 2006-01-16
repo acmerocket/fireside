@@ -41,15 +41,17 @@ public class TranscriptOutputStream implements OutputStream {
   private Writer transcriptWriter;
   private boolean enabled;
   private StringBuilder linebuffer;
+  private ZsciiEncoding encoding;
 
   /**
    * Constructor.
    * 
    * @param iosys the I/O system
    */
-  public TranscriptOutputStream(IOSystem iosys) {
+  public TranscriptOutputStream(IOSystem iosys, ZsciiEncoding encoding) {
   
     this.iosys = iosys;
+    this.encoding = encoding;
     linebuffer = new StringBuilder();
   }
   
@@ -73,7 +75,6 @@ public class TranscriptOutputStream implements OutputStream {
     initFile();
     if (output != null) {
       
-      ZsciiEncoding encoding = ZsciiEncoding.getInstance();
       if (zsciiChar == ZsciiEncoding.NEWLINE) {
         
         flush();

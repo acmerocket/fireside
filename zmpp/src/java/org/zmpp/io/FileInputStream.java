@@ -38,6 +38,7 @@ import org.zmpp.vmutil.ZsciiEncoding;
 public class FileInputStream implements InputStream {
 
   private IOSystem iosys;
+  private ZsciiEncoding encoding;
   private Reader filereader;
   private BufferedReader input;
   
@@ -45,10 +46,12 @@ public class FileInputStream implements InputStream {
    * Constructor.
    * 
    * @param iosys an IOSystem object
+   * @param encoding a ZSCII encoding object
    */
-  public FileInputStream(IOSystem iosys) {
+  public FileInputStream(IOSystem iosys, ZsciiEncoding encoding) {
 
     this.iosys = iosys;
+    this.encoding = encoding;
   }
 
   public void cancelInput() {
@@ -68,7 +71,6 @@ public class FileInputStream implements InputStream {
         
         if (input.ready()) {
           
-          ZsciiEncoding encoding = ZsciiEncoding.getInstance();
           char c = (char) input.read();
           if (encoding.isConvertableToZscii(c)) {
             

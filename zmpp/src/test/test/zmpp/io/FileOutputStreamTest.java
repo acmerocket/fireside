@@ -29,6 +29,7 @@ import org.jmock.Mock;
 import org.jmock.MockObjectTestCase;
 import org.zmpp.io.IOSystem;
 import org.zmpp.io.TranscriptOutputStream;
+import org.zmpp.vmutil.DefaultAccentTable;
 import org.zmpp.vmutil.ZsciiEncoding;
 
 public class FileOutputStreamTest extends MockObjectTestCase {
@@ -42,7 +43,7 @@ public class FileOutputStreamTest extends MockObjectTestCase {
     
     mockIo = mock(IOSystem.class);
     iosys = (IOSystem) mockIo.proxy();
-    outstream = new TranscriptOutputStream(iosys);
+    outstream = new TranscriptOutputStream(iosys, new ZsciiEncoding(new DefaultAccentTable()));
     outputwriter = new FileWriter("testfiles/streamoutput.txt");
   }
 

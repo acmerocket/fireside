@@ -342,8 +342,8 @@ ScreenModel {
     
     } else {
     
-      ZsciiEncoding encoding = ZsciiEncoding.getInstance();
-      printChar(encoding.getUnicodeChar(zsciiChar), isInput);
+      printChar(machine.getServices().getZsciiEncoding().getUnicodeChar(
+          zsciiChar), isInput);
     }
   }
 
@@ -352,7 +352,8 @@ ScreenModel {
    */
   public void deletePrevious(short zchar) {
     
-    char deleteChar = ZsciiEncoding.getInstance().getUnicodeChar(zchar);
+    char deleteChar =
+      machine.getServices().getZsciiEncoding().getUnicodeChar(zchar);
     windows[activeWindow].getCursor().backspace(deleteChar);
   }
   

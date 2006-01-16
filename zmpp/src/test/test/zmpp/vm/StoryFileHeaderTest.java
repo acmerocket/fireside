@@ -411,14 +411,14 @@ public class StoryFileHeaderTest extends MockObjectTestCase {
   public void testGetUnicodeTranslationTableNoExtensionTable() {
     
     mockMemAccess.expects(once()).method("readUnsignedShort").with(eq(0x36)).will(returnValue(0));
-    assertEquals(0, fileHeader.getCustomUnicodeTranslationTable());
+    assertEquals(0, fileHeader.getCustomAccentTable());
   }
   
   public void testGetCustomUnicodeTranslationTableNoTableInExtTable() {
     
     mockMemAccess.expects(once()).method("readUnsignedShort").with(eq(0x36)).will(returnValue(100));
     mockMemAccess.expects(once()).method("readUnsignedShort").with(eq(100)).will(returnValue(2));
-    assertEquals(0, fileHeader.getCustomUnicodeTranslationTable());
+    assertEquals(0, fileHeader.getCustomAccentTable());
   }
 
   public void testGetCustomUnicodeTranslationTableHasExtAddress() {
@@ -426,6 +426,6 @@ public class StoryFileHeaderTest extends MockObjectTestCase {
     mockMemAccess.expects(once()).method("readUnsignedShort").with(eq(0x36)).will(returnValue(100));
     mockMemAccess.expects(once()).method("readUnsignedShort").with(eq(100)).will(returnValue(3));
     mockMemAccess.expects(once()).method("readUnsignedShort").with(eq(102)).will(returnValue(1234));
-    assertEquals(1234, fileHeader.getCustomUnicodeTranslationTable());
+    assertEquals(1234, fileHeader.getCustomAccentTable());
   }
 }

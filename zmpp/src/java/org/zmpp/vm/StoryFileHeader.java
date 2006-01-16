@@ -254,7 +254,7 @@ public interface StoryFileHeader {
    * 
    * @return the address of the custom unicode translation table
    */
-  int getCustomUnicodeTranslationTable();
+  int getCustomAccentTable();
   
   // ********************************************************************
   // ****** Attributes

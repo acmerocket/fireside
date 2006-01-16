@@ -29,6 +29,8 @@ import org.jmock.Mock;
 import org.jmock.MockObjectTestCase;
 import org.zmpp.io.FileInputStream;
 import org.zmpp.io.IOSystem;
+import org.zmpp.vmutil.DefaultAccentTable;
+import org.zmpp.vmutil.ZsciiEncoding;
 
 public class FileInputStreamTest extends MockObjectTestCase {
 
@@ -41,8 +43,10 @@ public class FileInputStreamTest extends MockObjectTestCase {
 
     reader = new StringReader("Hello");
     mockIo = mock(IOSystem.class);
+    ZsciiEncoding encoding = new ZsciiEncoding(new DefaultAccentTable());
+    
     iosys = (IOSystem) mockIo.proxy();
-    instream = new FileInputStream(iosys);
+    instream = new FileInputStream(iosys, encoding);
   }
 
   public void testReadZsciiChar() {

@@ -80,7 +80,8 @@ public class Main {
       // Machine initialization
       
       // Input streams
-      FileInputStream fileIs = new FileInputStream(screen);      
+      FileInputStream fileIs = new FileInputStream(screen,
+          machine.getServices().getZsciiEncoding());      
       machine.setInputStream(0, screen);
       machine.setInputStream(1, fileIs);
       //machine.selectInputStream(1);
@@ -88,7 +89,8 @@ public class Main {
       // Output streams
       machine.setOutputStream(1, screen.getOutputStream());
       machine.selectOutputStream(1, true);
-      TranscriptOutputStream transcriptStream = new TranscriptOutputStream(screen);
+      TranscriptOutputStream transcriptStream = new TranscriptOutputStream(
+          screen, machine.getServices().getZsciiEncoding());
       machine.setOutputStream(2, transcriptStream);
       machine.selectOutputStream(2, false);
       machine.setOutputStream(3, new MemoryOutputStream(machine));

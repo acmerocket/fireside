@@ -291,7 +291,7 @@ public class DefaultStoryFileHeader implements StoryFileHeader {
   /**
    * {@inheritDoc}
    */
-  public int getCustomUnicodeTranslationTable() {
+  public int getCustomAccentTable() {
     
     // check the extension table
     int result = 0;
