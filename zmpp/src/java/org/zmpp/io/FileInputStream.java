@@ -26,7 +26,7 @@ import java.io.BufferedReader;
 import java.io.IOException;
 import java.io.Reader;
 
-import org.zmpp.vmutil.ZsciiEncoding;
+import org.zmpp.encoding.ZsciiEncoding;
 
 /**
  * This class implements a Z-machine input stream that takes its input from

@@ -26,7 +26,7 @@ import java.util.HashMap;
 import java.util.Map;
 
 import org.zmpp.base.MemoryReadAccess;
-import org.zmpp.vmutil.ZCharDecoder;
+import org.zmpp.encoding.ZCharDecoder;
 
 /**
  * This class implements a view on the dictionary within a memory map.

@@ -25,9 +25,9 @@ package test.zmpp.vm;
 import org.jmock.Mock;
 import org.jmock.MockObjectTestCase;
 import org.zmpp.base.MemoryReadAccess;
+import org.zmpp.encoding.ZCharDecoder;
 import org.zmpp.vm.DefaultDictionary;
 import org.zmpp.vm.Dictionary;
-import org.zmpp.vmutil.ZCharDecoder;
 
 /**
  * This class tests the dictionary view.

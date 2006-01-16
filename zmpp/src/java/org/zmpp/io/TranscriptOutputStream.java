@@ -26,7 +26,7 @@ import java.io.BufferedWriter;
 import java.io.IOException;
 import java.io.Writer;
 
-import org.zmpp.vmutil.ZsciiEncoding;
+import org.zmpp.encoding.ZsciiEncoding;
 
 /**
  * This class defines an output stream for transcript output (Stream 2).

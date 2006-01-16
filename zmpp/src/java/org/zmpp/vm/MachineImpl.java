@@ -27,6 +27,9 @@ import java.util.Collections;
 import java.util.List;
 
 import org.zmpp.base.MemoryAccess;
+import org.zmpp.encoding.ZCharDecoder;
+import org.zmpp.encoding.ZCharEncoder;
+import org.zmpp.encoding.ZsciiEncoding;
 import org.zmpp.iff.FormChunk;
 import org.zmpp.iff.WritableFormChunk;
 import org.zmpp.io.InputStream;
@@ -35,9 +38,6 @@ import org.zmpp.vm.StoryFileHeader.Attribute;
 import org.zmpp.vmutil.PredictableRandomGenerator;
 import org.zmpp.vmutil.RandomGenerator;
 import org.zmpp.vmutil.UnpredictableRandomGenerator;
-import org.zmpp.vmutil.ZCharDecoder;
-import org.zmpp.vmutil.ZCharEncoder;
-import org.zmpp.vmutil.ZsciiEncoding;
 
 /**
  * This class implements the state and some services of a Z-machine, version 3.

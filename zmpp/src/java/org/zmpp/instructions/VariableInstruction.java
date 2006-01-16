@@ -23,11 +23,11 @@
 package org.zmpp.instructions;
 
 import org.zmpp.base.MemoryAccess;
+import org.zmpp.encoding.ZCharEncoder;
 import org.zmpp.vm.Machine;
 import org.zmpp.vm.ScreenModel;
 import org.zmpp.vm.TextCursor;
 import org.zmpp.vm.ZObject;
-import org.zmpp.vmutil.ZCharEncoder;
 
 
 /**

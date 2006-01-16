@@ -1,7 +1,7 @@
 package org.zmpp.vm;
 
 import org.zmpp.base.MemoryReadAccess;
-import org.zmpp.vmutil.ZCharDecoder;
+import org.zmpp.encoding.ZCharDecoder;
 
 public abstract class AbstractDictionary implements Dictionary {
 

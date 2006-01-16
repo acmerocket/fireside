@@ -29,18 +29,20 @@ import java.awt.event.MouseListener;
 import java.util.LinkedList;
 import java.util.List;
 
+import org.zmpp.encoding.ZsciiEncoding;
 import org.zmpp.vm.StoryFileHeader;
-import org.zmpp.vmutil.ZsciiEncoding;
 
 public class LineEditor implements KeyListener, MouseListener {
 
   private boolean inputMode;
   private List<Short> editbuffer;
   private StoryFileHeader fileheader;
+  private ZsciiEncoding encoding;
   
   public LineEditor(StoryFileHeader fileheader, ZsciiEncoding encoding) {
   
     this.fileheader = fileheader;
+    this.encoding = encoding;
     editbuffer = new LinkedList<Short>();
   }
   
@@ -103,7 +105,6 @@ public class LineEditor implements KeyListener, MouseListener {
   public void keyTyped(KeyEvent e) {
   
     char c = e.getKeyChar();    
-    ZsciiEncoding encoding = ZsciiEncoding.getInstance();
     if (encoding.isConvertableToZscii(c)
         && !handledInKeyPressed(c)
         && !handledInKeyReleased(c)) {

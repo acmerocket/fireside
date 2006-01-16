@@ -31,6 +31,7 @@ import java.awt.image.BufferedImage;
 import javax.swing.JViewport;
 import javax.swing.SwingUtilities;
 
+import org.zmpp.encoding.ZsciiEncoding;
 import org.zmpp.io.OutputStream;
 import org.zmpp.swingui.SubWindow.HomeYPosition;
 import org.zmpp.vm.Machine;
@@ -38,7 +39,6 @@ import org.zmpp.vm.ScreenModel;
 import org.zmpp.vm.StoryFileHeader;
 import org.zmpp.vm.StoryFileHeader.Attribute;
 import org.zmpp.vm.TextCursor;
-import org.zmpp.vmutil.ZsciiEncoding;
 
 public class TextViewport extends JViewport implements OutputStream,
 ScreenModel {

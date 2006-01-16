@@ -27,10 +27,10 @@ import java.io.StringReader;
 
 import org.jmock.Mock;
 import org.jmock.MockObjectTestCase;
+import org.zmpp.encoding.DefaultAccentTable;
+import org.zmpp.encoding.ZsciiEncoding;
 import org.zmpp.io.FileInputStream;
 import org.zmpp.io.IOSystem;
-import org.zmpp.vmutil.DefaultAccentTable;
-import org.zmpp.vmutil.ZsciiEncoding;
 
 public class FileInputStreamTest extends MockObjectTestCase {
 

@@ -23,7 +23,7 @@
 package org.zmpp.vm;
 
 import org.zmpp.base.MemoryReadAccess;
-import org.zmpp.vmutil.ZCharDecoder;
+import org.zmpp.encoding.ZCharDecoder;
 
 /**
  * This class implements a user dictionary. The specification suggests that

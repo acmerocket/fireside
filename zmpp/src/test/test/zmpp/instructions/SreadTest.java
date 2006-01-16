@@ -23,13 +23,13 @@
 package test.zmpp.instructions;
 
 import org.jmock.Mock;
+import org.zmpp.encoding.ZsciiEncoding;
 import org.zmpp.instructions.Operand;
 import org.zmpp.instructions.VariableInstruction;
 import org.zmpp.instructions.VariableStaticInfo;
 import org.zmpp.instructions.AbstractInstruction.OperandCount;
 import org.zmpp.vm.InputFunctions;
 import org.zmpp.vm.Tokenizer;
-import org.zmpp.vmutil.ZsciiEncoding;
 
 /**
  * This class solely concentrates on the sread instruction which is more
