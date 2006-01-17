@@ -22,8 +22,7 @@
  */
 package org.zmpp.encoding;
 
-import org.zmpp.base.MemoryAccess;
-import org.zmpp.vm.StoryFileHeader;
+import org.zmpp.base.MemoryReadAccess;
 
 /**
  * This accent table is used in case that there is an extension header
@@ -34,20 +33,26 @@ import org.zmpp.vm.StoryFileHeader;
  */
 public class CustomAccentTable implements AccentTable {
 
-  private StoryFileHeader fileheader;
+  /**
+   * The memory access object.
+   */
+  private MemoryReadAccess memaccess;
   
-  private MemoryAccess memaccess;
+  /**
+   * The table adddress.
+   */
+  private int tableAddress;
 
   /**
    * Constructor.
    * 
-   * @param machine the machine object
+   * @param memaccess a memory access object
+   * @param address the table address
    */
-  public CustomAccentTable(StoryFileHeader fileheader,
-      MemoryAccess memaccess) {
+  public CustomAccentTable(MemoryReadAccess memaccess, int address) {
   
-    this.fileheader = fileheader;
     this.memaccess = memaccess;
+    this.tableAddress = address;
   }
   
   /**
@@ -55,11 +60,10 @@ public class CustomAccentTable implements AccentTable {
    */
   public int getLength() {
     
-    int address = fileheader.getCustomAccentTable();
     int result = 0;
-    if (address > 0) {
+    if (tableAddress > 0) {
       
-      return memaccess.readUnsignedByte(address);
+      return memaccess.readUnsignedByte(tableAddress);
     }
     return result;
   }
@@ -69,12 +73,11 @@ public class CustomAccentTable implements AccentTable {
    */
   public short getAccent(int index) {
     
-    int address = fileheader.getCustomAccentTable();
     short result = '?';
     
-    if (address > 0) {
+    if (tableAddress > 0) {
       
-      return memaccess.readShort(address + (index * 2) + 1);
+      return memaccess.readShort(tableAddress + (index * 2) + 1);
     }
     return result;
   }

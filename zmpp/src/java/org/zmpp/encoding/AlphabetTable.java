@@ -53,25 +53,52 @@ public interface AlphabetTable {
   public static final byte A2_ESCAPE = 0x06; // escape character
 
   /**
-   * Returns alphabet 0.
+   * Returns the ZSCII character from alphabet 0 at the specified index.
    * 
-   * @return alphabet 0
+   * @param index the index
+   * @return the specified character from alphabet 0
    */
-  String getA0Chars();
+  short getA0Char(int index);
   
   /**
-   * Returns alphabet 1.
+   * Returns the ZSCII character from alphabet 1 at the specified index.
    * 
-   * @return alphabet 1
+   * @param index the index
+   * @return the specified character from alphabet 1
    */
-  String getA1Chars();
+  short getA1Char(int index);
   
   /**
-   * Returns alphabet 2.
+   * Returns the ZSCII character from alphabet 2 at the specified index.
    * 
-   * @return alphabet 2
+   * @param index the index
+   * @return the specified character from alphabet 2
    */
-  String getA2Chars();
+  short getA2Char(int index);
+  
+  /**
+   * Returns the index of the specified ZSCII character in alphabet 0.
+   * 
+   * @param zsciiChar a ZSCII chararacter
+   * @return the index of the character in this alphabet or -1
+   */
+  int getA0IndexOf(short zsciiChar);
+
+  /**
+   * Returns the index of the specified ZSCII character in alphabet 2.
+   * 
+   * @param zsciiChar a ZSCII chararacter
+   * @return the index of the character in this alphabet or -1
+   */
+  int getA1IndexOf(short zsciiChar);
+
+  /**
+   * Returns the index of the specified ZSCII character in alphabet 2.
+   * 
+   * @param zsciiChar a ZSCII chararacter
+   * @return the index of the character in this alphabet or -1
+   */
+  int getA2IndexOf(short zsciiChar);
   
   /**
    * Determines if the specified character marks a abbreviation. 

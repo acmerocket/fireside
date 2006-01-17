@@ -22,9 +22,12 @@
  */
 package org.zmpp.encoding;
 
-
-
-public final class DefaultAlphabetTable implements AlphabetTable {
+/**
+ * The default alphabet table implementation.
+ * 
+ * @author Wei-ju Wu
+ */
+public class DefaultAlphabetTable implements AlphabetTable {
 
   private static final String A0CHARS = "abcdefghijklmnopqrstuvwxyz";
   private static final String A1CHARS = "ABCDEFGHIJKLMNOPQRSTUVWXYZ";
@@ -33,22 +36,55 @@ public final class DefaultAlphabetTable implements AlphabetTable {
   /**
    * {@inheritDoc}
    */
-  public final String getA0Chars() { return A0CHARS; }
+  public final short getA0Char(int index) {
+    
+    return (short) A0CHARS.charAt(index);
+  }
 
   /**
    * {@inheritDoc}
    */
-  public final String getA1Chars() { return A1CHARS; }
+  public final short getA1Char(int index) {
+  
+    return (short) A1CHARS.charAt(index);
+  }
 
   /**
    * {@inheritDoc}
    */
-  public final String getA2Chars() { return A2CHARS; }
+  public short getA2Char(int index) {
+    
+    return (short) A2CHARS.charAt(index);
+  }
+  
+  /**
+   * {@inheritDoc}
+   */
+  public final int getA0IndexOf(short zsciiChar) {
+
+    return A0CHARS.indexOf(zsciiChar);
+  }
+  
+  /**
+   * {@inheritDoc}
+   */
+  public final int getA1IndexOf(short zsciiChar) {
+
+    return A1CHARS.indexOf(zsciiChar);
+  }
 
   /**
    * {@inheritDoc}
    */
-  public final boolean isShiftCharacter(short zchar) {
+  public int getA2IndexOf(short zsciiChar) {
+
+    return A2CHARS.indexOf(zsciiChar);
+  }
+
+  /**
+   * {@inheritDoc}
+   */
+  public boolean isShiftCharacter(short zchar) {
     
     return SHIFT_4 <= zchar && zchar <= SHIFT_5;
   }
@@ -56,7 +92,7 @@ public final class DefaultAlphabetTable implements AlphabetTable {
   /**
    * {@inheritDoc}
    */
-  public final boolean isAbbreviation(short zchar) {
+  public boolean isAbbreviation(short zchar) {
     
     return 1 <= zchar && zchar <= 3;
   }  

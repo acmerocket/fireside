@@ -22,8 +22,27 @@
  */
 package org.zmpp.encoding;
 
+/**
+ * Accent tables are used by ZsciiEncoding objects to translate encoded
+ * Z characters to unicode characters.
+ * 
+ * @author Wei-ju Wu
+ * @version 1.0
+ */
 public interface AccentTable {
 
-  int getLength();  
+  /**
+   * Returns the length of the table.
+   * 
+   * @return the length of the table
+   */
+  int getLength();
+  
+  /**
+   * Returns the accent at the specified index.
+   * 
+   * @param index the index
+   * @return the accent
+   */
   short getAccent(int index);
 }

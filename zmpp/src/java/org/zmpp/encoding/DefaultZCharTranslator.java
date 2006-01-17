@@ -111,15 +111,17 @@ public class DefaultZCharTranslator implements Cloneable, ZCharTranslator {
       switch (currentAlphabet) {
     
         case A0:
-          result = alphabetTable.getA0Chars().charAt(zchar - AlphabetTable.ALPHABET_START);
+          result = (char)
+            alphabetTable.getA0Char(zchar - AlphabetTable.ALPHABET_START);
           break;
         case A1:
-          result = alphabetTable.getA1Chars().charAt(zchar - AlphabetTable.ALPHABET_START);
+          result = (char)
+            alphabetTable.getA1Char(zchar - AlphabetTable.ALPHABET_START);
           break;
         case A2:
-        default:
-            
-          result = alphabetTable.getA2Chars().charAt(zchar - AlphabetTable.ALPHABET_START);
+        default:            
+          result = (char)
+            alphabetTable.getA2Char(zchar - AlphabetTable.ALPHABET_START);
           break;
       }
       
@@ -249,16 +251,16 @@ public class DefaultZCharTranslator implements Cloneable, ZCharTranslator {
     }
     
     Alphabet alphabet = null;
-    int zcharCode = alphabetTable.getA0Chars().indexOf(zsciiChar);
+    int zcharCode = alphabetTable.getA0IndexOf(zsciiChar);
     
     if (zcharCode >= 0) alphabet = Alphabet.A0;      
     else {
       
-      zcharCode = alphabetTable.getA1Chars().indexOf(zsciiChar);
+      zcharCode = alphabetTable.getA1IndexOf(zsciiChar);
       if (zcharCode >= 0) alphabet = Alphabet.A1;
       else {
         
-        zcharCode = alphabetTable.getA2Chars().indexOf(zsciiChar);
+        zcharCode = alphabetTable.getA2IndexOf(zsciiChar);
         if (zcharCode >= 0) alphabet = Alphabet.A2;
       }
     }

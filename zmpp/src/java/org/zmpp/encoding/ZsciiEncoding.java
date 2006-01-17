@@ -49,8 +49,16 @@ public class ZsciiEncoding {
   public static final short ASCII_START   = 32;
   public static final short ASCII_END     = 126;
   
+  /**
+   * The start of the accent range. 
+   */
   public static final short ACCENT_START = 155;
+  
+  /**
+   * End of the accent range.
+   */
   public static final short ACCENT_END   = 251;
+  
   
   public static final short MOUSE_DOUBLE_CLICK = 253;
   public static final short MOUSE_SINGLE_CLICK = 254;
@@ -153,7 +161,8 @@ public class ZsciiEncoding {
     if (isAscii((short) c)) return (short) c;
     else if (isInTranslationTable(c)) {
       
-      return (short) (getIndexInTranslationTable(c) + ACCENT_START);
+      return (short)
+        (getIndexInTranslationTable(c) + ACCENT_START);
     }
     else if (c == '\n') return NEWLINE;
     return 0;
