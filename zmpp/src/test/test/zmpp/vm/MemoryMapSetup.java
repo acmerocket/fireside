@@ -72,7 +72,7 @@ public abstract class MemoryMapSetup extends MockObjectTestCase {
         fileheader.getAbbreviationsAddress());
     ZsciiEncoding encoding = new ZsciiEncoding(new DefaultAccentTable());
     AlphabetTable alphabetTable = new DefaultAlphabetTable();
-    ZCharTranslator translator = new DefaultZCharTranslator(alphabetTable, encoding);
+    ZCharTranslator translator = new DefaultZCharTranslator(alphabetTable);
     converter = new DefaultZCharDecoder(encoding, translator, abbreviations);
     
     machineState = new MachineImpl();

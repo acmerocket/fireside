@@ -83,15 +83,6 @@ public interface ZCharTranslator {
   public boolean willEscapeA2(byte zchar);
   
   /**
-   * Returns true if the specified character is a shift character in the
-   * current alphabet table.
-   * 
-   * @param zchar a Z encoded character
-   * @return true if shift, false, otherwise
-   */
-  public boolean isShiftCharacter(byte zchar);
-  
-  /**
    * Return true if this the specified character is an abbreviation in the
    * current alphabet table.
    * 

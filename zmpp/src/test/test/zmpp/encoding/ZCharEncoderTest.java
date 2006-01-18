@@ -26,12 +26,10 @@ import org.jmock.MockObjectTestCase;
 import org.zmpp.base.DefaultMemoryAccess;
 import org.zmpp.base.MemoryAccess;
 import org.zmpp.encoding.AlphabetTable;
-import org.zmpp.encoding.DefaultAccentTable;
 import org.zmpp.encoding.DefaultAlphabetTable;
 import org.zmpp.encoding.DefaultZCharTranslator;
 import org.zmpp.encoding.ZCharEncoder;
 import org.zmpp.encoding.ZCharTranslator;
-import org.zmpp.encoding.ZsciiEncoding;
 
 /**
  * This is the test for the encoder class. In general it is not so good to
@@ -54,8 +52,7 @@ public class ZCharEncoderTest extends MockObjectTestCase {
   protected void setUp() throws Exception {
 
     AlphabetTable alphabetTable = new DefaultAlphabetTable();
-    ZsciiEncoding encoding = new ZsciiEncoding(new DefaultAccentTable());
-    ZCharTranslator translator = new DefaultZCharTranslator(alphabetTable, encoding);
+    ZCharTranslator translator = new DefaultZCharTranslator(alphabetTable);
     encoder = new ZCharEncoder(translator);
     realmem = new DefaultMemoryAccess(data);
   }

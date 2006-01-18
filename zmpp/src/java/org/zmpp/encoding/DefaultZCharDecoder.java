@@ -29,6 +29,10 @@ import org.zmpp.base.MemoryReadAccess;
 
 /**
  * This is the default implementation of the ZCharDecoder interface.
+ * The central method is decode2Unicode which handles abbreviations,
+ * 10 Bit escape characters and alphabet table characters. Alphabet
+ * table characters and shift states are handled by the ZCharTranslator
+ * object.
  * 
  * @author Wei-ju Wu
  * @version 1.0
@@ -87,16 +91,10 @@ public final class DefaultZCharDecoder implements ZCharDecoder {
       
       boolean decoded = false;
       zchar = zbytes[i];
-      newpos = handleShift(zbytes, i);
+        
+      newpos = handleAbbreviation(builder, memaccess, zbytes, i);
       decoded = (newpos > i);
       i = newpos;
-        
-      if (!decoded) {
-        
-        newpos = handleAbbreviation(builder, memaccess, zbytes, i);
-        decoded = (newpos > i);
-        i = newpos;
-      }
       
       if (!decoded) {
          
@@ -113,18 +111,7 @@ public final class DefaultZCharDecoder implements ZCharDecoder {
     }
     return builder.toString();
   }
-    
-  private int handleShift(byte[] data, int pos) {
-    
-    if (translator.isShiftCharacter(data[pos])) {
-  
-      // This implicitly performs the shift
-      translator.translate(data[pos]);
-      pos++;
-    }
-    return pos;
-  }
-  
+   
   private int handleAbbreviation(StringBuilder builder,
       MemoryReadAccess memaccess, byte[] data, int pos) {
     
@@ -167,9 +154,9 @@ public final class DefaultZCharDecoder implements ZCharDecoder {
   private int handle10Bit(StringBuilder builder, byte[] data, int pos) {
     
     if (translator.willEscapeA2(data[pos])) {
-    
-      // TODO: what to do if this is already at the end of input ?
-      // we will ignore this for the moment
+
+      // If the data is truncated, do not continue (check if the
+      // constant should be 2 or 3)
       if (pos < data.length - 2) {
       
         joinToZsciiChar(builder, data[pos + 1], data[pos + 2]);
@@ -186,9 +173,10 @@ public final class DefaultZCharDecoder implements ZCharDecoder {
    */
   public void decodeZchar(StringBuilder builder, byte b) {
     
-    if (isPrintable(b)) {
+    char c = translator.translate(b);
+    if (c != 0) {
       
-      builder.append(translator.translate(b));
+      builder.append(c);
     }
   }
   
@@ -213,17 +201,6 @@ public final class DefaultZCharDecoder implements ZCharDecoder {
   public static boolean isEndWord(short zword) {
     
     return (zword & 0x8000) > 0;
-  }
-  
-  /**
-   * Returns true if the zchar parameter represents a printable character.
-   * 
-   * @param zchar a ZSCII character
-   * @return true if printable, false, otherwise
-   */
-  private boolean isPrintable(byte zchar) {
-    
-    return !translator.isShiftCharacter(zchar);
   }
   
   /**

@@ -82,7 +82,6 @@ public class ZCharDecoderTest extends MockObjectTestCase {
   
   public void testDecodeByte() {
   
-    mockTranslator.expects(once()).method("isShiftCharacter").with(eq((byte) 6)).will(returnValue(false));
     mockTranslator.expects(once()).method("translate").with(eq((short) 6)).will(returnValue('a'));
     
     StringBuilder buffer0 = new StringBuilder();
@@ -94,7 +93,7 @@ public class ZCharDecoderTest extends MockObjectTestCase {
   
     ZsciiEncoding encoding = new ZsciiEncoding(new DefaultAccentTable());
     AlphabetTable alphabetTable = new DefaultAlphabetTable();
-    ZCharTranslator translator = new DefaultZCharTranslator(alphabetTable, encoding);
+    ZCharTranslator translator = new DefaultZCharTranslator(alphabetTable);
     DefaultZCharDecoder decoder = new DefaultZCharDecoder(encoding, translator, abbrev);
     
     byte[] hello = { 0x35, 0x51, (byte) 0xc6, (byte) 0x85 };
@@ -109,7 +108,7 @@ public class ZCharDecoderTest extends MockObjectTestCase {
 
     ZsciiEncoding encoding = new ZsciiEncoding(new DefaultAccentTable());
     AlphabetTable alphabetTable = new DefaultAlphabetTable(); 
-    ZCharTranslator translator = new DefaultZCharTranslator(alphabetTable, encoding);
+    ZCharTranslator translator = new DefaultZCharTranslator(alphabetTable);
     DefaultZCharDecoder decoder = new DefaultZCharDecoder(
         encoding, translator, abbrev);
     
@@ -138,7 +137,7 @@ public class ZCharDecoderTest extends MockObjectTestCase {
 
     ZsciiEncoding encoding = new ZsciiEncoding(new DefaultAccentTable());
     AlphabetTable alphabetTable = new DefaultAlphabetTable(); 
-    ZCharTranslator translator = new DefaultZCharTranslator(alphabetTable, encoding);
+    ZCharTranslator translator = new DefaultZCharTranslator(alphabetTable);
     
     ZCharDecoder converter = new DefaultZCharDecoder(encoding, translator, abbr);
     assertEquals("The Great Underground Empire", converter.decode2Unicode(memaccess, 0xc120));

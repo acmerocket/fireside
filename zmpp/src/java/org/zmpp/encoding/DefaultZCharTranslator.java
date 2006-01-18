@@ -25,29 +25,31 @@ package org.zmpp.encoding;
 import org.zmpp.encoding.AlphabetTable.Alphabet;
 
 /**
- * The default implementation of ZCharTranslator.
+ * The default implementation of ZCharTranslator. 
  * 
  * @author Wei-ju Wu
  * @version 1.0
  */
 public class DefaultZCharTranslator implements Cloneable, ZCharTranslator {
 
+  /**
+   * The alphabet used for this game.
+   */
   private AlphabetTable alphabetTable;
+  
+  /**
+   * The current alphabet in this translator object.
+   */
   private Alphabet currentAlphabet;
  
-  private ZsciiEncoding encoding;
-  
   /**
    * Constructor.
    * 
    * @param alphabetTable the alphabet table
-   * @param encoding the encoding
    */
-  public DefaultZCharTranslator(AlphabetTable alphabetTable,
-                                ZsciiEncoding encoding) {
+  public DefaultZCharTranslator(AlphabetTable alphabetTable) {
     
     this.alphabetTable = alphabetTable;
-    this.encoding = encoding;
     reset();
   }
   
@@ -89,7 +91,7 @@ public class DefaultZCharTranslator implements Cloneable, ZCharTranslator {
   public char translate(short zchar) {
     
     // Handle the shift
-    if (isShiftCharacter((byte) zchar)) {
+    if (alphabetTable.isShiftCharacter((byte) zchar)) {
       
       shift((byte) zchar);
       return '\0';
@@ -100,11 +102,6 @@ public class DefaultZCharTranslator implements Cloneable, ZCharTranslator {
     if (zchar == 0) {
       
       result = ' ';
-      
-    } else if (isAsciiCharacter((byte) zchar)
-             || ZsciiEncoding.isAccent(zchar)) {
-      
-      result = encoding.getUnicodeChar(zchar);
       
     } else if (isInAlphabetRange((byte) zchar)) {
       
@@ -137,17 +134,62 @@ public class DefaultZCharTranslator implements Cloneable, ZCharTranslator {
   }
   
   /**
-   * Determines if the given byte falls in the ASCII range.
-   * 
-   * @param zchar a byte value
-   * @return true, if the value falls in the ASCII range, false, else
+   * {@inheritDoc}
    */
-  private static boolean isAsciiCharacter(byte zchar) {
-    
-    return ZsciiEncoding.ASCII_START <= zchar
-           && zchar <= ZsciiEncoding.ASCII_END;
+  public boolean willEscapeA2(byte zchar) {
+   
+    return currentAlphabet == Alphabet.A2 && zchar == AlphabetTable.A2_ESCAPE;
   }
   
+  /**
+   * {@inheritDoc}
+   */
+  public boolean isAbbreviation(byte zchar) {
+    
+    return alphabetTable.isAbbreviation(zchar);
+  }
+
+  /**
+   * {@inheritDoc}
+   */
+  public AlphabetElement getAlphabetElementFor(short zsciiChar) {
+    
+    // Special handling for newline !!
+    if (zsciiChar == '\n') {
+      
+      return new AlphabetElement(Alphabet.A2, (short) 7);
+    }
+    
+    Alphabet alphabet = null;
+    int zcharCode = alphabetTable.getA0IndexOf(zsciiChar);
+    
+    if (zcharCode >= 0) alphabet = Alphabet.A0;      
+    else {
+      
+      zcharCode = alphabetTable.getA1IndexOf(zsciiChar);
+      if (zcharCode >= 0) alphabet = Alphabet.A1;
+      else {
+        
+        zcharCode = alphabetTable.getA2IndexOf(zsciiChar);
+        if (zcharCode >= 0) alphabet = Alphabet.A2;
+      }
+    }
+    
+    // Was found in alphabet table, adjust by alphabet start
+    if (alphabet != null) {
+      
+      zcharCode += AlphabetTable.ALPHABET_START;
+      
+    } else {
+      
+      // It is not in any alphabet table, we are fine with taking the code
+      // number for the moment
+      zcharCode = zsciiChar;
+    }
+    
+    return new AlphabetElement(alphabet, (short) zcharCode);
+  }  
+
   /**
    * Determines if the given byte value falls within the alphabet range.
    * 
@@ -213,70 +255,5 @@ public class DefaultZCharTranslator implements Cloneable, ZCharTranslator {
       default:        
     }
     return alphabet;
-  }
-  
-  /**
-   * {@inheritDoc}
-   */
-  public boolean willEscapeA2(byte zchar) {
-   
-    return currentAlphabet == Alphabet.A2 && zchar == AlphabetTable.A2_ESCAPE;
-  }
-  
-  /**
-   * {@inheritDoc}
-   */
-  public boolean isShiftCharacter(byte zchar) {
-    
-    return alphabetTable.isShiftCharacter(zchar);
-  }
-
-  /**
-   * {@inheritDoc}
-   */
-  public boolean isAbbreviation(byte zchar) {
-    
-    return alphabetTable.isAbbreviation(zchar);
-  }
-
-  /**
-   * {@inheritDoc}
-   */
-  public AlphabetElement getAlphabetElementFor(short zsciiChar) {
-    
-    // Special handling for newline !!
-    if (zsciiChar == '\n') {
-      
-      return new AlphabetElement(Alphabet.A2, (short) 7);
-    }
-    
-    Alphabet alphabet = null;
-    int zcharCode = alphabetTable.getA0IndexOf(zsciiChar);
-    
-    if (zcharCode >= 0) alphabet = Alphabet.A0;      
-    else {
-      
-      zcharCode = alphabetTable.getA1IndexOf(zsciiChar);
-      if (zcharCode >= 0) alphabet = Alphabet.A1;
-      else {
-        
-        zcharCode = alphabetTable.getA2IndexOf(zsciiChar);
-        if (zcharCode >= 0) alphabet = Alphabet.A2;
-      }
-    }
-    
-    // Was found in alphabet table, adjust by alphabet start
-    if (alphabet != null) {
-      
-      zcharCode += AlphabetTable.ALPHABET_START;
-      
-    } else {
-      
-      // It is not in any alphabet table, we are fine with taking the code
-      // number for the moment
-      zcharCode = zsciiChar;
-    }
-    
-    return new AlphabetElement(alphabet, (short) zcharCode);
   }  
 }

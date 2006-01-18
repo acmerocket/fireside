@@ -118,11 +118,11 @@ public class Main {
       StoryFileHeader fileheader = config.getStoryFileHeader();
       System.out.println("Story file Version: " + fileheader.getVersion());
     
-      if (fileheader.getVersion() < 3 || fileheader.getVersion() == 6
+      if (fileheader.getVersion() < 1 || fileheader.getVersion() == 6
           || fileheader.getVersion() > 8) {
       
         JOptionPane.showMessageDialog(null,
-          "Story file versions 1, 2 or 6 are not supported.",
+          "Story file version 6 is not supported.",
           "Story file read error", JOptionPane.ERROR_MESSAGE);
         System.exit(0);
       }
