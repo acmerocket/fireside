@@ -80,7 +80,7 @@ public interface ZCharTranslator {
    * @param zchar the character
    * @return true if A2 escape, false otherwise
    */
-  public boolean willEscapeA2(byte zchar);
+  public boolean willEscapeA2(short zchar);
   
   /**
    * Return true if this the specified character is an abbreviation in the
@@ -89,7 +89,7 @@ public interface ZCharTranslator {
    * @param zchar a Z encoded character
    * @return true if abbreviation, false otherwise
    */
-  public boolean isAbbreviation(byte zchar);
+  public boolean isAbbreviation(short zchar);
 
   /**
    * Provides a reverse translation. Given a ZSCII character, determine

@@ -192,7 +192,7 @@ public class ZsciiEncoding {
    * @param zchar the input character
    * @return true if in the ASCII range, false, otherwise
    */
-  private boolean isAscii(short zchar) {
+  public static boolean isAscii(short zchar) {
     
     return zchar >= ASCII_START && zchar <= ASCII_END;
   }

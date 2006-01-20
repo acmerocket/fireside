@@ -21,18 +21,25 @@ public abstract class AbstractDictionary implements Dictionary {
   private ZCharDecoder decoder;
   
   /**
+   * A sizes object.
+   */
+  private DictionarySizes sizes;
+  
+  /**
    * Constructor.
    * 
    * @param map the memory map
    * @param address the start address of the dictionary
    * @param converter a Z char decoder object
+   * @param an object specifying the sizes of the dictionary entries
    */
   public AbstractDictionary(MemoryReadAccess map, int address,
-                            ZCharDecoder decoder) {
+                            ZCharDecoder decoder, DictionarySizes sizes) {
     
     this.memaccess = map;
     this.address = address;
     this.decoder = decoder;
+    this.sizes = sizes;
   }
   
   /**
@@ -86,31 +93,25 @@ public abstract class AbstractDictionary implements Dictionary {
     return memaccess;
   }
   
-  protected String truncateToken(String token) {
+  protected DictionarySizes getSizes() {
     
-    String truncated = token;
+    return sizes;
+  }
+  
+  protected String truncateToken(String token) {
     
     // Unfortunately it seems that the maximum size of an entry is not equal 
     // to the size declared in the dictionary header, therefore we take
-    // the maximum length of any token in the dictionary
-    int maxEntrySize = getMaxEntrySize();
-    int entryLength = getEntryLength();
-    entryLength = (maxEntrySize < entryLength) ? maxEntrySize : entryLength;
-    //System.out.println("lookup(), token: '" + token + "' entrylen: "
-    //                  + entryLength);
-    
+    // the maximum length of a token defined in the Z-machine specification.    
     // The lookup token can only be 6 characters long in version 3
     // and 9 in versions >= 4
-    if (token.length() > entryLength) {
+    if (token.length() > sizes.getMaxEntryChars()) {
       
-      truncated = token.substring(0, entryLength);
+      return token.substring(0, sizes.getMaxEntryChars());
     }
-    return truncated;
+    return token;
   }
   
-  
-  abstract protected int getMaxEntrySize();
-
   /**
    * Creates a string presentation of this dictionary.
    * 
@@ -127,7 +128,7 @@ public abstract class AbstractDictionary implements Dictionary {
       
       entryAddress = getEntryAddress(i);
       String str = getDecoder().decode2Unicode(getMemoryAccess(),
-          entryAddress);
+          entryAddress, sizes.getNumEntryBytes());
       buffer.append(String.format("[%4d] '%-9s' ", (i + 1), str));
       i++;
       if ((i % 4) == 0) buffer.append("\n");

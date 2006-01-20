@@ -1,7 +1,7 @@
 /*
  * $Id$
  * 
- * Created on 2006/01/17
+ * Created on 2006/01/18
  * Copyright 2005-2006 by Wei-ju Wu
  *
  * This file is part of The Z-machine Preservation Project (ZMPP).
@@ -23,50 +23,46 @@
 package org.zmpp.encoding;
 
 /**
- * An alphabet table in V1 story files behaves like an alphabet table in
- * V2, except that it has a different A2 alphabet.
- * Furthermore, character 1 returns '\n'. This is a thing that leads
- * to the extension of the getAnChar() methods, handling index -5.
+ * An alphabet table in a V2 story file behaves "almost like" the default
+ * alphabet table, in that they have the same characters in the alphabets.
+ * There are however two differences: It does not support abbreviations
+ * and it supports shift-lock. 
  * 
  * @author Wei-ju Wu
  * @version 1.0
  */
-public class AlphabetTableV1 extends AlphabetTableV2 {
-
-  private static final String A2CHARS = " 0123456789.,!?_#'\"/\\<-:()";
+public class AlphabetTableV2 extends DefaultAlphabetTable {
 
   /**
    * {@inheritDoc}
    */
-  public short getA0Char(byte zchar) {
+  public boolean isAbbreviation(short zchar) {
 
-    if (zchar == 1) return (short) '\n';
-    return super.getA0Char(zchar);
+    // always false
+    return false;
+  }
+
+  /**
+   * {@inheritDoc}
+   */
+  public boolean isShift1(short zchar) {
+
+    return zchar == SHIFT_2 || zchar == SHIFT_4;
   }
   
   /**
    * {@inheritDoc}
    */
-  public short getA1Char(byte zchar) {
+  public boolean isShift2(short zchar) {
     
-    if (zchar == 1) return (short) '\n';
-    return super.getA1Char(zchar);
+    return zchar == SHIFT_3 || zchar == SHIFT_5;
   }
   
   /**
    * {@inheritDoc}
    */
-  public short getA2Char(byte zchar) {
+  public boolean isShiftLock(short zchar) {
     
-    if (zchar == 1) return (short) '\n';
-    return (short) A2CHARS.charAt(zchar - ALPHABET_START);
-  }
-  
-  /**
-   * {@inheritDoc}
-   */
-  public final byte getA2CharCode(short zsciiChar) {
-
-    return getCharCodeFor(A2CHARS, zsciiChar);
+    return zchar == SHIFT_4 || zchar == SHIFT_5;
   }
 }

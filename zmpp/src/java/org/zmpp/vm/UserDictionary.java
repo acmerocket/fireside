@@ -42,11 +42,12 @@ public class UserDictionary extends AbstractDictionary {
    * @param map the memory map
    * @param address the start address of the dictionary
    * @param converter a Z char decoder object
+   * @param sizes a sizes object
    */
   public UserDictionary(MemoryReadAccess memaccess, int address,
                         ZCharDecoder decoder) {
     
-    super(memaccess, address, decoder);
+    super(memaccess, address, decoder, new DictionarySizesV4ToV8());
   }
 
   /**
@@ -63,7 +64,8 @@ public class UserDictionary extends AbstractDictionary {
       
       int entryAddress = getEntryAddress(i);
       String entry = getDecoder().decode2Unicode(getMemoryAccess(),
-                                                 entryAddress);
+                                                 entryAddress,
+                                                 getEntryLength());
       System.out.println("lookup(), compareto: " + entry);
       if (lookupToken.equals(entry)) {
         
@@ -71,13 +73,5 @@ public class UserDictionary extends AbstractDictionary {
       }
     }
     return 0;
-  }
-  
-  /**
-   * {@inheritDoc}
-   */
-  protected int getMaxEntrySize() {
-    
-    return getEntryLength();
-  }
+  }  
 }

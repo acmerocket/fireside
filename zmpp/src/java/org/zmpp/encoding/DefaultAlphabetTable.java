@@ -36,59 +36,94 @@ public class DefaultAlphabetTable implements AlphabetTable {
   /**
    * {@inheritDoc}
    */
-  public final short getA0Char(int index) {
+  public short getA0Char(byte zchar) {
     
-    return (short) A0CHARS.charAt(index);
+    return (short) A0CHARS.charAt(zchar - ALPHABET_START);
   }
 
   /**
    * {@inheritDoc}
    */
-  public final short getA1Char(int index) {
+  public short getA1Char(byte zchar) {
   
-    return (short) A1CHARS.charAt(index);
+    return (short) A1CHARS.charAt(zchar - ALPHABET_START);
   }
 
   /**
    * {@inheritDoc}
    */
-  public short getA2Char(int index) {
+  public short getA2Char(byte zchar) {
     
-    return (short) A2CHARS.charAt(index);
-  }
-  
-  /**
-   * {@inheritDoc}
-   */
-  public final int getA0IndexOf(short zsciiChar) {
-
-    return A0CHARS.indexOf(zsciiChar);
+    return (short) A2CHARS.charAt(zchar - ALPHABET_START);
   }
   
   /**
    * {@inheritDoc}
    */
-  public final int getA1IndexOf(short zsciiChar) {
+  public final byte getA0CharCode(short zsciiChar) {
 
-    return A1CHARS.indexOf(zsciiChar);
+    return getCharCodeFor(A0CHARS, zsciiChar);
+  }
+  
+  /**
+   * {@inheritDoc}
+   */
+  public final byte getA1CharCode(short zsciiChar) {
+
+    return getCharCodeFor(A1CHARS, zsciiChar);
   }
 
   /**
    * {@inheritDoc}
    */
-  public int getA2IndexOf(short zsciiChar) {
+  public byte getA2CharCode(short zsciiChar) {
 
-    return A2CHARS.indexOf(zsciiChar);
+    return getCharCodeFor(A2CHARS, zsciiChar);
   }
 
-  /**
-   * {@inheritDoc}
-   */
-  public boolean isShiftCharacter(short zchar) {
+  protected static byte getCharCodeFor(String chars, short zsciiChar) {
     
-    return SHIFT_4 <= zchar && zchar <= SHIFT_5;
+    int index = chars.indexOf(zsciiChar);
+    if (index >= 0) {
+      
+      index += ALPHABET_START;
+    }
+    return (byte) index;
+  }
+  
+  
+  /**
+   * {@inheritDoc}
+   */
+  public boolean isShift1(short zchar) {
+    
+    return zchar == SHIFT_4;
   }
 
+  /**
+   * {@inheritDoc}
+   */
+  public boolean isShift2(short zchar) {
+    
+    return zchar == SHIFT_5;
+  }
+  
+  /**
+   * {@inheritDoc}
+   */
+  public boolean isShift(short zchar) {
+    
+    return isShift1(zchar) || isShift2(zchar);
+  }
+  
+  /**
+   * {@inheritDoc}
+   */
+  public boolean isShiftLock(short zchar) {
+    
+    return false;
+  }
+  
   /**
    * {@inheritDoc}
    */

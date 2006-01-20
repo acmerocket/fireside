@@ -80,11 +80,20 @@ public final class DefaultZCharDecoder implements ZCharDecoder {
    */
   public String decode2Unicode(MemoryReadAccess memaccess, int address) {
     
+    return decode2Unicode(memaccess, address, 0);
+  }
+  
+  /**
+   * {@inheritDoc}
+   */
+  public String decode2Unicode(MemoryReadAccess memaccess, int address,
+                               int length) {
+    
     StringBuilder builder = new StringBuilder();
     translator.reset();    
     
-    byte[] zbytes = extractZbytes(memaccess, address);
-    byte zchar;
+    short[] zbytes = extractZbytes(memaccess, address, length);
+    short zchar;
     int i = 0, newpos;
 
     while (i < zbytes.length) {
@@ -113,9 +122,9 @@ public final class DefaultZCharDecoder implements ZCharDecoder {
   }
    
   private int handleAbbreviation(StringBuilder builder,
-      MemoryReadAccess memaccess, byte[] data, int pos) {
+      MemoryReadAccess memaccess, short[] data, int pos) {
     
-    byte zchar = data[pos];
+    short zchar = data[pos];
     
     if (translator.isAbbreviation(zchar)) {
     
@@ -151,7 +160,7 @@ public final class DefaultZCharDecoder implements ZCharDecoder {
     return pos;
   }
   
-  private int handle10Bit(StringBuilder builder, byte[] data, int pos) {
+  private int handle10Bit(StringBuilder builder, short[] data, int pos) {
     
     if (translator.willEscapeA2(data[pos])) {
 
@@ -171,13 +180,25 @@ public final class DefaultZCharDecoder implements ZCharDecoder {
   /**
    * {@inheritDoc}
    */
-  public void decodeZchar(StringBuilder builder, byte b) {
+  public short decodeZChar(short zchar) {
     
-    char c = translator.translate(b);
-    if (c != 0) {
+    if (ZsciiEncoding.isAscii(zchar) || ZsciiEncoding.isAccent(zchar)) {
       
-      builder.append(c);
-    }
+      return zchar;
+      
+    } else {
+      
+      return (short) translator.translate(zchar);
+    }  
+  }
+  
+  private void decodeZchar(StringBuilder builder, short zchar) {
+          
+    short c = decodeZChar(zchar);
+    if (c != 0) {
+        
+      builder.append((char) c);
+    }  
   }
   
   /**
@@ -209,25 +230,37 @@ public final class DefaultZCharDecoder implements ZCharDecoder {
    *  
    * @param memaccess the memory access object
    * @param address the address of the z string
+   * @param length the maximum length that the array should have or 0 for
+   * unspecified
    * @return the z characters of the string
    */
-  public static byte[] extractZbytes(MemoryReadAccess memaccess,
-                                       int address) {
+  public static short[] extractZbytes(MemoryReadAccess memaccess,
+                                      int address, int length) {
     
+    //if (length > 0) System.out.println("maximum length is: " + length);
     short zword = 0;
     int currentAddr = address;
-    List<byte[]> byteList = new ArrayList<byte[]>();
+    List<short[]> byteList = new ArrayList<short[]>();
     
     do {
+      
       zword = memaccess.readShort(currentAddr);
       byteList.add(extractBytes(zword));
-      currentAddr += 2; // increment pointer      
+      currentAddr += 2; // increment pointer
+      
+      // if this is a dictionary entry, we need to provide the
+      // length and cancel the loop earlier
+      if (length > 0 && (currentAddr - address) >= length) {
+        
+        break;
+      }
+      
     } while (!isEndWord(zword));
     
-    byte[] result = new byte[byteList.size() * 3];
+    short[] result = new short[byteList.size() * 3];
     int i = 0;
-    for (byte[] triplet : byteList) {
-      for (byte b : triplet) {
+    for (short[] triplet : byteList) {
+      for (short b : triplet) {
         result[i++] = b;
       }
     }
@@ -242,12 +275,12 @@ public final class DefaultZCharDecoder implements ZCharDecoder {
    * @return an array of three bytes containing the three 5-bit ZSCII characters
    * encoded in the word
    */
-  private static byte[] extractBytes(short zword) {
+  private static short[] extractBytes(short zword) {
     
-    byte[] result = new byte[3];
-    result[2] = (byte) (zword & 0x1f);
-    result[1] = (byte) ((zword >> 5) & 0x1f);
-    result[0] = (byte) ((zword >> 10) & 0x1f);
+    short[] result = new short[3];
+    result[2] = (short) (zword & 0x1f);
+    result[1] = (short) ((zword >> 5) & 0x1f);
+    result[0] = (short) ((zword >> 10) & 0x1f);
     return result;
   }
   
@@ -259,9 +292,9 @@ public final class DefaultZCharDecoder implements ZCharDecoder {
    * @param bottom the byte holding the bottom 5 bit of the zchar
    */  
   private void joinToZsciiChar(StringBuilder builder,
-                               byte top, byte bottom) {
+                               short top, short bottom) {
     
     short zchar = (short) (top << 5 | bottom);
     builder.append(encoding.getUnicodeChar(zchar));
-  }
+  }  
 }

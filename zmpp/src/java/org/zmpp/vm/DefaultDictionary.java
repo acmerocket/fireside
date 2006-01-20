@@ -30,6 +30,7 @@ import org.zmpp.encoding.ZCharDecoder;
 
 /**
  * This class implements a view on the dictionary within a memory map.
+ * Since it takes the implementations of getN
  *
  * @author Wei-ju Wu
  * @version 1.0
@@ -52,11 +53,12 @@ public class DefaultDictionary extends AbstractDictionary {
    * @param map the memory map
    * @param address the start address of the dictionary
    * @param converter a Z char decoder object
+   * @param sizes a sizes object
    */
   public DefaultDictionary(MemoryReadAccess map, int address,
-                           ZCharDecoder decoder) {
+                           ZCharDecoder decoder, DictionarySizes sizes) {
     
-    super(map, address, decoder);
+    super(map, address, decoder, sizes);
     createLookupMap();
   }  
 
@@ -102,7 +104,8 @@ public class DefaultDictionary extends AbstractDictionary {
       
       entryAddress = getEntryAddress(i);      
       String str = getDecoder().decode2Unicode(getMemoryAccess(),
-                                               entryAddress);
+                                               entryAddress,
+                                               getSizes().getNumEntryBytes());
       maxEntrySize = Math.max(str.length(), maxEntrySize);
       lookupMap.put(str, entryAddress);
     }

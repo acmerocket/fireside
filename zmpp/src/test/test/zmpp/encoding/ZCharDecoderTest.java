@@ -82,11 +82,8 @@ public class ZCharDecoderTest extends MockObjectTestCase {
   
   public void testDecodeByte() {
   
-    mockTranslator.expects(once()).method("translate").with(eq((short) 6)).will(returnValue('a'));
-    
-    StringBuilder buffer0 = new StringBuilder();
-    decoder.decodeZchar(buffer0, (byte) 6);
-    assertEquals("a", buffer0.toString());    
+    mockTranslator.expects(once()).method("translate").with(eq((short) 6)).will(returnValue('a'));    
+    assertEquals('a', decoder.decodeZChar((byte) 6));
   }
   
   public void testConvert() {
@@ -159,7 +156,7 @@ public class ZCharDecoderTest extends MockObjectTestCase {
   public void testExtractZBytesOneWordOnly() {
     
     mockMemAccess.expects(once()).method("readShort").will(returnValue((short) 0x9865));
-    byte[] data = DefaultZCharDecoder.extractZbytes(memaccess, 0);
+    short[] data = DefaultZCharDecoder.extractZbytes(memaccess, 0, 0);
     assertEquals(3, data.length);
     assertEquals(6, data[0]);
     assertEquals(3, data[1]);
@@ -172,7 +169,7 @@ public class ZCharDecoderTest extends MockObjectTestCase {
         onConsecutiveCalls(returnValue((short) 0x5432),
                            returnValue((short) 0x1234),
                            returnValue((short) 0x9865)));
-    byte[] data = DefaultZCharDecoder.extractZbytes(memaccess, 0);
+    short[] data = DefaultZCharDecoder.extractZbytes(memaccess, 0, 0);
     assertEquals(9, data.length);
   }  
 }

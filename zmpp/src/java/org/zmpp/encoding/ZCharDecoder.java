@@ -60,14 +60,27 @@ public interface ZCharDecoder {
   String decode2Unicode(MemoryReadAccess memaccess, int address);
 
   /**
+   * Performs a ZSCII to Unicode conversion at the specified position of
+   * the given memory object, this method is exclusively designed to
+   * deal with the problems of dictionary entries. These can be cropped,
+   * leaving the string in a state, that can not be decoded properly
+   * otherwise. If the provided length is 0, the semantics are
+   * equal to the method without the length parameter.
+   * 
+   * @param memaccess a MemoryReadAccess object
+   * @param address the address of the string
+   * @param length the maximum length in bytes
+   * @return the decoded string
+   */
+  String decode2Unicode(MemoryReadAccess memaccess, int address, int length);
+  
+  /**
    * Decodes the given byte value to the specified buffer using the working
    * alphabet.
    * 
-   * @param builder the buffer to print into
-   * @param alphabet the working alphabet
-   * @param b a z character, needs to be a non-shift character
+   * @param zchar a z encoded character, needs to be a non-shift character
    */
-  void decodeZchar(StringBuilder builder, byte b);
+  short decodeZChar(short zchar);
   
   /**
    * Returns the ZStringTranslator.

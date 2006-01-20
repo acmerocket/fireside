@@ -41,6 +41,11 @@ public class DefaultZCharTranslator implements Cloneable, ZCharTranslator {
    * The current alphabet in this translator object.
    */
   private Alphabet currentAlphabet;
+  
+  /**
+   * The shift lock flag.
+   */
+  private boolean shiftLock;
  
   /**
    * Constructor.
@@ -58,7 +63,7 @@ public class DefaultZCharTranslator implements Cloneable, ZCharTranslator {
    */
   public void reset() {
     
-    this.currentAlphabet = Alphabet.A0;
+    currentAlphabet = Alphabet.A0;
   }
   
   /**
@@ -91,52 +96,48 @@ public class DefaultZCharTranslator implements Cloneable, ZCharTranslator {
   public char translate(short zchar) {
     
     // Handle the shift
-    if (alphabetTable.isShiftCharacter((byte) zchar)) {
-      
-      shift((byte) zchar);
-      return '\0';
-    }
-    
+    if (shift(zchar)) return '\0';
+
     char result;
     
     if (zchar == 0) {
       
       result = ' ';
       
-    } else if (isInAlphabetRange((byte) zchar)) {
+    } else if (isInAlphabetRange(zchar)) {
       
       switch (currentAlphabet) {
     
         case A0:
-          result = (char)
-            alphabetTable.getA0Char(zchar - AlphabetTable.ALPHABET_START);
+          result = (char) alphabetTable.getA0Char((byte) zchar);
           break;
         case A1:
-          result = (char)
-            alphabetTable.getA1Char(zchar - AlphabetTable.ALPHABET_START);
+          result = (char) alphabetTable.getA1Char((byte) zchar);
           break;
         case A2:
         default:            
-          result = (char)
-            alphabetTable.getA2Char(zchar - AlphabetTable.ALPHABET_START);
+          result = (char) alphabetTable.getA2Char((byte) zchar);
           break;
       }
       
     } else {
       
-      //System.out.printf("not handled : %d\n", zchar);
+      System.out.printf("not handled : %d\n", zchar);
       result = '?';
     }
     
-    // For now, that's sufficient
-    reset();
+    // Only reset if the shift lock flag is not set
+    if (!shiftLock) {
+      
+      reset();
+    }
     return result;
   }
   
   /**
    * {@inheritDoc}
    */
-  public boolean willEscapeA2(byte zchar) {
+  public boolean willEscapeA2(short zchar) {
    
     return currentAlphabet == Alphabet.A2 && zchar == AlphabetTable.A2_ESCAPE;
   }
@@ -144,7 +145,7 @@ public class DefaultZCharTranslator implements Cloneable, ZCharTranslator {
   /**
    * {@inheritDoc}
    */
-  public boolean isAbbreviation(byte zchar) {
+  public boolean isAbbreviation(short zchar) {
     
     return alphabetTable.isAbbreviation(zchar);
   }
@@ -161,26 +162,21 @@ public class DefaultZCharTranslator implements Cloneable, ZCharTranslator {
     }
     
     Alphabet alphabet = null;
-    int zcharCode = alphabetTable.getA0IndexOf(zsciiChar);
+    int zcharCode = alphabetTable.getA0CharCode(zsciiChar);
     
     if (zcharCode >= 0) alphabet = Alphabet.A0;      
     else {
       
-      zcharCode = alphabetTable.getA1IndexOf(zsciiChar);
+      zcharCode = alphabetTable.getA1CharCode(zsciiChar);
       if (zcharCode >= 0) alphabet = Alphabet.A1;
       else {
         
-        zcharCode = alphabetTable.getA2IndexOf(zsciiChar);
+        zcharCode = alphabetTable.getA2CharCode(zsciiChar);
         if (zcharCode >= 0) alphabet = Alphabet.A2;
       }
     }
     
-    // Was found in alphabet table, adjust by alphabet start
-    if (alphabet != null) {
-      
-      zcharCode += AlphabetTable.ALPHABET_START;
-      
-    } else {
+    if (alphabet == null) {
       
       // It is not in any alphabet table, we are fine with taking the code
       // number for the moment
@@ -196,22 +192,27 @@ public class DefaultZCharTranslator implements Cloneable, ZCharTranslator {
    * @param zchar the zchar value
    * @return true if the value is in the alphabet range, false, otherwise
    */
-  private static boolean isInAlphabetRange(byte zchar) {
+  private static boolean isInAlphabetRange(short zchar) {
     
-    return AlphabetTable.ALPHABET_START <= zchar
-           && zchar <= AlphabetTable.ALPHABET_END;
+    return 1 <= zchar && zchar <= AlphabetTable.ALPHABET_END;
   }
   
   /**
    * Performs a shift.
    * 
-   * @param shiftChar the shift character
+   * @param zchar a z encoded character
+   * @return true if a shift was performed, false, otherwise
    */
-  private void shift(byte shiftChar) {
+  private boolean shift(short zchar) {
   
-    currentAlphabet = shiftFrom(currentAlphabet, shiftChar);
+    if (alphabetTable.isShift(zchar)) {
+      
+      currentAlphabet = shiftFrom(currentAlphabet, zchar);
+      return true;
+    }
+    return false;
   }
-
+  
   /**
    * This method contains the rules to shift the alphabets.
    * 
@@ -219,41 +220,47 @@ public class DefaultZCharTranslator implements Cloneable, ZCharTranslator {
    * @param shiftChar the shift character
    * @return the resulting alphabet
    */
-  private static Alphabet shiftFrom(Alphabet alphabet, byte shiftChar) {
+  private Alphabet shiftFrom(Alphabet alphabet, short shiftChar) {
+
+    Alphabet result = null;
     
-    switch (shiftChar) {
-      case AlphabetTable.SHIFT_4:
+    if (alphabetTable.isShift1(shiftChar)) {
       
-        if (alphabet == Alphabet.A0) {
+      if (alphabet == Alphabet.A0) {
         
-          return Alphabet.A1;
-        
-        } else if (alphabet == Alphabet.A1) {
-        
-          return Alphabet.A2;
-        
-        } else if (alphabet == Alphabet.A2) {
-        
-          return Alphabet.A0;
-        }
-        break;
-      case AlphabetTable.SHIFT_5:
+        result = Alphabet.A1;
       
-        if (alphabet == Alphabet.A0) {
+      } else if (alphabet == Alphabet.A1) {
+      
+        result = Alphabet.A2;
+      
+      } else if (alphabet == Alphabet.A2) {
+      
+        result = Alphabet.A0;
+      }
+      
+    } else if (alphabetTable.isShift2(shiftChar)) {
+      
+      if (alphabet == Alphabet.A0) {
         
-          return Alphabet.A2;
+        result = Alphabet.A2;
+      
+      } else if (alphabet == Alphabet.A1) {
+      
+        result = Alphabet.A0;
         
-        } else if (alphabet == Alphabet.A1) {
-        
-          return Alphabet.A0;
-          
-        } else if (alphabet == Alphabet.A2) {
-        
-          return Alphabet.A1;
-        }
-        break;
-      default:        
+      } else if (alphabet == Alphabet.A2) {
+      
+        result = Alphabet.A1;
+      }
+      
+    } else {
+      
+      result = alphabet;
     }
-    return alphabet;
-  }  
+    
+    shiftLock = alphabetTable.isShiftLock(shiftChar); 
+    
+    return result;
+  }
 }

@@ -53,36 +53,39 @@ public class CustomAlphabetTable implements AlphabetTable {
   /**
    * {@inheritDoc}
    */
-  public short getA0Char(int index) {
+  public short getA0Char(byte zchar) {
     
-    return memaccess.readUnsignedByte(tableAddress + index);
+    return memaccess.readUnsignedByte(tableAddress
+                                      + (zchar - ALPHABET_START));
   }
   
   /**
    * {@inheritDoc}
    */
-  public short getA1Char(int index) {
+  public short getA1Char(byte zchar) {
     
-    return memaccess.readUnsignedByte(tableAddress + ALPHABET_SIZE + index);
+    return memaccess.readUnsignedByte(tableAddress
+                                      + ALPHABET_SIZE
+                                      + (zchar - ALPHABET_START));
   }
   
   /**
    * {@inheritDoc}
    */
-  public short getA2Char(int index) {
+  public short getA2Char(byte zchar) {
     
     return memaccess.readUnsignedByte(tableAddress + 2 * ALPHABET_SIZE
-                                      + index);
+                                      + (zchar - ALPHABET_START));
   }
   
   /**
    * {@inheritDoc}
    */
-  public final int getA0IndexOf(short zsciiChar) {
+  public final byte getA0CharCode(short zsciiChar) {
 
-    for (int i = 0; i < ALPHABET_SIZE; i++) {
+    for (int i = ALPHABET_START; i < ALPHABET_START + ALPHABET_SIZE; i++) {
       
-      if (getA0Char(i) == zsciiChar) return i;
+      if (getA0Char((byte) i) == zsciiChar) return (byte) i;
     }
     return -1;
   }
@@ -90,11 +93,11 @@ public class CustomAlphabetTable implements AlphabetTable {
   /**
    * {@inheritDoc}
    */
-  public final int getA1IndexOf(short zsciiChar) {
+  public final byte getA1CharCode(short zsciiChar) {
 
-    for (int i = 0; i < ALPHABET_SIZE; i++) {
+    for (int i = ALPHABET_START; i < ALPHABET_START + ALPHABET_SIZE; i++) {
       
-      if (getA1Char(i) == zsciiChar) return i;
+      if (getA1Char((byte) i) == zsciiChar) return (byte) i;
     }
     return -1;
   }
@@ -102,11 +105,11 @@ public class CustomAlphabetTable implements AlphabetTable {
   /**
    * {@inheritDoc}
    */
-  public int getA2IndexOf(short zsciiChar) {
+  public byte getA2CharCode(short zsciiChar) {
 
-    for (int i = 0; i < ALPHABET_SIZE; i++) {
+    for (int i = ALPHABET_START; i < ALPHABET_START + ALPHABET_SIZE; i++) {
       
-      if (getA2Char(i) == zsciiChar) return i;
+      if (getA2Char((byte) i) == zsciiChar) return (byte) i;
     }
     return -1;
   }
@@ -123,8 +126,32 @@ public class CustomAlphabetTable implements AlphabetTable {
   /**
    * {@inheritDoc}
    */
-  public boolean isShiftCharacter(short zchar) {
+  public boolean isShift1(short zchar) {
 
-    return zchar == AlphabetTable.SHIFT_4 || zchar == AlphabetTable.SHIFT_5;
+    return zchar == AlphabetTable.SHIFT_4;
+  }
+  
+  /**
+   * {@inheritDoc}
+   */
+  public boolean isShift2(short zchar) {
+    
+    return zchar == AlphabetTable.SHIFT_5;
+  }
+  
+  /**
+   * {@inheritDoc}
+   */
+  public boolean isShiftLock(short zchar) {
+    
+    return false;
+  }
+
+  /**
+   * {@inheritDoc}
+   */
+  public boolean isShift(short zchar) {
+    
+    return isShift1(zchar) || isShift2(zchar);
   }
 }

@@ -7,6 +7,7 @@ import junit.framework.TestCase;
 
 import org.zmpp.encoding.AlphabetElement;
 import org.zmpp.encoding.AlphabetTable;
+import org.zmpp.encoding.AlphabetTableV2;
 import org.zmpp.encoding.DefaultAlphabetTable;
 import org.zmpp.encoding.DefaultZCharTranslator;
 import org.zmpp.encoding.ZCharTranslator;
@@ -17,10 +18,15 @@ public class ZCharTranslatorTest extends TestCase {
   private AlphabetTable alphabetTable;
   private ZCharTranslator translator;
   
+  private AlphabetTable alphabetTableV2;
+  private ZCharTranslator translatorV2;
+  
   protected void setUp() {
     
     alphabetTable = new DefaultAlphabetTable();
     translator = new DefaultZCharTranslator(alphabetTable);
+    alphabetTableV2 = new AlphabetTableV2();
+    translatorV2 = new DefaultZCharTranslator(alphabetTableV2);
   }
   
   public void testTranslate() {
@@ -157,4 +163,18 @@ public class ZCharTranslatorTest extends TestCase {
     assertEquals(Alphabet.A2, newline.getAlphabet());
     assertEquals(7, newline.getZCharCode());
   }  
+
+  // **********************************************************************
+  // ***** Shifting in V2
+  // ******************************************
+  
+  public void testShiftV2FromA0() {
+    
+    assertEquals(0, translatorV2.translate(AlphabetTable.SHIFT_2));
+    assertEquals(Alphabet.A1, translatorV2.getCurrentAlphabet());
+    translatorV2.reset();
+    
+    assertEquals(0, translatorV2.translate(AlphabetTable.SHIFT_4));
+  }
+  
 }

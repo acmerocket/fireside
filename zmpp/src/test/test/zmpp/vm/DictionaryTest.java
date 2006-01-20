@@ -28,6 +28,7 @@ import org.zmpp.base.MemoryReadAccess;
 import org.zmpp.encoding.ZCharDecoder;
 import org.zmpp.vm.DefaultDictionary;
 import org.zmpp.vm.Dictionary;
+import org.zmpp.vm.DictionarySizesV1ToV3;
 
 /**
  * This class tests the dictionary view.
@@ -63,14 +64,15 @@ public class DictionaryTest extends MockObjectTestCase {//extends MemoryMapSetup
     // entry size
     mockMemAccess.expects(exactly(2)).method("readUnsignedByte").with(eq(1004)).will(returnValue((short) 4));
     
-    mockDecoder.expects(once()).method("decode2Unicode").with(eq(memaccess), eq(1007)).will(returnValue("get"));
-    mockDecoder.expects(once()).method("decode2Unicode").with(eq(memaccess), eq(1011)).will(returnValue("look"));
+    mockDecoder.expects(once()).method("decode2Unicode").with(eq(memaccess), eq(1007), eq(4)).will(returnValue("get"));
+    mockDecoder.expects(once()).method("decode2Unicode").with(eq(memaccess), eq(1011), eq(4)).will(returnValue("look"));
     
-    dictionary = new DefaultDictionary(memaccess, 1000, decoder);
+    dictionary = new DefaultDictionary(memaccess, 1000, decoder, new DictionarySizesV1ToV3());
   }
   
   public void testGetNumSeparators() {
     
+    //mockDecoder.expects(once()).method("decode2Unicode").with(eq(memaccess), eq(1007)).will(returnValue(","));
     mockMemAccess.expects(once()).method("readUnsignedByte").with(eq(1000)).will(returnValue((short) 3));
     assertEquals(3, dictionary.getNumberOfSeparators());
   }
@@ -104,9 +106,6 @@ public class DictionaryTest extends MockObjectTestCase {//extends MemoryMapSetup
   }
 
   public void testLookup() {
-    
-    mockMemAccess.expects(atLeastOnce()).method("readUnsignedByte").with(eq(1000)).will(returnValue((short) 3));
-    mockMemAccess.expects(atLeastOnce()).method("readUnsignedByte").with(eq(1004)).will(returnValue((short) 7));
     
     assertEquals(1007, dictionary.lookup("get"));
     assertEquals(0, dictionary.lookup("nonsense"));
