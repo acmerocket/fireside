@@ -53,12 +53,9 @@ public class ZCharDecoderTest extends MockObjectTestCase {
 
   private Mock mockMemAccess;
   private MemoryAccess memaccess;
-  private Mock mockAbbrev;  
+  private Mock mockAbbrev;
   private AbbreviationsTable abbrev;
-  private Mock mockTranslator;
-  private ZCharTranslator translator;
   private ZCharDecoder decoder;
-  private byte[] byteSeq;
   byte shift2 = 2;
   byte shift3 = 3;
   byte shift4 = 4;
@@ -66,33 +63,24 @@ public class ZCharDecoderTest extends MockObjectTestCase {
 
   public void setUp() {
    
-    mockMemAccess = mock(MemoryAccess.class);
-    memaccess = (MemoryAccess) mockMemAccess.proxy();
     mockAbbrev = mock(AbbreviationsTable.class);
     abbrev = (AbbreviationsTable) mockAbbrev.proxy();
-    mockTranslator = mock(ZCharTranslator.class);
-    translator = (ZCharTranslator) mockTranslator.proxy();
+    mockMemAccess = mock(MemoryAccess.class);
+    memaccess = (MemoryAccess) mockMemAccess.proxy();
     
-    decoder = new DefaultZCharDecoder(new ZsciiEncoding(new DefaultAccentTable()), translator, abbrev);
-    
-    // Setup byte seq
-    byteSeq = new byte[32 - 6]; // Translation row size
-    for (int i = 6, index = 0; i < 32; i++, index ++) byteSeq[index] = (byte) i;    
+    ZsciiEncoding encoding = new ZsciiEncoding(new DefaultAccentTable());
+    AlphabetTable alphabetTable = new DefaultAlphabetTable();
+    ZCharTranslator translator = new DefaultZCharTranslator(alphabetTable);
+    decoder = new DefaultZCharDecoder(encoding, translator, abbrev);
   }
   
   public void testDecodeByte() {
   
-    mockTranslator.expects(once()).method("translate").with(eq((short) 6)).will(returnValue('a'));    
     assertEquals('a', decoder.decodeZChar((byte) 6));
   }
   
-  public void testConvert() {
+  public void testDecode2Unicode2Params() {
   
-    ZsciiEncoding encoding = new ZsciiEncoding(new DefaultAccentTable());
-    AlphabetTable alphabetTable = new DefaultAlphabetTable();
-    ZCharTranslator translator = new DefaultZCharTranslator(alphabetTable);
-    DefaultZCharDecoder decoder = new DefaultZCharDecoder(encoding, translator, abbrev);
-    
     byte[] hello = { 0x35, 0x51, (byte) 0xc6, (byte) 0x85 };
     byte[] Hello = { 0x11, (byte) 0xaa, (byte) 0xc6, (byte) 0x34 };
     MemoryReadAccess memaccess1 = new DefaultMemoryAccess(hello);     
@@ -101,23 +89,9 @@ public class ZCharDecoderTest extends MockObjectTestCase {
     assertEquals("Hello", decoder.decode2Unicode(memaccess2, 0));    
   }
   
-  public void testConvertWithAbbreviation() {
-
-    ZsciiEncoding encoding = new ZsciiEncoding(new DefaultAccentTable());
-    AlphabetTable alphabetTable = new DefaultAlphabetTable(); 
-    ZCharTranslator translator = new DefaultZCharTranslator(alphabetTable);
-    DefaultZCharDecoder decoder = new DefaultZCharDecoder(
-        encoding, translator, abbrev);
-    
-    byte[] helloAbbrev = {
-        0x35, 0x51, (byte) 0x46, (byte) 0x81, (byte) 0x88, (byte) 0xa5, // hello{abbrev_2}
-        0x35, 0x51, (byte) 0xc6, (byte) 0x85, // hello
-        0x11, (byte) 0xaa, (byte) 0xc6, (byte) 0x34 // Hello
-    };
-    mockAbbrev.expects(once()).method("getWordAddress").with(eq(2)).will(returnValue(10));
-    MemoryReadAccess memaccess = new DefaultMemoryAccess(helloAbbrev);
-    assertEquals("helloHello", decoder.decode2Unicode(memaccess, 0));    
-  }
+  // *********************************************************************
+  // **** Real-world test
+  // ****************************************
   
   public void testMinizork() throws Exception {
     
@@ -144,6 +118,19 @@ public class ZCharDecoderTest extends MockObjectTestCase {
   // *********************************************************************
   // **** Tests based on mock objects
   // ****************************************
+  
+  public void testConvertWithAbbreviation() {
+
+    byte[] helloAbbrev = {
+        0x35, 0x51, (byte) 0x46, (byte) 0x81, (byte) 0x88, (byte) 0xa5, // hello{abbrev_2}
+        0x35, 0x51, (byte) 0xc6, (byte) 0x85, // hello
+        0x11, (byte) 0xaa, (byte) 0xc6, (byte) 0x34 // Hello
+    };
+    mockAbbrev.expects(once()).method("getWordAddress").with(eq(2)).will(returnValue(10));
+    MemoryReadAccess memaccess = new DefaultMemoryAccess(helloAbbrev);
+    assertEquals("helloHello", decoder.decode2Unicode(memaccess, 0));    
+  }
+  
   
   public void testEndCharacter() {
     
@@ -172,4 +159,65 @@ public class ZCharDecoderTest extends MockObjectTestCase {
     short[] data = DefaultZCharDecoder.extractZbytes(memaccess, 0, 0);
     assertEquals(9, data.length);
   }  
+
+  // *********************************************************************
+  // **** Tests for string truncation
+  // **** We test the truncation algorithm for V3 length only which is
+  // **** 4 bytes, 6 characters. In fact, this should be general enough
+  // **** so we do not need to test 6 bytes, 9 characters as in >= V4
+  // **** files. Since this method is only used within dictionaries, we
+  // **** do not need to test abbreviations
+  // ****************************************
+  
+  public void testTruncateAllSmall() {
+    
+    byte[] data = { (byte) 0x35, (byte) 0x51, (byte) 0x46, (byte) 0x86,
+                    (byte) 0xc6, (byte) 0x85 };
+    MemoryReadAccess memaccess = new DefaultMemoryAccess(data);
+    int length = 4;
+    
+    // With length = 0
+    assertEquals("helloalo", decoder.decode2Unicode(memaccess, 0, 0));
+    
+    // With length = 4
+    assertEquals("helloa", decoder.decode2Unicode(memaccess, 0, length));    
+  }
+
+  public void testTruncateShiftAtEnd() {
+    
+    byte[] data = { (byte) 0x34, (byte) 0x8a, (byte) 0x45, (byte) 0xc4 };
+    MemoryReadAccess memaccess = new DefaultMemoryAccess(data);
+    int length = 4;
+    
+    decoder.decode2Unicode(memaccess, 0, length);
+    assertEquals("hEli", decoder.decode2Unicode(memaccess, 0, length));    
+  }
+  
+  /**
+   * Escape A6 starts at position 0 of the last word.
+   */
+  public void testTruncateEscapeA2AtEndStartsAtWord2_0() {
+    
+    byte[] data = { (byte) 0x34, (byte) 0xd1, (byte) 0x14, (byte) 0xc1,
+                    (byte) 0x80, (byte) 0xa5 };
+    MemoryReadAccess memaccess = new DefaultMemoryAccess(data);
+    int length = 4;
+    
+    decoder.decode2Unicode(memaccess, 0, length);
+    assertEquals("hal", decoder.decode2Unicode(memaccess, 0, length));    
+  }
+
+  /**
+   * Escape A6 starts at position 1 of the last word.
+   */
+  public void testTruncateEscapeA2AtEndStartsAtWord2_1() {
+    
+    byte[] data = { (byte) 0x34, (byte) 0xd1, (byte) 0x44, (byte) 0xa6,
+                    (byte) 0x84, (byte) 0x05 };
+    MemoryReadAccess memaccess = new DefaultMemoryAccess(data);
+    int length = 4;
+    
+    decoder.decode2Unicode(memaccess, 0, length);
+    assertEquals("hall", decoder.decode2Unicode(memaccess, 0, length));    
+  }
 }
