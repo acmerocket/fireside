@@ -175,6 +175,103 @@ public class ZCharTranslatorTest extends TestCase {
     translatorV2.reset();
     
     assertEquals(0, translatorV2.translate(AlphabetTable.SHIFT_4));
+    assertEquals(Alphabet.A1, translatorV2.getCurrentAlphabet());
+    translatorV2.reset();
+
+    assertEquals(0, translatorV2.translate(AlphabetTable.SHIFT_3));
+    assertEquals(Alphabet.A2, translatorV2.getCurrentAlphabet());
+    translatorV2.reset();
+
+    assertEquals(0, translatorV2.translate(AlphabetTable.SHIFT_5));
+    assertEquals(Alphabet.A2, translatorV2.getCurrentAlphabet());
   }
   
+  public void testShiftV2FromA1() {
+    
+    translatorV2.translate(AlphabetTable.SHIFT_2);
+    
+    assertEquals(0, translatorV2.translate(AlphabetTable.SHIFT_2));
+    assertEquals(Alphabet.A2, translatorV2.getCurrentAlphabet());
+    translatorV2.reset();
+    translatorV2.translate(AlphabetTable.SHIFT_2);
+    
+    assertEquals(0, translatorV2.translate(AlphabetTable.SHIFT_4));
+    assertEquals(Alphabet.A2, translatorV2.getCurrentAlphabet());
+    translatorV2.reset();
+    translatorV2.translate(AlphabetTable.SHIFT_2);
+
+    assertEquals(0, translatorV2.translate(AlphabetTable.SHIFT_3));
+    assertEquals(Alphabet.A0, translatorV2.getCurrentAlphabet());
+    translatorV2.reset();
+    translatorV2.translate(AlphabetTable.SHIFT_2);
+
+    assertEquals(0, translatorV2.translate(AlphabetTable.SHIFT_5));
+    assertEquals(Alphabet.A0, translatorV2.getCurrentAlphabet());
+  }
+
+  public void testShiftV2FromA2() {
+    
+    translatorV2.translate(AlphabetTable.SHIFT_3);
+    
+    assertEquals(0, translatorV2.translate(AlphabetTable.SHIFT_2));
+    assertEquals(Alphabet.A0, translatorV2.getCurrentAlphabet());
+    translatorV2.reset();
+    translatorV2.translate(AlphabetTable.SHIFT_3);
+    
+    assertEquals(0, translatorV2.translate(AlphabetTable.SHIFT_4));
+    assertEquals(Alphabet.A0, translatorV2.getCurrentAlphabet());
+    translatorV2.reset();
+    translatorV2.translate(AlphabetTable.SHIFT_3);
+
+    assertEquals(0, translatorV2.translate(AlphabetTable.SHIFT_3));
+    assertEquals(Alphabet.A1, translatorV2.getCurrentAlphabet());
+    translatorV2.reset();
+    translatorV2.translate(AlphabetTable.SHIFT_3);
+
+    assertEquals(0, translatorV2.translate(AlphabetTable.SHIFT_5));
+    assertEquals(Alphabet.A1, translatorV2.getCurrentAlphabet());
+  }
+
+  public void testShiftNotLocked() {
+
+    translatorV2.translate(AlphabetTable.SHIFT_2);
+    translatorV2.translate((short) 10);
+    assertEquals(Alphabet.A0, translatorV2.getCurrentAlphabet());
+   
+    translatorV2.translate(AlphabetTable.SHIFT_3);
+    translatorV2.translate((short) 10);
+    assertEquals(Alphabet.A0, translatorV2.getCurrentAlphabet());
+  }
+
+  public void testShiftLocked() {
+    
+    translatorV2.translate(AlphabetTable.SHIFT_4);
+    translatorV2.translate((short) 10);
+    assertEquals(Alphabet.A1, translatorV2.getCurrentAlphabet());
+    translatorV2.reset();
+    assertEquals(Alphabet.A0, translatorV2.getCurrentAlphabet());
+    
+    translatorV2.translate(AlphabetTable.SHIFT_5);
+    translatorV2.translate((short) 10);
+    assertEquals(Alphabet.A2, translatorV2.getCurrentAlphabet());
+  }
+
+  /**
+   * Test if the shift lock is reset after the a non-locking shift was
+   * met.
+   */
+  public void testShiftLockSequence() {
+    
+    translatorV2.translate(AlphabetTable.SHIFT_4);
+    translatorV2.translate(AlphabetTable.SHIFT_2);
+    translatorV2.translate((short) 10);
+    assertEquals(Alphabet.A0, translatorV2.getCurrentAlphabet());
+    
+    translatorV2.translate(AlphabetTable.SHIFT_4);
+    translatorV2.translate(AlphabetTable.SHIFT_5);
+    translatorV2.translate(AlphabetTable.SHIFT_2);
+    translatorV2.translate(AlphabetTable.SHIFT_3);
+    translatorV2.translate((short) 10);
+    assertEquals(Alphabet.A0, translatorV2.getCurrentAlphabet());
+  }
 }
