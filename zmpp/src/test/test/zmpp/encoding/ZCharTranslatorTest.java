@@ -57,8 +57,14 @@ public class ZCharTranslatorTest extends TestCase {
     assertEquals(' ', translator.translate((short) 0));
     translator.translate(AlphabetTable.SHIFT_5);
     assertEquals(' ', translator.translate((short) 0));
+    
+    assertEquals(' ', translatorV2.translate((short) 0));
+    translatorV2.translate(AlphabetTable.SHIFT_4);
+    assertEquals(' ', translatorV2.translate((short) 0));
+    translatorV2.translate(AlphabetTable.SHIFT_5);
+    assertEquals(' ', translatorV2.translate((short) 0));
   }
-  
+
   // **********************************************************************
   // ***** Shift
   // ******************************************
@@ -242,6 +248,17 @@ public class ZCharTranslatorTest extends TestCase {
     translatorV2.translate((short) 10);
     assertEquals(Alphabet.A0, translatorV2.getCurrentAlphabet());
   }
+  
+  public void testShiftNotLockedChar0() {
+        
+    translatorV2.translate(AlphabetTable.SHIFT_2);
+    translatorV2.translate((short) 0);
+    assertEquals(Alphabet.A0, translatorV2.getCurrentAlphabet());
+   
+    translatorV2.translate(AlphabetTable.SHIFT_3);
+    translatorV2.translate((short) 0);
+    assertEquals(Alphabet.A0, translatorV2.getCurrentAlphabet());
+  }
 
   public void testShiftLocked() {
     
@@ -260,18 +277,19 @@ public class ZCharTranslatorTest extends TestCase {
    * Test if the shift lock is reset after the a non-locking shift was
    * met.
    */
-  public void testShiftLockSequence() {
+  public void testShiftLockSequenceLock1() {
     
     translatorV2.translate(AlphabetTable.SHIFT_4);
     translatorV2.translate(AlphabetTable.SHIFT_2);
     translatorV2.translate((short) 10);
-    assertEquals(Alphabet.A0, translatorV2.getCurrentAlphabet());
+    assertEquals(Alphabet.A1, translatorV2.getCurrentAlphabet());
+  }
+  
+  public void testShiftLockSequenceLock2() {
     
-    translatorV2.translate(AlphabetTable.SHIFT_4);
     translatorV2.translate(AlphabetTable.SHIFT_5);
-    translatorV2.translate(AlphabetTable.SHIFT_2);
     translatorV2.translate(AlphabetTable.SHIFT_3);
     translatorV2.translate((short) 10);
-    assertEquals(Alphabet.A0, translatorV2.getCurrentAlphabet());
+    assertEquals(Alphabet.A2, translatorV2.getCurrentAlphabet());
   }
 }

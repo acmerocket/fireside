@@ -31,6 +31,7 @@ import org.zmpp.base.DefaultMemoryAccess;
 import org.zmpp.base.MemoryAccess;
 import org.zmpp.base.MemoryReadAccess;
 import org.zmpp.encoding.AlphabetTable;
+import org.zmpp.encoding.AlphabetTableV1;
 import org.zmpp.encoding.DefaultAccentTable;
 import org.zmpp.encoding.DefaultAlphabetTable;
 import org.zmpp.encoding.DefaultZCharDecoder;
@@ -90,7 +91,7 @@ public class ZCharDecoderTest extends MockObjectTestCase {
   }
   
   // *********************************************************************
-  // **** Real-world test
+  // **** Real-world tests
   // ****************************************
   
   public void testMinizork() throws Exception {
@@ -110,11 +111,70 @@ public class ZCharDecoderTest extends MockObjectTestCase {
     AlphabetTable alphabetTable = new DefaultAlphabetTable(); 
     ZCharTranslator translator = new DefaultZCharTranslator(alphabetTable);
     
-    ZCharDecoder converter = new DefaultZCharDecoder(encoding, translator, abbr);
-    assertEquals("The Great Underground Empire", converter.decode2Unicode(memaccess, 0xc120));
-    assertEquals("[I don't understand that sentence.]", converter.decode2Unicode(memaccess, 0x3e6d));
+    ZCharDecoder decoder = new DefaultZCharDecoder(encoding, translator, abbr);
+    assertEquals("The Great Underground Empire", decoder.decode2Unicode(memaccess, 0xc120));
+    assertEquals("[I don't understand that sentence.]", decoder.decode2Unicode(memaccess, 0x3e6d));
   }
 
+  /**
+   * A pretty complex example: the Zork I introduction message. This one
+   * clarified that the current shift lock alphabet needs to be restored
+   * after a regular shift occured.
+   */
+  public void testZork1V1() {
+    
+    String originalString = "ZORK: The Great Underground Empire - Part I\n"
+      + "Copyright (c) 1980 by Infocom, Inc. All rights reserved.\n"
+      + "ZORK is a trademark of Infocom, Inc.\n"
+      + "Release ";
+    
+    // This String was extracted from release 5 of Zork I and contains
+    // the same message as in originalString.
+    byte[] data = {
+        
+        (byte) 0x13, (byte) 0xf4, (byte) 0x5e, (byte) 0x02, 
+        (byte) 0x74, (byte) 0x19, (byte) 0x15, (byte) 0xaa, 
+        (byte) 0x00, (byte) 0x4c, (byte) 0x5d, (byte) 0x46, 
+        (byte) 0x64, (byte) 0x02, (byte) 0x6a, (byte) 0x69, 
+        (byte) 0x2a, (byte) 0xec, (byte) 0x5e, (byte) 0x9a, 
+        (byte) 0x4d, (byte) 0x20, (byte) 0x09, (byte) 0x52, 
+        (byte) 0x55, (byte) 0xd7, (byte) 0x28, (byte) 0x03, 
+        (byte) 0x70, (byte) 0x02, (byte) 0x54, (byte) 0xd7, 
+        (byte) 0x64, (byte) 0x02, (byte) 0x38, (byte) 0x22, 
+        (byte) 0x22, (byte) 0x95, (byte) 0x7a, (byte) 0xee, 
+        (byte) 0x31, (byte) 0xb9, (byte) 0x00, (byte) 0x7e, 
+        (byte) 0x20, (byte) 0x7f, (byte) 0x00, (byte) 0xa8, 
+        (byte) 0x41, (byte) 0xe7, (byte) 0x00, (byte) 0x87, 
+        (byte) 0x78, (byte) 0x02, (byte) 0x3a, (byte) 0x6b, 
+        (byte) 0x51, (byte) 0x14, (byte) 0x48, (byte) 0x72, 
+        (byte) 0x00, (byte) 0x4e, (byte) 0x4d, (byte) 0x03, 
+        (byte) 0x44, (byte) 0x02, (byte) 0x1a, (byte) 0x31, 
+        (byte) 0x02, (byte) 0xee, (byte) 0x31, (byte) 0xb9, 
+        (byte) 0x60, (byte) 0x17, (byte) 0x2b, (byte) 0x0a, 
+        (byte) 0x5f, (byte) 0x6a, (byte) 0x24, (byte) 0x71, 
+        (byte) 0x04, (byte) 0x9f, (byte) 0x52, (byte) 0xf0, 
+        (byte) 0x00, (byte) 0xae, (byte) 0x60, (byte) 0x06, 
+        (byte) 0x03, (byte) 0x37, (byte) 0x19, (byte) 0x2a, 
+        (byte) 0x48, (byte) 0xd7, (byte) 0x40, (byte) 0x14, 
+        (byte) 0x2c, (byte) 0x02, (byte) 0x3a, (byte) 0x6b, 
+        (byte) 0x51, (byte) 0x14, (byte) 0x48, (byte) 0x72, 
+        (byte) 0x00, (byte) 0x4e, (byte) 0x4d, (byte) 0x03, 
+        (byte) 0x44, (byte) 0x22, (byte) 0x5d, (byte) 0x51, 
+        (byte) 0x28, (byte) 0xd8, (byte) 0xa8, (byte) 0x05, 
+    };
+    
+    
+    MemoryAccess memaccess = new DefaultMemoryAccess(data);
+        
+    ZsciiEncoding encoding = new ZsciiEncoding(new DefaultAccentTable());
+    AlphabetTable alphabetTable = new AlphabetTableV1(); 
+    ZCharTranslator translator = new DefaultZCharTranslator(alphabetTable);
+    
+    ZCharDecoder decoder = new DefaultZCharDecoder(encoding, translator, null);
+    String decoded = decoder.decode2Unicode(memaccess, 0);
+    assertEquals(originalString, decoded);
+  }
+  
   // *********************************************************************
   // **** Tests based on mock objects
   // ****************************************

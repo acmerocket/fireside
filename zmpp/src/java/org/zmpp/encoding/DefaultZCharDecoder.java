@@ -93,6 +93,7 @@ public final class DefaultZCharDecoder implements ZCharDecoder {
     translator.reset();    
     
     short[] zbytes = extractZbytes(memaccess, address, length);
+    
     short zchar;
     int i = 0, newpos;
 
@@ -100,14 +101,13 @@ public final class DefaultZCharDecoder implements ZCharDecoder {
       
       boolean decoded = false;
       zchar = zbytes[i];
-        
       newpos = handleAbbreviation(builder, memaccess, zbytes, i);
       decoded = (newpos > i);
       i = newpos;
       
       if (!decoded) {
          
-        newpos = handle10Bit(builder, zbytes, i);
+        newpos = handleEscapeA2(builder, zbytes, i);
         decoded = newpos > i;
         i = newpos;
       }
@@ -160,7 +160,7 @@ public final class DefaultZCharDecoder implements ZCharDecoder {
     return pos;
   }
   
-  private int handle10Bit(StringBuilder builder, short[] data, int pos) {
+  private int handleEscapeA2(StringBuilder builder, short[] data, int pos) {
     
     if (translator.willEscapeA2(data[pos])) {
 
@@ -172,7 +172,7 @@ public final class DefaultZCharDecoder implements ZCharDecoder {
         pos += 2; // skip the three characters read (including the loop increment)
       }
       pos++;
-      translator.reset();
+      translator.resetToLastAlphabet();
     }
     return pos;
   }

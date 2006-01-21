@@ -25,21 +25,20 @@ package org.zmpp.encoding;
 /**
  * An alphabet table in a V2 story file behaves "almost like" the default
  * alphabet table, in that they have the same characters in the alphabets.
- * There are however two differences: It does not support abbreviations
+ * There are however two differences: It only supports one abbreviation code
  * and it supports shift-lock. 
  * 
  * @author Wei-ju Wu
  * @version 1.0
  */
 public class AlphabetTableV2 extends DefaultAlphabetTable {
-
+  
   /**
    * {@inheritDoc}
    */
   public boolean isAbbreviation(short zchar) {
 
-    // always false
-    return false;
+    return zchar == 1;
   }
 
   /**

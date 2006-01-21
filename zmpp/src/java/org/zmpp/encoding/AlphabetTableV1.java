@@ -24,7 +24,8 @@ package org.zmpp.encoding;
 
 /**
  * An alphabet table in V1 story files behaves like an alphabet table in
- * V2, except that it has a different A2 alphabet.
+ * V2, except that it has a different A2 alphabet and does not support
+ * abbreviations.
  * Furthermore, character 1 returns '\n'. This is a thing that leads
  * to the extension of the getAnChar() methods, handling index -5.
  * 
@@ -33,17 +34,20 @@ package org.zmpp.encoding;
  */
 public class AlphabetTableV1 extends AlphabetTableV2 {
 
+  /**
+   * V1 Alphabet 2 has a slightly different structure.
+   */
   private static final String A2CHARS = " 0123456789.,!?_#'\"/\\<-:()";
 
   /**
    * {@inheritDoc}
    */
   public short getA0Char(byte zchar) {
-
+    
     if (zchar == 1) return (short) '\n';
     return super.getA0Char(zchar);
   }
-  
+
   /**
    * {@inheritDoc}
    */
@@ -58,6 +62,7 @@ public class AlphabetTableV1 extends AlphabetTableV2 {
    */
   public short getA2Char(byte zchar) {
     
+    if (zchar == 0) return (short) ' ';
     if (zchar == 1) return (short) '\n';
     return (short) A2CHARS.charAt(zchar - ALPHABET_START);
   }
@@ -68,5 +73,13 @@ public class AlphabetTableV1 extends AlphabetTableV2 {
   public final byte getA2CharCode(short zsciiChar) {
 
     return getCharCodeFor(A2CHARS, zsciiChar);
+  }
+  
+  /**
+   * {@inheritDoc}
+   */
+  public boolean isAbbreviation(short zchar) {
+    
+    return false;
   }
 }

@@ -109,14 +109,5 @@ public class DictionaryTest extends MockObjectTestCase {//extends MemoryMapSetup
     
     assertEquals(1007, dictionary.lookup("get"));
     assertEquals(0, dictionary.lookup("nonsense"));
-  }
-  
-  /*
-  
-  
-  public void testToString() {
-    
-    assertNotNull(dictionary.toString());
-  }
-  */
+  }  
 }

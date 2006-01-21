@@ -45,6 +45,11 @@ public class DefaultZCharTranslator implements Cloneable, ZCharTranslator {
   /**
    * The shift lock flag.
    */
+  private Alphabet lockAlphabet;
+  
+  /**
+   * The lock flag.
+   */
   private boolean shiftLock;
  
   /**
@@ -64,6 +69,21 @@ public class DefaultZCharTranslator implements Cloneable, ZCharTranslator {
   public void reset() {
     
     currentAlphabet = Alphabet.A0;
+    lockAlphabet = null;
+    shiftLock = false;
+  }
+  
+  public void resetToLastAlphabet() {
+    
+    if (lockAlphabet != null) {
+      
+      currentAlphabet = lockAlphabet;
+      shiftLock = true;
+      
+    } else {
+      
+      currentAlphabet = Alphabet.A0;
+    }
   }
   
   /**
@@ -100,11 +120,7 @@ public class DefaultZCharTranslator implements Cloneable, ZCharTranslator {
 
     char result;
     
-    if (zchar == 0) {
-      
-      result = ' ';
-      
-    } else if (isInAlphabetRange(zchar)) {
+    if (isInAlphabetRange(zchar)) {
       
       switch (currentAlphabet) {
     
@@ -122,14 +138,14 @@ public class DefaultZCharTranslator implements Cloneable, ZCharTranslator {
       
     } else {
       
-      System.out.printf("not handled : %d\n", zchar);
+      //System.out.printf("not handled : %d\n", zchar);
       result = '?';
     }
     
     // Only reset if the shift lock flag is not set
     if (!shiftLock) {
       
-      reset();
+      resetToLastAlphabet();
     }
     return result;
   }
@@ -194,7 +210,7 @@ public class DefaultZCharTranslator implements Cloneable, ZCharTranslator {
    */
   private static boolean isInAlphabetRange(short zchar) {
     
-    return 1 <= zchar && zchar <= AlphabetTable.ALPHABET_END;
+    return 0 <= zchar && zchar <= AlphabetTable.ALPHABET_END;
   }
   
   /**
@@ -208,6 +224,12 @@ public class DefaultZCharTranslator implements Cloneable, ZCharTranslator {
     if (alphabetTable.isShift(zchar)) {
       
       currentAlphabet = shiftFrom(currentAlphabet, zchar);
+      
+      // Sets the current lock alphabet
+      if (alphabetTable.isShiftLock(zchar)) {
+      
+        lockAlphabet = currentAlphabet;
+      }
       return true;
     }
     return false;

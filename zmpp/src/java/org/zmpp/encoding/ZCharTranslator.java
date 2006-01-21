@@ -41,15 +41,31 @@ import org.zmpp.encoding.AlphabetTable.Alphabet;
  * client is responsible to join those characters and the translator will
  * not do anything about it, since it can only handle bytes.
  * 
+ * Shift lock characters are a little special: The object will remember
+ * the shift locked state until a reset() is called, if a regular shift
+ * occurs, the alphabet will be changed for one translation and will
+ * return to the last locked state. Since the translation process employs
+ * abbreviations and ZSCII-Escape-Sequences which are external to this
+ * class, the method resetToLastAlphabet() is provided to reset the state
+ * from the client after an external translation has been performed.
+ * 
  * @author Wei-ju Wu
  * @version 1.0
  */
 public interface ZCharTranslator {
 
   /**
-   * Resets the state of the translator.
+   * Resets the state of the translator. This should be called before
+   * a new decoding is started to reset this object to its initial state.
    */
   void reset();
+  
+  /**
+   * This method should be invoked within the decoding of one single string.
+   * In story file versions >= 3 this is the same as invoking reset(), in
+   * V1 and V2, the object will reset to the last shift-locked alphabet.
+   */
+  void resetToLastAlphabet();
   
   /**
    * Clones this object. Needed, since this object has a modifiable state.
