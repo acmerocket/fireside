@@ -55,16 +55,16 @@ public class Short1Instruction extends AbstractInstruction {
         jz();
         break;
       case Short1StaticInfo.OP_GET_SIBLING:
-        getSibling();
+        get_sibling();
         break;
       case Short1StaticInfo.OP_GET_CHILD:
-        getChild();
+        get_child();
         break;
       case Short1StaticInfo.OP_GET_PARENT:
-        getParent();
+        get_parent();
         break;
       case Short1StaticInfo.OP_GET_PROP_LEN:
-        getPropLen();
+        get_prop_len();
         break;
       case Short1StaticInfo.OP_INC:        
         inc();
@@ -73,13 +73,13 @@ public class Short1Instruction extends AbstractInstruction {
         dec();
         break;
       case Short1StaticInfo.OP_PRINT_ADDR:
-        printAddr();
+        print_addr();
         break;        
       case Short1StaticInfo.OP_REMOVE_OBJ:
-        removeObj();
+        remove_obj();
         break;        
       case Short1StaticInfo.OP_PRINT_OBJ:
-        printObj();
+        print_obj();
         break;        
       case Short1StaticInfo.OP_JUMP:
         jump();
@@ -88,7 +88,7 @@ public class Short1Instruction extends AbstractInstruction {
         ret();
         break;
       case Short1StaticInfo.OP_PRINT_PADDR:
-        printPaddr();
+        print_paddr();
         break;
       case Short1StaticInfo.OP_LOAD:
         load();
@@ -100,11 +100,11 @@ public class Short1Instruction extends AbstractInstruction {
           
         } else {
           
-          call1n();
+          call_1n();
         }
         break;
       case Short1StaticInfo.OP_CALL_1S:
-        call1s();
+        call_1s();
         break;
       default:
         throwInvalidOpcode();
@@ -203,7 +203,7 @@ public class Short1Instruction extends AbstractInstruction {
   /**
    * get_parent instruction.
    */
-  private void getParent() {
+  private void get_parent() {
 
     int obj = getUnsignedValue(0);
     int parent = 0;
@@ -219,7 +219,7 @@ public class Short1Instruction extends AbstractInstruction {
     nextInstruction();
   }
   
-  private void getSibling() {
+  private void get_sibling() {
 
     int obj = getUnsignedValue(0);
     int sibling = 0;
@@ -235,7 +235,7 @@ public class Short1Instruction extends AbstractInstruction {
     branchOnTest(sibling > 0);
   }
   
-  private void getChild() {
+  private void get_child() {
 
     int obj = getUnsignedValue(0);
     int child = 0;
@@ -251,13 +251,13 @@ public class Short1Instruction extends AbstractInstruction {
     branchOnTest(child > 0);
   }
 
-  private void printAddr() {
+  private void print_addr() {
    
     getMachine().printZString(getUnsignedValue(0));
     nextInstruction();
   }
   
-  private void printPaddr() {
+  private void print_paddr() {
     
     getMachine().printZString(
         getMachine().translatePackedAddress(getUnsignedValue(0), false));
@@ -269,7 +269,7 @@ public class Short1Instruction extends AbstractInstruction {
     returnFromRoutine(getValue(0));
   }
   
-  private void printObj() {
+  private void print_obj() {
     
     int obj = getUnsignedValue(0);
     if (obj > 0) {
@@ -284,7 +284,7 @@ public class Short1Instruction extends AbstractInstruction {
     nextInstruction();
   }
   
-  private void removeObj() {
+  private void remove_obj() {
     
     int obj = getUnsignedValue(0);
     if (obj > 0) {
@@ -294,7 +294,7 @@ public class Short1Instruction extends AbstractInstruction {
     nextInstruction();
   }  
 
-  private void getPropLen() {
+  private void get_prop_len() {
     
     int propertyAddress = getUnsignedValue(0);    
     short proplen = (short)
@@ -303,12 +303,12 @@ public class Short1Instruction extends AbstractInstruction {
     nextInstruction();
   }
   
-  private void call1s() {
+  private void call_1s() {
     
     call(0);
   }
   
-  private void call1n() {
+  private void call_1n() {
     
     call(0);
   }

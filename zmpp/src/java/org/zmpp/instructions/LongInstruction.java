@@ -529,6 +529,8 @@ public class LongInstruction extends AbstractInstruction {
   
   private void set_colour() {
     
+    //System.out.printf("@set_colour, foreground: %d, background: %d\n",
+    //    getValue(0), getValue(1));
     getMachine().getScreen().setForegroundColor(getValue(0));
     getMachine().getScreen().setBackgroundColor(getValue(1));
     nextInstruction();

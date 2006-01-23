@@ -111,16 +111,16 @@ public class VariableInstruction extends AbstractInstruction {
         storeb();
         break;
       case VariableStaticInfo.OP_PUT_PROP:
-        putProp();
+        put_prop();
         break;
       case VariableStaticInfo.OP_SREAD:
         sread();
         break;
       case VariableStaticInfo.OP_PRINT_CHAR:
-        printChar();
+        print_char();
         break;
       case VariableStaticInfo.OP_PRINT_NUM:
-        printNum();
+        print_num();
         break;
       case VariableStaticInfo.OP_RANDOM:
         random();
@@ -132,37 +132,37 @@ public class VariableInstruction extends AbstractInstruction {
         pull();
         break;
       case VariableStaticInfo.OP_SPLIT_WINDOW:
-        splitWindow();
+        split_window();
         break;
       case VariableStaticInfo.OP_SET_TEXT_STYLE:
-        setTextStyle();
+        set_text_style();
         break;
       case VariableStaticInfo.OP_BUFFER_MODE:
-        bufferMode();
+        buffer_mode();
         break;
       case VariableStaticInfo.OP_SET_WINDOW:
-        setWindow();
+        set_window();
         break;
       case VariableStaticInfo.OP_OUTPUTSTREAM:
-        outputstream();
+        output_stream();
         break;
       case VariableStaticInfo.OP_INPUTSTREAM:
-        inputstream();
+        input_stream();
         break;
       case VariableStaticInfo.OP_SOUND_EFFECT:
-        soundEffect();
+        sound_effect();
         break;
       case VariableStaticInfo.OP_ERASE_WINDOW:
-        eraseWindow();
+        erase_window();
         break;
       case VariableStaticInfo.OP_ERASE_LINE:
-        eraseLine();
+        erase_line();
         break;
       case VariableStaticInfo.OP_SET_CURSOR:
-        setCursor();
+        set_cursor();
         break;
       case VariableStaticInfo.OP_GET_CURSOR:
-        getCursor();
+        get_cursor();
         break;
       case VariableStaticInfo.OP_READ_CHAR:
         read_char();
@@ -226,7 +226,7 @@ public class VariableInstruction extends AbstractInstruction {
     nextInstruction();
   }
   
-  private void putProp() {
+  private void put_prop() {
     
     int obj = getUnsignedValue(0);
     int property = getUnsignedValue(1);
@@ -263,14 +263,14 @@ public class VariableInstruction extends AbstractInstruction {
     } 
   }
   
-  private void printChar() {
+  private void print_char() {
     
     short zchar = getValue(0);
     getMachine().printZsciiChar(zchar, false);
     nextInstruction();
   }
   
-  private void printNum() {
+  private void print_num() {
     
     short number = getValue(0);
     getMachine().printNumber(number);
@@ -301,7 +301,7 @@ public class VariableInstruction extends AbstractInstruction {
     nextInstruction();
   }
   
-  private void outputstream() {
+  private void output_stream() {
     
     // Stream number should be a signed byte
     short streamnumber = getValue(0);
@@ -326,7 +326,7 @@ public class VariableInstruction extends AbstractInstruction {
     nextInstruction();
   }
   
-  private void inputstream() {
+  private void input_stream() {
     
     getMachine().selectInputStream(getUnsignedValue(0));
     nextInstruction();
@@ -341,7 +341,7 @@ public class VariableInstruction extends AbstractInstruction {
   
   private void sread() {
     
-    //System.out.println("sread()");
+    //System.out.println("@sread()");
     int version = getStoryFileVersion();
     if (version <= 3) {
       
@@ -381,7 +381,7 @@ public class VariableInstruction extends AbstractInstruction {
   /**
    * Implements the sound_effect instruction.
    */
-  private void soundEffect() {
+  private void sound_effect() {
     
     int soundnum = 1;
     int effect = 0;
@@ -414,8 +414,9 @@ public class VariableInstruction extends AbstractInstruction {
     nextInstruction();
   }
   
-  private void splitWindow() {
+  private void split_window() {
     
+    //System.out.printf("@split_window, window: %d\n", getUnsignedValue(0));
     ScreenModel screenModel = getMachine().getScreen();
     if (screenModel != null) {
       
@@ -424,8 +425,9 @@ public class VariableInstruction extends AbstractInstruction {
     nextInstruction();
   }
   
-  private void setWindow() {
+  private void set_window() {
     
+    //System.out.printf("@set_window, window: %d\n", getUnsignedValue(0));    
     ScreenModel screenModel = getMachine().getScreen();
     if (screenModel != null) {
       
@@ -434,7 +436,7 @@ public class VariableInstruction extends AbstractInstruction {
     nextInstruction();
   }
   
-  private void setTextStyle() {
+  private void set_text_style() {
     
     ScreenModel screenModel = getMachine().getScreen();
     if (screenModel != null) {
@@ -444,7 +446,7 @@ public class VariableInstruction extends AbstractInstruction {
     nextInstruction();
   }
   
-  private void bufferMode() {
+  private void buffer_mode() {
     
     ScreenModel screenModel = getMachine().getScreen();
     if (screenModel != null) {
@@ -454,7 +456,7 @@ public class VariableInstruction extends AbstractInstruction {
     nextInstruction();
   }
   
-  private void eraseWindow() {
+  private void erase_window() {
     
     ScreenModel screenModel = getMachine().getScreen();
     if (screenModel != null) {
@@ -464,7 +466,7 @@ public class VariableInstruction extends AbstractInstruction {
     nextInstruction();    
   }
   
-  private void eraseLine() {
+  private void erase_line() {
     
     ScreenModel screenModel = getMachine().getScreen();
     if (screenModel != null) {
@@ -474,7 +476,7 @@ public class VariableInstruction extends AbstractInstruction {
     nextInstruction();    
   }
   
-  private void setCursor() {
+  private void set_cursor() {
     
     ScreenModel screenModel = getMachine().getScreen();
     if (screenModel != null) {
@@ -484,7 +486,7 @@ public class VariableInstruction extends AbstractInstruction {
     nextInstruction();    
   }
   
-  private void getCursor() {
+  private void get_cursor() {
     
     ScreenModel screenModel = getMachine().getScreen();
     if (screenModel != null) {
@@ -536,6 +538,8 @@ public class VariableInstruction extends AbstractInstruction {
   }
 
   private void read_char() {
+    
+    //System.out.println("@read_char()");
     
     int time = 0;
     int routineAddress = 0;
@@ -644,8 +648,8 @@ public class VariableInstruction extends AbstractInstruction {
     if (getNumOperands() >= 3) height = getUnsignedValue(2);
     if (getNumOperands() == 4) skip = getUnsignedValue(3);
     
-    System.out.printf("@print_table, zscii-text = %d, width = %d," +
-        " height = %d, skip = %d\n", zsciiText, width, height, skip);
+    //System.out.printf("@print_table, zscii-text = %d, width = %d," +
+    //    " height = %d, skip = %d\n", zsciiText, width, height, skip);
     short zchar = 0;
     MemoryAccess memaccess = getMemoryAccess();
     TextCursor cursor = getMachine().getScreen().getTextCursor();
