@@ -145,7 +145,7 @@ ScreenModel {
   
   public void splitWindow(final int linesUpperWindow) {
    
-    //System.out.println("splitWindow(): " + linesUpperWindow + " activeWindow: " + activeWindow);
+    //System.out.printf("@split_window %2x (active window: %d)\n", linesUpperWindow, activeWindow);
     // The standard document suggests that a split should only take part 
     // if the lower window is selected (S 8.7.2.1), but Bureaucracy does
     // the split with the upper window selected, so we do that resizing
@@ -161,7 +161,7 @@ ScreenModel {
   
   public void setWindow(final int window) {
     
-    //System.out.println("setWindow(), window: " + window);
+    //System.out.printf("@set_window %2x\n", window);
     // Flush out the current active window
     flush();
     
@@ -181,6 +181,7 @@ ScreenModel {
    */
   public void setTextStyle(int style) {
 
+    //System.out.printf("@set_text_style %x\n", style);
     // Flush the output before setting a new style
     flush();
     
@@ -335,7 +336,8 @@ ScreenModel {
    */
   public void print(final short zsciiChar, boolean isInput) {
 
-    //System.out.println("print: " + (char) zsciiChar + " isInput: " + isInput);    
+    //System.out.printf("@print %c (isInput: %b)\n", (char) zsciiChar, isInput);
+    
     if (zsciiChar == ZsciiEncoding.NEWLINE) {
     
       printChar('\n', isInput);
@@ -368,7 +370,7 @@ ScreenModel {
   public void setForegroundColor(int colornum) {
    
     //if (activeWindow == WINDOW_BOTTOM)
-    //  System.out.println("setForegroundColor(): " + colornum);
+    //System.out.printf("setForegroundColor(): %d\n", colornum);
     
     if (colornum > 0) {
       
@@ -383,7 +385,7 @@ ScreenModel {
   public void setBackgroundColor(int colornum) {
     
     //if (activeWindow == WINDOW_BOTTOM)
-    //  System.out.println("setBackgroundColor(): " + colornum);
+    //System.out.printf("setBackgroundColor(): %d\n", colornum);
     
     if (colornum > 0) {
       
@@ -477,12 +479,14 @@ ScreenModel {
     
   private void determineStandardFont() {
     
+    standardFont = fixedFont;
+    /*
     // Sets the fixed font as the standard
     if (machine.getServices().getStoryFileHeader().isEnabled(
         Attribute.FORCE_FIXED_FONT)) {
       
       standardFont = fixedFont;      
-    }
+    }*/
   }
 
   private void resizeWindows(int linesUpperWindow) {
@@ -510,8 +514,7 @@ ScreenModel {
       fileheader.setEnabled(Attribute.SUPPORTS_ITALIC, true);
       
       FontMetrics fm = imageBuffer.getGraphics().getFontMetrics(fixedFont);
-      int screenWidth = (imageBuffer.getWidth() - 2 * SubWindow.OFFSET_X) /
-                        fm.charWidth('0');
+      int screenWidth = imageBuffer.getWidth() / fm.charWidth('0');
       int screenHeight = imageBuffer.getHeight() / fm.getHeight();
       //System.out.println("screenWidth: " + screenWidth
       //    + " screenHeight: " + screenHeight);
