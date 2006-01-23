@@ -170,7 +170,7 @@ ScreenModel {
     // S 8.7.2: If the top window is set active, reset the cursor position
     if (activeWindow == WINDOW_TOP) {
       
-      windows[activeWindow].getCursor().reset();
+      windows[activeWindow].resetCursorToHome();
     }
   }
 
@@ -293,8 +293,8 @@ ScreenModel {
       g_img.setColor(defaultBackground);
       g_img.fillRect(0, 0, getWidth(), getHeight());
       resizeWindows(0);
-      windows[WINDOW_TOP].getCursor().reset();
-      windows[WINDOW_BOTTOM].getCursor().reset();
+      windows[WINDOW_TOP].resetCursorToHome();
+      windows[WINDOW_BOTTOM].resetCursorToHome();
       setScreenProperties();
       setInitialized();
     }
@@ -356,7 +356,7 @@ ScreenModel {
     
     char deleteChar =
       machine.getServices().getZsciiEncoding().getUnicodeChar(zchar);
-    windows[activeWindow].getCursor().backspace(deleteChar);
+    windows[activeWindow].backspace(deleteChar);
   }
   
   /**
@@ -455,7 +455,7 @@ ScreenModel {
    */
   public synchronized void displayCursor(boolean showCaret) {
     
-    windows[activeWindow].getCursor().draw(showCaret);
+    windows[activeWindow].drawCursor(showCaret);
   }
   
   // **********************************************************************

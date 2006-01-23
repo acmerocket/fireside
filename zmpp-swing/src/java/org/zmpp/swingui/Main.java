@@ -75,7 +75,7 @@ public class Main {
       File storyfile = fileChooser.getSelectedFile();
       
       Machine machine = openStoryFile(storyfile);
-      Screen3 screen = new Screen3(machine);
+      ZmppFrame screen = new ZmppFrame(machine);
       
       // Machine initialization
       

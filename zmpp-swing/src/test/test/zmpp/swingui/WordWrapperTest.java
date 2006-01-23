@@ -59,7 +59,7 @@ public class WordWrapperTest extends TestCase {
   public void testWrapBufferedSingleNewline() {
 
     String line = "\n";
-    assertEquals(5, fontMetrics.stringWidth(line));
+    assertEquals(0, fontMetrics.stringWidth(line));
     String[] lines = bufferedWordWrapper.wrap(0, line);
     assertEquals(1, lines.length);
     assertEquals("", lines[0]);
