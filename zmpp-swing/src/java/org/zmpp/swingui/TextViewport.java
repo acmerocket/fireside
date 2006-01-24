@@ -33,12 +33,11 @@ import javax.swing.SwingUtilities;
 
 import org.zmpp.encoding.ZsciiEncoding;
 import org.zmpp.io.OutputStream;
-import org.zmpp.swingui.SubWindow.HomeYPosition;
 import org.zmpp.vm.Machine;
 import org.zmpp.vm.ScreenModel;
 import org.zmpp.vm.StoryFileHeader;
-import org.zmpp.vm.StoryFileHeader.Attribute;
 import org.zmpp.vm.TextCursor;
+import org.zmpp.vm.StoryFileHeader.Attribute;
 
 public class TextViewport extends JViewport implements OutputStream,
 ScreenModel {
@@ -266,26 +265,18 @@ ScreenModel {
       setForeground(Color.BLACK);
       
       // Create the two sub windows
-      windows[WINDOW_TOP] = new SubWindow(this, editor, imageBuffer, "TOP");
+      windows[WINDOW_TOP] = new TopWindow(this, editor, imageBuffer);
       windows[WINDOW_TOP].setBackground(defaultBackground);
       windows[WINDOW_TOP].setForeground(defaultForeground);
       // S. 8.7.2.4: use fixed font for upper window
       windows[WINDOW_TOP].setFont(fixedFont);
       fontnumbers[WINDOW_TOP] = ScreenModel.FONT_FIXED;
-      windows[WINDOW_TOP].setHomeYPosition(HomeYPosition.TOP);
-      // S. 8.7.2.5: top window is unbuffered
-      windows[WINDOW_TOP].setBufferMode(false);
-      windows[WINDOW_TOP].setIsScrolled(false);
-      
-      windows[WINDOW_BOTTOM] = new SubWindow(this, editor, imageBuffer, "BOTTOM");           
+            
+      windows[WINDOW_BOTTOM] = new BottomWindow(this, editor, imageBuffer);           
       windows[WINDOW_BOTTOM].setBackground(defaultBackground);
       windows[WINDOW_BOTTOM].setForeground(defaultForeground);
       windows[WINDOW_BOTTOM].setFont(standardFont);
       fontnumbers[WINDOW_TOP] = ScreenModel.FONT_NORMAL;
-      windows[WINDOW_BOTTOM].setHomeYPosition(HomeYPosition.BOTTOM);
-      windows[WINDOW_BOTTOM].setBufferMode(true);
-      windows[WINDOW_BOTTOM].setIsPagingEnabled(true);
-      windows[WINDOW_BOTTOM].setIsScrolled(true);
 
       activeWindow = WINDOW_BOTTOM;
 

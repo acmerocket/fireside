@@ -29,8 +29,6 @@ import java.awt.FontMetrics;
 import java.awt.Graphics;
 import java.awt.image.BufferedImage;
 
-import javax.swing.SwingUtilities;
-
 import org.zmpp.vm.TextCursor;
 
 /**
@@ -39,13 +37,8 @@ import org.zmpp.vm.TextCursor;
  * @author Wei-ju Wu
  * @version 1.0
  */
-public class SubWindow {
+public abstract class SubWindow {
 
-  public enum HomeYPosition {
-    
-    TOP, BOTTOM
-  }
-  
   private BufferedImage image;
   private int top;
   private int height;
@@ -54,15 +47,11 @@ public class SubWindow {
 
   private TextCursor cursor;
   
-  private HomeYPosition yHomePos;
   private Font font;
   private boolean isReverseVideo;
-  private boolean isBuffered;
-  private boolean isPaged;
-  private boolean isScrolled;
   private LineEditor editor;
   private Component parentComponent;
-  private String position;
+  private String name;
   private int linesPerPage;
   private int linesPrinted;
  
@@ -73,34 +62,18 @@ public class SubWindow {
    * @param editor the line editor
    * @param windowNumber the window number
    * @param img the buffer image
+   * @param name the window name
    */
   public SubWindow(Component parentComponent, LineEditor editor,
-                   BufferedImage img, String position) {
+                   BufferedImage img, String name) {
     
     this.image = img;
     this.editor = editor;
     this.parentComponent = parentComponent;
-    isBuffered = true;
     this.cursor = new TextCursorImpl();
-    yHomePos = HomeYPosition.BOTTOM;
-    this.position = position;
+    this.name = name;
   }
   
-  /**
-   * Sets the home position, which can be either TOP or BOTTOM.
-   * 
-   * @param pos a home position.
-   */
-  public void setHomeYPosition(HomeYPosition pos) {
-    
-    yHomePos = pos;
-  }
-  
-  public HomeYPosition getHomeYPosition() {
-    
-    return yHomePos;
-  }
-
   /**
    * Sets the reverse video text mode.
    * 
@@ -121,29 +94,30 @@ public class SubWindow {
     return cursor;
   }
   
-  public void setBufferMode(boolean flag) {
-   
-    this.isBuffered = flag;
-  }
+  /**
+   * Sets the buffer mode.
+   * 
+   * @param flag the buffer mode flag
+   */
+  public abstract void setBufferMode(boolean flag);
   
-  public boolean isBuffered() {
-    
-    return isBuffered;
-  }
-  
-  public void setIsPagingEnabled(boolean flag) {
-    
-    this.isPaged = flag;
-  }
-  
-  public void setIsScrolled(boolean flag) {
-    
-    this.isScrolled = flag;
-  }
+  /**
+   * Returns the buffer mode.
+   * 
+   * @return the buffer mode
+   */
+  public abstract boolean isBuffered();
+
+  public abstract void setIsPagingEnabled(boolean flag);
   
   public int getHeight() {
     
     return height;
+  }
+  
+  public int getTop() {
+    
+    return top;
   }
   
   public void setVerticalBounds(int top, int height) {
@@ -159,14 +133,6 @@ public class SubWindow {
     height = getGraphics().getFontMetrics().getHeight() * numLines;
     updatePageSize();
     resetCursorToHome();
-  }
-  
-  /**
-   * Updates the page size.
-   */
-  private void updatePageSize() {
-    
-    linesPerPage = (height / getGraphics().getFontMetrics().getHeight()) - 1;
   }
   
   /**
@@ -252,39 +218,114 @@ public class SubWindow {
     int width = image.getWidth();
     int lineLength = width;
     
-    WordWrapper wordWrapper = new WordWrapper(lineLength, fm, isBuffered);
+    WordWrapper wordWrapper = new WordWrapper(lineLength, fm, isBuffered());
     String[] lines = wordWrapper.wrap(getCurrentX(), str);
     printLines(lines);    
   }
  
-  private void doMeMore() {
-        
-    printLine("<MORE> (Press key to continue)", getGraphics(),
-        getGraphics().getFontMetrics(),
-        getTextBackground(), getTextColor());
+  /**
+   * Resets the internal pager.
+   */
+  public void resetPager() {
     
-    // Rendering in the UI thread
-    try {
-      SwingUtilities.invokeAndWait(new Runnable() {
-        public void run() {
-        
-          parentComponent.repaint();
-        }
-      });
-    } catch (Exception ex) {
-      
-      ex.printStackTrace();
-    }
-    
-    // Do this exclusively to have better thread control, we need to stay
-    // in the application thread
-    editor.setInputMode(true);
-    editor.nextZsciiChar();
-    cursor.setColumn(1);
-    eraseLine();        
-    editor.setInputMode(false);
-    resetPager();
+    linesPrinted = 0;
   }
+  
+  public void newline() {
+    
+    cursor.setLine(cursor.getLine() + 1);
+    cursor.setColumn(1);
+    scrollIfNeeded();
+  }
+  
+  public String toString() {
+    
+    return "sub window [" + name + "]";
+  }
+
+  public void drawCursor(boolean flag) {
+    
+    Graphics g = getGraphics();
+    FontMetrics fm = g.getFontMetrics();
+    int meanCharWidth = fm.charWidth('0');    
+    
+    g.setColor(flag ? foreground : background);
+    g.fillRect(getCurrentX(), getCurrentY() - fm.getMaxAscent(),
+               meanCharWidth, fm.getHeight());
+  }
+  
+  public void backspace(char c) {
+    
+    Graphics g = getGraphics();
+    FontMetrics fm = g.getFontMetrics();
+    int charWidth = fm.charWidth(c);
+    cursor.setColumn(cursor.getColumn() - 1);
+    
+    // Clears the text under the cursor
+    g.setColor(background);      
+    g.fillRect(getCurrentX() - charWidth, getCurrentY() - fm.getMaxAscent(),
+               charWidth, fm.getHeight());
+  }
+
+  public abstract void resetCursorToHome();
+  
+  protected abstract void scrollIfNeeded();
+  
+  protected BufferedImage getImage() {
+    
+    return image;
+  }
+  
+  protected Component getParentComponent() {
+    
+    return parentComponent;
+  }
+  
+  protected LineEditor getEditor() {
+    
+    return editor;
+  }
+  
+  protected int getLinesPrinted() {
+    
+    return linesPrinted;
+  }
+  
+  protected int getLinesPerPage() {
+    
+    return linesPerPage;
+  }
+  // ************************************************************************
+  // ******* Private methods
+  // *************************************************
+  
+
+  protected int getCurrentY() {
+    
+    FontMetrics fm = getGraphics().getFontMetrics();      
+    return top + (cursor.getLine() - 1) * fm.getHeight()
+           + (fm.getHeight() - fm.getMaxDescent());
+  }
+ 
+  protected int getCurrentX() {
+    
+    // This code has one big problem: It does not work !!!
+    // It only works if we do not use the proportional font, but if we
+    // do, we need to know, what was actually typed ahead...
+    int meanCharWidth = getGraphics().getFontMetrics().charWidth('0');      
+    return (cursor.getColumn() - 1) * meanCharWidth;      
+  }
+  
+  
+  /**
+   * Updates the page size.
+   */
+  private void updatePageSize() {
+    
+    linesPerPage = (height / getGraphics().getFontMetrics().getHeight()) - 1;
+  }
+  
+  protected abstract void handlePaging();
   
   private void printLines(String lines[]) {
     
@@ -295,10 +336,7 @@ public class SubWindow {
     
     for (int i = 0; i < lines.length; i++) {
 
-      if (isPaged && linesPrinted >= linesPerPage) {
-        
-        doMeMore();
-      }
+      handlePaging();
       String line = lines[i];
       //if (position.equals("BOTTOM"))
       //System.out.printf("line = '%s', lines printed: %d\n", line, linesPrinted);
@@ -313,25 +351,17 @@ public class SubWindow {
     }
   }
   
-  /**
-   * Resets the internal pager.
-   */
-  public void resetPager() {
-    
-    linesPrinted = 0;
-  }
-  
-  private Color getTextBackground() {
+  protected Color getTextBackground() {
     
     return isReverseVideo ? foreground : background;
   }
   
-  private Color getTextColor() {
+  protected Color getTextColor() {
     
     return isReverseVideo ? background : foreground;
   }
   
-  private void printLine(String line, Graphics g, FontMetrics fm,
+  protected void printLine(String line, Graphics g, FontMetrics fm,
       Color textbackColor, Color textColor) {
     
     scrollIfNeeded();
@@ -353,106 +383,4 @@ public class SubWindow {
   
     return str.charAt(str.length() - 1) == '\n';
   }
-  
-  public void scrollUp() {
-    
-    Graphics g = getGraphics();
-    FontMetrics fm = g.getFontMetrics();
-    g.copyArea(0, top + fm.getHeight(), image.getWidth(),
-               height - fm.getHeight(), 0, -fm.getHeight());
-    g.setColor(background);
-    g.fillRect(0, top + height - fm.getHeight(),
-               image.getWidth(), fm.getHeight());
-  }
-  
-  public void newline() {
-    
-    cursor.setLine(cursor.getLine() + 1);
-    cursor.setColumn(1);
-    scrollIfNeeded();
-  }
-  
-  private void scrollIfNeeded() {
-
-    // CODE-DEBT: We could solve this by polymorphism ???    
-    if (isScrolled) {
-      
-      Graphics g = getGraphics();
-      FontMetrics fm = g.getFontMetrics();
-      // We calulate an available height with a correction amount
-      // of fm.getMaxDescent() to reserve enough scrolling space
-      while (getCurrentY() > (top + height - fm.getMaxDescent())) {
-      
-        if (isScrolled) scrollUp();
-        cursor.setLine(cursor.getLine() - 1);
-      }
-    }
-  }  
- 
-  public int getCurrentX() {
-    
-    // This code has one big problem: It does not work !!!
-    // It only works if we do not use the proportional font, but if we
-    // do, we need to know, what was actually typed ahead...
-    int meanCharWidth = getGraphics().getFontMetrics().charWidth('0');      
-    return (cursor.getColumn() - 1) * meanCharWidth;      
-  }
-  
-  public int getCurrentY() {
-          
-    FontMetrics fm = getGraphics().getFontMetrics();      
-    return top + (cursor.getLine() - 1) * fm.getHeight()
-           + (fm.getHeight() - fm.getMaxDescent());
-  }
- 
-  public String toString() {
-    
-    return "sub window [" + position + "]";
-  }
-
-  public void drawCursor(boolean flag) {
-    
-    Graphics g = getGraphics();
-    FontMetrics fm = g.getFontMetrics();
-    int meanCharWidth = fm.charWidth('0');    
-    
-    g.setColor(flag ? foreground : background);
-    g.fillRect(getCurrentX(), getCurrentY() - fm.getMaxAscent(),
-               meanCharWidth, fm.getHeight());
-  }
-  
-  public int getAvailableLines() {
-    
-    FontMetrics fm = getGraphics().getFontMetrics();
-    return (height - fm.getMaxDescent()) / fm.getHeight();
- }
-  
- //
-  public void resetCursorToHome() {
-
-    if (yHomePos == HomeYPosition.BOTTOM) {
-
-      // We calulate an available height with a correction amount
-      // of fm.getMaxDescent() to reserve enough scrolling space
-      cursor.setPosition(getAvailableLines(), 1);
-
-    } else if (yHomePos == HomeYPosition.TOP) {
-
-      cursor.setPosition(1, 1);
-    }
-  }
-  
-  public void backspace(char c) {
-    
-    Graphics g = getGraphics();
-    FontMetrics fm = g.getFontMetrics();
-    int charWidth = fm.charWidth(c);
-    cursor.setColumn(cursor.getColumn() - 1);
-    
-    // Clears the text under the cursor
-    g.setColor(background);      
-    g.fillRect(getCurrentX() - charWidth, getCurrentY() - fm.getMaxAscent(),
-               charWidth, fm.getHeight());
-  }
-  
 }
