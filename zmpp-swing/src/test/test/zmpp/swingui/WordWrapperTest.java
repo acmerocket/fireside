@@ -27,29 +27,55 @@ import java.awt.FontMetrics;
 
 import javax.swing.JFrame;
 
-import junit.framework.TestCase;
-
+import org.jmock.Mock;
+import org.jmock.MockObjectTestCase;
+import org.zmpp.swingui.Canvas;
 import org.zmpp.swingui.WordWrapper;
 
-public class WordWrapperTest extends TestCase {
+public class WordWrapperTest extends MockObjectTestCase {
 
   private WordWrapper bufferedWordWrapper;
   private WordWrapper unbufferedWordWrapper;
+  private Mock mockCanvas;
+  private Canvas canvas;
   private FontMetrics fontMetrics;
+  private Font font;
   
   protected void setUp() throws Exception {
  
+    mockCanvas = mock(Canvas.class);
+    canvas = (Canvas) mockCanvas.proxy();
     JFrame frame = new JFrame();
+    font = new Font("monospaced", Font.ROMAN_BASELINE, 8);
+    
     fontMetrics =
-      frame.getFontMetrics(new Font("Courier", Font.ROMAN_BASELINE, 8));
-    bufferedWordWrapper = new WordWrapper(100, fontMetrics, true);
-    unbufferedWordWrapper = new WordWrapper(85, fontMetrics, false);
+      frame.getFontMetrics(font);
+    bufferedWordWrapper = new WordWrapper(100, canvas, font, true);
+    unbufferedWordWrapper = new WordWrapper(85, canvas, font, false);
   }
 
   public void testWrapBuffered() {
 
     String line = "A line that is to be wrapped";
+    mockCanvas.expects(once()).method("getStringWidth").with(
+        eq(font), eq("A")).will(returnValue(fontMetrics.stringWidth("A")));
+    mockCanvas.expects(atLeastOnce()).method("getStringWidth").with(
+        eq(font), eq(" ")).will(returnValue(fontMetrics.stringWidth(" ")));
+    mockCanvas.expects(once()).method("getStringWidth").with(
+        eq(font), eq("line")).will(returnValue(fontMetrics.stringWidth("line")));
+    mockCanvas.expects(once()).method("getStringWidth").with(
+        eq(font), eq("that")).will(returnValue(fontMetrics.stringWidth("that")));
+    mockCanvas.expects(once()).method("getStringWidth").with(
+        eq(font), eq("is")).will(returnValue(fontMetrics.stringWidth("is")));
+    mockCanvas.expects(once()).method("getStringWidth").with(
+        eq(font), eq("to")).will(returnValue(fontMetrics.stringWidth("to")));
+    mockCanvas.expects(once()).method("getStringWidth").with(
+        eq(font), eq("be")).will(returnValue(fontMetrics.stringWidth("be")));
+    mockCanvas.expects(once()).method("getStringWidth").with(
+        eq(font), eq("wrapped")).will(returnValue(fontMetrics.stringWidth("wrapped")));
+    
     assertEquals(140, fontMetrics.stringWidth(line));
+    
     String[] lines = bufferedWordWrapper.wrap(0, line);
     assertEquals(2, lines.length);
     assertEquals("A line that is to be", lines[0]);
@@ -58,14 +84,37 @@ public class WordWrapperTest extends TestCase {
 
   public void testWrapBufferedSingleNewline() {
 
+    mockCanvas.expects(once()).method("getStringWidth").with(
+        eq(font), eq("\n")).will(returnValue(fontMetrics.stringWidth("\n")));
+    
     String line = "\n";
-    assertEquals(0, fontMetrics.stringWidth(line));
+    assertEquals(5, fontMetrics.stringWidth(line));
     String[] lines = bufferedWordWrapper.wrap(0, line);
     assertEquals(1, lines.length);
     assertEquals("", lines[0]);
   }
   
   public void testWrapBufferedWithNewLine() {
+    
+    mockCanvas.expects(atLeastOnce()).method("getStringWidth").with(
+        eq(font), eq(" ")).will(returnValue(fontMetrics.stringWidth(" ")));
+    mockCanvas.expects(atLeastOnce()).method("getStringWidth").with(
+        eq(font), eq("\n")).will(returnValue(fontMetrics.stringWidth("\n")));
+    
+    mockCanvas.expects(once()).method("getStringWidth").with(
+        eq(font), eq("A")).will(returnValue(fontMetrics.stringWidth("A")));
+    mockCanvas.expects(once()).method("getStringWidth").with(
+        eq(font), eq("line")).will(returnValue(fontMetrics.stringWidth("line")));
+    mockCanvas.expects(once()).method("getStringWidth").with(
+        eq(font), eq("that")).will(returnValue(fontMetrics.stringWidth("that")));
+    mockCanvas.expects(once()).method("getStringWidth").with(
+        eq(font), eq("is")).will(returnValue(fontMetrics.stringWidth("is")));
+    mockCanvas.expects(once()).method("getStringWidth").with(
+        eq(font), eq("to")).will(returnValue(fontMetrics.stringWidth("to")));
+    mockCanvas.expects(once()).method("getStringWidth").with(
+        eq(font), eq("be")).will(returnValue(fontMetrics.stringWidth("be")));
+    mockCanvas.expects(once()).method("getStringWidth").with(
+        eq(font), eq("wrapped")).will(returnValue(fontMetrics.stringWidth("wrapped")));
     
     String line =  "A line that\nis to\nbe wrapped";
     String[] lines = bufferedWordWrapper.wrap(0, line);
@@ -76,6 +125,26 @@ public class WordWrapperTest extends TestCase {
   }
 
   public void testWrapBufferedWithNewLineEndsWithNewLine() {
+
+    mockCanvas.expects(atLeastOnce()).method("getStringWidth").with(
+        eq(font), eq(" ")).will(returnValue(fontMetrics.stringWidth(" ")));
+    mockCanvas.expects(atLeastOnce()).method("getStringWidth").with(
+        eq(font), eq("\n")).will(returnValue(fontMetrics.stringWidth("\n")));
+    
+    mockCanvas.expects(once()).method("getStringWidth").with(
+        eq(font), eq("A")).will(returnValue(fontMetrics.stringWidth("A")));
+    mockCanvas.expects(once()).method("getStringWidth").with(
+        eq(font), eq("line")).will(returnValue(fontMetrics.stringWidth("line")));
+    mockCanvas.expects(once()).method("getStringWidth").with(
+        eq(font), eq("that")).will(returnValue(fontMetrics.stringWidth("that")));
+    mockCanvas.expects(once()).method("getStringWidth").with(
+        eq(font), eq("is")).will(returnValue(fontMetrics.stringWidth("is")));
+    mockCanvas.expects(once()).method("getStringWidth").with(
+        eq(font), eq("to")).will(returnValue(fontMetrics.stringWidth("to")));
+    mockCanvas.expects(once()).method("getStringWidth").with(
+        eq(font), eq("be")).will(returnValue(fontMetrics.stringWidth("be")));
+    mockCanvas.expects(once()).method("getStringWidth").with(
+        eq(font), eq("wrapped")).will(returnValue(fontMetrics.stringWidth("wrapped")));
     
     String line =  "A line that\nis to\nbe wrapped\n";
     String[] lines = bufferedWordWrapper.wrap(0, line);
@@ -87,6 +156,27 @@ public class WordWrapperTest extends TestCase {
   }
 
   public void testWrapBufferedWithNewLineStartsWithNewLine() {
+    
+    mockCanvas.expects(atLeastOnce()).method("getStringWidth").with(
+        eq(font), eq(" ")).will(returnValue(fontMetrics.stringWidth(" ")));
+    mockCanvas.expects(atLeastOnce()).method("getStringWidth").with(
+        eq(font), eq("\n")).will(returnValue(fontMetrics.stringWidth("\n")));
+    
+    mockCanvas.expects(once()).method("getStringWidth").with(
+        eq(font), eq("A")).will(returnValue(fontMetrics.stringWidth("A")));
+    mockCanvas.expects(once()).method("getStringWidth").with(
+        eq(font), eq("line")).will(returnValue(fontMetrics.stringWidth("line")));
+    mockCanvas.expects(once()).method("getStringWidth").with(
+        eq(font), eq("that")).will(returnValue(fontMetrics.stringWidth("that")));
+    mockCanvas.expects(once()).method("getStringWidth").with(
+        eq(font), eq("is")).will(returnValue(fontMetrics.stringWidth("is")));
+    mockCanvas.expects(once()).method("getStringWidth").with(
+        eq(font), eq("to")).will(returnValue(fontMetrics.stringWidth("to")));
+    mockCanvas.expects(once()).method("getStringWidth").with(
+        eq(font), eq("be")).will(returnValue(fontMetrics.stringWidth("be")));
+    mockCanvas.expects(once()).method("getStringWidth").with(
+        eq(font), eq("wrapped")).will(returnValue(fontMetrics.stringWidth("wrapped")));
+    
     
     String line =  "\nA line that\nis to\nbe wrapped\n";
     String[] lines = bufferedWordWrapper.wrap(0, line);
@@ -100,6 +190,9 @@ public class WordWrapperTest extends TestCase {
   
   public void testWrapBufferedNewLine() {
     
+    mockCanvas.expects(once()).method("getStringWidth").with(
+        eq(font), eq("\n")).will(returnValue(fontMetrics.stringWidth("\n")));
+    
     String line =  "\n";
     String[] lines = bufferedWordWrapper.wrap(0, line);
     assertEquals(1, lines.length);
@@ -108,6 +201,42 @@ public class WordWrapperTest extends TestCase {
   
   public void testWrapUnbuffered() {
 
+    mockCanvas.expects(atLeastOnce()).method("getCharWidth").with(
+        eq(font), eq(' ')).will(returnValue(fontMetrics.charWidth(' ')));
+    
+    mockCanvas.expects(once()).method("getCharWidth").with(
+        eq(font), eq('A')).will(returnValue(fontMetrics.charWidth('A')));
+    mockCanvas.expects(once()).method("getCharWidth").with(
+        eq(font), eq('l')).will(returnValue(fontMetrics.charWidth('l')));
+    mockCanvas.expects(exactly(3)).method("getCharWidth").with(
+        eq(font), eq('i')).will(returnValue(fontMetrics.charWidth('i')));
+    mockCanvas.expects(exactly(2)).method("getCharWidth").with(
+        eq(font), eq('n')).will(returnValue(fontMetrics.charWidth('n')));
+    mockCanvas.expects(exactly(3)).method("getCharWidth").with(
+        eq(font), eq('e')).will(returnValue(fontMetrics.charWidth('e')));
+    mockCanvas.expects(exactly(3)).method("getCharWidth").with(
+        eq(font), eq('t')).will(returnValue(fontMetrics.charWidth('t')));
+    mockCanvas.expects(once()).method("getCharWidth").with(
+        eq(font), eq('h')).will(returnValue(fontMetrics.charWidth('h')));
+    mockCanvas.expects(exactly(2)).method("getCharWidth").with(
+        eq(font), eq('a')).will(returnValue(fontMetrics.charWidth('a')));
+    mockCanvas.expects(once()).method("getCharWidth").with(
+        eq(font), eq('s')).will(returnValue(fontMetrics.charWidth('s')));
+    mockCanvas.expects(exactly(2)).method("getCharWidth").with(
+        eq(font), eq('g')).will(returnValue(fontMetrics.charWidth('g')));
+    mockCanvas.expects(exactly(2)).method("getCharWidth").with(
+        eq(font), eq('o')).will(returnValue(fontMetrics.charWidth('o')));
+    mockCanvas.expects(once()).method("getCharWidth").with(
+        eq(font), eq('b')).will(returnValue(fontMetrics.charWidth('b')));
+    mockCanvas.expects(once()).method("getCharWidth").with(
+        eq(font), eq('w')).will(returnValue(fontMetrics.charWidth('w')));
+    mockCanvas.expects(once()).method("getCharWidth").with(
+        eq(font), eq('r')).will(returnValue(fontMetrics.charWidth('r')));
+    mockCanvas.expects(exactly(2)).method("getCharWidth").with(
+        eq(font), eq('p')).will(returnValue(fontMetrics.charWidth('p')));
+    mockCanvas.expects(once()).method("getCharWidth").with(
+        eq(font), eq('d')).will(returnValue(fontMetrics.charWidth('d')));
+    
     String line = "A line that is going to be wrapped";
     assertEquals(170, fontMetrics.stringWidth(line));
     String[] lines = unbufferedWordWrapper.wrap(0, line);

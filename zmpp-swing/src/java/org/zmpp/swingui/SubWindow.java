@@ -23,12 +23,9 @@
 package org.zmpp.swingui;
 
 import java.awt.Color;
-import java.awt.Component;
 import java.awt.Font;
-import java.awt.FontMetrics;
-import java.awt.Graphics;
-import java.awt.image.BufferedImage;
 
+import org.zmpp.vm.ScreenModel;
 import org.zmpp.vm.TextCursor;
 
 /**
@@ -39,37 +36,34 @@ import org.zmpp.vm.TextCursor;
  */
 public abstract class SubWindow {
 
-  private BufferedImage image;
+  private Canvas canvas;
+  private TextCursor cursor;
+  private LineEditor editor;
+  private ScreenModel screen;
+  
   private int top;
   private int height;
   private Color foreground;
   private Color background;
-
-  private TextCursor cursor;
   
   private Font font;
   private boolean isReverseVideo;
-  private LineEditor editor;
-  private Component parentComponent;
   private String name;
-  private int linesPerPage;
-  private int linesPrinted;
  
   /**
    * Constructor.
    * 
    * @param parentComponent the parent component
    * @param editor the line editor
-   * @param windowNumber the window number
-   * @param img the buffer image
+   * @param canvas the canvas
    * @param name the window name
    */
-  public SubWindow(Component parentComponent, LineEditor editor,
-                   BufferedImage img, String name) {
+  public SubWindow(ScreenModel screen, LineEditor editor,
+                   Canvas canvas, String name) {
     
-    this.image = img;
+    this.canvas = canvas;
     this.editor = editor;
-    this.parentComponent = parentComponent;
+    this.screen = screen;
     this.cursor = new TextCursorImpl();
     this.name = name;
   }
@@ -94,22 +88,6 @@ public abstract class SubWindow {
     return cursor;
   }
   
-  /**
-   * Sets the buffer mode.
-   * 
-   * @param flag the buffer mode flag
-   */
-  public abstract void setBufferMode(boolean flag);
-  
-  /**
-   * Returns the buffer mode.
-   * 
-   * @return the buffer mode
-   */
-  public abstract boolean isBuffered();
-
-  public abstract void setIsPagingEnabled(boolean flag);
-  
   public int getHeight() {
     
     return height;
@@ -124,15 +102,15 @@ public abstract class SubWindow {
     
     this.top = top;
     this.height = height;
-    updatePageSize();
     resetCursorToHome();
+    sizeUpdated();
   }
   
   public void resize(int numLines) {
     
-    height = getGraphics().getFontMetrics().getHeight() * numLines;
-    updatePageSize();
+    height = getCanvas().getFontHeight(font) * numLines;
     resetCursorToHome();
+    sizeUpdated();
   }
   
   /**
@@ -155,34 +133,19 @@ public abstract class SubWindow {
     return font;
   }
   
-  /**
-   * Accesses this window's graphics object.
-   * 
-   * @return the graphics object
-   */
-  public Graphics getGraphics() {
-    
-    Graphics g = image.getGraphics();
-    g.setFont(font);
-    return g;
-  }
-  
   public void clear() {
     
-    Graphics g_img = getGraphics();
-    g_img.setColor(background);
-    g_img.fillRect(0, top, image.getWidth(), height);
+    canvas.fillRect(background, 0, getTop(), canvas.getWidth(), height);
     resetCursorToHome();
   }
   
   public void eraseLine() {
     
-    Graphics g = getGraphics();
-    FontMetrics fm = g.getFontMetrics();
-    g.setColor(background);
-    g.fillRect(getCurrentX(),
-               getCurrentY() - fm.getMaxAscent(),
-               image.getWidth() - getCurrentX(), fm.getHeight());
+    int currentX = getCurrentX();
+    canvas.fillRect(background, currentX,
+                    getCurrentY() - canvas.getFontAscent(font),
+                    canvas.getWidth() - currentX,
+                    canvas.getFontHeight(font));
   }
   
   public void setBackground(Color color) {
@@ -207,37 +170,15 @@ public abstract class SubWindow {
    */
   public void printString(String str) {
 
-    //if (position.equals("BOTTOM")) {
-      
-    //System.out.printf("[%s] printString(), str: [%s], x: %d y: %d\n", position,
-    //    str, cursor.getCurrentX(), cursor.getCurrentY());
-    //}
-    Graphics g = getGraphics();
-    FontMetrics fm = g.getFontMetrics();
-    
-    int width = image.getWidth();
+    int width = canvas.getWidth();
     int lineLength = width;
     
-    WordWrapper wordWrapper = new WordWrapper(lineLength, fm, isBuffered());
+    WordWrapper wordWrapper =
+      new WordWrapper(lineLength, canvas, font, isBuffered());
     String[] lines = wordWrapper.wrap(getCurrentX(), str);
     printLines(lines);    
   }
  
-  /**
-   * Resets the internal pager.
-   */
-  public void resetPager() {
-    
-    linesPrinted = 0;
-  }
-  
-  public void newline() {
-    
-    cursor.setLine(cursor.getLine() + 1);
-    cursor.setColumn(1);
-    scrollIfNeeded();
-  }
-  
   public String toString() {
     
     return "sub window [" + name + "]";
@@ -245,40 +186,42 @@ public abstract class SubWindow {
 
   public void drawCursor(boolean flag) {
     
-    Graphics g = getGraphics();
-    FontMetrics fm = g.getFontMetrics();
-    int meanCharWidth = fm.charWidth('0');    
+    int meanCharWidth = canvas.getCharWidth(font, '0');    
     
-    g.setColor(flag ? foreground : background);
-    g.fillRect(getCurrentX(), getCurrentY() - fm.getMaxAscent(),
-               meanCharWidth, fm.getHeight());
+    canvas.fillRect(flag ? foreground : background, getCurrentX(),
+                    getCurrentY() - canvas.getFontAscent(font), meanCharWidth,
+                    canvas.getFontHeight(font));
   }
   
   public void backspace(char c) {
     
-    Graphics g = getGraphics();
-    FontMetrics fm = g.getFontMetrics();
-    int charWidth = fm.charWidth(c);
+    int charWidth = canvas.getCharWidth(font, c);
     cursor.setColumn(cursor.getColumn() - 1);
     
     // Clears the text under the cursor
-    g.setColor(background);      
-    g.fillRect(getCurrentX() - charWidth, getCurrentY() - fm.getMaxAscent(),
-               charWidth, fm.getHeight());
+    canvas.fillRect(background, getCurrentX() - charWidth,
+                    getCurrentY() - canvas.getFontAscent(font), charWidth,
+                    canvas.getFontHeight(font));
   }
 
-  public abstract void resetCursorToHome();
+  // **********************************************************************
+  // ***** Protected methods
+  // **************************************
   
-  protected abstract void scrollIfNeeded();
-  
-  protected BufferedImage getImage() {
+  protected void newline() {
     
-    return image;
+    cursor.setLine(cursor.getLine() + 1);
+    cursor.setColumn(1);
   }
   
-  protected Component getParentComponent() {
+  protected Canvas getCanvas() {
     
-    return parentComponent;
+    return canvas;
+  }
+  
+  protected ScreenModel getScreen() {
+    
+    return screen;
   }
   
   protected LineEditor getEditor() {
@@ -286,25 +229,10 @@ public abstract class SubWindow {
     return editor;
   }
   
-  protected int getLinesPrinted() {
-    
-    return linesPrinted;
-  }
-  
-  protected int getLinesPerPage() {
-    
-    return linesPerPage;
-  }
-  // ************************************************************************
-  // ******* Private methods
-  // *************************************************
-  
-
   protected int getCurrentY() {
     
-    FontMetrics fm = getGraphics().getFontMetrics();      
-    return top + (cursor.getLine() - 1) * fm.getHeight()
-           + (fm.getHeight() - fm.getMaxDescent());
+    return top + (cursor.getLine() - 1) * canvas.getFontHeight(font)
+           + (canvas.getFontHeight(font) - canvas.getFontDescent(font));
   }
  
   protected int getCurrentX() {
@@ -312,45 +240,10 @@ public abstract class SubWindow {
     // This code has one big problem: It does not work !!!
     // It only works if we do not use the proportional font, but if we
     // do, we need to know, what was actually typed ahead...
-    int meanCharWidth = getGraphics().getFontMetrics().charWidth('0');      
+    int meanCharWidth = canvas.getCharWidth(font, '0');      
     return (cursor.getColumn() - 1) * meanCharWidth;      
   }
-  
-  
-  /**
-   * Updates the page size.
-   */
-  private void updatePageSize() {
     
-    linesPerPage = (height / getGraphics().getFontMetrics().getHeight()) - 1;
-  }
-  
-  protected abstract void handlePaging();
-  
-  private void printLines(String lines[]) {
-    
-    Graphics g = getGraphics();
-    FontMetrics fm = g.getFontMetrics();    
-    Color textColor = getTextColor();
-    Color textbackColor = getTextBackground();
-    
-    for (int i = 0; i < lines.length; i++) {
-
-      handlePaging();
-      String line = lines[i];
-      //if (position.equals("BOTTOM"))
-      //System.out.printf("line = '%s', lines printed: %d\n", line, linesPrinted);
-      printLine(line, g, fm, textbackColor, textColor);
-      
-      if (isEmptyLine(line) || endsWithNewLine(line)
-          || i < lines.length - 1) {
-        
-        newline();
-        linesPrinted++;
-      }
-    }
-  }
-  
   protected Color getTextBackground() {
     
     return isReverseVideo ? foreground : background;
@@ -361,18 +254,74 @@ public abstract class SubWindow {
     return isReverseVideo ? background : foreground;
   }
   
-  protected void printLine(String line, Graphics g, FontMetrics fm,
-      Color textbackColor, Color textColor) {
+  protected void printLine(String line, Color textbackColor,
+                           Color textColor) {
     
-    scrollIfNeeded();
-    g.setColor(textbackColor);
-    g.fillRect(getCurrentX(),
-               getCurrentY() - fm.getHeight() + fm.getMaxDescent(),
-               fm.stringWidth(line), fm.getHeight());
-    g.setColor(textColor);
-    g.drawString(line, getCurrentX(), getCurrentY());
+    canvas.fillRect(textbackColor,getCurrentX(),
+                    getCurrentY() - canvas.getFontHeight(font)
+                    + canvas.getFontDescent(font),
+                    canvas.getStringWidth(font, line),
+                    canvas.getFontHeight(font));
+    canvas.drawString(textColor, font, getCurrentX(), getCurrentY(), line);
     cursor.setColumn(cursor.getColumn() + line.length());
   }
+  
+  // ************************************************************************
+  // ******* Abstract methods
+  // *************************************************
+  
+  /**
+   * Sets the buffer mode.
+   * 
+   * @param flag the buffer mode flag
+   */
+  public abstract void setBufferMode(boolean flag);
+  
+  /**
+   * Returns the buffer mode.
+   * 
+   * @return the buffer mode
+   */
+  public abstract boolean isBuffered();
+
+  public abstract void setPagingEnabled(boolean flag);
+  
+  public abstract boolean isPagingEnabled();
+  
+  public abstract void resetCursorToHome();  
+
+  /**
+   * Resets the internal pager.
+   */
+  public abstract void resetPager();
+  
+  protected abstract void handlePaging();
+  
+  
+  protected abstract void sizeUpdated();  
+
+  // ************************************************************************
+  // ******* Private methods
+  // *************************************************
+  
+  private void printLines(String lines[]) {
+    
+    Color textColor = getTextColor();
+    Color textbackColor = getTextBackground();
+    
+    for (int i = 0; i < lines.length; i++) {
+
+      handlePaging();
+      String line = lines[i];
+      printLine(line, textbackColor, textColor);
+      
+      if (isEmptyLine(line) || endsWithNewLine(line)
+          || i < lines.length - 1) {
+        
+        newline();
+      }
+    }
+  }  
   
   private static boolean isEmptyLine(String str) {
     

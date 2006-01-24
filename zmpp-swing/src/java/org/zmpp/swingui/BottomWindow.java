@@ -22,12 +22,9 @@
  */
 package org.zmpp.swingui;
 
-import java.awt.Component;
-import java.awt.FontMetrics;
-import java.awt.Graphics;
-import java.awt.image.BufferedImage;
+import java.awt.Color;
 
-import javax.swing.SwingUtilities;
+import org.zmpp.vm.ScreenModel;
 
 /**
  * This class implements the lower window of the standard Z-machine screen
@@ -40,14 +37,22 @@ public class BottomWindow extends SubWindow {
 
   private boolean isBuffered;
   private boolean isPaged;
+  private int linesPerPage;
+  private int linesPrinted;
   
-  public BottomWindow(Component parentComponent, LineEditor editor,
-      BufferedImage img) {
+  /**
+   * Constructor.
+   * 
+   * @param screen the screen model
+   * @param editor the line editor
+   * @param canvas the canvas to draw to
+   */
+  public BottomWindow(ScreenModel screen, LineEditor editor, Canvas canvas) {
     
-    super(parentComponent, editor, img, "BOTTOM");
+    super(screen, editor, canvas, "BOTTOM");
     
     setBufferMode(true);
-    setIsPagingEnabled(true);
+    setPagingEnabled(true);
   }
 
   /**
@@ -61,9 +66,17 @@ public class BottomWindow extends SubWindow {
   /**
    * {@inheritDoc}
    */
-  public void setIsPagingEnabled(boolean flag) {
+  public void setPagingEnabled(boolean flag) {
     
-    this.isPaged = flag;
+    isPaged = flag;
+  }
+  
+  /**
+   * {@inheritDoc}
+   */
+  public boolean isPagingEnabled() {
+    
+    return isPaged;
   }
   
   /**
@@ -74,19 +87,22 @@ public class BottomWindow extends SubWindow {
     this.isBuffered = flag;
   }
     
-  protected void scrollIfNeeded() {
+  private void scrollIfNeeded() {
 
-    Graphics g = getGraphics();
-    FontMetrics fm = g.getFontMetrics();
+    int fontDescent = getCanvas().getFontDescent(getFont());
+    
     // We calulate an available height with a correction amount
-    // of fm.getMaxDescent() to reserve enough scrolling space
-    while (getCurrentY() > (getTop() + getHeight() - fm.getMaxDescent())) {
+    // of fontDescent to reserve enough scrolling space
+    while (getCurrentY() > (getTop() + getHeight() - fontDescent)) {
       
-      scrollUp();
+      getCanvas().scrollUp(getBackground(), getFont(), getTop(), getHeight());
       getCursor().setLine(getCursor().getLine() - 1);
     }
   }
-  
+
+  /**
+   * {@inheritDoc}
+   */
   public void resetCursorToHome() {
     
     // We calulate an available height with a correction amount
@@ -95,25 +111,15 @@ public class BottomWindow extends SubWindow {
   }
 
   private int getAvailableLines() {
-    
-    FontMetrics fm = getGraphics().getFontMetrics();
-    return (getHeight() - fm.getMaxDescent()) / fm.getHeight();
+  
+    int descent = getCanvas().getFontDescent(getFont());
+    int fontHeight = getCanvas().getFontHeight(getFont());
+    return (getHeight() - descent) / fontHeight;
   }
   
-  private void scrollUp() {
-    
-    Graphics g = getGraphics();
-    FontMetrics fm = g.getFontMetrics();
-    g.copyArea(0, getTop() + fm.getHeight(), getImage().getWidth(),
-               getHeight() - fm.getHeight(), 0, -fm.getHeight());
-    g.setColor(getBackground());
-    g.fillRect(0, getTop() + getHeight() - fm.getHeight(),
-               getImage().getWidth(), fm.getHeight());
-  }
-
   protected void handlePaging() {
     
-    if (isPaged && getLinesPrinted() >= getLinesPerPage()) {
+    if (isPaged && linesPrinted >= linesPerPage) {
       
       doMeMore();
     }
@@ -121,22 +127,10 @@ public class BottomWindow extends SubWindow {
   
   private void doMeMore() {
     
-    printLine("<MORE> (Press key to continue)", getGraphics(),
-        getGraphics().getFontMetrics(),
-        getTextBackground(), getTextColor());
+    printLine("<MORE> (Press key to continue)", getTextBackground(),
+              getTextColor());
     
-    // Rendering in the UI thread
-    try {
-      SwingUtilities.invokeAndWait(new Runnable() {
-        public void run() {
-        
-          getParentComponent().repaint();
-        }
-      });
-    } catch (Exception ex) {
-      
-      ex.printStackTrace();
-    }
+    getScreen().redraw();
     
     // Do this exclusively to have better thread control, we need to stay
     // in the application thread
@@ -146,5 +140,33 @@ public class BottomWindow extends SubWindow {
     eraseLine();        
     getEditor().setInputMode(false);
     resetPager();
+  }
+  
+  /**
+   * Updates the page size.
+   */
+  protected void sizeUpdated() {
+    
+    linesPerPage = (getHeight() / getCanvas().getFontHeight(getFont())) - 1;
+  }
+  
+  
+  protected void newline() {
+    
+    super.newline();
+    linesPrinted++;
+    scrollIfNeeded();
+  }
+  
+  protected void printLine(String line, Color textbackColor,
+      Color textColor) {
+    
+    scrollIfNeeded();
+    super.printLine(line, textbackColor, textColor);
+  }
+  
+  public void resetPager() {
+  
+    linesPrinted = 0;
   }
 }

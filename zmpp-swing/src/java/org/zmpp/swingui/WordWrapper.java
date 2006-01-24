@@ -22,7 +22,7 @@
  */
 package org.zmpp.swingui;
 
-import java.awt.FontMetrics;
+import java.awt.Font;
 import java.util.ArrayList;
 import java.util.List;
 import java.util.StringTokenizer;
@@ -38,16 +38,18 @@ import java.util.StringTokenizer;
  */
 public class WordWrapper {
 
+  private Font font;
+  private Canvas canvas;
   private int lineLength;
-  private FontMetrics fontMetrics;
   private boolean buffered;
   
-  public WordWrapper(int lineLength, FontMetrics fontMetrics,
+  public WordWrapper(int lineLength, Canvas canvas, Font font,
                      boolean isBuffered) {
     
     this.lineLength = lineLength;
-    this.fontMetrics = fontMetrics;
+    this.font = font;
     this.buffered = isBuffered;
+    this.canvas = canvas;
   }
   
   public String[] wrap(int currentX, String input) {
@@ -87,7 +89,7 @@ public class WordWrapper {
      
       for (; i < words.length; i++) {
       
-        wordWidth = fontMetrics.stringWidth(words[i]);
+        wordWidth = canvas.getStringWidth(font, words[i]);
         
         if (words[i].charAt(0) == '\n') {
           
@@ -123,7 +125,7 @@ public class WordWrapper {
     for (int i = 0; i < input.length(); i++) {
       
       char c = input.charAt(i);
-      int charWidth = fontMetrics.charWidth(c);
+      int charWidth = canvas.getCharWidth(font, c);
       
       // new line
       if ((currentWidth + charWidth > lineLength) || c == '\n') {

@@ -219,7 +219,7 @@ ScreenModel {
   
   public void setPaging(boolean flag) {
     
-    windows[WINDOW_BOTTOM].setIsPagingEnabled(flag);
+    windows[WINDOW_BOTTOM].setPagingEnabled(flag);
   }
   
   public void flush() {
@@ -257,6 +257,7 @@ ScreenModel {
       
       imageBuffer = new BufferedImage(getWidth(), getHeight(),
           BufferedImage.TYPE_INT_RGB);
+      Canvas canvas = new CanvasImpl(imageBuffer);
       
       // Default colors
       defaultBackground = Color.WHITE;
@@ -265,14 +266,14 @@ ScreenModel {
       setForeground(Color.BLACK);
       
       // Create the two sub windows
-      windows[WINDOW_TOP] = new TopWindow(this, editor, imageBuffer);
+      windows[WINDOW_TOP] = new TopWindow(this, editor, canvas);
       windows[WINDOW_TOP].setBackground(defaultBackground);
       windows[WINDOW_TOP].setForeground(defaultForeground);
       // S. 8.7.2.4: use fixed font for upper window
       windows[WINDOW_TOP].setFont(fixedFont);
       fontnumbers[WINDOW_TOP] = ScreenModel.FONT_FIXED;
             
-      windows[WINDOW_BOTTOM] = new BottomWindow(this, editor, imageBuffer);           
+      windows[WINDOW_BOTTOM] = new BottomWindow(this, editor, canvas);           
       windows[WINDOW_BOTTOM].setBackground(defaultBackground);
       windows[WINDOW_BOTTOM].setForeground(defaultForeground);
       windows[WINDOW_BOTTOM].setFont(standardFont);

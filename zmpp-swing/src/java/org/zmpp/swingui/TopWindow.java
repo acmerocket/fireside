@@ -22,8 +22,7 @@
  */
 package org.zmpp.swingui;
 
-import java.awt.Component;
-import java.awt.image.BufferedImage;
+import org.zmpp.vm.ScreenModel;
 
 /**
  * This class implements the upper window of the standard Z-machine screen
@@ -34,10 +33,16 @@ import java.awt.image.BufferedImage;
  */
 public class TopWindow extends SubWindow {
 
-  public TopWindow(Component parentComponent, LineEditor editor,
-      BufferedImage img) {
+  /**
+   * Constructor.
+   * 
+   * @param screen the screen model
+   * @param editor the line editor
+   * @param canvas the canvas to draw to
+   */
+  public TopWindow(ScreenModel screen, LineEditor editor, Canvas canvas) {
     
-    super(parentComponent, editor, img, "TOP");    
+    super(screen, editor, canvas, "TOP");    
   }
   
   /**
@@ -64,7 +69,17 @@ public class TopWindow extends SubWindow {
   /**
    * {@inheritDoc}
    */
-  public void setIsPagingEnabled(boolean flag) { }
+  public void setPagingEnabled(boolean flag) { }
+  
+  /**
+   * {@inheritDoc}
+   */
+  public boolean isPagingEnabled() { return false; }
+  
+  /**
+   * {@inheritDoc}
+   */
+  public void resetPager() { }
   
   /**
    * {@inheritDoc}
@@ -75,4 +90,9 @@ public class TopWindow extends SubWindow {
    * {@inheritDoc}
    */
   protected void handlePaging() { }
+  
+  /**
+   * {@inheritDoc}
+   */
+  protected void sizeUpdated() { }
 }

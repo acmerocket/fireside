@@ -77,7 +77,7 @@ implements InputStream, StatusLine, SaveGameDataStore, IOSystem {
   private JLabel statusLabel;
   private TextViewport viewport;
   private Machine machine;
-  private LineEditor lineEditor;
+  private LineEditorImpl lineEditor;
   private GameThread currentGame;
   private boolean isMacOs;
 
@@ -91,7 +91,7 @@ implements InputStream, StatusLine, SaveGameDataStore, IOSystem {
     super(Main.APPNAME);
     
     this.machine = machine;
-    lineEditor = new LineEditor(machine.getServices().getStoryFileHeader(),
+    lineEditor = new LineEditorImpl(machine.getServices().getStoryFileHeader(),
         machine.getServices().getZsciiEncoding());
     
     isMacOs = (System.getProperty("mrj.version") != null);

@@ -75,13 +75,13 @@ implements InputStream, StatusLine, SaveGameDataStore, IOSystem {
   private JLabel statusLabel;
   private TextViewport viewport;
   private Machine machine;
-  private LineEditor lineEditor;
+  private LineEditorImpl lineEditor;
   private GameThread currentGame;
   
   public void init() {
         
     machine = openStoryFile();
-    lineEditor = new LineEditor(machine.getServices().getStoryFileHeader(),
+    lineEditor = new LineEditorImpl(machine.getServices().getStoryFileHeader(),
         machine.getServices().getZsciiEncoding());
     
     viewport = new TextViewport(machine, lineEditor);
