@@ -196,12 +196,12 @@ public abstract class SubWindow {
   public void backspace(char c) {
     
     int charWidth = canvas.getCharWidth(font, c);
-    cursor.setColumn(cursor.getColumn() - 1);
     
     // Clears the text under the cursor
     canvas.fillRect(background, getCurrentX() - charWidth,
                     getCurrentY() - canvas.getFontAscent(font), charWidth,
                     canvas.getFontHeight(font));
+    cursor.setColumn(cursor.getColumn() - 1);
   }
 
   // **********************************************************************
@@ -235,15 +235,6 @@ public abstract class SubWindow {
            + (canvas.getFontHeight(font) - canvas.getFontDescent(font));
   }
  
-  protected int getCurrentX() {
-    
-    // This code has one big problem: It does not work !!!
-    // It only works if we do not use the proportional font, but if we
-    // do, we need to know, what was actually typed ahead...
-    int meanCharWidth = canvas.getCharWidth(font, '0');      
-    return (cursor.getColumn() - 1) * meanCharWidth;      
-  }
-    
   protected Color getTextBackground() {
     
     return isReverseVideo ? foreground : background;
@@ -257,7 +248,7 @@ public abstract class SubWindow {
   protected void printLine(String line, Color textbackColor,
                            Color textColor) {
     
-    canvas.fillRect(textbackColor,getCurrentX(),
+    canvas.fillRect(textbackColor, getCurrentX(),
                     getCurrentY() - canvas.getFontHeight(font)
                     + canvas.getFontDescent(font),
                     canvas.getStringWidth(font, line),
@@ -284,21 +275,34 @@ public abstract class SubWindow {
    */
   public abstract boolean isBuffered();
 
+  /**
+   * Sets the paging flag. This feature must be available to be controlled
+   * from within the core (file input for replaying recorded sessions).
+   * 
+   * @param flag true to enable paging, false otherwise
+   */
   public abstract void setPagingEnabled(boolean flag);
   
+  /**
+   * Returns the status of the paging flag.
+   * 
+   * @return the paging status
+   */
   public abstract boolean isPagingEnabled();
   
+  /**
+   * Resets the cursor to its home position.
+   */
   public abstract void resetCursorToHome();  
 
   /**
    * Resets the internal pager.
    */
   public abstract void resetPager();
+    
+  protected abstract void sizeUpdated();
   
-  protected abstract void handlePaging();
-  
-  
-  protected abstract void sizeUpdated();  
+  protected abstract int getCurrentX();  
 
   // ************************************************************************
   // ******* Private methods
@@ -311,7 +315,6 @@ public abstract class SubWindow {
     
     for (int i = 0; i < lines.length; i++) {
 
-      handlePaging();
       String line = lines[i];
       printLine(line, textbackColor, textColor);
       

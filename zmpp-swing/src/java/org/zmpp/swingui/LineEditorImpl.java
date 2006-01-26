@@ -104,11 +104,11 @@ public class LineEditorImpl implements LineEditor, KeyListener, MouseListener {
   
   public void keyTyped(KeyEvent e) {
   
-    char c = e.getKeyChar();    
+    char c = e.getKeyChar();
+    
     if (encoding.isConvertableToZscii(c)
-        && !handledInKeyPressed(c)
-        && !handledInKeyReleased(c)) {
-        
+        && !handledInKeyPressed(c)) {
+      
       addToBuffer(encoding.getZsciiChar(c));
     }
   }
@@ -149,13 +149,6 @@ public class LineEditorImpl implements LineEditor, KeyListener, MouseListener {
   private boolean handledInKeyPressed(char c) {
     
     return c == ' ' || c == KeyEvent.VK_BACK_SPACE || c == KeyEvent.VK_DELETE;
-  }
-  
-  private boolean handledInKeyReleased(char c) {
-    
-    return c == KeyEvent.VK_UP || c == KeyEvent.VK_DOWN
-           || c == KeyEvent.VK_LEFT || c == KeyEvent.VK_RIGHT
-           || c == KeyEvent.VK_ESCAPE;
   }
   
   public void mouseClicked(MouseEvent e) {

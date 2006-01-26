@@ -89,10 +89,15 @@ public class TopWindow extends SubWindow {
   /**
    * {@inheritDoc}
    */
-  protected void handlePaging() { }
-  
+  protected void sizeUpdated() { }
+
   /**
    * {@inheritDoc}
    */
-  protected void sizeUpdated() { }
+  protected int getCurrentX() {
+    
+    int meanCharWidth = getCanvas().getCharWidth(getFont(), '0');      
+    return (getCursor().getColumn() - 1) * meanCharWidth;
+  }
+    
 }

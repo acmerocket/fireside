@@ -28,7 +28,9 @@ import org.zmpp.vm.ScreenModel;
 
 /**
  * This class implements the lower window of the standard Z-machine screen
- * model.
+ * model. It extends on the base functionality defined in its super class,
+ * and is much more complex than TopWindow, because it supports paging,
+ * buffering and proportional font. 
  * 
  * @author Wei-ju Wu
  * @version 1.0
@@ -39,6 +41,7 @@ public class BottomWindow extends SubWindow {
   private boolean isPaged;
   private int linesPerPage;
   private int linesPrinted;
+  private StringBuilder currentLine;
   
   /**
    * Constructor.
@@ -51,6 +54,7 @@ public class BottomWindow extends SubWindow {
     
     super(screen, editor, canvas, "BOTTOM");
     
+    currentLine = new StringBuilder();
     setBufferMode(true);
     setPagingEnabled(true);
   }
@@ -117,7 +121,7 @@ public class BottomWindow extends SubWindow {
     return (getHeight() - descent) / fontHeight;
   }
   
-  protected void handlePaging() {
+  private void handlePaging() {
     
     if (isPaged && linesPrinted >= linesPerPage) {
       
@@ -127,8 +131,9 @@ public class BottomWindow extends SubWindow {
   
   private void doMeMore() {
     
-    printLine("<MORE> (Press key to continue)", getTextBackground(),
-              getTextColor());
+    // Invoke the super method, which does not handle paging
+    super.printLine("<MORE> (Press key to continue)", getTextBackground(),
+                    getTextColor());
     
     getScreen().redraw();
     
@@ -156,17 +161,50 @@ public class BottomWindow extends SubWindow {
     super.newline();
     linesPrinted++;
     scrollIfNeeded();
+    
+    // We reinitialize the line buffer after each newline
+    currentLine = new StringBuilder();
   }
   
   protected void printLine(String line, Color textbackColor,
       Color textColor) {
     
+    handlePaging();
     scrollIfNeeded();
     super.printLine(line, textbackColor, textColor);
+    
+    // Every elementary print instruction adds to the current line
+    currentLine.append(line);
   }
-  
+
+  /**
+   * {@inheritDoc}
+   */
   public void resetPager() {
   
     linesPrinted = 0;
+  }
+
+  /**
+   * {@inheritDoc}
+   */
+  protected int getCurrentX() {
+    
+    return getCanvas().getStringWidth(getFont(), currentLine.toString());
+  }
+  
+  /**
+   * {@inheritDoc}
+   */
+  public void backspace(char c) {
+    
+    super.backspace(c);
+    
+    // a backspace also updates the current line buffer
+    int linelen = currentLine.length();
+    if (linelen > 0) {
+      
+      currentLine.deleteCharAt(linelen - 1);
+    }
   }
 }

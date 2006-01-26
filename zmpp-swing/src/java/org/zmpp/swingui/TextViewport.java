@@ -80,7 +80,8 @@ ScreenModel {
     this.editor = editor;
     
     standardFont = getFont();
-    fixedFont = new Font("Monospaced", Font.PLAIN, standardFont.getSize());    
+    fixedFont = new Font("Monospaced", Font.ROMAN_BASELINE,
+                         standardFont.getSize());    
     streambuffer = new StringBuilder();
     windows = new SubWindow[2];
     fontnumbers = new int[2];
@@ -471,14 +472,12 @@ ScreenModel {
     
   private void determineStandardFont() {
     
-    standardFont = fixedFont;
-    /*
     // Sets the fixed font as the standard
     if (machine.getServices().getStoryFileHeader().isEnabled(
         Attribute.FORCE_FIXED_FONT)) {
       
       standardFont = fixedFont;      
-    }*/
+    }
   }
 
   private void resizeWindows(int linesUpperWindow) {
