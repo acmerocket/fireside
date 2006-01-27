@@ -1,0 +1,104 @@
+<project name="zmpp" default="dist" basedir=".">
+  <description>
+    Build file for Zmpp core
+  </description>
+  <!-- set global properties for this build -->  
+  <property file="build.properties" />
+  
+  <path id="cobertura.path">
+    <fileset dir="${cobertura.home}">
+      <include name="**/*.jar"/>
+    </fileset>
+  </path>
+  
+  <path id="junit.path">
+    <fileset dir="${junit.home}">
+      <include name="junit.jar"/>
+    </fileset>
+    <fileset dir="lib">
+      <include name="jmock-1.0.1.jar"/>
+    </fileset>
+  </path>
+  
+	<!--
+  <taskdef classpathref="cobertura.path" resource="tasks.properties"/>
+  <taskdef resource="checkstyletask.properties" classpath="checkstyle.path"/>
+  -->
+  <target name="init">
+    <!-- Create the time stamp -->
+    <tstamp/>
+    <!-- Create the build directory structure used by compile -->
+    <mkdir dir="${build.prj}"/>
+    <mkdir dir="${build.tests}"/>
+  </target>
+
+  <target name="compile" depends="init">
+    <javac debug="on" srcdir="${src.prj}" destdir="${build.prj}">
+      <classpath>
+  			<pathelement location="${build.prj}"/>
+  			<pathelement location="${zmpp.core}"/>
+  	  </classpath>
+    </javac>
+  </target>
+  
+  <target name="instrument" depends="compile">
+		<cobertura-instrument todir="${instrumented.dir}">		
+    	<fileset dir="${build.prj}">
+        <include name="**/*.class"/>
+    	</fileset>
+		</cobertura-instrument>
+  </target>
+  
+  <target name="test" depends="instrument">
+  
+    <mkdir dir="${reports.tests}"/>
+    
+    <junit printsummary="yes" haltonfailure="yes" dir="${basedir}">
+    
+  		<sysproperty key="net.sourceforge.cobertura.datafile"
+  							 	 file="${basedir}/cobertura.ser" />
+
+  		<classpath refid="cobertura.path" />
+  		<classpath refid="junit.path" />
+  		<classpath>
+    		<pathelement location="${instrumented.dir}"/>
+    		<pathelement location="${build.prj}"/>
+    		<pathelement location="${build.tests}"/>
+  		</classpath>
+    
+      <formatter type="xml" />
+      <batchtest fork="yes" todir="${reports.tests}">
+        <fileset dir="${src.tests}">
+          <include name="**/*Test.java" />
+        </fileset>
+      </batchtest>
+    </junit>
+  </target>
+
+  <target name="testreport" depends="test">
+    <mkdir dir="${coveragereport.dir}"/>
+		<cobertura-report format="html" destdir="${coveragereport.dir}"
+											srcdir="${src.prj}"> 
+			<classpath refid="cobertura.path" />
+		</cobertura-report>
+  </target>
+
+  <target name="dist" depends="compile"
+        description="generate the distribution" >
+    <mkdir dir="${dist}"/>
+    <mkdir dir="${dist}/lib"/>
+    <jar jarfile="${dist}/lib/zmpp-${app.version}.jar" index="true">
+    	<manifest>
+      	<attribute name="Built-By" value="Wei-ju Wu"/>
+        <attribute name="Main-Class" value="org.zmpp.swingui.Main"/>
+    	</manifest>
+    	<fileset dir="${build.prj}" />
+    	<fileset dir="${zmpp.core}" />
+    </jar>
+  </target>
+	
+  <target name="clean">
+    <delete dir="target"/>
+    <delete file="cobertura.ser"/>
+  </target>
+</project>
