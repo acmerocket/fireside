@@ -184,7 +184,7 @@ public class LongStaticInfo implements InstructionStaticInfo {
     case LongStaticInfo.OP_TEST_ATTR: return "TEST_ATTR";
     case LongStaticInfo.OP_CALL_2S: return "CALL_2S";
     case LongStaticInfo.OP_CALL_2N: return "CALL_2N";
-    case LongStaticInfo.OP_SET_COLOUR: return "CALL_SET_COLOUR";
+    case LongStaticInfo.OP_SET_COLOUR: return "SET_COLOUR";
     }
     return "unknown";
   }
