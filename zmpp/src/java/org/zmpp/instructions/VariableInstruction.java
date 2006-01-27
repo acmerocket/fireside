@@ -612,9 +612,9 @@ public class VariableInstruction extends AbstractInstruction {
       if (size < 0 || first > second) {
         
         // copy forward
-        size = -size;
+        size = Math.abs(size);
         for (int i = 0; i < size; i++) {
-          
+                    
           memaccess.writeByte(second + i, memaccess.readByte(first + i));
         }
         
