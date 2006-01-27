@@ -75,7 +75,7 @@ public class CanvasImpl implements Canvas {
   
   public int getStringWidth(Font font, String str) {
     
-    return graphics.getFontMetrics().stringWidth(str);
+    return graphics.getFontMetrics(font).stringWidth(str);
   }
   
   public void fillRect(Color color, int left, int top, int width,
