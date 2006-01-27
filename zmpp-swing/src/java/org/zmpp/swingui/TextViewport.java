@@ -439,6 +439,16 @@ ScreenModel {
       windows[activeWindow].setFont(standardFont);
       fontnumbers[activeWindow] = fontnum;
       return previous;
+    case FONT_CHARACTER_GRAPHICS:
+      
+      // CODE-DEBT:
+      // Note: if the @set_font command requests font 3, we will switch the
+      // window to fixed, so we solve the misalignment, but will return the
+      // 0 font anyways. This is not really correct, but will make sure
+      // that "Beyond Zork" does not look so weird...
+      windows[activeWindow].setFont(fixedFont);
+      fontnumbers[activeWindow] = fontnum;
+      return 0;
     }
     return 0;
   }
