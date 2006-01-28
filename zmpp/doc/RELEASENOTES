@@ -7,13 +7,13 @@ About
 
 The Z-machine Preservation Project is an attempt to capture and document the
 Z-machine's architecture and design principles and to provide a modern Java
-implementation that can be easily maintained and extended. Its goal is to be the reference
-Java implemetation of the Z-machine specification.
+implementation that can be easily maintained and extended. Its goal is to be a reference
+Java implementation of the Z-machine specification.
 
 Features:
 
 - written from scratch using Java 5
-- currently supports story file version 3, 4, 5, 7 and 8
+- currently supports story file version 1, 2, 3, 4, 5, 7 and 8
 - can be run as a Java applet within the web browser
 - saves and reads games in Quetzal 1.4 format
 - input stream 0 and 1 (keyboard, mouse and file)
@@ -22,7 +22,7 @@ Features:
 - multiple font styles and colors
 - accented characters and unicode
 - timed input, preinitialized input
-- user dictionaries
+- game-defined dictionaries, alphabet tables and accent tables
 - undo
 
 For remarks and suggestions for improvements, please contact
@@ -33,11 +33,9 @@ http://sourceforge.net/projects/zmpp
 TODO:
 
 - character graphics
-- custom alphabet tables
 - save/restore regions
 - sound_effects
 - version 6
-- version 1 and 2 (low priority)
 
 
 Running as an application

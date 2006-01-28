@@ -4,12 +4,11 @@ Version 0.82
 -----------
 
 - Standard revision number 1.0 is now set to the header
-- added access to the terminator character table in the header
-- fixed the missing newline bug (was a misunderstanding of print_ret)
+- fixed the "missing newline" bug (was a misunderstanding of print_ret)
 - added check in attribute instructions, so the "Sherlock bug" is handled implicitly
 - added font width and height to header
 - user dictionary with linear search added
-- class hierarchy for alphabet tables
+- restructuring of string encoding related classes
 - encoder implemented
 - structure improvements, "machine services"
 - terminator characters support
@@ -17,6 +16,16 @@ Version 0.82
 - non-V6 opcodes completed (@sound_effect not really implemented)
 - extension table support
 - mouse support
+- custom accent tables
+- custom alphabet tables
+- dictionary truncation fixed
+- alphabet tables for V1 and V2 and shift lock decoding, equals support for V1 and V2 !!!!
+- fixed the "Zokoban" bug (Zokoban itself does not split the screen, leaving the screen
+   model confused)
+ - refactored sub window classes for better testing and maintenance
+ - fixed input of ' character, overlap with the CURSOR_RIGHT key.
+ - fixed the @set_colour bug
+ - fixed the @copy_table bug
 
 Version 0.78
 -----------

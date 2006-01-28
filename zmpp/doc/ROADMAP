@@ -7,21 +7,21 @@ TODO:
 - sound
 - blorb file format
 - redesign execution scheme (partly done)
-- support version 1 and 2
 
 Version 0.85
 -----------
 
 - character graphics
-- opcodes: throw, catch
 
-Version 0.80:
+Version 0.82:
 -----------
 
 - add missing header information
-- user dictionaries, extend tokenise using user dictionary
-- opcode: encode_text, print_table ("Beyond Zork" uses this)
+- game-defined dictionaries, extend tokenise using user dictionary
+- game-defined accent tables and alphabet tables
+- opcodes: @encode_text, @print_table, @throw, @catch
 - different alphabet tables
+- support version 1 and 2
 - fix screen model bugs (font sizes, color and missing newline "Beyond Zork", "Blue Chairs")
 
 Version 0.78:
