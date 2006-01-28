@@ -181,7 +181,7 @@ public abstract class SubWindow {
  
   public String toString() {
     
-    return "sub window [" + name + "]";
+    return "[" + name + "]";
   }
 
   public void drawCursor(boolean flag) {
