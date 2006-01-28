@@ -569,15 +569,12 @@ public class VariableInstruction extends AbstractInstruction {
   
   private void tokenise() {
     
-    //System.out.println("tokenise()");
     int textbuffer = getUnsignedValue(0);
     int parsebuffer = getUnsignedValue(1);
     int dictionary = 0;
     int flag = 0;
     if (getNumOperands() >= 3) dictionary = getUnsignedValue(2);
     if (getNumOperands() >= 4) flag = getUnsignedValue(3);
-    if (dictionary != 0) System.out.println("use user dictionary");
-    if (flag != 0) System.out.println("tokenise flag is set");
     getMachine().getServices().getTokenizer().tokenize(textbuffer,
         parsebuffer, dictionary, (flag != 0));
     nextInstruction();
