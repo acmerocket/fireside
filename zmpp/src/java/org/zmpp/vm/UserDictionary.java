@@ -56,7 +56,6 @@ public class UserDictionary extends AbstractDictionary {
   public int lookup(String token) {
 
     // We only implement linear search for the moment
-    System.out.println("user dict, # entries: " + getNumberOfEntries());
     int n = Math.abs(getNumberOfEntries());
     String lookupToken = truncateToken(token);
     
@@ -66,7 +65,6 @@ public class UserDictionary extends AbstractDictionary {
       String entry = getDecoder().decode2Unicode(getMemoryAccess(),
                                                  entryAddress,
                                                  getEntryLength());
-      System.out.println("lookup(), compareto: " + entry);
       if (lookupToken.equals(entry)) {
         
         return entryAddress;
