@@ -107,10 +107,8 @@ ScreenModel {
     
     if (window == -1) {
       
-      windows[WINDOW_TOP].setBackground(windows[WINDOW_BOTTOM].getBackground());
-      windows[WINDOW_TOP].clear();
-      windows[WINDOW_BOTTOM].clear();
       resizeWindows(0);
+      windows[WINDOW_BOTTOM].clear();
       
     } else if (window == -2) {
       
@@ -145,7 +143,6 @@ ScreenModel {
   
   public void splitWindow(final int linesUpperWindow) {
    
-    //System.out.printf("@split_window %2x (active window: %d)\n", linesUpperWindow, activeWindow);
     // The standard document suggests that a split should only take part 
     // if the lower window is selected (S 8.7.2.1), but Bureaucracy does
     // the split with the upper window selected, so we do that resizing
@@ -161,7 +158,7 @@ ScreenModel {
   
   public void setWindow(final int window) {
     
-    //System.out.printf("@set_window %2x\n", window);
+    //System.out.printf("@set_window %d\n", window);
     // Flush out the current active window
     flush();
     
@@ -181,7 +178,6 @@ ScreenModel {
    */
   public void setTextStyle(int style) {
 
-    //System.out.printf("@set_text_style %x\n", style);
     // Flush the output before setting a new style
     flush();
     
@@ -329,8 +325,7 @@ ScreenModel {
    */
   public void print(final short zsciiChar, boolean isInput) {
 
-    //System.out.printf("@print %c (isInput: %b)\n", (char) zsciiChar, isInput);
-    
+    //System.out.printf("@print %c (isInput: %b)\n", (char) zsciiChar, isInput);    
     if (zsciiChar == ZsciiEncoding.NEWLINE) {
     
       printChar('\n', isInput);
@@ -363,12 +358,13 @@ ScreenModel {
   public void setForegroundColor(int colornum) {
    
     //if (activeWindow == WINDOW_BOTTOM)
-    //System.out.printf("setForegroundColor(): %d\n", colornum);
-    
+    //System.out.printf("setForegroundColor(): %d\n", colornum);    
     if (colornum > 0) {
       
       flush();
-      windows[activeWindow].setForeground(translateColornum(colornum, true));
+      Color foreground = translateColornum(colornum, true);
+      windows[WINDOW_TOP].setForeground(foreground);
+      windows[WINDOW_BOTTOM].setForeground(foreground);
     }
   }
   
@@ -378,12 +374,13 @@ ScreenModel {
   public void setBackgroundColor(int colornum) {
     
     //if (activeWindow == WINDOW_BOTTOM)
-    //System.out.printf("setBackgroundColor(): %d\n", colornum);
-    
+    //System.out.printf("setBackgroundColor(): %d\n", colornum);    
     if (colornum > 0) {
       
       flush();
-      windows[activeWindow].setBackground(translateColornum(colornum, false));
+      Color background = translateColornum(colornum, false);
+      windows[WINDOW_TOP].setBackground(background);
+      windows[WINDOW_BOTTOM].setBackground(background);
     }
   }
   
@@ -469,7 +466,6 @@ ScreenModel {
 
     //if (activeWindow == WINDOW_BOTTOM)
     //  System.out.println("printChar: " + c + " active: " + activeWindow);
-
     if (isInput || !windows[activeWindow].isBuffered()) {
       
       windows[activeWindow].printString(String.valueOf(c));
