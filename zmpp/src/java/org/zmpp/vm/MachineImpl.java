@@ -34,6 +34,8 @@ import org.zmpp.iff.FormChunk;
 import org.zmpp.iff.WritableFormChunk;
 import org.zmpp.io.InputStream;
 import org.zmpp.io.OutputStream;
+import org.zmpp.sound.SoundSystem;
+import org.zmpp.sound.SoundSystemImpl;
 import org.zmpp.vm.StoryFileHeader.Attribute;
 import org.zmpp.vmutil.PredictableRandomGenerator;
 import org.zmpp.vmutil.RandomGenerator;
@@ -133,11 +135,17 @@ public class MachineImpl implements Machine, MachineServices {
   private InputFunctionsImpl inputFunctions;
   
   /**
+   * The sound system.
+   */
+  private SoundSystem soundSystem;
+  
+  /**
    * Constructor.
    */
   public MachineImpl() {
 
     this.inputFunctions = new InputFunctionsImpl(this);
+    this.soundSystem = new SoundSystemImpl();
   }
   
   /**
@@ -666,15 +674,6 @@ public class MachineImpl implements Machine, MachineServices {
   /**
    * {@inheritDoc}
    */
-  public void playSoundEffect(int soundnum, int effect, int volume,
-                              int routine) {
-    
-    //System.out.println("sound_effect is not implemented yet");
-  }
-  
-  /**
-   * {@inheritDoc}
-   */
   public void updateStatusLine() {
   
     if (getStoryFileHeader().getVersion() <= 3 && statusLine != null) {
@@ -1030,6 +1029,13 @@ public class MachineImpl implements Machine, MachineServices {
     return config.getZsciiEncoding();
   }
   
+  /**
+   * {@inheritDoc}
+   */
+  public SoundSystem getSoundSystem() {
+    
+    return soundSystem;
+  }
   // ************************************************************************
   // ****** Private functions
   // ************************************************

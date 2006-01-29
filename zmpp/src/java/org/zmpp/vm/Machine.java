@@ -279,7 +279,7 @@ public interface Machine {
   /**
    * Prints the specified signed number.
    * 
-   * @param num the number to print§
+   * @param num the number to print?
    */
   void printNumber(short num);
   
@@ -345,16 +345,6 @@ public interface Machine {
    * @return the game screen
    */
   ScreenModel getScreen();
-  
-  /**
-   * Plays a sound effect.
-   * 
-   * @param soundnum the sound number
-   * @param effect the effect
-   * @param volume the volume
-   * @param routine the routine
-   */
-  void playSoundEffect(int soundnum, int effect, int volume, int routine);  
   
   /**
    * Initialization function.

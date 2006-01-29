@@ -24,6 +24,7 @@ package org.zmpp.instructions;
 
 import org.zmpp.base.MemoryAccess;
 import org.zmpp.encoding.ZCharEncoder;
+import org.zmpp.sound.SoundSystem;
 import org.zmpp.vm.Machine;
 import org.zmpp.vm.ScreenModel;
 import org.zmpp.vm.TextCursor;
@@ -410,7 +411,9 @@ public class VariableInstruction extends AbstractInstruction {
       routine = getUnsignedValue(3);
     }
     
-    getMachine().playSoundEffect(soundnum, effect, volume, routine);
+    SoundSystem soundSystem = getMachine().getServices().getSoundSystem();
+    soundSystem.play(soundnum, effect, volume);
+    // TODO: Callback and routine
     nextInstruction();
   }
   
