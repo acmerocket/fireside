@@ -1,6 +1,6 @@
 <project name="zmpp" default="dist" basedir=".">
   <description>
-    Build file for Zmpp core
+    Build file for Zmpp with user interface
   </description>
   <!-- set global properties for this build -->  
   <property file="build.properties" />
@@ -25,8 +25,6 @@
   <taskdef resource="checkstyletask.properties" classpath="checkstyle.path"/>
   -->
   <target name="init">
-    <!-- Create the time stamp -->
-    <tstamp/>
     <!-- Create the build directory structure used by compile -->
     <mkdir dir="${build.prj}"/>
     <mkdir dir="${build.tests}"/>
@@ -86,8 +84,7 @@
   <target name="dist" depends="compile"
         description="generate the distribution" >
     <mkdir dir="${dist}"/>
-    <mkdir dir="${dist}/lib"/>
-    <jar jarfile="${dist}/lib/zmpp-${app.version}.jar" index="true">
+    <jar jarfile="${dist}/zmpp-${app.version}.jar" index="true">
     	<manifest>
       	<attribute name="Built-By" value="Wei-ju Wu"/>
         <attribute name="Main-Class" value="org.zmpp.swingui.Main"/>
@@ -95,6 +92,35 @@
     	<fileset dir="${build.prj}" />
     	<fileset dir="${zmpp.core}" />
     </jar>
+  </target>
+
+  <target name="dist-src" description="generate src distribution" depends="dist">
+    <mkdir dir="${dist}/doc"/>
+    <mkdir dir="${dist}/src"/>
+    <mkdir dir="${dist}/src"/>
+    <copy todir="${dist}/src">
+      <fileset dir="src/java">
+        <exclude name="**/CVS/*" />
+      </fileset>
+      <!-- copy core source code -->
+      <fileset dir="../zmpp/src/java">
+        <exclude name="**/CVS/*" />
+      </fileset>
+      <!-- copy core source code -->
+      <fileset dir="../zmpp/src/java">
+        <exclude name="**/CVS/*" />
+      </fileset>
+    </copy>
+    <copy todir="${dist}/doc">
+      <!-- copy core docs -->
+      <fileset dir="../zmpp/doc">
+        <exclude name="ROADMAP" />
+      </fileset>
+    </copy>
+    <copy todir="${dist}">
+      <!-- copy build files -->
+      <fileset dir="src/dist" />
+    </copy>
   </target>
 	
   <target name="clean">
