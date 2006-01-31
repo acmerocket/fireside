@@ -40,6 +40,7 @@ public class ZsciiEncoding {
 
   public static final short NULL          = 0;
   public static final short DELETE        = 8;
+  public static final short NEWLINE_10    = 10;
   public static final short NEWLINE       = 13;
   public static final short ESCAPE        = 27;
   public static final short CURSOR_UP     = 129;
@@ -128,7 +129,7 @@ public class ZsciiEncoding {
       }
     }
     if (zchar == NULL) return '\0';
-    if (zchar == NEWLINE) return '\n';
+    if (zchar == NEWLINE || zchar == NEWLINE_10) return '\n';
     if (isUnicodeCharacter(zchar)) return (char) zchar;
     return '?';
   }

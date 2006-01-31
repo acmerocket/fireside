@@ -196,8 +196,8 @@ public final class DefaultZCharDecoder implements ZCharDecoder {
           
     short c = decodeZChar(zchar);
     if (c != 0) {
-        
-      builder.append((char) c);
+      
+      builder.append(encoding.getUnicodeChar(c));
     }  
   }
   
