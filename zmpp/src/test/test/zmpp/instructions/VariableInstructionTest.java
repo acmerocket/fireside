@@ -499,23 +499,6 @@ public class VariableInstructionTest extends InstructionTestBase {
   }
   
   // *******************************************************************
-  // ********* SOUND_EFFECT
-  // *************************
-  
-  public void testSoundEffect() {
-    
-    mockFileHeader.expects(atLeastOnce()).method("getVersion").will(returnValue(3));
-    mockMachine.expects(once()).method("playSoundEffect");
-    VariableInstructionMock sound_effect =
-      new VariableInstructionMock(machine, VariableStaticInfo.OP_SOUND_EFFECT);
-    sound_effect.addOperand(new Operand(Operand.TYPENUM_SMALL_CONSTANT, (short) 1));
-    sound_effect.addOperand(new Operand(Operand.TYPENUM_SMALL_CONSTANT, (short) 1));
-    sound_effect.addOperand(new Operand(Operand.TYPENUM_SMALL_CONSTANT, (short) 1));
-    sound_effect.execute();
-    assertTrue(sound_effect.nextInstructionCalled);
-  }
-
-  // *******************************************************************
   // ********* SPLIT_WINDOW
   // *************************
   

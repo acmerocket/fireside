@@ -59,7 +59,7 @@ public class DictionaryTest extends MockObjectTestCase {//extends MemoryMapSetup
     mockMemAccess.expects(exactly(5)).method("readUnsignedByte").with(eq(1000)).will(returnValue((short) 3));
     
     // num entries
-    mockMemAccess.expects(once()).method("readUnsignedShort").with(eq(1005)).will(returnValue(2));
+    mockMemAccess.expects(once()).method("readShort").with(eq(1005)).will(returnValue((short) 2));
     
     // entry size
     mockMemAccess.expects(exactly(2)).method("readUnsignedByte").with(eq(1004)).will(returnValue((short) 4));
@@ -80,7 +80,7 @@ public class DictionaryTest extends MockObjectTestCase {//extends MemoryMapSetup
   public void testGetNumEntries() {
     
     mockMemAccess.expects(once()).method("readUnsignedByte").with(eq(1000)).will(returnValue((short) 3));
-    mockMemAccess.expects(once()).method("readUnsignedShort").with(eq(1005)).will(returnValue(536));
+    mockMemAccess.expects(once()).method("readShort").with(eq(1005)).will(returnValue((short) 536));
     assertEquals(536, dictionary.getNumberOfEntries());
   }
   

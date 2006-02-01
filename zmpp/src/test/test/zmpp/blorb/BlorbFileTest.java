@@ -96,7 +96,7 @@ public class BlorbFileTest extends TestCase {
                                                      (long) soundchunk1.getSize());
       assertEquals(soundchunk1.getSize(), stream.available());
       assertEquals(49802, stream.available());
-      
+      /*
       byte[] sdata = new byte[stream.available()];
       stream.read(sdata);
       line = (SourceDataLine) AudioSystem.getLine(info);
@@ -112,6 +112,7 @@ public class BlorbFileTest extends TestCase {
       line.start();
       line.write(sdata, 0, sdata.length);
       line.drain();
+      */
 /*
       Iterator<Chunk> iter = soundchunk1.getSubChunks();      
       while (iter.hasNext()) {
