@@ -53,4 +53,13 @@ public interface FormChunk extends Chunk {
    * @return the chunk with the specified id or null if it does not exist
    */
   Chunk getSubChunk(byte[] id);
+  
+  /**
+   * Returns the sub chunk at the specified address or null if it does
+   * not exist.
+   * 
+   * @param address the address of the chunk
+   * @return the chunk or null if it does not exist
+   */
+  Chunk getSubChunk(int address);
 }

@@ -88,6 +88,15 @@ public class WritableFormChunk implements FormChunk {
     }
     return null;
   }
+  
+  /**
+   * {@inheritDoc}
+   */
+  public Chunk getSubChunk(int address) {
+    
+    // We do not need to implement this
+    return null;
+  }
 
   /**
    * {@inheritDoc}
@@ -185,4 +194,10 @@ public class WritableFormChunk implements FormChunk {
     
     return data;
   }
+  
+  /**
+   * {@inheritDoc}
+   */
+  public int getAddress() { return 0; }
+  
 }

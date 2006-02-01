@@ -55,7 +55,7 @@ public class DefaultFormChunk extends DefaultChunk implements FormChunk {
    */
   public DefaultFormChunk(MemoryAccess memaccess) {
 
-    super(memaccess);
+    super(memaccess, 0);
     initBaseInfo();
     readSubChunks();
   }
@@ -89,7 +89,7 @@ public class DefaultFormChunk extends DefaultChunk implements FormChunk {
     while (offset < length) {
       MemoryAccess memarray = new MemorySection(memaccess, offset,
                                               length - offset);
-      Chunk subchunk = new DefaultChunk(memarray);
+      Chunk subchunk = new DefaultChunk(memarray, offset);
       subChunks.add(subchunk);
       chunkTotalSize = subchunk.getSize() + CHUNK_HEADER_LENGTH;
       
@@ -132,6 +132,18 @@ public class DefaultFormChunk extends DefaultChunk implements FormChunk {
     for (Chunk chunk : subChunks) {
       
       if (Arrays.equals(id, chunk.getId())) {
+        
+        return chunk;
+      }
+    }
+    return null;
+  }
+  
+  public Chunk getSubChunk(int address) {
+    
+    for (Chunk chunk : subChunks) {
+      
+      if (chunk.getAddress() == address) {
         
         return chunk;
       }

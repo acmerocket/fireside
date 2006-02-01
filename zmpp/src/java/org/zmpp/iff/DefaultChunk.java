@@ -49,18 +49,27 @@ public class DefaultChunk implements Chunk {
   private int chunkSize;
   
   /**
-   * Constructor.
+   * The start address within the form chunk.
+   */
+  private int address;
+  
+  /**
+   * Constructor. Used for reading files.
    * 
    * @param memaccess a memory access object to the chunk data
+   * @param address the address within the form chunk
    */
-  public DefaultChunk(MemoryAccess memaccess) {
+  public DefaultChunk(MemoryAccess memaccess, int address) {
     
     this.memaccess = memaccess;
+    this.address = address;
     initBaseInfo();
   }
   
   /**
-   * Constructor. Initialize from byte data.
+   * Constructor. Initialize from byte data. This constructor is used
+   * when writing a file, in that case chunks really are separate
+   * memory areas.
    * 
    * @param id the id
    * @param chunkdata the data without header information, number of bytes
@@ -136,5 +145,13 @@ public class DefaultChunk implements Chunk {
   public MemoryAccess getMemoryAccess() {
     
     return memaccess;
+  }
+  
+  /**
+   * {@inheritDoc}
+   */
+  public int getAddress() {
+    
+    return address;
   }
 }

@@ -75,4 +75,11 @@ public interface Chunk {
    * @return the MemoryAccess object
    */
   MemoryAccess getMemoryAccess();
+  
+  /**
+   * Returns the address of the chunk within the global FORM chunk.
+   * 
+   * @return the address within the form chunk
+   */
+  int getAddress();
 }
