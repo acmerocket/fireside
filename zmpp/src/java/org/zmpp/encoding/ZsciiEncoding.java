@@ -242,4 +242,13 @@ public class ZsciiEncoding {
     return (zsciiChar >= 129 && zsciiChar <= 154)
            || (zsciiChar >= 252 && zsciiChar <= 254);
   }
+  
+  public static short toLower(short zsciiChar) {
+  
+    if (isAscii(zsciiChar)) {
+      
+      return (short) Character.toLowerCase(zsciiChar);
+    }
+    return zsciiChar;
+  }
 }
