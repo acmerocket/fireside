@@ -41,7 +41,7 @@ public class BottomWindow extends SubWindow {
   private boolean isPaged;
   private int linesPerPage;
   private int linesPrinted;
-  private StringBuilder currentLine;
+  private int currentX;
   
   /**
    * Constructor.
@@ -52,9 +52,7 @@ public class BottomWindow extends SubWindow {
    */
   public BottomWindow(ScreenModel screen, LineEditor editor, Canvas canvas) {
     
-    super(screen, editor, canvas, "BOTTOM");
-    
-    currentLine = new StringBuilder();
+    super(screen, editor, canvas, "BOTTOM");    
     setBufferMode(true);
     setPagingEnabled(true);
   }
@@ -114,6 +112,11 @@ public class BottomWindow extends SubWindow {
     getCursor().setPosition(getAvailableLines(), 1);
   }
 
+  /**
+   * Returns the available lines.
+   * 
+   * @return the available lines
+   */
   private int getAvailableLines() {
   
     int descent = getCanvas().getFontDescent(getFont());
@@ -121,6 +124,9 @@ public class BottomWindow extends SubWindow {
     return (getHeight() - descent) / fontHeight;
   }
   
+  /**
+   * Check if paging should be done.
+   */
   private void handlePaging() {
     
     if (isPaged && linesPrinted >= linesPerPage) {
@@ -128,7 +134,10 @@ public class BottomWindow extends SubWindow {
       doMeMore();
     }
   }
-  
+
+  /**
+   * Wait for key press.
+   */
   private void doMeMore() {
     
     // Invoke the super method, which does not handle paging
@@ -155,17 +164,20 @@ public class BottomWindow extends SubWindow {
     linesPerPage = (getHeight() / getCanvas().getFontHeight(getFont())) - 1;
   }
   
-  
+  /**
+   * {@inheritDoc}
+   */
   protected void newline() {
     
     super.newline();
     linesPrinted++;
     scrollIfNeeded();
-    
-    // We reinitialize the line buffer after each newline
-    currentLine = new StringBuilder();
+    currentX = 0;
   }
-  
+
+  /**
+   * {@inheritDoc}
+   */
   protected void printLine(String line, Color textbackColor,
       Color textColor) {
     
@@ -174,7 +186,7 @@ public class BottomWindow extends SubWindow {
     super.printLine(line, textbackColor, textColor);
     
     // Every elementary print instruction adds to the current line
-    currentLine.append(line);
+    currentX += getCanvas().getStringWidth(getFont(), line);
   }
 
   /**
@@ -190,7 +202,7 @@ public class BottomWindow extends SubWindow {
    */
   protected int getCurrentX() {
     
-    return getCanvas().getStringWidth(getFont(), currentLine.toString());
+    return currentX;
   }
   
   /**
@@ -200,11 +212,7 @@ public class BottomWindow extends SubWindow {
     
     super.backspace(c);
     
-    // a backspace also updates the current line buffer
-    int linelen = currentLine.length();
-    if (linelen > 0) {
-      
-      currentLine.deleteCharAt(linelen - 1);
-    }
+    currentX -= getCanvas().getCharWidth(getFont(), c);
+    if (currentX < 0) currentX = 0;
   }
 }
