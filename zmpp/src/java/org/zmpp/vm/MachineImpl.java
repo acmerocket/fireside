@@ -30,6 +30,7 @@ import org.zmpp.base.MemoryAccess;
 import org.zmpp.encoding.ZCharDecoder;
 import org.zmpp.encoding.ZCharEncoder;
 import org.zmpp.encoding.ZsciiEncoding;
+import org.zmpp.encoding.ZsciiString;
 import org.zmpp.iff.FormChunk;
 import org.zmpp.iff.WritableFormChunk;
 import org.zmpp.io.InputStream;
@@ -463,16 +464,16 @@ public class MachineImpl implements Machine, MachineServices {
   public void printZString(int address) {
     
     print(config.getZCharDecoder().decode2Zscii(getMemoryAccess(),
-        address, 0).toString());
+        address, 0));
   }
   
   /**
    * {@inheritDoc}
    */
-  public void print(String str) {
+  public void print(ZsciiString str) {
 
     //System.out.println("print: '" + str + "'");
-    printZsciiChars(getZsciiEncoding().convertToZscii(str), false);
+    printZsciiChars(str, false);
   }
   
   /**
@@ -492,7 +493,7 @@ public class MachineImpl implements Machine, MachineServices {
     
     //System.out.println("printZsciiChar: '" + (char) zchar + "'");
     zchars[0] = zchar;
-    printZsciiChars(zchars, isInput);
+    printZsciiChars(new ZsciiString(zchars), isInput);
   }
   
   /**
@@ -516,17 +517,18 @@ public class MachineImpl implements Machine, MachineServices {
    * Prints the specified array of ZSCII characters. This is the only function
    * that communicates with the output streams directly.
    * 
-   * @param zchars the array of ZSCII characters.
+   * @param zsciiString the array of ZSCII characters.
+   * @param isInput true if in input mode, false otherwise
    */
-  private void printZsciiChars(short[] zchars, boolean isInput) {
+  private void printZsciiChars(ZsciiString zsciiString, boolean isInput) {
     
     checkTranscriptFlag();
     
     if (outputStream[OUTPUTSTREAM_MEMORY - 1].isSelected()) {
       
-      for (short zchar : zchars) {
+      for (int i = 0, n = zsciiString.length(); i < n; i++) {
         
-        outputStream[OUTPUTSTREAM_MEMORY - 1].print(zchar, isInput);
+        outputStream[OUTPUTSTREAM_MEMORY - 1].print(zsciiString.charAt(i), isInput);
       }
       
     } else {
@@ -535,9 +537,9 @@ public class MachineImpl implements Machine, MachineServices {
       
         if (outputStream[i] != null && outputStream[i].isSelected()) {
       
-          for (short zchar : zchars) {
+          for (int j = 0, n = zsciiString.length(); j < n; j++) {
           
-            outputStream[i].print(zchar, isInput);
+            outputStream[i].print(zsciiString.charAt(j), isInput);
           }
         }
       }
@@ -549,7 +551,7 @@ public class MachineImpl implements Machine, MachineServices {
    */
   public void printNumber(short number) {
     
-    print(String.valueOf(number));
+    print(new ZsciiString(String.valueOf(number)));
   }
   
   public void flushOutput() {
@@ -724,7 +726,7 @@ public class MachineImpl implements Machine, MachineServices {
    */
   public void halt(String errormsg) {
   
-    print(errormsg);
+    print(new ZsciiString(errormsg));
     running = false;
   }
   
@@ -843,7 +845,7 @@ public class MachineImpl implements Machine, MachineServices {
     running = false;
     
     // On quit, close the streams
-    print("*Game ended*");
+    print(new ZsciiString("*Game ended*"));
     closeStreams();
     screenModel.redraw();
   }

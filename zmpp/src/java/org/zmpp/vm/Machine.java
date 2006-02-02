@@ -24,6 +24,7 @@ package org.zmpp.vm;
 
 import java.util.List;
 
+import org.zmpp.encoding.ZsciiString;
 import org.zmpp.io.InputStream;
 import org.zmpp.io.OutputStream;
 
@@ -254,7 +255,7 @@ public interface Machine {
    * 
    * @param str the string to print
    */
-  void print(String str);
+  void print(ZsciiString str);
   
   /**
    * Prints a newline to the active output streams.
