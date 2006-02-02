@@ -527,8 +527,26 @@ ScreenModel {
       fileheader.setDefaultForegroundColor(COLOR_BLACK);
       fileheader.setFontWidth(1);
       fileheader.setFontHeight(1);
+      
+      if (isBeyondZork()) {
+        
+        // Some BZ-specific settings
+        fileheader.setInterpreterNumber(3); // set to "Macintosh"
+        standardFont = fixedFont;
+      }
     }
     determineStandardFont();
+  }
+
+  private boolean isBeyondZork() {
+    
+    StoryFileHeader fileheader = machine.getServices().getStoryFileHeader();
+    String serial = fileheader.getSerialNumber();
+    int release = fileheader.getRelease();
+    return (release == 47 && serial.equals("870915"))
+           || (release == 49 && serial.equals("870917"))
+           || (release == 51 && serial.equals("870923"))
+           || (release == 57 && serial.equals("871221"));    
   }
   
   private void repaintInUiThread() {
