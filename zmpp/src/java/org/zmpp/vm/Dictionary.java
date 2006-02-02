@@ -22,6 +22,8 @@
  */
 package org.zmpp.vm;
 
+import org.zmpp.encoding.ZsciiString;
+
 
 /**
  * This is the interface definition for a dictionary.
@@ -76,5 +78,5 @@ public interface Dictionary {
    * @param token a token
    * @return the address of the token or 0
    */
-  int lookup(String token);
+  int lookup(ZsciiString token);
 }

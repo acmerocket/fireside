@@ -462,8 +462,8 @@ public class MachineImpl implements Machine, MachineServices {
    */
   public void printZString(int address) {
     
-    print(config.getZCharDecoder().decode2Unicode(getMemoryAccess(),
-        address));
+    print(config.getZCharDecoder().decode2Zscii(getMemoryAccess(),
+        address, 0).toString());
   }
   
   /**
@@ -680,8 +680,9 @@ public class MachineImpl implements Machine, MachineServices {
       
       int objNum = getVariable(0x10);    
       ZObject obj = getObjectTree().getObject(objNum);
-      String objectName = config.getZCharDecoder().decode2Unicode(
-          getMemoryAccess(), obj.getPropertiesDescriptionAddress());      
+      String objectName = config.getZCharDecoder().decode2Zscii(
+          getMemoryAccess(),
+          obj.getPropertiesDescriptionAddress(), 0).toString();      
       int global2 = getVariable(0x11);
       int global3 = getVariable(0x12);
       if (getStoryFileHeader().isEnabled(Attribute.SCORE_GAME)) {

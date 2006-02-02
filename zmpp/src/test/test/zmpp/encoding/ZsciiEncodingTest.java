@@ -29,68 +29,68 @@ import org.zmpp.encoding.ZsciiEncoding;
 
 public class ZsciiEncodingTest extends TestCase {
 
-  private ZsciiEncoding zsciiDef;
+  private ZsciiEncoding encoding;
   
   protected void setUp() throws Exception {
    
-    zsciiDef = new ZsciiEncoding(new DefaultAccentTable());
+    encoding = new ZsciiEncoding(new DefaultAccentTable());
   }
 
   public void testIsZsciiCharacterAscii() {
     
-    assertTrue(zsciiDef.isZsciiCharacter((short) 'A'));
-    assertTrue(zsciiDef.isZsciiCharacter((short) 'M'));
-    assertTrue(zsciiDef.isZsciiCharacter((short) 'Z'));
-    assertTrue(zsciiDef.isZsciiCharacter((short) 'a'));
-    assertTrue(zsciiDef.isZsciiCharacter((short) 'm'));
-    assertTrue(zsciiDef.isZsciiCharacter((short) 'z'));
+    assertTrue(encoding.isZsciiCharacter((short) 'A'));
+    assertTrue(encoding.isZsciiCharacter((short) 'M'));
+    assertTrue(encoding.isZsciiCharacter((short) 'Z'));
+    assertTrue(encoding.isZsciiCharacter((short) 'a'));
+    assertTrue(encoding.isZsciiCharacter((short) 'm'));
+    assertTrue(encoding.isZsciiCharacter((short) 'z'));
   }
   
   public void testIsZsciiCharacterExtra() {
     
     assertEquals(10, (int) '\n');
-    assertTrue(zsciiDef.isZsciiCharacter(ZsciiEncoding.NULL));
-    assertTrue(zsciiDef.isZsciiCharacter(ZsciiEncoding.NEWLINE));
-    assertTrue(zsciiDef.isZsciiCharacter(ZsciiEncoding.ESCAPE));
-    assertTrue(zsciiDef.isZsciiCharacter(ZsciiEncoding.DELETE));
+    assertTrue(encoding.isZsciiCharacter(ZsciiEncoding.NULL));
+    assertTrue(encoding.isZsciiCharacter(ZsciiEncoding.NEWLINE));
+    assertTrue(encoding.isZsciiCharacter(ZsciiEncoding.ESCAPE));
+    assertTrue(encoding.isZsciiCharacter(ZsciiEncoding.DELETE));
   }
   
   public void testIsConvertableToZscii() {
     
-    assertTrue(zsciiDef.isConvertableToZscii('A'));
-    assertTrue(zsciiDef.isConvertableToZscii('M'));
-    assertTrue(zsciiDef.isConvertableToZscii('Z'));
-    assertTrue(zsciiDef.isConvertableToZscii('a'));
-    assertTrue(zsciiDef.isConvertableToZscii('m'));
-    assertTrue(zsciiDef.isConvertableToZscii('z'));
+    assertTrue(encoding.isConvertableToZscii('A'));
+    assertTrue(encoding.isConvertableToZscii('M'));
+    assertTrue(encoding.isConvertableToZscii('Z'));
+    assertTrue(encoding.isConvertableToZscii('a'));
+    assertTrue(encoding.isConvertableToZscii('m'));
+    assertTrue(encoding.isConvertableToZscii('z'));
     
-    assertTrue(zsciiDef.isConvertableToZscii('\n'));
-    assertFalse(zsciiDef.isConvertableToZscii('\07'));
+    assertTrue(encoding.isConvertableToZscii('\n'));
+    assertFalse(encoding.isConvertableToZscii('\07'));
   }
   
   public void testGetUnicode() {
     
-    assertEquals('A', zsciiDef.getUnicodeChar((short) 'A'));
-    assertEquals('M', zsciiDef.getUnicodeChar((short) 'M'));
-    assertEquals('Z', zsciiDef.getUnicodeChar((short) 'Z'));
-    assertEquals('a', zsciiDef.getUnicodeChar((short) 'a'));
-    assertEquals('m', zsciiDef.getUnicodeChar((short) 'm'));
-    assertEquals('z', zsciiDef.getUnicodeChar((short) 'z'));
-    assertEquals('\n', zsciiDef.getUnicodeChar(ZsciiEncoding.NEWLINE));
-    assertEquals('\0', zsciiDef.getUnicodeChar(ZsciiEncoding.NULL));
-    assertEquals('?', zsciiDef.getUnicodeChar(ZsciiEncoding.DELETE));
+    assertEquals('A', encoding.getUnicodeChar((short) 'A'));
+    assertEquals('M', encoding.getUnicodeChar((short) 'M'));
+    assertEquals('Z', encoding.getUnicodeChar((short) 'Z'));
+    assertEquals('a', encoding.getUnicodeChar((short) 'a'));
+    assertEquals('m', encoding.getUnicodeChar((short) 'm'));
+    assertEquals('z', encoding.getUnicodeChar((short) 'z'));
+    assertEquals('\n', encoding.getUnicodeChar(ZsciiEncoding.NEWLINE));
+    assertEquals('\0', encoding.getUnicodeChar(ZsciiEncoding.NULL));
+    assertEquals('?', encoding.getUnicodeChar(ZsciiEncoding.DELETE));
   }
   
   public void testGetZChar() {
     
-    assertEquals('A', zsciiDef.getZsciiChar('A'));
-    assertEquals('M', zsciiDef.getZsciiChar('M'));
-    assertEquals('Z', zsciiDef.getZsciiChar('Z'));
+    assertEquals('A', encoding.getZsciiChar('A'));
+    assertEquals('M', encoding.getZsciiChar('M'));
+    assertEquals('Z', encoding.getZsciiChar('Z'));
     
-    assertEquals('a', zsciiDef.getZsciiChar('a'));
-    assertEquals('m', zsciiDef.getZsciiChar('m'));
-    assertEquals('z', zsciiDef.getZsciiChar('z'));    
-    assertEquals(0, zsciiDef.getZsciiChar('\07'));    
+    assertEquals('a', encoding.getZsciiChar('a'));
+    assertEquals('m', encoding.getZsciiChar('m'));
+    assertEquals('z', encoding.getZsciiChar('z'));    
+    assertEquals(0, encoding.getZsciiChar('\07'));    
   }
   
   public void testIsCursorKey() {
@@ -105,5 +105,11 @@ public class ZsciiEncodingTest extends TestCase {
   public void testStandardTable() {
     
     assertEquals(69, DefaultAccentTable.STANDARD_TRANSLATION_TABLE.length);
+  }
+  
+  public void testToLowerCase() {
+    
+    assertEquals('a', encoding.toLower((short) 'A'));
+    assertEquals(155, encoding.toLower((short) 158));
   }
 }

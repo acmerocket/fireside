@@ -243,11 +243,22 @@ public class ZsciiEncoding {
            || (zsciiChar >= 252 && zsciiChar <= 254);
   }
   
-  public static short toLower(short zsciiChar) {
+  /**
+   * Converts the character to lower case.
+   * 
+   * @param zsciiChar the ZSCII character to convert
+   * @return the lower case character
+   */
+  public short toLower(short zsciiChar) {
   
     if (isAscii(zsciiChar)) {
       
       return (short) Character.toLowerCase(zsciiChar);
+    }
+    if (isAccent(zsciiChar)) {
+      
+      return (short) (accentTable.getIndexOfLowerCase(zsciiChar - ACCENT_START)
+                      + ACCENT_START);
     }
     return zsciiChar;
   }

@@ -2,6 +2,7 @@ package org.zmpp.vm;
 
 import org.zmpp.base.MemoryReadAccess;
 import org.zmpp.encoding.ZCharDecoder;
+import org.zmpp.encoding.ZsciiString;
 
 public abstract class AbstractDictionary implements Dictionary {
 
@@ -100,7 +101,7 @@ public abstract class AbstractDictionary implements Dictionary {
     return sizes;
   }
   
-  protected String truncateToken(String token) {
+  protected ZsciiString truncateToken(ZsciiString token) {
     
     // Unfortunately it seems that the maximum size of an entry is not equal 
     // to the size declared in the dictionary header, therefore we take
@@ -129,8 +130,8 @@ public abstract class AbstractDictionary implements Dictionary {
     while (true) {
       
       entryAddress = getEntryAddress(i);
-      String str = getDecoder().decode2Unicode(getMemoryAccess(),
-          entryAddress, sizes.getNumEntryBytes());
+      String str = getDecoder().decode2Zscii(getMemoryAccess(),
+          entryAddress, sizes.getNumEntryBytes()).toString();
       buffer.append(String.format("[%4d] '%-9s' ", (i + 1), str));
       i++;
       if ((i % 4) == 0) buffer.append("\n");

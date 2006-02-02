@@ -27,6 +27,7 @@ import java.util.Map;
 
 import org.zmpp.base.MemoryReadAccess;
 import org.zmpp.encoding.ZCharDecoder;
+import org.zmpp.encoding.ZsciiString;
 
 /**
  * This class implements a view on the dictionary within a memory map.
@@ -40,7 +41,7 @@ public class DefaultDictionary extends AbstractDictionary {
   /**
    * The lookup map.
    */
-  private Map<String, Integer> lookupMap;
+  private Map<ZsciiString, Integer> lookupMap;
   
   /**
    * The maximum entry size.
@@ -65,9 +66,9 @@ public class DefaultDictionary extends AbstractDictionary {
   /**
    * {@inheritDoc}
    */
-  public int lookup(String token) {
+  public int lookup(ZsciiString token) {
     
-    String lookupToken = truncateToken(token);
+    ZsciiString lookupToken = truncateToken(token);
         
     if (lookupMap.containsKey(lookupToken)) {
       
@@ -97,15 +98,15 @@ public class DefaultDictionary extends AbstractDictionary {
    */
   private void createLookupMap() {
     
-    lookupMap = new HashMap<String, Integer>();
+    lookupMap = new HashMap<ZsciiString, Integer>();
     int entryAddress;
     
     for (int i = 0, n = getNumberOfEntries(); i < n; i++) {
       
       entryAddress = getEntryAddress(i);      
-      String str = getDecoder().decode2Unicode(getMemoryAccess(),
-                                               entryAddress,
-                                               getSizes().getNumEntryBytes());
+      ZsciiString str = getDecoder().decode2Zscii(getMemoryAccess(),
+                                                  entryAddress,
+                                                  getSizes().getNumEntryBytes());
       maxEntrySize = Math.max(str.length(), maxEntrySize);
       lookupMap.put(str, entryAddress);
     }

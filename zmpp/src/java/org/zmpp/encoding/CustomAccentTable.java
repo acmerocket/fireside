@@ -81,4 +81,20 @@ public class CustomAccentTable implements AccentTable {
     }
     return result;
   }
+    
+  /**
+   * {@inheritDoc}
+   */
+  public int getIndexOfLowerCase(int index) {
+
+    char c = (char) getAccent(index);
+    char lower = Character.toLowerCase(c);
+    int length = getLength();
+    
+    for (int i = 0; i < length; i++) {
+      
+      if (getAccent(i) == lower) return i;
+    }
+    return index;
+  }
 }

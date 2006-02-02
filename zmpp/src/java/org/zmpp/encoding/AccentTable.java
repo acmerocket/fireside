@@ -45,4 +45,13 @@ public interface AccentTable {
    * @return the accent
    */
   short getAccent(int index);
+  
+  /**
+   * Converts the accent at the specified index to lower case and returns
+   * the index of that character.
+   * 
+   * @param index the character
+   * @return the index of the corresponding lower case
+   */
+  int getIndexOfLowerCase(int index);
 }

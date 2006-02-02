@@ -66,8 +66,8 @@ public class PrintLiteralInstruction extends AbstractInstruction {
   protected String getOperandString() {
 
     String str =
-      getMachine().getServices().getZCharDecoder().decode2Unicode(memaccess,
-        instructionAddress + 1);
+      getMachine().getServices().getZCharDecoder().decode2Zscii(memaccess,
+        instructionAddress + 1, 0).toString();
     return "\"" + str + "\"";
   }
   

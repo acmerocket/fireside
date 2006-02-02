@@ -39,6 +39,7 @@ import org.zmpp.encoding.DefaultZCharTranslator;
 import org.zmpp.encoding.ZCharDecoder;
 import org.zmpp.encoding.ZCharTranslator;
 import org.zmpp.encoding.ZsciiEncoding;
+import org.zmpp.encoding.ZsciiString;
 import org.zmpp.encoding.ZCharDecoder.AbbreviationsTable;
 import org.zmpp.vm.Abbreviations;
 import org.zmpp.vm.DefaultStoryFileHeader;
@@ -70,6 +71,7 @@ public class ZCharDecoderTest extends MockObjectTestCase {
     memaccess = (MemoryAccess) mockMemAccess.proxy();
     
     ZsciiEncoding encoding = new ZsciiEncoding(new DefaultAccentTable());
+    ZsciiString.initialize(encoding);
     AlphabetTable alphabetTable = new DefaultAlphabetTable();
     ZCharTranslator translator = new DefaultZCharTranslator(alphabetTable);
     decoder = new DefaultZCharDecoder(encoding, translator, abbrev);
@@ -86,8 +88,8 @@ public class ZCharDecoderTest extends MockObjectTestCase {
     byte[] Hello = { 0x11, (byte) 0xaa, (byte) 0xc6, (byte) 0x34 };
     MemoryReadAccess memaccess1 = new DefaultMemoryAccess(hello);     
     MemoryReadAccess memaccess2 = new DefaultMemoryAccess(Hello);     
-    assertEquals("hello", decoder.decode2Unicode(memaccess1, 0));    
-    assertEquals("Hello", decoder.decode2Unicode(memaccess2, 0));    
+    assertEquals("hello", decoder.decode2Zscii(memaccess1, 0, 0).toString());    
+    assertEquals("Hello", decoder.decode2Zscii(memaccess2, 0, 0).toString());    
   }
   
   // *********************************************************************
@@ -112,8 +114,8 @@ public class ZCharDecoderTest extends MockObjectTestCase {
     ZCharTranslator translator = new DefaultZCharTranslator(alphabetTable);
     
     ZCharDecoder decoder = new DefaultZCharDecoder(encoding, translator, abbr);
-    assertEquals("The Great Underground Empire", decoder.decode2Unicode(memaccess, 0xc120));
-    assertEquals("[I don't understand that sentence.]", decoder.decode2Unicode(memaccess, 0x3e6d));
+    assertEquals("The Great Underground Empire", decoder.decode2Zscii(memaccess, 0xc120, 0).toString());
+    assertEquals("[I don't understand that sentence.]", decoder.decode2Zscii(memaccess, 0x3e6d, 0).toString());
   }
 
   /**
@@ -171,7 +173,7 @@ public class ZCharDecoderTest extends MockObjectTestCase {
     ZCharTranslator translator = new DefaultZCharTranslator(alphabetTable);
     
     ZCharDecoder decoder = new DefaultZCharDecoder(encoding, translator, null);
-    String decoded = decoder.decode2Unicode(memaccess, 0);
+    String decoded = decoder.decode2Zscii(memaccess, 0, 0).toString();
     assertEquals(originalString, decoded);
   }
   
@@ -188,7 +190,7 @@ public class ZCharDecoderTest extends MockObjectTestCase {
     };
     mockAbbrev.expects(once()).method("getWordAddress").with(eq(2)).will(returnValue(10));
     MemoryReadAccess memaccess = new DefaultMemoryAccess(helloAbbrev);
-    assertEquals("helloHello", decoder.decode2Unicode(memaccess, 0));    
+    assertEquals("helloHello", decoder.decode2Zscii(memaccess, 0, 0).toString());    
   }
   
   
@@ -237,10 +239,10 @@ public class ZCharDecoderTest extends MockObjectTestCase {
     int length = 4;
     
     // With length = 0
-    assertEquals("helloalo", decoder.decode2Unicode(memaccess, 0, 0));
+    assertEquals("helloalo", decoder.decode2Zscii(memaccess, 0, 0).toString());
     
     // With length = 4
-    assertEquals("helloa", decoder.decode2Unicode(memaccess, 0, length));    
+    assertEquals("helloa", decoder.decode2Zscii(memaccess, 0, length).toString());    
   }
 
   public void testTruncateShiftAtEnd() {
@@ -249,8 +251,7 @@ public class ZCharDecoderTest extends MockObjectTestCase {
     MemoryReadAccess memaccess = new DefaultMemoryAccess(data);
     int length = 4;
     
-    decoder.decode2Unicode(memaccess, 0, length);
-    assertEquals("hEli", decoder.decode2Unicode(memaccess, 0, length));    
+    assertEquals("hEli", decoder.decode2Zscii(memaccess, 0, length).toString());    
   }
   
   /**
@@ -263,8 +264,7 @@ public class ZCharDecoderTest extends MockObjectTestCase {
     MemoryReadAccess memaccess = new DefaultMemoryAccess(data);
     int length = 4;
     
-    decoder.decode2Unicode(memaccess, 0, length);
-    assertEquals("hal", decoder.decode2Unicode(memaccess, 0, length));    
+    assertEquals("hal", decoder.decode2Zscii(memaccess, 0, length).toString());    
   }
 
   /**
@@ -277,7 +277,6 @@ public class ZCharDecoderTest extends MockObjectTestCase {
     MemoryReadAccess memaccess = new DefaultMemoryAccess(data);
     int length = 4;
     
-    decoder.decode2Unicode(memaccess, 0, length);
-    assertEquals("hall", decoder.decode2Unicode(memaccess, 0, length));    
+    assertEquals("hall", decoder.decode2Zscii(memaccess, 0, length).toString());    
   }
 }

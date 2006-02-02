@@ -39,6 +39,9 @@ public class ZsciiString {
    */
   private static ZsciiEncoding encoding;
 
+  /**
+   * The string data.
+   */
   private short[] data;
   
   /**
@@ -62,6 +65,17 @@ public class ZsciiString {
   }
 
   /**
+   * Returns the ZSCII character at the specified position.
+   * 
+   * @param pos the position
+   * @return the character
+   */
+  public short charAt(int pos) {
+    
+    return data[pos];
+  }
+  
+  /**
    * Returns the length of this string.
    * 
    * @return the length
@@ -70,6 +84,60 @@ public class ZsciiString {
     
     return data.length;
   }
+  
+  /**
+   * Returns the index of the first occurrence of the specified sub string.
+   *  
+   * @param str the string
+   * @param startIndex the start index
+   * @return the first index
+   */
+  public int indexOf(ZsciiString str, int startIndex) {
+
+    int current = startIndex;
+    int length = length(); 
+    int n = str.length();
+    
+    while (current < length) {
+      
+      if (charAt(current) == str.charAt(0)) {
+        
+        // Compare all characters of str from the index on
+        int i = 1;
+        for (; i < n; i++) {
+
+          if (charAt(current + i) != str.charAt(i)) {
+            break;
+          }
+        }
+        if (i == n) return current;
+      }
+      current++;
+    }
+    return -1;
+  }
+  
+  /**
+   * Returns a new string that is a substring of this string. The substring
+   * begins at the specified startindex and extends to the character at
+   * index endindex - 1. Thus the length of the substring is
+   * endindex-startindex.
+   * 
+   * @param startindex start index
+   * @param endindex end index
+   * @return the sub string
+   */
+  public ZsciiString substring(int startindex, int endindex) {
+
+    int n = endindex - startindex;
+    short[] dat = new short[n];
+    for (int i = 0; i < n; i++) {
+      
+      dat[i] = charAt(startindex + i);
+    }
+    return new ZsciiString(dat);
+  }
+  
   
   /**
    * {@inheritDoc}

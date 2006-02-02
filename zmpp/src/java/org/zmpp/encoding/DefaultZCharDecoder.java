@@ -78,18 +78,10 @@ public final class DefaultZCharDecoder implements ZCharDecoder {
   /**
    * {@inheritDoc}
    */
-  public String decode2Unicode(MemoryReadAccess memaccess, int address) {
-    
-    return decode2Unicode(memaccess, address, 0);
-  }
-  
-  /**
-   * {@inheritDoc}
-   */
-  public String decode2Unicode(MemoryReadAccess memaccess, int address,
-                               int length) {
-    
-    StringBuilder builder = new StringBuilder();
+  public ZsciiString decode2Zscii(MemoryReadAccess memaccess, int address,
+                                  int length) {
+
+    ZsciiStringBuilder builder = new ZsciiStringBuilder();
     translator.reset();    
     
     short[] zbytes = extractZbytes(memaccess, address, length);
@@ -118,10 +110,10 @@ public final class DefaultZCharDecoder implements ZCharDecoder {
         i++;
       }
     }
-    return builder.toString();
+    return builder.toZsciiString();
   }
-   
-  private int handleAbbreviation(StringBuilder builder,
+  
+  private int handleAbbreviation(ZsciiStringBuilder builder,
       MemoryReadAccess memaccess, short[] data, int pos) {
     
     short zchar = data[pos];
@@ -150,8 +142,8 @@ public final class DefaultZCharDecoder implements ZCharDecoder {
             abbreviationDecoder = new DefaultZCharDecoder(encoding,
                   (ZCharTranslator) translator.clone(), null);
           }
-          String abbrev = abbreviationDecoder.decode2Unicode(memaccess,
-              entryAddress);
+          ZsciiString abbrev = abbreviationDecoder.decode2Zscii(memaccess,
+              entryAddress, 0);
           builder.append(abbrev);
         }
       }
@@ -160,7 +152,8 @@ public final class DefaultZCharDecoder implements ZCharDecoder {
     return pos;
   }
   
-  private int handleEscapeA2(StringBuilder builder, short[] data, int pos) {
+  private int handleEscapeA2(ZsciiStringBuilder builder, short[] data,
+      int pos) {
     
     if (translator.willEscapeA2(data[pos])) {
 
@@ -192,12 +185,18 @@ public final class DefaultZCharDecoder implements ZCharDecoder {
     }  
   }
   
-  private void decodeZchar(StringBuilder builder, short zchar) {
+  /**
+   * Decodes an encoded character and adds it to the specified builder object.
+   * 
+   * @param builder a ZsciiStringBuilder object
+   * @param zchar the encoded character to decode and add
+   */
+  private void decodeZchar(ZsciiStringBuilder builder, short zchar) {
           
     short c = decodeZChar(zchar);
     if (c != 0) {
       
-      builder.append(encoding.getUnicodeChar(c));
+      builder.append(c);
     }  
   }
   
@@ -291,10 +290,9 @@ public final class DefaultZCharDecoder implements ZCharDecoder {
    * @param top the byte holding the top 5 bit of the zchar
    * @param bottom the byte holding the bottom 5 bit of the zchar
    */  
-  private void joinToZsciiChar(StringBuilder builder,
+  private void joinToZsciiChar(ZsciiStringBuilder builder,
                                short top, short bottom) {
     
-    short zchar = (short) (top << 5 | bottom);
-    builder.append(encoding.getUnicodeChar(zchar));
+    builder.append((short) (top << 5 | bottom));
   }  
 }

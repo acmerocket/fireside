@@ -50,17 +50,7 @@ public interface ZCharDecoder {
   }
   
   /**
-   * Performs a ZSCII to Unicode conversion at the specified position of
-   * the given memory object.
-   * 
-   * @param memaccess a MemoryReadAccess object
-   * @param address the address of a ZSCII string
-   * @return a converted Unicode string 
-   */
-  String decode2Unicode(MemoryReadAccess memaccess, int address);
-
-  /**
-   * Performs a ZSCII to Unicode conversion at the specified position of
+   * Performs a ZSCII decoding at the specified position of
    * the given memory object, this method is exclusively designed to
    * deal with the problems of dictionary entries. These can be cropped,
    * leaving the string in a state, that can not be decoded properly
@@ -72,7 +62,7 @@ public interface ZCharDecoder {
    * @param length the maximum length in bytes
    * @return the decoded string
    */
-  String decode2Unicode(MemoryReadAccess memaccess, int address, int length);
+  ZsciiString decode2Zscii(MemoryReadAccess memaccess, int address, int length);
   
   /**
    * Decodes the given byte value to the specified buffer using the working

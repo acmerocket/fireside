@@ -57,8 +57,8 @@ public class AbbreviationsTest extends MemoryMapSetup {
     // Test of the abbreviations in the minizorkmap
     for (int i = 0; i < testdata.length; i++) {
       
-      assertEquals(testdata[i], converter.decode2Unicode(minizorkmap,
-         abbreviations.getWordAddress(i)));
+      assertEquals(testdata[i], converter.decode2Zscii(minizorkmap,
+         abbreviations.getWordAddress(i), 0).toString());
     }
   }  
 }

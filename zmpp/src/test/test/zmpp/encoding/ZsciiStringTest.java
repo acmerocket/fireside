@@ -100,4 +100,45 @@ public class ZsciiStringTest extends TestCase {
     assertEquals(strHi1.hashCode(), strHi3.hashCode());
     assertNotSame(strHi1.hashCode(), strAccented.hashCode());
   }
+  
+  public void testCharAt() {
+    
+    short[] chars1 = { (short) 'H', (short) 'i' };
+    ZsciiString strHi1 = new ZsciiString(chars1);
+    assertEquals((short) 'H', strHi1.charAt(0));
+    assertEquals((short) 'i', strHi1.charAt(1));
+  }
+  
+  public void testIndexOf() {
+    
+    short[] chars = { 'H', 'e', 'l', 'l', 'o', ' ', 'W', 'o', 'r', 'l', 'd' };
+    short[] sub1 = { 'H' };
+    short[] sub2 = { 'l' };
+    short[] sub3 = { 'l', 'o', ' ' };
+    short[] no = { 'n', 'o' };
+    ZsciiString hello = new ZsciiString(chars);
+    ZsciiString substr1 = new ZsciiString(sub1);
+    ZsciiString substr2 = new ZsciiString(sub2);
+    ZsciiString substr3 = new ZsciiString(sub3);
+    ZsciiString nonexistent = new ZsciiString(no);
+    
+    assertEquals(0, hello.indexOf(substr1, 0));
+    assertEquals(2, hello.indexOf(substr2, 0));
+    assertEquals(3, hello.indexOf(substr2, 3));
+    assertEquals(3, hello.indexOf(substr3, 0));
+    assertEquals(-1, hello.indexOf(nonexistent, 0));
+    assertEquals(-1, hello.indexOf(substr1, 5));
+  }
+  
+  public void testSubstring() {
+    
+    short[] chars = { 'H', 'e', 'l', 'l', 'o', ' ', 'W', 'o', 'r', 'l', 'd' };
+    ZsciiString hello = new ZsciiString(chars);
+    ZsciiString sub0 = hello.substring(0, 1);
+    ZsciiString sub1 = hello.substring(0, 2);
+    ZsciiString sub2 = hello.substring(6, hello.length());
+    assertEquals("H", sub0.toString());    
+    assertEquals("He", sub1.toString());    
+    assertEquals("World", sub2.toString());    
+  }
 }
