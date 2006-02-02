@@ -97,7 +97,6 @@
   <target name="dist-src" description="generate src distribution" depends="dist">
     <mkdir dir="${dist}/doc"/>
     <mkdir dir="${dist}/src"/>
-    <mkdir dir="${dist}/src"/>
     <copy todir="${dist}/src">
       <fileset dir="src/java">
         <exclude name="**/CVS/*" />

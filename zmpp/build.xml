@@ -25,8 +25,6 @@
   <taskdef resource="checkstyletask.properties" classpath="checkstyle.path"/>
   -->
   <target name="init">
-    <!-- Create the time stamp -->
-    <tstamp/>
     <!-- Create the build directory structure used by compile -->
     <mkdir dir="${build.prj}"/>
     <mkdir dir="${build.tests}"/>
@@ -34,12 +32,14 @@
 
   <target name="compile" depends="init">
     <javac debug="on" srcdir="${src.prj}" destdir="${build.prj}"/>
+    <!--
     <javac debug="on" srcdir="${src.tests}" destdir="${build.tests}">
       <classpath>
   			<pathelement location="${build.prj}"/>
   	  </classpath>
       <classpath refid="junit.path" />
     </javac>
+    -->
   </target>
   
   <target name="instrument" depends="compile">
@@ -88,7 +88,7 @@
         description="generate the distribution" >
     <mkdir dir="${dist}"/>
     <mkdir dir="${dist}/lib"/>
-    <jar jarfile="${dist}/lib/zmpp-${DSTAMP}.jar" basedir="${build}"/>
+    <jar jarfile="${dist}/lib/zmpp-${app.version}.jar" basedir="${build.prj}"/>
   </target>
 
   <target name="clean">

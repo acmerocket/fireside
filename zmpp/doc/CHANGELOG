@@ -1,7 +1,14 @@
 Changelog
 
+Version 0.83
+------------
+
+- core is now based on ZSCII instead of Unicode
+- fixed and tested to be compliant with Swedish.h
+- "Freefall" bug fixed by changing the behaviour of timed input
+
 Version 0.82
------------
+------------
 
 - Standard revision number 1.0 is now set to the header
 - fixed the "missing newline" bug (was a misunderstanding of print_ret)

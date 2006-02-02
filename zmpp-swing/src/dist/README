@@ -1,5 +1,5 @@
 This is the source code distribution of the Z-machine preservation project.
-The current version is 0.82.
+The current version is 0.83.
 
 Building:
 ---------
@@ -7,8 +7,3 @@ Building:
 To build the executable from the sources, simply type
 
 ant
-
-Known issues:
--------------
-
-- Swedish accents do not work yet
