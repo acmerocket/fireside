@@ -63,6 +63,16 @@ public class ZsciiString {
     
     this.data = data;
   }
+  
+  /**
+   * Creates a ZSCII string from a string.
+   * 
+   * @param str the string
+   */
+  public ZsciiString(String str) {
+    
+    this.data = encoding.convertToZscii(str);
+  }
 
   /**
    * Returns the ZSCII character at the specified position.
