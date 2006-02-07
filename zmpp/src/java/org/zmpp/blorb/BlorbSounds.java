@@ -32,7 +32,6 @@ import javax.sound.sampled.AudioSystem;
 import javax.sound.sampled.Clip;
 
 import org.zmpp.iff.Chunk;
-import org.zmpp.iff.DefaultFormChunk;
 import org.zmpp.iff.FormChunk;
 
 /**
@@ -88,14 +87,15 @@ public class BlorbSounds extends ResourceCollection<BlorbSound> {
    */
   protected boolean storeResource(Chunk chunk, int resnum) {
 
-    FormChunk soundchunk = new DefaultFormChunk(chunk.getMemoryAccess());
-    InputStream aiffStream = new  EmbeddedChunkInputStream(soundchunk, 0);
+    //FormChunk soundchunk = new DefaultFormChunk(chunk.getMemoryAccess());
+    InputStream aiffStream =
+      new  MemoryAccessInputStream(chunk.getMemoryAccess(), 0);
     try {
 
       AudioFileFormat aiffFormat = AudioSystem.getAudioFileFormat(aiffStream);
       AudioInputStream stream = new AudioInputStream(aiffStream,
                                                      aiffFormat.getFormat(),
-                                                     (long) soundchunk.getSize());
+                                                     (long) chunk.getSize());
       Clip clip = AudioSystem.getClip();
       clip.open(stream);      
       sounds.put(resnum, new AiffSound(clip));

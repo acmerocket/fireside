@@ -86,8 +86,8 @@ public class BlorbImages extends ResourceCollection<BufferedImage> {
    */
   protected boolean storeResource(Chunk chunk, int resnum) {
 
-    InputStream is =
-      new EmbeddedChunkInputStream(chunk, Chunk.CHUNK_HEADER_LENGTH);
+    InputStream is = new MemoryAccessInputStream(chunk.getMemoryAccess(),
+                                                  Chunk.CHUNK_HEADER_LENGTH);
     try {
 
       BufferedImage img = ImageIO.read(is);
