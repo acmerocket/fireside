@@ -53,7 +53,7 @@ public class GameThread extends Thread {
         
         public void run() {
           
-          viewport.requestFocus();
+          viewport.requestFocusInWindow();
         }
       });
     } catch (Exception ex) { }

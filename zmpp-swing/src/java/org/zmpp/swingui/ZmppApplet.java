@@ -23,7 +23,6 @@
 package org.zmpp.swingui;
 
 import java.awt.BorderLayout;
-import java.awt.Color;
 import java.awt.Dimension;
 import java.awt.FlowLayout;
 import java.awt.GridLayout;
@@ -87,8 +86,6 @@ implements InputStream, StatusLine, SaveGameDataStore, IOSystem {
     viewport = new TextViewport(machine, lineEditor);
     viewport.setPreferredSize(new Dimension(640, 480));
     viewport.setMinimumSize(new Dimension(400, 300));
-    viewport.setBackground(Color.WHITE);
-    viewport.setForeground(Color.BLACK);
     
     if (machine.getServices().getStoryFileHeader().getVersion() <= 3) {
       

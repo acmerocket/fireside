@@ -247,7 +247,7 @@ public abstract class SubWindow {
   
   protected void printLine(String line, Color textbackColor,
                            Color textColor) {
-    
+
     canvas.fillRect(textbackColor, getCurrentX(),
                     getCurrentY() - canvas.getFontHeight(font)
                     + canvas.getFontDescent(font),
@@ -311,8 +311,15 @@ public abstract class SubWindow {
   private void printLines(String lines[]) {
     
     Color textColor = getTextColor();
-    Color textbackColor = getTextBackground();
+    Color textbackColor = getTextBackground();    
     
+    // This is a feature that is not specified, but it is supported by
+    // DOS Frotz
+    if ((getFont().getStyle() & Font.BOLD) > 0 && !isReverseVideo) {
+
+      textColor = textColor.brighter();
+    }
+        
     for (int i = 0; i < lines.length; i++) {
 
       String line = lines[i];

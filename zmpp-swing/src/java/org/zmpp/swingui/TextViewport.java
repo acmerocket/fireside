@@ -259,8 +259,6 @@ ScreenModel {
       // Default colors
       defaultBackground = Color.WHITE;
       defaultForeground = Color.BLACK;
-      setBackground(Color.WHITE);
-      setForeground(Color.BLACK);
       
       // Create the two sub windows
       windows[WINDOW_TOP] = new TopWindow(this, editor, canvas);
@@ -392,6 +390,13 @@ ScreenModel {
     repaintInUiThread();
   }
   
+  private static Color GREEN = new Color(0, 190, 0);
+  private static Color RED = new Color(190, 0, 0);
+  private static Color YELLOW = new Color(190, 190, 0);
+  private static Color BLUE = new Color(0, 0, 190);
+  private static Color MAGENTA = new Color(190, 0, 190);
+  private static Color CYAN = new Color(0, 190, 190);
+  
   private Color translateColornum(int colornum, boolean foreground) {
     
     switch (colornum) {
@@ -401,17 +406,17 @@ ScreenModel {
     case COLOR_BLACK:
       return Color.BLACK;
     case COLOR_RED:
-      return Color.RED;
+      return RED;
     case COLOR_GREEN:
-      return Color.GREEN;
+      return GREEN;
     case COLOR_YELLOW:
-      return Color.YELLOW;
+      return YELLOW;
     case COLOR_BLUE:
-      return Color.BLUE;
+      return BLUE;
     case COLOR_MAGENTA:
-      return Color.MAGENTA;
+      return MAGENTA;
     case COLOR_CYAN:
-      return Color.CYAN;
+      return CYAN;
     case COLOR_WHITE:
       return Color.WHITE;
     case COLOR_MS_DOS_DARKISH_GREY:
@@ -527,27 +532,12 @@ ScreenModel {
       fileheader.setDefaultForegroundColor(COLOR_BLACK);
       fileheader.setFontWidth(1);
       fileheader.setFontHeight(1);
-      
-      if (isBeyondZork()) {
-        
-        // Some BZ-specific settings
-        fileheader.setInterpreterNumber(3); // set to "Macintosh"
-        standardFont = fixedFont;
-      }
+    
+      overrideDefaults(fileheader);
     }
     determineStandardFont();
   }
 
-  private boolean isBeyondZork() {
-    
-    StoryFileHeader fileheader = machine.getServices().getStoryFileHeader();
-    String serial = fileheader.getSerialNumber();
-    int release = fileheader.getRelease();
-    return (release == 47 && serial.equals("870915"))
-           || (release == 49 && serial.equals("870917"))
-           || (release == 51 && serial.equals("870923"))
-           || (release == 57 && serial.equals("871221"));    
-  }
   
   private void repaintInUiThread() {
     
@@ -569,5 +559,43 @@ ScreenModel {
       
       ex.printStackTrace();
     }
+  }
+  
+  private void overrideDefaults(StoryFileHeader fileheader) {
+    
+    if (isBeyondZork(fileheader)) {
+      
+      // Some BZ-specific settings
+      fileheader.setInterpreterNumber(3); // set to "Macintosh"
+      standardFont = fixedFont;
+      
+    } else if (isVaricella(fileheader)) {
+      
+      fileheader.setDefaultBackgroundColor(COLOR_BLACK);
+      fileheader.setDefaultForegroundColor(COLOR_WHITE);      
+      defaultBackground = Color.BLACK;
+      defaultForeground = Color.WHITE;
+      windows[WINDOW_BOTTOM].setBackground(defaultBackground);
+      windows[WINDOW_BOTTOM].setForeground(defaultForeground);
+      windows[WINDOW_BOTTOM].clear();
+    }
+  }
+  
+  private boolean isVaricella(StoryFileHeader fileheader) {
+    
+    String serial = fileheader.getSerialNumber();
+    int release = fileheader.getRelease();
+    String version = release + "." + serial;
+    return version.equals("1.990831");
+  }
+  
+  private boolean isBeyondZork(StoryFileHeader fileheader) {
+    
+    String serial = fileheader.getSerialNumber();
+    int release = fileheader.getRelease();
+    return (release == 47 && serial.equals("870915"))
+           || (release == 49 && serial.equals("870917"))
+           || (release == 51 && serial.equals("870923"))
+           || (release == 57 && serial.equals("871221"));    
   }
 }
