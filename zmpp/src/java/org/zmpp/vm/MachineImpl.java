@@ -33,6 +33,7 @@ import org.zmpp.encoding.ZsciiEncoding;
 import org.zmpp.encoding.ZsciiString;
 import org.zmpp.iff.FormChunk;
 import org.zmpp.iff.WritableFormChunk;
+import org.zmpp.instructions.Interruptable;
 import org.zmpp.io.InputStream;
 import org.zmpp.io.OutputStream;
 import org.zmpp.sound.SoundSystem;
@@ -48,7 +49,7 @@ import org.zmpp.vmutil.UnpredictableRandomGenerator;
  * @author Wei-ju Wu
  * @version 1.0
  */
-public class MachineImpl implements Machine, MachineServices {
+public class MachineImpl implements Machine, MachineServices, Interruptable {
 
   /**
    * The configuration object.
@@ -902,6 +903,15 @@ public class MachineImpl implements Machine, MachineServices {
     
     Instruction instruction = decoder.decodeInstruction(getProgramCounter());
     return instruction;
+  }
+  
+  /**
+   * {@inheritDoc}
+   */
+  public void setInterruptRoutine(int routine) {
+    
+    // TODO
+    System.out.printf("setInterruptRoutine(): %04x\n", routine);
   }
   
   /**
