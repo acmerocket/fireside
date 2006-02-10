@@ -384,9 +384,11 @@ public class VariableInstruction extends AbstractInstruction {
    */
   private void sound_effect() {
     
-    int soundnum = 1;
-    int effect = 0;
-    int volume = 0;
+    // Choose some default values
+    int soundnum = SoundSystem.BLEEP_HIGH;
+    int effect = SoundSystem.EFFECT_START;
+    int volume = SoundSystem.VOLUME_DEFAULT;
+    int repeats = 0;
     int routine = 0;
     
     // Truly variable
@@ -403,17 +405,21 @@ public class VariableInstruction extends AbstractInstruction {
     
     if (getNumOperands() >= 3) {
       
-      volume = getUnsignedValue(2);
+      int volumeRepeats = getUnsignedValue(2);
+      volume = volumeRepeats & 0xff;
+      repeats = (volumeRepeats >>> 8) & 0xff;
+      
+      if (repeats <= 0) repeats = 1;
     }
     
     if (getNumOperands() == 4) {
       
       routine = getUnsignedValue(3);
     }
-    
+    System.out.printf("@sound_effect %d, %d, $%04x, $%04x\n", soundnum, effect, volume, routine);
+        
     SoundSystem soundSystem = getMachine().getServices().getSoundSystem();
-    soundSystem.play(soundnum, effect, volume);
-    // TODO: Callback and routine
+    soundSystem.play(soundnum, effect, volume, repeats, routine);    
     nextInstruction();
   }
   
