@@ -38,7 +38,7 @@ import org.zmpp.iff.FormChunk;
 import org.zmpp.iff.WritableFormChunk;
 import org.zmpp.instructions.DefaultInstructionDecoder;
 import org.zmpp.vm.Machine;
-import org.zmpp.vm.MachineConfig;
+import org.zmpp.vm.GameData;
 import org.zmpp.vm.MachineImpl;
 import org.zmpp.vm.MachineServices;
 import org.zmpp.vm.PortableGameState;
@@ -60,7 +60,7 @@ public class PortableGameStateTest extends MockObjectTestCase {
   private Mock mockServices;
   private Machine machine;
   private MachineServices services;
-  private MachineConfig machineConfig;
+  private GameData machineConfig;
   private StoryFileHeader fileheader;
   private MemoryAccess memaccess;
   
@@ -72,8 +72,8 @@ public class PortableGameStateTest extends MockObjectTestCase {
     fileheader = (StoryFileHeader) mockFileheader.proxy();
     mockMemAccess = mock(MemoryAccess.class);
     memaccess = (MemoryAccess) mockMemAccess.proxy();
-    mockMachineConfig = mock(MachineConfig.class);
-    machineConfig = (MachineConfig) mockMachineConfig.proxy();
+    mockMachineConfig = mock(GameData.class);
+    machineConfig = (GameData) mockMachineConfig.proxy();
     mockServices = mock(MachineServices.class);
     services = (MachineServices) mockServices.proxy();
     

@@ -1,7 +1,7 @@
 /*
  * $Id$
  * 
- * Created on 10/03/2005
+ * Created on 2005/10/03
  * Copyright 2005-2006 by Wei-ju Wu
  *
  * This file is part of The Z-machine Preservation Project (ZMPP).
@@ -36,8 +36,8 @@ import org.zmpp.iff.WritableFormChunk;
 import org.zmpp.instructions.Interruptable;
 import org.zmpp.io.InputStream;
 import org.zmpp.io.OutputStream;
-import org.zmpp.sound.SoundSystem;
-import org.zmpp.sound.SoundSystemImpl;
+import org.zmpp.media.SoundSystem;
+import org.zmpp.media.SoundSystemImpl;
 import org.zmpp.vm.StoryFileHeader.Attribute;
 import org.zmpp.vmutil.PredictableRandomGenerator;
 import org.zmpp.vmutil.RandomGenerator;
@@ -54,7 +54,7 @@ public class MachineImpl implements Machine, MachineServices, Interruptable {
   /**
    * The configuration object.
    */
-  private MachineConfig config;
+  private GameData config;
   
   /**
    * This machine's current program counter.
@@ -147,7 +147,6 @@ public class MachineImpl implements Machine, MachineServices, Interruptable {
   public MachineImpl() {
 
     this.inputFunctions = new InputFunctionsImpl(this);
-    this.soundSystem = new SoundSystemImpl();
   }
   
   /**
@@ -158,10 +157,11 @@ public class MachineImpl implements Machine, MachineServices, Interruptable {
     return this;
   }
   
+  
   /**
    * {@inheritDoc}
    */
-  public void initialize(MachineConfig config, InstructionDecoder decoder) {
+  public void initialize(GameData config, InstructionDecoder decoder) {
   
     this.config = config;
     this.decoder = decoder;
@@ -170,6 +170,15 @@ public class MachineImpl implements Machine, MachineServices, Interruptable {
     this.selectedInputStreamIndex = 0;
     this.random = new UnpredictableRandomGenerator();
     this.running = true;
+    
+    // initialize the media access
+    if (config.getResources() != null) {
+    
+      if (config.getResources().getSounds() != null) {
+        this.soundSystem =
+          new SoundSystemImpl(config.getResources().getSounds());
+      }
+    }
     
     resetState();
   }

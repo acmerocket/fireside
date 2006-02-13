@@ -33,6 +33,8 @@ import javax.sound.sampled.Clip;
 
 import org.zmpp.iff.Chunk;
 import org.zmpp.iff.FormChunk;
+import org.zmpp.media.DefaultSoundEffect;
+import org.zmpp.media.SoundEffect;
 
 /**
  * This class implements the Blorb sound collection.
@@ -40,12 +42,12 @@ import org.zmpp.iff.FormChunk;
  * @author Wei-ju Wu
  * @version 1.0
  */
-public class BlorbSounds extends ResourceCollection<BlorbSound> {
+public class BlorbSounds extends BlorbMediaCollection<SoundEffect> {
 
   /**
    * This map implements the database.
    */
-  private Map<Integer, BlorbSound> sounds;
+  private Map<Integer, SoundEffect> sounds;
   
   /**
    * Constructor.
@@ -62,7 +64,7 @@ public class BlorbSounds extends ResourceCollection<BlorbSound> {
    */
   protected void initDatabase() {
     
-    sounds = new HashMap<Integer, BlorbSound>();
+    sounds = new HashMap<Integer, SoundEffect>();
   }
 
   /**
@@ -77,7 +79,7 @@ public class BlorbSounds extends ResourceCollection<BlorbSound> {
   /**
    * {@inheritDoc}
    */
-  public BlorbSound getResource(int resourcenumber) {
+  public SoundEffect getResource(int resourcenumber) {
 
     return sounds.get(resourcenumber);
   }
@@ -85,9 +87,8 @@ public class BlorbSounds extends ResourceCollection<BlorbSound> {
   /**
    * {@inheritDoc}
    */
-  protected boolean storeResource(Chunk chunk, int resnum) {
+  protected boolean putToDatabase(Chunk chunk, int resnum) {
 
-    //FormChunk soundchunk = new DefaultFormChunk(chunk.getMemoryAccess());
     InputStream aiffStream =
       new  MemoryAccessInputStream(chunk.getMemoryAccess(), 0);
     try {
@@ -98,7 +99,7 @@ public class BlorbSounds extends ResourceCollection<BlorbSound> {
                                                      (long) chunk.getSize());
       Clip clip = AudioSystem.getClip();
       clip.open(stream);      
-      sounds.put(resnum, new AiffSound(clip));
+      sounds.put(resnum, new DefaultSoundEffect(clip));
       return true;
 
     } catch (Exception ex) {

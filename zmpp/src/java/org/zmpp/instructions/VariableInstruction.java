@@ -24,7 +24,7 @@ package org.zmpp.instructions;
 
 import org.zmpp.base.MemoryAccess;
 import org.zmpp.encoding.ZCharEncoder;
-import org.zmpp.sound.SoundSystem;
+import org.zmpp.media.SoundSystem;
 import org.zmpp.vm.Machine;
 import org.zmpp.vm.ScreenModel;
 import org.zmpp.vm.TextCursor;

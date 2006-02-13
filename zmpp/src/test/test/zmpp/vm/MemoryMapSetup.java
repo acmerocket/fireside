@@ -37,9 +37,9 @@ import org.zmpp.encoding.ZCharTranslator;
 import org.zmpp.encoding.ZsciiEncoding;
 import org.zmpp.instructions.DefaultInstructionDecoder;
 import org.zmpp.vm.Abbreviations;
-import org.zmpp.vm.DefaultMachineConfig;
+import org.zmpp.vm.GameDataImpl;
 import org.zmpp.vm.Machine;
-import org.zmpp.vm.MachineConfig;
+import org.zmpp.vm.GameData;
 import org.zmpp.vm.MachineImpl;
 import org.zmpp.vm.StoryFileHeader;
 
@@ -53,7 +53,7 @@ import org.zmpp.vm.StoryFileHeader;
 public abstract class MemoryMapSetup extends MockObjectTestCase {
 
   protected MemoryAccess minizorkmap;
-  protected MachineConfig config;
+  protected GameData config;
   protected ZCharDecoder converter;
   protected StoryFileHeader fileheader;
   protected Abbreviations abbreviations;
@@ -64,7 +64,8 @@ public abstract class MemoryMapSetup extends MockObjectTestCase {
     
     File zork1 = new File("testfiles/minizork.z3");
     fileInput = new FileInputStream(zork1);
-    config = new DefaultMachineConfig(fileInput);
+    byte[] data = FileUtils.readFileBytes(fileInput);
+    config = new GameDataImpl(data, null);
     minizorkmap = config.getMemoryAccess();
     fileheader = config.getStoryFileHeader();
     

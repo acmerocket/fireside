@@ -39,7 +39,7 @@ import org.zmpp.iff.FormChunk;
  * @author Wei-ju Wu
  * @version 1.0
  */
-public class BlorbImages extends ResourceCollection<BufferedImage> {
+public class BlorbImages extends BlorbMediaCollection<BufferedImage> {
 
   /**
    * This map implements the image database.
@@ -80,11 +80,11 @@ public class BlorbImages extends ResourceCollection<BufferedImage> {
 
     return images.get(resourcenumber);
   }
-
+  
   /**
    * {@inheritDoc}
    */
-  protected boolean storeResource(Chunk chunk, int resnum) {
+  protected boolean putToDatabase(Chunk chunk, int resnum) {
 
     InputStream is = new MemoryAccessInputStream(chunk.getMemoryAccess(),
                                                   Chunk.CHUNK_HEADER_LENGTH);

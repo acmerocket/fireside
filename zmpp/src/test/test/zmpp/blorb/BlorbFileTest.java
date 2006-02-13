@@ -11,9 +11,11 @@ import junit.framework.TestCase;
 import org.zmpp.base.DefaultMemoryAccess;
 import org.zmpp.base.MemoryAccess;
 import org.zmpp.base.MemoryReadAccess;
+import org.zmpp.blorb.BlorbResources;
 import org.zmpp.iff.Chunk;
 import org.zmpp.iff.DefaultFormChunk;
 import org.zmpp.iff.FormChunk;
+import org.zmpp.media.SoundEffect;
 
 /**
  * This testing class explores the structure of a BLORB file.
@@ -25,7 +27,8 @@ public class BlorbFileTest extends TestCase {
 
   public void testLurkingHorrorBlorb() throws Exception {
 
-    File file = new File("testfiles/Lurking.blb");
+    //File file = new File("testfiles/Lurking.blb");
+    File file = new File("testfiles/sherlock.blb");
     RandomAccessFile rndfile = null;
     
     try {
@@ -42,6 +45,7 @@ public class BlorbFileTest extends TestCase {
       // Ridx chunk
       Chunk ridxChunk = formchunk.getSubChunk("RIdx".getBytes());
       assertNotNull(ridxChunk);
+      /*
       MemoryReadAccess chunkmem = ridxChunk.getMemoryAccess();
       int offset = 8;
       int numresources = (int) chunkmem.readUnsigned32(offset);
@@ -72,6 +76,11 @@ public class BlorbFileTest extends TestCase {
       int ratebits = (int) sound1mem.readUnsigned32(16);
       float rate = Float.intBitsToFloat(ratebits);
       assertEquals(2.1967278f, rate);
+      */
+      BlorbResources resources = new BlorbResources(formchunk);
+      SoundEffect sound = resources.getSounds().getResource(17);
+      sound.play(1, 255);
+      Thread.sleep(6000);
       
     } finally {
       

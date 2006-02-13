@@ -20,58 +20,46 @@
  * along with ZMPP; if not, write to the Free Software
  * Foundation, Inc., 51 Franklin St, Fifth Floor, Boston, MA  02110-1301  USA
  */
-package org.zmpp.blorb;
+package org.zmpp.media;
 
-import java.awt.image.BufferedImage;
-
-import org.zmpp.iff.FormChunk;
-import org.zmpp.media.MediaCollection;
-import org.zmpp.media.Resources;
-import org.zmpp.media.SoundEffect;
 
 /**
- * This class encapsulates a Blorb file and offers access to the sound
- * and graphics media collections.
+ * This class defines the interface to play a Blorb sound.
  * 
  * @author Wei-ju Wu
  * @version 1.0
  */
-public class BlorbResources implements Resources {
+public interface SoundEffect {
 
   /**
-   * The file's images.
+   * The volume range is between 0 and 255.
    */
-  private MediaCollection<BufferedImage> images;
+  public static final int MAX_VOLUME = 255;
   
   /**
-   * The file's sounds.
-   */
-  private MediaCollection<SoundEffect> sounds;
-  
-  /**
-   * Constructor.
+   * Plays a sound the specified number of times.
    * 
-   * @param formchunk a form chunk in Blorb format
+   * @param number the number of times to play
+   * @param volume the volume at which the sound should be played
    */
-  public BlorbResources(FormChunk formchunk) {
-  
-    images = new BlorbImages(formchunk);
-    sounds = new BlorbSounds(formchunk);
-  }
+  void play(int number, int volume);  
   
   /**
-   * {@inheritDoc}
+   * Stops a sound.
    */
-  public MediaCollection<BufferedImage> getImages() {
-    
-    return images;
-  }
+  void stop();
   
   /**
-   * {@inheritDoc}
+   * Adds a listener to listen for the sound stop event.
+   * 
+   * @param l the listener
    */
-  public MediaCollection<SoundEffect> getSounds() {
-    
-    return sounds;
-  }
+  void addSoundStopListener(SoundStopListener l);
+  
+  /**
+   * Removes a SoundStopListener.
+   * 
+   * @param l the listener
+   */
+  void removeSoundStopListener(SoundStopListener l);
 }

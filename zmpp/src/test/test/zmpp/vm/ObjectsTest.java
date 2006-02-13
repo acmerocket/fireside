@@ -26,8 +26,8 @@ import java.io.File;
 import java.io.FileInputStream;
 
 import org.zmpp.base.MemoryAccess;
-import org.zmpp.vm.DefaultMachineConfig;
-import org.zmpp.vm.MachineConfig;
+import org.zmpp.vm.GameDataImpl;
+import org.zmpp.vm.GameData;
 import org.zmpp.vm.ObjectTree;
 import org.zmpp.vm.Objects;
 import org.zmpp.vm.StoryFileHeader;
@@ -195,7 +195,8 @@ public class ObjectsTest extends MemoryMapSetup {
     
     File curses = new File("testfiles/curses.z5");
     FileInputStream fileInput = new FileInputStream(curses);
-    MachineConfig config = new DefaultMachineConfig(fileInput);
+    byte[] data = FileUtils.readFileBytes(fileInput);
+    GameData config = new GameDataImpl(data, null);
     MemoryAccess cursesmap = config.getMemoryAccess();
     StoryFileHeader fileheader = config.getStoryFileHeader();
     ObjectTree objectTree = new Objects(fileheader.getVersion(), cursesmap,

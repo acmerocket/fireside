@@ -1,7 +1,7 @@
 /*
  * $Id$
  * 
- * Created on 2006/02/06
+ * Created on 2006/02/10
  * Copyright 2005-2006 by Wei-ju Wu
  *
  * This file is part of The Z-machine Preservation Project (ZMPP).
@@ -20,58 +20,34 @@
  * along with ZMPP; if not, write to the Free Software
  * Foundation, Inc., 51 Franklin St, Fifth Floor, Boston, MA  02110-1301  USA
  */
-package org.zmpp.blorb;
+package org.zmpp.media;
 
-import java.awt.image.BufferedImage;
-
-import org.zmpp.iff.FormChunk;
-import org.zmpp.media.MediaCollection;
-import org.zmpp.media.Resources;
-import org.zmpp.media.SoundEffect;
+import org.zmpp.blorb.BlorbSounds;
 
 /**
- * This class encapsulates a Blorb file and offers access to the sound
- * and graphics media collections.
+ * The game "The Lurking Horror" serializes sound effect playing rather
+ * than stopping previous ones.
  * 
  * @author Wei-ju Wu
  * @version 1.0
  */
-public class BlorbResources implements Resources {
+public class LurkingHorrorSoundSystem extends SoundSystemImpl {
 
-  /**
-   * The file's images.
-   */
-  private MediaCollection<BufferedImage> images;
-  
-  /**
-   * The file's sounds.
-   */
-  private MediaCollection<SoundEffect> sounds;
-  
   /**
    * Constructor.
    * 
-   * @param formchunk a form chunk in Blorb format
+   * @param sounds the sound resources
    */
-  public BlorbResources(FormChunk formchunk) {
-  
-    images = new BlorbImages(formchunk);
-    sounds = new BlorbSounds(formchunk);
+  public LurkingHorrorSoundSystem(BlorbSounds sounds) {
+    
+    super(sounds);
   }
   
   /**
    * {@inheritDoc}
    */
-  public MediaCollection<BufferedImage> getImages() {
+  protected void handlePreviousNotFinished() {
     
-    return images;
-  }
-  
-  /**
-   * {@inheritDoc}
-   */
-  public MediaCollection<SoundEffect> getSounds() {
-    
-    return sounds;
+    currentTask.waitUntilDone();
   }
 }
