@@ -1,7 +1,7 @@
 /*
  * $Id$
  * 
- * Created on 01/23/2006
+ * Created on 2006/01/23
  * Copyright 2005-2006 by Wei-ju Wu
  *
  * This file is part of The Z-machine Preservation Project (ZMPP).
@@ -27,6 +27,12 @@ import java.awt.Font;
 import java.awt.Graphics;
 import java.awt.image.BufferedImage;
 
+/**
+ * The implementation of the Canvas interface.
+ * 
+ * @author Wei-ju Wu
+ * @version 1.0
+ */
 public class CanvasImpl implements Canvas {
 
   private BufferedImage image;

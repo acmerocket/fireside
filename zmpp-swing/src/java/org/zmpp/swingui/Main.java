@@ -1,7 +1,7 @@
 /*
  * $Id$
  * 
- * Created on 17.10.2005
+ * Created on 2005/10/17
  * Copyright 2005-2006 by Wei-ju Wu
  *
  * This file is part of The Z-machine Preservation Project (ZMPP).
@@ -23,6 +23,7 @@
 package org.zmpp.swingui;
 
 import java.io.File;
+import java.util.StringTokenizer;
 
 import javax.swing.JFileChooser;
 import javax.swing.JOptionPane;
@@ -30,10 +31,11 @@ import javax.swing.JOptionPane;
 import org.zmpp.instructions.DefaultInstructionDecoder;
 import org.zmpp.io.FileInputStream;
 import org.zmpp.io.TranscriptOutputStream;
-import org.zmpp.vm.DefaultMachineConfig;
+import org.zmpp.media.Resources;
+import org.zmpp.vm.GameData;
+import org.zmpp.vm.GameDataImpl;
 import org.zmpp.vm.InstructionDecoder;
 import org.zmpp.vm.Machine;
-import org.zmpp.vm.MachineConfig;
 import org.zmpp.vm.MachineImpl;
 import org.zmpp.vm.MemoryOutputStream;
 import org.zmpp.vm.StoryFileHeader;
@@ -51,7 +53,7 @@ public class Main {
    * The application name.
    */
   public static final String APPNAME =
-    "Z-Machine Preservation Project Version 0.82";
+    "Z-Machine Preservation Project Version 0.86";
   
   /**
    * @param args
@@ -73,8 +75,8 @@ public class Main {
     if (fileChooser.showOpenDialog(null) == JFileChooser.APPROVE_OPTION) {
       
       File storyfile = fileChooser.getSelectedFile();
-      
-      Machine machine = openStoryFile(storyfile);
+      Resources resources = searchForResources(storyfile);
+      Machine machine = openStoryFile(storyfile, resources);
       ZmppFrame screen = new ZmppFrame(machine);
       
       // Machine initialization
@@ -99,7 +101,6 @@ public class Main {
       machine.setStatusLine(screen);
       machine.setScreen(screen.getScreenModel());
       machine.setSaveGameDataStore(screen);
-      //machine.getStoryFileHeader().setForceFixedFont(true);
           
       screen.startMachine();
       screen.pack();
@@ -107,15 +108,32 @@ public class Main {
     }
   }
   
-  private static Machine openStoryFile(File storyfile) {
+  private static Resources searchForResources(File storyfile) {
+    
+    String directory = storyfile.getParent();
+    StringTokenizer tok = new StringTokenizer(storyfile.getName(), ".");
+    String prefix = tok.nextToken();
+    String blorbpath = directory + System.getProperty("file.separator")
+                       + prefix + ".blb";
+
+    File blorbfile = new File(blorbpath);
+    System.out.printf("does '%s' exist ? -> %b\n", blorbfile.getPath(),
+        blorbfile.exists());
+    if (blorbfile.exists()) return FileUtils.createResources(blorbfile);
+    return null;
+  }
+  
+  private static Machine openStoryFile(File storyfile, Resources resources) {
     
     java.io.InputStream inputstream = null;
     
     try {
       
       inputstream = new java.io.FileInputStream(storyfile);
-      MachineConfig config = new DefaultMachineConfig(inputstream);
-      StoryFileHeader fileheader = config.getStoryFileHeader();
+      byte[] storydata = FileUtils.readFileBytes(inputstream);
+      GameData gamedata = new GameDataImpl(storydata, resources);
+      StoryFileHeader fileheader = gamedata.getStoryFileHeader();
+      
       System.out.println("Story file Version: " + fileheader.getVersion());
     
       if (fileheader.getVersion() < 1 || fileheader.getVersion() == 6
@@ -128,7 +146,7 @@ public class Main {
       }
       Machine machine = new MachineImpl();
       InstructionDecoder decoder = new DefaultInstructionDecoder();
-      machine.initialize(config, decoder);
+      machine.initialize(gamedata, decoder);
       return machine;
       
     } catch (Exception ex) {

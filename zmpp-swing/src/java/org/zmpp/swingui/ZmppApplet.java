@@ -1,7 +1,7 @@
 /*
  * $Id$
  * 
- * Created on 15.11.2005
+ * Created on 2005/11/15
  * Copyright 2005-2006 by Wei-ju Wu
  *
  * This file is part of The Z-machine Preservation Project (ZMPP).
@@ -41,6 +41,9 @@ import javax.swing.JOptionPane;
 import javax.swing.JPanel;
 import javax.swing.SwingUtilities;
 
+import org.zmpp.base.DefaultMemoryAccess;
+import org.zmpp.blorb.BlorbResources;
+import org.zmpp.iff.DefaultFormChunk;
 import org.zmpp.iff.FormChunk;
 import org.zmpp.iff.WritableFormChunk;
 import org.zmpp.instructions.DefaultInstructionDecoder;
@@ -49,10 +52,11 @@ import org.zmpp.io.IOSystem;
 import org.zmpp.io.InputStream;
 import org.zmpp.io.OutputStream;
 import org.zmpp.io.TranscriptOutputStream;
-import org.zmpp.vm.DefaultMachineConfig;
+import org.zmpp.media.Resources;
+import org.zmpp.vm.GameData;
+import org.zmpp.vm.GameDataImpl;
 import org.zmpp.vm.InstructionDecoder;
 import org.zmpp.vm.Machine;
-import org.zmpp.vm.MachineConfig;
 import org.zmpp.vm.MachineImpl;
 import org.zmpp.vm.MemoryOutputStream;
 import org.zmpp.vm.SaveGameDataStore;
@@ -143,16 +147,26 @@ implements InputStream, StatusLine, SaveGameDataStore, IOSystem {
   
   private Machine openStoryFile() {
     
-    String source = getParameter("storyfile");
-    java.io.InputStream inputstream = null;
+    String story = getParameter("storyfile");
+    java.io.InputStream storyis = null;
+    String blorb = getParameter("blorbfile");
+    Resources blorbresources = null;
     
     try {
       
-      URL url = new URL(getDocumentBase(), source);
-      inputstream = url.openStream();
+      URL storyurl = new URL(getDocumentBase(), story);
+      storyis = storyurl.openStream();
+      
+      if (blorb != null) {
+        
+        URL blorburl = new URL(getDocumentBase(), blorb);
+        java.io.InputStream blorbis = blorburl.openStream();
+        blorbresources = readBlorbResources(blorbis);
+      }
     
-      MachineConfig config = new DefaultMachineConfig(inputstream);
-      StoryFileHeader fileheader = config.getStoryFileHeader();
+      byte[] storyfile = FileUtils.readFileBytes(storyis);
+      GameData gamedata = new GameDataImpl(storyfile, blorbresources);
+      StoryFileHeader fileheader = gamedata.getStoryFileHeader();
     
       if (fileheader.getVersion() < 1
           || fileheader.getVersion() == 6) {
@@ -164,7 +178,7 @@ implements InputStream, StatusLine, SaveGameDataStore, IOSystem {
       }
       Machine machine = new MachineImpl();
       InstructionDecoder decoder = new DefaultInstructionDecoder();
-      machine.initialize(config, decoder);
+      machine.initialize(gamedata, decoder);
       return machine;
       
     } catch (Exception ex) {
@@ -175,12 +189,23 @@ implements InputStream, StatusLine, SaveGameDataStore, IOSystem {
       
       try {
         
-        if (inputstream != null) inputstream.close();
+        if (storyis != null) storyis.close();
         
       } catch (Exception ex) {
         
         ex.printStackTrace();
       }
+    }
+    return null;
+  }
+  
+  private Resources readBlorbResources(java.io.InputStream inputstream) {
+  
+    byte[] data = FileUtils.readFileBytes(inputstream);
+    if (data != null) {
+    
+      FormChunk formchunk = new DefaultFormChunk(new DefaultMemoryAccess(data));
+      return new BlorbResources(formchunk);
     }
     return null;
   }
