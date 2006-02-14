@@ -65,8 +65,9 @@ public class SreadTest extends InstructionTestBase {
     mockServices.expects(atLeastOnce()).method("getTokenizer").will(returnValue(tokenizer));
     mockInputFunctions.expects(once()).method("readLine").with(eq(4711), eq(0), eq(0)).will(returnValue(ZsciiEncoding.NEWLINE));
     mockTokenizer.expects(once()).method("tokenize").with(eq(4711), eq(5711), eq(0), eq(false));    
-    mockMachine.expects(once()).method("getProgramCounter").will(returnValue(7711));
-    mockMachine.expects(once()).method("setProgramCounter").with(eq(7716));    
+    mockMachine.expects(atLeastOnce()).method("getCpu").will(returnValue(cpu));
+    mockCpu.expects(once()).method("getProgramCounter").will(returnValue(7711));
+    mockCpu.expects(once()).method("setProgramCounter").with(eq(7716));    
     
     VariableInstruction sread = new VariableInstruction(machine,
         OperandCount.VAR, VariableStaticInfo.OP_SREAD);

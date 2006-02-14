@@ -62,7 +62,7 @@ public class Short0Instruction extends AbstractInstruction {
         nextInstruction();
         break;
       case Short0StaticInfo.OP_SAVE:
-        saveToStorage(getMachine().getProgramCounter() + 1);
+        saveToStorage(getMachine().getCpu().getProgramCounter() + 1);
         break;
       case Short0StaticInfo.OP_RESTORE:
         
@@ -75,7 +75,7 @@ public class Short0Instruction extends AbstractInstruction {
         getMachine().quit();
         break;
       case Short0StaticInfo.OP_RET_POPPED:        
-        returnFromRoutine(getMachine().getVariable(0));
+        returnFromRoutine(getCpu().getVariable(0));
         break;
       case Short0StaticInfo.OP_POP:
         if (getStoryFileVersion() < 5) pop();
@@ -124,14 +124,14 @@ public class Short0Instruction extends AbstractInstruction {
   
   private void pop() {
     
-    getMachine().getVariable(0);
+    getCpu().getVariable(0);
     nextInstruction();    
   }
   
   private void z_catch() {
     
     // Stores the index of the current stack frame
-    storeResult((short) (getMachine().getRoutineContexts().size() - 1));
+    storeResult((short) (getCpu().getRoutineContexts().size() - 1));
     nextInstruction();
   }
 }

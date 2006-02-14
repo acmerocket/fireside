@@ -138,7 +138,7 @@ public class MemoryOutputStream implements OutputStream {
       
     } else {
       
-      machine.halt("maximum nesting depth (16) for stream 3 exceeded");
+      machine.getCpu().halt("maximum nesting depth (16) for stream 3 exceeded");
     }
   }
 

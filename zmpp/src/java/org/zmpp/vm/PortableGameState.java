@@ -461,7 +461,8 @@ public class PortableGameState {
    */
   private void captureStackFrames(Machine machine) {
     
-    List<RoutineContext> contexts = machine.getRoutineContexts();
+    Cpu cpu = machine.getCpu();
+    List<RoutineContext> contexts = cpu.getRoutineContexts();
 
     // Put in initial dummy stack frame
     StackFrame dummyFrame = new StackFrame();
@@ -471,7 +472,7 @@ public class PortableGameState {
     dummyFrame.evalStack = new short[numElements];
     for (int i = 0; i < numElements; i++) {
       
-      dummyFrame.evalStack[i] = machine.getStackElement(i);
+      dummyFrame.evalStack[i] = cpu.getStackElement(i);
     }
     stackFrames.add(dummyFrame);
     
@@ -505,7 +506,7 @@ public class PortableGameState {
       stackFrame.evalStack = new short[numElements];
       for (int i = 0; i < numElements; i++) {
         
-        stackFrame.evalStack[i] = machine.getStackElement(localStackStart + i);
+        stackFrame.evalStack[i] = cpu.getStackElement(localStackStart + i);
       }
       
       stackFrames.add(stackFrame);
@@ -536,7 +537,7 @@ public class PortableGameState {
       
     } else {
       
-      return machine.getStackPointer() - localStackStart; 
+      return machine.getCpu().getStackPointer() - localStackStart; 
     }
   }
   
@@ -707,7 +708,7 @@ public class PortableGameState {
       // Stack
       for (int s = 0; s < dummyFrame.getEvalStack().length; s++) {
         
-        machine.setVariable(0, dummyFrame.getEvalStack()[s]);
+        machine.getCpu().setVariable(0, dummyFrame.getEvalStack()[s]);
       }
     }
     
@@ -730,11 +731,11 @@ public class PortableGameState {
       // Stack
       for (int s = 0; s < stackFrame.evalStack.length; s++) {
         
-        machine.setVariable(0, stackFrame.evalStack[s]);
+        machine.getCpu().setVariable(0, stackFrame.evalStack[s]);
       }
       contexts.add(context);      
     }    
-    machine.setRoutineContexts(contexts);
+    machine.getCpu().setRoutineContexts(contexts);
 
     // Prepare the machine continue
     int pc = getProgramCounter();
@@ -749,7 +750,7 @@ public class PortableGameState {
       // in version 4 and later, this is always 1
       pc++;
     }
-    machine.setProgramCounter(pc);
+    machine.getCpu().setProgramCounter(pc);
   }
   
   /**

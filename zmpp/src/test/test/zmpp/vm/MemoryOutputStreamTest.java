@@ -25,30 +25,36 @@ package test.zmpp.vm;
 import org.jmock.Mock;
 import org.jmock.MockObjectTestCase;
 import org.zmpp.base.MemoryAccess;
+import org.zmpp.vm.Cpu;
+import org.zmpp.vm.GameData;
 import org.zmpp.vm.Machine;
-import org.zmpp.vm.MachineServices;
 import org.zmpp.vm.MemoryOutputStream;
 
 public class MemoryOutputStreamTest extends MockObjectTestCase {
 
-  private Mock mockMachine, mockServices;
+  private Mock mockMachine;
   private Machine machine;
-  private MachineServices services;
   private Mock mockMemAccess;
   private MemoryAccess memaccess;
   private MemoryOutputStream output;
+  private Mock mockGameData;
+  private GameData gamedata;
+  private Mock mockCpu;
+  private Cpu cpu;
   
   protected void setUp() throws Exception {
 
     mockMachine = mock(Machine.class);
     machine = (Machine) mockMachine.proxy();
-    mockServices = mock(MachineServices.class);
-    services = (MachineServices) mockServices.proxy();
     mockMemAccess = mock(MemoryAccess.class);
     memaccess = (MemoryAccess) mockMemAccess.proxy();
+    mockGameData = mock(GameData.class);
+    gamedata = (GameData) mockGameData.proxy();
+    mockCpu = mock(Cpu.class);
+    cpu = (Cpu) mockCpu.proxy();
 
-    mockMachine.expects(once()).method("getServices").will(returnValue(services));
-    mockServices.expects(once()).method("getMemoryAccess").will(returnValue(memaccess));
+    mockMachine.expects(once()).method("getGameData").will(returnValue(gamedata));
+    mockGameData.expects(once()).method("getMemoryAccess").will(returnValue(memaccess));
     
     output = new MemoryOutputStream(machine);
   }
@@ -78,7 +84,8 @@ public class MemoryOutputStreamTest extends MockObjectTestCase {
   
   public void testSelectMaxNesting() {
     
-    mockMachine.expects(once()).method("halt").with(eq("maximum nesting depth (16) for stream 3 exceeded"));
+    mockMachine.expects(once()).method("getCpu").will(returnValue(cpu));
+    mockCpu.expects(once()).method("halt").with(eq("maximum nesting depth (16) for stream 3 exceeded"));
     for (int i = 0; i < 17; i++) {
       
       output.select(4710 + 10 * i);

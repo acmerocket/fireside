@@ -123,7 +123,8 @@ public class VariableInstructionTest extends InstructionTestBase {
   public void testIllegalOpcode() {
 
     mockFileHeader.expects(atLeastOnce()).method("getVersion").will(returnValue(3));
-    mockMachine.expects(once()).method("halt").with(eq(
+    mockMachine.expects(atLeastOnce()).method("getCpu").will(returnValue(cpu));
+    mockCpu.expects(once()).method("halt").with(eq(
       "illegal instruction, type: VARIABLE operand count: VAR opcode: 238"));
     VariableInstruction illegal = new VariableInstruction(machine,
         OperandCount.VAR, 0xee);
@@ -133,9 +134,10 @@ public class VariableInstructionTest extends InstructionTestBase {
   public void testCall() {
     
     mockFileHeader.expects(atLeastOnce()).method("getVersion").will(returnValue(3));
-    mockMachine.expects(once()).method("setVariable").with(eq(0), eq((short) 0));
-    mockMachine.expects(once()).method("getProgramCounter").will(returnValue(4711));
-    mockMachine.expects(once()).method("setProgramCounter").with(eq(4716));
+    mockMachine.expects(atLeastOnce()).method("getCpu").will(returnValue(cpu));
+    mockCpu.expects(once()).method("setVariable").with(eq(0), eq((short) 0));
+    mockCpu.expects(once()).method("getProgramCounter").will(returnValue(4711));
+    mockCpu.expects(once()).method("setProgramCounter").with(eq(4716));
 
     VariableInstruction call_0 = new VariableInstruction(machine,
         OperandCount.VAR, VariableStaticInfo.OP_CALL);
@@ -148,12 +150,13 @@ public class VariableInstructionTest extends InstructionTestBase {
   public void testCallReal() {
     
     mockFileHeader.expects(atLeastOnce()).method("getVersion").will(returnValue(3));
-    mockMachine.expects(once()).method("getProgramCounter").will(returnValue(4711));
+    mockMachine.expects(atLeastOnce()).method("getCpu").will(returnValue(cpu));
+    mockCpu.expects(once()).method("getProgramCounter").will(returnValue(4711));
     
     short[] args = { 1, 2 };
     short retval = 17;
     RoutineContext routineContext = new RoutineContext(1234, 2);
-    mockMachine.expects(once()).method("call").with(eq(7109), eq(4716), eq(args), eq(retval)).will(returnValue(routineContext));
+    mockCpu.expects(once()).method("call").with(eq(7109), eq(4716), eq(args), eq(retval)).will(returnValue(routineContext));
     
 
     // Real call
@@ -174,7 +177,8 @@ public class VariableInstructionTest extends InstructionTestBase {
   public void testCallVs2InvalidForVersion3() {
     
     mockFileHeader.expects(once()).method("getVersion").will(returnValue(3));
-    mockMachine.expects(once()).method("halt").with(eq(
+    mockMachine.expects(atLeastOnce()).method("getCpu").will(returnValue(cpu));
+    mockCpu.expects(once()).method("halt").with(eq(
       "illegal instruction, type: VARIABLE operand count: VAR opcode: 12"));
     
     VariableInstruction call = new VariableInstruction(machine,
@@ -192,7 +196,8 @@ public class VariableInstructionTest extends InstructionTestBase {
   public void testCallVNIllegalForVersion4() {
     
     mockFileHeader.expects(once()).method("getVersion").will(returnValue(4));
-    mockMachine.expects(once()).method("halt").with(eq(
+    mockMachine.expects(atLeastOnce()).method("getCpu").will(returnValue(cpu));
+    mockCpu.expects(once()).method("halt").with(eq(
       "illegal instruction, type: VARIABLE operand count: VAR opcode: 25"));
     
     VariableInstruction call = new VariableInstruction(machine,
@@ -206,7 +211,8 @@ public class VariableInstructionTest extends InstructionTestBase {
   public void testCallVN2IllegalForVersion4() {
     
     mockFileHeader.expects(once()).method("getVersion").will(returnValue(4));
-    mockMachine.expects(once()).method("halt").with(eq(
+    mockMachine.expects(atLeastOnce()).method("getCpu").will(returnValue(cpu));
+    mockCpu.expects(once()).method("halt").with(eq(
       "illegal instruction, type: VARIABLE operand count: VAR opcode: 26"));
     
     VariableInstruction call = new VariableInstruction(machine,
@@ -225,8 +231,9 @@ public class VariableInstructionTest extends InstructionTestBase {
     mockFileHeader.expects(once()).method("getVersion").will(returnValue(3));
     mockGameData.expects(once()).method("getMemoryAccess").will(returnValue(memoryAccess));
     mockMemAccess.expects(once()).method("writeShort").with(eq(2), eq((short) 0x1000)); 
-    mockMachine.expects(once()).method("getProgramCounter").will(returnValue(4711));
-    mockMachine.expects(once()).method("setProgramCounter").with(eq(4716));
+    mockMachine.expects(atLeastOnce()).method("getCpu").will(returnValue(cpu));
+    mockCpu.expects(once()).method("getProgramCounter").will(returnValue(4711));
+    mockCpu.expects(once()).method("setProgramCounter").with(eq(4716));
     
     VariableInstruction storew = new VariableInstruction(machine,
         OperandCount.VAR, VariableStaticInfo.OP_STOREW);    
@@ -246,8 +253,9 @@ public class VariableInstructionTest extends InstructionTestBase {
     mockFileHeader.expects(once()).method("getVersion").will(returnValue(3));
     mockGameData.expects(once()).method("getMemoryAccess").will(returnValue(memoryAccess));
     mockMemAccess.expects(once()).method("writeByte").with(eq(1), eq((byte) 0x15)); 
-    mockMachine.expects(atLeastOnce()).method("getProgramCounter").will(returnValue(4711));
-    mockMachine.expects(once()).method("setProgramCounter").with(eq(4716));
+    mockMachine.expects(atLeastOnce()).method("getCpu").will(returnValue(cpu));
+    mockCpu.expects(atLeastOnce()).method("getProgramCounter").will(returnValue(4711));
+    mockCpu.expects(once()).method("setProgramCounter").with(eq(4716));
     
     VariableInstruction storeb = new VariableInstruction(machine,
         OperandCount.VAR, VariableStaticInfo.OP_STOREB);
@@ -267,8 +275,9 @@ public class VariableInstructionTest extends InstructionTestBase {
     
     mockFileHeader.expects(atLeastOnce()).method("getVersion").will(returnValue(3));
     mockGameData.expects(once()).method("getObjectTree").will(returnValue(objectTree));
-    mockMachine.expects(once()).method("getProgramCounter").will(returnValue(4711));
-    mockMachine.expects(once()).method("setProgramCounter").with(eq(4716));
+    mockMachine.expects(atLeastOnce()).method("getCpu").will(returnValue(cpu));
+    mockCpu.expects(once()).method("getProgramCounter").will(returnValue(4711));
+    mockCpu.expects(once()).method("setProgramCounter").with(eq(4716));
     mockObjectTree.expects(once()).method("getObject").with(eq(2)).will(returnValue(zobject));
     mockZObject.expects(once()).method("isPropertyAvailable").with(eq(22)).will(returnValue(true));
     mockZObject.expects(once()).method("getPropertySize").with(eq(22)).will(returnValue(1));
@@ -288,8 +297,9 @@ public class VariableInstructionTest extends InstructionTestBase {
     
     mockFileHeader.expects(atLeastOnce()).method("getVersion").will(returnValue(3));
     mockGameData.expects(once()).method("getObjectTree").will(returnValue(objectTree));
-    mockMachine.expects(once()).method("getProgramCounter").will(returnValue(4711));
-    mockMachine.expects(once()).method("setProgramCounter").with(eq(4716));
+    mockMachine.expects(atLeastOnce()).method("getCpu").will(returnValue(cpu));
+    mockCpu.expects(once()).method("getProgramCounter").will(returnValue(4711));
+    mockCpu.expects(once()).method("setProgramCounter").with(eq(4716));
     mockObjectTree.expects(once()).method("getObject").with(eq(2)).will(returnValue(zobject));
     mockZObject.expects(once()).method("isPropertyAvailable").with(eq(24)).will(returnValue(true));
     mockZObject.expects(once()).method("getPropertySize").with(eq(24)).will(returnValue(2));
@@ -309,7 +319,8 @@ public class VariableInstructionTest extends InstructionTestBase {
     
     mockFileHeader.expects(atLeastOnce()).method("getVersion").will(returnValue(3));
     mockGameData.expects(once()).method("getObjectTree").will(returnValue(objectTree));
-    mockMachine.expects(once()).method("halt").with(eq("put_prop: the property [5] of object [1] does not exist"));
+    mockMachine.expects(atLeastOnce()).method("getCpu").will(returnValue(cpu));
+    mockCpu.expects(once()).method("halt").with(eq("put_prop: the property [5] of object [1] does not exist"));
     mockObjectTree.expects(once()).method("getObject").with(eq(1)).will(returnValue(zobject));
     mockZObject.expects(once()).method("isPropertyAvailable").with(eq(5)).will(returnValue(false));
     
@@ -329,8 +340,9 @@ public class VariableInstructionTest extends InstructionTestBase {
     
     mockFileHeader.expects(atLeastOnce()).method("getVersion").will(returnValue(3));
     mockMachine.expects(once()).method("printZsciiChar").with(eq((short) 97), eq(false));
-    mockMachine.expects(once()).method("getProgramCounter").will(returnValue(4711));
-    mockMachine.expects(once()).method("setProgramCounter").with(eq(4716));
+    mockMachine.expects(atLeastOnce()).method("getCpu").will(returnValue(cpu));
+    mockCpu.expects(once()).method("getProgramCounter").will(returnValue(4711));
+    mockCpu.expects(once()).method("setProgramCounter").with(eq(4716));
     
     VariableInstruction print_char = new VariableInstruction(machine,
         OperandCount.VAR, VariableStaticInfo.OP_PRINT_CHAR);
@@ -347,8 +359,9 @@ public class VariableInstructionTest extends InstructionTestBase {
 
     mockFileHeader.expects(atLeastOnce()).method("getVersion").will(returnValue(3));
     mockMachine.expects(once()).method("printNumber").with(eq((short) -12));
-    mockMachine.expects(once()).method("getProgramCounter").will(returnValue(4711));
-    mockMachine.expects(once()).method("setProgramCounter").with(eq(4716));
+    mockMachine.expects(atLeastOnce()).method("getCpu").will(returnValue(cpu));
+    mockCpu.expects(once()).method("getProgramCounter").will(returnValue(4711));
+    mockCpu.expects(once()).method("setProgramCounter").with(eq(4716));
     
     VariableInstruction print_num = new VariableInstruction(machine,
         OperandCount.VAR, VariableStaticInfo.OP_PRINT_NUM);
@@ -364,9 +377,10 @@ public class VariableInstructionTest extends InstructionTestBase {
   public void testPush() {
     
     mockFileHeader.expects(once()).method("getVersion").will(returnValue(3));
-    mockMachine.expects(once()).method("setVariable").with(eq(0x00), eq((short) 0x13));
-    mockMachine.expects(atLeastOnce()).method("getProgramCounter").will(returnValue(4711));
-    mockMachine.expects(once()).method("setProgramCounter").with(eq(4716));
+    mockMachine.expects(atLeastOnce()).method("getCpu").will(returnValue(cpu));
+    mockCpu.expects(once()).method("setVariable").with(eq(0x00), eq((short) 0x13));
+    mockCpu.expects(atLeastOnce()).method("getProgramCounter").will(returnValue(4711));
+    mockCpu.expects(once()).method("setProgramCounter").with(eq(4716));
 
     VariableInstruction push = new VariableInstruction(machine,
         OperandCount.VAR, VariableStaticInfo.OP_PUSH);
@@ -382,10 +396,11 @@ public class VariableInstructionTest extends InstructionTestBase {
   public void testPull() {
     
     mockFileHeader.expects(once()).method("getVersion").will(returnValue(3));
-    mockMachine.expects(once()).method("getVariable").with(eq(0x00)).will(returnValue((short) 0x14));;
-    mockMachine.expects(once()).method("setVariable").with(eq(0x13), eq((short) 0x14));
-    mockMachine.expects(atLeastOnce()).method("getProgramCounter").will(returnValue(4711));
-    mockMachine.expects(once()).method("setProgramCounter").with(eq(4716));
+    mockMachine.expects(atLeastOnce()).method("getCpu").will(returnValue(cpu));
+    mockCpu.expects(once()).method("getVariable").with(eq(0x00)).will(returnValue((short) 0x14));;
+    mockCpu.expects(once()).method("setVariable").with(eq(0x13), eq((short) 0x14));
+    mockCpu.expects(atLeastOnce()).method("getProgramCounter").will(returnValue(4711));
+    mockCpu.expects(once()).method("setProgramCounter").with(eq(4716));
 
     VariableInstruction pull = new VariableInstruction(machine,
         OperandCount.VAR, VariableStaticInfo.OP_PULL);
@@ -400,10 +415,11 @@ public class VariableInstructionTest extends InstructionTestBase {
   public void testPullToStack() {
     
     mockFileHeader.expects(once()).method("getVersion").will(returnValue(3));
-    mockMachine.expects(once()).method("getVariable").with(eq(0)).will(returnValue((short) 0));
-    mockMachine.expects(once()).method("setStackTopElement").with(eq((short) 0));
-    mockMachine.expects(atLeastOnce()).method("getProgramCounter").will(returnValue(4711));
-    mockMachine.expects(once()).method("setProgramCounter").with(eq(4716));
+    mockMachine.expects(atLeastOnce()).method("getCpu").will(returnValue(cpu));
+    mockCpu.expects(once()).method("getVariable").with(eq(0)).will(returnValue((short) 0));
+    mockCpu.expects(once()).method("setStackTopElement").with(eq((short) 0));
+    mockCpu.expects(atLeastOnce()).method("getProgramCounter").will(returnValue(4711));
+    mockCpu.expects(once()).method("setProgramCounter").with(eq(4716));
     
     VariableInstruction pull = new VariableInstruction(machine,
         OperandCount.VAR, VariableStaticInfo.OP_PULL);
@@ -420,8 +436,9 @@ public class VariableInstructionTest extends InstructionTestBase {
    
     mockFileHeader.expects(atLeastOnce()).method("getVersion").will(returnValue(3));
     mockMachine.expects(once()).method("selectInputStream").with(eq(1));
-    mockMachine.expects(once()).method("getProgramCounter").will(returnValue(4711));
-    mockMachine.expects(once()).method("setProgramCounter").with(eq(4716));
+    mockMachine.expects(atLeastOnce()).method("getCpu").will(returnValue(cpu));
+    mockCpu.expects(once()).method("getProgramCounter").will(returnValue(4711));
+    mockCpu.expects(once()).method("setProgramCounter").with(eq(4716));
     
     VariableInstruction inputstream = new VariableInstruction(machine,
         OperandCount.VAR, VariableStaticInfo.OP_INPUTSTREAM);
@@ -438,8 +455,9 @@ public class VariableInstructionTest extends InstructionTestBase {
     
     mockFileHeader.expects(atLeastOnce()).method("getVersion").will(returnValue(3));
     mockMachine.expects(once()).method("selectOutputStream").with(eq(2), eq(false));
-    mockMachine.expects(once()).method("getProgramCounter").will(returnValue(4711));
-    mockMachine.expects(once()).method("setProgramCounter").with(eq(4716));
+    mockMachine.expects(atLeastOnce()).method("getCpu").will(returnValue(cpu));
+    mockCpu.expects(once()).method("getProgramCounter").will(returnValue(4711));
+    mockCpu.expects(once()).method("setProgramCounter").with(eq(4716));
     
     // disable
     VariableInstruction outputstream_disable = new VariableInstruction(machine,
@@ -452,8 +470,9 @@ public class VariableInstructionTest extends InstructionTestBase {
   public void testOutputStreamNoAction() {
     
     mockFileHeader.expects(atLeastOnce()).method("getVersion").will(returnValue(3));
-    mockMachine.expects(once()).method("getProgramCounter").will(returnValue(4711));
-    mockMachine.expects(once()).method("setProgramCounter").with(eq(4716));
+    mockMachine.expects(atLeastOnce()).method("getCpu").will(returnValue(cpu));
+    mockCpu.expects(once()).method("getProgramCounter").will(returnValue(4711));
+    mockCpu.expects(once()).method("setProgramCounter").with(eq(4716));
     
     // do nothing
     VariableInstruction outputstream_nothing = new VariableInstruction(machine,
@@ -467,8 +486,9 @@ public class VariableInstructionTest extends InstructionTestBase {
 
     mockFileHeader.expects(atLeastOnce()).method("getVersion").will(returnValue(3));
     mockMachine.expects(once()).method("selectOutputStream").with(eq(2), eq(true));
-    mockMachine.expects(once()).method("getProgramCounter").will(returnValue(4711));
-    mockMachine.expects(once()).method("setProgramCounter").with(eq(4716));
+    mockMachine.expects(atLeastOnce()).method("getCpu").will(returnValue(cpu));
+    mockCpu.expects(once()).method("getProgramCounter").will(returnValue(4711));
+    mockCpu.expects(once()).method("setProgramCounter").with(eq(4716));
     
     // enable
     VariableInstruction outputstream_enable = new VariableInstruction(machine,
@@ -486,9 +506,10 @@ public class VariableInstructionTest extends InstructionTestBase {
     
     mockFileHeader.expects(atLeastOnce()).method("getVersion").will(returnValue(3));
     mockMachine.expects(once()).method("random").with(eq((short) 1234)).will(returnValue((short) 3));
-    mockMachine.expects(once()).method("setVariable").with(eq(0x13), eq((short) 3));
-    mockMachine.expects(once()).method("getProgramCounter").will(returnValue(4711));
-    mockMachine.expects(once()).method("setProgramCounter").with(eq(4716));
+    mockMachine.expects(atLeastOnce()).method("getCpu").will(returnValue(cpu));
+    mockCpu.expects(once()).method("setVariable").with(eq(0x13), eq((short) 3));
+    mockCpu.expects(once()).method("getProgramCounter").will(returnValue(4711));
+    mockCpu.expects(once()).method("setProgramCounter").with(eq(4716));
 
     VariableInstruction random = new VariableInstruction(machine,
         OperandCount.VAR, VariableStaticInfo.OP_RANDOM);
@@ -551,7 +572,8 @@ public class VariableInstructionTest extends InstructionTestBase {
   public void testSetTextStyleInvalidInVersion3() {
     
     mockFileHeader.expects(once()).method("getVersion").will(returnValue(3));
-    mockMachine.expects(once()).method("halt").with(eq(
+    mockMachine.expects(atLeastOnce()).method("getCpu").will(returnValue(cpu));
+    mockCpu.expects(once()).method("halt").with(eq(
         "illegal instruction, type: VARIABLE operand count: VAR opcode: 17"));
     
     
@@ -599,7 +621,8 @@ public class VariableInstructionTest extends InstructionTestBase {
   public void testBufferModeInvalidInVersion3() {
     
     mockFileHeader.expects(once()).method("getVersion").will(returnValue(3));
-    mockMachine.expects(once()).method("halt").with(eq(
+    mockMachine.expects(atLeastOnce()).method("getCpu").will(returnValue(cpu));
+    mockCpu.expects(once()).method("halt").with(eq(
         "illegal instruction, type: VARIABLE operand count: VAR opcode: 18"));
     
     
@@ -631,7 +654,8 @@ public class VariableInstructionTest extends InstructionTestBase {
   public void testEraseWindowInvalidInVersion3() {
     
     mockFileHeader.expects(once()).method("getVersion").will(returnValue(3));
-    mockMachine.expects(once()).method("halt").with(eq(
+    mockMachine.expects(atLeastOnce()).method("getCpu").will(returnValue(cpu));
+    mockCpu.expects(once()).method("halt").with(eq(
         "illegal instruction, type: VARIABLE operand count: VAR opcode: 13"));
     
     
@@ -663,7 +687,8 @@ public class VariableInstructionTest extends InstructionTestBase {
   public void testEraseLineInvalidInVersion3() {
     
     mockFileHeader.expects(once()).method("getVersion").will(returnValue(3));
-    mockMachine.expects(once()).method("halt").with(eq(
+    mockMachine.expects(atLeastOnce()).method("getCpu").will(returnValue(cpu));
+    mockCpu.expects(once()).method("halt").with(eq(
         "illegal instruction, type: VARIABLE operand count: VAR opcode: 14"));
     
     
@@ -696,7 +721,8 @@ public class VariableInstructionTest extends InstructionTestBase {
   public void testSetCursorInvalidInVersion3() {
     
     mockFileHeader.expects(once()).method("getVersion").will(returnValue(3));
-    mockMachine.expects(once()).method("halt").with(eq(
+    mockMachine.expects(atLeastOnce()).method("getCpu").will(returnValue(cpu));
+    mockCpu.expects(once()).method("halt").with(eq(
         "illegal instruction, type: VARIABLE operand count: VAR opcode: 15"));    
     
     VariableInstructionMock set_cursor =
@@ -731,7 +757,8 @@ public class VariableInstructionTest extends InstructionTestBase {
   public void testGetCursorInvalidInVersion3() {
     
     mockFileHeader.expects(once()).method("getVersion").will(returnValue(3));
-    mockMachine.expects(once()).method("halt").with(eq(
+    mockMachine.expects(atLeastOnce()).method("getCpu").will(returnValue(cpu));
+    mockCpu.expects(once()).method("halt").with(eq(
         "illegal instruction, type: VARIABLE operand count: VAR opcode: 16"));    
     
     VariableInstructionMock get_cursor =
@@ -748,7 +775,8 @@ public class VariableInstructionTest extends InstructionTestBase {
   public void testScanTableInvalidInVersion3() {
     
     mockFileHeader.expects(once()).method("getVersion").will(returnValue(3));
-    mockMachine.expects(once()).method("halt").with(eq(
+    mockMachine.expects(atLeastOnce()).method("getCpu").will(returnValue(cpu));
+    mockCpu.expects(once()).method("halt").with(eq(
         "illegal instruction, type: VARIABLE operand count: VAR opcode: 23"));    
     
     VariableInstructionMock scan_table =
@@ -763,7 +791,8 @@ public class VariableInstructionTest extends InstructionTestBase {
   public void testReadCharInvalidInVersion3() {
     
     mockFileHeader.expects(once()).method("getVersion").will(returnValue(3));
-    mockMachine.expects(once()).method("halt").with(eq(
+    mockMachine.expects(atLeastOnce()).method("getCpu").will(returnValue(cpu));
+    mockCpu.expects(once()).method("halt").with(eq(
         "illegal instruction, type: VARIABLE operand count: VAR opcode: 22"));    
     
     VariableInstructionMock read_char =
@@ -778,7 +807,8 @@ public class VariableInstructionTest extends InstructionTestBase {
   public void testNotIsIllegalPriorV5() {
     
     mockFileHeader.expects(once()).method("getVersion").will(returnValue(4));
-    mockMachine.expects(once()).method("halt").with(eq(
+    mockMachine.expects(atLeastOnce()).method("getCpu").will(returnValue(cpu));
+    mockCpu.expects(once()).method("halt").with(eq(
         "illegal instruction, type: VARIABLE operand count: VAR opcode: 24"));    
     
     VariableInstructionMock not =
@@ -789,7 +819,8 @@ public class VariableInstructionTest extends InstructionTestBase {
   public void testNotInV5() {
     
     mockFileHeader.expects(atLeastOnce()).method("getVersion").will(returnValue(5));
-    mockMachine.expects(once()).method("setVariable").with(eq(0x12), eq((short) 0x5555));     
+    mockMachine.expects(atLeastOnce()).method("getCpu").will(returnValue(cpu));
+    mockCpu.expects(once()).method("setVariable").with(eq(0x12), eq((short) 0x5555));     
     
     VariableInstructionMock not =
       new VariableInstructionMock(machine, VariableStaticInfo.OP_NOT);
@@ -807,7 +838,8 @@ public class VariableInstructionTest extends InstructionTestBase {
   public void testTokeniseIllegalPriorV5() {
     
     mockFileHeader.expects(once()).method("getVersion").will(returnValue(4));
-    mockMachine.expects(once()).method("halt").with(eq(
+    mockMachine.expects(atLeastOnce()).method("getCpu").will(returnValue(cpu));
+    mockCpu.expects(once()).method("halt").with(eq(
         "illegal instruction, type: VARIABLE operand count: VAR opcode: 27"));    
     
     VariableInstructionMock tokenise =

@@ -38,7 +38,7 @@ public class DefaultInstructionDecoder implements InstructionDecoder {
   /**
    * The machine state object.
    */
-  private Machine machineState;
+  private Machine machine;
   
   /**
    * Constructor.
@@ -52,7 +52,7 @@ public class DefaultInstructionDecoder implements InstructionDecoder {
   public void initialize(Machine machine, MemoryReadAccess memaccess) {
     
     this.memaccess = memaccess;
-    this.machineState = machine;
+    this.machine = machine;
   }
   
   /**
@@ -70,7 +70,7 @@ public class DefaultInstructionDecoder implements InstructionDecoder {
       
       // Handle the VAR form of C2OP instructions here
       AbstractInstruction info2 =
-        new LongInstruction(machineState, OperandCount.VAR, info.getOpcode());
+        new LongInstruction(machine, OperandCount.VAR, info.getOpcode());
       
       for (int i = 0; i < info.getNumOperands(); i++) {
       
@@ -107,13 +107,13 @@ public class DefaultInstructionDecoder implements InstructionDecoder {
     if (firstByte == 0xbe) {
             
       opcode = memaccess.readUnsignedByte(instructionAddress + 1);
-      return new ExtendedInstruction(machineState, opcode);
+      return new ExtendedInstruction(machine, opcode);
       
     } else if (0x00 <= firstByte && firstByte <= 0x7f) {
       
       opcode = firstByte & 0x1f; // Bottom five bits contain the opcode number
       operandCount = OperandCount.C2OP;
-      return new LongInstruction(machineState, opcode);
+      return new LongInstruction(machine, opcode);
 
     } else if (0x80 <= firstByte && firstByte <= 0xbf) {
       
@@ -127,21 +127,21 @@ public class DefaultInstructionDecoder implements InstructionDecoder {
         if (opcode == PrintLiteralStaticInfo.OP_PRINT
             || opcode == PrintLiteralStaticInfo.OP_PRINT_RET) {
           
-          return new PrintLiteralInstruction(machineState, opcode, memaccess,
+          return new PrintLiteralInstruction(machine, opcode, memaccess,
                                              instructionAddress);
         }
-        return new Short0Instruction(machineState, opcode);
+        return new Short0Instruction(machine, opcode);
         
       } else {
         
-        return new Short1Instruction(machineState, opcode);
+        return new Short1Instruction(machine, opcode);
       }
       
     } else {
       
       opcode = firstByte & 0x1f; // Bottom five bits contain the opcode number
       operandCount = (firstByte >= 0xe0) ? OperandCount.VAR : OperandCount.C2OP;
-      return new VariableInstruction(machineState, operandCount, opcode);
+      return new VariableInstruction(machine, operandCount, opcode);
     }
   }
   

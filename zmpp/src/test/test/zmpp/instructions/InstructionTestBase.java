@@ -4,6 +4,7 @@ import org.jmock.Mock;
 import org.jmock.MockObjectTestCase;
 import org.zmpp.base.MemoryAccess;
 import org.zmpp.io.OutputStream;
+import org.zmpp.vm.Cpu;
 import org.zmpp.vm.Dictionary;
 import org.zmpp.vm.GameData;
 import org.zmpp.vm.Machine;
@@ -32,6 +33,8 @@ public abstract class InstructionTestBase extends MockObjectTestCase {
   protected StoryFileHeader storyfileHeader;
   protected Mock mockDictionary;
   protected Dictionary dictionary;
+  protected Mock mockCpu;
+  protected Cpu cpu;
   
   /**
    * {@inheritDoc}
@@ -58,7 +61,8 @@ public abstract class InstructionTestBase extends MockObjectTestCase {
     storyfileHeader = (StoryFileHeader) mockFileHeader.proxy();
     mockDictionary = mock(Dictionary.class);
     dictionary = (Dictionary) mockDictionary.proxy();    
-
+    mockCpu = mock(Cpu.class);
+    cpu = (Cpu) mockCpu.proxy();
     
     mockMachine.expects(atLeastOnce()).method("getGameData").will(returnValue(gamedata));
     mockGameData.expects(atLeastOnce()).method("getStoryFileHeader").will(returnValue(storyfileHeader));

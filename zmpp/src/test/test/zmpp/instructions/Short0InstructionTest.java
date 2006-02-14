@@ -70,7 +70,8 @@ public class Short0InstructionTest extends InstructionTestBase {
 
     mockFileHeader.expects(atLeastOnce()).method("getVersion").will(returnValue(3));
     Short0InstructionMock illegal = createInstructionMock(0xee);
-    mockMachine.expects(once()).method("halt").with(eq(
+    mockMachine.expects(atLeastOnce()).method("getCpu").will(returnValue(cpu));
+    mockCpu.expects(once()).method("halt").with(eq(
         "illegal instruction, type: SHORT operand count: C0OP opcode: 238"));
     illegal.execute();
   }
@@ -151,7 +152,8 @@ public class Short0InstructionTest extends InstructionTestBase {
   public void testSaveSuccessV3() {
     
     Short0InstructionMock save = createInstructionMock(Short0StaticInfo.OP_SAVE);
-    mockMachine.expects(once()).method("getProgramCounter").will(returnValue(1234));
+    mockMachine.expects(atLeastOnce()).method("getCpu").will(returnValue(cpu));
+    mockCpu.expects(once()).method("getProgramCounter").will(returnValue(1234));
     mockMachine.expects(once()).method("save").will(returnValue(true));
     mockFileHeader.expects(atLeastOnce()).method("getVersion").will(returnValue(3));
     save.execute();
@@ -162,7 +164,8 @@ public class Short0InstructionTest extends InstructionTestBase {
   public void testSaveFailV3() {
     
     Short0InstructionMock save = createInstructionMock(Short0StaticInfo.OP_SAVE);
-    mockMachine.expects(once()).method("getProgramCounter").will(returnValue(1234));
+    mockMachine.expects(atLeastOnce()).method("getCpu").will(returnValue(cpu));
+    mockCpu.expects(once()).method("getProgramCounter").will(returnValue(1234));
     mockMachine.expects(once()).method("save").will(returnValue(false));
     mockFileHeader.expects(atLeastOnce()).method("getVersion").will(returnValue(3));
     save.execute();
@@ -173,9 +176,10 @@ public class Short0InstructionTest extends InstructionTestBase {
   public void testSaveSuccessV4() {
     
     Short0InstructionMock save = createInstructionMock(Short0StaticInfo.OP_SAVE);
-    mockMachine.expects(once()).method("getProgramCounter").will(returnValue(1234));
+    mockMachine.expects(atLeastOnce()).method("getCpu").will(returnValue(cpu));
+    mockCpu.expects(once()).method("getProgramCounter").will(returnValue(1234));
     mockMachine.expects(once()).method("save").will(returnValue(true));
-    mockMachine.expects(once()).method("setVariable").with(eq(0), eq((short) 1));
+    mockCpu.expects(once()).method("setVariable").with(eq(0), eq((short) 1));
     mockFileHeader.expects(atLeastOnce()).method("getVersion").will(returnValue(4));
     save.execute();
     assertTrue(save.nextInstructionCalled);
@@ -183,7 +187,8 @@ public class Short0InstructionTest extends InstructionTestBase {
 
   public void testSaveIllegalInV5() {
     
-    mockMachine.expects(once()).method("halt").with(eq(
+    mockMachine.expects(atLeastOnce()).method("getCpu").will(returnValue(cpu));
+    mockCpu.expects(once()).method("halt").with(eq(
       "illegal instruction, type: SHORT operand count: C0OP opcode: 5"));
     mockFileHeader.expects(atLeastOnce()).method("getVersion").will(returnValue(5));
     Short0Instruction save = new Short0Instruction(machine, Short0StaticInfo.OP_SAVE);
@@ -219,7 +224,8 @@ public class Short0InstructionTest extends InstructionTestBase {
     Short0InstructionMock restore = createInstructionMock(Short0StaticInfo.OP_RESTORE);
     mockFileHeader.expects(atLeastOnce()).method("getVersion").will(returnValue(4));
     mockMachine.expects(once()).method("restore").will(returnValue(gamestate));
-    mockMachine.expects(once()).method("setVariable").with(eq(5), eq((short) 2));
+    mockMachine.expects(atLeastOnce()).method("getCpu").will(returnValue(cpu));
+    mockCpu.expects(once()).method("setVariable").with(eq(5), eq((short) 2));
     
     // Store variable
     mockGameData.expects(once()).method("getMemoryAccess").will(returnValue(memoryAccess));
@@ -234,7 +240,8 @@ public class Short0InstructionTest extends InstructionTestBase {
     Short0InstructionMock restore = createInstructionMock(Short0StaticInfo.OP_RESTORE);
     mockFileHeader.expects(atLeastOnce()).method("getVersion").will(returnValue(4));
     mockMachine.expects(once()).method("restore").will(returnValue(null));
-    mockMachine.expects(once()).method("setVariable").with(eq(0), eq((short) 0));
+    mockMachine.expects(atLeastOnce()).method("getCpu").will(returnValue(cpu));
+    mockCpu.expects(once()).method("setVariable").with(eq(0), eq((short) 0));
     
     restore.execute();
     assertTrue(restore.nextInstructionCalled);
@@ -243,7 +250,8 @@ public class Short0InstructionTest extends InstructionTestBase {
   public void testRestoreIllegalInV5() {
     
     mockFileHeader.expects(atLeastOnce()).method("getVersion").will(returnValue(5));
-    mockMachine.expects(once()).method("halt").with(eq(
+    mockMachine.expects(atLeastOnce()).method("getCpu").will(returnValue(cpu));
+    mockCpu.expects(once()).method("halt").with(eq(
       "illegal instruction, type: SHORT operand count: C0OP opcode: 6"));
     Short0Instruction restore = new Short0Instruction(machine, Short0StaticInfo.OP_RESTORE);
     restore.execute();
@@ -298,7 +306,8 @@ public class Short0InstructionTest extends InstructionTestBase {
     mockFileHeader.expects(atLeastOnce()).method("getVersion").will(returnValue(3));
 
     Short0InstructionMock ret_popped = createInstructionMock(Short0StaticInfo.OP_RET_POPPED);
-    mockMachine.expects(once()).method("getVariable").with(eq(0)).will(returnValue((short)15));
+    mockMachine.expects(atLeastOnce()).method("getCpu").will(returnValue(cpu));
+    mockCpu.expects(once()).method("getVariable").with(eq(0)).will(returnValue((short)15));
     ret_popped.execute();    
     assertTrue(ret_popped.returned);
     assertEquals(15, ret_popped.returnValue);
@@ -313,7 +322,8 @@ public class Short0InstructionTest extends InstructionTestBase {
     mockFileHeader.expects(atLeastOnce()).method("getVersion").will(returnValue(3));
 
     Short0InstructionMock pop = createInstructionMock(Short0StaticInfo.OP_POP);
-    mockMachine.expects(once()).method("getVariable").with(eq(0)).will(returnValue((short)42));
+    mockMachine.expects(atLeastOnce()).method("getCpu").will(returnValue(cpu));
+    mockCpu.expects(once()).method("getVariable").with(eq(0)).will(returnValue((short)42));
     pop.execute();
     assertTrue(pop.nextInstructionCalled);
   }
@@ -358,7 +368,8 @@ public class Short0InstructionTest extends InstructionTestBase {
   public void testShowStatusVersion4IsIllegal() {
     
     Short0InstructionMock showstatus = createInstructionMock(Short0StaticInfo.OP_SHOW_STATUS);
-    mockMachine.expects(once()).method("halt").with(eq(
+    mockMachine.expects(atLeastOnce()).method("getCpu").will(returnValue(cpu));
+    mockCpu.expects(once()).method("halt").with(eq(
       "illegal instruction, type: SHORT operand count: C0OP opcode: 12"));
     mockFileHeader.expects(once()).method("getVersion").will(returnValue(4));
     showstatus.execute();
@@ -373,8 +384,9 @@ public class Short0InstructionTest extends InstructionTestBase {
     
     mockFileHeader.expects(atLeastOnce()).method("getVersion").will(returnValue(5));
     
-    mockMachine.expects(once()).method("getRoutineContexts").will(returnValue(routineContexts));
-    mockMachine.expects(once()).method("setVariable").with(eq(0x12), eq((short) 2));
+    mockMachine.expects(atLeastOnce()).method("getCpu").will(returnValue(cpu));
+    mockCpu.expects(once()).method("getRoutineContexts").will(returnValue(routineContexts));
+    mockCpu.expects(once()).method("setVariable").with(eq(0x12), eq((short) 2));
 
     Short0InstructionMock zcatch = createInstructionMock(Short0StaticInfo.OP_POP);
     zcatch.setStoreVariable((short) 0x12);

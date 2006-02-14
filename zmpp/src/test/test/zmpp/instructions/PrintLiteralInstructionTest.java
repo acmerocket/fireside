@@ -37,7 +37,8 @@ public class PrintLiteralInstructionTest extends InstructionTestBase {
   public void testIllegalOpcode() {
     
     mockFileHeader.expects(atLeastOnce()).method("getVersion").will(returnValue(3));
-    mockMachine.expects(once()).method("halt").with(eq(
+    mockMachine.expects(atLeastOnce()).method("getCpu").will(returnValue(cpu));
+    mockCpu.expects(once()).method("halt").with(eq(
       "illegal instruction, type: SHORT operand count: C0OP opcode: 221"));
     PrintLiteralInstruction illegal = new PrintLiteralInstruction(
         machine, 0xdd, memoryAccess, 0);
@@ -47,8 +48,9 @@ public class PrintLiteralInstructionTest extends InstructionTestBase {
   public void testPrint() {
     
     mockFileHeader.expects(atLeastOnce()).method("getVersion").will(returnValue(3));
-    mockMachine.expects(once()).method("getProgramCounter").will(returnValue(4715));
-    mockMachine.expects(once()).method("setProgramCounter").with(eq(4718));
+    mockMachine.expects(atLeastOnce()).method("getCpu").will(returnValue(cpu));
+    mockCpu.expects(once()).method("getProgramCounter").will(returnValue(4715));
+    mockCpu.expects(once()).method("setProgramCounter").with(eq(4718));
     mockMachine.expects(once()).method("printZString").with(eq(4712));
     mockMemAccess.expects(once()).method("readUnsignedShort").with(eq(4712)).will(returnValue(0x8000));
     PrintLiteralInstruction print = new PrintLiteralInstruction(
@@ -59,9 +61,10 @@ public class PrintLiteralInstructionTest extends InstructionTestBase {
   public void testPrintRet() {
     
     mockFileHeader.expects(atLeastOnce()).method("getVersion").will(returnValue(3));
+    mockMachine.expects(atLeastOnce()).method("getCpu").will(returnValue(cpu));
     mockMachine.expects(once()).method("printZString").with(eq(4712));
     mockMachine.expects(once()).method("newline");
-    mockMachine.expects(once()).method("popRoutineContext").with(eq((short) 1));
+    mockCpu.expects(once()).method("popRoutineContext").with(eq((short) 1));
     
     PrintLiteralInstruction print_ret = new PrintLiteralInstruction(
         machine, PrintLiteralStaticInfo.OP_PRINT_RET, memoryAccess, 4711);

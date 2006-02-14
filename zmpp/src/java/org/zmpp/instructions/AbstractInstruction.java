@@ -25,6 +25,7 @@ package org.zmpp.instructions;
 import java.util.ArrayList;
 import java.util.List;
 
+import org.zmpp.vm.Cpu;
 import org.zmpp.vm.Instruction;
 import org.zmpp.vm.Machine;
 import org.zmpp.vm.ObjectTree;
@@ -152,6 +153,16 @@ public abstract class AbstractInstruction implements Instruction {
   protected Machine getMachine() {
     
     return machine;
+  }
+  
+  /**
+   * Returns the reference to the Cpu object.
+   * 
+   * @return the Cpu object
+   */
+  protected Cpu getCpu() {
+    
+    return machine.getCpu();
   }
     
   /**
@@ -340,7 +351,7 @@ public abstract class AbstractInstruction implements Instruction {
     switch (operand.getType()) {
     
       case VARIABLE:
-        return machine.getVariable(operand.getValue());
+        return getCpu().getVariable(operand.getValue());
       case SMALL_CONSTANT:
       case LARGE_CONSTANT:
       default:
@@ -368,7 +379,7 @@ public abstract class AbstractInstruction implements Instruction {
    */
   protected void storeResult(short value) {
     
-    machine.setVariable(getStoreVariable(), value);
+    getCpu().setVariable(getStoreVariable(), value);
   }
   
   /**
@@ -376,7 +387,7 @@ public abstract class AbstractInstruction implements Instruction {
    */
   protected void throwInvalidOpcode() {
     
-    getMachine().halt("illegal instruction, type: " + getInstructionForm() +
+    getCpu().halt("illegal instruction, type: " + getInstructionForm() +
         " operand count: " + getOperandCount() + " opcode: " + getOpcode());
   }
   
@@ -448,11 +459,11 @@ public abstract class AbstractInstruction implements Instruction {
     int value = 0;
     if (varnum == 0) {
       
-      value = getMachine().getStackTopElement();
+      value = getCpu().getStackTopElement();
       
     } else {
       
-      value = getMachine().getVariable(varnum);
+      value = getCpu().getVariable(varnum);
     }
     return String.format("$%02x", value);
   }
@@ -492,9 +503,8 @@ public abstract class AbstractInstruction implements Instruction {
    */
   protected void nextInstruction() {
     
-    Machine machineState = getMachine();
-    machineState.setProgramCounter(machineState.getProgramCounter()
-                                   + getLength());
+    Cpu cpu = getMachine().getCpu();
+    cpu.setProgramCounter(cpu.getProgramCounter() + getLength());
   }  
   
   /**
@@ -526,13 +536,14 @@ public abstract class AbstractInstruction implements Instruction {
    */
   private void applyBranch() {
     
-    Machine machineState = getMachine();
+    Cpu cpu = getMachine().getCpu();
+    
     short offset = getBranchOffset();
 
     if (offset >= 2 || offset < 0) {
       
-      machineState.setProgramCounter(
-          machineState.computeBranchTarget(getBranchOffset(), getLength()));
+      cpu.setProgramCounter(
+          cpu.computeBranchTarget(getBranchOffset(), getLength()));
       
     } else {
       
@@ -550,7 +561,7 @@ public abstract class AbstractInstruction implements Instruction {
    */
   protected void returnFromRoutine(short returnValue) {
     
-    getMachine().popRoutineContext(returnValue);
+    getCpu().popRoutineContext(returnValue);
   }
   
   /**
@@ -574,12 +585,13 @@ public abstract class AbstractInstruction implements Instruction {
   protected void call(int packedRoutineAddress, short[] args) {
 
     if (packedRoutineAddress != 0) {
-      
-      int returnAddress = getMachine().getProgramCounter() + getLength();
+
+      Cpu cpu = getCpu();      
+      int returnAddress = cpu.getProgramCounter() + getLength();
       short returnVariable = storesResult() ? getStoreVariable() :
         RoutineContext.DISCARD_RESULT;
       
-      getMachine().call(packedRoutineAddress, returnAddress, args,
+      cpu.call(packedRoutineAddress, returnAddress, args,
                         returnVariable);
       
     } else {
@@ -633,7 +645,7 @@ public abstract class AbstractInstruction implements Instruction {
       if (gamestate != null) {
 
         int storevar = gamestate.getStoreVariable(getMachine());        
-        getMachine().setVariable(storevar, (short) RESTORE_TRUE);
+        getCpu().setVariable(storevar, (short) RESTORE_TRUE);
         
       } else {
         

@@ -190,7 +190,7 @@ public class LongInstruction extends AbstractInstruction {
     short op1 = getValue(0);
     if (getNumOperands() <= 1) {
 
-      getMachine().halt("je expects at least two operands, only " +
+      getMachine().getCpu().halt("je expects at least two operands, only " +
                         "one provided");
     } else {
       
@@ -241,9 +241,9 @@ public class LongInstruction extends AbstractInstruction {
     
     int varnum = getUnsignedValue(0);
     short value = getValue(1);
-    short varValue = (short) (getMachine().getVariable(varnum) - 1);
+    short varValue = (short) (getCpu().getVariable(varnum) - 1);
     
-    getMachine().setVariable(varnum, varValue);
+    getCpu().setVariable(varnum, varValue);
     branchOnTest(varValue < value);
   }
   
@@ -251,9 +251,9 @@ public class LongInstruction extends AbstractInstruction {
     
     int varnum = getUnsignedValue(0);
     short value = getValue(1);
-    short varValue = (short) (getMachine().getVariable(varnum) + 1);
+    short varValue = (short) (getCpu().getVariable(varnum) + 1);
     
-    getMachine().setVariable(varnum, varValue);
+    getCpu().setVariable(varnum, varValue);
     branchOnTest(varValue > value);
   }
   
@@ -311,7 +311,7 @@ public class LongInstruction extends AbstractInstruction {
     
     if (op2 == 0) {
     
-      getMachine().halt("@div division by zero");
+      getMachine().getCpu().halt("@div division by zero");
       
     } else {
     
@@ -327,7 +327,7 @@ public class LongInstruction extends AbstractInstruction {
     
     if (op2 == 0) {
       
-      getMachine().halt("@mod division by zero");
+      getMachine().getCpu().halt("@mod division by zero");
     } else {
     
       storeResult((short) (op1 % op2));
@@ -394,11 +394,11 @@ public class LongInstruction extends AbstractInstruction {
     // Handle stack variable as a special case (standard 1.1)
     if (varnum == 0) {
       
-      getMachine().setStackTopElement(value);
+      getCpu().setStackTopElement(value);
       
     } else {
       
-      getMachine().setVariable(varnum, value);
+      getCpu().setVariable(varnum, value);
     }
     nextInstruction();
   }
@@ -515,7 +515,7 @@ public class LongInstruction extends AbstractInstruction {
       
       } else {
       
-        getMachine().halt("the property [" + property + "] of object [" + obj
+        getMachine().getCpu().halt("the property [" + property + "] of object [" + obj
                           + "] does not exist");
       }
       
@@ -542,10 +542,10 @@ public class LongInstruction extends AbstractInstruction {
     int stackFrame = getUnsignedValue(1);
     
     // Unwind the stack
-    int currentStackFrame = getMachine().getRoutineContexts().size() - 1;
+    int currentStackFrame = getCpu().getRoutineContexts().size() - 1;
     if (currentStackFrame < stackFrame) {
       
-      getMachine().halt("@throw from an invalid stack frame state");
+      getMachine().getCpu().halt("@throw from an invalid stack frame state");
     } else {
      
       // Pop off the routine contexts until the specified stack frame is
@@ -553,7 +553,7 @@ public class LongInstruction extends AbstractInstruction {
       int diff = currentStackFrame - stackFrame;
       for (int i = 0; i < diff; i++) {
         
-        getMachine().popRoutineContext((short) 0);
+        getCpu().popRoutineContext((short) 0);
       }
       
       // and return with the return value

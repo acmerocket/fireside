@@ -252,7 +252,7 @@ public class VariableInstruction extends AbstractInstruction {
       
       } else {
       
-        getMachine().halt("put_prop: the property [" + property
+        getMachine().getCpu().halt("put_prop: the property [" + property
             + "] of object [" + obj + "] does not exist");
       }
       
@@ -281,23 +281,23 @@ public class VariableInstruction extends AbstractInstruction {
   private void push() {
     
     short value = getValue(0);
-    getMachine().setVariable(0, value);
+    getCpu().setVariable(0, value);
     nextInstruction();
   }
   
   private void pull() {
     
     int varnum = getUnsignedValue(0);
-    short value = getMachine().getVariable(0);
+    short value = getCpu().getVariable(0);
     
     // standard 1.1
     if (varnum == 0) {
       
-      getMachine().setStackTopElement(value);
+      getCpu().setStackTopElement(value);
       
     } else {
       
-      getMachine().setVariable(varnum, value);
+      getCpu().setVariable(varnum, value);
     }
     nextInstruction();
   }
@@ -593,7 +593,7 @@ public class VariableInstruction extends AbstractInstruction {
     
     int argumentNumber = getUnsignedValue(0);
     int currentNumArgs =
-      getMachine().getCurrentRoutineContext().getNumArguments();
+      getCpu().getCurrentRoutineContext().getNumArguments();
     branchOnTest(argumentNumber <= currentNumArgs);
   }
   

@@ -107,7 +107,7 @@ public class ExtendedInstruction extends AbstractInstruction {
     
     // Target PC offset is two because of the extra opcode byte and 
     // operand type byte compared to the 0OP instruction
-    int pc = getMachine().getProgramCounter() + 3;
+    int pc = getMachine().getCpu().getProgramCounter() + 3;
     boolean success = getMachine().save_undo(pc);
     storeResult((short) (success ? TRUE : FALSE));
     nextInstruction();
@@ -119,7 +119,7 @@ public class ExtendedInstruction extends AbstractInstruction {
     if (gamestate != null) {
 
       int storevar = gamestate.getStoreVariable(getMachine());      
-      getMachine().setVariable(storevar, (short) RESTORE_TRUE);
+      getCpu().setVariable(storevar, (short) RESTORE_TRUE);
       
     } else {
       
@@ -157,7 +157,7 @@ public class ExtendedInstruction extends AbstractInstruction {
     // Saving to tables is not supported yet, this is the standard save feature
     // Offset is 3 because there are two opcode bytes + 1 optype byte before
     // the actual store var byte
-    saveToStorage(getMachine().getProgramCounter() + 3);
+    saveToStorage(getMachine().getCpu().getProgramCounter() + 3);
   }
   
   private void restore() {

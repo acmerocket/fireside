@@ -22,6 +22,7 @@
  */
 package org.zmpp.instructions;
 
+import org.zmpp.vm.Cpu;
 import org.zmpp.vm.Machine;
 import org.zmpp.vm.ZObject;
 
@@ -144,8 +145,8 @@ public class Short1Instruction extends AbstractInstruction {
   private void inc() {
     
     short varNum = getValue(0);
-    short value = getMachine().getVariable(varNum);
-    getMachine().setVariable(varNum, (short) (value + 1));
+    short value = getCpu().getVariable(varNum);
+    getCpu().setVariable(varNum, (short) (value + 1));
     nextInstruction();
   }
   
@@ -155,8 +156,8 @@ public class Short1Instruction extends AbstractInstruction {
   private void dec() {
     
     short varNum = getValue(0);
-    short value = (short) getMachine().getVariable(varNum);
-    getMachine().setVariable(varNum, (short) (value - 1));
+    short value = (short) getCpu().getVariable(varNum);
+    getCpu().setVariable(varNum, (short) (value - 1));
     nextInstruction();
   }
 
@@ -176,8 +177,8 @@ public class Short1Instruction extends AbstractInstruction {
   private void jump() {
     
     // Unconditional jump
-    getMachine().setProgramCounter(
-        getMachine().getProgramCounter() + getValue(0) + 1);
+    Cpu cpu = getMachine().getCpu();
+    cpu.setProgramCounter(cpu.getProgramCounter() + getValue(0) + 1);
   }
   
   /**
@@ -186,8 +187,8 @@ public class Short1Instruction extends AbstractInstruction {
   private void load() {
     
     int varnum = getValue(0);
-    short value = varnum == 0 ? getMachine().getStackTopElement() :
-                                getMachine().getVariable(varnum);
+    short value = varnum == 0 ? getCpu().getStackTopElement() :
+                                getCpu().getVariable(varnum);
     storeResult(value);
     nextInstruction();    
   }
@@ -260,7 +261,7 @@ public class Short1Instruction extends AbstractInstruction {
   private void print_paddr() {
     
     getMachine().printZString(
-        getMachine().translatePackedAddress(getUnsignedValue(0), false));
+        getMachine().getCpu().translatePackedAddress(getUnsignedValue(0), false));
     nextInstruction();
   }
   
