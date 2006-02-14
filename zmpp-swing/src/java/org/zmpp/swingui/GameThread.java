@@ -58,11 +58,11 @@ public class GameThread extends Thread {
       });
     } catch (Exception ex) { }
         
-    while (machine.isRunning()) {
+    while (machine.getCpu().isRunning()) {
       
-      Instruction instr = machine.nextStep();
+      Instruction instr = machine.getCpu().nextStep();
       if (DEBUG) {
-        System.out.println(String.format("%05x: %s", machine.getProgramCounter(),
+        System.out.println(String.format("%05x: %s", machine.getCpu().getProgramCounter(),
                            instr.toString()));
       }
       instr.execute();
