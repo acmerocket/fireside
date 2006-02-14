@@ -37,8 +37,8 @@ import org.zmpp.iff.DefaultFormChunk;
 import org.zmpp.iff.FormChunk;
 import org.zmpp.iff.WritableFormChunk;
 import org.zmpp.instructions.DefaultInstructionDecoder;
-import org.zmpp.vm.Machine;
 import org.zmpp.vm.GameData;
+import org.zmpp.vm.Machine;
 import org.zmpp.vm.MachineImpl;
 import org.zmpp.vm.MachineServices;
 import org.zmpp.vm.PortableGameState;
@@ -56,11 +56,11 @@ public class PortableGameStateTest extends MockObjectTestCase {
 
   private PortableGameState gameState;
   private FormChunk formChunk;
-  private Mock mockMachine, mockFileheader, mockMemAccess, mockMachineConfig;
+  private Mock mockMachine, mockFileheader, mockMemAccess, mockGameData;
   private Mock mockServices;
   private Machine machine;
   private MachineServices services;
-  private GameData machineConfig;
+  private GameData gamedata;
   private StoryFileHeader fileheader;
   private MemoryAccess memaccess;
   
@@ -72,8 +72,8 @@ public class PortableGameStateTest extends MockObjectTestCase {
     fileheader = (StoryFileHeader) mockFileheader.proxy();
     mockMemAccess = mock(MemoryAccess.class);
     memaccess = (MemoryAccess) mockMemAccess.proxy();
-    mockMachineConfig = mock(GameData.class);
-    machineConfig = (GameData) mockMachineConfig.proxy();
+    mockGameData = mock(GameData.class);
+    gamedata = (GameData) mockGameData.proxy();
     mockServices = mock(MachineServices.class);
     services = (MachineServices) mockServices.proxy();
     
@@ -310,8 +310,9 @@ public class PortableGameStateTest extends MockObjectTestCase {
     
     gamestate.setDynamicMem(dynMem);
    
-    mockMachineConfig.expects(atLeastOnce()).method("getMemoryAccess").will(returnValue(memaccess));
-    mockMachineConfig.expects(atLeastOnce()).method("getStoryFileHeader").will(returnValue(fileheader));
+    mockGameData.expects(atLeastOnce()).method("getMemoryAccess").will(returnValue(memaccess));
+    mockGameData.expects(atLeastOnce()).method("getStoryFileHeader").will(returnValue(fileheader));
+    mockGameData.expects(atLeastOnce()).method("getResources").will(returnValue(null));
     mockFileheader.expects(once()).method("getProgramStart").will(returnValue(4711));
     mockFileheader.expects(once()).method("getGlobalsAddress").will(returnValue(5711));
     mockFileheader.expects(once()).method("getFileLength").will(returnValue(0));
@@ -329,7 +330,7 @@ public class PortableGameStateTest extends MockObjectTestCase {
     // Tests if the dynamic memory and the stack frames are
     // completely copied
     Machine machine = new MachineImpl();
-    machine.initialize(machineConfig, new DefaultInstructionDecoder());
+    machine.initialize(gamedata, new DefaultInstructionDecoder());
         
     gamestate.transferStateToMachine(machine);
   }
