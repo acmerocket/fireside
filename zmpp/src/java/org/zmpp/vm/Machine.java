@@ -22,45 +22,16 @@
  */
 package org.zmpp.vm;
 
-import org.zmpp.encoding.ZsciiString;
-import org.zmpp.io.InputStream;
-import org.zmpp.io.OutputStream;
 import org.zmpp.media.SoundSystem;
 
 /**
- * This interface gives the instructions an abstract access to the current
- * Z-machine's state.
+ * This interface acts as a central access point to the Z-Machine's components.
  * 
  * @author Wei-ju Wu
  * @version 1.0
  */
 public interface Machine {
 
-  /**
-   * The output stream number for the screen.
-   */
-  final static int OUTPUTSTREAM_SCREEN = 1;
-  
-  /**
-   * The output stream number for the transcript.
-   */
-  final static int OUTPUTSTREAM_TRANSCRIPT = 2;
-  
-  /**
-   * The output stream number for the memory stream.
-   */
-  final static int OUTPUTSTREAM_MEMORY = 3;
-  
-  /**
-   * The input stream number for the keyboard.
-   */
-  final static int INPUTSTREAM_KEYBOARD = 0;
-  
-  /**
-   * The input stream number for file input.
-   */
-  final static int INPUTSTREAM_FILE = 1;
-  
   /**
    * Initialization function.
    * 
@@ -74,18 +45,32 @@ public interface Machine {
   // *******************************
   
   /**
-   * Returns the GameData interface.
+   * Returns the GameData object.
    * 
-   * @return the GameData interface
+   * @return the GameData object
    */
   GameData getGameData();
   
   /**
-   * Returns the Cpu interface.
+   * Returns the Cpu object.
    * 
-   * @return the Cpu interface
+   * @return the Cpu object
    */
   Cpu getCpu();
+  
+  /**
+   * Returns the Output object.
+   * 
+   * @return the Output object
+   */
+  Output getOutput();
+  
+  /**
+   * Returns the Input object.
+   * 
+   * @return the Input object
+   */
+  Input getInput();  
   
   /**
    * Returns true, if the checksum validation was successful.
@@ -94,103 +79,59 @@ public interface Machine {
    */
   boolean hasValidChecksum();
   
-  /**  
-   * Sets the output stream to the specified number.
+  // ************************************************************************
+  // ****** Control functions
+  // ************************************************
+
+  /**
+   * Restarts the virtual machine.
+   */
+  void restart();
+  
+  /**
+   * Starts the virtual machine.
+   */
+  void start();
+  
+  /**
+   * Exists the virtual machine.
+   */
+  void quit();
+  
+  /**
+   * Outputs a warning message.
+   *  
+   * @param msg
+   */
+  void warn(String msg);
+  
+  // **********************************************************************
+  // **** Services
+  // *******************************
+  
+  /**
+   * Returns an input functions object.
    * 
-   * @param streamnumber the stream number
-   * @param stream the output stream
+   * @return an input functions object
    */
-  void setOutputStream(int streamnumber, OutputStream stream);
+  InputFunctions getInputFunctions();
   
   /**
-   * Selects/unselects the specified output stream. If the streamnumber
-   * is negative, |streamnumber| is deselected, if positive, it is selected.
-   * Stream 3 (the memory stream) can not be selected by this function,
-   * but can be deselected here.
+   * Returns the tokenizer.
    * 
-   * @param streamnumber the output stream number
-   * @param flag true to enable, false to disable
+   * @return the tokenizer
    */
-  void selectOutputStream(int streamnumber, boolean flag);
+  Tokenizer getTokenizer();
   
   /**
-   * Selects the output stream 3 which writes to memory.
+   * Returns the sound system.
    * 
-   * @param tableAddress the table address to write to
+   * @return the sound system
    */
-  void selectOutputStream3(int tableAddress);
+  SoundSystem getSoundSystem();
   
   /**
-   * Sets an input stream to the specified number.
-   * 
-   * @param streamnumber the input stream number
-   * @param stream the input stream to set
-   */
-  void setInputStream(int streamnumber, InputStream stream);
-  
-  /**
-   * Selects an input stream.
-   * 
-   * @param streamnumber the input stream number to select
-   */
-  void selectInputStream(int streamnumber);
-  
-  /**
-   * Returns the selected input stream.
-   * 
-   * @return the selected input stream
-   */
-  InputStream getSelectedInputStream();
-  
-  /**
-   * Prints the ZSCII string at the specified address to the active
-   * output streams.
-   * 
-   * @param stringAddress the address of an ZSCII string
-   */
-  void printZString(int stringAddress);
-  
-  /**
-   * Prints the specified string to the active output streams.
-   * 
-   * @param str the string to print
-   */
-  void print(ZsciiString str);
-  
-  /**
-   * Prints a newline to the active output streams.
-   */
-  void newline();
-  
-  /**
-   * Prints the specified ZSCII character.
-   * 
-   * @param zchar the ZSCII character to print
-   * @param isInput true if this is echoing input
-   */
-  void printZsciiChar(short zchar, boolean isInput);
-  
-  /**
-   * Deletes the specified ZSCII character. This implements a backspace.
-   * 
-   * @param zchar the character to delete
-   */
-  void deletePreviousZsciiChar(short zchar);
-  
-  /**
-   * Prints the specified signed number.
-   * 
-   * @param num the number to print?
-   */
-  void printNumber(short num);
-  
-  /**
-   * Flushes the active output streams.
-   */
-  void flushOutput();
-  
-  /**
-   * Generates a number in the range between 1 and range. If range is
+   * Generates a number in the range between 1 and <i>range</i>. If range is
    * negative, the random generator will be seeded to abs(range), if
    * range is 0, the random generator will be initialized to a new
    * random seed. In both latter cases, the result will be 0.
@@ -198,11 +139,7 @@ public interface Machine {
    * @param range the range
    * @return a random number
    */
-  short random(short range);
-  
-  // ************************************************************************
-  // ****** Control functions
-  // ************************************************
+  short random(short range);  
 
   /**
    * Updates the status line.
@@ -254,13 +191,6 @@ public interface Machine {
   boolean save_undo(int savepc);
 
   /**
-   * Outputs a warning message.
-   *  
-   * @param msg
-   */
-  void warn(String msg);
-  
-  /**
    * Restores a previously saved state.
    * 
    * @return the portable game state
@@ -272,46 +202,5 @@ public interface Machine {
    * 
    * @return the portable game state
    */
-  PortableGameState restore_undo();
-  
-  // **********************************************************************
-  // **** Services
-  // *******************************
-  
-  /**
-   * Returns an input functions object.
-   * 
-   * @return an input functions object
-   */
-  InputFunctions getInputFunctions();
-  
-  /**
-   * Returns the tokenizer.
-   * 
-   * @return the tokenizer
-   */
-  Tokenizer getTokenizer();
-  
-  /**
-   * Returns the sound system.
-   * 
-   * @return the sound system
-   */
-  SoundSystem getSoundSystem();
-  
-  /**
-   * Restarts the virtual machine.
-   */
-  void restart();
-  
-  /**
-   * Starts the virtual machine.
-   */
-  void start();
-  
-  /**
-   * Exists the virtual machine.
-   */
-  void quit();
-  
+  PortableGameState restore_undo();  
 }

@@ -290,9 +290,10 @@ public class Short0InstructionTest extends InstructionTestBase {
   public void testNewLine() {
     
     mockFileHeader.expects(atLeastOnce()).method("getVersion").will(returnValue(3));
+    mockMachine.expects(once()).method("getOutput").will(returnValue(output));
 
     Short0InstructionMock newline = createInstructionMock(Short0StaticInfo.OP_NEW_LINE);
-    mockMachine.expects(once()).method("newline");
+    mockOutput.expects(once()).method("newline");
     newline.execute();
     assertTrue(newline.nextInstructionCalled);
   }

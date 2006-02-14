@@ -28,9 +28,10 @@ import org.zmpp.encoding.ZsciiString;
 import org.zmpp.instructions.DefaultInstructionDecoder;
 import org.zmpp.io.InputStream;
 import org.zmpp.io.OutputStream;
-import org.zmpp.vm.Machine;
+import org.zmpp.vm.Input;
 import org.zmpp.vm.MachineImpl;
 import org.zmpp.vm.MemoryOutputStream;
+import org.zmpp.vm.Output;
 import org.zmpp.vm.SaveGameDataStore;
 import org.zmpp.vm.ScreenModel;
 import org.zmpp.vm.StatusLine;
@@ -48,6 +49,8 @@ public class MachineTest extends MemoryMapSetup {
   private ScreenModel screen;
   private Mock mockDataStore;
   private SaveGameDataStore datastore;
+  private Output output;
+  private Input input;
   
   protected void setUp() throws Exception {
 
@@ -72,11 +75,14 @@ public class MachineTest extends MemoryMapSetup {
     
     machine.setScreen(screen);
     
-    machine.setOutputStream(Machine.OUTPUTSTREAM_SCREEN, outputStream1);
-    machine.setOutputStream(Machine.OUTPUTSTREAM_TRANSCRIPT, outputStream2);
-    machine.setOutputStream(Machine.OUTPUTSTREAM_MEMORY, outputStream3);
-    machine.setInputStream(Machine.INPUTSTREAM_KEYBOARD, inputStream0);
-    machine.setInputStream(Machine.INPUTSTREAM_FILE, inputStream1);
+    output = machine.getOutput();    
+    output.setOutputStream(Output.OUTPUTSTREAM_SCREEN, outputStream1);
+    output.setOutputStream(Output.OUTPUTSTREAM_TRANSCRIPT, outputStream2);
+    output.setOutputStream(Output.OUTPUTSTREAM_MEMORY, outputStream3);
+    
+    input = machine.getInput();
+    input.setInputStream(Input.INPUTSTREAM_KEYBOARD, inputStream0);
+    input.setInputStream(Input.INPUTSTREAM_FILE, inputStream1);
     
     mockDataStore = mock(SaveGameDataStore.class);
     datastore = (SaveGameDataStore) mockDataStore.proxy();
@@ -97,37 +103,37 @@ public class MachineTest extends MemoryMapSetup {
     mockOutputStream2.expects(atLeastOnce()).method("isSelected").will(returnValue(false));
     mockOutputStream3.expects(atLeastOnce()).method("isSelected").will(returnValue(false));
     mockOutputStream1.expects(atLeastOnce()).method("print").withAnyArguments();
-    machine.selectOutputStream(1, true);
+    output.selectOutputStream(1, true);
     
-    machine.print(new ZsciiString("test"));
+    output.print(new ZsciiString("test"));
   }
   
   public void testSelectOutputStream() {
     
     mockOutputStream1.expects(once()).method("select").with(eq(true));
-    machine.selectOutputStream(1, true);
+    output.selectOutputStream(1, true);
   }
   
   public void testInputStream1() {
     
     mockScreen.expects(once()).method("setPaging").with(eq(false));
     
-    machine.setInputStream(Machine.INPUTSTREAM_KEYBOARD, inputStream0);
-    machine.setInputStream(Machine.INPUTSTREAM_FILE, inputStream1);
+    input.setInputStream(Input.INPUTSTREAM_KEYBOARD, inputStream0);
+    input.setInputStream(Input.INPUTSTREAM_FILE, inputStream1);
     
-    machine.selectInputStream(Machine.INPUTSTREAM_FILE);
-    assertEquals(inputStream1, machine.getSelectedInputStream());
+    input.selectInputStream(Input.INPUTSTREAM_FILE);
+    assertEquals(inputStream1, input.getSelectedInputStream());
   }
 
   public void testInputStream0() {
     
     mockScreen.expects(once()).method("setPaging").with(eq(true));
     
-    machine.setInputStream(Machine.INPUTSTREAM_KEYBOARD, inputStream0);
-    machine.setInputStream(Machine.INPUTSTREAM_FILE, inputStream1);
+    input.setInputStream(Input.INPUTSTREAM_KEYBOARD, inputStream0);
+    input.setInputStream(Input.INPUTSTREAM_FILE, inputStream1);
     
-    machine.selectInputStream(Machine.INPUTSTREAM_KEYBOARD);
-    assertEquals(inputStream0, machine.getSelectedInputStream());
+    input.selectInputStream(Input.INPUTSTREAM_KEYBOARD);
+    assertEquals(inputStream0, input.getSelectedInputStream());
   }
   
   public void testRandom() {
@@ -258,7 +264,7 @@ public class MachineTest extends MemoryMapSetup {
     
     mockOutputStream2.expects(once()).method("select").with(eq(true));
 
-    machine.selectOutputStream(Machine.OUTPUTSTREAM_TRANSCRIPT, true);
+    output.selectOutputStream(Output.OUTPUTSTREAM_TRANSCRIPT, true);
     assertTrue(machine.getGameData().getStoryFileHeader().isEnabled(Attribute.TRANSCRIPTING));    
   }
   
@@ -274,7 +280,7 @@ public class MachineTest extends MemoryMapSetup {
     // for the error message
     mockOutputStream1.expects(atLeastOnce()).method("print").withAnyArguments();
     
-    machine.selectOutputStream(Machine.OUTPUTSTREAM_MEMORY, true);
+    output.selectOutputStream(Output.OUTPUTSTREAM_MEMORY, true);
   }
   
   private int tableAddress;
@@ -288,9 +294,9 @@ public class MachineTest extends MemoryMapSetup {
         tableAddress = table;
       }
     };
-    machine.setOutputStream(Machine.OUTPUTSTREAM_MEMORY, memstream);
-
-    machine.selectOutputStream3(4711);
+    output.setOutputStream(Output.OUTPUTSTREAM_MEMORY, memstream);
+    output.selectOutputStream3(4711);
+    
     assertEquals(4711, tableAddress);
   }
   
@@ -314,7 +320,7 @@ public class MachineTest extends MemoryMapSetup {
     mockOutputStream1.expects(atLeastOnce()).method("print").with(eq((short) 'i'), eq(true));
     mockOutputStream1.expects(atLeastOnce()).method("print").with(eq((short) ZsciiEncoding.NEWLINE), eq(false));
     
-    machine.selectInputStream(0);
+    input.selectInputStream(0);
     machine.getInputFunctions().readLine(4711, 0, 0);
   }
   
@@ -331,8 +337,8 @@ public class MachineTest extends MemoryMapSetup {
     
     mockInputStream0.expects(once()).method("getZsciiChar").will(returnValue((short) 'L'));
     
-    machine.setInputStream(0, inputStream0);
-    machine.setInputStream(1, inputStream1);
+    input.setInputStream(0, inputStream0);
+    input.setInputStream(1, inputStream1);
     short zchar = machine.getInputFunctions().readChar(0, 0);
     assertEquals((short) 'L', zchar);
   }

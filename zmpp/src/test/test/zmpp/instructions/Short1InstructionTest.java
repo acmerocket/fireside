@@ -386,9 +386,11 @@ public class Short1InstructionTest extends InstructionTestBase {
   public void testPrintAddr() {
     
     mockFileHeader.expects(atLeastOnce()).method("getVersion").will(returnValue(3));
+    mockMachine.expects(atLeastOnce()).method("getOutput").will(returnValue(output));
+
     Short1InstructionMock print_addr = createInstructionMock(Short1StaticInfo.OP_PRINT_ADDR,
         Operand.TYPENUM_LARGE_CONSTANT, (short) 0x28bc);
-    mockMachine.expects(once()).method("printZString").with(eq(0x28bc));
+    mockOutput.expects(once()).method("printZString").with(eq(0x28bc));
     print_addr.execute();
     assertTrue(print_addr.nextInstructionCalled);
   }
@@ -400,11 +402,13 @@ public class Short1InstructionTest extends InstructionTestBase {
   public void testPrintPaddr() {
     
     mockFileHeader.expects(atLeastOnce()).method("getVersion").will(returnValue(3));
+    mockMachine.expects(atLeastOnce()).method("getOutput").will(returnValue(output));
+    
     Short1InstructionMock print_paddr = createInstructionMock(Short1StaticInfo.OP_PRINT_PADDR,
         Operand.TYPENUM_LARGE_CONSTANT, (short) 0x145e);
     mockMachine.expects(once()).method("getCpu").will(returnValue(cpu));
     mockCpu.expects(once()).method("translatePackedAddress").with(eq(0x145e), eq(false)).will(returnValue(1234));
-    mockMachine.expects(once()).method("printZString").with(eq(1234));
+    mockOutput.expects(once()).method("printZString").with(eq(1234));
     
     print_paddr.execute();
     assertTrue(print_paddr.nextInstructionCalled);
@@ -445,13 +449,15 @@ public class Short1InstructionTest extends InstructionTestBase {
   public void testPrintObj() {
     
     mockFileHeader.expects(atLeastOnce()).method("getVersion").will(returnValue(3));
+    mockMachine.expects(atLeastOnce()).method("getOutput").will(returnValue(output));
+    
     Short1InstructionMock print_obj = createInstructionMock(Short1StaticInfo.OP_PRINT_OBJ,
         Operand.TYPENUM_SMALL_CONSTANT, (short) 0x03);
 
     mockGameData.expects(once()).method("getObjectTree").will(returnValue(objectTree));
     mockObjectTree.expects(once()).method("getObject").with(eq(0x03)).will(returnValue(zobject));
     mockZObject.expects(once()).method("getPropertiesDescriptionAddress").will(returnValue(4712));
-    mockMachine.expects(once()).method("printZString").with(eq(4712));
+    mockOutput.expects(once()).method("printZString").with(eq(4712));
     print_obj.execute();
     assertTrue(print_obj.nextInstructionCalled);
   }

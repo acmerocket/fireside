@@ -170,7 +170,7 @@ public class ExtendedInstruction extends AbstractInstruction {
   private void print_unicode() {
  
     short zchar = getValue(0);
-    getMachine().printZsciiChar(zchar, false);
+    getMachine().getOutput().printZsciiChar(zchar, false);
     nextInstruction();
   }
   

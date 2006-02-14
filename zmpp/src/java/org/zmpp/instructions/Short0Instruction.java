@@ -82,7 +82,7 @@ public class Short0Instruction extends AbstractInstruction {
         else z_catch();
         break;
       case Short0StaticInfo.OP_NEW_LINE:
-        getMachine().newline();
+        getMachine().getOutput().newline();
         nextInstruction();
         break;
       case Short0StaticInfo.OP_SHOW_STATUS:

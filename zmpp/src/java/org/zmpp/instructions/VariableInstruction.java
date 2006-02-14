@@ -26,6 +26,7 @@ import org.zmpp.base.MemoryAccess;
 import org.zmpp.encoding.ZCharEncoder;
 import org.zmpp.media.SoundSystem;
 import org.zmpp.vm.Machine;
+import org.zmpp.vm.Output;
 import org.zmpp.vm.ScreenModel;
 import org.zmpp.vm.TextCursor;
 import org.zmpp.vm.ZObject;
@@ -267,14 +268,14 @@ public class VariableInstruction extends AbstractInstruction {
   private void print_char() {
     
     short zchar = getValue(0);
-    getMachine().printZsciiChar(zchar, false);
+    getMachine().getOutput().printZsciiChar(zchar, false);
     nextInstruction();
   }
   
   private void print_num() {
     
     short number = getValue(0);
-    getMachine().printNumber(number);
+    getMachine().getOutput().printNumber(number);
     nextInstruction();
   }
   
@@ -309,19 +310,19 @@ public class VariableInstruction extends AbstractInstruction {
     
     if (streamnumber < 0 && streamnumber >= -3) {
       
-      getMachine().selectOutputStream(-streamnumber, false);
+      getMachine().getOutput().selectOutputStream(-streamnumber, false);
     
     } else if (streamnumber > 0 && streamnumber <= 3) {
       
-      if (streamnumber == Machine.OUTPUTSTREAM_MEMORY) {
+      if (streamnumber == Output.OUTPUTSTREAM_MEMORY) {
        
         int tableAddress = this.getUnsignedValue(1);
         //System.out.printf("Select stream 3 on table: %x\n", tableAddress);
-        getMachine().selectOutputStream3(tableAddress);
+        getMachine().getOutput().selectOutputStream3(tableAddress);
         
       } else {
       
-        getMachine().selectOutputStream(streamnumber, true);
+        getMachine().getOutput().selectOutputStream(streamnumber, true);
       }
     }
     nextInstruction();
@@ -329,7 +330,7 @@ public class VariableInstruction extends AbstractInstruction {
   
   private void input_stream() {
     
-    getMachine().selectInputStream(getUnsignedValue(0));
+    getMachine().getInput().selectInputStream(getUnsignedValue(0));
     nextInstruction();
   }
   
@@ -668,7 +669,7 @@ public class VariableInstruction extends AbstractInstruction {
         
         int offset = (width * i) + j;
         zchar = memaccess.readUnsignedByte(zsciiText + offset);
-        getMachine().printZsciiChar(zchar, false);
+        getMachine().getOutput().printZsciiChar(zchar, false);
       }
       row += skip + 1;
       getMachine().getScreen().setTextCursor(row, column);

@@ -22,13 +22,9 @@
  */
 package org.zmpp.vm;
 
-import org.zmpp.encoding.ZsciiEncoding;
 import org.zmpp.encoding.ZsciiString;
 import org.zmpp.iff.FormChunk;
 import org.zmpp.iff.WritableFormChunk;
-import org.zmpp.instructions.Interruptable;
-import org.zmpp.io.InputStream;
-import org.zmpp.io.OutputStream;
 import org.zmpp.media.SoundSystem;
 import org.zmpp.media.SoundSystemImpl;
 import org.zmpp.vm.StoryFileHeader.Attribute;
@@ -42,27 +38,12 @@ import org.zmpp.vmutil.UnpredictableRandomGenerator;
  * @author Wei-ju Wu
  * @version 1.0
  */
-public class MachineImpl implements Machine, Interruptable {
+public class MachineImpl implements Machine {
 
   /**
    * The configuration object.
    */
   private GameData gamedata;
-  
-  /**
-   * This is the array of output streams.
-   */
-  private OutputStream[] outputStream;
-  
-  /**
-   * This is the array of input streams.
-   */
-  private InputStream[] inputStream;
-  
-  /**
-   * The selected input stream.
-   */
-  private int selectedInputStreamIndex;
   
   /**
    * The random generator.
@@ -110,6 +91,16 @@ public class MachineImpl implements Machine, Interruptable {
   private Cpu cpu;
   
   /**
+   * The output streams.
+   */
+  private Output output;
+  
+  /**
+   * The input streams.
+   */
+  private Input input;
+  
+  /**
    * Constructor.
    */
   public MachineImpl() {
@@ -117,11 +108,17 @@ public class MachineImpl implements Machine, Interruptable {
     this.inputFunctions = new InputFunctionsImpl(this);
   }
   
+  /**
+   * {@inheritDoc}
+   */
   public GameData getGameData() {
     
     return gamedata;
   }
   
+  /**
+   * {@inheritDoc}
+   */
   public Cpu getCpu() {
     
     return cpu;
@@ -130,14 +127,29 @@ public class MachineImpl implements Machine, Interruptable {
   /**
    * {@inheritDoc}
    */
+  public Output getOutput() {
+    
+    return output;
+  }
+  
+  /**
+   * {@inheritDoc}
+   */
+  public Input getInput() {
+    
+    return input;
+  }
+  
+  /**
+   * {@inheritDoc}
+   */
   public void initialize(GameData gamedata, InstructionDecoder decoder) {
   
     this.gamedata = gamedata;
-    this.outputStream = new OutputStream[3];
-    this.inputStream = new InputStream[2];    
-    this.selectedInputStreamIndex = 0;
     this.random = new UnpredictableRandomGenerator();
     cpu = new CpuImpl(this, decoder);
+    output = new OutputImpl(gamedata, cpu);
+    input = new InputImpl(this);
     
     // initialize the media access
     if (gamedata.getResources() != null) {
@@ -146,55 +158,17 @@ public class MachineImpl implements Machine, Interruptable {
         this.soundSystem =
           new SoundSystemImpl(gamedata.getResources().getSounds());
       }
-    }
-    
+    }    
     resetState();
   }
 
-  /**
-   * Resets all state to initial values, using the configuration object.
-   */
-  private void resetState() {
-    
-    cpu.reset();
-    int checksum = calculateChecksum(gamedata.getStoryFileHeader());
-    hasValidChecksum = gamedata.getStoryFileHeader().getChecksum() == checksum;
-    //gamedata.getStoryFileHeader().setStandardRevision(1, 0);
-    
-    if (gamedata.getStoryFileHeader().getVersion() >= 4) {
-            
-      gamedata.getStoryFileHeader().setEnabled(Attribute.SUPPORTS_TIMED_INPUT, true);
-      gamedata.getStoryFileHeader().setInterpreterNumber(6); // IBM PC
-      gamedata.getStoryFileHeader().setInterpreterVersion(1);
-    }
-  }
-  
-  /**
-   * Calculates the checksum of the file.
-   * 
-   * @param fileheader the file header
-   * @return the check sum
-   */
-  private int calculateChecksum(StoryFileHeader fileheader) {
-    
-    int filelen = fileheader.getFileLength();
-    int sum = 0;
-    
-    for (int i = 0x40; i < filelen; i++) {
-    
-      sum += gamedata.getMemoryAccess().readUnsignedByte(i);
-    }
-    return (sum & 0xffff);
-  }
-  
   /**
    * {@inheritDoc}
    */
   public boolean hasValidChecksum() {
     
     return this.hasValidChecksum;
-  }
-  
+  }  
   
   /**
    * {@inheritDoc}
@@ -214,200 +188,82 @@ public class MachineImpl implements Machine, Interruptable {
     return (short) ((random.next() % range) + 1);
   }
 
-  // **********************************************************************
-  // ****** Streams
-  // ****************************
-  
-  /**
-   * {@inheritDoc}
-   */
-  public void setOutputStream(int streamnumber, OutputStream stream) {
-    
-    outputStream[streamnumber - 1] = stream;
-  }
-  
-  /**
-   * {@inheritDoc}
-   */
-  public void printZString(int address) {
-    
-    print(gamedata.getZCharDecoder().decode2Zscii(gamedata.getMemoryAccess(),
-        address, 0));
-  }
-  
-  /**
-   * {@inheritDoc}
-   */
-  public void print(ZsciiString str) {
-
-    //System.out.println("print: '" + str + "'");
-    printZsciiChars(str, false);
-  }
-  
-  /**
-   * {@inheritDoc}
-   */
-  public void newline() {
-    
-    printZsciiChar(ZsciiEncoding.NEWLINE, false);
-  }
-  
-  private short[] zchars = new short[1];
-  
-  /**
-   * {@inheritDoc}
-   */
-  public void printZsciiChar(short zchar, boolean isInput) {
-    
-    //System.out.println("printZsciiChar: '" + (char) zchar + "'");
-    zchars[0] = zchar;
-    printZsciiChars(new ZsciiString(zchars), isInput);
-  }
-  
-  /**
-   * {@inheritDoc}
-   */
-  public void deletePreviousZsciiChar(short zchar) {
-    
-    if (!outputStream[OUTPUTSTREAM_MEMORY - 1].isSelected()) {
-          
-      for (int i = 0; i < outputStream.length; i++) {
-      
-        if (outputStream[i] != null && outputStream[i].isSelected()) {
-      
-          outputStream[i].deletePrevious(zchar);
-        }
-      }
-    }
-  }
-
-  /**
-   * Prints the specified array of ZSCII characters. This is the only function
-   * that communicates with the output streams directly.
-   * 
-   * @param zsciiString the array of ZSCII characters.
-   * @param isInput true if in input mode, false otherwise
-   */
-  private void printZsciiChars(ZsciiString zsciiString, boolean isInput) {
-    
-    checkTranscriptFlag();
-    
-    if (outputStream[OUTPUTSTREAM_MEMORY - 1].isSelected()) {
-      
-      for (int i = 0, n = zsciiString.length(); i < n; i++) {
-        
-        outputStream[OUTPUTSTREAM_MEMORY - 1].print(zsciiString.charAt(i), isInput);
-      }
-      
-    } else {
-    
-      for (int i = 0; i < outputStream.length; i++) {
-      
-        if (outputStream[i] != null && outputStream[i].isSelected()) {
-      
-          for (int j = 0, n = zsciiString.length(); j < n; j++) {
-          
-            outputStream[i].print(zsciiString.charAt(j), isInput);
-          }
-        }
-      }
-    }
-  }
-  
-  /**
-   * {@inheritDoc}
-   */
-  public void printNumber(short number) {
-    
-    print(new ZsciiString(String.valueOf(number)));
-  }
-  
-  public void flushOutput() {
-    
-    // At the moment flushing only makes sense for screen
-    if (!outputStream[OUTPUTSTREAM_MEMORY - 1].isSelected()) {
-      
-      
-      for (int i = 0; i < outputStream.length; i++) {
-      
-        if (outputStream[i] != null && outputStream[i].isSelected()) {
-      
-          outputStream[i].flush();
-        }
-      }
-    }
-  }
-
-  /**
-   * Checks the fileheader if the transcript flag was set by the game
-   * bypassing output_stream, e.g. with a storeb to the fileheader flags
-   * address. Enable the transcript depending on the status of that flag.
-   */
-  private void checkTranscriptFlag() {
-    
-    if (outputStream[OUTPUTSTREAM_TRANSCRIPT - 1] != null) {
-        
-      outputStream[OUTPUTSTREAM_TRANSCRIPT - 1].select(
-          gamedata.getStoryFileHeader().isEnabled(Attribute.TRANSCRIPTING));
-    }
-  }
-  
-  /**
-   * {@inheritDoc}
-   */
-  public void selectOutputStream(int streamnumber, boolean flag) {
-    
-    outputStream[streamnumber - 1].select(flag);
-    
-    // Sets the tranxdQscript flag if the transcipt is specified
-    if (streamnumber == OUTPUTSTREAM_TRANSCRIPT) {
-      
-      //System.out.println("ENABLE_TRANSCRIPT_STREAM: " + flag);
-      gamedata.getStoryFileHeader().setEnabled(Attribute.TRANSCRIPTING, flag);
-      
-    } else if (streamnumber == OUTPUTSTREAM_MEMORY && flag) {
-      
-      cpu.halt("invalid selection of memory stream");
-    }
-  }
-  
-  /**
-   * {@inheritDoc}
-   */
-  public void selectOutputStream3(int tableAddress) {
-
-    ((MemoryOutputStream) outputStream[OUTPUTSTREAM_MEMORY - 1]).select(
-        tableAddress);
-  }
-  
-  /**
-   * {@inheritDoc}
-   */
-  public void setInputStream(int streamnumber, InputStream stream) {
-    
-    inputStream[streamnumber] = stream;
-  }
-  
-  /**
-   * {@inheritDoc}
-   */
-  public void selectInputStream(int streamnumber) {
-    
-    selectedInputStreamIndex = streamnumber;    
-    screenModel.setPaging(streamnumber != Machine.INPUTSTREAM_FILE);
-  }
-  
-  /**
-   * {@inheritDoc}
-   */
-  public InputStream getSelectedInputStream() {
-    
-    return inputStream[selectedInputStreamIndex];
-  }
-    
   // ************************************************************************
   // ****** Control functions
   // ************************************************
+
+  /**
+   * {@inheritDoc}
+   */
+  public void warn(String msg) {
+    
+    System.err.println("WARNING: " + msg);
+  }
+  
+  /**
+   * {@inheritDoc} 
+   */
+  public void restart() {
+
+    restart(true);
+  }
+  
+  /**
+   * {@inheritDoc} 
+   */
+  public void quit() {
+    
+    cpu.setRunning(false);
+    
+    // On quit, close the streams
+    output.print(new ZsciiString("*Game ended*"));
+    closeStreams();
+    screenModel.redraw();
+  }
+  
+  /**
+   * {@inheritDoc}
+   */
+  public void start() {
+    
+    cpu.setRunning(true);
+  }
+  
+  // ************************************************************************
+  // ****** Machine services
+  // ************************************************
+  
+  /**
+   * {@inheritDoc}
+   */
+  public InputFunctions getInputFunctions() {
+    
+    return inputFunctions;
+  }
+  
+  /**
+   * {@inheritDoc}
+   */
+  public Tokenizer getTokenizer() {
+    
+    return inputFunctions;
+  }
+  
+  /**
+   * {@inheritDoc}
+   */
+  public SoundSystem getSoundSystem() {
+    
+    return soundSystem;
+  }
+
+  /**
+   * {@inheritDoc}
+   */
+  public void setSaveGameDataStore(SaveGameDataStore datastore) {
+    
+    this.datastore = datastore;
+  }
 
   /**
    * {@inheritDoc}
@@ -455,15 +311,7 @@ public class MachineImpl implements Machine, Interruptable {
   public ScreenModel getScreen() {
     
     return screenModel;
-  }
-  
-  /**
-   * {@inheritDoc}
-   */
-  public void warn(String msg) {
-    
-    System.err.println("WARNING: " + msg);
-  }
+  }  
   
   /**
    * {@inheritDoc} 
@@ -532,6 +380,10 @@ public class MachineImpl implements Machine, Interruptable {
     return null;
   }
   
+  // ***********************************************************************
+  // ***** Private methods
+  // **************************************
+  
   private boolean verifySaveGame(PortableGameState gamestate) {
     
     // Verify the game according to the standard
@@ -541,16 +393,53 @@ public class MachineImpl implements Machine, Interruptable {
     return gamestate.getRelease() == fileHeader.getRelease()
       && gamestate.getChecksum() == checksum
       && gamestate.getSerialNumber().equals(fileHeader.getSerialNumber());
+  }  
+
+  /**
+   * Close the streams.
+   */
+  private void closeStreams() {
+
+    input.close();
+    output.close();
   }
   
   /**
-   * {@inheritDoc} 
+   * Resets all state to initial values, using the configuration object.
    */
-  public void restart() {
-
-    restart(true);
+  private void resetState() {
+    
+    cpu.reset();
+    int checksum = calculateChecksum(gamedata.getStoryFileHeader());
+    hasValidChecksum = gamedata.getStoryFileHeader().getChecksum() == checksum;
+    //gamedata.getStoryFileHeader().setStandardRevision(1, 0);
+    
+    if (gamedata.getStoryFileHeader().getVersion() >= 4) {
+            
+      gamedata.getStoryFileHeader().setEnabled(Attribute.SUPPORTS_TIMED_INPUT, true);
+      gamedata.getStoryFileHeader().setInterpreterNumber(6); // IBM PC
+      gamedata.getStoryFileHeader().setInterpreterVersion(1);
+    }
   }
   
+  /**
+   * Calculates the checksum of the file.
+   * 
+   * @param fileheader the file header
+   * @return the check sum
+   */
+  private int calculateChecksum(StoryFileHeader fileheader) {
+    
+    int filelen = fileheader.getFileLength();
+    int sum = 0;
+    
+    for (int i = 0x40; i < filelen; i++) {
+    
+      sum += gamedata.getMemoryAccess().readUnsignedByte(i);
+    }
+    return (sum & 0xffff);
+  }  
+
   private void restart(boolean resetScreenModel) {
     
     // Transcripting and fixed font bits survive the restart
@@ -562,100 +451,5 @@ public class MachineImpl implements Machine, Interruptable {
     if (resetScreenModel) screenModel.reset();    
     fileHeader.setEnabled(Attribute.TRANSCRIPTING, transcripting);
     fileHeader.setEnabled(Attribute.FORCE_FIXED_FONT, fixedFontForced);
-  }
-  
-  /**
-   * {@inheritDoc} 
-   */
-  public void quit() {
-    
-    cpu.setRunning(false);
-    
-    // On quit, close the streams
-    print(new ZsciiString("*Game ended*"));
-    closeStreams();
-    screenModel.redraw();
-  }
-  
-  /**
-   * Close the streams.
-   */
-  private void closeStreams() {
-    
-    if (inputStream != null) {
-
-      for (int i = 0; i < inputStream.length; i++) {
-        
-        if (inputStream[i] != null) {
-          
-          inputStream[i].close();
-        }
-      }
-    }
-    
-    if (outputStream != null) {
-
-      for (int i = 0; i < outputStream.length; i++) {
-        
-        if (outputStream[i] != null) {
-          
-          outputStream[i].flush();
-          outputStream[i].close();
-        }
-      }
-    }
-  }
-  
-  /**
-   * {@inheritDoc}
-   */
-  public void start() {
-    
-    cpu.setRunning(true);
-  }
-  
-  /**
-   * {@inheritDoc}
-   */
-  public void setInterruptRoutine(int routine) {
-    
-    // TODO
-    System.out.printf("setInterruptRoutine(): %04x\n", routine);
-  }
-  
-  /**
-   * {@inheritDoc}
-   */
-  public void setSaveGameDataStore(SaveGameDataStore datastore) {
-    
-    this.datastore = datastore;
-  }
-  
-  // ************************************************************************
-  // ****** Machine services
-  // ************************************************
-  
-  /**
-   * {@inheritDoc}
-   */
-  public InputFunctions getInputFunctions() {
-    
-    return inputFunctions;
-  }
-  
-  /**
-   * {@inheritDoc}
-   */
-  public Tokenizer getTokenizer() {
-    
-    return inputFunctions;
-  }
-  
-  /**
-   * {@inheritDoc}
-   */
-  public SoundSystem getSoundSystem() {
-    
-    return soundSystem;
-  }
+  }  
 }

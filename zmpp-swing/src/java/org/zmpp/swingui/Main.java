@@ -34,10 +34,12 @@ import org.zmpp.io.TranscriptOutputStream;
 import org.zmpp.media.Resources;
 import org.zmpp.vm.GameData;
 import org.zmpp.vm.GameDataImpl;
+import org.zmpp.vm.Input;
 import org.zmpp.vm.InstructionDecoder;
 import org.zmpp.vm.Machine;
 import org.zmpp.vm.MachineImpl;
 import org.zmpp.vm.MemoryOutputStream;
+import org.zmpp.vm.Output;
 import org.zmpp.vm.StoryFileHeader;
 
 
@@ -83,20 +85,22 @@ public class Main {
       
       // Input streams
       FileInputStream fileIs = new FileInputStream(screen,
-          machine.getGameData().getZsciiEncoding());      
-      machine.setInputStream(0, screen);
-      machine.setInputStream(1, fileIs);
+          machine.getGameData().getZsciiEncoding());
+      Input input = machine.getInput();
+      input.setInputStream(0, screen);
+      input.setInputStream(1, fileIs);
       //machine.selectInputStream(1);
       
       // Output streams
-      machine.setOutputStream(1, screen.getOutputStream());
-      machine.selectOutputStream(1, true);
+      Output output = machine.getOutput();
+      output.setOutputStream(1, screen.getOutputStream());
+      output.selectOutputStream(1, true);
       TranscriptOutputStream transcriptStream = new TranscriptOutputStream(
           screen, machine.getGameData().getZsciiEncoding());
-      machine.setOutputStream(2, transcriptStream);
-      machine.selectOutputStream(2, false);
-      machine.setOutputStream(3, new MemoryOutputStream(machine));
-      machine.selectOutputStream(3, false);
+      output.setOutputStream(2, transcriptStream);
+      output.selectOutputStream(2, false);
+      output.setOutputStream(3, new MemoryOutputStream(machine));
+      output.selectOutputStream(3, false);
       
       machine.setStatusLine(screen);
       machine.setScreen(screen.getScreenModel());

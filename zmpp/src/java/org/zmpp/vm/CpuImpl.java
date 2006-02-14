@@ -28,8 +28,9 @@ import java.util.List;
 
 import org.zmpp.base.MemoryAccess;
 import org.zmpp.encoding.ZsciiString;
+import org.zmpp.instructions.Interruptable;
 
-public class CpuImpl implements Cpu {
+public class CpuImpl implements Cpu, Interruptable {
 
   private GameData gamedata;
   
@@ -149,7 +150,7 @@ public class CpuImpl implements Cpu {
    */
   public void halt(String errormsg) {
   
-    machine.print(new ZsciiString(errormsg));
+    machine.getOutput().print(new ZsciiString(errormsg));
     running = false;
   }  
 
@@ -411,6 +412,15 @@ public class CpuImpl implements Cpu {
     return routineContext;
   }
 
+  /**
+   * {@inheritDoc}
+   */
+  public void setInterruptRoutine(int routine) {
+    
+    // TODO
+    System.out.printf("setInterruptRoutine(): %04x\n", routine);
+  }  
+  
   // ************************************************************************
   // ****** Private functions
   // ************************************************

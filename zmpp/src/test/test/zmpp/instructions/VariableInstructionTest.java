@@ -27,6 +27,7 @@ import org.zmpp.instructions.Operand;
 import org.zmpp.instructions.VariableInstruction;
 import org.zmpp.instructions.VariableStaticInfo;
 import org.zmpp.instructions.AbstractInstruction.OperandCount;
+import org.zmpp.vm.Input;
 import org.zmpp.vm.Machine;
 import org.zmpp.vm.RoutineContext;
 import org.zmpp.vm.ScreenModel;
@@ -334,7 +335,8 @@ public class VariableInstructionTest extends InstructionTestBase {
   public void testPrintChar() {
     
     mockFileHeader.expects(atLeastOnce()).method("getVersion").will(returnValue(3));
-    mockMachine.expects(once()).method("printZsciiChar").with(eq((short) 97), eq(false));
+    mockMachine.expects(once()).method("getOutput").will(returnValue(output));
+    mockOutput.expects(once()).method("printZsciiChar").with(eq((short) 97), eq(false));
     mockMachine.expects(atLeastOnce()).method("getCpu").will(returnValue(cpu));
     mockCpu.expects(once()).method("incrementProgramCounter").with(eq(5));
     
@@ -352,7 +354,8 @@ public class VariableInstructionTest extends InstructionTestBase {
   public void testPrintNum() {
 
     mockFileHeader.expects(atLeastOnce()).method("getVersion").will(returnValue(3));
-    mockMachine.expects(once()).method("printNumber").with(eq((short) -12));
+    mockMachine.expects(once()).method("getOutput").will(returnValue(output));
+    mockOutput.expects(once()).method("printNumber").with(eq((short) -12));
     mockMachine.expects(atLeastOnce()).method("getCpu").will(returnValue(cpu));
     mockCpu.expects(once()).method("incrementProgramCounter").with(eq(5));
     
@@ -424,8 +427,12 @@ public class VariableInstructionTest extends InstructionTestBase {
   
   public void testInputStream() {
    
+    Mock mockInput = mock(Input.class);
+    Input input = (Input) mockInput.proxy();
+    
     mockFileHeader.expects(atLeastOnce()).method("getVersion").will(returnValue(3));
-    mockMachine.expects(once()).method("selectInputStream").with(eq(1));
+    mockMachine.expects(once()).method("getInput").will(returnValue(input));
+    mockInput.expects(once()).method("selectInputStream").with(eq(1));
     mockMachine.expects(atLeastOnce()).method("getCpu").will(returnValue(cpu));
     mockCpu.expects(once()).method("incrementProgramCounter").with(eq(5));
     
@@ -443,7 +450,8 @@ public class VariableInstructionTest extends InstructionTestBase {
   public void testOutputStreamDisable2() {
     
     mockFileHeader.expects(atLeastOnce()).method("getVersion").will(returnValue(3));
-    mockMachine.expects(once()).method("selectOutputStream").with(eq(2), eq(false));
+    mockMachine.expects(once()).method("getOutput").will(returnValue(output));
+    mockOutput.expects(once()).method("selectOutputStream").with(eq(2), eq(false));
     mockMachine.expects(atLeastOnce()).method("getCpu").will(returnValue(cpu));
     mockCpu.expects(once()).method("incrementProgramCounter").with(eq(5));
     
@@ -472,7 +480,8 @@ public class VariableInstructionTest extends InstructionTestBase {
   public void testOutputStreamEnable2() {
 
     mockFileHeader.expects(atLeastOnce()).method("getVersion").will(returnValue(3));
-    mockMachine.expects(once()).method("selectOutputStream").with(eq(2), eq(true));
+    mockMachine.expects(once()).method("getOutput").will(returnValue(output));
+    mockOutput.expects(once()).method("selectOutputStream").with(eq(2), eq(true));
     mockMachine.expects(atLeastOnce()).method("getCpu").will(returnValue(cpu));
     mockCpu.expects(once()).method("incrementProgramCounter").with(eq(5));
     

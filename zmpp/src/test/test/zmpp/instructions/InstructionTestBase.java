@@ -9,6 +9,7 @@ import org.zmpp.vm.Dictionary;
 import org.zmpp.vm.GameData;
 import org.zmpp.vm.Machine;
 import org.zmpp.vm.ObjectTree;
+import org.zmpp.vm.Output;
 import org.zmpp.vm.StoryFileHeader;
 import org.zmpp.vm.ZObject;
 
@@ -32,6 +33,8 @@ public abstract class InstructionTestBase extends MockObjectTestCase {
   protected Dictionary dictionary;
   protected Mock mockCpu;
   protected Cpu cpu;
+  protected Mock mockOutput;
+  protected Output output;
   
   /**
    * {@inheritDoc}
@@ -58,6 +61,8 @@ public abstract class InstructionTestBase extends MockObjectTestCase {
     dictionary = (Dictionary) mockDictionary.proxy();    
     mockCpu = mock(Cpu.class);
     cpu = (Cpu) mockCpu.proxy();
+    mockOutput = mock(Output.class);
+    output = (Output) mockOutput.proxy();
     
     mockMachine.expects(atLeastOnce()).method("getGameData").will(returnValue(gamedata));
     mockGameData.expects(atLeastOnce()).method("getStoryFileHeader").will(returnValue(storyfileHeader));

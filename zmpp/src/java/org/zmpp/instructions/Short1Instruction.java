@@ -252,13 +252,13 @@ public class Short1Instruction extends AbstractInstruction {
 
   private void print_addr() {
    
-    getMachine().printZString(getUnsignedValue(0));
+    getMachine().getOutput().printZString(getUnsignedValue(0));
     nextInstruction();
   }
   
   private void print_paddr() {
     
-    getMachine().printZString(
+    getMachine().getOutput().printZString(
         getMachine().getCpu().translatePackedAddress(getUnsignedValue(0), false));
     nextInstruction();
   }
@@ -274,7 +274,7 @@ public class Short1Instruction extends AbstractInstruction {
     if (obj > 0) {
       
       ZObject zobj = getObjectTree().getObject(obj);
-      getMachine().printZString(zobj.getPropertiesDescriptionAddress());
+      getMachine().getOutput().printZString(zobj.getPropertiesDescriptionAddress());
       
     } else {
       

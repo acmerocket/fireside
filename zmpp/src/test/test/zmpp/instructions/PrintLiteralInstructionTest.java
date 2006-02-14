@@ -48,9 +48,10 @@ public class PrintLiteralInstructionTest extends InstructionTestBase {
   public void testPrint() {
     
     mockFileHeader.expects(atLeastOnce()).method("getVersion").will(returnValue(3));
-    mockMachine.expects(atLeastOnce()).method("getCpu").will(returnValue(cpu));
+    mockMachine.expects(atLeastOnce()).method("getCpu").will(returnValue(cpu));    
     mockCpu.expects(once()).method("incrementProgramCounter").with(eq(3));
-    mockMachine.expects(once()).method("printZString").with(eq(4712));
+    mockMachine.expects(once()).method("getOutput").will(returnValue(output));
+    mockOutput.expects(once()).method("printZString").with(eq(4712));
     mockMemAccess.expects(once()).method("readUnsignedShort").with(eq(4712)).will(returnValue(0x8000));
     PrintLiteralInstruction print = new PrintLiteralInstruction(
         machine, PrintLiteralStaticInfo.OP_PRINT, memoryAccess, 4711);
@@ -60,9 +61,11 @@ public class PrintLiteralInstructionTest extends InstructionTestBase {
   public void testPrintRet() {
     
     mockFileHeader.expects(atLeastOnce()).method("getVersion").will(returnValue(3));
-    mockMachine.expects(atLeastOnce()).method("getCpu").will(returnValue(cpu));
-    mockMachine.expects(once()).method("printZString").with(eq(4712));
-    mockMachine.expects(once()).method("newline");
+    mockMachine.expects(atLeastOnce()).method("getCpu").will(returnValue(cpu));    
+    mockMachine.expects(atLeastOnce()).method("getOutput").will(returnValue(output));
+    
+    mockOutput.expects(once()).method("printZString").with(eq(4712));
+    mockOutput.expects(once()).method("newline");
     mockCpu.expects(once()).method("popRoutineContext").with(eq((short) 1));
     
     PrintLiteralInstruction print_ret = new PrintLiteralInstruction(
