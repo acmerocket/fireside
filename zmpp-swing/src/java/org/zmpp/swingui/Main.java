@@ -83,7 +83,7 @@ public class Main {
       
       // Input streams
       FileInputStream fileIs = new FileInputStream(screen,
-          machine.getServices().getZsciiEncoding());      
+          machine.getGameData().getZsciiEncoding());      
       machine.setInputStream(0, screen);
       machine.setInputStream(1, fileIs);
       //machine.selectInputStream(1);
@@ -92,7 +92,7 @@ public class Main {
       machine.setOutputStream(1, screen.getOutputStream());
       machine.selectOutputStream(1, true);
       TranscriptOutputStream transcriptStream = new TranscriptOutputStream(
-          screen, machine.getServices().getZsciiEncoding());
+          screen, machine.getGameData().getZsciiEncoding());
       machine.setOutputStream(2, transcriptStream);
       machine.selectOutputStream(2, false);
       machine.setOutputStream(3, new MemoryOutputStream(machine));

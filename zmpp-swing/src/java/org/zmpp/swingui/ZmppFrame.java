@@ -90,8 +90,8 @@ implements InputStream, StatusLine, SaveGameDataStore, IOSystem {
     super(Main.APPNAME);
     
     this.machine = machine;
-    lineEditor = new LineEditorImpl(machine.getServices().getStoryFileHeader(),
-        machine.getServices().getZsciiEncoding());
+    lineEditor = new LineEditorImpl(machine.getGameData().getStoryFileHeader(),
+        machine.getGameData().getZsciiEncoding());
     
     isMacOs = (System.getProperty("mrj.version") != null);
     setDefaultCloseOperation(JFrame.EXIT_ON_CLOSE);
@@ -100,7 +100,7 @@ implements InputStream, StatusLine, SaveGameDataStore, IOSystem {
     viewport.setPreferredSize(new Dimension(640, 476));
     viewport.setMinimumSize(new Dimension(400, 300));
     
-    if (machine.getServices().getStoryFileHeader().getVersion() <= 3) {
+    if (machine.getGameData().getStoryFileHeader().getVersion() <= 3) {
       
       JPanel statusPanel = new JPanel(new GridLayout(1, 2));
       JPanel status1Panel = new JPanel(new FlowLayout(FlowLayout.LEFT));

@@ -150,7 +150,7 @@ ScreenModel {
     resizeWindows(linesUpperWindow);
       
     // S 8.6.1.1.2: Top window is cleared in version 3
-    if (machine.getServices().getStoryFileHeader().getVersion() == 3) {
+    if (machine.getGameData().getStoryFileHeader().getVersion() == 3) {
         
       windows[WINDOW_TOP].clear();
     }
@@ -330,7 +330,7 @@ ScreenModel {
     
     } else {
     
-      printChar(machine.getServices().getZsciiEncoding().getUnicodeChar(
+      printChar(machine.getGameData().getZsciiEncoding().getUnicodeChar(
           zsciiChar), isInput);
     }
   }
@@ -341,7 +341,7 @@ ScreenModel {
   public void deletePrevious(short zchar) {
     
     char deleteChar =
-      machine.getServices().getZsciiEncoding().getUnicodeChar(zchar);
+      machine.getGameData().getZsciiEncoding().getUnicodeChar(zchar);
     windows[activeWindow].backspace(deleteChar);
   }
   
@@ -484,7 +484,7 @@ ScreenModel {
   private void determineStandardFont() {
     
     // Sets the fixed font as the standard
-    if (machine.getServices().getStoryFileHeader().isEnabled(
+    if (machine.getGameData().getStoryFileHeader().isEnabled(
         Attribute.FORCE_FIXED_FONT)) {
       
       standardFont = fixedFont;      
@@ -501,7 +501,7 @@ ScreenModel {
 
   private void setScreenProperties() {
     
-    StoryFileHeader fileheader = machine.getServices().getStoryFileHeader();
+    StoryFileHeader fileheader = machine.getGameData().getStoryFileHeader();
     if (fileheader.getVersion() <= 3) {
       
       fileheader.setEnabled(Attribute.DEFAULT_FONT_IS_VARIABLE, true);    

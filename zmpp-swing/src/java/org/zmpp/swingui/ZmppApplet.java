@@ -84,14 +84,14 @@ implements InputStream, StatusLine, SaveGameDataStore, IOSystem {
   public void init() {
         
     machine = openStoryFile();
-    lineEditor = new LineEditorImpl(machine.getServices().getStoryFileHeader(),
-        machine.getServices().getZsciiEncoding());
+    lineEditor = new LineEditorImpl(machine.getGameData().getStoryFileHeader(),
+        machine.getGameData().getZsciiEncoding());
     
     viewport = new TextViewport(machine, lineEditor);
     viewport.setPreferredSize(new Dimension(640, 480));
     viewport.setMinimumSize(new Dimension(400, 300));
     
-    if (machine.getServices().getStoryFileHeader().getVersion() <= 3) {
+    if (machine.getGameData().getStoryFileHeader().getVersion() <= 3) {
       
       JPanel statusPanel = new JPanel(new GridLayout(1, 2));
       JPanel status1Panel = new JPanel(new FlowLayout(FlowLayout.LEFT));
@@ -126,7 +126,7 @@ implements InputStream, StatusLine, SaveGameDataStore, IOSystem {
     
     // Input streams
     FileInputStream fileIs = new FileInputStream(this,
-        machine.getServices().getZsciiEncoding());      
+        machine.getGameData().getZsciiEncoding());      
     machine.setInputStream(0, this);
     machine.setInputStream(1, fileIs);
     
@@ -134,7 +134,7 @@ implements InputStream, StatusLine, SaveGameDataStore, IOSystem {
     machine.setOutputStream(1, this.getOutputStream());
     machine.selectOutputStream(1, true);
     TranscriptOutputStream transcriptStream = new TranscriptOutputStream(
-        this, machine.getServices().getZsciiEncoding());
+        this, machine.getGameData().getZsciiEncoding());
     machine.setOutputStream(2, transcriptStream);
     machine.selectOutputStream(2, false);
     machine.setOutputStream(3, new MemoryOutputStream(machine));
