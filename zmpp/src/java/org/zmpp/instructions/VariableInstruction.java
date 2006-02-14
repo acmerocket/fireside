@@ -358,13 +358,13 @@ public class VariableInstruction extends AbstractInstruction {
     if (getNumOperands() >= 3) time = getUnsignedValue(2);
     if (getNumOperands() >= 4) packedAddress = getValue(3);
     
-    short terminal = getMachine().getServices().getInputFunctions().readLine(
+    short terminal = getMachine().getInputFunctions().readLine(
         textbuffer, time, packedAddress);
     
     if (version < 5 || (version >= 5 && parsebuffer > 0)) {
       
       // Do not tokenise if parsebuffer is 0 (See specification of read)
-      getMachine().getServices().getTokenizer().tokenize(textbuffer,
+      getMachine().getTokenizer().tokenize(textbuffer,
           parsebuffer, 0, false);
     }
     
@@ -418,7 +418,7 @@ public class VariableInstruction extends AbstractInstruction {
     }
     System.out.printf("@sound_effect %d, %d, $%04x, $%04x\n", soundnum, effect, volume, routine);
         
-    SoundSystem soundSystem = getMachine().getServices().getSoundSystem();
+    SoundSystem soundSystem = getMachine().getSoundSystem();
     soundSystem.play(soundnum, effect, volume, repeats, routine);    
     nextInstruction();
   }
@@ -560,7 +560,7 @@ public class VariableInstruction extends AbstractInstruction {
       
       routineAddress = getValue(2);
     }
-    storeResult(getMachine().getServices().getInputFunctions().readChar(time,
+    storeResult(getMachine().getInputFunctions().readChar(time,
         routineAddress));
     nextInstruction();
   }
@@ -584,7 +584,7 @@ public class VariableInstruction extends AbstractInstruction {
     int flag = 0;
     if (getNumOperands() >= 3) dictionary = getUnsignedValue(2);
     if (getNumOperands() >= 4) flag = getUnsignedValue(3);
-    getMachine().getServices().getTokenizer().tokenize(textbuffer,
+    getMachine().getTokenizer().tokenize(textbuffer,
         parsebuffer, dictionary, (flag != 0));
     nextInstruction();
   }

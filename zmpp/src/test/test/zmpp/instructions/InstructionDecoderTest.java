@@ -74,7 +74,7 @@ public class InstructionDecoderTest extends MemoryMapSetup {
   public void testMinizorkVariable() {
     
     // VARIABLE: Instruction at 0x37d9 is call 0x3b36, #3e88, #ffff
-    AbstractInstruction info = decoder.decodeInstruction(0x37d9);
+    AbstractInstruction info = (AbstractInstruction) decoder.decodeInstruction(0x37d9);
     assertEquals(InstructionForm.VARIABLE, info.getInstructionForm());
     assertEquals(OperandCount.VAR, info.getOperandCount());
     assertEquals(VariableStaticInfo.OP_CALL, info.getOpcode());
@@ -91,7 +91,7 @@ public class InstructionDecoderTest extends MemoryMapSetup {
     assertEquals(0x37e2, 0x37d9 + info.getLength());
     
     // VARIABLE: Instruction at 0x37e2 is storew (sp)+, #00, #01
-    AbstractInstruction info2 = decoder.decodeInstruction(0x37e2);
+    AbstractInstruction info2 = (AbstractInstruction) decoder.decodeInstruction(0x37e2);
     assertEquals(InstructionForm.VARIABLE, info2.getInstructionForm());
     assertEquals(OperandCount.VAR, info2.getOperandCount());
     assertEquals(VariableStaticInfo.OP_STOREW, info2.getOpcode());
@@ -110,7 +110,7 @@ public class InstructionDecoderTest extends MemoryMapSetup {
   public void testMinizorkBranch() {
     
     // SHORT 1OP: Instruction at 0x3773 is jz g17 [true] 0x377f
-    AbstractInstruction jz = decoder.decodeInstruction(0x3773);
+    AbstractInstruction jz = (AbstractInstruction) decoder.decodeInstruction(0x3773);
     assertEquals(InstructionForm.SHORT, jz.getInstructionForm());
     assertEquals(OperandCount.C1OP, jz.getOperandCount());
     assertEquals(1, jz.getNumOperands());
@@ -125,7 +125,7 @@ public class InstructionDecoderTest extends MemoryMapSetup {
   public void testMinizorkRet() {
     
     // SHORT 1OP: Instruction at 0x37d5 is ret L04
-    AbstractInstruction retL04 = decoder.decodeInstruction(0x37d5);
+    AbstractInstruction retL04 = (AbstractInstruction) decoder.decodeInstruction(0x37d5);
     assertEquals(InstructionForm.SHORT, retL04.getInstructionForm());
     assertEquals(OperandCount.C1OP, retL04.getOperandCount());
     assertEquals(1, retL04.getNumOperands());
@@ -137,7 +137,7 @@ public class InstructionDecoderTest extends MemoryMapSetup {
   public void testMinizorkShort1OP() {
             
     // SHORT 1OP: Instruction at 0x379f is dec L01
-    AbstractInstruction decL01 = decoder.decodeInstruction(0x379f);
+    AbstractInstruction decL01 = (AbstractInstruction) decoder.decodeInstruction(0x379f);
     assertEquals(InstructionForm.SHORT, decL01.getInstructionForm());
     assertEquals(OperandCount.C1OP, decL01.getOperandCount());
     assertEquals(1, decL01.getNumOperands());
@@ -148,7 +148,7 @@ public class InstructionDecoderTest extends MemoryMapSetup {
     assertEquals(0x37a1, 0x379f + decL01.getLength());
     
     // SHORT 1OP: Instruction at 0x3816 is jump 0x37d9
-    AbstractInstruction jump = decoder.decodeInstruction(0x3816);
+    AbstractInstruction jump = (AbstractInstruction) decoder.decodeInstruction(0x3816);
     assertEquals(InstructionForm.SHORT, jump.getInstructionForm());
     assertEquals(OperandCount.C1OP, jump.getOperandCount());
     assertEquals(1, jump.getNumOperands());
@@ -157,7 +157,7 @@ public class InstructionDecoderTest extends MemoryMapSetup {
     assertEquals((short) (0xffc2), jump.getOperand(0).getValue());
     
     // SHORT 1OP: Instruction at 0x37c7 is inc L01
-    AbstractInstruction incL02 = decoder.decodeInstruction(0x37c7);
+    AbstractInstruction incL02 = (AbstractInstruction) decoder.decodeInstruction(0x37c7);
     assertEquals(InstructionForm.SHORT, incL02.getInstructionForm());
     assertEquals(OperandCount.C1OP, incL02.getOperandCount());
     assertEquals(1, incL02.getNumOperands());
@@ -170,7 +170,7 @@ public class InstructionDecoderTest extends MemoryMapSetup {
   
 
     // SHORT 0OP: Instruction at 0x3788 is rfalse
-    AbstractInstruction rfalse = decoder.decodeInstruction(0x3788);
+    AbstractInstruction rfalse = (AbstractInstruction) decoder.decodeInstruction(0x3788);
     assertEquals(InstructionForm.SHORT, rfalse.getInstructionForm());
     assertEquals(OperandCount.C0OP, rfalse.getOperandCount());
     assertEquals(0, rfalse.getNumOperands());
@@ -181,7 +181,7 @@ public class InstructionDecoderTest extends MemoryMapSetup {
   public void testMinizorkLong() {
    
     // LONG: Instruction at 0x37c9 is je L02, L01
-    AbstractInstruction je = decoder.decodeInstruction(0x37c9);
+    AbstractInstruction je = (AbstractInstruction) decoder.decodeInstruction(0x37c9);
     
     assertEquals(InstructionForm.LONG, je.getInstructionForm());
     assertEquals(OperandCount.C2OP, je.getOperandCount());
@@ -195,7 +195,7 @@ public class InstructionDecoderTest extends MemoryMapSetup {
   
   public void testMinizorkPrint() {
     
-    AbstractInstruction print = decoder.decodeInstruction(0x393f);
+    AbstractInstruction print = (AbstractInstruction) decoder.decodeInstruction(0x393f);
     assertEquals(InstructionForm.SHORT, print.getInstructionForm());
     assertEquals(OperandCount.C0OP, print.getOperandCount());
     assertEquals(PrintLiteralStaticInfo.OP_PRINT, print.getOpcode());
@@ -203,7 +203,7 @@ public class InstructionDecoderTest extends MemoryMapSetup {
     assertEquals(0, print.getNumOperands());
     assertEquals(5, print.getLength());
     
-    AbstractInstruction print_ret = decoder.decodeInstruction(0x5761);
+    AbstractInstruction print_ret = (AbstractInstruction) decoder.decodeInstruction(0x5761);
     assertEquals(InstructionForm.SHORT, print_ret.getInstructionForm());
     assertEquals(OperandCount.C0OP, print_ret.getOperandCount());
     assertEquals(PrintLiteralStaticInfo.OP_PRINT_RET, print_ret.getOpcode());
@@ -218,7 +218,7 @@ public class InstructionDecoderTest extends MemoryMapSetup {
     // AH !!! This is really a long instruction, but encoded as a
     // variable instruction, this is odd !!!!
     // This needs to be handled !!!
-    AbstractInstruction and = decoder.decodeInstruction(0x58d4);
+    AbstractInstruction and = (AbstractInstruction) decoder.decodeInstruction(0x58d4);
     assertEquals(OperandCount.VAR, and.getOperandCount());
     assertEquals(InstructionForm.LONG, and.getInstructionForm());
     assertEquals(LongStaticInfo.OP_AND, and.getOpcode());
@@ -236,7 +236,7 @@ public class InstructionDecoderTest extends MemoryMapSetup {
   
   public void testMinizorkJump() {
     
-    AbstractInstruction jump = decoder.decodeInstruction(0x58f7);
+    AbstractInstruction jump = (AbstractInstruction) decoder.decodeInstruction(0x58f7);
     assertEquals(OperandCount.C1OP, jump.getOperandCount());
     assertEquals(InstructionForm.SHORT, jump.getInstructionForm());
     assertEquals(Short1StaticInfo.OP_JUMP, jump.getOpcode());
@@ -247,7 +247,7 @@ public class InstructionDecoderTest extends MemoryMapSetup {
   
   public void testMinizorkGetSibling() {
     //System.out.println("get_sibling");
-    AbstractInstruction get_sibling = decoder.decodeInstruction(0x6dbd);
+    AbstractInstruction get_sibling = (AbstractInstruction) decoder.decodeInstruction(0x6dbd);
     assertEquals(OperandCount.C1OP, get_sibling.getOperandCount());
     assertEquals(InstructionForm.SHORT, get_sibling.getInstructionForm());
     assertEquals(Short1StaticInfo.OP_GET_SIBLING, get_sibling.getOpcode());
@@ -259,7 +259,7 @@ public class InstructionDecoderTest extends MemoryMapSetup {
   
   public void testJe3Operands() {
     
-    AbstractInstruction je3 = decoder.decodeInstruction(0x6dc5);
+    AbstractInstruction je3 = (AbstractInstruction) decoder.decodeInstruction(0x6dc5);
     assertEquals(InstructionForm.LONG, je3.getInstructionForm());    
     assertEquals(OperandCount.VAR, je3.getOperandCount());
     assertEquals(3, je3.getNumOperands());
@@ -292,7 +292,7 @@ public class InstructionDecoderTest extends MemoryMapSetup {
 
     // Expected:
     // ecf4:  CALL_VS2        efdc (G90,#10,#20,L00) -> -(SP)
-    AbstractInstruction call_vs2 = decoder4.decodeInstruction(0);
+    AbstractInstruction call_vs2 = (AbstractInstruction) decoder4.decodeInstruction(0);
     assertEquals(InstructionForm.VARIABLE, call_vs2.getInstructionForm());
     assertTrue(call_vs2.storesResult());
     assertEquals(5, call_vs2.getNumOperands());

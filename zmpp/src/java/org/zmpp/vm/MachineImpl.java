@@ -42,7 +42,7 @@ import org.zmpp.vmutil.UnpredictableRandomGenerator;
  * @author Wei-ju Wu
  * @version 1.0
  */
-public class MachineImpl implements Machine, MachineServices, Interruptable {
+public class MachineImpl implements Machine, Interruptable {
 
   /**
    * The configuration object.
@@ -115,11 +115,6 @@ public class MachineImpl implements Machine, MachineServices, Interruptable {
   public MachineImpl() {
 
     this.inputFunctions = new InputFunctionsImpl(this);
-  }
-  
-  public MachineServices getServices() {
-  
-    return this;
   }
   
   public GameData getGameData() {

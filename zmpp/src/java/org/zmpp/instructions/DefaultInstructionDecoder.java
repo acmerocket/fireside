@@ -25,6 +25,7 @@ package org.zmpp.instructions;
 import org.zmpp.base.MemoryReadAccess;
 import org.zmpp.instructions.AbstractInstruction.InstructionForm;
 import org.zmpp.instructions.AbstractInstruction.OperandCount;
+import org.zmpp.vm.Instruction;
 import org.zmpp.vm.InstructionDecoder;
 import org.zmpp.vm.Machine;
 
@@ -61,7 +62,7 @@ public class DefaultInstructionDecoder implements InstructionDecoder {
    * @param instructionAddress the current instruction's address
    * @return the instruction at the specified address
    */
-  public AbstractInstruction decodeInstruction(int instructionAddress) {
+  public Instruction decodeInstruction(int instructionAddress) {
   
     AbstractInstruction info = createBasicInstructionInfo(instructionAddress);
     int currentAddress = extractOperands(info, instructionAddress);

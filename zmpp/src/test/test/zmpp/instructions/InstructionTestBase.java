@@ -8,7 +8,6 @@ import org.zmpp.vm.Cpu;
 import org.zmpp.vm.Dictionary;
 import org.zmpp.vm.GameData;
 import org.zmpp.vm.Machine;
-import org.zmpp.vm.MachineServices;
 import org.zmpp.vm.ObjectTree;
 import org.zmpp.vm.StoryFileHeader;
 import org.zmpp.vm.ZObject;
@@ -17,8 +16,6 @@ public abstract class InstructionTestBase extends MockObjectTestCase {
 
   protected Mock mockMachine;
   protected Machine machine;
-  protected Mock mockServices;
-  protected MachineServices services;
   protected Mock mockGameData;
   protected GameData gamedata;
   protected Mock mockOutputStream;
@@ -45,8 +42,6 @@ public abstract class InstructionTestBase extends MockObjectTestCase {
   
     mockMachine = mock(Machine.class);
     machine = (Machine) mockMachine.proxy();
-    mockServices = mock(MachineServices.class);
-    services = (MachineServices) mockServices.proxy();
     mockGameData = mock(GameData.class);
     gamedata = (GameData) mockGameData.proxy();
     mockOutputStream = mock(OutputStream.class);

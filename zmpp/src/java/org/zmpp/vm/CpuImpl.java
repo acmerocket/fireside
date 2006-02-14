@@ -28,7 +28,6 @@ import java.util.List;
 
 import org.zmpp.base.MemoryAccess;
 import org.zmpp.encoding.ZsciiString;
-import org.zmpp.vm.Machine.VariableType;
 
 public class CpuImpl implements Cpu {
 
@@ -230,8 +229,8 @@ public class CpuImpl implements Cpu {
    */
   public short getVariable(int variableNumber) {
 
-    VariableType varType = getVariableType(variableNumber);
-    if (varType == VariableType.STACK) {
+    Cpu.VariableType varType = getVariableType(variableNumber);
+    if (varType == Cpu.VariableType.STACK) {
       
       if (stack.size() == 0) {
         
@@ -242,7 +241,7 @@ public class CpuImpl implements Cpu {
         return stack.remove(stack.size() - 1);
       }
       
-    } else if (varType == VariableType.LOCAL) {
+    } else if (varType == Cpu.VariableType.LOCAL) {
       
       int localVarNumber = getLocalVariableNumber(variableNumber);
       checkLocalVariableAccess(localVarNumber);
@@ -260,12 +259,12 @@ public class CpuImpl implements Cpu {
    */
   public void setVariable(int variableNumber, short value) {
 
-    VariableType varType = getVariableType(variableNumber);
-    if (varType == VariableType.STACK) {
+    Cpu.VariableType varType = getVariableType(variableNumber);
+    if (varType == Cpu.VariableType.STACK) {
       
       stack.add(value);
       
-    } else if (varType == VariableType.LOCAL) {
+    } else if (varType == Cpu.VariableType.LOCAL) {
       
       int localVarNumber = getLocalVariableNumber(variableNumber);
       checkLocalVariableAccess(localVarNumber);
@@ -284,11 +283,11 @@ public class CpuImpl implements Cpu {
    * @param variableNumber the variable number
    * @return STACK if stack variable, LOCAL if local variable, GLOBAL if global
    */
-  public static VariableType getVariableType(int variableNumber) {
+  public static Cpu.VariableType getVariableType(int variableNumber) {
     
-    if (variableNumber == 0) return VariableType.STACK;
-    else if (variableNumber < 0x10) return VariableType.LOCAL;
-    else return VariableType.GLOBAL;
+    if (variableNumber == 0) return Cpu.VariableType.STACK;
+    else if (variableNumber < 0x10) return Cpu.VariableType.LOCAL;
+    else return Cpu.VariableType.GLOBAL;
   }
 
 

@@ -60,9 +60,8 @@ public class SreadTest extends InstructionTestBase {
     // common things
     mockFileHeader.expects(atLeastOnce()).method("getVersion").will(returnValue(3));
     mockMachine.expects(once()).method("updateStatusLine");
-    mockMachine.expects(atLeastOnce()).method("getServices").will(returnValue(services));
-    mockServices.expects(atLeastOnce()).method("getInputFunctions").will(returnValue(inputFunctions));
-    mockServices.expects(atLeastOnce()).method("getTokenizer").will(returnValue(tokenizer));
+    mockMachine.expects(atLeastOnce()).method("getInputFunctions").will(returnValue(inputFunctions));
+    mockMachine.expects(atLeastOnce()).method("getTokenizer").will(returnValue(tokenizer));
     mockInputFunctions.expects(once()).method("readLine").with(eq(4711), eq(0), eq(0)).will(returnValue(ZsciiEncoding.NEWLINE));
     mockTokenizer.expects(once()).method("tokenize").with(eq(4711), eq(5711), eq(0), eq(false));    
     mockMachine.expects(atLeastOnce()).method("getCpu").will(returnValue(cpu));

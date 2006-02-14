@@ -25,6 +25,7 @@ package org.zmpp.vm;
 import org.zmpp.encoding.ZsciiString;
 import org.zmpp.io.InputStream;
 import org.zmpp.io.OutputStream;
+import org.zmpp.media.SoundSystem;
 
 /**
  * This interface gives the instructions an abstract access to the current
@@ -61,16 +62,16 @@ public interface Machine {
   final static int INPUTSTREAM_FILE = 1;
   
   /**
-   * The possible variable types.
-   */
-  enum VariableType { STACK, LOCAL, GLOBAL };
-  
-  /**
-   * Returns the services interface.
+   * Initialization function.
    * 
-   * @return the services
+   * @param machineConfig a configuration object
+   * @param decoder the instruction decoder
    */
-  MachineServices getServices();
+  void initialize(GameData machineConfig, InstructionDecoder decoder);  
+  
+  // **********************************************************************
+  // **** Main machine objects
+  // *******************************
   
   /**
    * Returns the GameData interface.
@@ -85,7 +86,6 @@ public interface Machine {
    * @return the Cpu interface
    */
   Cpu getCpu();
-  
   
   /**
    * Returns true, if the checksum validation was successful.
@@ -231,14 +231,6 @@ public interface Machine {
   ScreenModel getScreen();
   
   /**
-   * Initialization function.
-   * 
-   * @param machineConfig a configuration object
-   * @param decoder the instruction decoder
-   */
-  void initialize(GameData machineConfig, InstructionDecoder decoder);
-  
-  /**
    * Sets the save game data store.
    * 
    * @param datastore the data store
@@ -281,6 +273,31 @@ public interface Machine {
    * @return the portable game state
    */
   PortableGameState restore_undo();
+  
+  // **********************************************************************
+  // **** Services
+  // *******************************
+  
+  /**
+   * Returns an input functions object.
+   * 
+   * @return an input functions object
+   */
+  InputFunctions getInputFunctions();
+  
+  /**
+   * Returns the tokenizer.
+   * 
+   * @return the tokenizer
+   */
+  Tokenizer getTokenizer();
+  
+  /**
+   * Returns the sound system.
+   * 
+   * @return the sound system
+   */
+  SoundSystem getSoundSystem();
   
   /**
    * Restarts the virtual machine.

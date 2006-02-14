@@ -23,7 +23,6 @@
 package org.zmpp.vm;
 
 import org.zmpp.base.MemoryReadAccess;
-import org.zmpp.instructions.AbstractInstruction;
 
 /**
  * The instruction decoder decodes an instruction at a specified address.
@@ -41,5 +40,5 @@ public interface InstructionDecoder {
    * @param instructionAddress the current instruction's address
    * @return the instruction at the specified address
    */
-  public AbstractInstruction decodeInstruction(int instructionAddress);
+  public Instruction decodeInstruction(int instructionAddress);
 }

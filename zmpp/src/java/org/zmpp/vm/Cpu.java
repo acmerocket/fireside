@@ -27,6 +27,11 @@ import java.util.List;
 public interface Cpu {
 
   /**
+   * The possible variable types.
+   */
+  enum VariableType { STACK, LOCAL, GLOBAL }
+
+  /**
    * Resets this object to initial state.
    */
   void reset();
