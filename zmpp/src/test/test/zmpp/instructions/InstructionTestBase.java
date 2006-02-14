@@ -5,6 +5,7 @@ import org.jmock.MockObjectTestCase;
 import org.zmpp.base.MemoryAccess;
 import org.zmpp.io.OutputStream;
 import org.zmpp.vm.Dictionary;
+import org.zmpp.vm.GameData;
 import org.zmpp.vm.Machine;
 import org.zmpp.vm.MachineServices;
 import org.zmpp.vm.ObjectTree;
@@ -17,6 +18,8 @@ public abstract class InstructionTestBase extends MockObjectTestCase {
   protected Machine machine;
   protected Mock mockServices;
   protected MachineServices services;
+  protected Mock mockGameData;
+  protected GameData gamedata;
   protected Mock mockOutputStream;
   protected OutputStream outputStream;
   protected Mock mockObjectTree;
@@ -41,6 +44,8 @@ public abstract class InstructionTestBase extends MockObjectTestCase {
     machine = (Machine) mockMachine.proxy();
     mockServices = mock(MachineServices.class);
     services = (MachineServices) mockServices.proxy();
+    mockGameData = mock(GameData.class);
+    gamedata = (GameData) mockGameData.proxy();
     mockOutputStream = mock(OutputStream.class);
     outputStream = (OutputStream) mockOutputStream.proxy();    
     mockObjectTree = mock(ObjectTree.class);
@@ -55,7 +60,7 @@ public abstract class InstructionTestBase extends MockObjectTestCase {
     dictionary = (Dictionary) mockDictionary.proxy();    
 
     
-    mockMachine.expects(atLeastOnce()).method("getServices").will(returnValue(services));
-    mockServices.expects(atLeastOnce()).method("getStoryFileHeader").will(returnValue(storyfileHeader));
+    mockMachine.expects(atLeastOnce()).method("getGameData").will(returnValue(gamedata));
+    mockGameData.expects(atLeastOnce()).method("getStoryFileHeader").will(returnValue(storyfileHeader));
   }
 }

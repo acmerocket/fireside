@@ -70,9 +70,16 @@ public interface Machine {
   /**
    * Returns the services interface.
    * 
-   * @return the services interface
+   * @return the services
    */
   MachineServices getServices();
+  
+  /**
+   * Returns the GameData interface.
+   * 
+   * @return the GameData interface
+   */
+  GameData getGameData();
   
   /**
    * Returns true, if the checksum validation was successful.

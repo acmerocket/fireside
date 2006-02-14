@@ -89,7 +89,7 @@ public class VariableInstruction extends AbstractInstruction {
    */
   private MemoryAccess getMemoryAccess() {
     
-    return getMachine().getServices().getMemoryAccess();
+    return getMachine().getGameData().getMemoryAccess();
   }
   
   /**
@@ -683,7 +683,7 @@ public class VariableInstruction extends AbstractInstruction {
     int from = getUnsignedValue(2);
     int codedText = getUnsignedValue(3);
     
-    ZCharEncoder encoder = getMachine().getServices().getZCharEncoder();
+    ZCharEncoder encoder = getMachine().getGameData().getZCharEncoder();
     encoder.encode(getMemoryAccess(), zsciiText + from,
         length, codedText);
     nextInstruction();

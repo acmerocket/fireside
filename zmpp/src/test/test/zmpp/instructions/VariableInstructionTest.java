@@ -223,7 +223,7 @@ public class VariableInstructionTest extends InstructionTestBase {
   public void testStorew() {
     
     mockFileHeader.expects(once()).method("getVersion").will(returnValue(3));
-    mockServices.expects(once()).method("getMemoryAccess").will(returnValue(memoryAccess));
+    mockGameData.expects(once()).method("getMemoryAccess").will(returnValue(memoryAccess));
     mockMemAccess.expects(once()).method("writeShort").with(eq(2), eq((short) 0x1000)); 
     mockMachine.expects(once()).method("getProgramCounter").will(returnValue(4711));
     mockMachine.expects(once()).method("setProgramCounter").with(eq(4716));
@@ -244,7 +244,7 @@ public class VariableInstructionTest extends InstructionTestBase {
   public void testStoreb() {
 
     mockFileHeader.expects(once()).method("getVersion").will(returnValue(3));
-    mockServices.expects(once()).method("getMemoryAccess").will(returnValue(memoryAccess));
+    mockGameData.expects(once()).method("getMemoryAccess").will(returnValue(memoryAccess));
     mockMemAccess.expects(once()).method("writeByte").with(eq(1), eq((byte) 0x15)); 
     mockMachine.expects(atLeastOnce()).method("getProgramCounter").will(returnValue(4711));
     mockMachine.expects(once()).method("setProgramCounter").with(eq(4716));
@@ -266,7 +266,7 @@ public class VariableInstructionTest extends InstructionTestBase {
   public void testPutPropLength1() {
     
     mockFileHeader.expects(atLeastOnce()).method("getVersion").will(returnValue(3));
-    mockServices.expects(once()).method("getObjectTree").will(returnValue(objectTree));
+    mockGameData.expects(once()).method("getObjectTree").will(returnValue(objectTree));
     mockMachine.expects(once()).method("getProgramCounter").will(returnValue(4711));
     mockMachine.expects(once()).method("setProgramCounter").with(eq(4716));
     mockObjectTree.expects(once()).method("getObject").with(eq(2)).will(returnValue(zobject));
@@ -287,7 +287,7 @@ public class VariableInstructionTest extends InstructionTestBase {
   public void testPutPropLength2() {
     
     mockFileHeader.expects(atLeastOnce()).method("getVersion").will(returnValue(3));
-    mockServices.expects(once()).method("getObjectTree").will(returnValue(objectTree));
+    mockGameData.expects(once()).method("getObjectTree").will(returnValue(objectTree));
     mockMachine.expects(once()).method("getProgramCounter").will(returnValue(4711));
     mockMachine.expects(once()).method("setProgramCounter").with(eq(4716));
     mockObjectTree.expects(once()).method("getObject").with(eq(2)).will(returnValue(zobject));
@@ -308,7 +308,7 @@ public class VariableInstructionTest extends InstructionTestBase {
   public void testPutPropNotExists() {
     
     mockFileHeader.expects(atLeastOnce()).method("getVersion").will(returnValue(3));
-    mockServices.expects(once()).method("getObjectTree").will(returnValue(objectTree));
+    mockGameData.expects(once()).method("getObjectTree").will(returnValue(objectTree));
     mockMachine.expects(once()).method("halt").with(eq("put_prop: the property [5] of object [1] does not exist"));
     mockObjectTree.expects(once()).method("getObject").with(eq(1)).will(returnValue(zobject));
     mockZObject.expects(once()).method("isPropertyAvailable").with(eq(5)).will(returnValue(false));
@@ -713,7 +713,7 @@ public class VariableInstructionTest extends InstructionTestBase {
   public void testGetCursor() {
     
     mockMachine.expects(once()).method("getScreen").will(returnValue(screen));
-    mockServices.expects(once()).method("getMemoryAccess").will(returnValue(memoryAccess));
+    mockGameData.expects(once()).method("getMemoryAccess").will(returnValue(memoryAccess));
     mockScreen.expects(once()).method("getTextCursor").will(returnValue(cursor));
     mockCursor.expects(once()).method("getLine").will(returnValue(1));
     mockCursor.expects(once()).method("getColumn").will(returnValue(1));

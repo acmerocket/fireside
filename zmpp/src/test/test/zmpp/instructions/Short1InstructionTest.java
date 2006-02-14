@@ -166,7 +166,7 @@ public class Short1InstructionTest extends InstructionTestBase {
         Short1StaticInfo.OP_GET_PARENT, Operand.TYPENUM_SMALL_CONSTANT,
         (short) 0x02);
     get_parent.setStoreVariable((short)0x10);
-    mockServices.expects(once()).method("getObjectTree").will(returnValue(objectTree));
+    mockGameData.expects(once()).method("getObjectTree").will(returnValue(objectTree));
     mockObjectTree.expects(once()).method("getObject").with(eq(2)).will(returnValue(zobject));
     mockZObject.expects(once()).method("getParent").will(returnValue(27));
     mockMachine.expects(once()).method("setVariable").with(eq(0x10), eq((short) 27));
@@ -279,7 +279,7 @@ public class Short1InstructionTest extends InstructionTestBase {
     mockFileHeader.expects(atLeastOnce()).method("getVersion").will(returnValue(3));
     Short1InstructionMock get_sibling = createInstructionMock(Short1StaticInfo.OP_GET_SIBLING,
         Operand.TYPENUM_SMALL_CONSTANT, (short) 0x08);
-    mockServices.expects(once()).method("getObjectTree").will(returnValue(objectTree));
+    mockGameData.expects(once()).method("getObjectTree").will(returnValue(objectTree));
     mockObjectTree.expects(once()).method("getObject").with(eq(8)).will(returnValue(zobject));
     mockZObject.expects(once()).method("getSibling").will(returnValue(0));
     mockMachine.expects(once()).method("setVariable").with(eq(1), eq((short) 0));
@@ -298,7 +298,7 @@ public class Short1InstructionTest extends InstructionTestBase {
         Operand.TYPENUM_SMALL_CONSTANT, (short) 0x06);
     get_sibling.setStoreVariable((short) 0x01);
     
-    mockServices.expects(once()).method("getObjectTree").will(returnValue(objectTree));
+    mockGameData.expects(once()).method("getObjectTree").will(returnValue(objectTree));
     mockObjectTree.expects(once()).method("getObject").with(eq(6)).will(returnValue(zobject));
     mockZObject.expects(once()).method("getSibling").will(returnValue(152));
     mockMachine.expects(once()).method("setVariable").with(eq(1), eq((short) 152));
@@ -335,7 +335,7 @@ public class Short1InstructionTest extends InstructionTestBase {
         Operand.TYPENUM_SMALL_CONSTANT, (short) 0x04);
     get_child.setStoreVariable((short) 0x01);
     
-    mockServices.expects(once()).method("getObjectTree").will(returnValue(objectTree));
+    mockGameData.expects(once()).method("getObjectTree").will(returnValue(objectTree));
     mockObjectTree.expects(once()).method("getObject").with(eq(4)).will(returnValue(zobject));
     mockZObject.expects(once()).method("getChild").will(returnValue(0));
     mockMachine.expects(once()).method("setVariable").with(eq(1), eq((short) 0));
@@ -354,7 +354,7 @@ public class Short1InstructionTest extends InstructionTestBase {
         Operand.TYPENUM_SMALL_CONSTANT, (short) 0x07);
     get_child.setStoreVariable((short) 0x02);
     
-    mockServices.expects(once()).method("getObjectTree").will(returnValue(objectTree));
+    mockGameData.expects(once()).method("getObjectTree").will(returnValue(objectTree));
     mockObjectTree.expects(once()).method("getObject").with(eq(7)).will(returnValue(zobject));
     mockZObject.expects(once()).method("getChild").will(returnValue(41));
     mockMachine.expects(once()).method("setVariable").with(eq(2), eq((short) 41));
@@ -432,7 +432,7 @@ public class Short1InstructionTest extends InstructionTestBase {
     Short1InstructionMock print_obj = createInstructionMock(Short1StaticInfo.OP_PRINT_OBJ,
         Operand.TYPENUM_SMALL_CONSTANT, (short) 0x03);
 
-    mockServices.expects(once()).method("getObjectTree").will(returnValue(objectTree));
+    mockGameData.expects(once()).method("getObjectTree").will(returnValue(objectTree));
     mockObjectTree.expects(once()).method("getObject").with(eq(0x03)).will(returnValue(zobject));
     mockZObject.expects(once()).method("getPropertiesDescriptionAddress").will(returnValue(4712));
     mockMachine.expects(once()).method("printZString").with(eq(4712));
@@ -449,7 +449,7 @@ public class Short1InstructionTest extends InstructionTestBase {
     mockFileHeader.expects(atLeastOnce()).method("getVersion").will(returnValue(3));
     Short1InstructionMock remove_obj = createInstructionMock(Short1StaticInfo.OP_REMOVE_OBJ,
         Operand.TYPENUM_SMALL_CONSTANT, (short) 0x03);
-    mockServices.expects(once()).method("getObjectTree").will(returnValue(objectTree));
+    mockGameData.expects(once()).method("getObjectTree").will(returnValue(objectTree));
     mockObjectTree.expects(once()).method("removeObject").with(eq(0x03));    
     remove_obj.execute();
     assertTrue(remove_obj.nextInstructionCalled);
@@ -465,7 +465,7 @@ public class Short1InstructionTest extends InstructionTestBase {
     Short1InstructionMock get_prop_len = createInstructionMock(Short1StaticInfo.OP_GET_PROP_LEN,
         Operand.TYPENUM_LARGE_CONSTANT, (short) 0x1889);
     get_prop_len.setStoreVariable((short) 0x15);
-    mockServices.expects(once()).method("getObjectTree").will(returnValue(objectTree));
+    mockGameData.expects(once()).method("getObjectTree").will(returnValue(objectTree));
     mockObjectTree.expects(once()).method("getPropertyLength").with(eq(0x1889)).will(returnValue(4));
     mockMachine.expects(once()).method("setVariable").with(eq(0x15), eq((short) 4));
     get_prop_len.execute();

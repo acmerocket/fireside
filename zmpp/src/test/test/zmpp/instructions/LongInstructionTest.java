@@ -279,7 +279,7 @@ public class LongInstructionTest extends InstructionTestBase {
         Operand.TYPENUM_SMALL_CONSTANT, (short) 1,
         Operand.TYPENUM_SMALL_CONSTANT, (short) 5);
     
-    mockServices.expects(once()).method("getObjectTree").will(returnValue(objectTree));
+    mockGameData.expects(once()).method("getObjectTree").will(returnValue(objectTree));
     mockObjectTree.expects(once()).method("getObject").with(eq(1)).will(returnValue(zobject));
     mockZObject.expects(once()).method("getParent").will(returnValue(12));
     jin_nobranch.execute();
@@ -293,7 +293,7 @@ public class LongInstructionTest extends InstructionTestBase {
     LongInstructionMock jin_branch = createInstructionMock(LongStaticInfo.OP_JIN,
         Operand.TYPENUM_SMALL_CONSTANT, (short) 1,
         Operand.TYPENUM_SMALL_CONSTANT, (short) 36);
-    mockServices.expects(once()).method("getObjectTree").will(returnValue(objectTree));
+    mockGameData.expects(once()).method("getObjectTree").will(returnValue(objectTree));
     mockObjectTree.expects(once()).method("getObject").with(eq(1)).will(returnValue(zobject));
     mockZObject.expects(once()).method("getParent").will(returnValue(36));
     
@@ -539,7 +539,7 @@ public class LongInstructionTest extends InstructionTestBase {
         LongStaticInfo.OP_TEST_ATTR,
         Operand.TYPENUM_LARGE_CONSTANT, (short) 1,
         Operand.TYPENUM_SMALL_CONSTANT, (byte) 2);
-    mockServices.expects(once()).method("getObjectTree").will(returnValue(objectTree));
+    mockGameData.expects(once()).method("getObjectTree").will(returnValue(objectTree));
     mockObjectTree.expects(once()).method("getObject").with(eq(1)).will(returnValue(zobject));
     mockZObject.expects(once()).method("isAttributeSet").with(eq(2)).will(returnValue(false));    
     test_attr_nobranch.execute();
@@ -554,7 +554,7 @@ public class LongInstructionTest extends InstructionTestBase {
         LongStaticInfo.OP_TEST_ATTR,
         Operand.TYPENUM_LARGE_CONSTANT, (short) 1,
         Operand.TYPENUM_SMALL_CONSTANT, (byte) 2);
-    mockServices.expects(once()).method("getObjectTree").will(returnValue(objectTree));
+    mockGameData.expects(once()).method("getObjectTree").will(returnValue(objectTree));
     mockObjectTree.expects(once()).method("getObject").with(eq(1)).will(returnValue(zobject));
     mockZObject.expects(once()).method("isAttributeSet").with(eq(2)).will(returnValue(true));    
     
@@ -574,7 +574,7 @@ public class LongInstructionTest extends InstructionTestBase {
         LongStaticInfo.OP_SET_ATTR,
         Operand.TYPENUM_LARGE_CONSTANT, (short) 1,
         Operand.TYPENUM_SMALL_CONSTANT, (byte) 2);
-    mockServices.expects(once()).method("getObjectTree").will(returnValue(objectTree));
+    mockGameData.expects(once()).method("getObjectTree").will(returnValue(objectTree));
     mockObjectTree.expects(once()).method("getObject").with(eq(1)).will(returnValue(zobject));
     mockZObject.expects(once()).method("setAttribute").with(eq(2));    
     set_attr.execute();    
@@ -592,7 +592,7 @@ public class LongInstructionTest extends InstructionTestBase {
         LongStaticInfo.OP_CLEAR_ATTR,
         Operand.TYPENUM_LARGE_CONSTANT, (short) 1,
         Operand.TYPENUM_SMALL_CONSTANT, (byte) 2);
-    mockServices.expects(once()).method("getObjectTree").will(returnValue(objectTree));
+    mockGameData.expects(once()).method("getObjectTree").will(returnValue(objectTree));
     mockObjectTree.expects(once()).method("getObject").with(eq(1)).will(returnValue(zobject));
     mockZObject.expects(once()).method("clearAttribute").with(eq(2));
     clear_attr.execute();
@@ -638,7 +638,7 @@ public class LongInstructionTest extends InstructionTestBase {
         Operand.TYPENUM_SMALL_CONSTANT, (short) 1);
     loadw.setStoreVariable((short) 0x11);
     
-    mockServices.expects(once()).method("getMemoryAccess").will(returnValue(memoryAccess));
+    mockGameData.expects(once()).method("getMemoryAccess").will(returnValue(memoryAccess));
     mockMemAccess.expects(once()).method("readShort").with(eq(0x0010 + 2)).will(returnValue((short) 123));
     mockMachine.expects(once()).method("setVariable").with(eq(0x11), eq((short)123));
     loadw.execute();
@@ -657,7 +657,7 @@ public class LongInstructionTest extends InstructionTestBase {
         Operand.TYPENUM_LARGE_CONSTANT, (short) 0x0010,
         Operand.TYPENUM_SMALL_CONSTANT, (byte) 1);
     loadb.setStoreVariable((short) 0x11);
-    mockServices.expects(once()).method("getMemoryAccess").will(returnValue(memoryAccess));
+    mockGameData.expects(once()).method("getMemoryAccess").will(returnValue(memoryAccess));
     mockMemAccess.expects(once()).method("readUnsignedByte").with(eq(0x0010 + 1)).will(returnValue((short) 42));
     mockMachine.expects(once()).method("setVariable").with(eq(0x11), eq((short) 42));
     
@@ -672,7 +672,7 @@ public class LongInstructionTest extends InstructionTestBase {
   public void testGetProp2Bytes() {
     
     mockFileHeader.expects(atLeastOnce()).method("getVersion").will(returnValue(3));
-    mockServices.expects(once()).method("getObjectTree").will(returnValue(objectTree));
+    mockGameData.expects(once()).method("getObjectTree").will(returnValue(objectTree));
     mockObjectTree.expects(once()).method("getObject").with(eq(1)).will(returnValue(zobject));
     mockZObject.expects(once()).method("getPropertySize").with(eq(18)).will(returnValue(2));
     mockZObject.expects(once()).method("isPropertyAvailable").with(eq(18)).will(returnValue(true));
@@ -694,7 +694,7 @@ public class LongInstructionTest extends InstructionTestBase {
   public void testGetPropOneByte() {
     
     mockFileHeader.expects(atLeastOnce()).method("getVersion").will(returnValue(3));
-    mockServices.expects(once()).method("getObjectTree").will(returnValue(objectTree));
+    mockGameData.expects(once()).method("getObjectTree").will(returnValue(objectTree));
     mockObjectTree.expects(once()).method("getObject").with(eq(2)).will(returnValue(zobject));
     mockZObject.expects(once()).method("getPropertySize").with(eq(22)).will(returnValue(1));
     mockZObject.expects(once()).method("isPropertyAvailable").with(eq(22)).will(returnValue(true));
@@ -716,7 +716,7 @@ public class LongInstructionTest extends InstructionTestBase {
 
     mockFileHeader.expects(atLeastOnce()).method("getVersion").will(returnValue(3));
     // No defined property, take default, Object 1, property 1
-    mockServices.expects(atLeastOnce()).method("getObjectTree").will(returnValue(objectTree));
+    mockGameData.expects(atLeastOnce()).method("getObjectTree").will(returnValue(objectTree));
     mockObjectTree.expects(once()).method("getObject").with(eq(1)).will(returnValue(zobject));
     mockZObject.expects(once()).method("getPropertySize").with(eq(1)).will(returnValue(0));
     mockZObject.expects(once()).method("isPropertyAvailable").with(eq(1)).will(returnValue(false));
@@ -746,7 +746,7 @@ public class LongInstructionTest extends InstructionTestBase {
         Operand.TYPENUM_SMALL_CONSTANT, (short) 7,
         Operand.TYPENUM_SMALL_CONSTANT, (short) 2);
     
-    mockServices.expects(once()).method("getObjectTree").will(returnValue(objectTree));
+    mockGameData.expects(once()).method("getObjectTree").will(returnValue(objectTree));
     mockObjectTree.expects(once()).method("insertObject").with(eq(2), eq(7));
     insert_obj.execute();
     assertTrue(insert_obj.nextInstructionCalled);
@@ -759,7 +759,7 @@ public class LongInstructionTest extends InstructionTestBase {
   public void testGetPropAddr() {
    
     mockFileHeader.expects(atLeastOnce()).method("getVersion").will(returnValue(3));
-    mockServices.expects(atLeastOnce()).method("getObjectTree").will(returnValue(objectTree));
+    mockGameData.expects(atLeastOnce()).method("getObjectTree").will(returnValue(objectTree));
     mockObjectTree.expects(once()).method("getObject").with(eq(1)).will(returnValue(zobject));
     mockZObject.expects(once()).method("isPropertyAvailable").with(eq(18)).will(returnValue(true));
     mockZObject.expects(once()).method("getPropertyAddress").with(eq(18)).will(returnValue(0x0a55));
@@ -779,7 +779,7 @@ public class LongInstructionTest extends InstructionTestBase {
   public void testGetPropAddrNotExists() {
     
     mockFileHeader.expects(atLeastOnce()).method("getVersion").will(returnValue(3));
-    mockServices.expects(atLeastOnce()).method("getObjectTree").will(returnValue(objectTree));
+    mockGameData.expects(atLeastOnce()).method("getObjectTree").will(returnValue(objectTree));
     mockObjectTree.expects(once()).method("getObject").with(eq(1)).will(returnValue(zobject));
     mockZObject.expects(once()).method("isPropertyAvailable").with(eq(2)).will(returnValue(false));
     mockMachine.expects(once()).method("setVariable").with(eq(17), eq((short) 0x00));
@@ -801,7 +801,7 @@ public class LongInstructionTest extends InstructionTestBase {
   public void testGetNextProp() {
     
     mockFileHeader.expects(atLeastOnce()).method("getVersion").will(returnValue(3));
-    mockServices.expects(once()).method("getObjectTree").will(returnValue(objectTree));
+    mockGameData.expects(once()).method("getObjectTree").will(returnValue(objectTree));
     mockObjectTree.expects(once()).method("getObject").with(eq(1)).will(returnValue(zobject));
     mockZObject.expects(once()).method("getNextProperty").with(eq(12)).will(returnValue(15));
     mockZObject.expects(once()).method("isPropertyAvailable").with(eq(12)).will(returnValue(true));
@@ -822,7 +822,7 @@ public class LongInstructionTest extends InstructionTestBase {
   public void testGetNextPropWith0() {
     
     mockFileHeader.expects(atLeastOnce()).method("getVersion").will(returnValue(3));
-    mockServices.expects(once()).method("getObjectTree").will(returnValue(objectTree));
+    mockGameData.expects(once()).method("getObjectTree").will(returnValue(objectTree));
     mockObjectTree.expects(once()).method("getObject").with(eq(1)).will(returnValue(zobject));
     mockZObject.expects(once()).method("getNextProperty").with(eq(0)).will(returnValue(15));
     mockMachine.expects(once()).method("setVariable").with(eq(0x11), eq((short) 15));
@@ -842,7 +842,7 @@ public class LongInstructionTest extends InstructionTestBase {
   public void testGetNextPropNotAvailable() {
     
     mockFileHeader.expects(atLeastOnce()).method("getVersion").will(returnValue(3));
-    mockServices.expects(once()).method("getObjectTree").will(returnValue(objectTree));
+    mockGameData.expects(once()).method("getObjectTree").will(returnValue(objectTree));
     mockObjectTree.expects(once()).method("getObject").with(eq(1)).will(returnValue(zobject));
     mockZObject.expects(once()).method("isPropertyAvailable").with(eq(13)).will(returnValue(false));
     mockMachine.expects(once()).method("halt").with(eq("the property [13] of object [1] does not exist"));

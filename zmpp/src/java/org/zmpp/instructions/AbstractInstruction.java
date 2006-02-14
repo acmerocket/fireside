@@ -200,7 +200,7 @@ public abstract class AbstractInstruction implements Instruction {
    */
   protected int getStoryFileVersion() {
     
-    return getMachine().getServices().getStoryFileHeader().getVersion();
+    return getMachine().getGameData().getStoryFileHeader().getVersion();
   }
   
   /**
@@ -210,7 +210,7 @@ public abstract class AbstractInstruction implements Instruction {
    */
   protected ObjectTree getObjectTree() {
     
-    return getMachine().getServices().getObjectTree();
+    return getMachine().getGameData().getObjectTree();
   }
   
   /**

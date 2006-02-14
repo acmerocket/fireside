@@ -27,8 +27,6 @@ import java.util.Collections;
 import java.util.List;
 
 import org.zmpp.base.MemoryAccess;
-import org.zmpp.encoding.ZCharDecoder;
-import org.zmpp.encoding.ZCharEncoder;
 import org.zmpp.encoding.ZsciiEncoding;
 import org.zmpp.encoding.ZsciiString;
 import org.zmpp.iff.FormChunk;
@@ -54,7 +52,7 @@ public class MachineImpl implements Machine, MachineServices, Interruptable {
   /**
    * The configuration object.
    */
-  private GameData config;
+  private GameData gamedata;
   
   /**
    * This machine's current program counter.
@@ -149,21 +147,23 @@ public class MachineImpl implements Machine, MachineServices, Interruptable {
     this.inputFunctions = new InputFunctionsImpl(this);
   }
   
-  /**
-   * {@inheritDoc}
-   */
   public MachineServices getServices() {
-    
+  
     return this;
+  }
+  
+  public GameData getGameData() {
+    
+    return gamedata;
   }
   
   
   /**
    * {@inheritDoc}
    */
-  public void initialize(GameData config, InstructionDecoder decoder) {
+  public void initialize(GameData gamedata, InstructionDecoder decoder) {
   
-    this.config = config;
+    this.gamedata = gamedata;
     this.decoder = decoder;
     this.outputStream = new OutputStream[3];
     this.inputStream = new InputStream[2];    
@@ -172,11 +172,11 @@ public class MachineImpl implements Machine, MachineServices, Interruptable {
     this.running = true;
     
     // initialize the media access
-    if (config.getResources() != null) {
+    if (gamedata.getResources() != null) {
     
-      if (config.getResources().getSounds() != null) {
+      if (gamedata.getResources().getSounds() != null) {
         this.soundSystem =
-          new SoundSystemImpl(config.getResources().getSounds());
+          new SoundSystemImpl(gamedata.getResources().getSounds());
       }
     }
     
@@ -190,18 +190,18 @@ public class MachineImpl implements Machine, MachineServices, Interruptable {
     
     this.stack = new ArrayList<Short>();
     this.routineContextStack = new ArrayList<RoutineContext>();
-    this.programCounter = getStoryFileHeader().getProgramStart();
-    this.globalsAddress = getStoryFileHeader().getGlobalsAddress();
-    this.decoder.initialize(this, getMemoryAccess());
-    int checksum = calculateChecksum(getStoryFileHeader());
-    hasValidChecksum = getStoryFileHeader().getChecksum() == checksum;
-    getStoryFileHeader().setStandardRevision(1, 0);
+    this.programCounter = gamedata.getStoryFileHeader().getProgramStart();
+    this.globalsAddress = gamedata.getStoryFileHeader().getGlobalsAddress();
+    this.decoder.initialize(this, gamedata.getMemoryAccess());
+    int checksum = calculateChecksum(gamedata.getStoryFileHeader());
+    hasValidChecksum = gamedata.getStoryFileHeader().getChecksum() == checksum;
+    //gamedata.getStoryFileHeader().setStandardRevision(1, 0);
     
-    if (getStoryFileHeader().getVersion() >= 4) {
+    if (gamedata.getStoryFileHeader().getVersion() >= 4) {
             
-      getStoryFileHeader().setEnabled(Attribute.SUPPORTS_TIMED_INPUT, true);
-      getStoryFileHeader().setInterpreterNumber(6); // IBM PC
-      getStoryFileHeader().setInterpreterVersion(1);
+      gamedata.getStoryFileHeader().setEnabled(Attribute.SUPPORTS_TIMED_INPUT, true);
+      gamedata.getStoryFileHeader().setInterpreterNumber(6); // IBM PC
+      gamedata.getStoryFileHeader().setInterpreterVersion(1);
     }
   }
   
@@ -218,7 +218,7 @@ public class MachineImpl implements Machine, MachineServices, Interruptable {
     
     for (int i = 0x40; i < filelen; i++) {
     
-      sum += getMemoryAccess().readUnsignedByte(i);
+      sum += gamedata.getMemoryAccess().readUnsignedByte(i);
     }
     return (sum & 0xffff);
   }
@@ -324,7 +324,7 @@ public class MachineImpl implements Machine, MachineServices, Interruptable {
       
     } else { // GLOBAL
       
-      return getMemoryAccess().readShort(globalsAddress
+      return gamedata.getMemoryAccess().readShort(globalsAddress
           + (getGlobalVariableNumber(variableNumber) * 2));
     }
   }
@@ -347,7 +347,7 @@ public class MachineImpl implements Machine, MachineServices, Interruptable {
       
     } else {
       
-      getMemoryAccess().writeShort(globalsAddress
+      gamedata.getMemoryAccess().writeShort(globalsAddress
           + (getGlobalVariableNumber(variableNumber) * 2), value);
     }
   }
@@ -473,7 +473,7 @@ public class MachineImpl implements Machine, MachineServices, Interruptable {
    */
   public void printZString(int address) {
     
-    print(config.getZCharDecoder().decode2Zscii(getMemoryAccess(),
+    print(gamedata.getZCharDecoder().decode2Zscii(gamedata.getMemoryAccess(),
         address, 0));
   }
   
@@ -590,7 +590,7 @@ public class MachineImpl implements Machine, MachineServices, Interruptable {
     if (outputStream[OUTPUTSTREAM_TRANSCRIPT - 1] != null) {
         
       outputStream[OUTPUTSTREAM_TRANSCRIPT - 1].select(
-          getStoryFileHeader().isEnabled(Attribute.TRANSCRIPTING));
+          gamedata.getStoryFileHeader().isEnabled(Attribute.TRANSCRIPTING));
     }
   }
   
@@ -605,7 +605,7 @@ public class MachineImpl implements Machine, MachineServices, Interruptable {
     if (streamnumber == OUTPUTSTREAM_TRANSCRIPT) {
       
       //System.out.println("ENABLE_TRANSCRIPT_STREAM: " + flag);
-      getStoryFileHeader().setEnabled(Attribute.TRANSCRIPTING, flag);
+      gamedata.getStoryFileHeader().setEnabled(Attribute.TRANSCRIPTING, flag);
       
     } else if (streamnumber == OUTPUTSTREAM_MEMORY && flag) {
       
@@ -653,7 +653,7 @@ public class MachineImpl implements Machine, MachineServices, Interruptable {
   public int translatePackedAddress(int packedAddress, boolean isCall) {
   
     // Version specific packed address translation
-    switch (getStoryFileHeader().getVersion()) {
+    switch (gamedata.getStoryFileHeader().getVersion()) {
     
       case 1: case 2: case 3:  
         return packedAddress * 2;
@@ -663,8 +663,8 @@ public class MachineImpl implements Machine, MachineServices, Interruptable {
       case 6:
       case 7:
         return packedAddress * 4 + 8 *
-          (isCall ? getStoryFileHeader().getRoutineOffset() :
-                    getStoryFileHeader().getStaticStringOffset());
+          (isCall ? gamedata.getStoryFileHeader().getRoutineOffset() :
+                    gamedata.getStoryFileHeader().getStaticStringOffset());
       case 8:
       default:
         return packedAddress * 8;
@@ -688,16 +688,16 @@ public class MachineImpl implements Machine, MachineServices, Interruptable {
    */
   public void updateStatusLine() {
   
-    if (getStoryFileHeader().getVersion() <= 3 && statusLine != null) {
+    if (gamedata.getStoryFileHeader().getVersion() <= 3 && statusLine != null) {
       
       int objNum = getVariable(0x10);    
-      ZObject obj = getObjectTree().getObject(objNum);
-      String objectName = config.getZCharDecoder().decode2Zscii(
-          getMemoryAccess(),
+      ZObject obj = gamedata.getObjectTree().getObject(objNum);
+      String objectName = gamedata.getZCharDecoder().decode2Zscii(
+          gamedata.getMemoryAccess(),
           obj.getPropertiesDescriptionAddress(), 0).toString();      
       int global2 = getVariable(0x11);
       int global3 = getVariable(0x12);
-      if (getStoryFileHeader().isEnabled(Attribute.SCORE_GAME)) {
+      if (gamedata.getStoryFileHeader().isEnabled(Attribute.SCORE_GAME)) {
         
         statusLine.updateStatusScore(objectName, global2, global3);
       } else {
@@ -818,7 +818,7 @@ public class MachineImpl implements Machine, MachineServices, Interruptable {
   private boolean verifySaveGame(PortableGameState gamestate) {
     
     // Verify the game according to the standard
-    StoryFileHeader fileHeader = getStoryFileHeader();
+    StoryFileHeader fileHeader = gamedata.getStoryFileHeader();
     int checksum = fileHeader.getChecksum();
     if (checksum == 0) checksum = calculateChecksum(fileHeader);
     return gamestate.getRelease() == fileHeader.getRelease()
@@ -837,10 +837,10 @@ public class MachineImpl implements Machine, MachineServices, Interruptable {
   private void restart(boolean resetScreenModel) {
     
     // Transcripting and fixed font bits survive the restart
-    StoryFileHeader fileHeader = getStoryFileHeader();
+    StoryFileHeader fileHeader = gamedata.getStoryFileHeader();
     boolean fixedFontForced = fileHeader.isEnabled(Attribute.FORCE_FIXED_FONT);
     boolean transcripting = fileHeader.isEnabled(Attribute.TRANSCRIPTING);
-    config.reset();
+    gamedata.reset();
     resetState();
     if (resetScreenModel) screenModel.reset();    
     fileHeader.setEnabled(Attribute.TRANSCRIPTING, transcripting);
@@ -985,51 +985,6 @@ public class MachineImpl implements Machine, MachineServices, Interruptable {
   /**
    * {@inheritDoc}
    */
-  public MemoryAccess getMemoryAccess() {
-    
-    return config.getMemoryAccess();
-  }
-  
-  /**
-   * {@inheritDoc}
-   */
-  public Dictionary getDictionary() {
-    
-    return config.getDictionary();
-  }
-  
-  public ObjectTree getObjectTree() {
-    
-    return config.getObjectTree();
-  }
-
-  /**
-   * {@inheritDoc}
-   */
-  public StoryFileHeader getStoryFileHeader() {
-    
-    return config.getStoryFileHeader();
-  }
-  
-  /**
-   * {@inheritDoc}
-   */
-  public ZCharDecoder getZCharDecoder() {
-    
-    return config.getZCharDecoder();
-  }
-  
-  /**
-   * {@inheritDoc}
-   */
-  public ZCharEncoder getZCharEncoder() {
-    
-    return config.getZCharEncoder();
-  }
-  
-  /**
-   * {@inheritDoc}
-   */
   public InputFunctions getInputFunctions() {
     
     return inputFunctions;
@@ -1041,14 +996,6 @@ public class MachineImpl implements Machine, MachineServices, Interruptable {
   public Tokenizer getTokenizer() {
     
     return inputFunctions;
-  }
-  
-  /**
-   * {@inheritDoc}
-   */
-  public ZsciiEncoding getZsciiEncoding() {
-    
-    return config.getZsciiEncoding();
   }
   
   /**
@@ -1070,12 +1017,12 @@ public class MachineImpl implements Machine, MachineServices, Interruptable {
    */
   private RoutineContext decodeRoutine(int routineAddress) {
 
-    MemoryAccess memaccess = getMemoryAccess();    
+    MemoryAccess memaccess = gamedata.getMemoryAccess();    
     int numLocals = memaccess.readUnsignedByte(routineAddress);
     short[] locals = new short[numLocals];
     int currentAddress = routineAddress + 1;
     
-    if (getStoryFileHeader().getVersion() <= 4) {
+    if (gamedata.getStoryFileHeader().getVersion() <= 4) {
       
       // Only story files <= 4 actually store default values here,
       // after V5 they are assumed as being 0 (standard document 1.0, S.5.2.1) 

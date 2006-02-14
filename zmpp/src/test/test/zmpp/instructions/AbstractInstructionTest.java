@@ -33,6 +33,7 @@ import org.zmpp.instructions.AbstractInstruction.InstructionForm;
 import org.zmpp.instructions.AbstractInstruction.OperandCount;
 import org.zmpp.io.OutputStream;
 import org.zmpp.vm.Dictionary;
+import org.zmpp.vm.GameData;
 import org.zmpp.vm.Machine;
 import org.zmpp.vm.MachineServices;
 import org.zmpp.vm.ObjectTree;
@@ -51,6 +52,8 @@ public class AbstractInstructionTest extends MockObjectTestCase {
   protected Machine machine;
   protected Mock mockServices;
   protected MachineServices services;
+  protected Mock mockGameData;
+  protected GameData gamedata;
   protected Mock mockOutputStream;
   protected OutputStream outputStream;
   protected Mock mockObjectTree;
@@ -84,6 +87,8 @@ public class AbstractInstructionTest extends MockObjectTestCase {
     storyfileHeader = (StoryFileHeader) mockFileHeader.proxy();
     mockDictionary = mock(Dictionary.class);
     dictionary = (Dictionary) mockDictionary.proxy();
+    mockGameData = mock(GameData.class);
+    gamedata = (GameData) mockGameData.proxy();
     
     info = new VariableInstruction(machine, OperandCount.VAR, 0xe0);
   }
@@ -345,8 +350,8 @@ public class AbstractInstructionTest extends MockObjectTestCase {
   
   public void testToString() {
     
-    mockMachine.expects(atLeastOnce()).method("getServices").will(returnValue(services));
-    mockServices.expects(atLeastOnce()).method("getStoryFileHeader").will(returnValue(storyfileHeader));
+    mockMachine.expects(atLeastOnce()).method("getGameData").will(returnValue(gamedata));
+    mockGameData.expects(atLeastOnce()).method("getStoryFileHeader").will(returnValue(storyfileHeader));
     mockFileHeader.expects(atLeastOnce()).method("getVersion").will(returnValue(3));
     AbstractInstruction branchInstr = new BranchInstruction(machine) {
       
@@ -357,50 +362,4 @@ public class AbstractInstructionTest extends MockObjectTestCase {
     };
     assertNotNull(branchInstr.toString());
   }
-
-
-  /**
-   * Checks if the branch formula was applied to the given pc.
-   * 
-   * @param oldpc the original program counter
-   * @param offset the branch offset
-   */
-  /*
-  protected void checkBranchFormula(int oldpc, int length, int offset) {
-    
-    assertEquals(oldpc + length + offset - 2, machine.getProgramCounter());
-  }*/
-  
-  /**
-   * Pushes a simple routine context on the stack. Define two local
-   * variables and 0x01 of the enclosing context as return variable.
-   * 
-   * @return a routine context
-   */
-  /*
-  protected RoutineContext prepareForReturn() {
-    
-    machine.setVariable(0x01, (short) 32); // just to be sure it was set
-    
-    // A routine context to have valid local variable access
-    RoutineContext routineContext = new RoutineContext(0x4213, 2);
-    machine.pushRoutineContext(routineContext);
-    routineContext.setReturnAddress(0x0815);
-    routineContext.setReturnVariable((byte) 0x01);
-    return routineContext;
-  }*/
-  
-  /**
-   * Checks if the machine returned from a routine with the specified value.
-   * 
-   * @param returnAddress the return address to check
-   * @param returnValue the return value to check
-   */
-  /*
-  protected void checkReturnedWith(int returnAddress, int returnValue) {
-    
-    assertEquals(returnAddress, machine.getProgramCounter());
-    assertEquals(returnValue, machine.getVariable(0x01));
-  }*/
-    
 }

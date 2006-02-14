@@ -36,9 +36,9 @@ import org.zmpp.instructions.VariableStaticInfo;
 import org.zmpp.instructions.AbstractInstruction.InstructionForm;
 import org.zmpp.instructions.AbstractInstruction.OperandCount;
 import org.zmpp.instructions.Operand.OperandType;
+import org.zmpp.vm.GameData;
 import org.zmpp.vm.InstructionDecoder;
 import org.zmpp.vm.Machine;
-import org.zmpp.vm.MachineServices;
 import org.zmpp.vm.StoryFileHeader;
 
 import test.zmpp.vm.MemoryMapSetup;
@@ -278,16 +278,16 @@ public class InstructionDecoderTest extends MemoryMapSetup {
     amfvmap = new DefaultMemoryAccess(call_vs2);
     Mock mockMachine4 = mock(Machine.class);
     Machine machine4 = (Machine) mockMachine4.proxy();
-    Mock mockServices = mock(MachineServices.class);
-    MachineServices services = (MachineServices) mockServices.proxy(); 
+    Mock mockGameData = mock(GameData.class);
+    GameData gamedata = (GameData) mockGameData.proxy(); 
     Mock mockFileHeader = mock(StoryFileHeader.class);
     StoryFileHeader storyFileHeader = (StoryFileHeader) mockFileHeader.proxy();
     
     InstructionDecoder decoder4 = new DefaultInstructionDecoder();
     decoder4.initialize(machine4, amfvmap);
     
-    mockMachine4.expects(atLeastOnce()).method("getServices").will(returnValue(services));
-    mockServices.expects(atLeastOnce()).method("getStoryFileHeader").will(returnValue(storyFileHeader));    
+    mockMachine4.expects(atLeastOnce()).method("getGameData").will(returnValue(gamedata));
+    mockGameData.expects(atLeastOnce()).method("getStoryFileHeader").will(returnValue(storyFileHeader));    
     mockFileHeader.expects(atLeastOnce()).method("getVersion").will(returnValue(4));
 
     // Expected:

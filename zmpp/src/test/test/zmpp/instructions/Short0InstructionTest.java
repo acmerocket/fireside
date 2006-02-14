@@ -222,7 +222,7 @@ public class Short0InstructionTest extends InstructionTestBase {
     mockMachine.expects(once()).method("setVariable").with(eq(5), eq((short) 2));
     
     // Store variable
-    mockServices.expects(once()).method("getMemoryAccess").will(returnValue(memoryAccess));
+    mockGameData.expects(once()).method("getMemoryAccess").will(returnValue(memoryAccess));
     mockMemAccess.expects(once()).method("readUnsignedByte").with(eq(0)).will(returnValue((short) 5));
     
     restore.execute();

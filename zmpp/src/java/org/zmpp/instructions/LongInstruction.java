@@ -424,7 +424,7 @@ public class LongInstruction extends AbstractInstruction {
     
     int arrayAddress = getUnsignedValue(0);
     int index = getUnsignedValue(1);
-    MemoryReadAccess memaccess = getMachine().getServices().getMemoryAccess();
+    MemoryReadAccess memaccess = getMachine().getGameData().getMemoryAccess();
     storeResult(memaccess.readShort(arrayAddress + 2 * index));
     nextInstruction();
   }
@@ -433,7 +433,7 @@ public class LongInstruction extends AbstractInstruction {
     
     int arrayAddress = getUnsignedValue(0);
     int index = getUnsignedValue(1);
-    MemoryReadAccess memaccess = getMachine().getServices().getMemoryAccess();
+    MemoryReadAccess memaccess = getMachine().getGameData().getMemoryAccess();
     storeResult((short) memaccess.readUnsignedByte(arrayAddress + index));
     nextInstruction();
   }
