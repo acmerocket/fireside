@@ -96,7 +96,12 @@ public class CpuImpl implements Cpu {
    */
   public void setProgramCounter(int address) {
 
-    this.programCounter = address;
+    programCounter = address;
+  }
+  
+  public void incrementProgramCounter(int offset) {
+    
+    programCounter += offset;
   }
 
   /**

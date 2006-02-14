@@ -299,8 +299,7 @@ public class AbstractInstructionTest extends MockObjectTestCase {
   public void testBranchIfTrueBranchConditionIsFalse() {
     
     mockMachine.expects(atLeastOnce()).method("getCpu").will(returnValue(cpu));
-    mockCpu.expects(once()).method("getProgramCounter").will(returnValue(4711));
-    mockCpu.expects(once()).method("setProgramCounter").with(eq(4711 + 12));
+    mockCpu.expects(once()).method("incrementProgramCounter").with(eq(12));
  
     AbstractInstruction branchInstr = new BranchInstruction(machine) {
       
@@ -323,8 +322,7 @@ public class AbstractInstructionTest extends MockObjectTestCase {
   public void testBranchIfFalseBranchConditionIsTrue() {
 
     mockMachine.expects(atLeastOnce()).method("getCpu").will(returnValue(cpu));
-    mockCpu.expects(atLeastOnce()).method("getProgramCounter").will(returnValue(4711));
-    mockCpu.expects(once()).method("setProgramCounter").with(eq(4711 + 12));
+    mockCpu.expects(once()).method("incrementProgramCounter").with(eq(12));
     
     AbstractInstruction branchInstr = new BranchInstruction(machine) {
       

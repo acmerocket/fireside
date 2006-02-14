@@ -22,7 +22,6 @@
  */
 package org.zmpp.instructions;
 
-import org.zmpp.vm.Cpu;
 import org.zmpp.vm.Machine;
 import org.zmpp.vm.ZObject;
 
@@ -177,8 +176,7 @@ public class Short1Instruction extends AbstractInstruction {
   private void jump() {
     
     // Unconditional jump
-    Cpu cpu = getMachine().getCpu();
-    cpu.setProgramCounter(cpu.getProgramCounter() + getValue(0) + 1);
+    getCpu().incrementProgramCounter(getValue(0) + 1);
   }
   
   /**
@@ -313,5 +311,4 @@ public class Short1Instruction extends AbstractInstruction {
     
     call(0);
   }
-    
 }

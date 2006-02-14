@@ -703,8 +703,7 @@ public class LongInstructionTest extends InstructionTestBase {
     mockZObject.expects(once()).method("getPropertyByte").with(eq(18), eq(0)).will(returnValue((byte) 0x01));
     mockZObject.expects(once()).method("getPropertyByte").with(eq(18), eq(1)).will(returnValue((byte) 0xee));
     mockCpu.expects(once()).method("setVariable").with(eq(17), eq((short) 494));
-    mockCpu.expects(once()).method("getProgramCounter").will(returnValue(4711));
-    mockCpu.expects(once()).method("setProgramCounter").with(eq(4717));
+    mockCpu.expects(once()).method("incrementProgramCounter").with(eq(6));
     
     // Two-byte property, Object 1, property 18
     LongInstruction get_prop_two = createInstruction(
@@ -725,8 +724,7 @@ public class LongInstructionTest extends InstructionTestBase {
     mockZObject.expects(once()).method("isPropertyAvailable").with(eq(22)).will(returnValue(true));
     mockZObject.expects(once()).method("getPropertyByte").with(eq(22), eq(0)).will(returnValue((byte) 0x77));
     mockCpu.expects(once()).method("setVariable").with(eq(17), eq((short) 0x77));
-    mockCpu.expects(once()).method("getProgramCounter").will(returnValue(4711));
-    mockCpu.expects(once()).method("setProgramCounter").with(eq(4717));
+    mockCpu.expects(once()).method("incrementProgramCounter").with(eq(6));
     
     // One-byte property, Object 2, property 22
     LongInstruction get_prop_one = createInstruction(
@@ -748,8 +746,7 @@ public class LongInstructionTest extends InstructionTestBase {
     mockZObject.expects(once()).method("isPropertyAvailable").with(eq(1)).will(returnValue(false));
     mockObjectTree.expects(once()).method("getPropertyDefault").with(eq(1)).will(returnValue((short) 2));
     mockCpu.expects(once()).method("setVariable").with(eq(17), eq((short) 0x02));
-    mockCpu.expects(once()).method("getProgramCounter").will(returnValue(4711));
-    mockCpu.expects(once()).method("setProgramCounter").with(eq(4717));
+    mockCpu.expects(once()).method("incrementProgramCounter").with(eq(6));
     
     LongInstruction get_prop_default = createInstruction(
         LongStaticInfo.OP_GET_PROP,
@@ -791,8 +788,7 @@ public class LongInstructionTest extends InstructionTestBase {
     mockZObject.expects(once()).method("isPropertyAvailable").with(eq(18)).will(returnValue(true));
     mockZObject.expects(once()).method("getPropertyAddress").with(eq(18)).will(returnValue(0x0a55));
     mockCpu.expects(once()).method("setVariable").with(eq(17), eq((short) 0x0a55));
-    mockCpu.expects(once()).method("getProgramCounter").will(returnValue(4711));
-    mockCpu.expects(once()).method("setProgramCounter").with(eq(4717));
+    mockCpu.expects(once()).method("incrementProgramCounter").with(eq(6));
 
     LongInstruction get_prop_addr_exists = createInstruction(
         LongStaticInfo.OP_GET_PROP_ADDR,
@@ -811,8 +807,7 @@ public class LongInstructionTest extends InstructionTestBase {
     mockObjectTree.expects(once()).method("getObject").with(eq(1)).will(returnValue(zobject));
     mockZObject.expects(once()).method("isPropertyAvailable").with(eq(2)).will(returnValue(false));
     mockCpu.expects(once()).method("setVariable").with(eq(17), eq((short) 0x00));
-    mockCpu.expects(once()).method("getProgramCounter").will(returnValue(4711));
-    mockCpu.expects(once()).method("setProgramCounter").with(eq(4717));
+    mockCpu.expects(once()).method("incrementProgramCounter").with(eq(6));
 
     LongInstruction get_prop_addr_notexists = createInstruction(
         LongStaticInfo.OP_GET_PROP_ADDR,

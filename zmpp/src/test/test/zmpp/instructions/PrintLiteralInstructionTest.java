@@ -49,8 +49,7 @@ public class PrintLiteralInstructionTest extends InstructionTestBase {
     
     mockFileHeader.expects(atLeastOnce()).method("getVersion").will(returnValue(3));
     mockMachine.expects(atLeastOnce()).method("getCpu").will(returnValue(cpu));
-    mockCpu.expects(once()).method("getProgramCounter").will(returnValue(4715));
-    mockCpu.expects(once()).method("setProgramCounter").with(eq(4718));
+    mockCpu.expects(once()).method("incrementProgramCounter").with(eq(3));
     mockMachine.expects(once()).method("printZString").with(eq(4712));
     mockMemAccess.expects(once()).method("readUnsignedShort").with(eq(4712)).will(returnValue(0x8000));
     PrintLiteralInstruction print = new PrintLiteralInstruction(

@@ -27,8 +27,8 @@ public class BlorbFileTest extends TestCase {
 
   public void testLurkingHorrorBlorb() throws Exception {
 
-    //File file = new File("testfiles/Lurking.blb");
-    File file = new File("testfiles/sherlock.blb");
+    File file = new File("testfiles/Lurking.blb");
+    //File file = new File("testfiles/sherlock.blb");
     RandomAccessFile rndfile = null;
     
     try {

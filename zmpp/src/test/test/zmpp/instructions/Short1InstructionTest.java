@@ -190,8 +190,7 @@ public class Short1InstructionTest extends InstructionTestBase {
     Short1InstructionMock jump = createInstructionMock(Short1StaticInfo.OP_JUMP,
         Operand.TYPENUM_LARGE_CONSTANT, (short)0x4711);
     mockMachine.expects(atLeastOnce()).method("getCpu").will(returnValue(cpu));
-    mockCpu.expects(once()).method("getProgramCounter").will(returnValue(1234));
-    mockCpu.expects(once()).method("setProgramCounter").with(eq(1234 + 0x4711 + 1));
+    mockCpu.expects(once()).method("incrementProgramCounter").with(eq(18194));
     jump.execute();
   }
 

@@ -88,7 +88,14 @@ public interface Cpu {
    * 
    * @param address the new address
    */
-  void setProgramCounter(int address);  
+  void setProgramCounter(int address);
+  
+  /**
+   * Increments the program counter by the specified offset.
+   * 
+   * @param offset the offset
+   */
+  void incrementProgramCounter(int offset);
 
   // ********************************************************************
   // ***** Stack operations

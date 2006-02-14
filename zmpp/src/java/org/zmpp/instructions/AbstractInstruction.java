@@ -503,8 +503,7 @@ public abstract class AbstractInstruction implements Instruction {
    */
   protected void nextInstruction() {
     
-    Cpu cpu = getMachine().getCpu();
-    cpu.setProgramCounter(cpu.getProgramCounter() + getLength());
+    getCpu().incrementProgramCounter(getLength());
   }  
   
   /**
@@ -536,7 +535,7 @@ public abstract class AbstractInstruction implements Instruction {
    */
   private void applyBranch() {
     
-    Cpu cpu = getMachine().getCpu();
+    Cpu cpu = getCpu();
     
     short offset = getBranchOffset();
 
