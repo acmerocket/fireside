@@ -91,7 +91,7 @@ public class Short0Instruction extends AbstractInstruction {
         nextInstruction();
         break;
       case Short0StaticInfo.OP_VERIFY:
-        branchOnTest(getMachine().hasValidChecksum());
+        branchOnTest(getMachine().getGameData().hasValidChecksum());
         break;
       case Short0StaticInfo.OP_PIRACY:
         branchOnTest(true);

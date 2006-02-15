@@ -104,4 +104,18 @@ public interface GameData {
    * @return the multimedia resources
    */
   Resources getResources();
+
+  /**
+   * Returns the calculated check sum.
+   * 
+   * @return the calculated check sum
+   */
+  int getCalculatedChecksum();
+
+  /**
+   * Returns true, if the checksum validation was successful.
+   * 
+   * @return true if checksum is valid
+   */
+  boolean hasValidChecksum();  
 }

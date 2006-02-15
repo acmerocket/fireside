@@ -127,9 +127,17 @@ public class StoryFileHeaderTest extends MockObjectTestCase {
     mockMemAccess.expects(atLeastOnce()).method("readUnsignedByte").with(eq(0x00)).will(returnValue((short) 4));
     mockMemAccess.expects(atLeastOnce()).method("readUnsignedShort").with(eq(0x1a)).will(returnValue(4718));
     
-    assertEquals(4718, fileHeader.getFileLength());
+    assertEquals(4718 * 4, fileHeader.getFileLength());
   }
 
+  public void testGetFileLengthV8() {
+    
+    mockMemAccess.expects(atLeastOnce()).method("readUnsignedByte").with(eq(0x00)).will(returnValue((short) 8));
+    mockMemAccess.expects(atLeastOnce()).method("readUnsignedShort").with(eq(0x1a)).will(returnValue(4718));
+    
+    assertEquals(4718 * 8, fileHeader.getFileLength());
+  }
+  
   public void testGetChecksum() {
     
     mockMemAccess.expects(atLeastOnce()).method("readUnsignedShort").with(eq(0x1c)).will(returnValue(4719));    

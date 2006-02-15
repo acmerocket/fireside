@@ -61,11 +61,6 @@ public class MachineImpl implements Machine {
   private ScreenModel screenModel;
   
   /**
-   * Returns the checksum verification status of the story file.
-   */
-  private boolean hasValidChecksum;
-  
-  /**
    * The save game data store.
    */
   private SaveGameDataStore datastore;
@@ -162,14 +157,6 @@ public class MachineImpl implements Machine {
     resetState();
   }
 
-  /**
-   * {@inheritDoc}
-   */
-  public boolean hasValidChecksum() {
-    
-    return this.hasValidChecksum;
-  }  
-  
   /**
    * {@inheritDoc}
    */
@@ -389,7 +376,7 @@ public class MachineImpl implements Machine {
     // Verify the game according to the standard
     StoryFileHeader fileHeader = gamedata.getStoryFileHeader();
     int checksum = fileHeader.getChecksum();
-    if (checksum == 0) checksum = calculateChecksum(fileHeader);
+    if (checksum == 0) checksum = gamedata.getCalculatedChecksum();
     return gamestate.getRelease() == fileHeader.getRelease()
       && gamestate.getChecksum() == checksum
       && gamestate.getSerialNumber().equals(fileHeader.getSerialNumber());
@@ -410,8 +397,6 @@ public class MachineImpl implements Machine {
   private void resetState() {
     
     cpu.reset();
-    int checksum = calculateChecksum(gamedata.getStoryFileHeader());
-    hasValidChecksum = gamedata.getStoryFileHeader().getChecksum() == checksum;
     //gamedata.getStoryFileHeader().setStandardRevision(1, 0);
     
     if (gamedata.getStoryFileHeader().getVersion() >= 4) {
@@ -422,24 +407,6 @@ public class MachineImpl implements Machine {
     }
   }
   
-  /**
-   * Calculates the checksum of the file.
-   * 
-   * @param fileheader the file header
-   * @return the check sum
-   */
-  private int calculateChecksum(StoryFileHeader fileheader) {
-    
-    int filelen = fileheader.getFileLength();
-    int sum = 0;
-    
-    for (int i = 0x40; i < filelen; i++) {
-    
-      sum += gamedata.getMemoryAccess().readUnsignedByte(i);
-    }
-    return (sum & 0xffff);
-  }  
-
   private void restart(boolean resetScreenModel) {
     
     // Transcripting and fixed font bits survive the restart

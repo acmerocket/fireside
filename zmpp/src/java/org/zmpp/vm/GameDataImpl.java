@@ -99,6 +99,8 @@ public class GameDataImpl implements GameData {
    */
   private byte[] storyfileData;
   
+  private int checksum;  
+  
   /**
    * Constructor.
    * 
@@ -123,6 +125,8 @@ public class GameDataImpl implements GameData {
     
     memaccess = new DefaultMemoryAccess(data);
     fileheader = new DefaultStoryFileHeader(memaccess);
+    
+    checksum = calculateChecksum();
     
     // Install the whole character code system here
     initEncodingSystem();
@@ -247,5 +251,36 @@ public class GameDataImpl implements GameData {
   public Resources getResources() {
     
     return resources;
+  }
+
+  /**
+   * Calculates the checksum of the file.
+   * 
+   * @param fileheader the file header
+   * @return the check sum
+   */
+  private int calculateChecksum() {
+    
+    int filelen = fileheader.getFileLength();
+    int sum = 0;
+    
+    for (int i = 0x40; i < filelen; i++) {
+    
+      sum += getMemoryAccess().readUnsignedByte(i);
+    }
+    return (sum & 0xffff);
+  }
+  
+  public int getCalculatedChecksum() {
+    
+    return checksum;
+  }
+
+  /**
+   * {@inheritDoc}
+   */
+  public boolean hasValidChecksum() {
+    
+    return getStoryFileHeader().getChecksum() == checksum;
   }
 }

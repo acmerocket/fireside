@@ -233,7 +233,8 @@ public class PortableGameState {
     
     stackFrames.clear();
     
-    if ((new String(formChunk.getSubId())).equals("IFZS")) {
+    if (formChunk != null
+        && (new String(formChunk.getSubId())).equals("IFZS")) {
       
       readIfhdChunk(formChunk);
       readStacksChunk(formChunk);

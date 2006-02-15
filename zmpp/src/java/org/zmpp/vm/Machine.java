@@ -72,13 +72,6 @@ public interface Machine {
    */
   Input getInput();  
   
-  /**
-   * Returns true, if the checksum validation was successful.
-   * 
-   * @return true if checksum is valid
-   */
-  boolean hasValidChecksum();
-  
   // ************************************************************************
   // ****** Control functions
   // ************************************************

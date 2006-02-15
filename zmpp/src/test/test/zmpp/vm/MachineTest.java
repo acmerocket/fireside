@@ -92,7 +92,7 @@ public class MachineTest extends MemoryMapSetup {
     
     assertEquals(fileheader, machine.getGameData().getStoryFileHeader());
     assertEquals(minizorkmap, machine.getGameData().getMemoryAccess());
-    assertTrue(machine.hasValidChecksum());
+    assertTrue(machine.getGameData().hasValidChecksum());
   }
   
   public void testSetOutputStream() {

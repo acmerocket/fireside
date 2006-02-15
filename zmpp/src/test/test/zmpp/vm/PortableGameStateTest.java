@@ -117,6 +117,11 @@ public class PortableGameStateTest extends MockObjectTestCase {
     assertEquals(10030, gameState.getDeltaBytes().length);
   }
   
+  public void testReadSaveGameFormChunkIsNull() {
+
+    assertFalse(gameState.readSaveGame(null));
+  }
+  
   public void testGetStackFrameStatusVars() {
     
     StackFrame stackFrame = new StackFrame();
@@ -277,8 +282,7 @@ public class PortableGameStateTest extends MockObjectTestCase {
     for (int i = 0; i < stks2.getSize() + Chunk.CHUNK_HEADER_LENGTH; i++) {
       
       assertEquals(stks2mem.readByte(i), stks1mem.readByte(i));
-    }
-    
+    }    
   }
   
   private int decodePcBytes(byte b0, byte b1, byte b2) {
@@ -316,8 +320,6 @@ public class PortableGameStateTest extends MockObjectTestCase {
     mockGameData.expects(atLeastOnce()).method("getResources").will(returnValue(null));
     mockFileheader.expects(once()).method("getProgramStart").will(returnValue(4711));
     mockFileheader.expects(once()).method("getGlobalsAddress").will(returnValue(5711));
-    mockFileheader.expects(once()).method("getFileLength").will(returnValue(0));
-    mockFileheader.expects(once()).method("getChecksum").will(returnValue(0));
     mockFileheader.expects(atLeastOnce()).method("getVersion").will(returnValue(5));
     mockFileheader.expects(once()).method("setEnabled").withAnyArguments();
     mockFileheader.expects(once()).method("setInterpreterNumber").withAnyArguments();

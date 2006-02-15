@@ -338,7 +338,8 @@ public class Short0InstructionTest extends InstructionTestBase {
     mockFileHeader.expects(atLeastOnce()).method("getVersion").will(returnValue(3));
 
     Short0InstructionMock verify = createInstructionMock(Short0StaticInfo.OP_VERIFY);
-    mockMachine.expects(once()).method("hasValidChecksum").will(returnValue(true));    
+    mockMachine.expects(once()).method("getGameData").will(returnValue(gamedata));
+    mockGameData.expects(once()).method("hasValidChecksum").will(returnValue(true));    
     verify.execute();
     assertTrue(verify.branchOnTestCalled);
     assertTrue(verify.branchOnTestCondition);
@@ -349,7 +350,8 @@ public class Short0InstructionTest extends InstructionTestBase {
     mockFileHeader.expects(atLeastOnce()).method("getVersion").will(returnValue(3));
 
     Short0InstructionMock verify = createInstructionMock(Short0StaticInfo.OP_VERIFY);
-    mockMachine.expects(once()).method("hasValidChecksum").will(returnValue(false));    
+    mockMachine.expects(once()).method("getGameData").will(returnValue(gamedata));
+    mockGameData.expects(once()).method("hasValidChecksum").will(returnValue(false));    
     verify.execute();
     assertTrue(verify.branchOnTestCalled);
     assertFalse(verify.branchOnTestCondition);
