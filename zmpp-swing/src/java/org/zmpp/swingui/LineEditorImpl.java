@@ -34,7 +34,7 @@ import org.zmpp.vm.StoryFileHeader;
 
 public class LineEditorImpl implements LineEditor, KeyListener, MouseListener {
 
-  private boolean inputMode;
+  private boolean inputmode;
   private List<Short> editbuffer;
   private StoryFileHeader fileheader;
   private ZsciiEncoding encoding;
@@ -50,7 +50,7 @@ public class LineEditorImpl implements LineEditor, KeyListener, MouseListener {
     
     synchronized (editbuffer) {
       
-      inputMode = flag;
+      inputmode = flag;
       editbuffer.clear();
       editbuffer.notifyAll();
     }
@@ -61,6 +61,7 @@ public class LineEditorImpl implements LineEditor, KeyListener, MouseListener {
     synchronized (editbuffer) {
   
       editbuffer.add(ZsciiEncoding.NULL);
+      inputmode = false;
       editbuffer.notifyAll();
     }
   }
@@ -86,7 +87,9 @@ public class LineEditorImpl implements LineEditor, KeyListener, MouseListener {
   
   public boolean isInputMode() {
     
-    return inputMode;
+    synchronized (editbuffer) {
+      return inputmode;
+    }
   }
   
   public void keyPressed(KeyEvent e) {
