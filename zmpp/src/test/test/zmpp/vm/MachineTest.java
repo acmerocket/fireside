@@ -321,7 +321,7 @@ public class MachineTest extends MemoryMapSetup {
     mockOutputStream1.expects(atLeastOnce()).method("print").with(eq((short) ZsciiEncoding.NEWLINE), eq(false));
     
     input.selectInputStream(0);
-    machine.getInputFunctions().readLine(4711, 0, 0);
+    machine.readLine(4711, 0, 0);
   }
   
   public void testReadChar() {
@@ -339,7 +339,7 @@ public class MachineTest extends MemoryMapSetup {
     
     input.setInputStream(0, inputStream0);
     input.setInputStream(1, inputStream1);
-    short zchar = machine.getInputFunctions().readChar(0, 0);
+    short zchar = machine.readChar(0, 0);
     assertEquals((short) 'L', zchar);
   }
 }

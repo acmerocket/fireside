@@ -103,18 +103,36 @@ public interface Machine {
   // *******************************
   
   /**
-   * Returns an input functions object.
+   * Tokenizes the text in the text buffer using the specified parse buffer.
    * 
-   * @return an input functions object
+   * @param textbuffer the text buffer
+   * @param parsebuffer the parse buffer
+   * @param dictionaryAddress the dictionary address or 0 for the default
+   * dictionary
+   * @param flag if set, unrecognized words are not written into the parse
+   * buffer and their slots are left unchanged
    */
-  InputFunctions getInputFunctions();
+  void tokenize(int textbuffer, int parsebuffer, int dictionaryAddress,
+                boolean flag);
   
   /**
-   * Returns the tokenizer.
+   * Reads a string from the selected input stream.
    * 
-   * @return the tokenizer
+   * @param textbuffer the text buffer address in memory
+   * @param time the time interval to call routine
+   * @param routineAddress the packed routine address
+   * @return the terminating character
    */
-  Tokenizer getTokenizer();
+  short readLine(int textbuffer, int time, int routineAddress);
+  
+  /**
+   * Reads a ZSCII char from the selected input stream.
+   * 
+   * @param time the time interval to call routine (timed input)
+   * @param routineAddress the packed routine address to call (timed input)
+   * @return the selected ZSCII char
+   */
+  short readChar(int time, int routineAddress);  
   
   /**
    * Returns the sound system.

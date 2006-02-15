@@ -22,14 +22,11 @@
  */
 package test.zmpp.instructions;
 
-import org.jmock.Mock;
 import org.zmpp.encoding.ZsciiEncoding;
 import org.zmpp.instructions.Operand;
 import org.zmpp.instructions.VariableInstruction;
 import org.zmpp.instructions.VariableStaticInfo;
 import org.zmpp.instructions.AbstractInstruction.OperandCount;
-import org.zmpp.vm.InputFunctions;
-import org.zmpp.vm.Tokenizer;
 
 /**
  * This class solely concentrates on the sread instruction which is more
@@ -40,19 +37,6 @@ import org.zmpp.vm.Tokenizer;
  */
 public class SreadTest extends InstructionTestBase {
 
-  private Mock mockInputFunctions, mockTokenizer;
-  private InputFunctions inputFunctions;
-  private Tokenizer tokenizer;
-  
-  protected void setUp() throws Exception {
-    
-    super.setUp();
-    mockInputFunctions = mock(InputFunctions.class);
-    inputFunctions = (InputFunctions) mockInputFunctions.proxy();
-    mockTokenizer = mock(Tokenizer.class);
-    tokenizer = (Tokenizer) mockTokenizer.proxy();
-  }
-  
   // This is a first template setup for one of the central functions
   // in the Z-machine, the parser.
   public void testSreadVersion3() {
@@ -60,10 +44,8 @@ public class SreadTest extends InstructionTestBase {
     // common things
     mockFileHeader.expects(atLeastOnce()).method("getVersion").will(returnValue(3));
     mockMachine.expects(once()).method("updateStatusLine");
-    mockMachine.expects(atLeastOnce()).method("getInputFunctions").will(returnValue(inputFunctions));
-    mockMachine.expects(atLeastOnce()).method("getTokenizer").will(returnValue(tokenizer));
-    mockInputFunctions.expects(once()).method("readLine").with(eq(4711), eq(0), eq(0)).will(returnValue(ZsciiEncoding.NEWLINE));
-    mockTokenizer.expects(once()).method("tokenize").with(eq(4711), eq(5711), eq(0), eq(false));    
+    mockMachine.expects(once()).method("readLine").with(eq(4711), eq(0), eq(0)).will(returnValue(ZsciiEncoding.NEWLINE));
+    mockMachine.expects(once()).method("tokenize").with(eq(4711), eq(5711), eq(0), eq(false));    
     mockMachine.expects(atLeastOnce()).method("getCpu").will(returnValue(cpu));
     mockCpu.expects(once()).method("incrementProgramCounter").with(eq(5));    
     

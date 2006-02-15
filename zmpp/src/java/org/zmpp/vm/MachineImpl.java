@@ -75,7 +75,7 @@ public class MachineImpl implements Machine {
   /**
    * The input functions object.
    */
-  private InputFunctionsImpl inputFunctions;
+  private InputFunctions inputFunctions;
   
   /**
    * The sound system.
@@ -102,7 +102,7 @@ public class MachineImpl implements Machine {
    */
   public MachineImpl() {
 
-    this.inputFunctions = new InputFunctionsImpl(this);
+    this.inputFunctions = new InputFunctions(this);
   }
   
   /**
@@ -220,21 +220,30 @@ public class MachineImpl implements Machine {
   // ************************************************************************
   // ****** Machine services
   // ************************************************
-  
+
   /**
    * {@inheritDoc}
    */
-  public InputFunctions getInputFunctions() {
+  public void tokenize(int textbuffer, int parsebuffer, int dictionaryAddress,
+                       boolean flag) {
     
-    return inputFunctions;
+    inputFunctions.tokenize(textbuffer, parsebuffer, dictionaryAddress, flag);
   }
   
   /**
    * {@inheritDoc}
    */
-  public Tokenizer getTokenizer() {
+  public short readLine(int textbuffer, int time, int routineAddress) {
     
-    return inputFunctions;
+    return inputFunctions.readLine(textbuffer, time, routineAddress);
+  }
+  
+  /**
+   * {@inheritDoc}
+   */
+  public short readChar(int time, int routineAddress) {
+
+    return inputFunctions.readChar(time, routineAddress);
   }
   
   /**
