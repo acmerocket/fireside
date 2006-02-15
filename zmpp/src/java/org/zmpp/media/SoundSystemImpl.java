@@ -97,7 +97,8 @@ public class SoundSystemImpl implements SoundSystem {
   public void play(int number, int effect, int repeats, int volume,
                    int routine) {
 
-    SoundEffect sound = sounds.getResource(number);
+    SoundEffect sound = null;
+    if (sounds != null) sound = sounds.getResource(number);
     if (sound != null) {
 
       if (effect == SoundSystem.EFFECT_START) {

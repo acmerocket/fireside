@@ -420,7 +420,7 @@ public class VariableInstruction extends AbstractInstruction {
     System.out.printf("@sound_effect %d, %d, $%04x, $%04x\n", soundnum, effect, volume, routine);
         
     SoundSystem soundSystem = getMachine().getSoundSystem();
-    soundSystem.play(soundnum, effect, volume, repeats, routine);    
+    soundSystem.play(soundnum, effect, volume, repeats, routine);
     nextInstruction();
   }
   

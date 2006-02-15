@@ -25,6 +25,8 @@ package org.zmpp.vm;
 import org.zmpp.encoding.ZsciiString;
 import org.zmpp.iff.FormChunk;
 import org.zmpp.iff.WritableFormChunk;
+import org.zmpp.media.MediaCollection;
+import org.zmpp.media.SoundEffect;
 import org.zmpp.media.SoundSystem;
 import org.zmpp.media.SoundSystemImpl;
 import org.zmpp.vm.StoryFileHeader.Attribute;
@@ -146,14 +148,13 @@ public class MachineImpl implements Machine {
     output = new OutputImpl(gamedata, cpu);
     input = new InputImpl(this);
     
-    // initialize the media access
+    MediaCollection<SoundEffect> sounds = null;
     if (gamedata.getResources() != null) {
+      
+      sounds = gamedata.getResources().getSounds();
+    }
     
-      if (gamedata.getResources().getSounds() != null) {
-        this.soundSystem =
-          new SoundSystemImpl(gamedata.getResources().getSounds());
-      }
-    }    
+    soundSystem = new SoundSystemImpl(sounds);
     resetState();
   }
 
