@@ -37,7 +37,7 @@ import org.zmpp.encoding.ZsciiStringTokenizer;
 
 
 /**
- * This class contains functions that deal with input.
+ * This class contains functions that deal with user input.
  * 
  * @author Wei-ju Wu
  * @version 1.0
@@ -48,6 +48,9 @@ public class InputFunctions {
   private static final ZsciiString WHITESPACE =
     new ZsciiString(new short[] { ' ', '\n', '\t', '\r' });
 
+  /**
+   * This class represents the interrupt method in timed input.
+   */
   public class InterruptThread extends Thread {
   
     /**
@@ -61,14 +64,14 @@ public class InputFunctions {
     private int routineAddress;
     
     /**
-     * After a routine has run, true indicates that it has printed something.
+     * The input buffer.
      */
-    private boolean routineDidOutput;
-    
     private List<Short> inputbuffer;
     
-    // We make this status variable, so we do not need to synchronize it 
-    public volatile boolean running;
+    /**
+     * Status variable.
+     */ 
+    public boolean running;
     
     public InterruptThread(int time, int routineAddress,
                            List<Short> inputbuffer) {
@@ -79,18 +82,28 @@ public class InputFunctions {
       this.running = true;
     }
     
+    public synchronized boolean isRunning() {
+      
+      return running;
+    }
+    
+    public synchronized void setRunning(boolean flag) {
+      
+      running = flag;
+    }
+    
     public void run() {
       
       Output output = machine.getOutput();
       
-      while (running) {
+      while (isRunning()) {
         
         // We sleep for the given time
         try { Thread.sleep(time); } catch (InterruptedException ex) { }
         
-        if (running) {
+        if (isRunning()) {
           displayCursor(false);
-          short retval = runRoutine();
+          short retval = machine.getCpu().callInterrupt(routineAddress);
           if (retval == 1) {
           
             machine.getInput().getSelectedInputStream().cancelInput();
@@ -100,7 +113,8 @@ public class InputFunctions {
           // REDISPLAY INPUT HERE
           // We need to find out if the routine has printed anything to
           // the screen if yes, the input needs to be redisplayed
-          if (inputbuffer != null && routineDidOutput) {
+          if (inputbuffer != null
+              && machine.getCpu().interruptDidOutput()) {
           
             for (short zsciiChar : inputbuffer) {
             
@@ -111,39 +125,21 @@ public class InputFunctions {
           displayCursor(true);
         }
       }
-    }
-    
-    private short runRoutine() {
-     
-      routineDidOutput = false;
-      Cpu cpu = machine.getCpu();
-      int originalRoutineStackSize = cpu.getRoutineContexts().size();
-      RoutineContext routineContext = cpu.call(routineAddress,
-          machine.getCpu().getProgramCounter(),
-          new short[0], (short) RoutineContext.DISCARD_RESULT);
-      
-      for (;;) {
-        
-        Instruction instr = cpu.nextStep();
-        instr.execute();
-        // check if something was printed
-        if (instr.isOutput()) routineDidOutput = true;
-        if (cpu.getRoutineContexts().size() == originalRoutineStackSize) {
-          
-          break;
-        }
-      }
-      return routineContext.getReturnValue();
     }    
   }
   
+  /**
+   * Constructor.
+   * 
+   * @param machine the machine object
+   */
   public InputFunctions(Machine machine) {
     
     this.machine = machine;
   }
 
   // *********************************************************************
-  // ****** SREAD/AREAD - the most complex and flexible function within
+  // ****** SREAD/AREAD - the most complex and flexible function within the
   // ****** Z-machine. This function takes input from the user and
   // ****** calls the tokenizer for lexical analysis. It also recognizes
   // ****** terminator characters and controls the output as well as
@@ -173,6 +169,13 @@ public class InputFunctions {
     return handleTerminateChar(terminateChar);
   }
   
+  /**
+   * This method checks the buffer for previous input.
+   * 
+   * @param textbuffer the text buffer
+   * @param inputbuffer the input buffer
+   * @return
+   */
   public int checkForPreviousInput(int textbuffer, List<Short> inputbuffer) {
     
     int version = machine.getGameData().getStoryFileHeader().getVersion();
@@ -259,7 +262,7 @@ public class InputFunctions {
     // Synchronize with timed input thread    
     if (thread != null) {
       
-      thread.running = false;
+      thread.setRunning(false);
       try { thread.join(); } catch (Exception ex) { }
     }    
   }
@@ -390,7 +393,7 @@ public class InputFunctions {
     
     if (thread != null) {
 
-      thread.running = false;
+      thread.setRunning(false);
       try { thread.join(); } catch (Exception ex) { }
     }
     

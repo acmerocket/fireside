@@ -217,5 +217,24 @@ public interface Cpu {
    * @return the routine context created
    */
   RoutineContext call(int routineAddress, int returnAddress, short[] args,
-      short returnVariable);
+      short returnVariable);  
+
+  // ***********************************************************************
+  // **** Interrupt routines
+  // ********************************
+  
+  /**
+   * Indicates if the last interrupt routine performed any output.
+   * 
+   * @return true if the routine performed output, false otherwise
+   */
+  boolean interruptDidOutput();  
+  
+  /**
+   * Calls the specified interrupt routine.
+   * 
+   * @param routineAddress the routine address
+   * @return the return value
+   */
+  short callInterrupt(int routineAddress);
 }

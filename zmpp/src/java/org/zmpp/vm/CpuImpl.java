@@ -32,8 +32,9 @@ import org.zmpp.instructions.Interruptable;
 
 public class CpuImpl implements Cpu, Interruptable {
 
-  private GameData gamedata;
-  
+  /**
+   * The machine object.
+   */
   private Machine machine;
 
   /**
@@ -68,14 +69,14 @@ public class CpuImpl implements Cpu, Interruptable {
   
   public CpuImpl(Machine machine, InstructionDecoder decoder) {
   
-    this.gamedata = machine.getGameData();
     this.machine = machine;
     this.decoder = decoder;
     this.running = true;
   }
   
   public void reset() {
-    
+
+    GameData gamedata = machine.getGameData();
     programCounter = gamedata.getStoryFileHeader().getProgramStart();    
     decoder.initialize(machine, gamedata.getMemoryAccess());
     stack = new ArrayList<Short>();
@@ -119,6 +120,8 @@ public class CpuImpl implements Cpu, Interruptable {
   public int translatePackedAddress(int packedAddress, boolean isCall) {
   
     // Version specific packed address translation
+    GameData gamedata = machine.getGameData();
+    
     switch (gamedata.getStoryFileHeader().getVersion()) {
     
       case 1: case 2: case 3:  
@@ -250,7 +253,7 @@ public class CpuImpl implements Cpu, Interruptable {
       
     } else { // GLOBAL
       
-      return gamedata.getMemoryAccess().readShort(globalsAddress
+      return machine.getGameData().getMemoryAccess().readShort(globalsAddress
           + (getGlobalVariableNumber(variableNumber) * 2));
     }
   }
@@ -273,7 +276,7 @@ public class CpuImpl implements Cpu, Interruptable {
       
     } else {
       
-      gamedata.getMemoryAccess().writeShort(globalsAddress
+      machine.getGameData().getMemoryAccess().writeShort(globalsAddress
           + (getGlobalVariableNumber(variableNumber) * 2), value);
     }
   }
@@ -412,15 +415,6 @@ public class CpuImpl implements Cpu, Interruptable {
     return routineContext;
   }
 
-  /**
-   * {@inheritDoc}
-   */
-  public void setInterruptRoutine(int routine) {
-    
-    // TODO
-    System.out.printf("setInterruptRoutine(): %04x\n", routine);
-  }  
-  
   // ************************************************************************
   // ****** Private functions
   // ************************************************
@@ -433,6 +427,7 @@ public class CpuImpl implements Cpu, Interruptable {
    */
   private RoutineContext decodeRoutine(int routineAddress) {
 
+    GameData gamedata = machine.getGameData();
     MemoryAccess memaccess = gamedata.getMemoryAccess();    
     int numLocals = memaccess.readUnsignedByte(routineAddress);
     short[] locals = new short[numLocals];
@@ -500,5 +495,59 @@ public class CpuImpl implements Cpu, Interruptable {
       throw new IllegalStateException("access to non-existent local variable: "
                                       + localVariableNumber);
     }
+  }
+  
+  // ************************************************************************
+  // ****** Interrupt functions
+  // *************************************
+  
+  /**
+   * The flag to indicate interrupt output.
+   */
+  private boolean interruptDidOutput;
+  
+  /**
+   * The flag to indicate interrupt execution.
+   */
+  private boolean executeInterrupt;
+  
+  /**
+   * {@inheritDoc}
+   */
+  public boolean interruptDidOutput() {
+    
+    return interruptDidOutput;
+  }
+  
+  /**
+   * {@inheritDoc}
+   */
+  public short callInterrupt(int routineAddress) {
+    
+    interruptDidOutput = false;
+    executeInterrupt = true;
+    int originalRoutineStackSize = getRoutineContexts().size();
+    RoutineContext routineContext = call(routineAddress,
+        machine.getCpu().getProgramCounter(),
+        new short[0], (short) RoutineContext.DISCARD_RESULT);
+    
+    for (;;) {
+      
+      Instruction instr = nextStep();
+      instr.execute();
+      // check if something was printed
+      if (instr.isOutput()) interruptDidOutput = true;
+      if (getRoutineContexts().size() == originalRoutineStackSize) {
+        
+        break;
+      }
+    }
+    executeInterrupt = false;
+    return routineContext.getReturnValue();
+  }
+  
+  public void setInterruptRoutine(int routineAddress) {
+    
+    // TODO
   }
 }
