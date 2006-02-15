@@ -26,22 +26,6 @@ import java.io.File;
 import java.util.StringTokenizer;
 
 import javax.swing.JFileChooser;
-import javax.swing.JOptionPane;
-
-import org.zmpp.instructions.DefaultInstructionDecoder;
-import org.zmpp.io.FileInputStream;
-import org.zmpp.io.TranscriptOutputStream;
-import org.zmpp.media.Resources;
-import org.zmpp.vm.GameData;
-import org.zmpp.vm.GameDataImpl;
-import org.zmpp.vm.Input;
-import org.zmpp.vm.InstructionDecoder;
-import org.zmpp.vm.Machine;
-import org.zmpp.vm.MachineImpl;
-import org.zmpp.vm.MemoryOutputStream;
-import org.zmpp.vm.Output;
-import org.zmpp.vm.StoryFileHeader;
-
 
 /**
  * This class starts the ZMPP swing interface.
@@ -58,12 +42,13 @@ public class Main {
     "Z-Machine Preservation Project Version 0.86";
   
   /**
-   * @param args
+   * The main method.
+   * 
+   * @param args the arguments
    */
   public static void main(String[] args) {
     
-    String mrjVersion = System.getProperty("mrj.version");
-    if (mrjVersion != null) {
+    if (System.getProperty("mrj.version") != null) {
       System.setProperty("apple.laf.useScreenMenuBar", "true");
       System.setProperty("com.apple.eawt.CocoaComponent.CompatibilityMode",
           "false");
@@ -71,103 +56,40 @@ public class Main {
           "ZMPP");
     }
     
-    File currentdir = new File(System.getProperty("user.dir"));    
-    JFileChooser fileChooser = new JFileChooser(currentdir);
+    JFileChooser fileChooser = new JFileChooser(System.getProperty("user.dir"));
     fileChooser.setDialogTitle("Open story file...");
     if (fileChooser.showOpenDialog(null) == JFileChooser.APPROVE_OPTION) {
       
       File storyfile = fileChooser.getSelectedFile();
-      Resources resources = searchForResources(storyfile);
-      Machine machine = openStoryFile(storyfile, resources);
-      ZmppFrame screen = new ZmppFrame(machine);
-      
-      // Machine initialization
-      
-      // Input streams
-      FileInputStream fileIs = new FileInputStream(screen,
-          machine.getGameData().getZsciiEncoding());
-      Input input = machine.getInput();
-      input.setInputStream(0, screen);
-      input.setInputStream(1, fileIs);
-      //machine.selectInputStream(1);
-      
-      // Output streams
-      Output output = machine.getOutput();
-      output.setOutputStream(1, screen.getOutputStream());
-      output.selectOutputStream(1, true);
-      TranscriptOutputStream transcriptStream = new TranscriptOutputStream(
-          screen, machine.getGameData().getZsciiEncoding());
-      output.setOutputStream(2, transcriptStream);
-      output.selectOutputStream(2, false);
-      output.setOutputStream(3, new MemoryOutputStream(machine));
-      output.selectOutputStream(3, false);
-      
-      machine.setStatusLine(screen);
-      machine.setScreen(screen.getScreenModel());
-      machine.setSaveGameDataStore(screen);
-          
-      screen.startMachine();
-      screen.pack();
-      screen.setVisible(true);
+      File blorbfile = searchForResources(storyfile);
+      ApplicationMachineFactory factory =
+        new ApplicationMachineFactory(storyfile, blorbfile);
+      factory.buildMachine();
+      ZmppFrame frame = factory.getUI();      
+      frame.startMachine();
+      frame.pack();
+      frame.setVisible(true);
     }
   }
   
-  private static Resources searchForResources(File storyfile) {
+  /**
+   * Trys to find a resource file in Blorb format.
+   * 
+   * @param storyfile the storyfile
+   * @return the blorb file if one exists or null
+   */
+  private static File searchForResources(File storyfile) {
     
-    String directory = storyfile.getParent();
     StringTokenizer tok = new StringTokenizer(storyfile.getName(), ".");
     String prefix = tok.nextToken();
-    String blorbpath = directory + System.getProperty("file.separator")
+    String blorbpath = storyfile.getParent()
+                       + System.getProperty("file.separator")
                        + prefix + ".blb";
 
     File blorbfile = new File(blorbpath);
     System.out.printf("does '%s' exist ? -> %b\n", blorbfile.getPath(),
         blorbfile.exists());
-    if (blorbfile.exists()) return FileUtils.createResources(blorbfile);
+    if (blorbfile.exists()) return blorbfile;
     return null;
-  }
-  
-  private static Machine openStoryFile(File storyfile, Resources resources) {
-    
-    java.io.InputStream inputstream = null;
-    
-    try {
-      
-      inputstream = new java.io.FileInputStream(storyfile);
-      byte[] storydata = FileUtils.readFileBytes(inputstream);
-      GameData gamedata = new GameDataImpl(storydata, resources);
-      StoryFileHeader fileheader = gamedata.getStoryFileHeader();
-      
-      System.out.println("Story file Version: " + fileheader.getVersion());
-    
-      if (fileheader.getVersion() < 1 || fileheader.getVersion() == 6
-          || fileheader.getVersion() > 8) {
-      
-        JOptionPane.showMessageDialog(null,
-          "Story file version 6 is not supported.",
-          "Story file read error", JOptionPane.ERROR_MESSAGE);
-        System.exit(0);
-      }
-      Machine machine = new MachineImpl();
-      InstructionDecoder decoder = new DefaultInstructionDecoder();
-      machine.initialize(gamedata, decoder);
-      return machine;
-      
-    } catch (Exception ex) {
-      
-      ex.printStackTrace();
-      
-    } finally {
-      
-      try {
-        
-        if (inputstream != null) inputstream.close();
-        
-      } catch (Exception ex) {
-        
-        ex.printStackTrace();
-      }
-    }
-    return null;
-  }
+  }  
 }

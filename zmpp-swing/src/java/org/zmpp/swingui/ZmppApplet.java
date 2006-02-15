@@ -37,33 +37,18 @@ import java.net.URL;
 import javax.swing.JApplet;
 import javax.swing.JFileChooser;
 import javax.swing.JLabel;
-import javax.swing.JOptionPane;
 import javax.swing.JPanel;
 import javax.swing.SwingUtilities;
 
-import org.zmpp.base.DefaultMemoryAccess;
-import org.zmpp.blorb.BlorbResources;
-import org.zmpp.iff.DefaultFormChunk;
 import org.zmpp.iff.FormChunk;
 import org.zmpp.iff.WritableFormChunk;
-import org.zmpp.instructions.DefaultInstructionDecoder;
-import org.zmpp.io.FileInputStream;
 import org.zmpp.io.IOSystem;
 import org.zmpp.io.InputStream;
 import org.zmpp.io.OutputStream;
-import org.zmpp.io.TranscriptOutputStream;
-import org.zmpp.media.Resources;
-import org.zmpp.vm.GameData;
-import org.zmpp.vm.GameDataImpl;
-import org.zmpp.vm.Input;
-import org.zmpp.vm.InstructionDecoder;
 import org.zmpp.vm.Machine;
-import org.zmpp.vm.MachineImpl;
-import org.zmpp.vm.MemoryOutputStream;
-import org.zmpp.vm.Output;
 import org.zmpp.vm.SaveGameDataStore;
+import org.zmpp.vm.ScreenModel;
 import org.zmpp.vm.StatusLine;
-import org.zmpp.vm.StoryFileHeader;
 
 /**
  * This is the applet class for ZMPP.
@@ -85,7 +70,30 @@ implements InputStream, StatusLine, SaveGameDataStore, IOSystem {
   
   public void init() {
         
-    machine = openStoryFile();
+    String story = getParameter("storyfile");
+    String blorb = getParameter("blorbfile");
+    
+    try {
+      
+      URL storyurl = new URL(getDocumentBase(), story);
+      URL blorburl = null;
+      if (blorb != null) {
+        
+        blorburl = new URL(getDocumentBase(), blorb);
+      }
+      AppletMachineFactory factory = new AppletMachineFactory(this,
+          storyurl, blorburl);
+      machine = factory.buildMachine();
+      
+    } catch (Exception ex) {
+      
+      ex.printStackTrace();      
+    }
+    
+  }
+  
+  public void initUI(Machine machine) {
+    
     lineEditor = new LineEditorImpl(machine.getGameData().getStoryFileHeader(),
         machine.getGameData().getZsciiEncoding());
     
@@ -112,8 +120,6 @@ implements InputStream, StatusLine, SaveGameDataStore, IOSystem {
     addKeyListener(lineEditor);
     viewport.addKeyListener(lineEditor);
     viewport.addMouseListener(lineEditor);
-    
-    initMachine();
   }
   
   public void start() {
@@ -122,98 +128,11 @@ implements InputStream, StatusLine, SaveGameDataStore, IOSystem {
     currentGame.start();
   }
   
-  private void initMachine() {
+  public ScreenModel getScreenModel() {
     
-    // Machine initialization
-    
-    // Input streams
-    FileInputStream fileIs = new FileInputStream(this,
-        machine.getGameData().getZsciiEncoding());
-    Input input = machine.getInput();
-    input.setInputStream(0, this);
-    input.setInputStream(1, fileIs);
-    
-    // Output streams
-    Output output = machine.getOutput();
-    output.setOutputStream(1, this.getOutputStream());
-    output.selectOutputStream(1, true);
-    TranscriptOutputStream transcriptStream = new TranscriptOutputStream(
-        this, machine.getGameData().getZsciiEncoding());
-    output.setOutputStream(2, transcriptStream);
-    output.selectOutputStream(2, false);
-    output.setOutputStream(3, new MemoryOutputStream(machine));
-    output.selectOutputStream(3, false);
-    
-    machine.setStatusLine(this);
-    machine.setScreen(viewport);
-    machine.setSaveGameDataStore(this);        
+    return viewport;
   }
-  
-  private Machine openStoryFile() {
     
-    String story = getParameter("storyfile");
-    java.io.InputStream storyis = null;
-    String blorb = getParameter("blorbfile");
-    Resources blorbresources = null;
-    
-    try {
-      
-      URL storyurl = new URL(getDocumentBase(), story);
-      storyis = storyurl.openStream();
-      
-      if (blorb != null) {
-        
-        URL blorburl = new URL(getDocumentBase(), blorb);
-        java.io.InputStream blorbis = blorburl.openStream();
-        blorbresources = readBlorbResources(blorbis);
-      }
-    
-      byte[] storyfile = FileUtils.readFileBytes(storyis);
-      GameData gamedata = new GameDataImpl(storyfile, blorbresources);
-      StoryFileHeader fileheader = gamedata.getStoryFileHeader();
-    
-      if (fileheader.getVersion() < 1
-          || fileheader.getVersion() == 6) {
-      
-        JOptionPane.showMessageDialog(null,
-          "Story file version 6 is not supported.",
-          "Story file read error", JOptionPane.ERROR_MESSAGE);
-        stop();
-      }
-      Machine machine = new MachineImpl();
-      InstructionDecoder decoder = new DefaultInstructionDecoder();
-      machine.initialize(gamedata, decoder);
-      return machine;
-      
-    } catch (Exception ex) {
-      
-      ex.printStackTrace();
-      
-    } finally {
-      
-      try {
-        
-        if (storyis != null) storyis.close();
-        
-      } catch (Exception ex) {
-        
-        ex.printStackTrace();
-      }
-    }
-    return null;
-  }
-  
-  private Resources readBlorbResources(java.io.InputStream inputstream) {
-  
-    byte[] data = FileUtils.readFileBytes(inputstream);
-    if (data != null) {
-    
-      FormChunk formchunk = new DefaultFormChunk(new DefaultMemoryAccess(data));
-      return new BlorbResources(formchunk);
-    }
-    return null;
-  }
-  
   // *************************************************************************
   // ******** StatusLine interface
   // ******************************************
