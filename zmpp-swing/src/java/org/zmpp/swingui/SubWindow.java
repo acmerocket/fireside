@@ -102,14 +102,12 @@ public abstract class SubWindow {
     
     this.top = top;
     this.height = height;
-    resetCursorToHome();
     sizeUpdated();
   }
   
   public void resize(int numLines) {
     
     height = getCanvas().getFontHeight(font) * numLines;
-    resetCursorToHome();
     sizeUpdated();
   }
   
