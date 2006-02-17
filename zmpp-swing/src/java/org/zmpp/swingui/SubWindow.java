@@ -170,6 +170,7 @@ public abstract class SubWindow {
    */
   public void printString(String str) {
 
+    //System.out.printf("printString(), %s: '%s'\n", name, str);
     int width = canvas.getWidth();
     int lineLength = width;
     
@@ -210,6 +211,7 @@ public abstract class SubWindow {
   
   protected void newline() {
     
+    //System.out.println("newline()");
     cursor.setLine(cursor.getLine() + 1);
     cursor.setColumn(1);
   }
@@ -229,12 +231,6 @@ public abstract class SubWindow {
     return editor;
   }
   
-  protected int getCurrentY() {
-    
-    return top + (cursor.getLine() - 1) * canvas.getFontHeight(font)
-           + (canvas.getFontHeight(font) - canvas.getFontDescent(font));
-  }
- 
   protected Color getTextBackground() {
     
     return isReverseVideo ? foreground : background;
@@ -248,6 +244,7 @@ public abstract class SubWindow {
   protected void printLine(String line, Color textbackColor,
                            Color textColor) {
 
+    //System.out.printf("printLine(): '%s'\n", line);
     canvas.fillRect(textbackColor, getCurrentX(),
                     getCurrentY() - canvas.getFontHeight(font)
                     + canvas.getFontDescent(font),
@@ -302,7 +299,9 @@ public abstract class SubWindow {
     
   protected abstract void sizeUpdated();
   
-  protected abstract int getCurrentX();  
+  protected abstract int getCurrentX();
+  
+  protected abstract int getCurrentY();
 
   // ************************************************************************
   // ******* Private methods

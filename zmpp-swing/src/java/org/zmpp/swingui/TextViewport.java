@@ -163,6 +163,7 @@ ScreenModel {
     flush();
     
     activeWindow = window;
+    updateDimensionsInHeader();
     
     // S 8.7.2: If the top window is set active, reset the cursor position
     if (activeWindow == WINDOW_TOP) {
@@ -205,6 +206,7 @@ ScreenModel {
     fontStyle |= ((style & TEXTSTYLE_ITALIC) > 0) ? Font.ITALIC : 0;
     
     windows[activeWindow].setFont(windowFont.deriveFont(fontStyle));
+    updateDimensionsInHeader();    
   }
   
   public void setBufferMode(boolean flag) {
@@ -432,15 +434,16 @@ ScreenModel {
     
     flush();
     int previous = fontnumbers[activeWindow];
+    
     switch (fontnum) {
     case FONT_FIXED:
       windows[activeWindow].setFont(fixedFont);
       fontnumbers[activeWindow] = fontnum;
-      return previous;
+      break;
     case FONT_NORMAL:
       windows[activeWindow].setFont(standardFont);
       fontnumbers[activeWindow] = fontnum;
-      return previous;
+      break;
     case FONT_CHARACTER_GRAPHICS:
       
       // CODE-DEBT:
@@ -450,9 +453,11 @@ ScreenModel {
       // that "Beyond Zork" does not look so weird...
       windows[activeWindow].setFont(fixedFont);
       fontnumbers[activeWindow] = fontnum;
-      return 0;
+    default:
+      previous = 0;
+      break;
     }
-    return 0;
+    return previous;
   }
   
   /**
@@ -466,6 +471,20 @@ ScreenModel {
   // **********************************************************************
   // ******** Private functions
   // *************************************************
+
+  private void updateDimensionsInHeader() {
+    
+    StoryFileHeader fileheader = machine.getGameData().getStoryFileHeader();
+    if (fileheader.getVersion() >= 4) {
+      Font font = windows[activeWindow].getFont();
+      FontMetrics fm = imageBuffer.getGraphics().getFontMetrics(font);
+      int screenWidth = imageBuffer.getWidth() / fm.charWidth('0');
+      int screenHeight = imageBuffer.getHeight() / fm.getHeight();    
+      fileheader.setScreenWidth(screenWidth);
+      fileheader.setScreenHeight(screenHeight);
+    }
+  }
+  
 
   private void printChar(char c, boolean isInput) {
 
@@ -515,14 +534,6 @@ ScreenModel {
       fileheader.setEnabled(Attribute.SUPPORTS_FIXED_FONT, true);
       fileheader.setEnabled(Attribute.SUPPORTS_ITALIC, true);
       
-      FontMetrics fm = imageBuffer.getGraphics().getFontMetrics(fixedFont);
-      int screenWidth = imageBuffer.getWidth() / fm.charWidth('0');
-      int screenHeight = imageBuffer.getHeight() / fm.getHeight();
-      //System.out.println("screenWidth: " + screenWidth
-      //    + " screenHeight: " + screenHeight);
-      
-      fileheader.setScreenWidth(screenWidth);
-      fileheader.setScreenHeight(screenHeight);
     }
     
     if (fileheader.getVersion() >= 5) {
@@ -536,6 +547,7 @@ ScreenModel {
       overrideDefaults(fileheader);
     }
     determineStandardFont();
+    updateDimensionsInHeader();
   }
 
   

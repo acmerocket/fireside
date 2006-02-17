@@ -22,6 +22,8 @@
  */
 package org.zmpp.swingui;
 
+import java.awt.Font;
+
 import org.zmpp.vm.ScreenModel;
 
 /**
@@ -99,5 +101,12 @@ public class TopWindow extends SubWindow {
     int meanCharWidth = getCanvas().getCharWidth(getFont(), '0');      
     return (getCursor().getColumn() - 1) * meanCharWidth;
   }
+  
+  protected int getCurrentY() {
     
+    Font font = getFont();
+    Canvas canvas = getCanvas();
+    return getTop() + (getCursor().getLine() - 1) * canvas.getFontHeight(font)
+           + (canvas.getFontHeight(font) - canvas.getFontDescent(font));
+  } 
 }

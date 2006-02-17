@@ -42,6 +42,8 @@ public class BottomWindow extends SubWindow {
   private int linesPerPage;
   private int linesPrinted;
   private int currentX;
+  private int currentY;
+  private int lineHeight;
   
   /**
    * Constructor.
@@ -91,7 +93,12 @@ public class BottomWindow extends SubWindow {
     
   private void scrollIfNeeded() {
 
+    //System.out.printf("scrollIfNeeded(), current y: %d, window bottom: %d" +
+    //    ", font descent: %d, font height: %d\n", getCurrentY(),
+    //    (getTop() + getHeight()), getCanvas().getFontDescent(getFont()),
+    //    getCanvas().getFontHeight(getFont()));
     int fontDescent = getCanvas().getFontDescent(getFont());
+    int fontHeight = getCanvas().getFontHeight(getFont());
     
     // We calulate an available height with a correction amount
     // of fontDescent to reserve enough scrolling space
@@ -99,6 +106,7 @@ public class BottomWindow extends SubWindow {
       
       getCanvas().scrollUp(getBackground(), getFont(), getTop(), getHeight());
       getCursor().setLine(getCursor().getLine() - 1);
+      currentY -= fontHeight;
     }
   }
 
@@ -110,6 +118,9 @@ public class BottomWindow extends SubWindow {
     // We calulate an available height with a correction amount
     // of fm.getMaxDescent() to reserve enough scrolling space
     getCursor().setPosition(getAvailableLines(), 1);
+    
+    currentX = 0;
+    currentY = getTop() + getHeight() - getCanvas().getFontDescent(getFont());
   }
 
   /**
@@ -141,8 +152,8 @@ public class BottomWindow extends SubWindow {
   private void doMeMore() {
     
     // Invoke the super method, which does not handle paging
-    super.printLine("<MORE> (Press key to continue)", getTextBackground(),
-                    getTextColor());
+    printLineNonPaged("\n<MORE> (Press key to continue)", getTextBackground(),
+                      getTextColor());
     
     getScreen().redraw();
     
@@ -150,8 +161,8 @@ public class BottomWindow extends SubWindow {
     // in the application thread
     getEditor().setInputMode(true);
     getEditor().nextZsciiChar();
-    getCursor().setColumn(1);
-    eraseLine();        
+    resetCursorToHome();
+    eraseLine();
     getEditor().setInputMode(false);
     resetPager();
   }
@@ -173,6 +184,10 @@ public class BottomWindow extends SubWindow {
     linesPrinted++;
     scrollIfNeeded();
     currentX = 0;
+    
+    // We need to remember the line height to calculate the next y position
+    currentY += lineHeight;
+    lineHeight = 0;
   }
 
   /**
@@ -187,8 +202,24 @@ public class BottomWindow extends SubWindow {
     
     // Every elementary print instruction adds to the current line
     currentX += getCanvas().getStringWidth(getFont(), line);
+
+    // Adjust the maximum line height
+    lineHeight = Math.max(lineHeight, getCanvas().getFontHeight(getFont()));
   }
 
+  private void printLineNonPaged(String line, Color textbackColor,
+                                 Color textColor) {
+    
+    scrollIfNeeded();
+    super.printLine(line, textbackColor, textColor);
+    
+    // Every elementary print instruction adds to the current line
+    currentX += getCanvas().getStringWidth(getFont(), line);
+
+    // Adjust the maximum line height
+    lineHeight = Math.max(lineHeight, getCanvas().getFontHeight(getFont()));
+  }
+  
   /**
    * {@inheritDoc}
    */
@@ -203,6 +234,11 @@ public class BottomWindow extends SubWindow {
   protected int getCurrentX() {
     
     return currentX;
+  }
+  
+  protected int getCurrentY() {
+    
+    return currentY;
   }
   
   /**
