@@ -43,12 +43,18 @@ public class TextCursorImpl implements TextCursor {
   private int column;
   
   /**
+   * The window this cursor is contained in.
+   */
+  private SubWindow window;
+  
+  /**
    * Constructor.
    */
-  public TextCursorImpl() {
+  public TextCursorImpl(SubWindow window) {
   
     this.line = 1;
     this.column = 1;
+    this.window = window;
   }
   
   /**
@@ -68,6 +74,7 @@ public class TextCursorImpl implements TextCursor {
    
     setLine(line);
     setColumn(column);
+    window.updateCursorCoordinates();
   }
   
   /**

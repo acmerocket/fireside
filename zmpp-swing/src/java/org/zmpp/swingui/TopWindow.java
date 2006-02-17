@@ -108,5 +108,9 @@ public class TopWindow extends SubWindow {
     Canvas canvas = getCanvas();
     return getTop() + (getCursor().getLine() - 1) * canvas.getFontHeight(font)
            + (canvas.getFontHeight(font) - canvas.getFontDescent(font));
-  } 
+  }
+  
+  protected void updateCursorCoordinates() {
+    
+  }
 }

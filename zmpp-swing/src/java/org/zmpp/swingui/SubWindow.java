@@ -64,7 +64,7 @@ public abstract class SubWindow {
     this.canvas = canvas;
     this.editor = editor;
     this.screen = screen;
-    this.cursor = new TextCursorImpl();
+    this.cursor = new TextCursorImpl(this);
     this.name = name;
   }
   
@@ -302,6 +302,8 @@ public abstract class SubWindow {
   protected abstract int getCurrentX();
   
   protected abstract int getCurrentY();
+  
+  protected abstract void updateCursorCoordinates();
 
   // ************************************************************************
   // ******* Private methods

@@ -23,6 +23,7 @@
 package org.zmpp.swingui;
 
 import java.awt.Color;
+import java.awt.Font;
 
 import org.zmpp.vm.ScreenModel;
 
@@ -115,11 +116,11 @@ public class BottomWindow extends SubWindow {
    */
   public void resetCursorToHome() {
     
+    //System.out.println("resetCursorToHome()");
     // We calulate an available height with a correction amount
     // of fm.getMaxDescent() to reserve enough scrolling space
     getCursor().setPosition(getAvailableLines(), 1);
     
-    currentX = 0;
     currentY = getTop() + getHeight() - getCanvas().getFontDescent(getFont());
   }
 
@@ -140,7 +141,7 @@ public class BottomWindow extends SubWindow {
    */
   private void handlePaging() {
     
-    if (isPaged && linesPrinted >= linesPerPage) {
+    if (isPaged && linesPrinted > linesPerPage) {
       
       doMeMore();
     }
@@ -180,6 +181,7 @@ public class BottomWindow extends SubWindow {
    */
   protected void newline() {
     
+    //System.out.println("newline()");
     super.newline();
     linesPrinted++;
     scrollIfNeeded();
@@ -196,12 +198,14 @@ public class BottomWindow extends SubWindow {
   protected void printLine(String line, Color textbackColor,
       Color textColor) {
     
+    //System.out.printf("printLine(): '%s' current x: %d -> ", line, currentX);
     handlePaging();
     scrollIfNeeded();
     super.printLine(line, textbackColor, textColor);
     
     // Every elementary print instruction adds to the current line
     currentX += getCanvas().getStringWidth(getFont(), line);
+    //System.out.printf("current x: %d\n", currentX);
 
     // Adjust the maximum line height
     lineHeight = Math.max(lineHeight, getCanvas().getFontHeight(getFont()));
@@ -250,5 +254,17 @@ public class BottomWindow extends SubWindow {
     
     currentX -= getCanvas().getCharWidth(getFont(), c);
     if (currentX < 0) currentX = 0;
+  }
+  
+  protected void updateCursorCoordinates() {
+    
+    Canvas canvas = getCanvas();
+    Font font = getFont();
+    int currentLine = getCursor().getLine();
+    int currentColumn = getCursor().getColumn();
+    
+    currentX = (currentColumn - 1) * canvas.getCharWidth(font, '0');
+    currentY = getTop() + (currentLine - 1) * canvas.getFontHeight(font)
+               + (canvas.getFontHeight(font) - canvas.getFontDescent(font));
   }
 }

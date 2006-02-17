@@ -24,6 +24,7 @@ package test.zmpp.swingui;
 
 import junit.framework.TestCase;
 
+import org.zmpp.swingui.SubWindow;
 import org.zmpp.swingui.TextCursorImpl;
 import org.zmpp.vm.TextCursor;
 
@@ -39,7 +40,8 @@ public class TextCursorImplTest extends TestCase {
   
   protected void setUp() throws Exception {
     
-    cursor = new TextCursorImpl();
+    SubWindow window = null;
+    cursor = new TextCursorImpl(window);
   }
   
   public void testInitialState() {
