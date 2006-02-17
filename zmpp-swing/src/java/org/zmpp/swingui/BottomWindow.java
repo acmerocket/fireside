@@ -40,8 +40,7 @@ public class BottomWindow extends SubWindow {
 
   private boolean isBuffered;
   private boolean isPaged;
-  private int linesPerPage;
-  private int linesPrinted;
+  private int verticalTextPixelsPrinted;
   private int currentX;
   private int currentY;
   private int lineHeight;
@@ -141,10 +140,18 @@ public class BottomWindow extends SubWindow {
    */
   private void handlePaging() {
     
-    if (isPaged && linesPrinted > linesPerPage) {
+    if (isPaged && pageMinusOneLinePrinted()) {
       
       doMeMore();
     }
+  }
+  
+  private boolean pageMinusOneLinePrinted() {
+    
+    return (verticalTextPixelsPrinted
+           + getCanvas().getFontDescent(getFont())
+           + getCanvas().getFontHeight(getFont()))
+           >= getHeight();
   }
 
   /**
@@ -171,10 +178,7 @@ public class BottomWindow extends SubWindow {
   /**
    * Updates the page size.
    */
-  protected void sizeUpdated() {
-    
-    linesPerPage = (getHeight() / getCanvas().getFontHeight(getFont())) - 1;
-  }
+  protected void sizeUpdated() { }
   
   /**
    * {@inheritDoc}
@@ -183,11 +187,11 @@ public class BottomWindow extends SubWindow {
     
     //System.out.println("newline()");
     super.newline();
-    linesPrinted++;
     scrollIfNeeded();
     currentX = 0;
     
     // We need to remember the line height to calculate the next y position
+    verticalTextPixelsPrinted += lineHeight;
     currentY += lineHeight;
     lineHeight = 0;
   }
@@ -236,7 +240,7 @@ public class BottomWindow extends SubWindow {
    */
   public void resetPager() {
   
-    linesPrinted = 0;
+    verticalTextPixelsPrinted = 0;
   }
 
   /**
