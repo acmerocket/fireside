@@ -34,7 +34,7 @@ import org.zmpp.vm.TextCursor;
  * @author Wei-ju Wu
  * @version 1.0
  */
-public abstract class SubWindow {
+public abstract class SubWindow implements CursorWindow {
 
   private Canvas canvas;
   private TextCursor cursor;
@@ -301,8 +301,6 @@ public abstract class SubWindow {
   
   protected abstract int getCurrentY();
   
-  protected abstract void updateCursorCoordinates();
-
   // ************************************************************************
   // ******* Private methods
   // *************************************************
@@ -324,18 +322,13 @@ public abstract class SubWindow {
       String line = lines[i];
       printLine(line, textbackColor, textColor);
       
-      if (isEmptyLine(line) || endsWithNewLine(line)
-          || i < lines.length - 1) {
+      //if (endsWithNewLine(line) || i < lines.length - 1) {
+      if (endsWithNewLine(line)) {
         
         newline();
       }
     }
   }  
-  
-  private static boolean isEmptyLine(String str) {
-    
-    return str.length() == 0;
-  }
   
   private static boolean endsWithNewLine(String str) {
   

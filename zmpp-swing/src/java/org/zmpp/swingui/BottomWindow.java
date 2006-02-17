@@ -192,6 +192,13 @@ public class BottomWindow extends SubWindow {
     lineHeight = 0;
   }
 
+  /*
+  public void printString(String str) {
+    
+    System.out.printf("printString(), '%s'\n", str);
+    super.printString(str);
+  }*/
+  
   /**
    * {@inheritDoc}
    */
@@ -256,7 +263,10 @@ public class BottomWindow extends SubWindow {
     if (currentX < 0) currentX = 0;
   }
   
-  protected void updateCursorCoordinates() {
+  /**
+   * {@inheritDoc}
+   */
+  public void updateCursorCoordinates() {
     
     Canvas canvas = getCanvas();
     Font font = getFont();

@@ -110,7 +110,7 @@ public class TopWindow extends SubWindow {
            + (canvas.getFontHeight(font) - canvas.getFontDescent(font));
   }
   
-  protected void updateCursorCoordinates() {
+  public void updateCursorCoordinates() {
     
   }
 }

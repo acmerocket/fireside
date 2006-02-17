@@ -85,33 +85,48 @@ public class WordWrapper {
     
     while (i < words.length) {
       
+      // Create the builder for a new line
       lineBuffer = new StringBuilder();
      
       for (; i < words.length; i++) {
       
         wordWidth = canvas.getStringWidth(font, words[i]);
         
+        // Start a new line if a new line is found
         if (words[i].charAt(0) == '\n') {
           
           i++;
           break;
         }
+        
         if (currentWidth + wordWidth <= lineLength) {
         
+          // Append the current word if possible
           lineBuffer.append(words[i]);
           currentWidth += wordWidth;
           
         } else {
         
+          // If a space lead to the line break, skip it
+          if (words[i].charAt(0) == ' ') i++;
+          
+          // Next line
           break;
         }
       }
+      
+      lineBuffer.append('\n');
       result.add(lineBuffer.toString());
       currentWidth = 0;
     }
-    if (words.length > 1 && words[words.length - 1].equals("\n")) {
-      
-      result.add("");
+    
+    // patch the last line if the string did not end with new line
+    if (input.charAt(input.length() - 1) != '\n') {
+            
+      String lastline = result.get(result.size() - 1);
+      lastline = lastline.substring(0, lastline.length() - 1);
+      result.remove(result.size() - 1);
+      result.add(lastline);
     }
     return result.toArray(new String[0]);
   }

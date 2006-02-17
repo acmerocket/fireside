@@ -22,9 +22,9 @@
  */
 package test.zmpp.swingui;
 
-import junit.framework.TestCase;
-
-import org.zmpp.swingui.SubWindow;
+import org.jmock.Mock;
+import org.jmock.MockObjectTestCase;
+import org.zmpp.swingui.CursorWindow;
 import org.zmpp.swingui.TextCursorImpl;
 import org.zmpp.vm.TextCursor;
 
@@ -34,13 +34,16 @@ import org.zmpp.vm.TextCursor;
  * @author Wei-ju Wu
  * @version 1.0
  */
-public class TextCursorImplTest extends TestCase {
+public class TextCursorImplTest extends MockObjectTestCase {
 
   private TextCursor cursor;
+  private Mock mockwindow;
+  private CursorWindow window;
   
   protected void setUp() throws Exception {
-    
-    SubWindow window = null;
+  
+    mockwindow = mock(CursorWindow.class);    
+    window = (CursorWindow) mockwindow.proxy();
     cursor = new TextCursorImpl(window);
   }
   
@@ -52,6 +55,7 @@ public class TextCursorImplTest extends TestCase {
 
   public void testSetPosition() {
     
+    mockwindow.expects(once()).method("updateCursorCoordinates");
     cursor.setPosition(3, 7);
     assertEquals("Line should be 3", 3, cursor.getLine());
     assertEquals("Column should be 7",  7, cursor.getColumn());
@@ -83,6 +87,7 @@ public class TextCursorImplTest extends TestCase {
   
   public void testSetPositionNegative() {
    
+    mockwindow.expects(exactly(3)).method("updateCursorCoordinates");
     cursor.setPosition(-1, 5);
     assertEquals("Negative values should be reset to 1", 1, cursor.getLine());
 

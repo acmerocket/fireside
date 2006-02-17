@@ -78,8 +78,8 @@ public class WordWrapperTest extends MockObjectTestCase {
     
     String[] lines = bufferedWordWrapper.wrap(0, line);
     assertEquals(2, lines.length);
-    assertEquals("A line that is to be", lines[0]);
-    assertEquals(" wrapped", lines[1]);
+    assertEquals("A line that is to be\n", lines[0]);
+    assertEquals("wrapped", lines[1]);
   }
 
   public void testWrapBufferedSingleNewline() {
@@ -88,10 +88,10 @@ public class WordWrapperTest extends MockObjectTestCase {
         eq(font), eq("\n")).will(returnValue(fontMetrics.stringWidth("\n")));
     
     String line = "\n";
-    assertEquals(5, fontMetrics.stringWidth(line));
+    assertEquals(0, fontMetrics.stringWidth(line));
     String[] lines = bufferedWordWrapper.wrap(0, line);
     assertEquals(1, lines.length);
-    assertEquals("", lines[0]);
+    assertEquals("\n", lines[0]);
   }
   
   public void testWrapBufferedWithNewLine() {
@@ -119,8 +119,8 @@ public class WordWrapperTest extends MockObjectTestCase {
     String line =  "A line that\nis to\nbe wrapped";
     String[] lines = bufferedWordWrapper.wrap(0, line);
     assertEquals(3, lines.length);
-    assertEquals("A line that", lines[0]);
-    assertEquals("is to", lines[1]);
+    assertEquals("A line that\n", lines[0]);
+    assertEquals("is to\n", lines[1]);
     assertEquals("be wrapped", lines[2]);
   }
 
@@ -148,11 +148,11 @@ public class WordWrapperTest extends MockObjectTestCase {
     
     String line =  "A line that\nis to\nbe wrapped\n";
     String[] lines = bufferedWordWrapper.wrap(0, line);
-    assertEquals(4, lines.length);
-    assertEquals("A line that", lines[0]);
-    assertEquals("is to", lines[1]);
-    assertEquals("be wrapped", lines[2]);
-    assertEquals("", lines[3]);
+    assertEquals(3, lines.length);
+    assertEquals("A line that\n", lines[0]);
+    assertEquals("is to\n", lines[1]);
+    assertEquals("be wrapped\n", lines[2]);
+    //assertEquals("", lines[3]);
   }
 
   public void testWrapBufferedWithNewLineStartsWithNewLine() {
@@ -180,12 +180,11 @@ public class WordWrapperTest extends MockObjectTestCase {
     
     String line =  "\nA line that\nis to\nbe wrapped\n";
     String[] lines = bufferedWordWrapper.wrap(0, line);
-    assertEquals(5, lines.length);
-    assertEquals("", lines[0]);
-    assertEquals("A line that", lines[1]);
-    assertEquals("is to", lines[2]);
-    assertEquals("be wrapped", lines[3]);
-    assertEquals("", lines[4]);
+    assertEquals(4, lines.length);
+    assertEquals("\n", lines[0]);
+    assertEquals("A line that\n", lines[1]);
+    assertEquals("is to\n", lines[2]);
+    assertEquals("be wrapped\n", lines[3]);
   }
   
   public void testWrapBufferedNewLine() {
@@ -196,7 +195,7 @@ public class WordWrapperTest extends MockObjectTestCase {
     String line =  "\n";
     String[] lines = bufferedWordWrapper.wrap(0, line);
     assertEquals(1, lines.length);
-    assertEquals("", lines[0]);
+    assertEquals("\n", lines[0]);
   }
   
   public void testWrapUnbuffered() {

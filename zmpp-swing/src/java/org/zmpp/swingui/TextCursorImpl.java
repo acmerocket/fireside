@@ -45,12 +45,12 @@ public class TextCursorImpl implements TextCursor {
   /**
    * The window this cursor is contained in.
    */
-  private SubWindow window;
+  private CursorWindow window;
   
   /**
    * Constructor.
    */
-  public TextCursorImpl(SubWindow window) {
+  public TextCursorImpl(CursorWindow window) {
   
     this.line = 1;
     this.column = 1;
