@@ -104,7 +104,8 @@ public class BottomWindow extends SubWindow {
     // of fontDescent to reserve enough scrolling space
     while (getCurrentY() > (getTop() + getHeight() - fontDescent)) {
       
-      getCanvas().scrollUp(getBackground(), getFont(), getTop(), getHeight());
+      getCanvas().scrollUp(getBackground(), getFont(),
+                           getTop() + 1, getHeight());
       getCursor().setLine(getCursor().getLine() - 1);
       currentY -= fontHeight;
     }
