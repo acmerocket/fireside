@@ -105,7 +105,7 @@ public class BottomWindow extends SubWindow {
     while (getCurrentY() > (getTop() + getHeight() - fontDescent)) {
       
       getCanvas().scrollUp(getBackground(), getFont(),
-                           getTop() + 1, getHeight());
+                           getTop(), getHeight());
       getCursor().setLine(getCursor().getLine() - 1);
       currentY -= fontHeight;
     }
