@@ -73,10 +73,14 @@ public abstract class SubWindow implements CursorWindow {
    * 
    * @param flag true or false to activate or deactivate reverse video
    */
-  public void setReverseVideo(boolean flag) {
-    
-    this.isReverseVideo = flag;
-  }
+  public void setReverseVideo(boolean flag) { isReverseVideo = flag; }
+  
+  /**
+   * Returns the reverse video status.
+   * 
+   * @return true if reverse video, false otherwise
+   */
+  public boolean isReverseVideo() { return isReverseVideo; }
 
   /**
    * Access to this window's cursor.
