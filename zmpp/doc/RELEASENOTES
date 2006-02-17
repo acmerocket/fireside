@@ -16,10 +16,12 @@ Features:
 - currently supports story file version 1, 2, 3, 4, 5, 7 and 8
 - can be run as a Java applet within the web browser
 - saves and reads games in Quetzal 1.4 format
+- reads media in Blorb 1.1 format
 - input stream 0 and 1 (keyboard, mouse and file)
 - output streams 1, 2 and 3 (screen, transcript, memory with nesting)
 - split subwindows (paging, buffering, scrolling)
-- multiple font styles and colors
+- multiple font styles and colors (console Frotz color scheme)
+- sound effects (AIFF)
 - accented characters and unicode
 - timed input, preinitialized input
 - game-defined dictionaries, alphabet tables and accent tables
@@ -34,7 +36,6 @@ TODO:
 
 - character graphics
 - save/restore regions
-- sound_effects
 - version 6
 
 
@@ -50,10 +51,21 @@ the software as well.
 
 Select a game
 
+Reading Blorb files
+---------------------
+
+Blorb files must have the same filename as their story files, with a suffix of ".blb". The
+name is case-sensitive, so the name should be exactly the same way as the respective
+story file
+
 Running as an applet
 --------------------
 
-TODO
+applet parameters:
+
+storyfile - the URL of the story file, must be on the same server as the jar file
+blorbfile - the URL of the blorb file, must be on the same server as the jar file
+
 
 Operating systems tested on:
 -------------------------

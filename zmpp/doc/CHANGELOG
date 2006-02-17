@@ -1,5 +1,15 @@
 Changelog
 
+Version 0.86
+-----------
+- imitate text coloring in console Frotz, making "Varicella" and "Photopia" more enjoyable
+- Blorb support
+- sound support
+- major refactorings
+- fixed some display bugs
+- fixed file verification
+- paging now pixel based
+
 Version 0.83
 ------------
 
