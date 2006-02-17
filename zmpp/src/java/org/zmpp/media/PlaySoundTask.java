@@ -35,14 +35,14 @@ public class PlaySoundTask implements Runnable, SoundStopListener {
   private int routine;
   private boolean stopped;
   
-  public PlaySoundTask(int resourceNum, SoundEffect sound, int repeats,
-                       int volume) {
+  public PlaySoundTask(int resourceNum, SoundEffect sound, int volume,
+                       int repeats) {
   
-    this(resourceNum, sound, repeats, volume, null, 0);
+    this(resourceNum, sound, volume, repeats, null, 0);
   }
   
-  public PlaySoundTask(int resourceNum, SoundEffect sound, int repeats,
-      int volume, Interruptable interruptable, int routine) {
+  public PlaySoundTask(int resourceNum, SoundEffect sound, int volume,
+      int repeats, Interruptable interruptable, int routine) {
     
     this.resourceNum = resourceNum;
     this.sound = sound;

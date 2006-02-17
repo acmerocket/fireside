@@ -32,11 +32,6 @@ package org.zmpp.media;
 public interface SoundEffect {
 
   /**
-   * The volume range is between 0 and 255.
-   */
-  public static final int MAX_VOLUME = 255;
-  
-  /**
    * Plays a sound the specified number of times.
    * 
    * @param number the number of times to play

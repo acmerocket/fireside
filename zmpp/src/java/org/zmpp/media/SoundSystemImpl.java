@@ -94,16 +94,24 @@ public class SoundSystemImpl implements SoundSystem {
   /**
    * {@inheritDoc}
    */
-  public void play(int number, int effect, int repeats, int volume,
+  public void play(int number, int effect, int volume, int repeats, 
                    int routine) {
 
     SoundEffect sound = null;
+    
+    // @sound_effect 0 3 followed by @sound_effect 0 4 is called
+    // by "The Lurking Horror" and hints that all sound effects should
+    // be stopped and unloaded. ZMPP's sound system implementation does
+    // nothing at the moment (hey, we have plenty of memory and are
+    // in a Java environment)
+    if (number == 0) return;
+    
     if (sounds != null) sound = sounds.getResource(number);
     if (sound != null) {
 
       if (effect == SoundSystem.EFFECT_START) {
         
-        startSound(number, sound, routine, repeats, volume);
+        startSound(number, sound, volume, repeats, routine);
         
       } else if (effect == SoundSystem.EFFECT_STOP) {
         
@@ -130,12 +138,12 @@ public class SoundSystemImpl implements SoundSystem {
    * 
    * @param number the sound number
    * @param sound the sound object
-   * @param routine the interrupt routine
-   * @param repeats the number of repeats
    * @param volume the volume
+   * @param repeats the number of repeats
+   * @param routine the interrupt routine
    */
-  private void startSound(int number, SoundEffect sound, int routine,
-                          int repeats, int volume) {
+  private void startSound(int number, SoundEffect sound, int volume,
+                          int repeats, int routine) {
     
     if (currentTask != null && !currentTask.wasPlayed()) {
       
@@ -143,8 +151,8 @@ public class SoundSystemImpl implements SoundSystem {
     }
     
     currentTask = (routine <= 0) ?
-      new PlaySoundTask(number, sound, repeats, volume) :
-      new PlaySoundTask(number, sound, repeats, volume, interruptable, routine);  
+      new PlaySoundTask(number, sound, volume, repeats) :
+      new PlaySoundTask(number, sound, volume, repeats, interruptable, routine);  
     executor.submit(currentTask);
   }
   
@@ -177,7 +185,7 @@ public class SoundSystemImpl implements SoundSystem {
       
       BlorbResources resources = new BlorbResources(formchunk);
       SoundSystem system = new SoundSystemImpl(resources.getSounds());
-      system.play(16, SoundSystem.EFFECT_START, 3, 255, 0);
+      system.play(16, SoundSystem.EFFECT_START, 3, 64, 0);
       Thread.sleep(2000);
       
       // stop method

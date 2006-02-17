@@ -406,8 +406,7 @@ public class VariableInstruction extends AbstractInstruction {
       
       int volumeRepeats = getUnsignedValue(2);
       volume = volumeRepeats & 0xff;
-      repeats = (volumeRepeats >>> 8) & 0xff;
-      
+      repeats = (volumeRepeats >>> 8) & 0xff;      
       if (repeats <= 0) repeats = 1;
     }
     
@@ -415,7 +414,9 @@ public class VariableInstruction extends AbstractInstruction {
       
       routine = getUnsignedValue(3);
     }
-    System.out.printf("@sound_effect %d, %d, $%04x, $%04x\n", soundnum, effect, volume, routine);
+    System.out.printf("@sound_effect n: %d, fx: %d, vol: %d, rep: %d, routine: $%04x\n", soundnum, effect, volume, repeats, routine);
+    // In version 3 repeats is always 1
+    if (getStoryFileVersion() == 3) repeats = 1;
         
     SoundSystem soundSystem = getMachine().getSoundSystem();
     soundSystem.play(soundnum, effect, volume, repeats, routine);
