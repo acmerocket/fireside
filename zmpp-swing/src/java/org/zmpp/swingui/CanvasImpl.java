@@ -105,6 +105,6 @@ public class CanvasImpl implements Canvas {
                       height - fontHeight, 0, -fontHeight);
     graphics.setColor(backColor);
     graphics.fillRect(0, top + height - fontHeight,
-                      getWidth(), fontHeight);
+                      getWidth(), fontHeight + 1);
   }
 }
