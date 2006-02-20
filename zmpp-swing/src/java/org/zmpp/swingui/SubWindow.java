@@ -137,6 +137,7 @@ public abstract class SubWindow implements CursorWindow {
   
   public void clear() {
     
+    clipToCurrentBounds();
     canvas.fillRect(background, 0, getTop(), canvas.getWidth(), height);
     resetCursorToHome();
   }
@@ -144,6 +145,7 @@ public abstract class SubWindow implements CursorWindow {
   public void eraseLine() {
     
     int currentX = getCurrentX();
+    clipToCurrentBounds();
     canvas.fillRect(background, currentX,
                     getCurrentY() - canvas.getFontAscent(font),
                     canvas.getWidth() - currentX,
@@ -191,6 +193,7 @@ public abstract class SubWindow implements CursorWindow {
     
     int meanCharWidth = canvas.getCharWidth(font, '0');    
     
+    clipToCurrentBounds();
     canvas.fillRect(flag ? foreground : background, getCurrentX(),
                     getCurrentY() - canvas.getFontAscent(font), meanCharWidth,
                     canvas.getFontHeight(font));
@@ -201,6 +204,7 @@ public abstract class SubWindow implements CursorWindow {
     int charWidth = canvas.getCharWidth(font, c);
     
     // Clears the text under the cursor
+    clipToCurrentBounds();
     canvas.fillRect(background, getCurrentX() - charWidth,
                     getCurrentY() - canvas.getFontAscent(font), charWidth,
                     canvas.getFontHeight(font));
@@ -247,6 +251,7 @@ public abstract class SubWindow implements CursorWindow {
                            Color textColor) {
 
     //System.out.printf("printLine(): '%s'\n", line);
+    clipToCurrentBounds();
     canvas.fillRect(textbackColor, getCurrentX(),
                     getCurrentY() - canvas.getFontHeight(font)
                     + canvas.getFontDescent(font),
@@ -337,5 +342,10 @@ public abstract class SubWindow implements CursorWindow {
   private static boolean endsWithNewLine(String str) {
   
     return str.charAt(str.length() - 1) == '\n';
+  }
+  
+  protected void clipToCurrentBounds() {
+    
+    canvas.setClip(0, top, canvas.getWidth(), height);
   }
 }

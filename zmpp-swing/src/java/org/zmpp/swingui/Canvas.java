@@ -47,4 +47,5 @@ public interface Canvas {
   void scrollUp(Color backColor, Font font, int top, int height);
   void fillRect(Color color, int left, int top, int width, int height);
   void drawString(Color color, Font font, int x, int y, String str);
+  void setClip(int left, int top, int width, int height);
 }

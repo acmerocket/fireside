@@ -99,6 +99,7 @@ public class BottomWindow extends SubWindow {
     //    getCanvas().getFontHeight(getFont()));
     int fontDescent = getCanvas().getFontDescent(getFont());
     int fontHeight = getCanvas().getFontHeight(getFont());
+    clipToCurrentBounds();
     
     // We calulate an available height with a correction amount
     // of fontDescent to reserve enough scrolling space

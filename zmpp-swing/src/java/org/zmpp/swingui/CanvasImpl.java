@@ -107,4 +107,9 @@ public class CanvasImpl implements Canvas {
     graphics.fillRect(0, top + height - fontHeight,
                       getWidth(), fontHeight + 1);
   }
+  
+  public void setClip(int left, int top, int width, int height) {
+    
+    graphics.setClip(left, top, width, height);
+  }
 }
