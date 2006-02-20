@@ -514,7 +514,7 @@ ScreenModel {
     
     windows[WINDOW_TOP].resize(linesUpperWindow);
     int heightWindowTop = windows[WINDOW_TOP].getHeight();
-    windows[WINDOW_BOTTOM].setVerticalBounds(heightWindowTop - 1,
+    windows[WINDOW_BOTTOM].setVerticalBounds(heightWindowTop,
                                              getHeight() - heightWindowTop);
   }
 
