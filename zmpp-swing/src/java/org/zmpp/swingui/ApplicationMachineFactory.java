@@ -85,7 +85,7 @@ public class ApplicationMachineFactory extends MachineFactory<ZmppFrame> {
   protected void reportInvalidStory() {
 
     JOptionPane.showMessageDialog(null,
-        "Invalid story file (Story file version 6 is not supported).",
+        "Invalid story file.",
         "Story file read error", JOptionPane.ERROR_MESSAGE);
     System.exit(0);
   }

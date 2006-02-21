@@ -77,11 +77,21 @@ public class CpuImpl implements Cpu, Interruptable {
   public void reset() {
 
     GameData gamedata = machine.getGameData();
-    programCounter = gamedata.getStoryFileHeader().getProgramStart();    
     decoder.initialize(machine, gamedata.getMemoryAccess());
     stack = new ArrayList<Short>();
     routineContextStack = new ArrayList<RoutineContext>();
     globalsAddress = gamedata.getStoryFileHeader().getGlobalsAddress();
+    
+    if (gamedata.getStoryFileHeader().getVersion() == 6) {
+      
+      // Call main function in version 6
+      call(gamedata.getStoryFileHeader().getProgramStart(), 0, new short[0],
+           (short) 0);
+      
+    } else {
+      
+      programCounter = gamedata.getStoryFileHeader().getProgramStart();
+    }
   }
  
   /**

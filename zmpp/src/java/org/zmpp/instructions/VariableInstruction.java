@@ -489,8 +489,18 @@ public class VariableInstruction extends AbstractInstruction {
     
     ScreenModel screenModel = getMachine().getScreen();
     if (screenModel != null) {
+    
+      int line = getValue(0);
+      int column = getValue(1);
       
-      screenModel.setTextCursor(getUnsignedValue(0), getUnsignedValue(1));
+      if (line > 0) {
+        
+        screenModel.setTextCursor(line, column);
+        
+      } else if (getStoryFileVersion() == 6) {
+
+        // ignore negative line values for the moment
+      }
     }
     nextInstruction();    
   }

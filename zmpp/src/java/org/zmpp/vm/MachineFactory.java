@@ -154,7 +154,7 @@ public abstract class MachineFactory<T> {
    */
   private boolean isInvalidStory(int version) {
     
-    return version < 1 || version == 6 || version > 8;
+    return version < 1 || version > 8;
   }
   
   /**

@@ -26,6 +26,7 @@ import java.io.File;
 import java.util.StringTokenizer;
 
 import javax.swing.JFileChooser;
+import javax.swing.JOptionPane;
 
 /**
  * This class starts the ZMPP swing interface.
@@ -39,7 +40,7 @@ public class Main {
    * The application name.
    */
   public static final String APPNAME =
-    "Z-Machine Preservation Project Version 0.86";
+    "Z-Machine Preservation Project Version 0.87";
   
   /**
    * The main method.
@@ -56,11 +57,25 @@ public class Main {
           "ZMPP");
     }
     
-    JFileChooser fileChooser = new JFileChooser(System.getProperty("user.dir"));
-    fileChooser.setDialogTitle("Open story file...");
-    if (fileChooser.showOpenDialog(null) == JFileChooser.APPROVE_OPTION) {
+    File storyfile = null;
+    
+    if (args.length >= 1) {
       
-      File storyfile = fileChooser.getSelectedFile();
+      storyfile = new File(args[0]);      
+      
+    } else {
+    
+      JFileChooser fileChooser = new JFileChooser(System.getProperty("user.dir"));
+      fileChooser.setDialogTitle("Open story file...");
+      if (fileChooser.showOpenDialog(null) == JFileChooser.APPROVE_OPTION) {
+      
+        storyfile = fileChooser.getSelectedFile();
+      }
+    }
+    
+    // Read in the story file
+    if (storyfile != null && storyfile.exists()) {
+      
       File blorbfile = searchForResources(storyfile);
       ApplicationMachineFactory factory =
         new ApplicationMachineFactory(storyfile, blorbfile);
@@ -69,6 +84,12 @@ public class Main {
       frame.startMachine();
       frame.pack();
       frame.setVisible(true);
+      
+    } else {
+      
+      JOptionPane.showMessageDialog(null,
+          String.format("The selected story file '%s' was not found", storyfile.getPath()),
+          "Story file not found", JOptionPane.ERROR_MESSAGE);
     }
   }
   

@@ -49,6 +49,7 @@ public class CpuTest extends MockObjectTestCase {
     mockGameData.expects(atLeastOnce()).method("getStoryFileHeader").will(returnValue(fileheader));
     mockFileHeader.expects(once()).method("getProgramStart").will(returnValue(1000));
     mockFileHeader.expects(once()).method("getGlobalsAddress").will(returnValue(5000));
+    mockFileHeader.expects(once()).method("getVersion").will(returnValue(5));
     mockGameData.expects(atLeastOnce()).method("getMemoryAccess").will(returnValue(memaccess));
     mockDecoder.expects(once()).method("initialize").with(eq(machine), eq(memaccess));
     cpu = new CpuImpl(machine, decoder);
