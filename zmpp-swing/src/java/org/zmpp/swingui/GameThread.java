@@ -31,7 +31,7 @@ public class GameThread extends Thread {
 
   private TextViewport viewport;
   private Machine machine;
-  private static final boolean DEBUG = true;
+  private static final boolean DEBUG = false;
   
   public GameThread(Machine machine, TextViewport viewport) {
     
