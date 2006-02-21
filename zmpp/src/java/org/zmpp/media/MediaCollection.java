@@ -35,6 +35,8 @@ package org.zmpp.media;
  */
 public interface MediaCollection<T> {
 
+  void clear();
+  
   /**
    * Accesses the resource.
    * 

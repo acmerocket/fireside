@@ -91,6 +91,11 @@ public class SoundSystemImpl implements SoundSystem {
     currentTask.stop();
   }
   
+  public void reset() {
+  
+    if (sounds != null) sounds.clear();
+  }
+  
   /**
    * {@inheritDoc}
    */

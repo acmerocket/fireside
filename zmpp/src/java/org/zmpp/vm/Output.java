@@ -118,5 +118,10 @@ public interface Output {
   /**
    * Flushes the active output streams.
    */
-  void flushOutput();  
+  void flushOutput();
+  
+  /**
+   * Resets the output streams.
+   */
+  void reset();  
 }

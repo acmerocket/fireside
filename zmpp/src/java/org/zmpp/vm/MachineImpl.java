@@ -405,7 +405,9 @@ public class MachineImpl implements Machine {
    * Resets all state to initial values, using the configuration object.
    */
   private void resetState() {
-    
+        
+    output.reset();
+    soundSystem.reset();
     cpu.reset();
     //gamedata.getStoryFileHeader().setStandardRevision(1, 0);
     
@@ -423,8 +425,10 @@ public class MachineImpl implements Machine {
     StoryFileHeader fileHeader = gamedata.getStoryFileHeader();
     boolean fixedFontForced = fileHeader.isEnabled(Attribute.FORCE_FIXED_FONT);
     boolean transcripting = fileHeader.isEnabled(Attribute.TRANSCRIPTING);
+    
     gamedata.reset();
     resetState();
+    
     if (resetScreenModel) screenModel.reset();    
     fileHeader.setEnabled(Attribute.TRANSCRIPTING, transcripting);
     fileHeader.setEnabled(Attribute.FORCE_FIXED_FONT, fixedFontForced);

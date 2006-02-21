@@ -85,6 +85,14 @@ public abstract class BlorbMediaCollection<T> implements MediaCollection<T> {
   }
   
   /**
+   * {@inheritDoc}
+   */
+  public void clear() {
+    
+    resourceNumbers.clear();
+  }
+  
+  /**
    * Returns the number of resources.
    * 
    * @return the number of resources.

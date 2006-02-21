@@ -223,4 +223,18 @@ public class OutputImpl implements Output {
       }
     }
   }
+  
+  /**
+   * {@inheritDoc}
+   */
+  public void reset() {
+    
+    for (int i = 0; i < outputStream.length; i++) {
+      
+      if (outputStream[i] != null) {
+        
+        outputStream[i].flush();
+      }
+    }
+  }
 }

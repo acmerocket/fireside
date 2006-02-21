@@ -86,4 +86,9 @@ public interface SoundSystem {
    * @param routine the interrupt routine (can be 0)
    */
   void play(int number, int effect, int volume, int repeats, int routine);
+  
+  /**
+   * Resets the sound system.
+   */
+  void reset();  
 }

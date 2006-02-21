@@ -62,6 +62,15 @@ public class BlorbSounds extends BlorbMediaCollection<SoundEffect> {
   /**
    * {@inheritDoc}
    */
+  public void clear() {
+    
+    super.clear();
+    sounds.clear();
+  }
+  
+  /**
+   * {@inheritDoc}
+   */
   protected void initDatabase() {
     
     sounds = new HashMap<Integer, SoundEffect>();

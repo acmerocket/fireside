@@ -59,6 +59,15 @@ public class BlorbImages extends BlorbMediaCollection<BufferedImage> {
   /**
    * {@inheritDoc}
    */
+  public void clear() {
+    
+    super.clear();
+    images.clear();
+  }
+  
+  /**
+   * {@inheritDoc}
+   */
   protected void initDatabase() {
     
     images = new HashMap<Integer, BufferedImage>();    

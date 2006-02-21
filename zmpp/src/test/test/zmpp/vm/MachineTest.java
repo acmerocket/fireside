@@ -244,6 +244,9 @@ public class MachineTest extends MemoryMapSetup {
   
   public void testRestart() {
     
+    mockOutputStream1.expects(once()).method("flush");
+    mockOutputStream2.expects(once()).method("flush");
+    mockOutputStream3.expects(once()).method("flush");
     mockScreen.expects(once()).method("reset");
     machine.restart();
   }
