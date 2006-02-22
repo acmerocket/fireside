@@ -25,7 +25,6 @@ package org.zmpp.vm;
 import java.util.ArrayList;
 import java.util.List;
 
-import org.zmpp.base.MemoryAccess;
 import org.zmpp.io.OutputStream;
 
 /**
@@ -55,11 +54,6 @@ public class MemoryOutputStream implements OutputStream {
   }
   
   /**
-   * The memory access object.
-   */
-  private MemoryAccess memaccess;
-  
-  /**
    * The machine object.
    */
   private Machine machine;
@@ -72,7 +66,6 @@ public class MemoryOutputStream implements OutputStream {
   public MemoryOutputStream(Machine machine) {
   
     tableStack = new ArrayList<TablePosition>();
-    this.memaccess = machine.getGameData().getMemoryAccess();
     this.machine = machine;
   }
   
@@ -84,7 +77,8 @@ public class MemoryOutputStream implements OutputStream {
     //System.out.println("memory.print: " + ((char) zsciiChar));
     TablePosition tablePos = tableStack.get(tableStack.size() - 1);
     int position = tablePos.tableAddress + 2 + tablePos.bytesWritten;
-    memaccess.writeUnsignedByte(position, zsciiChar);
+    machine.getGameData().getMemoryAccess().writeUnsignedByte(
+        position, zsciiChar);
     tablePos.bytesWritten++;
   }
 
@@ -120,8 +114,8 @@ public class MemoryOutputStream implements OutputStream {
       //System.out.println("deselect stream 3, popping off: "
       //                   + tablePos.tableAddress + " # bytes: "
       //                   + tablePos.bytesWritten);
-      memaccess.writeUnsignedShort(tablePos.tableAddress,
-                                   tablePos.bytesWritten);
+      machine.getGameData().getMemoryAccess().writeUnsignedShort(
+          tablePos.tableAddress, tablePos.bytesWritten);
     }
   }
   
