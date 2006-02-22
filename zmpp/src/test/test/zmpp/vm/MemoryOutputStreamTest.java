@@ -53,13 +53,13 @@ public class MemoryOutputStreamTest extends MockObjectTestCase {
     mockCpu = mock(Cpu.class);
     cpu = (Cpu) mockCpu.proxy();
 
-    mockMachine.expects(once()).method("getGameData").will(returnValue(gamedata));
-    mockGameData.expects(once()).method("getMemoryAccess").will(returnValue(memaccess));
-    
     output = new MemoryOutputStream(machine);
   }
   
   public void testPrint() {
+    
+    mockMachine.expects(atLeastOnce()).method("getGameData").will(returnValue(gamedata));
+    mockGameData.expects(atLeastOnce()).method("getMemoryAccess").will(returnValue(memaccess));
     
     mockMemAccess.expects(once()).method("writeUnsignedByte").with(eq(4713), eq((short)65));
     mockMemAccess.expects(once()).method("writeUnsignedShort").with(eq(4711), eq(1));
