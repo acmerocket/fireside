@@ -22,10 +22,14 @@
  */
 package org.zmpp.vm;
 
+import java.awt.image.BufferedImage;
+
 import org.zmpp.encoding.ZsciiString;
 import org.zmpp.iff.FormChunk;
 import org.zmpp.iff.WritableFormChunk;
 import org.zmpp.media.MediaCollection;
+import org.zmpp.media.PictureManager;
+import org.zmpp.media.PictureManagerImpl;
 import org.zmpp.media.SoundEffect;
 import org.zmpp.media.SoundSystem;
 import org.zmpp.media.SoundSystemImpl;
@@ -81,6 +85,11 @@ public class MachineImpl implements Machine {
    * The sound system.
    */
   private SoundSystem soundSystem;
+  
+  /**
+   * The picture manager.
+   */
+  private PictureManager pictureManager;  
   
   /**
    * The CPU object.
@@ -149,12 +158,19 @@ public class MachineImpl implements Machine {
     input = new InputImpl(this);
     
     MediaCollection<SoundEffect> sounds = null;
+    MediaCollection<BufferedImage> pictures = null;
+    int resourceRelease = 0;
+    
     if (gamedata.getResources() != null) {
       
       sounds = gamedata.getResources().getSounds();
+      pictures = gamedata.getResources().getImages();
+      resourceRelease = gamedata.getResources().getRelease();
     }
     
     soundSystem = new SoundSystemImpl(sounds);
+    pictureManager = new PictureManagerImpl(resourceRelease, pictures);
+    
     resetState();
   }
 
@@ -257,6 +273,14 @@ public class MachineImpl implements Machine {
   /**
    * {@inheritDoc}
    */
+  public PictureManager getPictureManager() {
+  
+    return pictureManager;
+  }
+  
+  /**
+   * {@inheritDoc}
+   */
   public void setSaveGameDataStore(SaveGameDataStore datastore) {
     
     this.datastore = datastore;
@@ -308,7 +332,15 @@ public class MachineImpl implements Machine {
   public ScreenModel getScreen() {
     
     return screenModel;
-  }  
+  }
+  
+  /**
+   * {@inheritDoc}
+   */
+  public ScreenModel6 getScreen6() {
+    
+    return (ScreenModel6) screenModel;
+  }
   
   /**
    * {@inheritDoc} 

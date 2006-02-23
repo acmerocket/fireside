@@ -22,6 +22,7 @@
  */
 package org.zmpp.vm;
 
+import org.zmpp.media.PictureManager;
 import org.zmpp.media.SoundSystem;
 
 /**
@@ -142,6 +143,13 @@ public interface Machine {
   SoundSystem getSoundSystem();
   
   /**
+   * Returns the picture manager.
+   * 
+   * @return the picture manager
+   */
+  PictureManager getPictureManager();
+  
+  /**
    * Generates a number in the range between 1 and <i>range</i>. If range is
    * negative, the random generator will be seeded to abs(range), if
    * range is 0, the random generator will be initialized to a new
@@ -177,6 +185,13 @@ public interface Machine {
    * @return the game screen
    */
   ScreenModel getScreen();
+  
+  /**
+   * Returns screen model 6.
+   * 
+   * @return screen model 6
+   */
+  ScreenModel6 getScreen6();
   
   /**
    * Sets the save game data store.
