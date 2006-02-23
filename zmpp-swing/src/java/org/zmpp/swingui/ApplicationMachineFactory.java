@@ -31,7 +31,6 @@ import org.zmpp.blorb.BlorbResources;
 import org.zmpp.iff.DefaultFormChunk;
 import org.zmpp.io.IOSystem;
 import org.zmpp.io.InputStream;
-import org.zmpp.io.OutputStream;
 import org.zmpp.media.Resources;
 import org.zmpp.vm.Machine;
 import org.zmpp.vm.MachineFactory;
@@ -113,11 +112,6 @@ public class ApplicationMachineFactory extends MachineFactory<ZmppFrame> {
    * {@inheritDoc}
    */
   protected InputStream getKeyboardInputStream() { return frame; }
-
-  /**
-   * {@inheritDoc}
-   */
-  protected OutputStream getConsoleOutputStream() { return frame.getOutputStream(); }
 
   /**
    * {@inheritDoc}

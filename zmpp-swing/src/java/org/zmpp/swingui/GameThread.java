@@ -22,26 +22,28 @@
  */
 package org.zmpp.swingui;
 
+import javax.swing.JComponent;
 import javax.swing.SwingUtilities;
 
 import org.zmpp.vm.Instruction;
 import org.zmpp.vm.Machine;
+import org.zmpp.vm.ScreenModel;
 
 public class GameThread extends Thread {
 
-  private TextViewport viewport;
+  private ScreenModel screen;
   private Machine machine;
-  private static final boolean DEBUG = false;
+  private static final boolean DEBUG = true;
   
-  public GameThread(Machine machine, TextViewport viewport) {
+  public GameThread(Machine machine, ScreenModel viewport) {
     
     this.machine = machine;
-    this.viewport = viewport;
+    this.screen = viewport;
   }
   
   public void run() {
     
-    viewport.waitInitialized();  
+    screen.waitInitialized();  
     machine.start();
     
     // on MacOS X, after running the thread keyboard input is suspended
@@ -53,7 +55,7 @@ public class GameThread extends Thread {
         
         public void run() {
           
-          viewport.requestFocusInWindow();
+          ((JComponent) screen).requestFocusInWindow();
         }
       });
     } catch (Exception ex) { }
