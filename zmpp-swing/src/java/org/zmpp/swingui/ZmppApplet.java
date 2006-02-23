@@ -35,6 +35,7 @@ import java.io.Writer;
 import java.net.URL;
 
 import javax.swing.JApplet;
+import javax.swing.JComponent;
 import javax.swing.JFileChooser;
 import javax.swing.JLabel;
 import javax.swing.JPanel;
@@ -44,7 +45,6 @@ import org.zmpp.iff.FormChunk;
 import org.zmpp.iff.WritableFormChunk;
 import org.zmpp.io.IOSystem;
 import org.zmpp.io.InputStream;
-import org.zmpp.io.OutputStream;
 import org.zmpp.vm.Machine;
 import org.zmpp.vm.SaveGameDataStore;
 import org.zmpp.vm.ScreenModel;
@@ -63,7 +63,7 @@ implements InputStream, StatusLine, SaveGameDataStore, IOSystem {
   
   private JLabel global1ObjectLabel;
   private JLabel statusLabel;
-  private TextViewport viewport;
+  private ScreenModel screen;
   private Machine machine;
   private LineEditorImpl lineEditor;
   private GameThread currentGame;
@@ -97,9 +97,20 @@ implements InputStream, StatusLine, SaveGameDataStore, IOSystem {
     lineEditor = new LineEditorImpl(machine.getGameData().getStoryFileHeader(),
         machine.getGameData().getZsciiEncoding());
     
-    viewport = new TextViewport(machine, lineEditor);
-    viewport.setPreferredSize(new Dimension(640, 480));
-    viewport.setMinimumSize(new Dimension(400, 300));
+    JComponent view = null;
+    
+    if (machine.getGameData().getStoryFileHeader().getVersion() == 6) {
+      
+      view = new Viewport6(machine, lineEditor);
+      screen = (ScreenModel) view;
+      
+    } else {
+      
+      view = new TextViewport(machine, lineEditor);
+      screen = (ScreenModel) view;
+    }
+    view.setPreferredSize(new Dimension(640, 480));
+    view.setMinimumSize(new Dimension(400, 300));
     
     if (machine.getGameData().getStoryFileHeader().getVersion() <= 3) {
       
@@ -115,22 +126,22 @@ implements InputStream, StatusLine, SaveGameDataStore, IOSystem {
       getContentPane().add(statusPanel, BorderLayout.NORTH);
     }
     
-    getContentPane().add(viewport, BorderLayout.CENTER);
+    getContentPane().add(view, BorderLayout.CENTER);
     
     addKeyListener(lineEditor);
-    viewport.addKeyListener(lineEditor);
-    viewport.addMouseListener(lineEditor);
+    view.addKeyListener(lineEditor);
+    view.addMouseListener(lineEditor);
   }
   
   public void start() {
    
-    currentGame = new GameThread(machine, viewport);
+    currentGame = new GameThread(machine, screen);
     currentGame.start();
   }
   
   public ScreenModel getScreenModel() {
     
-    return viewport;
+    return screen;
   }
     
   // *************************************************************************
@@ -164,14 +175,9 @@ implements InputStream, StatusLine, SaveGameDataStore, IOSystem {
   }
 
   // *************************************************************************
-  // ******** OutputStream interface
+  // ******** SaveGameDataStore interface
   // ******************************************
 
-  public OutputStream getOutputStream() {
-
-    return viewport;
-  }
-  
   // Save games are stored in memory only
   private WritableFormChunk savegame;
   
@@ -233,7 +239,7 @@ implements InputStream, StatusLine, SaveGameDataStore, IOSystem {
     
     if (!lineEditor.isInputMode()) {
 
-      viewport.resetPagers();
+      screen.resetPagers();
       lineEditor.setInputMode(true);
     }
   }
