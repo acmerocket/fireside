@@ -22,6 +22,8 @@
  */
 package org.zmpp.vm;
 
+import org.zmpp.io.OutputStream;
+
 
 /**
  * This interface defines the access to the screen model.
@@ -46,6 +48,12 @@ public interface ScreenModel {
    */
   static final int FONT_FIXED   = 4;
   
+  static final int TEXTSTYLE_ROMAN          = 0;
+  static final int TEXTSTYLE_REVERSE_VIDEO  = 1;
+  static final int TEXTSTYLE_BOLD           = 2;
+  static final int TEXTSTYLE_ITALIC         = 4;
+  static final int TEXTSTYLE_FIXED          = 8;
+  
   static final int COLOR_UNDER_CURSOR   =  -1;
   static final int COLOR_CURRENT        =   0;
   static final int COLOR_DEFAULT        =   1;
@@ -58,7 +66,7 @@ public interface ScreenModel {
   static final int COLOR_CYAN           =   8;
   static final int COLOR_WHITE          =   9;
   static final int COLOR_MS_DOS_DARKISH_GREY  =   10;
-  
+    
   /**
    * Resets the screen model.
    */
@@ -167,4 +175,21 @@ public interface ScreenModel {
    * @param flag true if display, false for clear
    */
   void displayCursor(boolean flag);
+  
+  /**
+   * Returns the output stream associated with the screen.
+   * 
+   * @return the output stream
+   */
+  OutputStream getOutputStream();
+  
+  /**
+   * Wait until this object is initialized.
+   */
+  void waitInitialized();
+  
+  /**
+   * Reset the internal pagers.
+   */
+  void resetPagers();
 }
