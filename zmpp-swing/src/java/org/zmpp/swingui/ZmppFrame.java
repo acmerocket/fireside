@@ -36,6 +36,7 @@ import java.io.RandomAccessFile;
 import java.io.Reader;
 import java.io.Writer;
 
+import javax.swing.JComponent;
 import javax.swing.JFileChooser;
 import javax.swing.JFrame;
 import javax.swing.JLabel;
@@ -52,7 +53,6 @@ import org.zmpp.iff.FormChunk;
 import org.zmpp.iff.WritableFormChunk;
 import org.zmpp.io.IOSystem;
 import org.zmpp.io.InputStream;
-import org.zmpp.io.OutputStream;
 import org.zmpp.vm.Machine;
 import org.zmpp.vm.SaveGameDataStore;
 import org.zmpp.vm.ScreenModel;
@@ -74,7 +74,7 @@ implements InputStream, StatusLine, SaveGameDataStore, IOSystem {
 
   private JLabel global1ObjectLabel;
   private JLabel statusLabel;
-  private TextViewport viewport;
+  private ScreenModel screen;
   private Machine machine;
   private LineEditorImpl lineEditor;
   private GameThread currentGame;
@@ -96,9 +96,20 @@ implements InputStream, StatusLine, SaveGameDataStore, IOSystem {
     isMacOs = (System.getProperty("mrj.version") != null);
     setDefaultCloseOperation(JFrame.EXIT_ON_CLOSE);
     setResizable(false);
-    viewport = new TextViewport(machine, lineEditor);
-    viewport.setPreferredSize(new Dimension(640, 476));
-    viewport.setMinimumSize(new Dimension(400, 300));
+    JComponent view = null;
+    
+    if (machine.getGameData().getStoryFileHeader().getVersion() ==  6) {
+      
+      view = new Viewport6(machine, lineEditor);
+      screen = (ScreenModel) view;
+      
+    } else {
+      
+      view = new TextViewport(machine, lineEditor);
+      screen = (ScreenModel) view;
+    }
+    view.setPreferredSize(new Dimension(640, 476));
+    view.setMinimumSize(new Dimension(400, 300));
     
     if (machine.getGameData().getStoryFileHeader().getVersion() <= 3) {
       
@@ -114,7 +125,7 @@ implements InputStream, StatusLine, SaveGameDataStore, IOSystem {
       status2Panel.add(statusLabel);    
       getContentPane().add(statusPanel, BorderLayout.NORTH);
     }
-    getContentPane().add(viewport, BorderLayout.CENTER);
+    getContentPane().add(view, BorderLayout.CENTER);
     
     JMenuBar menubar = new JMenuBar();
     setJMenuBar(menubar);
@@ -155,8 +166,8 @@ implements InputStream, StatusLine, SaveGameDataStore, IOSystem {
     });
         
     addKeyListener(lineEditor);
-    viewport.addKeyListener(lineEditor);
-    viewport.addMouseListener(lineEditor);
+    view.addKeyListener(lineEditor);
+    view.addMouseListener(lineEditor);
   }
 
   /**
@@ -166,12 +177,7 @@ implements InputStream, StatusLine, SaveGameDataStore, IOSystem {
    */
   public ScreenModel getScreenModel() {
     
-    return viewport;
-  }
-  
-  public OutputStream getOutputStream() {
-
-    return viewport;
+    return screen;
   }
   
   // *************************************************************************
@@ -335,7 +341,7 @@ implements InputStream, StatusLine, SaveGameDataStore, IOSystem {
     
     if (!lineEditor.isInputMode()) {
 
-      viewport.resetPagers();
+      screen.resetPagers();
       lineEditor.setInputMode(true);
     }
   }
@@ -356,7 +362,7 @@ implements InputStream, StatusLine, SaveGameDataStore, IOSystem {
   
   public void startMachine() {
     
-    currentGame = new GameThread(machine, viewport);
+    currentGame = new GameThread(machine, screen);
     currentGame.start();
   }
 }
