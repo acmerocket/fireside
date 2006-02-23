@@ -46,12 +46,6 @@ ScreenModel {
   
   private BufferedImage imageBuffer;
   private boolean initialized;
-    
-  private static final int TEXTSTYLE_ROMAN          = 0;
-  private static final int TEXTSTYLE_REVERSE_VIDEO  = 1;
-  private static final int TEXTSTYLE_BOLD           = 2;
-  private static final int TEXTSTYLE_ITALIC         = 4;
-  private static final int TEXTSTYLE_FIXED          = 8;
   
   private static final int WINDOW_BOTTOM  = 0;
   private static final int WINDOW_TOP     = 1;
@@ -256,7 +250,7 @@ ScreenModel {
       
       imageBuffer = new BufferedImage(getWidth(), getHeight(),
           BufferedImage.TYPE_INT_RGB);
-      Canvas canvas = new CanvasImpl(imageBuffer);
+      Canvas canvas = new CanvasImpl(imageBuffer, this);
       
       // Default colors
       defaultBackground = Color.WHITE;
@@ -468,6 +462,14 @@ ScreenModel {
     windows[activeWindow].drawCursor(showCaret);
   }
   
+  /**
+   * {@inheritDoc}
+   */
+  public OutputStream getOutputStream() {
+    
+    return this;
+  }
+  
   // **********************************************************************
   // ******** Private functions
   // *************************************************
@@ -574,14 +576,17 @@ ScreenModel {
   }
   
   private void overrideDefaults(StoryFileHeader fileheader) {
+
+    String version = fileheader.getRelease() + "."
+                     + fileheader.getSerialNumber();
     
-    if (isBeyondZork(fileheader)) {
+    if (isBeyondZork(version)) {
       
       // Some BZ-specific settings
       fileheader.setInterpreterNumber(3); // set to "Macintosh"
       standardFont = fixedFont;
       
-    } else if (isVaricella(fileheader)) {
+    } else if (isVaricella(version) || isOnlyAfterDark(version)) {
       
       fileheader.setDefaultBackgroundColor(COLOR_BLACK);
       fileheader.setDefaultForegroundColor(COLOR_WHITE);      
@@ -593,21 +598,22 @@ ScreenModel {
     }
   }
   
-  private boolean isVaricella(StoryFileHeader fileheader) {
+  private boolean isVaricella(String version) {
     
-    String serial = fileheader.getSerialNumber();
-    int release = fileheader.getRelease();
-    String version = release + "." + serial;
     return version.equals("1.990831");
   }
   
-  private boolean isBeyondZork(StoryFileHeader fileheader) {
+  private boolean isOnlyAfterDark(String version) {
     
-    String serial = fileheader.getSerialNumber();
-    int release = fileheader.getRelease();
-    return (release == 47 && serial.equals("870915"))
-           || (release == 49 && serial.equals("870917"))
-           || (release == 51 && serial.equals("870923"))
-           || (release == 57 && serial.equals("871221"));    
+    return version.equals("2.000913")
+           || version.equals("1.990915");
+  }
+  
+  private boolean isBeyondZork(String version) {
+    
+    return (version.equals("47.870915"))
+           || (version.equals("49.870917"))
+           || (version.equals("51.870923"))
+           || (version.equals("57.871221"));    
   }
 }
