@@ -49,6 +49,11 @@ public class BlorbResources implements Resources {
   private MediaCollection<SoundEffect> sounds;
   
   /**
+   * The release number.
+   */
+  private int release;
+  
+  /**
    * Constructor.
    * 
    * @param formchunk a form chunk in Blorb format
@@ -73,5 +78,13 @@ public class BlorbResources implements Resources {
   public MediaCollection<SoundEffect> getSounds() {
     
     return sounds;
+  }
+  
+  /**
+   * {@inheritDoc}
+   */
+  public int getRelease() {
+    
+    return release;
   }
 }

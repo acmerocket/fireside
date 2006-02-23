@@ -93,9 +93,7 @@ public abstract class BlorbMediaCollection<T> implements MediaCollection<T> {
   }
   
   /**
-   * Returns the number of resources.
-   * 
-   * @return the number of resources.
+   * {@inheritDoc}
    */
   public int getNumResources() {
     
