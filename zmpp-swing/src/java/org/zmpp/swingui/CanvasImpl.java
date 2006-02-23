@@ -26,6 +26,7 @@ import java.awt.Color;
 import java.awt.Font;
 import java.awt.Graphics;
 import java.awt.image.BufferedImage;
+import java.awt.image.ImageObserver;
 
 /**
  * The implementation of the Canvas interface.
@@ -37,11 +38,13 @@ public class CanvasImpl implements Canvas {
 
   private BufferedImage image;
   private Graphics graphics;
+  private ImageObserver observer;
   
-  public CanvasImpl(BufferedImage image) {
+  public CanvasImpl(BufferedImage image, ImageObserver observer) {
     
     this.image = image;
     this.graphics = image.getGraphics();
+    this.observer = observer;
   }
   
   public int getWidth() {
@@ -111,5 +114,10 @@ public class CanvasImpl implements Canvas {
   public void setClip(int left, int top, int width, int height) {
     
     graphics.setClip(left, top, width, height);
+  }
+  
+  public void drawImage(BufferedImage image, int x, int y) {
+    
+    graphics.drawImage(image, x, y, observer);
   }
 }

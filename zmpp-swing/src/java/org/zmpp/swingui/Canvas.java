@@ -24,6 +24,7 @@ package org.zmpp.swingui;
 
 import java.awt.Color;
 import java.awt.Font;
+import java.awt.image.BufferedImage;
 
 /**
  * This interface defines an abstract access to the Java graphics system
@@ -42,10 +43,10 @@ public interface Canvas {
   int getFontDescent(Font font);
   int getCharWidth(Font font, char c);
   int getStringWidth(Font font, String str);
-  
-  
+    
   void scrollUp(Color backColor, Font font, int top, int height);
   void fillRect(Color color, int left, int top, int width, int height);
   void drawString(Color color, Font font, int x, int y, String str);
   void setClip(int left, int top, int width, int height);
+  void drawImage(BufferedImage image, int x, int y);
 }
