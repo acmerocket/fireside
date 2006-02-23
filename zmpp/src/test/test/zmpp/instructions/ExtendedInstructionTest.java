@@ -160,4 +160,7 @@ public class ExtendedInstructionTest extends InstructionTestBase {
   // **************************************************************************
   // ******** LOG_SHIFT
   // **********************************
+
+  // TODO
+  
 }

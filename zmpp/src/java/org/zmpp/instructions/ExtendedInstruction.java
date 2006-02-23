@@ -22,8 +22,13 @@
  */
 package org.zmpp.instructions;
 
+import java.awt.Dimension;
+
+import org.zmpp.base.MemoryAccess;
 import org.zmpp.vm.Machine;
 import org.zmpp.vm.PortableGameState;
+import org.zmpp.vm.ScreenModel6;
+import org.zmpp.vm.Window6;
 
 
 public class ExtendedInstruction extends AbstractInstruction {
@@ -93,6 +98,30 @@ public class ExtendedInstruction extends AbstractInstruction {
       break;
     case ExtendedStaticInfo.OP_CHECK_UNICODE:
       check_unicode();
+      break;
+    case ExtendedStaticInfo.OP_MOUSE_WINDOW:
+      mouse_window();
+      break;
+    case ExtendedStaticInfo.OP_PICTURE_DATA:
+      picture_data();
+      break;
+    case ExtendedStaticInfo.OP_DRAW_PICTURE:
+      draw_picture();
+      break;
+    case ExtendedStaticInfo.OP_MOVE_WINDOW:
+      move_window();
+      break;
+    case ExtendedStaticInfo.OP_WINDOW_SIZE:
+      window_size();
+      break;
+    case ExtendedStaticInfo.OP_WINDOW_STYLE:
+      window_style();
+      break;
+    case ExtendedStaticInfo.OP_SET_MARGINS:
+      set_margins();
+      break;
+    case ExtendedStaticInfo.OP_GET_WIND_PROP:
+      get_wind_prop();
       break;
     default:
       throwInvalidOpcode();
@@ -180,5 +209,103 @@ public class ExtendedInstruction extends AbstractInstruction {
     // can read
     storeResult((short) 3);
     nextInstruction();
+  }
+  
+  private void mouse_window() {
+    
+    getMachine().getScreen6().setMouseWindow(getValue(0));
+    nextInstruction();
+  }
+  
+  private void picture_data() {
+    
+    int picnum = getUnsignedValue(0);
+    int array = getUnsignedValue(1);
+    boolean result = false;
+    
+    if (picnum == 0) {
+
+      writePictureFileInfo(array);
+      // TODO: Determine if result should be set to true here
+      
+    } else {
+      
+      Dimension picdim =
+        getMachine().getPictureManager().getPictureSize(picnum);
+      if (picdim != null) {
+        
+        MemoryAccess memaccess = getMachine().getGameData().getMemoryAccess();
+        memaccess.writeUnsignedShort(array, picdim.height);
+        memaccess.writeUnsignedShort(array + 2, picdim.width);
+        result = true;
+      }
+    }
+    branchOnTest(result);
+  }
+  
+  private void writePictureFileInfo(int array) {
+    
+    MemoryAccess memaccess = getMachine().getGameData().getMemoryAccess();
+    memaccess.writeUnsignedShort(array,
+        getMachine().getPictureManager().getNumPictures());
+    memaccess.writeUnsignedShort(array + 2,
+        getMachine().getPictureManager().getRelease());
+  }
+  
+  private void draw_picture() {
+    
+    int picnum = getUnsignedValue(0);
+    int x = 0, y = 0;
+    if (getNumOperands() > 1) y = getUnsignedValue(1);
+    if (getNumOperands() > 2) x = getUnsignedValue(2);
+    getMachine().getScreen6().getCurrentWindow().drawPicture(
+        getMachine().getPictureManager().getPicture(picnum), y, x);
+    nextInstruction();
+  }
+  
+  private void move_window() {
+    
+    getMachine().getScreen6().getWindow(getUnsignedValue(0)).move(
+        getUnsignedValue(1), getUnsignedValue(2));
+    nextInstruction();
+  }
+  
+  private void window_size() {
+
+    getMachine().getScreen6().getWindow(getUnsignedValue(0)).setSize(
+        getUnsignedValue(1), getUnsignedValue(2));
+    nextInstruction();
+  }
+  
+  private void window_style() {
+
+    int operation = 0;
+    if (getNumOperands() > 2) operation = getUnsignedValue(2);
+    
+    getMachine().getScreen6().getWindow(getUnsignedValue(0)).setStyle(
+        getUnsignedValue(1), operation);
+    nextInstruction();
+  }
+  
+  private void set_margins() {
+    
+    getMachine().getScreen6().getWindow(getUnsignedValue(2)).setMargins(
+        getUnsignedValue(0), getUnsignedValue(1));
+    nextInstruction();
+  }
+  
+  private void get_wind_prop() {
+    
+    short result;
+    result = (short) getWindow(getValue(0)).getProperty(getUnsignedValue(1));
+    storeResult(result);
+    nextInstruction();
+  }
+  
+  private Window6 getWindow(int windownum) {
+    
+    return (windownum == ScreenModel6.CURRENT_WINDOW) ?
+            getMachine().getScreen6().getCurrentWindow() :
+            getMachine().getScreen6().getWindow(windownum);
   }
 }

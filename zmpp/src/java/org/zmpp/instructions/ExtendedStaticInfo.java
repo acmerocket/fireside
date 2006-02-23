@@ -32,15 +32,31 @@ public class ExtendedStaticInfo implements InstructionStaticInfo {
     { 5, 6, 7, 8 }, // LOG_SHIFT
     { 5, 6, 7, 8 }, // ART_SHIFT
     { 5, 6, 7, 8 }, // SET_FONT
-    { },            // 0x05
-    { },            // 0x06
-    { },            // 0x07
-    { },            // 0x08
+    { 6 },          // DRAW_PICTURE
+    { 6 },          // PICTURE_DATA
+    { },          // ERASE_PICTURE
+    { 6 },          // SET_MARGINS
     { 5, 6, 7, 8 }, // SAVE_UNDO    
     { 5, 6, 7, 8 }, // RESTORE_UNDO
     { 5, 6, 7, 8 }, // PRINT_UNICODE
     { 5, 6, 7, 8 }, // CHECK_UNICODE
-  };  
+    { },            // 0x0d
+    { },            // 0x0e
+    { },            // 0x0f
+    { 6 },          // MOVE_WINDOW
+    { 6 },          // WINDOW_SIZE
+    { 6 },          // WINDOW_STYLE
+    { 6 },          // GET_WIND_PROP
+    { },          // SCROLL_WINDOW
+    { },          // POP_STACK
+    { },          // READ_MOUSE
+    { 6 },          // MOUSE_WINDOW
+    { },          // PUSH_STACK
+    { },          // PUT_WIND_PROP
+    { },          // PRINT_FORM
+    { },          // MAKE_MENU
+    { },          // PICTURE_TABLE
+  };
 
   private static final ExtendedStaticInfo instance = new ExtendedStaticInfo();
   
@@ -58,10 +74,27 @@ public class ExtendedStaticInfo implements InstructionStaticInfo {
   public static final int OP_LOG_SHIFT            = 0x02;
   public static final int OP_ART_SHIFT            = 0x03;
   public static final int OP_SET_FONT             = 0x04;
+  public static final int OP_DRAW_PICTURE         = 0x05;
+  public static final int OP_PICTURE_DATA         = 0x06;
+  public static final int OP_ERASE_PICTURE        = 0x07;
+  public static final int OP_SET_MARGINS          = 0x08;  
   public static final int OP_SAVE_UNDO            = 0x09;
   public static final int OP_RESTORE_UNDO         = 0x0a;
   public static final int OP_PRINT_UNICODE        = 0x0b;
   public static final int OP_CHECK_UNICODE        = 0x0c;
+  public static final int OP_MOVE_WINDOW          = 0x10;
+  public static final int OP_WINDOW_SIZE          = 0x11;
+  public static final int OP_WINDOW_STYLE         = 0x12;
+  public static final int OP_GET_WIND_PROP        = 0x13;
+  public static final int OP_SCROLL_WINDOW        = 0x14;
+  public static final int OP_POP_STACK            = 0x15;
+  public static final int OP_READ_MOUSE           = 0x16;
+  public static final int OP_MOUSE_WINDOW         = 0x17;
+  public static final int OP_PUSH_STACK           = 0x18;
+  public static final int OP_PUT_WIND_PROP        = 0x19;
+  public static final int OP_PRINT_FORM           = 0x1a;
+  public static final int OP_MAKE_MENU            = 0x1b;  
+  public static final int OP_PICTURE_TABLE        = 0x1c;  
   
   public int[] getValidVersions(int opcode) {
 
@@ -84,6 +117,7 @@ public class ExtendedStaticInfo implements InstructionStaticInfo {
     case ExtendedStaticInfo.OP_SAVE_UNDO:
     case ExtendedStaticInfo.OP_RESTORE_UNDO:
     case ExtendedStaticInfo.OP_CHECK_UNICODE:
+    case ExtendedStaticInfo.OP_GET_WIND_PROP:
       return true;
     }
     return false;
@@ -94,6 +128,13 @@ public class ExtendedStaticInfo implements InstructionStaticInfo {
    */
   public boolean isBranch(int opcode, int version) {
     
+    switch (opcode) {
+    
+    case ExtendedStaticInfo.OP_PICTURE_DATA:
+    case ExtendedStaticInfo.OP_PUSH_STACK:
+    case ExtendedStaticInfo.OP_MAKE_MENU:
+      return true;
+    }
     return false;
   }
   
@@ -130,6 +171,22 @@ public class ExtendedStaticInfo implements InstructionStaticInfo {
       return "PRINT_UNICODE";
     case ExtendedStaticInfo.OP_CHECK_UNICODE:
       return "CHECK_UNICODE";
+    case ExtendedStaticInfo.OP_MOUSE_WINDOW:
+      return "MOUSE_WINDOW";
+    case ExtendedStaticInfo.OP_PICTURE_DATA:
+      return "PICTURE_DATA";
+    case ExtendedStaticInfo.OP_DRAW_PICTURE:
+      return "DRAW_PICTURE";
+    case ExtendedStaticInfo.OP_MOVE_WINDOW:
+      return "MOVE_WINDOW";
+    case ExtendedStaticInfo.OP_WINDOW_SIZE:
+      return "WINDOW_SIZE";
+    case ExtendedStaticInfo.OP_WINDOW_STYLE:
+      return "WINDOW_STYLE";
+    case ExtendedStaticInfo.OP_SET_MARGINS:
+      return "SET_MARGINS";
+    case ExtendedStaticInfo.OP_GET_WIND_PROP:
+      return "GET_WIND_PROP";
     }
     return "unknown";
   }
