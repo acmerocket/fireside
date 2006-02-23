@@ -90,10 +90,12 @@ public class SoundSystemImpl implements SoundSystem {
     // The default behaviour is to stop the previous sound
     currentTask.stop();
   }
-  
+
+  /**
+   * {@inheritDoc}
+   */
   public void reset() {
   
-    if (sounds != null) sounds.clear();
   }
   
   /**

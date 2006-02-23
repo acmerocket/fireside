@@ -60,4 +60,11 @@ public interface MediaCollection<T> {
    * @param number the number of the resource
    */
   void unloadResource(int number);
+  
+  /**
+   * Returns the number of resources.
+   * 
+   * @return the number of resources
+   */
+  int getNumResources();
 }

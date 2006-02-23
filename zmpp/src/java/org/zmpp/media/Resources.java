@@ -33,6 +33,13 @@ import java.awt.image.BufferedImage;
 public interface Resources {
 
   /**
+   * The release number of the resource file.
+   * 
+   * @return the release number
+   */
+  int getRelease();
+  
+  /**
    * Returns the images of this file.
    * 
    * @return the images
