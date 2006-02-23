@@ -26,7 +26,6 @@ import org.zmpp.instructions.DefaultInstructionDecoder;
 import org.zmpp.io.FileInputStream;
 import org.zmpp.io.IOSystem;
 import org.zmpp.io.InputStream;
-import org.zmpp.io.OutputStream;
 import org.zmpp.io.TranscriptOutputStream;
 import org.zmpp.media.Resources;
 
@@ -116,13 +115,6 @@ public abstract class MachineFactory<T> {
   abstract protected InputStream getKeyboardInputStream();
   
   /**
-   * The console output stream object.
-   * 
-   * @return the console output stream
-   */
-  abstract protected OutputStream getConsoleOutputStream();
-  
-  /**
    * Returns the status line object.
    * 
    * @return the status line object
@@ -168,7 +160,7 @@ public abstract class MachineFactory<T> {
     initOutputStreams(machine);    
     machine.setStatusLine(getStatusLine());
     machine.setScreen(getScreenModel());
-    machine.setSaveGameDataStore(getSaveGameDataStore());        
+    machine.setSaveGameDataStore(getSaveGameDataStore());    
   }
   
   /**
@@ -191,7 +183,7 @@ public abstract class MachineFactory<T> {
   private void initOutputStreams(Machine machine) {
     
     Output output = machine.getOutput();
-    output.setOutputStream(1, getConsoleOutputStream());
+    output.setOutputStream(1, getScreenModel().getOutputStream());
     output.selectOutputStream(1, true);
     output.setOutputStream(2, new TranscriptOutputStream(
         getIOSystem(), machine.getGameData().getZsciiEncoding()));
