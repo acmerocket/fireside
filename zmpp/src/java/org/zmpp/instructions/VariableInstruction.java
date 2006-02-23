@@ -491,7 +491,9 @@ public class VariableInstruction extends AbstractInstruction {
     if (screenModel != null) {
     
       int line = getValue(0);
-      int column = getValue(1);
+      int column = 0;
+      
+      if (getNumOperands() >= 2) column = getValue(1);
       
       if (line > 0) {
         
