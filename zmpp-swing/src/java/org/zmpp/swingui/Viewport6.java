@@ -44,6 +44,7 @@ public class Viewport6 extends JViewport implements ScreenModel6, Viewport {
   private static final long serialVersionUID  = 1L;
   private static final int NUM_V6_WINDOWS = 8;
   
+  private Canvas canvas;
   private BufferedImage imageBuffer;
   private boolean initialized;
   private Color defaultForeground;
@@ -76,8 +77,16 @@ public class Viewport6 extends JViewport implements ScreenModel6, Viewport {
   // ***** ScreenModel interface
   // *******************************************
   
-  public void eraseWindow(final int window) {
+  public void eraseWindow(int window) {
     
+    if (window == - 1 || window == -2) {
+      
+      // We need to have special handling for the two different cases
+      canvas.fillRect(defaultBackground, 0, 0 , getWidth(), getHeight());
+      
+    } else {
+      windows[window].clear();
+    }
   }
   
   public void eraseLine(int value) {
@@ -94,11 +103,11 @@ public class Viewport6 extends JViewport implements ScreenModel6, Viewport {
     windows[currentwindow].getCursor().setPosition(line, column);
   }
   
-  public void splitWindow(final int linesUpperWindow) {
+  public void splitWindow(int linesUpperWindow) {
     
   }
   
-  public void setWindow(final int window) {
+  public void setWindow(int window) {
     
     currentwindow = window;
   }
@@ -109,6 +118,7 @@ public class Viewport6 extends JViewport implements ScreenModel6, Viewport {
   
   public void setBufferMode(boolean flag) {
     
+    windows[currentwindow].setBufferMode(flag);
   }
   
   public void setPaging(boolean flag) {
@@ -219,6 +229,10 @@ public class Viewport6 extends JViewport implements ScreenModel6, Viewport {
     return windows[window];
   }
   
+  // ********************************************************************
+  // ***** Component functions  
+  // *******************************************
+  
   public void paint(Graphics g) {
 
     if (imageBuffer == null) {
@@ -230,10 +244,10 @@ public class Viewport6 extends JViewport implements ScreenModel6, Viewport {
       defaultBackground = Color.WHITE;
       defaultForeground = Color.BLACK;
             
-      Canvas canvas = new CanvasImpl(imageBuffer, this);
+      canvas = new CanvasImpl(imageBuffer, this);
       for (int i = 0; i < NUM_V6_WINDOWS; i++) {
       
-        windows[i] = new Window6Impl(canvas);
+        windows[i] = new Window6Impl(canvas, editor);
         windows[i].setBackground(defaultBackground);
         windows[i].setForeground(defaultForeground);
         windows[i].setFont(fixedFont);
@@ -254,6 +268,10 @@ public class Viewport6 extends JViewport implements ScreenModel6, Viewport {
     g.drawImage(imageBuffer, 0, 0, this);    
   }
 
+  // ********************************************************************
+  // ***** Private functions
+  // *******************************************
+  
   private void setScreenProperties() {
     
     StoryFileHeader fileheader = machine.getGameData().getStoryFileHeader();

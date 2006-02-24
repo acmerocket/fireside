@@ -31,6 +31,8 @@ package org.zmpp.swingui;
  */
 public interface CursorWindow {
 
+  void clear();
+  
   void updateCursorCoordinates();
   
   void backspace(char previousChar);

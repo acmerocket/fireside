@@ -32,17 +32,22 @@ import org.zmpp.vm.Window6;
 public class Window6Impl implements Window6, CursorWindow {
 
   private Canvas canvas;
+  private TextCursor cursor;
+  private LineEditor editor;
+  
   private Color background;
   private Color foreground;
+  
   private Font font;
   private boolean isReverseVideo;
-  private TextCursor cursor;
   private int left, top, width, height;
   private int marginLeft, marginRight;
+  private boolean buffered;
   
-  public Window6Impl(Canvas canvas) {
+  public Window6Impl(Canvas canvas, LineEditor editor) {
   
     this.canvas = canvas;
+    this.editor = editor;
     cursor = new TextCursorImpl(this);
     
     this.left = 1;    
@@ -65,6 +70,12 @@ public class Window6Impl implements Window6, CursorWindow {
     this.top = y;
   }
 
+  public void setBufferMode(boolean flag) {
+    
+    buffered = flag;
+  }
+  
+  
   public void setSize(int height, int width) {
     
     this.height = height;
@@ -117,27 +128,13 @@ public class Window6Impl implements Window6, CursorWindow {
     this.font = font;
   }
   
-  private int getCurrentX() {
-    
-    int meanCharWidth = canvas.getCharWidth(getFont(), '0');      
-    return (cursor.getColumn() - 1) * meanCharWidth;
-  }
-  private int getCurrentY() {
-    
-    Font font = getFont();
-    return top + (cursor.getLine() - 1) * canvas.getFontHeight(font)
-           + (canvas.getFontHeight(font) - canvas.getFontDescent(font));
-  }
-  
   // ************************************************************************
   // ****** CursorWindow interface
   // ***************************************
   
   public void printString(String str) {
 
-    //System.out.println("printString(): " + str);
-    int width = canvas.getWidth();
-    int lineLength = width;
+    int lineLength = getOutputWidth();
     
     WordWrapper wordWrapper =
       new WordWrapper(lineLength, canvas, font, isBuffered());
@@ -151,11 +148,19 @@ public class Window6Impl implements Window6, CursorWindow {
   
   public boolean isBuffered() {
     
-    return true;
+    return buffered;
   }
   
   public void backspace(char previousChar) {
     
+  }
+  
+  public void clear() {
+    
+    clipToCurrentBounds();
+    canvas.fillRect(background, getOutputStartX(), getOutputStartY(),
+                    getOutputWidth(), getOutputHeight());
+    resetCursorToHome();
   }
   
   // ************************************************************************
@@ -207,7 +212,8 @@ public class Window6Impl implements Window6, CursorWindow {
     
   private void clipToCurrentBounds() {
     
-    canvas.setClip(left - 1, top - 1, width, height);
+    canvas.setClip(getOutputStartX(), getOutputStartY(), getOutputWidth(),
+                   getOutputHeight());
   }
 
   private void newline() {
@@ -215,5 +221,52 @@ public class Window6Impl implements Window6, CursorWindow {
     cursor.setLine(cursor.getLine() + 1);
     cursor.setColumn(1);
   }
+
+  // ***********************************************************************
+  // ****** Coordinate calculation
+  // ****************************************************
   
+  private int getOutputStartX() {
+    
+    return (left - 1) + marginLeft;
+  }
+  
+  private int getOutputStartY() {
+    
+    return top - 1;
+  }
+  
+  private int getOutputWidth() {
+    
+    return width - (marginLeft + marginRight);
+  }
+  
+  private int getOutputHeight() {
+    
+    return height;
+  }
+
+  private int getCurrentX() {
+    
+    int meanCharWidth = canvas.getCharWidth(getFont(), '0');      
+    return marginLeft + (cursor.getColumn() - 1) * meanCharWidth;
+  }
+  private int getCurrentY() {
+    
+    Font font = getFont();
+    return top + (cursor.getLine() - 1) * canvas.getFontHeight(font)
+           + (canvas.getFontHeight(font) - canvas.getFontDescent(font));
+  }
+  
+  private void resetCursorToHome() {
+    
+    getCursor().setPosition(getAvailableLines(), 1);
+  }
+
+  private int getAvailableLines() {
+    
+    int descent = canvas.getFontDescent(getFont());
+    int fontHeight = canvas.getFontHeight(getFont());
+    return (getOutputHeight() - descent) / fontHeight;
+  }
 }
