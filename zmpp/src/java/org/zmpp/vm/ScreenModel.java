@@ -54,19 +54,6 @@ public interface ScreenModel {
   static final int TEXTSTYLE_ITALIC         = 4;
   static final int TEXTSTYLE_FIXED          = 8;
   
-  static final int COLOR_UNDER_CURSOR   =  -1;
-  static final int COLOR_CURRENT        =   0;
-  static final int COLOR_DEFAULT        =   1;
-  static final int COLOR_BLACK          =   2;
-  static final int COLOR_RED            =   3;
-  static final int COLOR_GREEN          =   4;
-  static final int COLOR_YELLOW         =   5;
-  static final int COLOR_BLUE           =   6;
-  static final int COLOR_MAGENTA        =   7;
-  static final int COLOR_CYAN           =   8;
-  static final int COLOR_WHITE          =   9;
-  static final int COLOR_MS_DOS_DARKISH_GREY  =   10;
-    
   /**
    * Resets the screen model.
    */

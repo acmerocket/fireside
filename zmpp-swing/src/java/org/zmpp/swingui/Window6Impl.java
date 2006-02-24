@@ -44,6 +44,9 @@ public class Window6Impl implements Window6, CursorWindow {
   
     this.canvas = canvas;
     cursor = new TextCursorImpl(this);
+    
+    this.left = 1;    
+    this.top = 1;
   }
   
   public TextCursor getCursor() {
@@ -53,7 +56,7 @@ public class Window6Impl implements Window6, CursorWindow {
   
   public void drawPicture(BufferedImage picture, int y, int x) {
 
-    canvas.drawImage(picture, x, y);
+    canvas.drawImage(picture, x - 1, y - 1);
   }
 
   public void move(int y, int x) {
@@ -69,7 +72,6 @@ public class Window6Impl implements Window6, CursorWindow {
   }
 
   public void setStyle(int styleflags, int operation) {
-    // TODO Auto-generated method stub
 
   }
   
@@ -127,10 +129,9 @@ public class Window6Impl implements Window6, CursorWindow {
            + (canvas.getFontHeight(font) - canvas.getFontDescent(font));
   }
   
-  public boolean isBuffered() {
-    
-    return true;
-  }
+  // ************************************************************************
+  // ****** CursorWindow interface
+  // ***************************************
   
   public void printString(String str) {
 
@@ -143,6 +144,23 @@ public class Window6Impl implements Window6, CursorWindow {
     String[] lines = wordWrapper.wrap(getCurrentX(), str);
     printLines(lines);    
   }
+  
+  public void updateCursorCoordinates() {
+    
+  }
+  
+  public boolean isBuffered() {
+    
+    return true;
+  }
+  
+  public void backspace(char previousChar) {
+    
+  }
+  
+  // ************************************************************************
+  // ****** Private methods
+  // ***************************************
   
   private void printLines(String lines[]) {
     
@@ -168,10 +186,10 @@ public class Window6Impl implements Window6, CursorWindow {
     }
   }  
   
-  protected void printLine(String line, Color textbackColor,
+  private void printLine(String line, Color textbackColor,
       Color textColor) {
 
-    //clipToCurrentBounds();
+    clipToCurrentBounds();
     canvas.fillRect(textbackColor, getCurrentX(),
                     getCurrentY() - canvas.getFontHeight(font)
                     + canvas.getFontDescent(font),
@@ -187,16 +205,12 @@ public class Window6Impl implements Window6, CursorWindow {
     return str.length() > 0 && str.charAt(str.length() - 1) == '\n';
   }
     
-  protected void clipToCurrentBounds() {
+  private void clipToCurrentBounds() {
     
-    canvas.setClip(0, top, canvas.getWidth(), height);
+    canvas.setClip(left - 1, top - 1, width, height);
   }
 
-  public void updateCursorCoordinates() {
-    
-  }
-  
-  protected void newline() {
+  private void newline() {
     
     cursor.setLine(cursor.getLine() + 1);
     cursor.setColumn(1);

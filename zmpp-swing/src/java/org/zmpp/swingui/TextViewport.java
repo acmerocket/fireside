@@ -31,7 +31,6 @@ import java.awt.image.BufferedImage;
 import javax.swing.JViewport;
 import javax.swing.SwingUtilities;
 
-import org.zmpp.encoding.ZsciiEncoding;
 import org.zmpp.io.OutputStream;
 import org.zmpp.vm.Machine;
 import org.zmpp.vm.ScreenModel;
@@ -39,13 +38,13 @@ import org.zmpp.vm.StoryFileHeader;
 import org.zmpp.vm.TextCursor;
 import org.zmpp.vm.StoryFileHeader.Attribute;
 
-public class TextViewport extends JViewport implements OutputStream,
-ScreenModel {
+public class TextViewport extends JViewport implements ScreenModel, Viewport {
 
   private static final long serialVersionUID = 1L;
   
   private BufferedImage imageBuffer;
   private boolean initialized;
+  private ScreenOutputStream outputstream;
   
   private static final int WINDOW_BOTTOM  = 0;
   private static final int WINDOW_TOP     = 1;
@@ -54,15 +53,9 @@ ScreenModel {
   private Color defaultBackground;
   private Font standardFont, fixedFont;
   
-  /**
-   * This buffer holds the current text within the output stream.
-   */
-  private StringBuilder streambuffer;
-  
   private Machine machine;
   private LineEditor editor;
   
-  private boolean isSelected;
   private SubWindow[] windows;
   private int[] fontnumbers;
   private int activeWindow;
@@ -75,12 +68,14 @@ ScreenModel {
     
     standardFont = getFont();
     fixedFont = new Font("Monospaced", Font.ROMAN_BASELINE,
-                         standardFont.getSize());    
-    streambuffer = new StringBuilder();
+                         standardFont.getSize());
+    outputstream = new ScreenOutputStream(machine, this);
     windows = new SubWindow[2];
     fontnumbers = new int[2];
     activeWindow = WINDOW_BOTTOM;
   }
+  
+  public CursorWindow getCurrentWindow() { return windows[activeWindow]; }
   
   public void reset() {
     
@@ -97,7 +92,7 @@ ScreenModel {
     });
   }
     
-  public void eraseWindow(final int window) {
+  public void eraseWindow(int window) {
     
     if (window == -1) {
       
@@ -154,7 +149,7 @@ ScreenModel {
     
     //System.out.printf("@set_window %d\n", window);
     // Flush out the current active window
-    flush();
+    getOutputStream().flush();
     
     activeWindow = window;
     updateDimensionsInHeader();
@@ -174,7 +169,7 @@ ScreenModel {
   public void setTextStyle(int style) {
 
     // Flush the output before setting a new style
-    flush();
+    getOutputStream().flush();
     
     // Reset to plain if style is roman, or get the current font style
     // otherwise
@@ -206,23 +201,13 @@ ScreenModel {
   public void setBufferMode(boolean flag) {
 
     // only affects bottom window
-    flush();
+    getOutputStream().flush();
     windows[WINDOW_BOTTOM].setBufferMode(flag);
   }
   
   public void setPaging(boolean flag) {
     
     windows[WINDOW_BOTTOM].setPagingEnabled(flag);
-  }
-  
-  public void flush() {
-    
-    // save some unnecessary flushes
-    if (streambuffer.length() > 0) {
-      
-      windows[activeWindow].printString(streambuffer.toString());
-      streambuffer = new StringBuilder();
-    }
   }
   
   public synchronized boolean isInitialized() {
@@ -295,57 +280,6 @@ ScreenModel {
     }
   }
   
-  public boolean isSelected() {
-    
-    return isSelected;
-  }
-  
-  public void select(boolean flag) {
-  
-    isSelected = flag;
-  }
-  
-  /**
-   * Reset the line counters.
-   */
-  public void resetPagers() {
-    
-    windows[WINDOW_TOP].resetPager();
-    windows[WINDOW_BOTTOM].resetPager();
-  }
-  
-  /**
-   * {@inheritDoc}
-   */
-  public void print(final short zsciiChar, boolean isInput) {
-
-    //System.out.printf("@print %c (isInput: %b)\n", (char) zsciiChar, isInput);    
-    if (zsciiChar == ZsciiEncoding.NEWLINE) {
-    
-      printChar('\n', isInput);
-    
-    } else {
-    
-      printChar(machine.getGameData().getZsciiEncoding().getUnicodeChar(
-          zsciiChar), isInput);
-    }
-  }
-
-  /**
-   * {@inheritDoc}
-   */
-  public void deletePrevious(short zchar) {
-    
-    char deleteChar =
-      machine.getGameData().getZsciiEncoding().getUnicodeChar(zchar);
-    windows[activeWindow].backspace(deleteChar);
-  }
-  
-  /**
-   * {@inheritDoc}
-   */
-  public void close() { }
-  
   /**
    * {@inheritDoc}
    */
@@ -355,8 +289,9 @@ ScreenModel {
     //System.out.printf("setForegroundColor(): %d\n", colornum);    
     if (colornum > 0) {
       
-      flush();
-      Color foreground = translateColornum(colornum, true);
+      getOutputStream().flush();
+      Color foreground = ColorTranslator.getInstance().translateColornum(
+          colornum, defaultForeground);
       windows[WINDOW_TOP].setForeground(foreground);
       windows[WINDOW_BOTTOM].setForeground(foreground);
     }
@@ -371,8 +306,9 @@ ScreenModel {
     //System.out.printf("setBackgroundColor(): %d\n", colornum);    
     if (colornum > 0) {
       
-      flush();
-      Color background = translateColornum(colornum, false);
+      getOutputStream().flush();
+      Color background = ColorTranslator.getInstance().translateColornum(
+          colornum, defaultBackground);
       windows[WINDOW_TOP].setBackground(background);
       windows[WINDOW_BOTTOM].setBackground(background);
     }
@@ -386,47 +322,12 @@ ScreenModel {
     repaintInUiThread();
   }
   
-  private static Color GREEN = new Color(0, 190, 0);
-  private static Color RED = new Color(190, 0, 0);
-  private static Color YELLOW = new Color(190, 190, 0);
-  private static Color BLUE = new Color(0, 0, 190);
-  private static Color MAGENTA = new Color(190, 0, 190);
-  private static Color CYAN = new Color(0, 190, 190);
-  
-  private Color translateColornum(int colornum, boolean foreground) {
-    
-    switch (colornum) {
-    
-    case COLOR_DEFAULT:
-      return (foreground) ? defaultForeground : defaultBackground;
-    case COLOR_BLACK:
-      return Color.BLACK;
-    case COLOR_RED:
-      return RED;
-    case COLOR_GREEN:
-      return GREEN;
-    case COLOR_YELLOW:
-      return YELLOW;
-    case COLOR_BLUE:
-      return BLUE;
-    case COLOR_MAGENTA:
-      return MAGENTA;
-    case COLOR_CYAN:
-      return CYAN;
-    case COLOR_WHITE:
-      return Color.WHITE;
-    case COLOR_MS_DOS_DARKISH_GREY:
-      return Color.DARK_GRAY;
-    }
-    return Color.BLACK;
-  }
-  
   /**
    * {@inheritDoc}
    */
   public int setFont(int fontnum) {
     
-    flush();
+    getOutputStream().flush();
     int previous = fontnumbers[activeWindow];
     
     switch (fontnum) {
@@ -467,8 +368,17 @@ ScreenModel {
    */
   public OutputStream getOutputStream() {
     
-    return this;
+    return outputstream;
   }
+
+  /**
+   * Reset the line counters.
+   */
+  public void resetPagers() {
+    
+    windows[WINDOW_TOP].resetPager();
+    windows[WINDOW_BOTTOM].resetPager();
+  }  
   
   // **********************************************************************
   // ******** Private functions
@@ -488,20 +398,6 @@ ScreenModel {
   }
   
 
-  private void printChar(char c, boolean isInput) {
-
-    //if (activeWindow == WINDOW_BOTTOM)
-    //  System.out.println("printChar: " + c + " active: " + activeWindow);
-    if (isInput || !windows[activeWindow].isBuffered()) {
-      
-      windows[activeWindow].printString(String.valueOf(c));
-      
-    } else {
-      
-      streambuffer.append(c);
-    }
-  }    
-    
   private void determineStandardFont() {
     
     // Sets the fixed font as the standard
@@ -541,8 +437,8 @@ ScreenModel {
     if (fileheader.getVersion() >= 5) {
 
       fileheader.setEnabled(Attribute.SUPPORTS_COLOURS, true);
-      fileheader.setDefaultBackgroundColor(COLOR_WHITE);
-      fileheader.setDefaultForegroundColor(COLOR_BLACK);
+      fileheader.setDefaultBackgroundColor(ColorTranslator.COLOR_WHITE);
+      fileheader.setDefaultForegroundColor(ColorTranslator.COLOR_BLACK);
       fileheader.setFontWidth(1);
       fileheader.setFontHeight(1);
     
@@ -588,8 +484,8 @@ ScreenModel {
       
     } else if (isVaricella(version) || isOnlyAfterDark(version)) {
       
-      fileheader.setDefaultBackgroundColor(COLOR_BLACK);
-      fileheader.setDefaultForegroundColor(COLOR_WHITE);      
+      fileheader.setDefaultBackgroundColor(ColorTranslator.COLOR_BLACK);
+      fileheader.setDefaultForegroundColor(ColorTranslator.COLOR_WHITE);      
       defaultBackground = Color.BLACK;
       defaultForeground = Color.WHITE;
       windows[WINDOW_BOTTOM].setBackground(defaultBackground);

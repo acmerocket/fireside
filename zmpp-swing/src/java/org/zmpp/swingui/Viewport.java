@@ -1,7 +1,7 @@
 /*
  * $Id$
  * 
- * Created on 2006/02/17
+ * Created on 2006/02/24
  * Copyright 2005-2006 by Wei-ju Wu
  *
  * This file is part of The Z-machine Preservation Project (ZMPP).
@@ -22,20 +22,7 @@
  */
 package org.zmpp.swingui;
 
-/**
- * This interface reduces the dependency between cursor and window and
- * facilitates testing.
- * 
- * @author Wei-ju Wu
- * @version 1.0
- */
-public interface CursorWindow {
+public interface Viewport {
 
-  void updateCursorCoordinates();
-  
-  void backspace(char previousChar);
-  
-  void printString(String str);
-  
-  boolean isBuffered();
+  CursorWindow getCurrentWindow();
 }

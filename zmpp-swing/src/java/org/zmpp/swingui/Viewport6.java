@@ -31,7 +31,6 @@ import java.awt.image.BufferedImage;
 import javax.swing.JViewport;
 import javax.swing.SwingUtilities;
 
-import org.zmpp.encoding.ZsciiEncoding;
 import org.zmpp.io.OutputStream;
 import org.zmpp.vm.Machine;
 import org.zmpp.vm.ScreenModel6;
@@ -40,32 +39,37 @@ import org.zmpp.vm.TextCursor;
 import org.zmpp.vm.Window6;
 import org.zmpp.vm.StoryFileHeader.Attribute;
 
-public class Viewport6 extends JViewport implements ScreenModel6, OutputStream {
+public class Viewport6 extends JViewport implements ScreenModel6, Viewport {
 
   private static final long serialVersionUID  = 1L;
   private static final int NUM_V6_WINDOWS = 8;
   
   private BufferedImage imageBuffer;
   private boolean initialized;
-  private boolean isSelected;
   private Color defaultForeground;
   private Color defaultBackground;
   private Font standardFont, fixedFont;
     
-  private Window6[] windows;
+  private Window6Impl[] windows;
   private int currentwindow;
   private Machine machine;
   private LineEditor editor;
+  private OutputStream outputstream;
   
   public Viewport6(Machine machine, LineEditor editor) {
 
     this.machine = machine;
     this.editor = editor;
-    windows = new Window6[NUM_V6_WINDOWS];
+    windows = new Window6Impl[NUM_V6_WINDOWS];
     standardFont = getFont();
     fixedFont = new Font("Monospaced", Font.ROMAN_BASELINE,
         standardFont.getSize());    
-    
+    outputstream = new ScreenOutputStream(machine, this);
+  }
+  
+  public CursorWindow getCurrentWindow() {
+
+    return windows[currentwindow];
   }
   
   // ********************************************************************
@@ -139,42 +143,7 @@ public class Viewport6 extends JViewport implements ScreenModel6, OutputStream {
   
   public OutputStream getOutputStream() {
     
-    return this;
-  }
-  
-  private static Color GREEN = new Color(0, 190, 0);
-  private static Color RED = new Color(190, 0, 0);
-  private static Color YELLOW = new Color(190, 190, 0);
-  private static Color BLUE = new Color(0, 0, 190);
-  private static Color MAGENTA = new Color(190, 0, 190);
-  private static Color CYAN = new Color(0, 190, 190);
-  
-  private Color translateColornum(int colornum, boolean foreground) {
-    
-    switch (colornum) {
-    
-    case COLOR_DEFAULT:
-      return (foreground) ? defaultForeground : defaultBackground;
-    case COLOR_BLACK:
-      return Color.BLACK;
-    case COLOR_RED:
-      return RED;
-    case COLOR_GREEN:
-      return GREEN;
-    case COLOR_YELLOW:
-      return YELLOW;
-    case COLOR_BLUE:
-      return BLUE;
-    case COLOR_MAGENTA:
-      return MAGENTA;
-    case COLOR_CYAN:
-      return CYAN;
-    case COLOR_WHITE:
-      return Color.WHITE;
-    case COLOR_MS_DOS_DARKISH_GREY:
-      return Color.DARK_GRAY;
-    }
-    return Color.BLACK;
+    return outputstream;
   }
   
   /**
@@ -184,8 +153,9 @@ public class Viewport6 extends JViewport implements ScreenModel6, OutputStream {
 
     if (colornum > 0) {
       
-      flush();
-      Color foreground = translateColornum(colornum, true);
+      getOutputStream().flush();
+      Color foreground = ColorTranslator.getInstance().translateColornum(
+          colornum, defaultForeground);
       for (int i = 0; i < windows.length; i++) {
         
         windows[i].setForeground(foreground);
@@ -193,12 +163,17 @@ public class Viewport6 extends JViewport implements ScreenModel6, OutputStream {
     }
   }
   
+  /**
+   * {@inheritDoc}
+   */
   public void setBackgroundColor(int colornum) {
     
     if (colornum > 0) {
       
-      flush();
-      Color background = translateColornum(colornum, true);
+      getOutputStream().flush();
+      Color background = ColorTranslator.getInstance().translateColornum(
+          colornum, defaultBackground);
+      
       for (int i = 0; i < windows.length; i++) {
         
         windows[i].setBackground(background);
@@ -225,43 +200,6 @@ public class Viewport6 extends JViewport implements ScreenModel6, OutputStream {
     setScreenProperties();
   }
   
-  // **************************************************************************
-  // ****** OutputStream interface
-  // **************************************
-
-  public void close() { }  
-  
-  public boolean isSelected() {
-    
-    return isSelected;
-  }
-  
-  public void select(boolean flag) {
-  
-    isSelected = flag;
-  }
-  
-  public void flush() {
-    
-  }
-  
-  public void print(final short zsciiChar, boolean isInput) {
-    
-    if (zsciiChar == ZsciiEncoding.NEWLINE) {
-      
-      printChar('\n', isInput);
-    
-    } else {
-    
-      printChar(machine.getGameData().getZsciiEncoding().getUnicodeChar(
-          zsciiChar), isInput);
-    }
-  }
-
-  public void deletePrevious(short zchar) {
-    
-  }
-  
   // ********************************************************************
   // ***** ScreenModel V6 interface
   // *******************************************
@@ -271,7 +209,7 @@ public class Viewport6 extends JViewport implements ScreenModel6, OutputStream {
     // do nothing at the moment
   }
   
-  public Window6 getCurrentWindow() {
+  public Window6 getSelectedWindow() {
 
     return windows[currentwindow];
   }
@@ -301,6 +239,10 @@ public class Viewport6 extends JViewport implements ScreenModel6, OutputStream {
         windows[i].setFont(fixedFont);
       }
       
+      // Set initial window sizes
+      windows[0].setSize(getWidth(), getHeight());
+      windows[1].setSize(getWidth(), 0);
+      
       Graphics g_img = imageBuffer.getGraphics();
       g_img.setColor(defaultBackground);
       g_img.fillRect(0, 0, getWidth(), getHeight());
@@ -320,8 +262,8 @@ public class Viewport6 extends JViewport implements ScreenModel6, OutputStream {
     fileheader.setEnabled(Attribute.SUPPORTS_ITALIC, true);
     
     fileheader.setEnabled(Attribute.SUPPORTS_COLOURS, true);
-    fileheader.setDefaultBackgroundColor(COLOR_WHITE);
-    fileheader.setDefaultForegroundColor(COLOR_BLACK);
+    fileheader.setDefaultBackgroundColor(ColorTranslator.COLOR_WHITE);
+    fileheader.setDefaultForegroundColor(ColorTranslator.COLOR_BLACK);
     fileheader.setFontWidth(1);
     fileheader.setFontHeight(1);    
     determineStandardFont();
@@ -343,13 +285,7 @@ public class Viewport6 extends JViewport implements ScreenModel6, OutputStream {
     fileheader.setScreenWidth(screenWidth);
     fileheader.setScreenHeight(screenHeight);
   }
-  
-  
-  private void printChar(char c, boolean isInput) {
-
-    windows[currentwindow].printString(String.valueOf(c));
-  }
-  
+    
   private void repaintInUiThread() {
     
     try {

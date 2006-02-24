@@ -43,9 +43,9 @@ public interface ScreenModel6 extends ScreenModel {
   Window6 getWindow(int window);
 
   /**
-   * Returns the current window.
+   * Returns the currently selected window.
    * 
-   * @return the current window
+   * @return the currently selected window
    */
-  Window6 getCurrentWindow();
+  Window6 getSelectedWindow();
 }

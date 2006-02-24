@@ -22,8 +22,6 @@
  */
 package org.zmpp.vm;
 
-import java.awt.Color;
-import java.awt.Font;
 import java.awt.image.BufferedImage;
 
 public interface Window6 {
@@ -112,13 +110,4 @@ public interface Window6 {
    * @return the property value
    */
   int getProperty(int propertynum);
-  
-  void setBackground(Color color);
-  void setForeground(Color color);
-  
-  void setFont(Font font);
-  
-  void printString(String str);
-  
-  TextCursor getCursor();
 }

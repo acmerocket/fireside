@@ -258,7 +258,7 @@ public class ExtendedInstruction extends AbstractInstruction {
     int x = 0, y = 0;
     if (getNumOperands() > 1) y = getUnsignedValue(1);
     if (getNumOperands() > 2) x = getUnsignedValue(2);
-    getMachine().getScreen6().getCurrentWindow().drawPicture(
+    getMachine().getScreen6().getSelectedWindow().drawPicture(
         getMachine().getPictureManager().getPicture(picnum), y, x);
     nextInstruction();
   }
@@ -305,7 +305,7 @@ public class ExtendedInstruction extends AbstractInstruction {
   private Window6 getWindow(int windownum) {
     
     return (windownum == ScreenModel6.CURRENT_WINDOW) ?
-            getMachine().getScreen6().getCurrentWindow() :
+            getMachine().getScreen6().getSelectedWindow() :
             getMachine().getScreen6().getWindow(windownum);
   }
 }
