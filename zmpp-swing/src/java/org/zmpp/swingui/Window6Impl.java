@@ -40,9 +40,10 @@ public class Window6Impl implements Window6, CursorWindow {
   
   private Font font;
   private boolean isReverseVideo;
-  private int left, top, width, height;
-  private int marginLeft, marginRight;
+  
   private boolean buffered;
+
+  private WindowArea area;
   
   public Window6Impl(Canvas canvas, LineEditor editor) {
   
@@ -50,8 +51,8 @@ public class Window6Impl implements Window6, CursorWindow {
     this.editor = editor;
     cursor = new TextCursorImpl(this);
     
-    this.left = 1;    
-    this.top = 1;
+    area = new WindowArea();
+    area.setPosition(1, 1);
   }
   
   public TextCursor getCursor() {
@@ -66,8 +67,7 @@ public class Window6Impl implements Window6, CursorWindow {
 
   public void move(int y, int x) {
 
-    this.left = x;
-    this.top = y;
+    area.setPosition(x, y);
   }
 
   public void setBufferMode(boolean flag) {
@@ -78,8 +78,7 @@ public class Window6Impl implements Window6, CursorWindow {
   
   public void setSize(int height, int width) {
     
-    this.height = height;
-    this.width = width;
+    area.setSize(width, height);
   }
 
   public void setStyle(int styleflags, int operation) {
@@ -87,9 +86,8 @@ public class Window6Impl implements Window6, CursorWindow {
   }
   
   public void setMargins(int left, int right) {
-    
-    marginLeft = left;
-    marginRight = right;
+
+    area.setMargins(left, right);
   }
   
   public int getProperty(int propertynum) {
@@ -134,7 +132,7 @@ public class Window6Impl implements Window6, CursorWindow {
   
   public void printString(String str) {
 
-    int lineLength = getOutputWidth();
+    int lineLength = area.getOutputWidth();
     
     WordWrapper wordWrapper =
       new WordWrapper(lineLength, canvas, font, isBuffered());
@@ -157,9 +155,7 @@ public class Window6Impl implements Window6, CursorWindow {
   
   public void clear() {
     
-    clipToCurrentBounds();
-    canvas.fillRect(background, getOutputStartX(), getOutputStartY(),
-                    getOutputWidth(), getOutputHeight());
+    area.fill(canvas, background);
     resetCursorToHome();
   }
   
@@ -194,7 +190,7 @@ public class Window6Impl implements Window6, CursorWindow {
   private void printLine(String line, Color textbackColor,
       Color textColor) {
 
-    clipToCurrentBounds();
+    area.clip(canvas);
     canvas.fillRect(textbackColor, getCurrentX(),
                     getCurrentY() - canvas.getFontHeight(font)
                     + canvas.getFontDescent(font),
@@ -210,11 +206,6 @@ public class Window6Impl implements Window6, CursorWindow {
     return str.length() > 0 && str.charAt(str.length() - 1) == '\n';
   }
     
-  private void clipToCurrentBounds() {
-    
-    canvas.setClip(getOutputStartX(), getOutputStartY(), getOutputWidth(),
-                   getOutputHeight());
-  }
 
   private void newline() {
     
@@ -226,35 +217,16 @@ public class Window6Impl implements Window6, CursorWindow {
   // ****** Coordinate calculation
   // ****************************************************
   
-  private int getOutputStartX() {
-    
-    return (left - 1) + marginLeft;
-  }
-  
-  private int getOutputStartY() {
-    
-    return top - 1;
-  }
-  
-  private int getOutputWidth() {
-    
-    return width - (marginLeft + marginRight);
-  }
-  
-  private int getOutputHeight() {
-    
-    return height;
-  }
-
   private int getCurrentX() {
     
     int meanCharWidth = canvas.getCharWidth(getFont(), '0');      
-    return marginLeft + (cursor.getColumn() - 1) * meanCharWidth;
+    return area.getMarginLeft() + (cursor.getColumn() - 1) * meanCharWidth;
   }
+  
   private int getCurrentY() {
     
     Font font = getFont();
-    return top + (cursor.getLine() - 1) * canvas.getFontHeight(font)
+    return area.getStartY() + (cursor.getLine() - 1) * canvas.getFontHeight(font)
            + (canvas.getFontHeight(font) - canvas.getFontDescent(font));
   }
   
@@ -267,6 +239,6 @@ public class Window6Impl implements Window6, CursorWindow {
     
     int descent = canvas.getFontDescent(getFont());
     int fontHeight = canvas.getFontHeight(getFont());
-    return (getOutputHeight() - descent) / fontHeight;
+    return (area.getOutputHeight() - descent) / fontHeight;
   }
 }
