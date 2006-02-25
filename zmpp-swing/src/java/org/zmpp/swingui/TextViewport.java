@@ -57,7 +57,6 @@ public class TextViewport extends JViewport implements ScreenModel, Viewport {
   private LineEditor editor;
   
   private SubWindow[] windows;
-  private int[] fontnumbers;
   private int activeWindow;
   private static final boolean DEBUG = false;
   
@@ -71,7 +70,6 @@ public class TextViewport extends JViewport implements ScreenModel, Viewport {
                          standardFont.getSize());
     outputstream = new ScreenOutputStream(machine, this);
     windows = new SubWindow[2];
-    fontnumbers = new int[2];
     activeWindow = WINDOW_BOTTOM;
   }
   
@@ -247,13 +245,13 @@ public class TextViewport extends JViewport implements ScreenModel, Viewport {
       windows[WINDOW_TOP].setForeground(defaultForeground);
       // S. 8.7.2.4: use fixed font for upper window
       windows[WINDOW_TOP].setFont(fixedFont);
-      fontnumbers[WINDOW_TOP] = ScreenModel.FONT_FIXED;
+      windows[WINDOW_TOP].setFontNumber(ScreenModel.FONT_FIXED);
             
       windows[WINDOW_BOTTOM] = new BottomWindow(this, editor, canvas);           
       windows[WINDOW_BOTTOM].setBackground(defaultBackground);
       windows[WINDOW_BOTTOM].setForeground(defaultForeground);
       windows[WINDOW_BOTTOM].setFont(standardFont);
-      fontnumbers[WINDOW_TOP] = ScreenModel.FONT_NORMAL;
+      windows[WINDOW_BOTTOM].setFontNumber(ScreenModel.FONT_NORMAL);
 
       activeWindow = WINDOW_BOTTOM;
 
@@ -328,16 +326,16 @@ public class TextViewport extends JViewport implements ScreenModel, Viewport {
   public int setFont(int fontnum) {
     
     getOutputStream().flush();
-    int previous = fontnumbers[activeWindow];
+    int previous = windows[activeWindow].getFontNumber();
     
     switch (fontnum) {
     case FONT_FIXED:
       windows[activeWindow].setFont(fixedFont);
-      fontnumbers[activeWindow] = fontnum;
+      windows[activeWindow].setFontNumber(fontnum);
       break;
     case FONT_NORMAL:
       windows[activeWindow].setFont(standardFont);
-      fontnumbers[activeWindow] = fontnum;
+      windows[activeWindow].setFontNumber(fontnum);
       break;
     case FONT_CHARACTER_GRAPHICS:
       
@@ -347,7 +345,7 @@ public class TextViewport extends JViewport implements ScreenModel, Viewport {
       // 0 font anyways. This is not really correct, but will make sure
       // that "Beyond Zork" does not look so weird...
       windows[activeWindow].setFont(fixedFont);
-      fontnumbers[activeWindow] = fontnum;
+      windows[activeWindow].setFontNumber(fontnum);
     default:
       previous = 0;
       break;

@@ -45,9 +45,11 @@ public abstract class SubWindow implements CursorWindow {
   private int height;
   private Color foreground;
   private Color background;
-  
+ 
+  private int fontnumber;
   private Font font;
   private boolean isReverseVideo;
+  
   private String name;
  
   /**
@@ -67,6 +69,10 @@ public abstract class SubWindow implements CursorWindow {
     this.cursor = new TextCursorImpl(this);
     this.name = name;
   }
+  
+  public int getFontNumber() { return fontnumber; }
+  
+  public void setFontNumber(int fontnumber) { this.fontnumber = fontnumber; }
   
   /**
    * Sets the reverse video text mode.
