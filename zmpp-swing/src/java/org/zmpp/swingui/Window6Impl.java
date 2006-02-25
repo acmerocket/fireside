@@ -34,21 +34,24 @@ public class Window6Impl implements Window6, CursorWindow {
   private Canvas canvas;
   private TextCursor cursor;
   private LineEditor editor;
+  private FontFactory fontFactory;
   
   private Color background;
   private Color foreground;
   
-  private Font font;
-  private boolean isReverseVideo;
+  private ScreenFont font;
   
   private boolean buffered;
 
   private WindowArea area;
   
-  public Window6Impl(Canvas canvas, LineEditor editor) {
+  public Window6Impl(Canvas canvas, LineEditor editor,
+      FontFactory fontFactory) {
   
     this.canvas = canvas;
     this.editor = editor;
+    this.fontFactory = fontFactory;
+    
     cursor = new TextCursorImpl(this);
     
     area = new WindowArea();
@@ -108,22 +111,28 @@ public class Window6Impl implements Window6, CursorWindow {
   
   protected Color getTextBackground() {
     
-    return isReverseVideo ? foreground : background;
+    return font.isReverseVideo() ? foreground : background;
   }
   
   protected Color getTextColor() {
     
-    return isReverseVideo ? background : foreground;
+    return font.isReverseVideo() ? background : foreground;
   }
   
-  public Font getFont() {
-    
-    return font;
+  public int setFont(int fontnum) {
+  
+    ScreenFont newfont = fontFactory.getFont(fontnum);
+    if (newfont == null) return font.getNumber();
+    else {
+      
+      font = newfont;
+      return font.getNumber();
+    }
   }
   
-  public void setFont(Font font) {
+  public void setTextStyle(int style) {
     
-    this.font = font;
+    this.font = fontFactory.getTextStyle(font, style);
   }
   
   // ************************************************************************
@@ -135,7 +144,7 @@ public class Window6Impl implements Window6, CursorWindow {
     int lineLength = area.getOutputWidth();
     
     WordWrapper wordWrapper =
-      new WordWrapper(lineLength, canvas, font, isBuffered());
+      new WordWrapper(lineLength, canvas, getFont(), isBuffered());
     String[] lines = wordWrapper.wrap(getCurrentX(), str);
     printLines(lines);    
   }
@@ -163,6 +172,8 @@ public class Window6Impl implements Window6, CursorWindow {
   // ****** Private methods
   // ***************************************
   
+  private Font getFont() { return font.getFont(); }
+  
   private void printLines(String lines[]) {
     
     Color textColor = getTextColor();
@@ -170,7 +181,7 @@ public class Window6Impl implements Window6, CursorWindow {
     
     // This is a feature that is not specified, but it is supported by
     // DOS Frotz
-    if ((getFont().getStyle() & Font.BOLD) > 0 && !isReverseVideo) {
+    if ((getFont().getStyle() & Font.BOLD) > 0 && !font.isReverseVideo()) {
 
       textColor = textColor.brighter();
     }
@@ -192,11 +203,11 @@ public class Window6Impl implements Window6, CursorWindow {
 
     area.clip(canvas);
     canvas.fillRect(textbackColor, getCurrentX(),
-                    getCurrentY() - canvas.getFontHeight(font)
-                    + canvas.getFontDescent(font),
-                    canvas.getStringWidth(font, line),
-                    canvas.getFontHeight(font));
-    canvas.drawString(textColor, font,
+                    getCurrentY() - canvas.getFontHeight(getFont())
+                    + canvas.getFontDescent(getFont()),
+                    canvas.getStringWidth(getFont(), line),
+                    canvas.getFontHeight(getFont()));
+    canvas.drawString(textColor, getFont(),
                       getCurrentX(), getCurrentY(), line);
     cursor.setColumn(cursor.getColumn() + line.length());
   }

@@ -46,6 +46,7 @@ public class Viewport6 extends JViewport implements ScreenModel6, Viewport {
   
   private Canvas canvas;
   private BufferedImage imageBuffer;
+  private FontFactory fontFactory;
   private boolean initialized;
   private Color defaultForeground;
   private Color defaultBackground;
@@ -61,6 +62,8 @@ public class Viewport6 extends JViewport implements ScreenModel6, Viewport {
 
     this.machine = machine;
     this.editor = editor;
+    this.fontFactory = new FontFactory();
+    
     windows = new Window6Impl[NUM_V6_WINDOWS];
     standardFont = getFont();
     fixedFont = new Font("Monospaced", Font.ROMAN_BASELINE,
@@ -85,6 +88,7 @@ public class Viewport6 extends JViewport implements ScreenModel6, Viewport {
       canvas.fillRect(defaultBackground, 0, 0 , getWidth(), getHeight());
       
     } else {
+      
       windows[window].clear();
     }
   }
@@ -114,6 +118,8 @@ public class Viewport6 extends JViewport implements ScreenModel6, Viewport {
   
   public void setTextStyle(int style) {
     
+    getOutputStream().flush();
+    windows[currentwindow].setTextStyle(style);
   }
   
   public void setBufferMode(boolean flag) {
@@ -198,7 +204,8 @@ public class Viewport6 extends JViewport implements ScreenModel6, Viewport {
   
   public int setFont(int fontnum) {
    
-    return 0;
+    getOutputStream().flush();
+    return windows[currentwindow].setFont(fontnum);
   }
 
   public synchronized void displayCursor(boolean showCaret) {
@@ -247,10 +254,9 @@ public class Viewport6 extends JViewport implements ScreenModel6, Viewport {
       canvas = new CanvasImpl(imageBuffer, this);
       for (int i = 0; i < NUM_V6_WINDOWS; i++) {
       
-        windows[i] = new Window6Impl(canvas, editor);
+        windows[i] = new Window6Impl(canvas, editor, fontFactory);
         windows[i].setBackground(defaultBackground);
         windows[i].setForeground(defaultForeground);
-        windows[i].setFont(fixedFont);
       }
       
       // Set initial window sizes
@@ -262,7 +268,7 @@ public class Viewport6 extends JViewport implements ScreenModel6, Viewport {
       g_img.fillRect(0, 0, getWidth(), getHeight());
       
       setScreenProperties();      
-      setInitialized();
+      setInitialized();        
     }
 
     g.drawImage(imageBuffer, 0, 0, this);    
@@ -290,7 +296,11 @@ public class Viewport6 extends JViewport implements ScreenModel6, Viewport {
   
   private void determineStandardFont() {
           
-    standardFont = fixedFont;      
+    standardFont = fixedFont;
+    fontFactory.initialize(standardFont, fixedFont);
+    
+    // And set the standard font to the windows
+    for (int i = 0; i < NUM_V6_WINDOWS; i++) windows[i].setFont(1);
   }
   
   private void updateDimensionsInHeader() {
