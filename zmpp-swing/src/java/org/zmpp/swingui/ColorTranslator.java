@@ -67,12 +67,12 @@ public class ColorTranslator {
    * @param defaultColor the default color
    * @return the color for the number
    */
-  public Color translateColornum(int colornum, Color defaultColor) {
+  public Color translate(int colornum, int defaultColor) {
     
     switch (colornum) {
     
     case COLOR_DEFAULT:
-      return defaultColor;
+      return translate(defaultColor, -1000);
     case COLOR_BLACK:
       return Color.BLACK;
     case COLOR_RED:
@@ -93,5 +93,10 @@ public class ColorTranslator {
       return Color.DARK_GRAY;
     }
     return Color.BLACK;
-  }  
+  }
+  
+  public Color translate(int colornum) {
+    
+    return translate(colornum, -1000);
+  }
 }

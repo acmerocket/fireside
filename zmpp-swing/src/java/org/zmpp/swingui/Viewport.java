@@ -22,7 +22,13 @@
  */
 package org.zmpp.swingui;
 
-public interface Viewport {
+import org.zmpp.vm.ScreenModel;
+
+public interface Viewport extends ScreenModel {
 
   CursorWindow getCurrentWindow();
+  int getDefaultBackground();
+  int getDefaultForeground();
+  LineEditor getLineEditor();
+  Canvas getCanvas();
 }

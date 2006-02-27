@@ -25,8 +25,6 @@ package org.zmpp.swingui;
 import java.awt.Color;
 import java.awt.Font;
 
-import org.zmpp.vm.ScreenModel;
-
 /**
  * This class implements the lower window of the standard Z-machine screen
  * model. It extends on the base functionality defined in its super class,
@@ -52,9 +50,9 @@ public class BottomWindow extends SubWindow {
    * @param editor the line editor
    * @param canvas the canvas to draw to
    */
-  public BottomWindow(ScreenModel screen, LineEditor editor, Canvas canvas) {
+  public BottomWindow(Viewport viewport) {
     
-    super(screen, editor, canvas, "BOTTOM");    
+    super(viewport, "BOTTOM");    
     setBufferMode(true);
     setPagingEnabled(true);
   }
@@ -105,7 +103,7 @@ public class BottomWindow extends SubWindow {
     // of fontDescent to reserve enough scrolling space
     while (getCurrentY() > (getTop() + getHeight() - fontDescent)) {
       
-      getCanvas().scrollUp(getBackground(), getFont(),
+      getCanvas().scrollUp(getBackgroundColor(), getFont(),
                            getTop(), getHeight());
       getCursor().setLine(getCursor().getLine() - 1);
       currentY -= fontHeight;

@@ -33,6 +33,7 @@ import javax.swing.SwingUtilities;
 
 import org.zmpp.io.OutputStream;
 import org.zmpp.vm.Machine;
+import org.zmpp.vm.ScreenModel;
 import org.zmpp.vm.ScreenModel6;
 import org.zmpp.vm.StoryFileHeader;
 import org.zmpp.vm.TextCursor;
@@ -48,12 +49,12 @@ public class Viewport6 extends JViewport implements ScreenModel6, Viewport {
   private BufferedImage imageBuffer;
   private FontFactory fontFactory;
   private boolean initialized;
-  private Color defaultForeground;
-  private Color defaultBackground;
-  private Font standardFont, fixedFont;
-    
+  
+  private int defaultBackground, defaultForeground;
+  
   private Window6Impl[] windows;
   private int currentwindow;
+  
   private Machine machine;
   private LineEditor editor;
   private OutputStream outputstream;
@@ -65,9 +66,6 @@ public class Viewport6 extends JViewport implements ScreenModel6, Viewport {
     this.fontFactory = new FontFactory();
     
     windows = new Window6Impl[NUM_V6_WINDOWS];
-    standardFont = getFont();
-    fixedFont = new Font("Monospaced", Font.ROMAN_BASELINE,
-        standardFont.getSize());    
     outputstream = new ScreenOutputStream(machine, this);
   }
   
@@ -76,6 +74,11 @@ public class Viewport6 extends JViewport implements ScreenModel6, Viewport {
     return windows[currentwindow];
   }
   
+  public LineEditor getLineEditor() { return editor; }
+  public int getDefaultBackground() { return defaultBackground; }
+  public int getDefaultForeground() { return defaultForeground; }
+  public Canvas getCanvas() { return canvas; }
+    
   // ********************************************************************
   // ***** ScreenModel interface
   // *******************************************
@@ -85,7 +88,9 @@ public class Viewport6 extends JViewport implements ScreenModel6, Viewport {
     if (window == - 1 || window == -2) {
       
       // We need to have special handling for the two different cases
-      canvas.fillRect(defaultBackground, 0, 0 , getWidth(), getHeight());
+      Color erasecolor =
+        ColorTranslator.getInstance().translate(defaultBackground);
+      canvas.fillRect(erasecolor, 0, 0 , getWidth(), getHeight());
       
     } else {
       
@@ -170,11 +175,9 @@ public class Viewport6 extends JViewport implements ScreenModel6, Viewport {
     if (colornum > 0) {
       
       getOutputStream().flush();
-      Color foreground = ColorTranslator.getInstance().translateColornum(
-          colornum, defaultForeground);
       for (int i = 0; i < windows.length; i++) {
         
-        windows[i].setForeground(foreground);
+        windows[i].setForeground(colornum);
       }
     }
   }
@@ -187,12 +190,9 @@ public class Viewport6 extends JViewport implements ScreenModel6, Viewport {
     if (colornum > 0) {
       
       getOutputStream().flush();
-      Color background = ColorTranslator.getInstance().translateColornum(
-          colornum, defaultBackground);
-      
       for (int i = 0; i < windows.length; i++) {
         
-        windows[i].setBackground(background);
+        windows[i].setBackground(colornum);
       }
     }
   }
@@ -248,15 +248,13 @@ public class Viewport6 extends JViewport implements ScreenModel6, Viewport {
           BufferedImage.TYPE_INT_RGB);
 
       // Default colors
-      defaultBackground = Color.WHITE;
-      defaultForeground = Color.BLACK;
+      defaultBackground = ColorTranslator.COLOR_WHITE;
+      defaultForeground = ColorTranslator.COLOR_BLACK;
             
       canvas = new CanvasImpl(imageBuffer, this);
       for (int i = 0; i < NUM_V6_WINDOWS; i++) {
       
-        windows[i] = new Window6Impl(canvas, editor, fontFactory);
-        windows[i].setBackground(defaultBackground);
-        windows[i].setForeground(defaultForeground);
+        windows[i] = new Window6Impl(this, fontFactory);
       }
       
       // Set initial window sizes
@@ -264,11 +262,22 @@ public class Viewport6 extends JViewport implements ScreenModel6, Viewport {
       windows[1].setSize(getWidth(), 0);
       
       Graphics g_img = imageBuffer.getGraphics();
-      g_img.setColor(defaultBackground);
+      Color bgcolor =
+        ColorTranslator.getInstance().translate(defaultBackground);
+      g_img.setColor(bgcolor);
       g_img.fillRect(0, 0, getWidth(), getHeight());
       
-      setScreenProperties();      
-      setInitialized();        
+      setScreenProperties();
+      
+      // Set the final default settings to each window
+      for (int i = 0; i < NUM_V6_WINDOWS; i++) {
+        
+        windows[i].setFont(1);
+        windows[i].setBackground(defaultBackground);
+        windows[i].setForeground(defaultForeground);
+      }
+      
+      setInitialized();
     }
 
     g.drawImage(imageBuffer, 0, 0, this);    
@@ -296,17 +305,17 @@ public class Viewport6 extends JViewport implements ScreenModel6, Viewport {
   
   private void determineStandardFont() {
           
+    Font standardFont = getFont();
+    Font fixedFont = new Font("Monospaced", Font.ROMAN_BASELINE,
+                              standardFont.getSize());    
     standardFont = fixedFont;
-    fontFactory.initialize(standardFont, fixedFont);
-    
-    // And set the standard font to the windows
-    for (int i = 0; i < NUM_V6_WINDOWS; i++) windows[i].setFont(1);
+    fontFactory.initialize(standardFont, fixedFont);    
   }
   
   private void updateDimensionsInHeader() {
     
     StoryFileHeader fileheader = machine.getGameData().getStoryFileHeader();
-    Font font = fixedFont;
+    Font font = fontFactory.getFont(ScreenModel.FONT_FIXED).getFont();
     FontMetrics fm = imageBuffer.getGraphics().getFontMetrics(font);
     int screenWidth = imageBuffer.getWidth() / fm.charWidth('0');
     int screenHeight = imageBuffer.getHeight() / fm.getHeight();    

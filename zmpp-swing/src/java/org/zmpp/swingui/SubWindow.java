@@ -36,15 +36,13 @@ import org.zmpp.vm.TextCursor;
  */
 public abstract class SubWindow implements CursorWindow {
 
-  private Canvas canvas;
+  private Viewport viewport;
   private TextCursor cursor;
-  private LineEditor editor;
-  private ScreenModel screen;
   
   private int top;
   private int height;
-  private Color foreground;
-  private Color background;
+  private int foreground;
+  private int background;
  
   private int fontnumber;
   private Font font;
@@ -60,12 +58,9 @@ public abstract class SubWindow implements CursorWindow {
    * @param canvas the canvas
    * @param name the window name
    */
-  public SubWindow(ScreenModel screen, LineEditor editor,
-                   Canvas canvas, String name) {
+  public SubWindow(Viewport viewport, String name) {
     
-    this.canvas = canvas;
-    this.editor = editor;
-    this.screen = screen;
+    this.viewport = viewport;
     this.cursor = new TextCursorImpl(this);
     this.name = name;
   }
@@ -144,33 +139,36 @@ public abstract class SubWindow implements CursorWindow {
   public void clear() {
     
     clipToCurrentBounds();
-    canvas.fillRect(background, 0, getTop(), canvas.getWidth(), height);
+    getCanvas().fillRect(getBackgroundColor(), 0, getTop(),
+                         getCanvas().getWidth(), height);
     resetCursorToHome();
   }
   
   public void eraseLine() {
     
+    Canvas canvas = getCanvas();
     int currentX = getCurrentX();
     clipToCurrentBounds();
-    canvas.fillRect(background, currentX,
+    canvas.fillRect(getBackgroundColor(), currentX,
                     getCurrentY() - canvas.getFontAscent(font),
                     canvas.getWidth() - currentX,
                     canvas.getFontHeight(font));
   }
   
-  public void setBackground(Color color) {
+  public void setBackground(int colornum) { background = colornum; }
+  
+  protected Color getBackgroundColor() {
     
-    background = color;
+    return ColorTranslator.getInstance().translate(background,
+        viewport.getDefaultBackground());
   }
   
-  public Color getBackground() {
-    
-    return background;
-  }
+  public void setForeground(int colornum) { foreground = colornum; }
   
-  public void setForeground(Color color) {
+  protected Color getForegroundColor() {
     
-    foreground = color;
+    return ColorTranslator.getInstance().translate(foreground,
+        viewport.getDefaultForeground());
   }
   
   /**
@@ -181,6 +179,7 @@ public abstract class SubWindow implements CursorWindow {
   public void printString(String str) {
 
     //System.out.printf("printString(), %s: '%s'\n", name, str);
+    Canvas canvas = getCanvas();
     int width = canvas.getWidth();
     int lineLength = width;
     
@@ -197,21 +196,23 @@ public abstract class SubWindow implements CursorWindow {
 
   public void drawCursor(boolean flag) {
     
+    Canvas canvas = getCanvas();
     int meanCharWidth = canvas.getCharWidth(font, '0');    
     
     clipToCurrentBounds();
-    canvas.fillRect(flag ? foreground : background, getCurrentX(),
-                    getCurrentY() - canvas.getFontAscent(font), meanCharWidth,
-                    canvas.getFontHeight(font));
+    canvas.fillRect(flag ? getForegroundColor() : getBackgroundColor(),
+                    getCurrentX(), getCurrentY() - canvas.getFontAscent(font),
+                    meanCharWidth, canvas.getFontHeight(font));
   }
   
   public void backspace(char c) {
     
+    Canvas canvas = getCanvas();
     int charWidth = canvas.getCharWidth(font, c);
     
     // Clears the text under the cursor
     clipToCurrentBounds();
-    canvas.fillRect(background, getCurrentX() - charWidth,
+    canvas.fillRect(getBackgroundColor(), getCurrentX() - charWidth,
                     getCurrentY() - canvas.getFontAscent(font), charWidth,
                     canvas.getFontHeight(font));
     cursor.setColumn(cursor.getColumn() - 1);
@@ -230,34 +231,39 @@ public abstract class SubWindow implements CursorWindow {
   
   protected Canvas getCanvas() {
     
-    return canvas;
-  }
-  
-  protected ScreenModel getScreen() {
-    
-    return screen;
+    return viewport.getCanvas();
   }
   
   protected LineEditor getEditor() {
     
-    return editor;
+    return viewport.getLineEditor();
+  }
+  
+  protected ScreenModel getScreen() {
+    
+    return (ScreenModel) viewport;
+  }
+  
+  protected Viewport getViewport() {
+    
+    return viewport;
   }
   
   protected Color getTextBackground() {
     
-    return isReverseVideo ? foreground : background;
+    return isReverseVideo ? getForegroundColor() : getBackgroundColor();
   }
   
   protected Color getTextColor() {
     
-    return isReverseVideo ? background : foreground;
+    return isReverseVideo ? getBackgroundColor() : getForegroundColor();
   }
   
   protected void printLine(String line, Color textbackColor,
                            Color textColor) {
 
-    //System.out.printf("printLine(): '%s'\n", line);
     clipToCurrentBounds();
+    Canvas canvas = getCanvas();
     canvas.fillRect(textbackColor, getCurrentX(),
                     getCurrentY() - canvas.getFontHeight(font)
                     + canvas.getFontDescent(font),
@@ -337,7 +343,6 @@ public abstract class SubWindow implements CursorWindow {
       String line = lines[i];
       printLine(line, textbackColor, textColor);
       
-      //if (endsWithNewLine(line) || i < lines.length - 1) {
       if (endsWithNewLine(line)) {
         
         newline();
@@ -352,6 +357,7 @@ public abstract class SubWindow implements CursorWindow {
   
   protected void clipToCurrentBounds() {
     
+    Canvas canvas = getCanvas();
     canvas.setClip(0, top, canvas.getWidth(), height);
   }
 }

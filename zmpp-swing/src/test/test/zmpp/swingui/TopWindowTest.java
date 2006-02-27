@@ -24,32 +24,22 @@ package test.zmpp.swingui;
 
 import org.jmock.Mock;
 import org.jmock.MockObjectTestCase;
-import org.zmpp.swingui.Canvas;
-import org.zmpp.swingui.LineEditor;
 import org.zmpp.swingui.TopWindow;
-import org.zmpp.vm.ScreenModel;
+import org.zmpp.swingui.Viewport;
 
 public class TopWindowTest extends MockObjectTestCase {
 
   private Mock mockScreen;
-  private ScreenModel screen;
-  private Mock mockCanvas;
-  private Canvas canvas;
-  private Mock mockEditor;
-  private LineEditor editor;
+  private Viewport screen;
   
   private TopWindow window;
   
   protected void setUp() throws Exception {
 
-    mockScreen = mock(ScreenModel.class);
-    screen = (ScreenModel) mockScreen.proxy();
-    mockCanvas = mock(Canvas.class);
-    canvas = (Canvas) mockCanvas.proxy();
-    mockEditor = mock(LineEditor.class);
-    editor = (LineEditor) mockEditor.proxy();
+    mockScreen = mock(Viewport.class);
+    screen = (Viewport) mockScreen.proxy();
     
-    window = new TopWindow(screen, editor, canvas);
+    window = new TopWindow(screen);
   }
 
   public void testUnbuffered() {

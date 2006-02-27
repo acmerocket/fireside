@@ -43,14 +43,15 @@ public class TextViewport extends JViewport implements ScreenModel, Viewport {
   private static final long serialVersionUID = 1L;
   
   private BufferedImage imageBuffer;
+  private Canvas canvas;
   private boolean initialized;
   private ScreenOutputStream outputstream;
   
   private static final int WINDOW_BOTTOM  = 0;
   private static final int WINDOW_TOP     = 1;
   
-  private Color defaultForeground;
-  private Color defaultBackground;
+  private int defaultForeground;
+  private int defaultBackground;
   private Font standardFont, fixedFont;
   
   private Machine machine;
@@ -74,6 +75,14 @@ public class TextViewport extends JViewport implements ScreenModel, Viewport {
   }
   
   public CursorWindow getCurrentWindow() { return windows[activeWindow]; }
+  
+  public LineEditor getLineEditor() { return editor; }
+  
+  public int getDefaultBackground() { return defaultBackground; }
+  
+  public int getDefaultForeground() { return defaultForeground; }
+  
+  public Canvas getCanvas() { return canvas; }
   
   public void reset() {
     
@@ -233,35 +242,37 @@ public class TextViewport extends JViewport implements ScreenModel, Viewport {
       
       imageBuffer = new BufferedImage(getWidth(), getHeight(),
           BufferedImage.TYPE_INT_RGB);
-      Canvas canvas = new CanvasImpl(imageBuffer, this);
+      canvas = new CanvasImpl(imageBuffer, this);
       
       // Default colors
-      defaultBackground = Color.WHITE;
-      defaultForeground = Color.BLACK;
+      defaultBackground = ColorTranslator.COLOR_WHITE;
+      defaultForeground = ColorTranslator.COLOR_BLACK;
       
       // Create the two sub windows
-      windows[WINDOW_TOP] = new TopWindow(this, editor, canvas);
-      windows[WINDOW_TOP].setBackground(defaultBackground);
-      windows[WINDOW_TOP].setForeground(defaultForeground);
+      windows[WINDOW_TOP] = new TopWindow(this);
       // S. 8.7.2.4: use fixed font for upper window
       windows[WINDOW_TOP].setFont(fixedFont);
       windows[WINDOW_TOP].setFontNumber(ScreenModel.FONT_FIXED);
             
-      windows[WINDOW_BOTTOM] = new BottomWindow(this, editor, canvas);           
-      windows[WINDOW_BOTTOM].setBackground(defaultBackground);
-      windows[WINDOW_BOTTOM].setForeground(defaultForeground);
+      windows[WINDOW_BOTTOM] = new BottomWindow(this);           
       windows[WINDOW_BOTTOM].setFont(standardFont);
       windows[WINDOW_BOTTOM].setFontNumber(ScreenModel.FONT_NORMAL);
 
       activeWindow = WINDOW_BOTTOM;
 
       Graphics g_img = imageBuffer.getGraphics();
-      g_img.setColor(defaultBackground);
-      g_img.fillRect(0, 0, getWidth(), getHeight());
       resizeWindows(0);
       windows[WINDOW_TOP].resetCursorToHome();
       windows[WINDOW_BOTTOM].resetCursorToHome();
       setScreenProperties();
+      
+      g_img.setColor(ColorTranslator.getInstance().translate(defaultBackground));
+      g_img.fillRect(0, 0, getWidth(), getHeight());
+      windows[WINDOW_TOP].setBackground(defaultBackground);
+      windows[WINDOW_TOP].setForeground(defaultForeground);
+      windows[WINDOW_BOTTOM].setBackground(defaultBackground);
+      windows[WINDOW_BOTTOM].setForeground(defaultForeground);
+      
       setInitialized();
     }
 
@@ -283,15 +294,11 @@ public class TextViewport extends JViewport implements ScreenModel, Viewport {
    */
   public void setForegroundColor(int colornum) {
    
-    //if (activeWindow == WINDOW_BOTTOM)
-    //System.out.printf("setForegroundColor(): %d\n", colornum);    
     if (colornum > 0) {
       
       getOutputStream().flush();
-      Color foreground = ColorTranslator.getInstance().translateColornum(
-          colornum, defaultForeground);
-      windows[WINDOW_TOP].setForeground(foreground);
-      windows[WINDOW_BOTTOM].setForeground(foreground);
+      windows[WINDOW_TOP].setForeground(colornum);
+      windows[WINDOW_BOTTOM].setForeground(colornum);
     }
   }
   
@@ -300,15 +307,11 @@ public class TextViewport extends JViewport implements ScreenModel, Viewport {
    */
   public void setBackgroundColor(int colornum) {
     
-    //if (activeWindow == WINDOW_BOTTOM)
-    //System.out.printf("setBackgroundColor(): %d\n", colornum);    
     if (colornum > 0) {
       
       getOutputStream().flush();
-      Color background = ColorTranslator.getInstance().translateColornum(
-          colornum, defaultBackground);
-      windows[WINDOW_TOP].setBackground(background);
-      windows[WINDOW_BOTTOM].setBackground(background);
+      windows[WINDOW_TOP].setBackground(colornum);
+      windows[WINDOW_BOTTOM].setBackground(colornum);
     }
   }
   
@@ -484,10 +487,8 @@ public class TextViewport extends JViewport implements ScreenModel, Viewport {
       
       fileheader.setDefaultBackgroundColor(ColorTranslator.COLOR_BLACK);
       fileheader.setDefaultForegroundColor(ColorTranslator.COLOR_WHITE);      
-      defaultBackground = Color.BLACK;
-      defaultForeground = Color.WHITE;
-      windows[WINDOW_BOTTOM].setBackground(defaultBackground);
-      windows[WINDOW_BOTTOM].setForeground(defaultForeground);
+      defaultBackground = ColorTranslator.COLOR_BLACK;
+      defaultForeground = ColorTranslator.COLOR_WHITE;
       windows[WINDOW_BOTTOM].clear();
     }
   }

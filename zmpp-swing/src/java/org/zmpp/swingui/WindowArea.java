@@ -24,6 +24,8 @@ package org.zmpp.swingui;
 
 import java.awt.Color;
 
+import org.zmpp.vm.Window6;
+
 /**
  * This class holds the knowledge about a window's position and sizes.
  * The setter methods all take 1-based coordinates, which is the standard
@@ -42,7 +44,11 @@ public class WindowArea {
   private int marginLeft;
   private int marginRight;
   
-  public WindowArea() { }
+  public WindowArea() {
+    
+    this.left = 1;
+    this.top = 1;
+  }
   
   public int getMarginLeft() { return marginLeft; }
   
@@ -95,5 +101,19 @@ public class WindowArea {
     clip(canvas);
     canvas.fillRect(color, getStartX(), getStartY(),
                     getOutputWidth(), getOutputHeight());
+  }
+  
+  public int getProperty(int propertynum) {
+    
+    switch (propertynum) {
+    
+      case Window6.PROPERTY_Y_COORD: return top;
+      case Window6.PROPERTY_X_COORD: return left;
+      case Window6.PROPERTY_Y_SIZE: return height;
+      case Window6.PROPERTY_X_SIZE: return width;
+      case Window6.PROPERTY_LEFT_MARGIN: return marginLeft;
+      case Window6.PROPERTY_RIGHT_MARGIN: return marginRight;
+      default: return 0;
+    }
   }
 }

@@ -31,41 +31,37 @@ import org.zmpp.vm.Window6;
 
 public class Window6Impl implements Window6, CursorWindow {
 
-  private Canvas canvas;
   private TextCursor cursor;
-  private LineEditor editor;
   private FontFactory fontFactory;
   
-  private Color background;
-  private Color foreground;
+  private int interruptRoutine;
+  private int interruptCount;
+  
+  private int background;
+  private int foreground;
   
   private ScreenFont font;
   
-  private boolean buffered;
-
+  private Viewport viewport;
   private WindowArea area;
+  private WindowStyle style;
   
-  public Window6Impl(Canvas canvas, LineEditor editor,
-      FontFactory fontFactory) {
+  public Window6Impl(Viewport viewport, FontFactory fontFactory) {
   
-    this.canvas = canvas;
-    this.editor = editor;
+    this.viewport = viewport;
     this.fontFactory = fontFactory;
     
     cursor = new TextCursorImpl(this);
     
     area = new WindowArea();
-    area.setPosition(1, 1);
+    style = new WindowStyle();
   }
   
-  public TextCursor getCursor() {
-    
-    return cursor;
-  }
+  public TextCursor getCursor() { return cursor; }
   
   public void drawPicture(BufferedImage picture, int y, int x) {
 
-    canvas.drawImage(picture, x - 1, y - 1);
+    getCanvas().drawImage(picture, x - 1, y - 1);
   }
 
   public void move(int y, int x) {
@@ -74,10 +70,9 @@ public class Window6Impl implements Window6, CursorWindow {
   }
 
   public void setBufferMode(boolean flag) {
-    
-    buffered = flag;
-  }
-  
+
+    style.setIsWrapped(flag);
+  }  
   
   public void setSize(int height, int width) {
     
@@ -86,6 +81,7 @@ public class Window6Impl implements Window6, CursorWindow {
 
   public void setStyle(int styleflags, int operation) {
 
+    style.setFlags(styleflags, operation);
   }
   
   public void setMargins(int left, int right) {
@@ -94,29 +90,53 @@ public class Window6Impl implements Window6, CursorWindow {
   }
   
   public int getProperty(int propertynum) {
-    
-    // TODO
-    return 0;
+
+    switch (propertynum) {
+    case Window6.PROPERTY_Y_COORD: case Window6.PROPERTY_X_COORD:
+    case Window6.PROPERTY_Y_SIZE: case Window6.PROPERTY_X_SIZE:
+    case Window6.PROPERTY_LEFT_MARGIN: case Window6.PROPERTY_RIGHT_MARGIN:
+      return area.getProperty(propertynum);
+    case Window6.PROPERTY_X_CURSOR: return cursor.getColumn();
+    case Window6.PROPERTY_Y_CURSOR: return cursor.getLine();
+    case Window6.PROPERTY_INTERRUPT_COUNT: return interruptCount;
+    case Window6.PROPERTY_INTERRUPT_ROUTINE: return interruptRoutine;
+    case Window6.PROPERTY_FONT_NUMBER: return font.getNumber();    
+    case Window6.PROPERTY_TEXTSTYLE: return font.getStyle();    
+    case Window6.PROPERTY_COLOURDATA: return getColorData();
+    case Window6.PROPERTY_FONT_SIZE: return 1; // TODO
+    case Window6.PROPERTY_ATTRIBUTES: return style.getFlags();
+    case Window6.PROPERTY_LINE_COUNT: return getAvailableLines();
+    default: return 0;
+    }
   }
   
-  public void setBackground(Color color) {
-    
-    background = color;
+  private int getColorData() {
+   
+    return ((background << 8 & 0x0f0) | (foreground & 0x0f));
   }
   
-  public void setForeground(Color color) {
-    
-    foreground = color;
+  public void setBackground(int colornum) { background = colornum; }
+  private Color getBackgroundColor() {
+  
+    return ColorTranslator.getInstance().translate(
+        background, viewport.getDefaultBackground());
   }
   
+  public void setForeground(int colornum) { foreground = colornum; }
+  private Color getForegroundColor() {
+    
+    return ColorTranslator.getInstance().translate(
+        foreground, viewport.getDefaultForeground());
+  }
+    
   protected Color getTextBackground() {
     
-    return font.isReverseVideo() ? foreground : background;
+    return font.isReverseVideo() ? getForegroundColor() : getBackgroundColor();
   }
   
   protected Color getTextColor() {
     
-    return font.isReverseVideo() ? background : foreground;
+    return font.isReverseVideo() ? getBackgroundColor() : getForegroundColor();
   }
   
   public int setFont(int fontnum) {
@@ -132,7 +152,7 @@ public class Window6Impl implements Window6, CursorWindow {
   
   public void setTextStyle(int style) {
     
-    this.font = fontFactory.getTextStyle(font, style);
+    font = fontFactory.getTextStyle(font, style);
   }
   
   // ************************************************************************
@@ -144,7 +164,7 @@ public class Window6Impl implements Window6, CursorWindow {
     int lineLength = area.getOutputWidth();
     
     WordWrapper wordWrapper =
-      new WordWrapper(lineLength, canvas, getFont(), isBuffered());
+      new WordWrapper(lineLength, getCanvas(), getFont(), isBuffered());
     String[] lines = wordWrapper.wrap(getCurrentX(), str);
     printLines(lines);    
   }
@@ -153,10 +173,7 @@ public class Window6Impl implements Window6, CursorWindow {
     
   }
   
-  public boolean isBuffered() {
-    
-    return buffered;
-  }
+  public boolean isBuffered() { return style.isWrapped(); }
   
   public void backspace(char previousChar) {
     
@@ -164,13 +181,15 @@ public class Window6Impl implements Window6, CursorWindow {
   
   public void clear() {
     
-    area.fill(canvas, background);
+    area.fill(getCanvas(), getBackgroundColor());
     resetCursorToHome();
   }
   
   // ************************************************************************
   // ****** Private methods
   // ***************************************
+  
+  private Canvas getCanvas() { return viewport.getCanvas(); }
   
   private Font getFont() { return font.getFont(); }
   
@@ -201,6 +220,7 @@ public class Window6Impl implements Window6, CursorWindow {
   private void printLine(String line, Color textbackColor,
       Color textColor) {
 
+    Canvas canvas = getCanvas();
     area.clip(canvas);
     canvas.fillRect(textbackColor, getCurrentX(),
                     getCurrentY() - canvas.getFontHeight(getFont())
@@ -230,13 +250,14 @@ public class Window6Impl implements Window6, CursorWindow {
   
   private int getCurrentX() {
     
-    int meanCharWidth = canvas.getCharWidth(getFont(), '0');      
+    int meanCharWidth = getCanvas().getCharWidth(getFont(), '0');      
     return area.getMarginLeft() + (cursor.getColumn() - 1) * meanCharWidth;
   }
   
   private int getCurrentY() {
     
     Font font = getFont();
+    Canvas canvas = getCanvas();
     return area.getStartY() + (cursor.getLine() - 1) * canvas.getFontHeight(font)
            + (canvas.getFontHeight(font) - canvas.getFontDescent(font));
   }
@@ -248,8 +269,9 @@ public class Window6Impl implements Window6, CursorWindow {
 
   private int getAvailableLines() {
     
+    Canvas canvas = getCanvas();
     int descent = canvas.getFontDescent(getFont());
     int fontHeight = canvas.getFontHeight(getFont());
     return (area.getOutputHeight() - descent) / fontHeight;
-  }
+  }  
 }

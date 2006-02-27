@@ -25,31 +25,21 @@ package test.zmpp.swingui;
 import org.jmock.Mock;
 import org.jmock.MockObjectTestCase;
 import org.zmpp.swingui.BottomWindow;
-import org.zmpp.swingui.Canvas;
-import org.zmpp.swingui.LineEditor;
-import org.zmpp.vm.ScreenModel;
+import org.zmpp.swingui.Viewport;
 
 public class BottomWindowTest extends MockObjectTestCase {
 
   private Mock mockScreen;
-  private ScreenModel screen;
-  private Mock mockCanvas;
-  private Canvas canvas;
-  private Mock mockEditor;
-  private LineEditor editor;
+  private Viewport screen;
   
   private BottomWindow window;
   
   protected void setUp() {
     
-    mockScreen = mock(ScreenModel.class);
-    screen = (ScreenModel) mockScreen.proxy();
-    mockCanvas = mock(Canvas.class);
-    canvas = (Canvas) mockCanvas.proxy();
-    mockEditor = mock(LineEditor.class);
-    editor = (LineEditor) mockEditor.proxy();
+    mockScreen = mock(Viewport.class);
+    screen = (Viewport) mockScreen.proxy();
     
-    window = new BottomWindow(screen, editor, canvas);
+    window = new BottomWindow(screen);
   }
   
   public void testInitial() {

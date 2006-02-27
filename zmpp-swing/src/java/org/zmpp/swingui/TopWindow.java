@@ -24,8 +24,6 @@ package org.zmpp.swingui;
 
 import java.awt.Font;
 
-import org.zmpp.vm.ScreenModel;
-
 /**
  * This class implements the upper window of the standard Z-machine screen
  * model.
@@ -39,12 +37,10 @@ public class TopWindow extends SubWindow {
    * Constructor.
    * 
    * @param screen the screen model
-   * @param editor the line editor
-   * @param canvas the canvas to draw to
    */
-  public TopWindow(ScreenModel screen, LineEditor editor, Canvas canvas) {
+  public TopWindow(Viewport viewport) {
     
-    super(screen, editor, canvas, "TOP");    
+    super(viewport, "TOP");    
   }
   
   /**
