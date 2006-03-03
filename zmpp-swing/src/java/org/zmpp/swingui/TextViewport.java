@@ -132,7 +132,7 @@ public class TextViewport extends JViewport implements ScreenModel, Viewport {
     return windows[activeWindow].getCursor();
   }
   
-  public void setTextCursor(final int line, final int column) {
+  public void setTextCursor(int line, int column, int window) {
    
     windows[activeWindow].getCursor().setPosition(line, column);
   }
@@ -292,7 +292,7 @@ public class TextViewport extends JViewport implements ScreenModel, Viewport {
   /**
    * {@inheritDoc}
    */
-  public void setForegroundColor(int colornum) {
+  public void setForegroundColor(int colornum, int window) {
    
     if (colornum > 0) {
       
@@ -305,7 +305,7 @@ public class TextViewport extends JViewport implements ScreenModel, Viewport {
   /**
    * {@inheritDoc}
    */
-  public void setBackgroundColor(int colornum) {
+  public void setBackgroundColor(int colornum, int window) {
     
     if (colornum > 0) {
       
