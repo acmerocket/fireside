@@ -492,16 +492,14 @@ public class VariableInstruction extends AbstractInstruction {
     
       int line = getValue(0);
       int column = 0;
+      int window = ScreenModel.CURRENT_WINDOW;
       
       if (getNumOperands() >= 2) column = getValue(1);
+      if (getNumOperands() >= 3) window = getValue(2);
       
       if (line > 0) {
         
-        screenModel.setTextCursor(line, column);
-        
-      } else if (getStoryFileVersion() == 6) {
-
-        // ignore negative line values for the moment
+        screenModel.setTextCursor(line, column, window);        
       }
     }
     nextInstruction();    
@@ -682,7 +680,8 @@ public class VariableInstruction extends AbstractInstruction {
         getMachine().getOutput().printZsciiChar(zchar, false);
       }
       row += skip + 1;
-      getMachine().getScreen().setTextCursor(row, column);
+      getMachine().getScreen().setTextCursor(row, column,
+          ScreenModel.CURRENT_WINDOW);
     }
     nextInstruction();
   }
