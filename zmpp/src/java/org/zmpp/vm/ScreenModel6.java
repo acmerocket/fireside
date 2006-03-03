@@ -25,8 +25,6 @@ package org.zmpp.vm;
 
 public interface ScreenModel6 extends ScreenModel {
 
-  static final int CURRENT_WINDOW = -3;
-  
   /**
    * Restricts the mouse pointer to the specified window.
    * 

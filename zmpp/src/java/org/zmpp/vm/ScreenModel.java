@@ -33,6 +33,8 @@ import org.zmpp.io.OutputStream;
  */
 public interface ScreenModel {
 
+  static final int CURRENT_WINDOW = -3;
+  
   /**
    * Font number for the standard font.
    */
@@ -112,8 +114,9 @@ public interface ScreenModel {
    * 
    * @param line the line
    * @param column the column
+   * @param the window
    */
-  void setTextCursor(int line, int column);
+  void setTextCursor(int line, int column, int window);
   
   /**
    * Retrieves the active window's cursor.
@@ -141,15 +144,17 @@ public interface ScreenModel {
    * Sets the background color.
    * 
    * @param colornumber the color number
+   * @param window the window
    */
-  void setBackgroundColor(int colornumber);
+  void setBackgroundColor(int colornumber, int window);
   
   /**
    * Sets the foreground color.
    * 
    * @param colornumber a color number
+   * @param window the window
    */
-  void setForegroundColor(int colornumber);
+  void setForegroundColor(int colornumber, int window);
   
   /**
    * Forces a redraw.
