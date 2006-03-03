@@ -153,6 +153,7 @@ public class DefaultStoryFileHeader implements StoryFileHeader {
    */
   public void setScreenWidth(int numChars) {
 
+    //System.out.println("setScreenWidth(): " + numChars);
     memaccess.writeUnsignedByte(0x21, (short) numChars);
     
     if (getVersion() >= 5) {
@@ -252,7 +253,14 @@ public class DefaultStoryFileHeader implements StoryFileHeader {
    */
   public void setFontWidth(int units) {
 
-    memaccess.writeUnsignedByte(0x26, (short) units);
+    if (getVersion() == 6) {
+      
+      memaccess.writeUnsignedByte(0x27, (short) units);
+      
+    } else {
+      
+      memaccess.writeUnsignedByte(0x26, (short) units);
+    }
   }
   
   /**
@@ -260,7 +268,14 @@ public class DefaultStoryFileHeader implements StoryFileHeader {
    */
   public void setFontHeight(int units) {
     
-    memaccess.writeUnsignedByte(0x27, (short) units);
+    if (getVersion() == 6) {
+      
+      memaccess.writeUnsignedByte(0x26, (short) units);
+      
+    } else {
+      
+      memaccess.writeUnsignedByte(0x27, (short) units);
+    }
   }
   
   /**
