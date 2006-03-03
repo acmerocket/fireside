@@ -74,22 +74,27 @@ implements InputStream, StatusLine, SaveGameDataStore, IOSystem {
     String blorb = getParameter("blorbfile");
     
     try {
-      
-      URL storyurl = new URL(getDocumentBase(), story);
+
       URL blorburl = null;
-      if (blorb != null) {
-        
-        blorburl = new URL(getDocumentBase(), blorb);
+      if (blorb != null) blorburl = new URL(getDocumentBase(), blorb);
+      
+      AppletMachineFactory factory = null;
+
+      if (story != null) {
+
+        URL storyurl = new URL(getDocumentBase(), story);
+        factory = new AppletMachineFactory(this, storyurl, blorburl);
+
+      } else {
+
+        factory = new AppletMachineFactory(this, blorburl);
       }
-      AppletMachineFactory factory = new AppletMachineFactory(this,
-          storyurl, blorburl);
       machine = factory.buildMachine();
       
     } catch (Exception ex) {
       
       ex.printStackTrace();      
     }
-    
   }
   
   public void initUI(Machine machine) {

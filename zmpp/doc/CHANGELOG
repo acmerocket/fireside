@@ -1,7 +1,21 @@
 Changelog
 
+Version 0.87
+------------
+
+- sub window graphics operations clip to window bounds
+- standalone application accepts the story file as a parameter
+- enable V6 story file reading
+- resetting sub components on restart
+- fixed memory stream bug
+- opcodes: @mouse_window, @picture_data, @draw_picture, @move_window,
+  @window_style, @window_size, @set_margins, @get_wind_prop
+- changed @set_colour, @erase_line for model 6
+- picture management
+- can use embedded ZCOD chunks in Blorb files
+
 Version 0.86
------------
+------------
 - imitate text coloring in console Frotz, making "Varicella" and "Photopia" more enjoyable
 - Blorb support
 - sound support

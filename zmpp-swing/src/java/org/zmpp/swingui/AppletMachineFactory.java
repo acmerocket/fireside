@@ -26,6 +26,7 @@ import java.net.URL;
 
 import org.zmpp.base.DefaultMemoryAccess;
 import org.zmpp.blorb.BlorbResources;
+import org.zmpp.blorb.BlorbStory;
 import org.zmpp.iff.DefaultFormChunk;
 import org.zmpp.iff.FormChunk;
 import org.zmpp.io.IOSystem;
@@ -48,6 +49,7 @@ public class AppletMachineFactory extends MachineFactory<ZmppApplet> {
   private ZmppApplet applet;
   private java.io.InputStream storyis;
   private java.io.InputStream resourceis;
+  private FormChunk blorbchunk;
 
   /**
    * Constructor.
@@ -74,26 +76,55 @@ public class AppletMachineFactory extends MachineFactory<ZmppApplet> {
     }
   }
   
-  /**
-   * {@inheritDoc}
-   */
-  protected Resources readResources() {
+  public AppletMachineFactory(ZmppApplet applet, URL zblorburl)
+  throws Exception {
+  
+    this.applet = applet;
+    try {
     
-    byte[] data = FileUtils.readFileBytes(resourceis);
-    if (data != null) {
+      resourceis = zblorburl.openStream();
     
-      FormChunk formchunk = new DefaultFormChunk(new DefaultMemoryAccess(data));
-      return new BlorbResources(formchunk);
+    } catch (Exception ex) {
+    
+      ex.printStackTrace();      
     }
-    return null;
   }
 
   /**
    * {@inheritDoc}
    */
   protected byte[] readStoryData() {
+  
+    if (storyis != null) {
+      
+      return FileUtils.readFileBytes(storyis);
+      
+    } else {
+      
+      FormChunk formchunk = readBlorb();      
+      return formchunk != null ? new BlorbStory(readBlorb()).getStoryData()
+                                 : null;
+    }
+  }
+  
+  private FormChunk readBlorb() {
     
-    return FileUtils.readFileBytes(storyis);
+    if (blorbchunk == null) {
+      byte[] data = FileUtils.readFileBytes(resourceis);
+      if (data != null)
+        blorbchunk = new DefaultFormChunk(new DefaultMemoryAccess(data));
+    }
+    return blorbchunk;
+  }
+
+
+  /**
+   * {@inheritDoc}
+   */
+  protected Resources readResources() {
+
+    FormChunk formchunk = readBlorb();
+    return (formchunk != null) ? new BlorbResources(formchunk) : null;
   }
 
   /**

@@ -74,11 +74,19 @@ public class Main {
     }
     
     // Read in the story file
-    if (storyfile != null && storyfile.exists()) {
+    if (storyfile != null && storyfile.exists() && storyfile.isFile()) {
       
-      File blorbfile = searchForResources(storyfile);
-      ApplicationMachineFactory factory =
-        new ApplicationMachineFactory(storyfile, blorbfile);
+      ApplicationMachineFactory factory;
+      
+      if (isZblorbSuffix(storyfile.getName())) {
+        
+        factory = new ApplicationMachineFactory(storyfile);
+        
+      } else {
+        
+        File blorbfile = searchForResources(storyfile);
+        factory = new ApplicationMachineFactory(storyfile, blorbfile);
+      }
       factory.buildMachine();
       ZmppFrame frame = factory.getUI();      
       frame.startMachine();
@@ -93,6 +101,11 @@ public class Main {
     }
   }
   
+  private static boolean isZblorbSuffix(String filename) {
+    
+    return filename.endsWith("zblorb") || filename.endsWith("zlb");
+  }
+  
   /**
    * Trys to find a resource file in Blorb format.
    * 
@@ -103,14 +116,22 @@ public class Main {
     
     StringTokenizer tok = new StringTokenizer(storyfile.getName(), ".");
     String prefix = tok.nextToken();
-    String blorbpath = storyfile.getParent()
-                       + System.getProperty("file.separator")
-                       + prefix + ".blb";
+    String dir = storyfile.getParent();
+    String blorbpath1 = ((dir != null) ? dir + System.getProperty("file.separator") : "")
+                        + prefix + ".blb";
+    String blorbpath2 = ((dir != null) ? dir + System.getProperty("file.separator") : "")
+                        + prefix + ".blorb";
 
-    File blorbfile = new File(blorbpath);
-    System.out.printf("does '%s' exist ? -> %b\n", blorbfile.getPath(),
-        blorbfile.exists());
-    if (blorbfile.exists()) return blorbfile;
+    File blorbfile1 = new File(blorbpath1);
+    System.out.printf("does '%s' exist ? -> %b\n", blorbfile1.getPath(),
+        blorbfile1.exists());
+    if (blorbfile1.exists()) return blorbfile1;
+
+    File blorbfile2 = new File(blorbpath2);
+    System.out.printf("does '%s' exist ? -> %b\n", blorbfile2.getPath(),
+        blorbfile2.exists());
+    if (blorbfile2.exists()) return blorbfile2;
+    
     return null;
   }  
 }

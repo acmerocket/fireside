@@ -28,7 +28,9 @@ import javax.swing.JOptionPane;
 
 import org.zmpp.base.DefaultMemoryAccess;
 import org.zmpp.blorb.BlorbResources;
+import org.zmpp.blorb.BlorbStory;
 import org.zmpp.iff.DefaultFormChunk;
+import org.zmpp.iff.FormChunk;
 import org.zmpp.io.IOSystem;
 import org.zmpp.io.InputStream;
 import org.zmpp.media.Resources;
@@ -49,10 +51,16 @@ public class ApplicationMachineFactory extends MachineFactory<ZmppFrame> {
   private File storyfile;
   private File blorbfile;
   private ZmppFrame frame;
+  private FormChunk blorbchunk;
   
   public ApplicationMachineFactory(File storyfile, File blorbfile) {
   
     this.storyfile = storyfile;
+    this.blorbfile = blorbfile;
+  }
+
+  public ApplicationMachineFactory(File blorbfile) {
+    
     this.blorbfile = blorbfile;
   }
   
@@ -60,22 +68,37 @@ public class ApplicationMachineFactory extends MachineFactory<ZmppFrame> {
    * {@inheritDoc}
    */
   protected byte[] readStoryData() {
+        
+    if (storyfile != null) {
+      
+      return FileUtils.readFileBytes(storyfile);
+      
+    } else {
+      
+      // Read from Z BLORB
+      FormChunk formchunk = readBlorb();
+      return formchunk != null ? new BlorbStory(formchunk).getStoryData() : null;
+    }
+  }
+  
+  private FormChunk readBlorb() {
     
-    return FileUtils.readFileBytes(storyfile);
+    if (blorbchunk == null) {
+      
+      byte[] data = FileUtils.readFileBytes(blorbfile);
+      if (data != null)
+        blorbchunk = new DefaultFormChunk(new DefaultMemoryAccess(data));      
+    }
+    return blorbchunk;
   }
   
   /**
    * {@inheritDoc}
    */
   protected Resources readResources() {
-    
-    byte[] data = FileUtils.readFileBytes(blorbfile);
-    if (data != null) {
-      
-      return new BlorbResources(
-          new DefaultFormChunk(new DefaultMemoryAccess(data)));
-    }
-    return null;
+
+    FormChunk formchunk = readBlorb();
+    return (formchunk != null) ? new BlorbResources(formchunk) : null;
   }
 
   /**
