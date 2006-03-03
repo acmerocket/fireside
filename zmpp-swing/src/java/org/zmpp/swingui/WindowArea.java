@@ -50,6 +50,10 @@ public class WindowArea {
     this.top = 1;
   }
   
+  public int getLeft() { return left; }
+  public int getTop() { return top; }
+  public int getWidth() { return width; }
+  public int getHeight() { return height; }
   public int getMarginLeft() { return marginLeft; }
   
   public void setPosition(int left, int top) {

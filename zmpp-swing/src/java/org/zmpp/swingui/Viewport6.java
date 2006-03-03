@@ -100,6 +100,7 @@ public class Viewport6 extends JViewport implements ScreenModel6, Viewport {
   
   public void eraseLine(int value) {
     
+    windows[currentwindow].eraseLine(value);
   }
   
   public TextCursor getTextCursor() {
@@ -107,22 +108,31 @@ public class Viewport6 extends JViewport implements ScreenModel6, Viewport {
     return windows[currentwindow].getCursor();
   }
 
-  public void setTextCursor(int line, int column) {
+  public void setTextCursor(int line, int column, int window) {
 
-    windows[currentwindow].getCursor().setPosition(line, column);
+//    System.out.printf("@set_cursor %d %d %d\n", line, column, window);
+    int w = (window == ScreenModel.CURRENT_WINDOW) ? currentwindow : window;    
+    windows[w].getCursor().setPosition(line, column);
   }
   
   public void splitWindow(int linesUpperWindow) {
     
+    //System.out.println("@split_window: " + linesUpperWindow);
+    windows[1].resize(linesUpperWindow);
+    int heightWindowTop = windows[1].getHeight();
+    windows[0].setVerticalBounds(heightWindowTop + 1,
+                                 getHeight() - heightWindowTop);    
   }
   
   public void setWindow(int window) {
     
+    //System.out.println("setWindow: ");
     currentwindow = window;
   }
   
   public void setTextStyle(int style) {
-    
+   
+    //System.out.println("setTextStyle()");
     getOutputStream().flush();
     windows[currentwindow].setTextStyle(style);
   }
@@ -133,7 +143,9 @@ public class Viewport6 extends JViewport implements ScreenModel6, Viewport {
   }
   
   public void setPaging(boolean flag) {
-    
+
+    // TODO
+    //System.out.println("setPaging()");
   }
   
   /**
@@ -141,6 +153,8 @@ public class Viewport6 extends JViewport implements ScreenModel6, Viewport {
    */
   public void resetPagers() {
     
+    // TODO
+    //System.out.println("resetPagers()");    
   }
 
   public synchronized void waitInitialized() {
@@ -170,30 +184,28 @@ public class Viewport6 extends JViewport implements ScreenModel6, Viewport {
   /**
    * {@inheritDoc}
    */
-  public void setForegroundColor(int colornum) {
+  public void setForegroundColor(int colornum, int window) {
 
+    //System.out.printf("@set_foreground %d %d\n", colornum, window);
     if (colornum > 0) {
       
       getOutputStream().flush();
-      for (int i = 0; i < windows.length; i++) {
-        
-        windows[i].setForeground(colornum);
-      }
+      int w = (window == CURRENT_WINDOW) ? currentwindow : window;      
+      windows[w].setForeground(colornum);
     }
   }
   
   /**
    * {@inheritDoc}
    */
-  public void setBackgroundColor(int colornum) {
+  public void setBackgroundColor(int colornum, int window) {
     
+    //System.out.printf("@set_background %d %d\n", colornum, window);
     if (colornum > 0) {
       
       getOutputStream().flush();
-      for (int i = 0; i < windows.length; i++) {
-        
-        windows[i].setBackground(colornum);
-      }
+      int w = (window == CURRENT_WINDOW) ? currentwindow : window;      
+      windows[w].setBackground(colornum);
     }
   }
 
@@ -210,6 +222,8 @@ public class Viewport6 extends JViewport implements ScreenModel6, Viewport {
 
   public synchronized void displayCursor(boolean showCaret) {
     
+    // TODO
+    //System.out.println("displayCursor()");
   }
   
   public void reset() {
@@ -254,7 +268,7 @@ public class Viewport6 extends JViewport implements ScreenModel6, Viewport {
       canvas = new CanvasImpl(imageBuffer, this);
       for (int i = 0; i < NUM_V6_WINDOWS; i++) {
       
-        windows[i] = new Window6Impl(this, fontFactory);
+        windows[i] = new Window6Impl(this, fontFactory, i);
       }
       
       // Set initial window sizes
