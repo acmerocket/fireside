@@ -25,6 +25,7 @@ package org.zmpp.instructions;
 import org.zmpp.base.MemoryReadAccess;
 import org.zmpp.vm.Machine;
 import org.zmpp.vm.ObjectTree;
+import org.zmpp.vm.ScreenModel;
 import org.zmpp.vm.ZObject;
 
 
@@ -529,10 +530,15 @@ public class LongInstruction extends AbstractInstruction {
   
   private void set_colour() {
     
+    int window = ScreenModel.CURRENT_WINDOW;
+    if (getNumOperands() == 3) {
+      
+      window = getValue(2);
+    }
     //System.out.printf("@set_colour, foreground: %d, background: %d\n",
     //    getValue(0), getValue(1));
-    getMachine().getScreen().setForegroundColor(getValue(0));
-    getMachine().getScreen().setBackgroundColor(getValue(1));
+    getMachine().getScreen().setForegroundColor(getValue(0), window);
+    getMachine().getScreen().setBackgroundColor(getValue(1), window);
     nextInstruction();
   }
   
