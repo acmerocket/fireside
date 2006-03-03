@@ -272,8 +272,11 @@ public class ExtendedInstruction extends AbstractInstruction {
   
   private void window_size() {
 
-    getMachine().getScreen6().getWindow(getUnsignedValue(0)).setSize(
-        getUnsignedValue(1), getUnsignedValue(2));
+    int window = getValue(0);
+    int height = getValue(1);
+    int width = getValue(2);
+    System.out.printf("@window_size %d %d %d\n", window, height, width);
+    getMachine().getScreen6().getWindow(window).setSize(height, width);
     nextInstruction();
   }
   
