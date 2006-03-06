@@ -368,18 +368,34 @@ public class StoryFileHeaderTest extends MockObjectTestCase {
     fileHeader.setStandardRevision(1, 2);
   }
   
-  public void testSetFontWidth() {
+  public void testSetFontWidthV5() {
     
+    mockMemAccess.expects(once()).method("readUnsignedByte").with(eq(0x00)).will(returnValue((short) 5));
     mockMemAccess.expects(once()).method("writeUnsignedByte").with(eq(0x26), eq((short) 1));
     fileHeader.setFontWidth(1);
   }
   
-  public void testSetFontHeight() {
+  public void testSetFontWidthV6() {
     
+    mockMemAccess.expects(once()).method("readUnsignedByte").with(eq(0x00)).will(returnValue((short) 6));
+    mockMemAccess.expects(once()).method("writeUnsignedByte").with(eq(0x27), eq((short) 1));
+    fileHeader.setFontWidth(1);
+  }
+  
+  public void testSetFontHeightV5() {
+    
+    mockMemAccess.expects(once()).method("readUnsignedByte").with(eq(0x00)).will(returnValue((short) 5));
     mockMemAccess.expects(once()).method("writeUnsignedByte").with(eq(0x27), eq((short) 2));
     fileHeader.setFontHeight(2);
   }
 
+  public void testSetFontHeightV6() {
+    
+    mockMemAccess.expects(once()).method("readUnsignedByte").with(eq(0x00)).will(returnValue((short) 6));
+    mockMemAccess.expects(once()).method("writeUnsignedByte").with(eq(0x26), eq((short) 2));
+    fileHeader.setFontHeight(2);
+  }
+  
   public void testUseMouseFalse() {
     
     mockMemAccess.expects(once()).method("readUnsignedByte").with(eq(0x10)).will(returnValue((short) 2));

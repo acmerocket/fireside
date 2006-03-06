@@ -139,7 +139,7 @@ public class ExtendedInstructionV6Test extends InstructionTestBase {
     mockMachine.expects(atLeastOnce()).method("getPictureManager").will(returnValue(picturemanager));
     mockPictureManager.expects(once()).method("getPicture").with(eq(1)).will(returnValue(image));
     mockMachine.expects(atLeastOnce()).method("getScreen6").will(returnValue(screen6));
-    mockscreen6.expects(once()).method("getCurrentWindow").will(returnValue(window6));
+    mockscreen6.expects(once()).method("getSelectedWindow").will(returnValue(window6));
     mockwindow6.expects(once()).method("drawPicture").with(eq(image), eq(2), eq(3));
     
     mockMachine.expects(atLeastOnce()).method("getCpu").will(returnValue(cpu));

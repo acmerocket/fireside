@@ -700,7 +700,7 @@ public class VariableInstructionTest extends InstructionTestBase {
   public void testSetCursor() {
     
     mockMachine.expects(once()).method("getScreen").will(returnValue(screen));
-    mockScreen.expects(once()).method("setTextCursor").with(eq(1), eq(2));
+    mockScreen.expects(once()).method("setTextCursor").with(eq(1), eq(2), eq(-3));
     mockFileHeader.expects(atLeastOnce()).method("getVersion").will(returnValue(4));
         
     VariableInstructionMock set_cursor =
