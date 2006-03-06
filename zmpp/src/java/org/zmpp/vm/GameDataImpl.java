@@ -132,14 +132,21 @@ public class GameDataImpl implements GameData {
     initEncodingSystem();
     
     // The object tree and dictionaries depend on the code system
-    objectTree = new Objects(fileheader.getVersion(), memaccess,
-        fileheader.getObjectTableAddress(), decoder);
+    if (fileheader.getVersion() <= 3) {
+      
+      objectTree = new ClassicObjectTree(memaccess,
+          fileheader.getObjectTableAddress(), decoder);
+      
+    } else {
+      
+      objectTree = new ModernObjectTree(memaccess,
+          fileheader.getObjectTableAddress(), decoder);
+    }
     
     DictionarySizes sizes = (fileheader.getVersion() <= 3) ?
         new DictionarySizesV1ToV3() : new DictionarySizesV4ToV8();
     dictionary = new DefaultDictionary(memaccess,
         fileheader.getDictionaryAddress(), decoder, sizes);
-    //System.out.println(dictionary.toString());
   }
   
   private void initEncodingSystem() {
