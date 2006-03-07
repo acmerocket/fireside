@@ -42,6 +42,11 @@ public abstract class AbstractObjectTree implements ObjectTree {
   private Map<Integer, ZObject> objectCache;
   
   /**
+   * Flags if illegal access was reported.
+   */
+  private boolean illegalAccessReported;
+  
+  /**
    * The memory access object.
    */
   private MemoryAccess memaccess;
@@ -120,7 +125,12 @@ public abstract class AbstractObjectTree implements ObjectTree {
       }
       return result;
     }
-    System.err.println("invalid access to object 0");
+    
+    if (!illegalAccessReported) {
+      
+      System.err.println("invalid access to object 0");
+      illegalAccessReported = true;
+    }
     return null;
   }
   
