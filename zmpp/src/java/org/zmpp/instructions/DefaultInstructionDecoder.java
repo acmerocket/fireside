@@ -22,6 +22,9 @@
  */
 package org.zmpp.instructions;
 
+import java.util.HashMap;
+import java.util.Map;
+
 import org.zmpp.base.MemoryReadAccess;
 import org.zmpp.instructions.AbstractInstruction.InstructionForm;
 import org.zmpp.instructions.AbstractInstruction.OperandCount;
@@ -30,6 +33,8 @@ import org.zmpp.vm.InstructionDecoder;
 import org.zmpp.vm.Machine;
 
 public class DefaultInstructionDecoder implements InstructionDecoder {
+  
+  private Map<Integer, Instruction> instructionCache;
   
   /**
    * The memory access object.
@@ -48,6 +53,7 @@ public class DefaultInstructionDecoder implements InstructionDecoder {
    */
   public DefaultInstructionDecoder() {
   
+    instructionCache = new HashMap<Integer, Instruction>();
   }
   
   public void initialize(Machine machine, MemoryReadAccess memaccess) {
@@ -64,25 +70,30 @@ public class DefaultInstructionDecoder implements InstructionDecoder {
    */
   public Instruction decodeInstruction(int instructionAddress) {
   
-    AbstractInstruction info = createBasicInstructionInfo(instructionAddress);
-    int currentAddress = extractOperands(info, instructionAddress);
-    if (info.getInstructionForm() == InstructionForm.VARIABLE
-        && info.getOperandCount() == OperandCount.C2OP) {
+    Integer key = new Integer(instructionAddress);
+    if (!instructionCache.containsKey(key)) {
+      AbstractInstruction info = createBasicInstructionInfo(instructionAddress);
+      int currentAddress = extractOperands(info, instructionAddress);
+      if (info.getInstructionForm() == InstructionForm.VARIABLE
+          && info.getOperandCount() == OperandCount.C2OP) {
       
-      // Handle the VAR form of C2OP instructions here
-      AbstractInstruction info2 =
-        new LongInstruction(machine, OperandCount.VAR, info.getOpcode());
+        // Handle the VAR form of C2OP instructions here
+        AbstractInstruction info2 =
+          new LongInstruction(machine, OperandCount.VAR, info.getOpcode());
       
-      for (int i = 0; i < info.getNumOperands(); i++) {
+        for (int i = 0; i < info.getNumOperands(); i++) {
       
-        info2.addOperand(info.getOperand(i));
+          info2.addOperand(info.getOperand(i));
+        }
+        info = info2;
       }
-      info = info2;
+      currentAddress = extractStoreVariable(info, currentAddress);
+      currentAddress = extractBranchOffset(info, currentAddress);
+      info.setLength(currentAddress - instructionAddress);    
+      //return info;
+      instructionCache.put(key, info);
     }
-    currentAddress = extractStoreVariable(info, currentAddress);
-    currentAddress = extractBranchOffset(info, currentAddress);
-    info.setLength(currentAddress - instructionAddress);    
-    return info;
+    return instructionCache.get(key);
   }
   
   // ***********************************************************************
