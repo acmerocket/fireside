@@ -71,6 +71,11 @@ public abstract class AbstractInstruction implements Instruction {
   public enum OperandCount { C0OP, C1OP, C2OP, VAR, EXT }
   
   /**
+   * Cache the story file version.
+   */
+  private int storyfileVersion;
+  
+  /**
    * This is the result of an instruction.
    */
   public class InstructionResult {
@@ -134,15 +139,16 @@ public abstract class AbstractInstruction implements Instruction {
   /**
    * Constructor.
    * 
-   * @param machineState a reference to the machine state
+   * @param machine a reference to the machine state
    * @param opcode the opcode
    */
-  public AbstractInstruction(Machine machineState, int opcode) {
+  public AbstractInstruction(Machine machine, int opcode) {
     
     this.opcode = opcode;
-    this.machine = machineState;
+    this.machine = machine;
     this.operands = new ArrayList<Operand>();
     this.branchIfConditionTrue = true;
+    this.storyfileVersion = machine.getGameData().getStoryFileHeader().getVersion();
   }
   
   /**
@@ -210,8 +216,8 @@ public abstract class AbstractInstruction implements Instruction {
    * @return the story file version
    */
   protected int getStoryFileVersion() {
-    
-    return getMachine().getGameData().getStoryFileHeader().getVersion();
+
+    return storyfileVersion;
   }
   
   /**
