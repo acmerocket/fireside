@@ -26,20 +26,22 @@ import java.io.File;
 import java.io.FileInputStream;
 
 import org.zmpp.base.MemoryAccess;
-import org.zmpp.vm.GameDataImpl;
+import org.zmpp.vm.ClassicObjectTree;
 import org.zmpp.vm.GameData;
+import org.zmpp.vm.GameDataImpl;
+import org.zmpp.vm.ModernObjectTree;
 import org.zmpp.vm.ObjectTree;
-import org.zmpp.vm.Objects;
+import org.zmpp.vm.AbstractObjectTree;
 import org.zmpp.vm.StoryFileHeader;
 import org.zmpp.vm.ZObject;
 
 public class ObjectsTest extends MemoryMapSetup {
 
-  private Objects objects;
+  private AbstractObjectTree objects;
   
   protected void setUp() throws Exception {
     super.setUp();
-    this.objects = new Objects(fileheader.getVersion(), minizorkmap,
+    this.objects = new ClassicObjectTree(minizorkmap,
         fileheader.getObjectTableAddress(), converter);
   }
 
@@ -199,7 +201,7 @@ public class ObjectsTest extends MemoryMapSetup {
     GameData config = new GameDataImpl(data, null);
     MemoryAccess cursesmap = config.getMemoryAccess();
     StoryFileHeader fileheader = config.getStoryFileHeader();
-    ObjectTree objectTree = new Objects(fileheader.getVersion(), cursesmap,
+    ObjectTree objectTree = new ModernObjectTree(cursesmap,
         fileheader.getObjectTableAddress(), converter);
     ZObject obj502 = objectTree.getObject(502);
     assertTrue(obj502.isPropertyAvailable(2));

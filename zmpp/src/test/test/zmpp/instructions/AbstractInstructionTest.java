@@ -91,6 +91,9 @@ public class AbstractInstructionTest extends MockObjectTestCase {
     mockCpu = mock(Cpu.class);
     cpu = (Cpu) mockCpu.proxy();
     
+    mockMachine.expects(atLeastOnce()).method("getGameData").will(returnValue(gamedata));
+    mockGameData.expects(atLeastOnce()).method("getStoryFileHeader").will(returnValue(storyfileHeader));
+    mockFileHeader.expects(atLeastOnce()).method("getVersion").will(returnValue(3));
     info = new VariableInstruction(machine, OperandCount.VAR, 0xe0);
   }
   
@@ -361,6 +364,7 @@ public class AbstractInstructionTest extends MockObjectTestCase {
     mockMachine.expects(atLeastOnce()).method("getGameData").will(returnValue(gamedata));
     mockGameData.expects(atLeastOnce()).method("getStoryFileHeader").will(returnValue(storyfileHeader));
     mockFileHeader.expects(atLeastOnce()).method("getVersion").will(returnValue(3));
+    
     AbstractInstruction branchInstr = new BranchInstruction(machine) {
       
       public void execute() {

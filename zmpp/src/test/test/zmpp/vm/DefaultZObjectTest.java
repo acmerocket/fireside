@@ -22,8 +22,8 @@
  */
 package test.zmpp.vm;
 
+import org.zmpp.vm.ClassicObjectTree;
 import org.zmpp.vm.ObjectTree;
-import org.zmpp.vm.Objects;
 import org.zmpp.vm.ZObject;
 
 public class DefaultZObjectTest extends MemoryMapSetup {
@@ -34,7 +34,7 @@ public class DefaultZObjectTest extends MemoryMapSetup {
   public void setUp() throws Exception {
     
     super.setUp();
-    this.objectTree = new Objects(fileheader.getVersion(), minizorkmap,
+    this.objectTree = new ClassicObjectTree(minizorkmap,
         fileheader.getObjectTableAddress(), converter);
     this.object = objectTree.getObject((short) 1);
   }
