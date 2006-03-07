@@ -39,6 +39,17 @@ public abstract class AbstractZObject implements ZObject {
    */
   abstract class PropertyTable {
     
+    private int[] propertyAddresses;
+    private int numProperties;
+    
+    public PropertyTable() {
+      
+      propertyAddresses = createPropertyAddressTable();
+      numProperties = -1;
+    }
+    
+    protected abstract int[] createPropertyAddressTable();
+    
     /**
      * Returns this property table's description string address.
      * 
@@ -95,18 +106,25 @@ public abstract class AbstractZObject implements ZObject {
      * @return the address of the specified property
      */
     protected int getPropertyAddressAt(int index) {
+
+      // Only calculate the property address once and return the
+      // result in the future
+      if (index < 0) return getPropertyEntriesStart();
+      if (propertyAddresses[index] == 0) {
+        
+        int addr = getPropertyEntriesStart();
+        int size = 0;
       
-      int addr = getPropertyEntriesStart();
-      int size = 0;
-      
-      // iterate over the previous entries and
-      // skip over the entries        
-      for (int i = 0; i < index; i++) {
+        // iterate over the previous entries and
+        // skip over the entries        
+        for (int i = 0; i < index; i++) {
           
-        size = getPropertySizeAtAddress(addr);
-        addr += (size + getNumPropertySizeBytes(addr));
+          size = getPropertySizeAtAddress(addr);
+          addr += (size + getNumPropertySizeBytes(addr));
+        }
+        propertyAddresses[index] = addr;
       }
-      return addr;
+      return propertyAddresses[index];
     }
     
     /**
@@ -116,12 +134,17 @@ public abstract class AbstractZObject implements ZObject {
      */
     public int getNumProperties() {
       
-      int row = 0;
-      while (memaccess.readUnsignedByte(getPropertyAddressAt(row)) > 0) {
+      // Only calculate properties once and return it in the future
+      if (numProperties < 0) {
         
-        row++;
+        int row = 0;
+        while (memaccess.readUnsignedByte(getPropertyAddressAt(row)) > 0) {
+          
+          row++;
+        }
+        numProperties = row;
       }
-      return row;
+      return numProperties;
     }
     
     /**

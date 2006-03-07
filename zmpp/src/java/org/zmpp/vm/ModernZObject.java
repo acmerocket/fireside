@@ -44,6 +44,11 @@ public class ModernZObject extends AbstractZObject {
     /**
      * {@inheritDoc}
      */
+    protected int[] createPropertyAddressTable() { return new int[64]; }
+    
+    /**
+     * {@inheritDoc}
+     */
     protected int getNumPropertySizeBytes(int address) {
       
       // if bit 7 is set, there are two size bytes, one otherwise

@@ -43,6 +43,11 @@ public class ClassicZObject extends AbstractZObject {
     /**
      * {@inheritDoc}
      */
+    protected int[] createPropertyAddressTable() { return new int[8]; }
+    
+    /**
+     * {@inheritDoc}
+     */
     protected int getNumPropertySizeBytes(int address) { return 1; }
     
     /**

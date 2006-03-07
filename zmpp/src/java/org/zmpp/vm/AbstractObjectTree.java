@@ -22,6 +22,9 @@
  */
 package org.zmpp.vm;
 
+import java.util.HashMap;
+import java.util.Map;
+
 import org.zmpp.base.MemoryAccess;
 import org.zmpp.encoding.ZCharDecoder;
 
@@ -32,6 +35,11 @@ import org.zmpp.encoding.ZCharDecoder;
  * @version 1.0
  */
 public abstract class AbstractObjectTree implements ObjectTree {
+  
+  /**
+   * The object cache.
+   */
+  private Map<Integer, ZObject> objectCache;
   
   /**
    * The memory access object.
@@ -57,6 +65,7 @@ public abstract class AbstractObjectTree implements ObjectTree {
    */
   public AbstractObjectTree(MemoryAccess memaccess, int address, ZCharDecoder decoder) {
 
+    this.objectCache = new HashMap<Integer, ZObject>();
     this.memaccess = memaccess;
     this.address = address;
     this.decoder = decoder;
@@ -102,7 +111,14 @@ public abstract class AbstractObjectTree implements ObjectTree {
     if (objectNum > 0) {
       
       // flags + (parent, sibling, child) + properties
-      return createObject(objectNum);
+      Integer key = new Integer(objectNum);
+      ZObject result = objectCache.get(key);
+      if (result == null) {
+        
+        result = createObject(objectNum);
+        objectCache.put(key, result);
+      }
+      return result;
     }
     System.err.println("invalid access to object 0");
     return null;
