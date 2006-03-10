@@ -60,10 +60,12 @@ public abstract class BlorbMediaCollection<T> implements MediaCollection<T> {
     
     // Ridx chunk
     Chunk ridxChunk = formchunk.getSubChunk("RIdx".getBytes());
+    //System.out.println("ridxChunk: " + ridxChunk);
     MemoryReadAccess chunkmem = ridxChunk.getMemoryAccess();
     int numresources = (int) chunkmem.readUnsigned32(8);
     int offset = 12;
     byte[] usage = new byte[4];
+    //System.out.println("num resources: " + numresources);
     
     for (int i = 0; i < numresources; i++) {
 
@@ -79,8 +81,8 @@ public abstract class BlorbMediaCollection<T> implements MediaCollection<T> {
 
           resourceNumbers.add(resnum);
         }
-        offset += 12;
       }
+      offset += 12;
     }
   }
   
