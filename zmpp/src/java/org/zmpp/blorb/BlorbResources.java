@@ -49,6 +49,16 @@ public class BlorbResources implements Resources {
   private MediaCollection<SoundEffect> sounds;
   
   /**
+   * The cover art.
+   */
+  private BlorbCoverArt coverart;
+  
+  /**
+   * The meta data.
+   */
+  private BlorbMetadataHandler metadata;
+  
+  /**
    * The release number.
    */
   private int release;
@@ -62,29 +72,38 @@ public class BlorbResources implements Resources {
   
     images = new BlorbImages(formchunk);
     sounds = new BlorbSounds(formchunk);
+    coverart = new BlorbCoverArt(formchunk);
+    metadata = new BlorbMetadataHandler(formchunk);
   }
   
   /**
    * {@inheritDoc}
    */
-  public MediaCollection<BufferedImage> getImages() {
-    
-    return images;
-  }
+  public MediaCollection<BufferedImage> getImages() { return images; }
   
   /**
    * {@inheritDoc}
    */
-  public MediaCollection<SoundEffect> getSounds() {
-    
-    return sounds;
-  }
+  public MediaCollection<SoundEffect> getSounds() { return sounds; }
   
   /**
    * {@inheritDoc}
    */
-  public int getRelease() {
-    
-    return release;
-  }
+  public int getCoverArtNum() { return coverart.getCoverArtNum(); }
+  
+  
+  /**
+   * {@inheritDoc}
+   */
+  public InformMetadata getMetadata() { return metadata.getMetadata(); }
+  
+  /**
+   * {@inheritDoc}
+   */
+  public int getRelease() { return release; }
+  
+  /**
+   * {@inheritDoc}
+   */
+  public boolean hasInfo() { return getCoverArtNum() > 0; }
 }

@@ -24,6 +24,8 @@ package org.zmpp.media;
 
 import java.awt.image.BufferedImage;
 
+import org.zmpp.blorb.InformMetadata;
+
 /**
  * This interface defines access to the Z-machine's media resources.
  * 
@@ -52,4 +54,25 @@ public interface Resources {
    * @return the sounds
    */
   MediaCollection<SoundEffect> getSounds();
+
+  /**
+   * Returns the number of the cover art picture.
+   * 
+   * @return the number of the cover art picture
+   */  
+  int getCoverArtNum();
+  
+  /**
+   * Returns the inform meta data if available.
+   * 
+   * @return the meta data
+   */
+  InformMetadata getMetadata();
+  
+  /**
+   * Returns true if the resource file has information.
+   * 
+   * @return true if information, false, otherwise
+   */
+  boolean hasInfo();
 }
