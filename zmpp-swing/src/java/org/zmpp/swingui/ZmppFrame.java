@@ -48,11 +48,13 @@ import javax.swing.JPanel;
 import javax.swing.SwingUtilities;
 
 import org.zmpp.base.DefaultMemoryAccess;
+import org.zmpp.blorb.StoryMetadata;
 import org.zmpp.iff.DefaultFormChunk;
 import org.zmpp.iff.FormChunk;
 import org.zmpp.iff.WritableFormChunk;
 import org.zmpp.io.IOSystem;
 import org.zmpp.io.InputStream;
+import org.zmpp.media.Resources;
 import org.zmpp.vm.Machine;
 import org.zmpp.vm.SaveGameDataStore;
 import org.zmpp.vm.ScreenModel;
@@ -152,11 +154,12 @@ implements InputStream, StatusLine, SaveGameDataStore, IOSystem {
       });      
     }
     JMenu helpMenu = new JMenu("Help");
+    menubar.add(helpMenu);
     helpMenu.setMnemonic('H');
+    
     JMenuItem aboutItem = new JMenuItem("About ZMPP...");
     aboutItem.setMnemonic('A');
     helpMenu.add(aboutItem);
-    menubar.add(helpMenu);
     aboutItem.addActionListener(new ActionListener() {
       
       public void actionPerformed(ActionEvent e) {
@@ -164,10 +167,34 @@ implements InputStream, StatusLine, SaveGameDataStore, IOSystem {
         about();
       }
     });
+    
+    //if (machine.getGameData().getResources().hasInfo()) {
+    if (machine.getGameData().getResources() != null) {
+    //if (machine.getGameData().getResources().getImages().getNumResources() > 0) {
+      
+      JMenuItem aboutGameItem = new JMenuItem("About Game...");
+      helpMenu.add(aboutGameItem);
+      aboutGameItem.addActionListener(new ActionListener() {
+        
+        public void actionPerformed(ActionEvent e) {
+
+          aboutGame();
+        }
+      });
+    }
         
     addKeyListener(lineEditor);
     view.addKeyListener(lineEditor);
     view.addMouseListener(lineEditor);
+    
+    // Add a title if meta data exists
+    Resources resources = machine.getGameData().getResources();
+    if (resources != null && resources.getMetadata() != null) {
+      
+      StoryMetadata storyinfo = resources.getMetadata().getStoryInfo();
+      setTitle(Main.APPNAME + " - " + storyinfo.getTitle()
+               + " (" + storyinfo.getAuthor() + ")");
+    }
   }
 
   /**
@@ -358,6 +385,13 @@ implements InputStream, StatusLine, SaveGameDataStore, IOSystem {
         "This software is released under the GNU public license.",
         "About...",
         JOptionPane.INFORMATION_MESSAGE);
+  }
+
+  private void aboutGame() {
+    
+    GameInfoDialog dialog = new GameInfoDialog(this,
+        machine.getGameData().getResources());
+    dialog.setVisible(true);
   }
   
   public void startMachine() {
