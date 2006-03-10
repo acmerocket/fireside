@@ -49,17 +49,25 @@ public class MemoryAccessInputStream extends InputStream {
    * Supports a mark.
    */
   private int mark;
+  
+  /**
+   * The size of the memory.
+   */
+  private int size;
 
   /**
    * Constructor.
    * 
    * @param memaccess a memory object
    * @param offset the byte offset
+   * @param size the memory size
    */
-  public MemoryAccessInputStream(MemoryReadAccess memaccess, int offset) {
+  public MemoryAccessInputStream(MemoryReadAccess memaccess, int offset,
+      int size) {
   
     this.memaccess = memaccess;
     position += offset;
+    this.size = size;
   }
   
   /**
@@ -67,6 +75,7 @@ public class MemoryAccessInputStream extends InputStream {
    */
   public int read() throws IOException {
     
+    if (position >= size) return -1;
     return memaccess.readUnsignedByte(position++);
   }
 

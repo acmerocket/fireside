@@ -78,6 +78,7 @@ public class BlorbImages extends BlorbMediaCollection<BufferedImage> {
    */
   protected boolean isHandledResource(byte[] usageId) {
     
+    //System.out.println("isHandled ? : " + (new String(usageId)));
     return usageId[0] == 'P' && usageId[1] == 'i' && usageId[2] == 'c'
            && usageId[3] == 't';
   }
@@ -96,7 +97,7 @@ public class BlorbImages extends BlorbMediaCollection<BufferedImage> {
   protected boolean putToDatabase(Chunk chunk, int resnum) {
 
     InputStream is = new MemoryAccessInputStream(chunk.getMemoryAccess(),
-                                                  Chunk.CHUNK_HEADER_LENGTH);
+        Chunk.CHUNK_HEADER_LENGTH, chunk.getSize() + Chunk.CHUNK_HEADER_LENGTH);
     try {
 
       BufferedImage img = ImageIO.read(is);

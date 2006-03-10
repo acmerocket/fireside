@@ -99,7 +99,8 @@ public class BlorbSounds extends BlorbMediaCollection<SoundEffect> {
   protected boolean putToDatabase(Chunk chunk, int resnum) {
 
     InputStream aiffStream =
-      new  MemoryAccessInputStream(chunk.getMemoryAccess(), 0);
+      new  MemoryAccessInputStream(chunk.getMemoryAccess(), 0,
+          chunk.getSize() + Chunk.CHUNK_HEADER_LENGTH);
     try {
 
       AudioFileFormat aiffFormat = AudioSystem.getAudioFileFormat(aiffStream);
