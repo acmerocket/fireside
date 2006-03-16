@@ -3,15 +3,30 @@ Roadmap:
 TODO:
 
 - save and restore with regions
-- support version 6
-- sound
-- blorb file format
-- redesign execution scheme (partly done)
+- input line editing
+- text selection (maybe use text components in swing)
+- cut, copy, paste
+- scrollback
 
-Version 0.85
+Version 0.89
+------------
+- performance tuning (Inform 7 games seem to run significantly slower)
+- metadata and frontispiece support
+- command history
+- applet version: display front picture and load progress bars
+
+Version 0.87
+------------
+
+- rudimentary V6 support
+- sound
+- last-minute enhancement: read ZCOD chunks from BLORB files
+
+Version 0.86
 -----------
 
-- character graphics
+- blorb support
+- sound
 
 Version 0.82:
 -----------
