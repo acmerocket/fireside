@@ -84,5 +84,6 @@ public class GameInfoDialog extends JDialog {
     buttonPanel.add(okButton);
     add(buttonPanel, BorderLayout.SOUTH);
     pack();
+    setLocation(owner.getX() + 60, owner.getY() + 50);
   }
 }

@@ -168,11 +168,20 @@ implements InputStream, StatusLine, SaveGameDataStore, IOSystem {
       }
     });
     
-    //if (machine.getGameData().getResources().hasInfo()) {
-    if (machine.getGameData().getResources() != null) {
-    //if (machine.getGameData().getResources().getImages().getNumResources() > 0) {
+    addKeyListener(lineEditor);
+    view.addKeyListener(lineEditor);
+    view.addMouseListener(lineEditor);
+    
+    // Add an info dialog and a title if metadata exists
+    Resources resources = machine.getGameData().getResources();
+    if (resources != null && resources.getMetadata() != null) {
       
-      JMenuItem aboutGameItem = new JMenuItem("About Game...");
+      StoryMetadata storyinfo = resources.getMetadata().getStoryInfo();
+      setTitle(Main.APPNAME + " - " + storyinfo.getTitle()
+          + " (" + storyinfo.getAuthor() + ")");
+      
+      JMenuItem aboutGameItem = new JMenuItem("About " + storyinfo.getTitle()
+                                              + " ...");
       helpMenu.add(aboutGameItem);
       aboutGameItem.addActionListener(new ActionListener() {
         
@@ -181,19 +190,6 @@ implements InputStream, StatusLine, SaveGameDataStore, IOSystem {
           aboutGame();
         }
       });
-    }
-        
-    addKeyListener(lineEditor);
-    view.addKeyListener(lineEditor);
-    view.addMouseListener(lineEditor);
-    
-    // Add a title if meta data exists
-    Resources resources = machine.getGameData().getResources();
-    if (resources != null && resources.getMetadata() != null) {
-      
-      StoryMetadata storyinfo = resources.getMetadata().getStoryInfo();
-      setTitle(Main.APPNAME + " - " + storyinfo.getTitle()
-               + " (" + storyinfo.getAuthor() + ")");
     }
   }
 
