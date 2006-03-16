@@ -37,6 +37,7 @@ import org.zmpp.vm.MachineFactory;
 import org.zmpp.vm.SaveGameDataStore;
 import org.zmpp.vm.ScreenModel;
 import org.zmpp.vm.StatusLine;
+import org.zmpp.vmutil.FileUtils;
 
 /**
  * This class implements machine creation for an applet.

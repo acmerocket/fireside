@@ -27,10 +27,11 @@ import java.io.FileInputStream;
 
 import org.jmock.MockObjectTestCase;
 import org.zmpp.base.MemoryAccess;
-import org.zmpp.vm.GameDataImpl;
 import org.zmpp.vm.Dictionary;
+import org.zmpp.vm.GameDataImpl;
 import org.zmpp.vm.ObjectTree;
 import org.zmpp.vm.StoryFileHeader;
+import org.zmpp.vmutil.FileUtils;
 
 public class DefaultMachineConfigTest extends MockObjectTestCase {
 

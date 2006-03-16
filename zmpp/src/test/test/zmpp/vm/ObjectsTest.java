@@ -26,14 +26,15 @@ import java.io.File;
 import java.io.FileInputStream;
 
 import org.zmpp.base.MemoryAccess;
+import org.zmpp.vm.AbstractObjectTree;
 import org.zmpp.vm.ClassicObjectTree;
 import org.zmpp.vm.GameData;
 import org.zmpp.vm.GameDataImpl;
 import org.zmpp.vm.ModernObjectTree;
 import org.zmpp.vm.ObjectTree;
-import org.zmpp.vm.AbstractObjectTree;
 import org.zmpp.vm.StoryFileHeader;
 import org.zmpp.vm.ZObject;
+import org.zmpp.vmutil.FileUtils;
 
 public class ObjectsTest extends MemoryMapSetup {
 

@@ -37,11 +37,12 @@ import org.zmpp.encoding.ZCharTranslator;
 import org.zmpp.encoding.ZsciiEncoding;
 import org.zmpp.instructions.DefaultInstructionDecoder;
 import org.zmpp.vm.Abbreviations;
+import org.zmpp.vm.GameData;
 import org.zmpp.vm.GameDataImpl;
 import org.zmpp.vm.Machine;
-import org.zmpp.vm.GameData;
 import org.zmpp.vm.MachineImpl;
 import org.zmpp.vm.StoryFileHeader;
+import org.zmpp.vmutil.FileUtils;
 
 /**
  * This class acts as a base test class and sets up some integrated
