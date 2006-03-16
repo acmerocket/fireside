@@ -1,7 +1,7 @@
 /*
  * $Id$
  * 
- * Created on 2006/03/04
+ * Created on 2006/03/10
  * Copyright 2005-2006 by Wei-ju Wu
  *
  * This file is part of The Z-machine Preservation Project (ZMPP).
@@ -20,46 +20,36 @@
  * along with ZMPP; if not, write to the Free Software
  * Foundation, Inc., 51 Franklin St, Fifth Floor, Boston, MA  02110-1301  USA
  */
-package org.zmpp.blorb;
+package org.zmpp.vm;
 
-import org.zmpp.iff.Chunk;
-import org.zmpp.iff.FormChunk;
+import java.util.List;
 
 /**
- * This class extracts the Frontispiece chunk.
+ * This interface is used from CommandHistory to manipulate the input line.
  * 
  * @author Wei-ju Wu
  * @version 1.0
  */
-public class BlorbCoverArt {
-
-  private int coverartnum;
+public interface InputLine {
 
   /**
-   * Constructor.
+   * Deletes the previous character in the input line.
    * 
-   * @param formchunk the form chunk
+   * @param inputbuffer the input buffer
+   * @param pointer the pointer
+   * @return the new pointer after delete
    */
-  public BlorbCoverArt(FormChunk formchunk) {
-    
-    readFrontispiece(formchunk);
-  }
-  
-  private void readFrontispiece(FormChunk formchunk) {
-    
-    //System.out.println("SEARCHIN FRONTISPIECE");
-    Chunk fspcchunk = formchunk.getSubChunk("Fspc".getBytes());
-    if (fspcchunk != null) {
-      //System.out.println("FOUND FRONTISPIECE");
-      coverartnum = (int)
-        fspcchunk.getMemoryAccess().readUnsigned32(Chunk.CHUNK_HEADER_LENGTH);
-    }
-  }
-  
+  int deletePreviousChar(List<Short> inputbuffer, int pointer);
+
   /**
-   * Returns the number of the cover art.
+   * Adds a character to the current input line.
    * 
-   * @return the cover art
+   * @param inputbuffer the input buffer
+   * @param textbuffer the textbuffer address
+   * @param pointer the pointer address
+   * @param zsciiChar the character to add
+   * @return the new pointer
    */
-  public int getCoverArtNum() { return coverartnum; }
+  int addChar(List<Short> inputbuffer, int textbuffer, int pointer,
+              short zsciiChar);
 }

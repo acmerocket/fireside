@@ -42,8 +42,9 @@ import org.zmpp.encoding.ZsciiStringTokenizer;
  * @author Wei-ju Wu
  * @version 1.0
  */
-public class InputFunctions {
+public class InputFunctions implements InputLine {
 
+  private CommandHistory history;  
   private Machine machine;
   private static final ZsciiString WHITESPACE =
     new ZsciiString(new short[] { ' ', '\n', '\t', '\r' });
@@ -136,6 +137,7 @@ public class InputFunctions {
   public InputFunctions(Machine machine) {
     
     this.machine = machine;
+    this.history = new CommandHistory(this);
   }
 
   // *********************************************************************
@@ -156,6 +158,7 @@ public class InputFunctions {
     
     // Using a Vector for synchronization
     List<Short> inputbuffer = new Vector<Short>();
+    history.reset();
     
     int pointer = checkForPreviousInput(textbuffer, inputbuffer);    
     
@@ -164,9 +167,45 @@ public class InputFunctions {
                                                   inputbuffer);
     
     short terminateChar = doInputLoop(textbuffer, pointer, inputbuffer);
-    terminateInterruptThread(thread);
-    displayCursor(false);    
+    storeInput(inputbuffer, terminateChar);
+    terminateInterruptThread(thread);    
+    displayCursor(false);
+    
     return handleTerminateChar(terminateChar);
+  }
+  
+  /**
+   * {@inheritDoc}
+   */
+  public int deletePreviousChar(List<Short> inputbuffer, int pointer) {
+    
+    // Decrement the buffer pointer
+    if (inputbuffer.size() > 0) {
+    
+      short deleteChar = inputbuffer.remove(inputbuffer.size() - 1);
+      pointer--;
+      machine.getOutput().deletePreviousZsciiChar(deleteChar);
+    }
+    return pointer;
+  }
+  
+  /**
+   * {@inheritDoc}
+   */
+  public int addChar(List<Short> inputbuffer,
+      int textbuffer, int pointer, short zsciiChar) {
+    
+    // Do not include the terminator in the buffer
+    // Note: we convert ASCII characters to lower case to allow the
+    // transkription of umlauts
+    MemoryAccess memaccess = machine.getGameData().getMemoryAccess();    
+    ZsciiEncoding encoding = machine.getGameData().getZsciiEncoding();
+    memaccess.writeUnsignedByte(textbuffer + pointer,
+                                encoding.toLower(zsciiChar));
+    inputbuffer.add(zsciiChar);
+    pointer++;
+    machine.getOutput().printZsciiChar(zsciiChar, true);
+    return pointer;
   }
   
   /**
@@ -289,26 +328,21 @@ public class InputFunctions {
       displayCursor(false);
       
       if (zsciiChar == ZsciiEncoding.DELETE) {
-        
-        // Decrement the buffer pointer
-        if (inputbuffer.size() > 0) {
-        
-          short deleteChar = inputbuffer.remove(inputbuffer.size() - 1);
-          pointer--;
-          machine.getOutput().deletePreviousZsciiChar(deleteChar);
-        }
+   
+        pointer = deletePreviousChar(inputbuffer, pointer);
         
       } else if (!isTerminatingCharacter(zsciiChar)) {
         
-        // Do not include the terminator in the buffer
-        // Note: we convert ASCII characters to lower case to allow the
-        // transkription of umlauts
-        ZsciiEncoding encoding = machine.getGameData().getZsciiEncoding();
-        memaccess.writeUnsignedByte(textbuffer + pointer,
-                                    encoding.toLower(zsciiChar));
-        inputbuffer.add(zsciiChar);
-        pointer++;
-        machine.getOutput().printZsciiChar(zsciiChar, true);
+        if (history.isHistoryChar(zsciiChar)) {
+         
+          pointer = history.switchHistoryEntry(inputbuffer, textbuffer,
+                                           pointer, zsciiChar);
+                    
+        } else {
+    
+          pointer = addChar(inputbuffer, textbuffer, pointer,
+                            zsciiChar);
+        }
       }
       displayCursor(true);
       
@@ -586,4 +620,17 @@ public class InputFunctions {
     machine.getScreen().displayCursor(flag);
     machine.getScreen().redraw();
   }
+  
+  // *********************************************************************
+  // ***** History methods
+  // ***********************************
+
+  private void storeInput(List<Short> inputbuffer, short terminateChar) {
+   
+    if (terminateChar != ZsciiEncoding.NULL) {
+  
+      history.addInputLine(inputbuffer);
+    }
+  }
+  
 }

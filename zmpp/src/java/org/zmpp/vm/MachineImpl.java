@@ -36,6 +36,7 @@ import org.zmpp.media.SoundSystemImpl;
 import org.zmpp.vm.StoryFileHeader.Attribute;
 import org.zmpp.vmutil.PredictableRandomGenerator;
 import org.zmpp.vmutil.RandomGenerator;
+import org.zmpp.vmutil.RingBuffer;
 import org.zmpp.vmutil.UnpredictableRandomGenerator;
 
 /**
@@ -46,6 +47,11 @@ import org.zmpp.vmutil.UnpredictableRandomGenerator;
  */
 public class MachineImpl implements Machine {
 
+  /**
+   * Number of undo steps.
+   */
+  private static final int NUM_UNDO = 5;
+  
   /**
    * The configuration object.
    */
@@ -72,9 +78,9 @@ public class MachineImpl implements Machine {
   private SaveGameDataStore datastore;
   
   /**
-   * The undo game state.
+   * The undo states.
    */
-  private PortableGameState undoGameState;
+  private RingBuffer<PortableGameState> undostates;
   
   /**
    * The input functions object.
@@ -153,6 +159,8 @@ public class MachineImpl implements Machine {
   
     this.gamedata = gamedata;
     this.random = new UnpredictableRandomGenerator();
+    this.undostates = new RingBuffer<PortableGameState>(NUM_UNDO);
+    
     cpu = new CpuImpl(this, decoder);
     output = new OutputImpl(gamedata, cpu);
     input = new InputImpl(this);
@@ -363,8 +371,9 @@ public class MachineImpl implements Machine {
    */
   public boolean save_undo(int savepc) {
     
-    undoGameState = new PortableGameState();
+    PortableGameState undoGameState = new PortableGameState();
     undoGameState.captureMachineState(this, savepc);
+    undostates.add(undoGameState);
     return true;
   }
 
@@ -400,7 +409,10 @@ public class MachineImpl implements Machine {
     
     // do not reset screen model, since e.g. AMFV simply picks up the
     // current window state
-    if (undoGameState != null) {
+    if (undostates.size() > 0) {
+      
+      PortableGameState undoGameState =
+        undostates.remove(undostates.size() - 1);      
       restart(false);
       undoGameState.transferStateToMachine(this);
       System.out.printf("restore(), pc is: %4x\n", cpu.getProgramCounter());
@@ -437,7 +449,7 @@ public class MachineImpl implements Machine {
    * Resets all state to initial values, using the configuration object.
    */
   private void resetState() {
-        
+
     output.reset();
     soundSystem.reset();
     cpu.reset();
