@@ -96,7 +96,8 @@ public class Main {
     } else {
       
       JOptionPane.showMessageDialog(null,
-          String.format("The selected story file '%s' was not found", storyfile.getPath()),
+          String.format("The selected story file '%s' was not found",
+          storyfile != null ? storyfile.getPath() : ""),
           "Story file not found", JOptionPane.ERROR_MESSAGE);
     }
   }
