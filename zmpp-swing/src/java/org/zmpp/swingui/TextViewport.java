@@ -28,7 +28,7 @@ import java.awt.FontMetrics;
 import java.awt.Graphics;
 import java.awt.image.BufferedImage;
 
-import javax.swing.JViewport;
+import javax.swing.JComponent;
 import javax.swing.SwingUtilities;
 
 import org.zmpp.io.OutputStream;
@@ -38,7 +38,15 @@ import org.zmpp.vm.StoryFileHeader;
 import org.zmpp.vm.TextCursor;
 import org.zmpp.vm.StoryFileHeader.Attribute;
 
-public class TextViewport extends JViewport implements ScreenModel, Viewport {
+/**
+ * This class is a custom text component, rendering is handled by this class.
+ * As opposed to former versions, this inherits from JComponent, so it is
+ * even more lightweight.
+ * 
+ * @author Wei-ju Wu
+ * @version 1.0
+ */
+public class TextViewport extends JComponent implements ScreenModel, Viewport {
 
   private static final long serialVersionUID = 1L;
   
@@ -62,16 +70,19 @@ public class TextViewport extends JViewport implements ScreenModel, Viewport {
   private static final boolean DEBUG = false;
   
   public TextViewport(Machine machine, LineEditor editor) {
-    
+
     this.machine = machine;
     this.editor = editor;
     
-    standardFont = getFont();
-    fixedFont = new Font("Monospaced", Font.ROMAN_BASELINE,
-                         standardFont.getSize());
+    standardFont = new Font("Dialog", Font.ROMAN_BASELINE, 12);
+    fixedFont = new Font("Monospaced", Font.ROMAN_BASELINE, 12);
     outputstream = new ScreenOutputStream(machine, this);
     windows = new SubWindow[2];
     activeWindow = WINDOW_BOTTOM;
+
+    // For efficiency, override some of this component's standard properties
+    setOpaque(true);
+    setDoubleBuffered(false);
   }
   
   public CursorWindow getCurrentWindow() { return windows[activeWindow]; }
@@ -87,16 +98,10 @@ public class TextViewport extends JViewport implements ScreenModel, Viewport {
   public void reset() {
     
     setScreenProperties();
-    SwingUtilities.invokeLater(new Runnable() {
-      
-      public void run() {
-        
-        windows[WINDOW_TOP].clear();
-        resizeWindows(0);
-        windows[WINDOW_BOTTOM].clear();
-        repaint();
-      }
-    });
+    windows[WINDOW_TOP].clear();
+    resizeWindows(0);
+    windows[WINDOW_BOTTOM].clear();
+    repaintInUiThread();
   }
     
   public void eraseWindow(int window) {
@@ -236,8 +241,8 @@ public class TextViewport extends JViewport implements ScreenModel, Viewport {
     }
   }
   
-  public void paint(Graphics g) {
-
+  protected void paintComponent(Graphics g) {
+    
     if (imageBuffer == null) {
       
       imageBuffer = new BufferedImage(getWidth(), getHeight(),

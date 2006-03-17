@@ -131,7 +131,7 @@ implements InputStream, StatusLine, SaveGameDataStore, IOSystem {
       getContentPane().add(statusPanel, BorderLayout.NORTH);
     }
     
-    getContentPane().add(view, BorderLayout.CENTER);
+    setContentPane(view);
     
     addKeyListener(lineEditor);
     view.addKeyListener(lineEditor);
