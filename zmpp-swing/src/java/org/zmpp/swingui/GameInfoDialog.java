@@ -25,6 +25,8 @@ package org.zmpp.swingui;
 import java.awt.BorderLayout;
 import java.awt.Dimension;
 import java.awt.FlowLayout;
+import java.awt.Font;
+import java.awt.GridLayout;
 import java.awt.event.ActionEvent;
 import java.awt.event.ActionListener;
 import java.awt.image.BufferedImage;
@@ -37,6 +39,7 @@ import javax.swing.JPanel;
 import javax.swing.JTabbedPane;
 
 import org.zmpp.blorb.InformMetadata;
+import org.zmpp.blorb.StoryMetadata;
 import org.zmpp.media.Resources;
 
 /**
@@ -53,10 +56,17 @@ public class GameInfoDialog extends JDialog {
     
     super(owner, "About " + resources.getMetadata().getStoryInfo().getTitle());
     JTabbedPane tabPane = new JTabbedPane();
-    JPanel infopanel = new JPanel();
-    tabPane.add("Info", infopanel);
-    add(tabPane, BorderLayout.CENTER);
+    tabPane.add("Info", createInfoPanel(resources));
+    tabPane.add("Cover Art", createPicturePanel(resources));
+    add(tabPane, BorderLayout.CENTER);    
+    add(createButtonPanel(), BorderLayout.SOUTH);
+    pack();
+    setLocation(owner.getX() + 60, owner.getY() + 50);
+  }
+
+  private JPanel createPicturePanel(Resources resources) {
     
+    JPanel picpanel = new JPanel();
     int coverartnum = resources.getCoverArtNum();
     InformMetadata metadata = resources.getMetadata();
     
@@ -65,14 +75,55 @@ public class GameInfoDialog extends JDialog {
     if (coverartnum <= 0) {
       coverartnum = metadata.getStoryInfo().getCoverPicture();
     }
+    
     if (coverartnum > 0) {
       BufferedImage image =
         resources.getImages().getResource(coverartnum);
       JLabel label = new PictureLabel(image);
       label.setPreferredSize(new Dimension(400, 400));
-      infopanel.add(label);
+      picpanel.add(label);
     }
-
+    return picpanel;
+  }
+  
+  private JPanel createInfoPanel(Resources resources) {
+        
+    JPanel infopanel = new JPanel(new BorderLayout());    
+    StoryMetadata storyinfo = resources.getMetadata().getStoryInfo();
+    JPanel basicspanel = new JPanel(new GridLayout(0, 1));
+    JPanel titlepanel = new JPanel(new FlowLayout(FlowLayout.LEFT));
+    basicspanel.add(titlepanel);
+    titlepanel.add(new JLabel("Title: "));
+    titlepanel.add(new JLabel(storyinfo.getTitle()));
+    infopanel.add(basicspanel, BorderLayout.NORTH);
+    
+    String description = storyinfo.getDescription();    
+    StringBuilder builder = new StringBuilder();    
+    builder.append("<html>");
+    builder.append("<b>Title:</b> ");
+    builder.append(storyinfo.getTitle() + "<br>");
+    builder.append("<b>Author:</b> ");
+    builder.append(storyinfo.getAuthor() + "<br>");
+    builder.append("<b>Year:</b> ");
+    builder.append(storyinfo.getYear() + "<br>");
+    builder.append("<b>Genre:</b> ");
+    builder.append(storyinfo.getGenre() + "<br>");
+    builder.append("<b>Group:</b> ");
+    builder.append(storyinfo.getGroup() + "<br>");
+    builder.append("<b>Headline:</b> ");
+    builder.append(storyinfo.getHeadline() + "<br>");
+    builder.append("<b>Description:</b> ");
+    builder.append("<p>" + description + "</p>");
+    builder.append("</html>");
+    JLabel basicinfo = new JLabel(builder.toString());
+    basicinfo.setFont(basicinfo.getFont().deriveFont(Font.PLAIN));
+    basicinfo.setPreferredSize(new Dimension(400, 400));
+    infopanel.add(basicinfo);    
+    return infopanel;
+  }
+  
+  private JPanel createButtonPanel() {
+    
     // Set up the other controls
     JPanel buttonPanel = new JPanel(new FlowLayout(FlowLayout.RIGHT));
     JButton okButton = new JButton("Ok");
@@ -82,8 +133,6 @@ public class GameInfoDialog extends JDialog {
       }
     });
     buttonPanel.add(okButton);
-    add(buttonPanel, BorderLayout.SOUTH);
-    pack();
-    setLocation(owner.getX() + 60, owner.getY() + 50);
+    return buttonPanel;
   }
 }
