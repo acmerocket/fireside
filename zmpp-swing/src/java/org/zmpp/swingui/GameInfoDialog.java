@@ -23,23 +23,34 @@
 package org.zmpp.swingui;
 
 import java.awt.BorderLayout;
+import java.awt.Component;
 import java.awt.Dimension;
 import java.awt.FlowLayout;
 import java.awt.Font;
-import java.awt.GridLayout;
 import java.awt.event.ActionEvent;
 import java.awt.event.ActionListener;
 import java.awt.image.BufferedImage;
+import java.util.List;
 
+import javax.swing.Box;
+import javax.swing.DefaultListModel;
 import javax.swing.JButton;
+import javax.swing.JComponent;
 import javax.swing.JDialog;
 import javax.swing.JFrame;
 import javax.swing.JLabel;
+import javax.swing.JList;
 import javax.swing.JPanel;
+import javax.swing.JScrollPane;
 import javax.swing.JTabbedPane;
+import javax.swing.JTextArea;
+import javax.swing.ListSelectionModel;
+import javax.swing.event.ListSelectionEvent;
+import javax.swing.event.ListSelectionListener;
 
 import org.zmpp.blorb.InformMetadata;
 import org.zmpp.blorb.StoryMetadata;
+import org.zmpp.blorb.StoryMetadata.Auxiliary;
 import org.zmpp.media.Resources;
 
 /**
@@ -48,77 +59,100 @@ import org.zmpp.media.Resources;
  * @author Wei-ju Wu
  * @version 1.0
  */
-public class GameInfoDialog extends JDialog {
+public class GameInfoDialog extends JDialog implements ListSelectionListener {
 
+  private static final int STD_WIDTH = 400;
   private static final long serialVersionUID = 1L;
+  
+  private JList auxlist;
+  private JTextArea auxdescarea;
   
   public GameInfoDialog(JFrame owner, Resources resources) {
     
     super(owner, "About " + resources.getMetadata().getStoryInfo().getTitle());
     JTabbedPane tabPane = new JTabbedPane();
     tabPane.add("Info", createInfoPanel(resources));
-    tabPane.add("Cover Art", createPicturePanel(resources));
-    add(tabPane, BorderLayout.CENTER);    
-    add(createButtonPanel(), BorderLayout.SOUTH);
+    
+    int coverartnum = this.getCoverartNum(resources);    
+    if (coverartnum > 0) {
+      
+      tabPane.add("Cover Art", createPicturePanel(resources, coverartnum));
+    }
+    
+    List<Auxiliary> auxiliaries =
+      resources.getMetadata().getStoryInfo().getAuxiliaries();
+    if (auxiliaries != null && auxiliaries.size() > 0) {
+      
+      tabPane.add("Auxiliaries", createAuxPanel(auxiliaries));
+    }
+    
+    getContentPane().add(tabPane, BorderLayout.CENTER);
+    getContentPane().add(createButtonPanel(), BorderLayout.SOUTH);
     pack();
     setLocation(owner.getX() + 60, owner.getY() + 50);
   }
 
-  private JPanel createPicturePanel(Resources resources) {
+  private JPanel createPicturePanel(Resources resources, int coverartnum) {
     
     JPanel picpanel = new JPanel();
-    int coverartnum = resources.getCoverArtNum();
-    InformMetadata metadata = resources.getMetadata();
-    
-    // If the picture number is not in the Frontispiece chunk, retrieve it
-    // from the metadata
-    if (coverartnum <= 0) {
-      coverartnum = metadata.getStoryInfo().getCoverPicture();
-    }
     
     if (coverartnum > 0) {
       BufferedImage image =
         resources.getImages().getResource(coverartnum);
       JLabel label = new PictureLabel(image);
-      label.setPreferredSize(new Dimension(400, 400));
+      label.setPreferredSize(new Dimension(STD_WIDTH, 400));
       picpanel.add(label);
     }
     return picpanel;
   }
   
-  private JPanel createInfoPanel(Resources resources) {
+  private JComponent createInfoPanel(Resources resources) {
         
-    JPanel infopanel = new JPanel(new BorderLayout());    
     StoryMetadata storyinfo = resources.getMetadata().getStoryInfo();
-    JPanel basicspanel = new JPanel(new GridLayout(0, 1));
-    JPanel titlepanel = new JPanel(new FlowLayout(FlowLayout.LEFT));
-    basicspanel.add(titlepanel);
-    titlepanel.add(new JLabel("Title: "));
-    titlepanel.add(new JLabel(storyinfo.getTitle()));
-    infopanel.add(basicspanel, BorderLayout.NORTH);
+    Box infopanel = Box.createVerticalBox();
+    infopanel.setAlignmentX(Component.LEFT_ALIGNMENT);
+    infopanel.setPreferredSize(new Dimension(STD_WIDTH, 400));
     
-    String description = storyinfo.getDescription();    
-    StringBuilder builder = new StringBuilder();    
-    builder.append("<html>");
-    builder.append("<b>Title:</b> ");
-    builder.append(storyinfo.getTitle() + "<br>");
-    builder.append("<b>Author:</b> ");
-    builder.append(storyinfo.getAuthor() + "<br>");
-    builder.append("<b>Year:</b> ");
-    builder.append(storyinfo.getYear() + "<br>");
-    builder.append("<b>Genre:</b> ");
-    builder.append(storyinfo.getGenre() + "<br>");
-    builder.append("<b>Group:</b> ");
-    builder.append(storyinfo.getGroup() + "<br>");
-    builder.append("<b>Headline:</b> ");
-    builder.append(storyinfo.getHeadline() + "<br>");
-    builder.append("<b>Description:</b> ");
-    builder.append("<p>" + description + "</p>");
-    builder.append("</html>");
-    JLabel basicinfo = new JLabel(builder.toString());
-    basicinfo.setFont(basicinfo.getFont().deriveFont(Font.PLAIN));
-    basicinfo.setPreferredSize(new Dimension(400, 400));
-    infopanel.add(basicinfo);    
+    JLabel[] labels = new JLabel[6];
+    labels[0] = new JLabel("<html><b>Title:</b> " + storyinfo.getTitle()
+                           + "</html>");
+    labels[1] = new JLabel("<html><b>Author:</b> " + storyinfo.getAuthor()
+                           + "</html>");
+    labels[2] = new JLabel("<html><b>Year:</b> " + storyinfo.getYear()
+                           + "</html>");
+    labels[3] = new JLabel("<html><b>Genre:</b> " + storyinfo.getGenre()
+                           + "</html>");
+    labels[4] = new JLabel("<html><b>Group:</b> " + storyinfo.getGroup()
+                           + "</html>");
+    labels[5] = new JLabel("<html><b>Headline:</b> " + storyinfo.getHeadline()
+                           + "</html>");
+    
+    Font labelfont = labels[0].getFont().deriveFont(Font.ROMAN_BASELINE);
+    
+    for (int i = 0; i < labels.length; i++) {
+      
+      infopanel.add(labels[i]);
+      labels[i].setFont(labelfont);
+      labels[i].setAlignmentX(Component.LEFT_ALIGNMENT);
+    }
+    
+    infopanel.add(Box.createVerticalStrut(6));
+    
+    JLabel desclabel = new JLabel("Description: ");
+    desclabel.setAlignmentX(Component.LEFT_ALIGNMENT);
+    infopanel.add(desclabel);    
+    infopanel.add(Box.createVerticalStrut(3));
+    
+    JTextArea descarea = new JTextArea(storyinfo.getDescription());    
+    descarea.setLineWrap(true);
+    descarea.setWrapStyleWord(true);
+    descarea.setEditable(false);
+    
+    JScrollPane spane = new JScrollPane(descarea);
+    spane.setHorizontalScrollBarPolicy(JScrollPane.HORIZONTAL_SCROLLBAR_NEVER);
+    spane.setPreferredSize(new Dimension(STD_WIDTH, 200));
+    spane.setAlignmentX(Component.LEFT_ALIGNMENT);
+    infopanel.add(spane);
     return infopanel;
   }
   
@@ -134,5 +168,76 @@ public class GameInfoDialog extends JDialog {
     });
     buttonPanel.add(okButton);
     return buttonPanel;
+  }
+  
+  private int getCoverartNum(Resources resources) {
+    
+    int coverartnum = resources.getCoverArtNum();
+    InformMetadata metadata = resources.getMetadata();
+    
+    // If the picture number is not in the Frontispiece chunk, retrieve it
+    // from the metadata
+    if (coverartnum <= 0) {
+      coverartnum = metadata.getStoryInfo().getCoverPicture();
+    }
+    return coverartnum;
+  }
+  
+  private JComponent createAuxPanel(List<Auxiliary> auxiliaries) {
+    
+    Box auxpanel = Box.createVerticalBox();
+    auxpanel.setPreferredSize(new Dimension(STD_WIDTH, 400));
+    auxpanel.setAlignmentX(Component.LEFT_ALIGNMENT);
+    
+    JLabel auxlabel = new JLabel("Auxiliaries: ");
+    auxlabel.setAlignmentX(Component.LEFT_ALIGNMENT);
+    auxpanel.add(auxlabel);
+    auxpanel.add(Box.createVerticalStrut(6));
+    
+    DefaultListModel listmodel = new DefaultListModel();
+    for (Auxiliary aux : auxiliaries) listmodel.addElement(aux);
+    
+    auxlist = new JList(listmodel);
+    auxlist.getSelectionModel().setSelectionMode(
+        ListSelectionModel.SINGLE_SELECTION);
+    auxlist.getSelectionModel().addListSelectionListener(this);
+    JScrollPane spane = new JScrollPane(auxlist);
+    spane.setPreferredSize(new Dimension(STD_WIDTH, 50));
+    spane.setAlignmentX(Component.LEFT_ALIGNMENT);
+    spane.setHorizontalScrollBarPolicy(JScrollPane.HORIZONTAL_SCROLLBAR_NEVER);
+    auxpanel.add(spane);
+    
+    auxpanel.add(Box.createVerticalStrut(15));    
+    
+    JLabel desclabel = new JLabel("Description: ");
+    desclabel.setAlignmentX(Component.LEFT_ALIGNMENT);
+    auxpanel.add(desclabel);
+    auxpanel.add(Box.createVerticalStrut(6));
+    
+    auxdescarea = new JTextArea();
+    auxdescarea.setLineWrap(true);
+    auxdescarea.setWrapStyleWord(true);
+    auxdescarea.setEditable(false);
+    
+    JScrollPane spane2 = new JScrollPane(auxdescarea);    
+    spane2.setHorizontalScrollBarPolicy(JScrollPane.HORIZONTAL_SCROLLBAR_NEVER);
+    spane2.setPreferredSize(new Dimension(STD_WIDTH, 50));
+    spane2.setAlignmentX(Component.LEFT_ALIGNMENT);    
+    auxpanel.add(spane2);
+    
+    auxpanel.add(Box.createVerticalGlue());
+    return auxpanel;
+  }
+  
+  /**
+   * {@inheritDoc}
+   */
+  public void valueChanged(ListSelectionEvent e) {
+    
+    if (!e.getValueIsAdjusting()) {
+      
+      Auxiliary aux = (Auxiliary) auxlist.getSelectedValue();
+      auxdescarea.setText(aux != null ? aux.getDescription() : "");
+    }
   }
 }
