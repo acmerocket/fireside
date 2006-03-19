@@ -126,8 +126,12 @@ implements InputStream, StatusLine, SaveGameDataStore, IOSystem {
       status1Panel.add(global1ObjectLabel);
       status2Panel.add(statusLabel);    
       getContentPane().add(statusPanel, BorderLayout.NORTH);
+      getContentPane().add(view, BorderLayout.CENTER);
+      
+    } else {
+      
+      setContentPane(view);
     }
-    setContentPane(view);
     
     JMenuBar menubar = new JMenuBar();
     setJMenuBar(menubar);
