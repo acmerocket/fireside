@@ -155,12 +155,16 @@ public interface StoryFileHeader {
    */
   void setScreenWidth(int numChars);
   
+  void setScreenWidthUnits(int units);
+  
   /**
    * Sets the screen height in number of lines.
    * 
    * @param numLines the number of lines
    */
   void setScreenHeight(int numLines);
+  
+  void setScreenHeightUnits(int units);
   
   /**
    * Only for V6 and V7 games: the routine offset.
