@@ -43,15 +43,6 @@ public class ClassicZObject extends AbstractZObject {
     /**
      * {@inheritDoc}
      */
-    protected int[] createPropertyAddressTable() {
-    
-      // in fact, a length of 8 should be enough, but Minizork crashes !!!
-      return new int[9];
-    }
-    
-    /**
-     * {@inheritDoc}
-     */
     protected int getNumPropertySizeBytes(int address) { return 1; }
     
     /**

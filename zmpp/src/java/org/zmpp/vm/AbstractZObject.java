@@ -33,6 +33,8 @@ import org.zmpp.encoding.ZCharDecoder;
  */
 public abstract class AbstractZObject implements ZObject {
 
+  private static final int MAX_NUM_PROPERTIES = 32;
+  
   /**
    * The property table is defined in the object's context
    * to make it dependent on a specific instance.
@@ -44,11 +46,9 @@ public abstract class AbstractZObject implements ZObject {
     
     public PropertyTable() {
       
-      propertyAddresses = createPropertyAddressTable();
+      propertyAddresses = new int[MAX_NUM_PROPERTIES];
       numProperties = -1;
     }
-    
-    protected abstract int[] createPropertyAddressTable();
     
     /**
      * Returns this property table's description string address.
@@ -109,7 +109,7 @@ public abstract class AbstractZObject implements ZObject {
 
       // Only calculate the property address once and return the
       // result in the future
-      if (index < 0) return getPropertyEntriesStart();
+      if (index < 0) return getPropertyEntriesStart();      
       if (propertyAddresses[index] == 0) {
         
         int addr = getPropertyEntriesStart();
