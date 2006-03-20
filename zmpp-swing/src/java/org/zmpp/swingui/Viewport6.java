@@ -48,6 +48,7 @@ public class Viewport6 extends JViewport implements ScreenModel6, Viewport {
   private Canvas canvas;
   private BufferedImage imageBuffer;
   private FontFactory fontFactory;
+  private Font fixedFont, standardFont;
   private boolean initialized;
   
   private int defaultBackground, defaultForeground;
@@ -311,28 +312,30 @@ public class Viewport6 extends JViewport implements ScreenModel6, Viewport {
     fileheader.setEnabled(Attribute.SUPPORTS_COLOURS, true);
     fileheader.setDefaultBackgroundColor(ColorTranslator.COLOR_WHITE);
     fileheader.setDefaultForegroundColor(ColorTranslator.COLOR_BLACK);
-    fileheader.setFontWidth(canvas.getCharWidth(
-        fontFactory.getFont(FONT_FIXED).getFont(), '0'));
-    fileheader.setFontHeight(canvas.getFontHeight(
-        fontFactory.getFont(FONT_FIXED).getFont()));    
+    
     determineStandardFont();
+    fileheader.setFontWidth(canvas.getCharWidth(fixedFont, '0'));
+    fileheader.setFontHeight(canvas.getFontHeight(fixedFont));
     updateDimensionsInHeader();
   }
   
   private void determineStandardFont() {
           
-    Font standardFont = getFont();
-    Font fixedFont = new Font("Monospaced", Font.ROMAN_BASELINE,
-                              standardFont.getSize());    
-    standardFont = fixedFont;
+    standardFont = new Font("Monospaced", Font.ROMAN_BASELINE, 12);
+    fixedFont = standardFont;
     fontFactory.initialize(standardFont, fixedFont);    
   }
   
   private void updateDimensionsInHeader() {
     
     StoryFileHeader fileheader = machine.getGameData().getStoryFileHeader();
-    fileheader.setScreenWidth(imageBuffer.getWidth());
-    fileheader.setScreenHeight(imageBuffer.getHeight());
+    int numcols = imageBuffer.getWidth() / canvas.getCharWidth(fixedFont, '0');
+    int numlines = imageBuffer.getHeight() / canvas.getFontHeight(fixedFont);
+    
+    fileheader.setScreenWidth(numcols);
+    fileheader.setScreenHeight(numlines);
+    fileheader.setScreenWidthUnits(imageBuffer.getWidth());
+    fileheader.setScreenHeightUnits(imageBuffer.getHeight());
   }
     
   private void repaintInUiThread() {
