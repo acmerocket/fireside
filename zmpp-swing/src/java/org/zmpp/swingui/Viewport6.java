@@ -311,8 +311,10 @@ public class Viewport6 extends JViewport implements ScreenModel6, Viewport {
     fileheader.setEnabled(Attribute.SUPPORTS_COLOURS, true);
     fileheader.setDefaultBackgroundColor(ColorTranslator.COLOR_WHITE);
     fileheader.setDefaultForegroundColor(ColorTranslator.COLOR_BLACK);
-    fileheader.setFontWidth(1);
-    fileheader.setFontHeight(1);    
+    fileheader.setFontWidth(canvas.getCharWidth(
+        fontFactory.getFont(FONT_FIXED).getFont(), '0'));
+    fileheader.setFontHeight(canvas.getFontHeight(
+        fontFactory.getFont(FONT_FIXED).getFont()));    
     determineStandardFont();
     updateDimensionsInHeader();
   }
@@ -329,12 +331,8 @@ public class Viewport6 extends JViewport implements ScreenModel6, Viewport {
   private void updateDimensionsInHeader() {
     
     StoryFileHeader fileheader = machine.getGameData().getStoryFileHeader();
-    Font font = fontFactory.getFont(ScreenModel.FONT_FIXED).getFont();
-    FontMetrics fm = imageBuffer.getGraphics().getFontMetrics(font);
-    int screenWidth = imageBuffer.getWidth() / fm.charWidth('0');
-    int screenHeight = imageBuffer.getHeight() / fm.getHeight();    
-    fileheader.setScreenWidth(screenWidth);
-    fileheader.setScreenHeight(screenHeight);
+    fileheader.setScreenWidth(imageBuffer.getWidth());
+    fileheader.setScreenHeight(imageBuffer.getHeight());
   }
     
   private void repaintInUiThread() {
