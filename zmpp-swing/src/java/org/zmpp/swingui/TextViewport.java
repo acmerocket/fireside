@@ -164,7 +164,6 @@ public class TextViewport extends JComponent implements ScreenModel, Viewport {
     getOutputStream().flush();
     
     activeWindow = window;
-    updateDimensionsInHeader();
     
     // S 8.7.2: If the top window is set active, reset the cursor position
     if (activeWindow == WINDOW_TOP) {
@@ -207,7 +206,6 @@ public class TextViewport extends JComponent implements ScreenModel, Viewport {
     fontStyle |= ((style & TEXTSTYLE_ITALIC) > 0) ? Font.ITALIC : 0;
     
     windows[activeWindow].setFont(windowFont.deriveFont(fontStyle));
-    updateDimensionsInHeader();    
   }
   
   public void setBufferMode(boolean flag) {
@@ -394,12 +392,17 @@ public class TextViewport extends JComponent implements ScreenModel, Viewport {
     
     StoryFileHeader fileheader = machine.getGameData().getStoryFileHeader();
     if (fileheader.getVersion() >= 4) {
-      Font font = windows[activeWindow].getFont();
-      FontMetrics fm = imageBuffer.getGraphics().getFontMetrics(font);
+      FontMetrics fm = imageBuffer.getGraphics().getFontMetrics(fixedFont);
       int screenWidth = imageBuffer.getWidth() / fm.charWidth('0');
       int screenHeight = imageBuffer.getHeight() / fm.getHeight();    
       fileheader.setScreenWidth(screenWidth);
       fileheader.setScreenHeight(screenHeight);
+      
+      if (fileheader.getVersion() >= 5) {
+        
+        fileheader.setScreenWidthUnits(screenWidth);
+        fileheader.setScreenHeightUnits(screenHeight);
+      }
     }
   }
   
