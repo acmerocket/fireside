@@ -53,6 +53,7 @@ public class ApplicationMachineFactory extends MachineFactory<ZmppFrame> {
   private File blorbfile;
   private ZmppFrame frame;
   private FormChunk blorbchunk;
+  private SaveGameDataStore savegamestore;
   
   public ApplicationMachineFactory(File storyfile, File blorbfile) {
   
@@ -119,6 +120,7 @@ public class ApplicationMachineFactory extends MachineFactory<ZmppFrame> {
   protected ZmppFrame initUI(Machine machine) {
     
     frame = new ZmppFrame(machine);
+    savegamestore = new FileSaveGameDataStore(frame);
     return frame;
   }
 
@@ -150,5 +152,5 @@ public class ApplicationMachineFactory extends MachineFactory<ZmppFrame> {
   /**
    * {@inheritDoc}
    */
-  protected SaveGameDataStore getSaveGameDataStore() { return frame; }
+  protected SaveGameDataStore getSaveGameDataStore() { return savegamestore; }
 }

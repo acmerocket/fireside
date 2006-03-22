@@ -51,6 +51,7 @@ public class AppletMachineFactory extends MachineFactory<ZmppApplet> {
   private java.io.InputStream storyis;
   private java.io.InputStream resourceis;
   private FormChunk blorbchunk;
+  private SaveGameDataStore savegamestore;
 
   /**
    * Constructor.
@@ -58,12 +59,16 @@ public class AppletMachineFactory extends MachineFactory<ZmppApplet> {
    * @param applet the applet object
    * @param storyurl the story file url
    * @param resourceurl the blorb file url
+   * @param savetofile true if should save to file
    * @throws Exception if an error occurs
    */
-  public AppletMachineFactory(ZmppApplet applet, URL storyurl, URL resourceurl)
+  public AppletMachineFactory(ZmppApplet applet, URL storyurl, URL resourceurl,
+                              boolean savetofile)
     throws Exception {
     
     this.applet = applet;
+    savegamestore = savetofile ? new FileSaveGameDataStore(applet) :
+                                 new MemorySaveGameDataStore();
     try {
       
       storyis = storyurl.openStream();
@@ -77,10 +82,13 @@ public class AppletMachineFactory extends MachineFactory<ZmppApplet> {
     }
   }
   
-  public AppletMachineFactory(ZmppApplet applet, URL zblorburl)
-  throws Exception {
+  public AppletMachineFactory(ZmppApplet applet, URL zblorburl,
+                              boolean savetofile)
+    throws Exception {
   
     this.applet = applet;
+    savegamestore = savetofile ? new FileSaveGameDataStore(applet) :
+      new MemorySaveGameDataStore();
     try {
     
       resourceis = zblorburl.openStream();
@@ -159,7 +167,7 @@ public class AppletMachineFactory extends MachineFactory<ZmppApplet> {
   /**
    * {@inheritDoc}
    */
-  protected SaveGameDataStore getSaveGameDataStore() { return applet; }
+  protected SaveGameDataStore getSaveGameDataStore() { return savegamestore; }
   
   /**
    * {@inheritDoc}

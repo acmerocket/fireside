@@ -41,12 +41,9 @@ import javax.swing.JLabel;
 import javax.swing.JPanel;
 import javax.swing.SwingUtilities;
 
-import org.zmpp.iff.FormChunk;
-import org.zmpp.iff.WritableFormChunk;
 import org.zmpp.io.IOSystem;
 import org.zmpp.io.InputStream;
 import org.zmpp.vm.Machine;
-import org.zmpp.vm.SaveGameDataStore;
 import org.zmpp.vm.ScreenModel;
 import org.zmpp.vm.StatusLine;
 
@@ -57,7 +54,7 @@ import org.zmpp.vm.StatusLine;
  * @version 1.0
  */
 public class ZmppApplet extends JApplet
-implements InputStream, StatusLine, SaveGameDataStore, IOSystem {
+implements InputStream, StatusLine, IOSystem {
 
   private static final long serialVersionUID = 1L;
   
@@ -67,11 +64,14 @@ implements InputStream, StatusLine, SaveGameDataStore, IOSystem {
   private Machine machine;
   private LineEditorImpl lineEditor;
   private GameThread currentGame;
+  private boolean savetofile;
   
   public void init() {
         
     String story = getParameter("storyfile");
     String blorb = getParameter("blorbfile");
+    String saveto = getParameter("saveto");
+    savetofile = "file".equalsIgnoreCase(saveto);
     
     try {
 
@@ -83,11 +83,11 @@ implements InputStream, StatusLine, SaveGameDataStore, IOSystem {
       if (story != null) {
 
         URL storyurl = new URL(getDocumentBase(), story);
-        factory = new AppletMachineFactory(this, storyurl, blorburl);
+        factory = new AppletMachineFactory(this, storyurl, blorburl, savetofile);
 
       } else {
 
-        factory = new AppletMachineFactory(this, blorburl);
+        factory = new AppletMachineFactory(this, blorburl, savetofile);
       }
       machine = factory.buildMachine();
       
@@ -180,24 +180,6 @@ implements InputStream, StatusLine, SaveGameDataStore, IOSystem {
         statusLabel.setText(hours + ":" + minutes);
       }
     });
-  }
-
-  // *************************************************************************
-  // ******** SaveGameDataStore interface
-  // ******************************************
-
-  // Save games are stored in memory only
-  private WritableFormChunk savegame;
-  
-  public boolean saveFormChunk(WritableFormChunk formchunk) {
-
-    savegame = formchunk;
-    return true;
-  }
-  
-  public FormChunk retrieveFormChunk() {
-
-    return savegame;
   }
 
   public Writer getTranscriptWriter() {

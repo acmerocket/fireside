@@ -32,7 +32,6 @@ import java.io.File;
 import java.io.FileReader;
 import java.io.FileWriter;
 import java.io.IOException;
-import java.io.RandomAccessFile;
 import java.io.Reader;
 import java.io.Writer;
 
@@ -47,16 +46,11 @@ import javax.swing.JOptionPane;
 import javax.swing.JPanel;
 import javax.swing.SwingUtilities;
 
-import org.zmpp.base.DefaultMemoryAccess;
 import org.zmpp.blorb.StoryMetadata;
-import org.zmpp.iff.DefaultFormChunk;
-import org.zmpp.iff.FormChunk;
-import org.zmpp.iff.WritableFormChunk;
 import org.zmpp.io.IOSystem;
 import org.zmpp.io.InputStream;
 import org.zmpp.media.Resources;
 import org.zmpp.vm.Machine;
-import org.zmpp.vm.SaveGameDataStore;
 import org.zmpp.vm.ScreenModel;
 import org.zmpp.vm.StatusLine;
 
@@ -67,7 +61,7 @@ import org.zmpp.vm.StatusLine;
  * @version 1.0
  */
 public class ZmppFrame extends JFrame
-implements InputStream, StatusLine, SaveGameDataStore, IOSystem {
+implements InputStream, StatusLine, IOSystem {
 
   /**
    * Serial version UID.
@@ -235,67 +229,6 @@ implements InputStream, StatusLine, SaveGameDataStore, IOSystem {
         statusLabel.setText(hours + ":" + minutes);
       }
     });
-  }
-
-  // *************************************************************************
-  // ******** SaveGameDataStore interface
-  // ******************************************
-
-  public boolean saveFormChunk(WritableFormChunk formchunk) {
-  
-    File currentdir = new File(System.getProperty("user.dir"));    
-    JFileChooser fileChooser = new JFileChooser(currentdir);
-    fileChooser.setDialogTitle("Save game ...");
-    
-    if (fileChooser.showSaveDialog(this) == JFileChooser.APPROVE_OPTION) {
-      
-      File savefile = fileChooser.getSelectedFile();
-      RandomAccessFile raf = null;
-      try {
-        
-        raf = new RandomAccessFile(savefile, "rw");
-        byte[] data = formchunk.getBytes();
-        raf.write(data);
-        return true;
-        
-      } catch (IOException ex) {
-       
-        ex.printStackTrace();
-        
-      } finally {
-        
-        if (raf != null) try { raf.close(); } catch (Exception ex) { }
-      }
-    }
-    return false;
-  }
-  
-  public FormChunk retrieveFormChunk() {
-    
-    File currentdir = new File(System.getProperty("user.dir"));    
-    JFileChooser fileChooser = new JFileChooser(currentdir);
-    fileChooser.setDialogTitle("Restore game...");
-    if (fileChooser.showOpenDialog(this) == JFileChooser.APPROVE_OPTION) {
-      
-      File savefile = fileChooser.getSelectedFile();
-      RandomAccessFile raf = null;
-      try {
-        
-        raf = new RandomAccessFile(savefile, "r");
-        byte[] data = new byte[(int) raf.length()];
-        raf.readFully(data);
-        return new DefaultFormChunk(new DefaultMemoryAccess(data));
-        
-      } catch (IOException ex) {
-       
-        ex.printStackTrace();
-        
-      } finally {
-        
-        if (raf != null) try { raf.close(); } catch (Exception ex) { }
-      }
-    }
-    return null;
   }
 
   // *************************************************************************
