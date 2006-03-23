@@ -3,10 +3,12 @@ Changelog
 Version 0.89
 ------------
 - performance tuning (object access, instruction processing)
-- processes meta information
+- processes and views meta information
 - no maven builds anymore
 - command history added
 - added multiple undo
+- added save to file in applet mode
+- started signing the jar file
 
 Version 0.87
 ------------

@@ -18,6 +18,7 @@ Features:
 - saves and reads games in Quetzal 1.4 format
 - reads media in Blorb format
 - reads Z code embedded in Blorb files
+- shows Inform 7 meta data in application mode
 - input stream 0 and 1 (keyboard, mouse and file)
 - output streams 1, 2 and 3 (screen, transcript, memory with nesting)
 - split subwindows (paging, buffering, scrolling)
@@ -26,7 +27,8 @@ Features:
 - accented characters and unicode
 - timed input, preinitialized input
 - game-defined dictionaries, alphabet tables and accent tables
-- undo
+- command history
+- multiple undo
 
 For remarks and suggestions for improvements, please contact
 me using the ZMPP project homepage:
@@ -39,36 +41,55 @@ TODO:
 - save/restore regions
 - version 6
 
-
+**************************************
 Running as an application
--------------------------
+*************************************
 
 Command line:
 
-java -jar zmpp.jar
+java -jar zmpp.jar [story-file]
 
 On most systems, double clicking on the application jar file should start
 the software as well.
 
-Select a game
+Select a game:
+
+The game can be specified on the command line, if there is no story file
+specified, the application comes up with a file dialog
 
 Reading Blorb files
 ---------------------
 
 Blorb files must have the same filename as their story files, with a suffix of ".blb". The
 name is case-sensitive, so the name should be exactly the same way as the respective
-story file
+story file.
+Note: ZMPP can handle Blorb-wrapped story files which are recognized by
+having either a ".zblb" or ".zblorb" extension.
 
+**************************
 Running as an applet
---------------------
+**************************
 
 applet parameters:
 
-storyfile - the URL of the story file, must be on the same server as the jar file
-blorbfile - the URL of the blorb file, must be on the same server as the jar file
+1. storyfile:
+-------------
+the URL of the story file, must be on the same server as the jar file
 
-if only the blorb file is specified, the interpreter assumes the story is
-embedded in the blorb file
+2. blorbfile (optional):
+------------------------
+the URL of the blorb file, must be on the same server as the jar file
+
+3. saveto (optional):
+---------------------
+if set to "file", the applet will try to save a game state to the
+user's file system, the default value is "memory" which saves a game
+within the Java VM's memory
+
+
+Note: if only the blorbfile parameter is specified, the interpreter assumes
+that the story is embedded in the blorb file
+
 
 Operating systems tested on:
 -------------------------
