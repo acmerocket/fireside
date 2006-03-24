@@ -8,6 +8,14 @@ TODO:
 - cut, copy, paste
 - scrollback
 
+Version 0.91
+------------
+
+- fix the problem that leads to focus loss in Mozilla and Opera
+- add character graphics font
+- find out why the layout calculation does not work in V6
+- do more benchmark testing and tuning
+
 Version 0.89
 ------------
 - performance tuning (Inform 7 games seem to run significantly slower)
