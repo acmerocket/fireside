@@ -1,5 +1,5 @@
 This is the source code distribution of the Z-machine preservation project.
-The current version is 0.89.
+The current version is 0.91.
 
 This distribution contains both an unsigned and a signed version.
 The signed version allows for saving game states on the user's
