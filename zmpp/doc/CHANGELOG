@@ -1,5 +1,10 @@
 Changelog
 
+Version 0.91
+------------
+- customizable fonts sizes/default colors
+- preferences dialog added
+
 Version 0.89
 ------------
 - performance tuning (object access, instruction processing)
