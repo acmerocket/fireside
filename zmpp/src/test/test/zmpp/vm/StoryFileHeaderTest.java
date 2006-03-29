@@ -144,41 +144,34 @@ public class StoryFileHeaderTest extends MockObjectTestCase {
     assertEquals(4719, fileHeader.getChecksum());
   }
   
-  public void testSetScreenHeightV4() {
+  public void testSetScreenHeight() {
     
-    mockMemAccess.expects(atLeastOnce()).method("readUnsignedByte").with(eq(0x00)).will(returnValue((short) 4));
     mockMemAccess.expects(once()).method("writeUnsignedByte").with(eq(0x20), eq((short) 255));
-    fileHeader.setScreenHeight(255);
-  }
-
-  public void testSetScreenHeightV5() {
-    
-    mockMemAccess.expects(atLeastOnce()).method("readUnsignedByte").with(eq(0x00)).will(returnValue((short) 5));
-    mockMemAccess.expects(once()).method("writeUnsignedByte").with(eq(0x20), eq((short) 255));
-    mockMemAccess.expects(once()).method("writeUnsignedShort").with(eq(0x24), eq(255));
     fileHeader.setScreenHeight(255);
   }
   
+  public void testSetScreenHeightUnits() {
+    
+    mockMemAccess.expects(once()).method("writeUnsignedShort").with(eq(0x24), eq(40));
+    fileHeader.setScreenHeightUnits(40);
+  }
+
   public void testGetScreenWidth() {
     
     mockMemAccess.expects(once()).method("readUnsignedByte").with(eq(0x21)).will(returnValue((short) 82));
     assertEquals(82, fileHeader.getScreenWidth());
   }
   
-  public void testSetScreenWidthV4() {
+  public void testSetScreenWidth() {
     
-    mockMemAccess.expects(atLeastOnce()).method("readUnsignedByte").with(eq(0x00)).will(returnValue((short) 4));
     mockMemAccess.expects(once()).method("writeUnsignedByte").with(eq(0x21), eq((short) 82));
     fileHeader.setScreenWidth(82);
   }  
 
-  public void testSetScreenWidthV5() {
+  public void testSetScreenWidthUnits() {
     
-    mockMemAccess.expects(atLeastOnce()).method("readUnsignedByte").with(eq(0x00)).will(returnValue((short) 5));
-    mockMemAccess.expects(once()).method("writeUnsignedByte").with(eq(0x21), eq((short) 82));
-    mockMemAccess.expects(once()).method("writeUnsignedShort").with(eq(0x22), eq(82));
-    
-    fileHeader.setScreenWidth(82);
+    mockMemAccess.expects(once()).method("writeUnsignedShort").with(eq(0x22), eq(82));    
+    fileHeader.setScreenWidthUnits(82);
   }  
   
   public void testSetInterpreterVersionV5() {
