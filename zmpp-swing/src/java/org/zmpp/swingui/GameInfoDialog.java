@@ -166,6 +166,7 @@ public class GameInfoDialog extends JDialog implements ListSelectionListener {
         setVisible(false);
       }
     });
+    getRootPane().setDefaultButton(okButton);
     buttonPanel.add(okButton);
     return buttonPanel;
   }

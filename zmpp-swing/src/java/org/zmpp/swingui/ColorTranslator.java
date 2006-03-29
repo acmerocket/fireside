@@ -34,18 +34,19 @@ import java.awt.Color;
  */
 public class ColorTranslator {
 
-  public static final int COLOR_UNDER_CURSOR          =  -1;
-  public static final int COLOR_CURRENT               =   0;
-  public static final int COLOR_DEFAULT               =   1;
-  public static final int COLOR_BLACK                 =   2;
-  public static final int COLOR_RED                   =   3;
-  public static final int COLOR_GREEN                 =   4;
-  public static final int COLOR_YELLOW                =   5;
-  public static final int COLOR_BLUE                  =   6;
-  public static final int COLOR_MAGENTA               =   7;
-  public static final int COLOR_CYAN                  =   8;
-  public static final int COLOR_WHITE                 =   9;
-  public static final int COLOR_MS_DOS_DARKISH_GREY   =   10;    
+  public static final int UNDEFINED                   = -1000;
+  public static final int COLOR_UNDER_CURSOR          = -1;
+  public static final int COLOR_CURRENT               =  0;
+  public static final int COLOR_DEFAULT               =  1;
+  public static final int COLOR_BLACK                 =  2;
+  public static final int COLOR_RED                   =  3;
+  public static final int COLOR_GREEN                 =  4;
+  public static final int COLOR_YELLOW                =  5;
+  public static final int COLOR_BLUE                  =  6;
+  public static final int COLOR_MAGENTA               =  7;
+  public static final int COLOR_CYAN                  =  8;
+  public static final int COLOR_WHITE                 =  9;
+  public static final int COLOR_MS_DOS_DARKISH_GREY   =  10;    
   
   private static final Color GREEN    = new Color(0, 190, 0);
   private static final Color RED      = new Color(190, 0, 0);
@@ -72,7 +73,7 @@ public class ColorTranslator {
     switch (colornum) {
     
     case COLOR_DEFAULT:
-      return translate(defaultColor, -1000);
+      return translate(defaultColor, UNDEFINED);
     case COLOR_BLACK:
       return Color.BLACK;
     case COLOR_RED:
@@ -97,6 +98,6 @@ public class ColorTranslator {
   
   public Color translate(int colornum) {
     
-    return translate(colornum, -1000);
+    return translate(colornum, UNDEFINED);
   }
 }

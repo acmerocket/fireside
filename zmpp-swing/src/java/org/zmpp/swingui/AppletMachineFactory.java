@@ -59,6 +59,7 @@ public class AppletMachineFactory extends MachineFactory<ZmppApplet> {
    * @param applet the applet object
    * @param storyurl the story file url
    * @param resourceurl the blorb file url
+   * @param settings the display settings
    * @param savetofile true if should save to file
    * @throws Exception if an error occurs
    */

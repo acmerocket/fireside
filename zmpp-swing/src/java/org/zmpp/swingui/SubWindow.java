@@ -352,7 +352,7 @@ public abstract class SubWindow implements CursorWindow {
   
   private static boolean endsWithNewLine(String str) {
   
-    return str.charAt(str.length() - 1) == '\n';
+    return str.length() > 0 && str.charAt(str.length() - 1) == '\n';
   }
   
   protected void clipToCurrentBounds() {

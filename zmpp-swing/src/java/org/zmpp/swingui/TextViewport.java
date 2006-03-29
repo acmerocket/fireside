@@ -58,6 +58,7 @@ public class TextViewport extends JComponent implements ScreenModel, Viewport {
   private static final int WINDOW_BOTTOM  = 0;
   private static final int WINDOW_TOP     = 1;
   
+  private DisplaySettings settings;
   private int defaultForeground;
   private int defaultBackground;
   private Font standardFont, fixedFont;
@@ -69,13 +70,17 @@ public class TextViewport extends JComponent implements ScreenModel, Viewport {
   private int activeWindow;
   private static final boolean DEBUG = false;
   
-  public TextViewport(Machine machine, LineEditor editor) {
+  public TextViewport(Machine machine, LineEditor editor,
+                      DisplaySettings settings) {
 
     this.machine = machine;
     this.editor = editor;
+    this.settings = settings;
     
-    standardFont = new Font("Dialog", Font.ROMAN_BASELINE, 12);
-    fixedFont = new Font("Monospaced", Font.ROMAN_BASELINE, 12);
+    standardFont = new Font("Dialog", Font.ROMAN_BASELINE,
+                            settings.getStdFontSize());
+    fixedFont = new Font("Monospaced", Font.ROMAN_BASELINE,
+                         settings.getFixedFontSize());
     outputstream = new ScreenOutputStream(machine, this);
     windows = new SubWindow[2];
     activeWindow = WINDOW_BOTTOM;
@@ -248,8 +253,8 @@ public class TextViewport extends JComponent implements ScreenModel, Viewport {
       canvas = new CanvasImpl(imageBuffer, this);
       
       // Default colors
-      defaultBackground = ColorTranslator.COLOR_WHITE;
-      defaultForeground = ColorTranslator.COLOR_BLACK;
+      setDefaultColors(machine.getGameData().getStoryFileHeader(),
+          ColorTranslator.COLOR_WHITE, ColorTranslator.COLOR_BLACK);
       
       // Create the two sub windows
       windows[WINDOW_TOP] = new TopWindow(this);
@@ -493,10 +498,8 @@ public class TextViewport extends JComponent implements ScreenModel, Viewport {
       
     } else if (isVaricella(version) || isOnlyAfterDark(version)) {
       
-      fileheader.setDefaultBackgroundColor(ColorTranslator.COLOR_BLACK);
-      fileheader.setDefaultForegroundColor(ColorTranslator.COLOR_WHITE);      
-      defaultBackground = ColorTranslator.COLOR_BLACK;
-      defaultForeground = ColorTranslator.COLOR_WHITE;
+      setDefaultColors(fileheader, ColorTranslator.COLOR_BLACK,
+                       ColorTranslator.COLOR_WHITE);
       windows[WINDOW_BOTTOM].clear();
     }
   }
@@ -518,5 +521,27 @@ public class TextViewport extends JComponent implements ScreenModel, Viewport {
            || (version.equals("49.870917"))
            || (version.equals("51.870923"))
            || (version.equals("57.871221"));    
+  }
+
+  /**
+   * Sets the default colors both in the viewport object and the file header.
+   * If the settings object defines colors the defined values will be
+   * taken instead, otherwise take the parameters.
+   * 
+   * @param fileheader the file header
+   * @param background the background color to set
+   * @param foreground the foreground color to set
+   */
+  private void setDefaultColors(StoryFileHeader fileheader,
+      int background, int foreground) {
+    
+    defaultBackground = 
+      (settings.getDefaultBackground() != ColorTranslator.UNDEFINED) ?      
+       settings.getDefaultBackground() : background;
+   defaultForeground = 
+      (settings.getDefaultForeground() != ColorTranslator.UNDEFINED) ?      
+       settings.getDefaultForeground() : foreground;   
+    fileheader.setDefaultBackgroundColor(defaultBackground);
+    fileheader.setDefaultForegroundColor(defaultForeground);      
   }
 }

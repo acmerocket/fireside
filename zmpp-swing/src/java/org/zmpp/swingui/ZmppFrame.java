@@ -34,6 +34,7 @@ import java.io.FileWriter;
 import java.io.IOException;
 import java.io.Reader;
 import java.io.Writer;
+import java.util.prefs.Preferences;
 
 import javax.swing.JComponent;
 import javax.swing.JFileChooser;
@@ -75,6 +76,8 @@ implements InputStream, StatusLine, IOSystem {
   private LineEditorImpl lineEditor;
   private GameThread currentGame;
   private boolean isMacOs;
+  private DisplaySettings settings;
+  private Preferences preferences;
 
   /**
    * Constructor.
@@ -94,14 +97,17 @@ implements InputStream, StatusLine, IOSystem {
     setResizable(false);
     JComponent view = null;
     
+    preferences = Preferences.userNodeForPackage(ZmppFrame.class);
+    settings = createDisplaySettings(preferences);
+    
     if (machine.getGameData().getStoryFileHeader().getVersion() ==  6) {
       
       view = new Viewport6(machine, lineEditor);
       screen = (ScreenModel) view;
       
     } else {
-      
-      view = new TextViewport(machine, lineEditor);
+
+      view = new TextViewport(machine, lineEditor, settings);
       screen = (ScreenModel) view;
     }
     view.setPreferredSize(new Dimension(640, 476));
@@ -129,12 +135,10 @@ implements InputStream, StatusLine, IOSystem {
     
     JMenuBar menubar = new JMenuBar();
     setJMenuBar(menubar);
-    // Menus need to be slightly different on MacOS
-    if (isMacOs) {
-      
-      // Here Macos specific stuff
-      
-    } else {
+    
+    // Menus need to be slightly different on MacOS X, they do not have
+    // an explicit File menu
+    if (!isMacOs) { 
       
       JMenu fileMenu = new JMenu("File");
       fileMenu.setMnemonic('F');
@@ -151,6 +155,20 @@ implements InputStream, StatusLine, IOSystem {
         }
       });      
     }
+    JMenu editMenu = new JMenu("Edit");
+    menubar.add(editMenu);
+    editMenu.setMnemonic('E');
+    JMenuItem preferencesItem = new JMenuItem("Preferences...");
+    preferencesItem.setMnemonic('P');
+    editMenu.add(preferencesItem);
+    preferencesItem.addActionListener(new ActionListener() {
+      
+      public void actionPerformed(ActionEvent e) {
+        
+        editPreferences();
+      }
+    });
+    
     JMenu helpMenu = new JMenu("Help");
     menubar.add(helpMenu);
     helpMenu.setMnemonic('H');
@@ -199,6 +217,12 @@ implements InputStream, StatusLine, IOSystem {
   public ScreenModel getScreenModel() {
     
     return screen;
+  }
+  
+  public void startMachine() {
+    
+    currentGame = new GameThread(machine, screen);
+    currentGame.start();
   }
   
   // *************************************************************************
@@ -327,9 +351,23 @@ implements InputStream, StatusLine, IOSystem {
     dialog.setVisible(true);
   }
   
-  public void startMachine() {
+  private void editPreferences() {
     
-    currentGame = new GameThread(machine, screen);
-    currentGame.start();
+    PreferencesDialog dialog = new PreferencesDialog(this, preferences,
+                                                     settings);
+    dialog.setVisible(true);
+  }
+  
+  private DisplaySettings createDisplaySettings(Preferences preferences) {
+    
+    int stdfontsize = preferences.getInt("stdfontsize", 12);
+    int fixedfontsize = preferences.getInt("fixedfontsize", 12);
+    int defaultforeground = preferences.getInt("defaultforeground",
+        ColorTranslator.UNDEFINED);
+    int defaultbackground = preferences.getInt("defaultbackground",
+        ColorTranslator.UNDEFINED);
+    
+    return new DisplaySettings(stdfontsize, fixedfontsize, defaultbackground,
+                               defaultforeground);    
   }
 }

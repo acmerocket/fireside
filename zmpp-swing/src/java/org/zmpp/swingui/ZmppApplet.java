@@ -64,6 +64,7 @@ implements InputStream, StatusLine, IOSystem {
   private Machine machine;
   private LineEditorImpl lineEditor;
   private GameThread currentGame;
+  private DisplaySettings settings;
   private boolean savetofile;
   
   public void init() {
@@ -71,7 +72,28 @@ implements InputStream, StatusLine, IOSystem {
     String story = getParameter("storyfile");
     String blorb = getParameter("blorbfile");
     String saveto = getParameter("saveto");
+    String fixedfontsize = getParameter("fixedfontsize");
+    String stdfontsize = getParameter("stdfontsize");
+    int sizeStdFont = 12;
+    int sizeFixedFont = 12;
+    int defaultBackground = ColorTranslator.UNDEFINED;
+    int defaultForeground = ColorTranslator.UNDEFINED;
+    
     savetofile = "file".equalsIgnoreCase(saveto);
+    
+    if (fixedfontsize != null) {
+      try {
+        sizeFixedFont = Integer.parseInt(fixedfontsize);
+      } catch (NumberFormatException ignore) { }
+    }
+    
+    if (stdfontsize != null) {
+      try {
+        sizeStdFont = Integer.parseInt(stdfontsize);
+      } catch (NumberFormatException ignore) { }
+    }
+    settings = new DisplaySettings(sizeStdFont, sizeFixedFont,
+        defaultBackground, defaultForeground);
     
     try {
 
@@ -83,7 +105,8 @@ implements InputStream, StatusLine, IOSystem {
       if (story != null) {
 
         URL storyurl = new URL(getDocumentBase(), story);
-        factory = new AppletMachineFactory(this, storyurl, blorburl, savetofile);
+        factory = new AppletMachineFactory(this, storyurl, blorburl,
+                                           savetofile);
 
       } else {
 
@@ -111,7 +134,7 @@ implements InputStream, StatusLine, IOSystem {
       
     } else {
       
-      view = new TextViewport(machine, lineEditor);
+      view = new TextViewport(machine, lineEditor, settings);
       screen = (ScreenModel) view;
     }
     view.setPreferredSize(new Dimension(640, 480));
