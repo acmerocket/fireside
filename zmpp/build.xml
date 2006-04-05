@@ -6,24 +6,29 @@
   <property file="build.properties" />
   
   <path id="cobertura.path">
-    <fileset dir="${cobertura.home}">
+    <fileset dir="lib">
       <include name="**/*.jar"/>
     </fileset>
   </path>
   
   <path id="junit.path">
-    <fileset dir="${junit.home}">
-      <include name="junit.jar"/>
-    </fileset>
     <fileset dir="lib">
-      <include name="jmock-1.0.1.jar"/>
+      <include name="junit.jar"/>
+      <include name="jmock-SNAPSHOT.jar"/>
     </fileset>
   </path>
-  
-  <!--
+
+	<path id="pmd.classpath">
+    <fileset dir="lib">
+        <include name="*.jar"/>
+    </fileset>
+	</path>
+
+
   <taskdef classpathref="cobertura.path" resource="tasks.properties"/>
   <taskdef resource="checkstyletask.properties" classpath="checkstyle.path"/>
-  -->
+	<taskdef name="pmd" classname="net.sourceforge.pmd.ant.PMDTask" classpathref="pmd.classpath"/>
+  
   <target name="init">
     <!-- Create the build directory structure used by compile -->
     <mkdir dir="${build.prj}"/>
@@ -31,15 +36,13 @@
   </target>
 
   <target name="compile" depends="init">
-    <javac debug="off" srcdir="${src.prj}" destdir="${build.prj}"/>
-    <!--
+    <javac debug="on" srcdir="${src.prj}" destdir="${build.prj}"/>
     <javac debug="on" srcdir="${src.tests}" destdir="${build.tests}">
       <classpath>
   			<pathelement location="${build.prj}"/>
   	  </classpath>
       <classpath refid="junit.path" />
     </javac>
-    -->
   </target>
   
   <target name="instrument" depends="compile">
@@ -83,6 +86,33 @@
 			<classpath refid="cobertura.path" />
 		</cobertura-report>
   </target>
+
+	<target name="jdepend">
+    <mkdir dir="${jdepend.dir}"/>
+  	<jdepend outputfile="${jdepend.dir}/jdepend-report.txt">
+      <exclude name="java.*"/>
+      <exclude name="javax.*"/>
+      <exclude name="org.xml.*"/>
+      <classespath>
+        <pathelement location="${build.prj}" />
+      </classespath>
+      <classpath>
+        <pathelement location="${build.prj}" />
+        <pathelement location="lib/jdepend-2.9.jar" />
+      </classpath>
+  	</jdepend>
+	</target>  
+
+	<target name="pmd">
+    <mkdir dir="${pmdreport.dir}"/>
+ 		<taskdef name="pmd" classname="net.sourceforge.pmd.ant.PMDTask"/>
+ 		<pmd targetjdk="1.5" rulesetfiles="rulesets/zmpp_all.xml">
+  		<formatter type="html" toFile="${pmdreport.dir}/pmd_report.html" />
+  		<fileset dir="${src.prj}">
+   			<include name="**/*.java"/>
+  		</fileset>
+ 		</pmd>
+	</target>
 
   <target name="dist" depends="compile"
         description="generate the distribution" >
