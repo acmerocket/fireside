@@ -47,10 +47,10 @@ import javax.swing.JOptionPane;
 import javax.swing.JPanel;
 import javax.swing.SwingUtilities;
 
-import org.zmpp.blorb.StoryMetadata;
 import org.zmpp.io.IOSystem;
 import org.zmpp.io.InputStream;
 import org.zmpp.media.Resources;
+import org.zmpp.media.StoryMetadata;
 import org.zmpp.vm.Machine;
 import org.zmpp.vm.ScreenModel;
 import org.zmpp.vm.StatusLine;

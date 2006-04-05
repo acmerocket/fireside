@@ -48,10 +48,10 @@ import javax.swing.ListSelectionModel;
 import javax.swing.event.ListSelectionEvent;
 import javax.swing.event.ListSelectionListener;
 
-import org.zmpp.blorb.InformMetadata;
-import org.zmpp.blorb.StoryMetadata;
-import org.zmpp.blorb.StoryMetadata.Auxiliary;
+import org.zmpp.media.InformMetadata;
 import org.zmpp.media.Resources;
+import org.zmpp.media.StoryMetadata;
+import org.zmpp.media.StoryMetadata.Auxiliary;
 
 /**
  * This dialog displays information about a story given its meta information.
