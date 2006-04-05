@@ -22,7 +22,6 @@
  */
 package org.zmpp.media;
 
-import org.zmpp.blorb.BlorbSounds;
 
 /**
  * The game "The Lurking Horror" serializes sound effect playing rather
@@ -38,7 +37,7 @@ public class LurkingHorrorSoundSystem extends SoundSystemImpl {
    * 
    * @param sounds the sound resources
    */
-  public LurkingHorrorSoundSystem(BlorbSounds sounds) {
+  public LurkingHorrorSoundSystem(MediaCollection<SoundEffect> sounds) {
     
     super(sounds);
   }

@@ -1,7 +1,7 @@
 /*
  * $Id$
  * 
- * Created on 2005/09/23
+ * Created on 2006/02/10
  * Copyright 2005-2006 by Wei-ju Wu
  *
  * This file is part of The Z-machine Preservation Project (ZMPP).
@@ -20,26 +20,22 @@
  * along with ZMPP; if not, write to the Free Software
  * Foundation, Inc., 51 Franklin St, Fifth Floor, Boston, MA  02110-1301  USA
  */
-package org.zmpp.vmutil;
+package org.zmpp.base;
 
 /**
- * This interface defines the functions of a random number generator within
- * the Z machine.
+ * This interface indicates that objects implementing it can interrupt
+ * their current execution temporarily, executing the given routine and
+ * returning to the former execution after finishing with that routine.
  * 
  * @author Wei-ju Wu
  * @version 1.0
  */
-public interface RandomGenerator {
+public interface Interruptable {
 
   /**
-   * The maximum generated value.
-   */
-  int MAX_VALUE = 32767;
-  
-  /**
-   * Returns the next random value between 1 and MAX_VALUE.
+   * Indicates to the receiver that a interrupt should be started.
    * 
-   * @return a random int value
+   * @param routineAddress the routine address
    */
-  int next();
+  void setInterruptRoutine(int routineAddress);
 }

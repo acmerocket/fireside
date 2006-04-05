@@ -22,7 +22,7 @@
  */
 package org.zmpp.media;
 
-import org.zmpp.instructions.Interruptable;
+import org.zmpp.base.Interruptable;
 
 public class PlaySoundTask implements Runnable, SoundStopListener {
 
@@ -74,7 +74,10 @@ public class PlaySoundTask implements Runnable, SoundStopListener {
       
       while (!wasPlayed()) {
         
-        try { wait(); } catch (Exception ex) { }
+        try { wait(); } catch (Exception ex) {
+          
+          ex.printStackTrace(System.err);
+        }
       }
     }
     sound.removeSoundStopListener(this);
@@ -145,7 +148,10 @@ public class PlaySoundTask implements Runnable, SoundStopListener {
     
     while (!wasPlayed()) {
       
-      try { wait(); } catch (Exception ex) { }
+      try { wait(); } catch (Exception ex) {
+        
+        ex.printStackTrace(System.err);
+      }
     }
   }
   

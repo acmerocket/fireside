@@ -92,12 +92,16 @@ public class FileInputStream implements InputStream {
   public void close() {
 
     if (input != null) {
+      
       try {
         
         input.close();
         input = null;
         
-      } catch (IOException ex) { }
+      } catch (IOException ex) {
+        
+        ex.printStackTrace(System.err);
+      }
     }
     
     if (filereader != null) {
@@ -107,7 +111,10 @@ public class FileInputStream implements InputStream {
         filereader.close();
         filereader = null;
         
-      } catch (IOException ex) { }
+      } catch (IOException ex) {
+        
+        ex.printStackTrace(System.err);
+      }
     }      
   }
   

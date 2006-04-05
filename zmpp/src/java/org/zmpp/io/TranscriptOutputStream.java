@@ -122,7 +122,7 @@ public class TranscriptOutputStream implements OutputStream {
       
     } catch (IOException ex) {
       
-      ex.printStackTrace();
+      ex.printStackTrace(System.err);
     }
   }
   
@@ -138,7 +138,10 @@ public class TranscriptOutputStream implements OutputStream {
         output.close();
         output = null;
         
-      } catch (Exception ex) { }      
+      } catch (Exception ex) {
+        
+        ex.printStackTrace(System.err);
+      }      
     }
     
     if (transcriptWriter != null) {
@@ -148,7 +151,10 @@ public class TranscriptOutputStream implements OutputStream {
         transcriptWriter.close();
         transcriptWriter = null;
         
-      } catch (Exception ex) { }      
+      } catch (Exception ex) {
+        
+        ex.printStackTrace(System.err);
+      }      
     }
   }
   

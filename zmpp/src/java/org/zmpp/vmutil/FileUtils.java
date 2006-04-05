@@ -49,7 +49,10 @@ public class FileUtils {
   /**
    * This class only contains static methods.
    */
-  private FileUtils() { }
+  private FileUtils() {
+    
+    // this of course, does nothing, since there are no instances
+  }
   
   /**
    * Creates a resources object from a Blorb file.
@@ -75,7 +78,10 @@ public class FileUtils {
       
     } finally {
       
-      if (raf != null) try { raf.close(); } catch (Exception ignore) { }
+      if (raf != null) try { raf.close(); } catch (Exception ex) {
+        
+        ex.printStackTrace(System.err);
+      }
     }
     return null;
   }
@@ -115,7 +121,10 @@ public class FileUtils {
       
     } finally {
       
-      try { inputstream.close(); } catch (Exception ex) { } 
+      try { inputstream.close(); } catch (Exception ex) {
+        
+        ex.printStackTrace(System.err);
+      } 
     }
     return data;
   }
@@ -146,7 +155,13 @@ public class FileUtils {
       
       } finally {
       
-        if (raf != null) { try { raf.close(); } catch (Exception ex) { } } 
+        if (raf != null) {
+          
+          try { raf.close(); } catch (Exception ex) {
+            
+            ex.printStackTrace(System.err);
+          } 
+        } 
       }
     }
     return data;

@@ -28,9 +28,11 @@ import javax.xml.parsers.SAXParserFactory;
 import org.xml.sax.Attributes;
 import org.xml.sax.helpers.DefaultHandler;
 import org.zmpp.base.MemoryReadAccess;
-import org.zmpp.blorb.StoryMetadata.Auxiliary;
 import org.zmpp.iff.Chunk;
 import org.zmpp.iff.FormChunk;
+import org.zmpp.media.InformMetadata;
+import org.zmpp.media.StoryMetadata;
+import org.zmpp.media.StoryMetadata.Auxiliary;
 
 /**
  * This class parses the metadata chunk in the Blorb file and converts
@@ -84,31 +86,31 @@ public class BlorbMetadataHandler extends DefaultHandler {
   public void startElement(String uri, String localName, String qname,
                           Attributes attributes) {
     
-    if (qname.equals("story")) {
+    if ("story".equals(qname)) {
 
       story = new StoryMetadata();
     }
-    if (qname.equals("title")) {
+    if ("title".equals(qname)) {
       
       buffer = new StringBuilder();
     }
-    if (qname.equals("headline")) {
+    if ("headline".equals(qname)) {
       
       buffer = new StringBuilder();
     }
-    if (qname.equals("author")) {
+    if ("author".equals(qname)) {
       
       buffer = new StringBuilder();
     }
-    if (qname.equals("genre")) {
+    if ("genre".equals(qname)) {
       
       buffer = new StringBuilder();
     }
-    if (qname.equals("description")) {
+    if ("description".equals(qname)) {
       
       buffer = new StringBuilder();
     }
-    if (qname.equals("year")) {
+    if ("year".equals(qname)) {
       
       buffer = new StringBuilder();
     }
@@ -132,23 +134,23 @@ public class BlorbMetadataHandler extends DefaultHandler {
 
   public void endElement(String uri, String localName, String qname) {
 
-    if (qname.equals("title")) {
+    if ("title".equals(qname)) {
       
       story.setTitle(buffer.toString());
     }
-    if (qname.equals("headline")) {
+    if ("headline".equals(qname)) {
       
       story.setHeadline(buffer.toString());
     }
-    if (qname.equals("author")) {
+    if ("author".equals(qname)) {
       
       story.setAuthor(buffer.toString());
     }
-    if (qname.equals("genre")) {
+    if ("genre".equals(qname)) {
       
       story.setGenre(buffer.toString());
     }
-    if (qname.equals("description")) {
+    if ("description".equals(qname)) {
       
       if (auxiliary != null) {
         
@@ -159,26 +161,31 @@ public class BlorbMetadataHandler extends DefaultHandler {
         story.setDescription(buffer.toString());
       }
     }
-    if (qname.equals("year")) {
+    if ("year".equals(qname)) {
       
       story.setYear(buffer.toString());
     }
-    if (qname.equals("group")) {
+    if ("group".equals(qname)) {
       
       story.setGroup(buffer.toString());
     }
-    if (qname.equals("coverpicture")) {
+    if ("coverpicture".equals(qname)) {
       
       String val = buffer.toString().trim();
       try {
+        
         story.setCoverPicture(Integer.parseInt(val));
-      } catch (NumberFormatException ignore) { }
+        
+      } catch (NumberFormatException ex) {
+        
+        System.err.println("NumberFormatException in cover picture: " + val);
+      }
     }
-    if (qname.equals("leafname")) {
+    if ("leafname".equals(qname) && auxiliary != null) {
       
-      if (auxiliary != null) auxiliary.setLeafName(buffer.toString());
+      auxiliary.setLeafName(buffer.toString());
     }
-    if (qname.equals("auxiliary")) {
+    if ("auxiliary".equals(qname)) {
       
       if (auxiliary != null) story.addAuxiliary(auxiliary);
       auxiliary = null;

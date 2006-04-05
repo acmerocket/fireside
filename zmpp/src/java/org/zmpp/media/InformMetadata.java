@@ -1,7 +1,7 @@
 /*
  * $Id$
  * 
- * Created on 2005/09/23
+ * Created on 2006/03/10
  * Copyright 2005-2006 by Wei-ju Wu
  *
  * This file is part of The Z-machine Preservation Project (ZMPP).
@@ -20,26 +20,23 @@
  * along with ZMPP; if not, write to the Free Software
  * Foundation, Inc., 51 Franklin St, Fifth Floor, Boston, MA  02110-1301  USA
  */
-package org.zmpp.vmutil;
+package org.zmpp.media;
+
 
 /**
- * This interface defines the functions of a random number generator within
- * the Z machine.
+ * This class holds Inform meta information.
  * 
  * @author Wei-ju Wu
  * @version 1.0
  */
-public interface RandomGenerator {
-
-  /**
-   * The maximum generated value.
-   */
-  int MAX_VALUE = 32767;
+public class InformMetadata {
+    
+  private StoryMetadata storyinfo;
   
-  /**
-   * Returns the next random value between 1 and MAX_VALUE.
-   * 
-   * @return a random int value
-   */
-  int next();
+  public InformMetadata(StoryMetadata storyinfo) {
+   
+    this.storyinfo = storyinfo;
+  }
+  
+  public StoryMetadata getStoryInfo() { return storyinfo; }
 }

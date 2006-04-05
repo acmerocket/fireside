@@ -25,6 +25,7 @@ package org.zmpp.blorb;
 import java.awt.image.BufferedImage;
 
 import org.zmpp.iff.FormChunk;
+import org.zmpp.media.InformMetadata;
 import org.zmpp.media.MediaCollection;
 import org.zmpp.media.Resources;
 import org.zmpp.media.SoundEffect;

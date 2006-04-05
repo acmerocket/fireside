@@ -116,12 +116,18 @@ public abstract class BlorbMediaCollection<T> implements MediaCollection<T> {
   /**
    * {@inheritDoc}
    */
-  public void loadResource(int resourcenumber) { }
+  public void loadResource(int resourcenumber) {
+    
+    // intentionally left empty for possible future use
+  }
 
   /**
    * {@inheritDoc}
    */
-  public void unloadResource(int resourcenumber) { }  
+  public void unloadResource(int resourcenumber) {
+    
+    // intentionally left empty for possible future use
+  }  
   
   /**
    * Initialize the database.

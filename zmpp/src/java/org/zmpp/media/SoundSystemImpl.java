@@ -23,17 +23,10 @@
 package org.zmpp.media;
 
 import java.awt.Toolkit;
-import java.io.File;
-import java.io.RandomAccessFile;
 import java.util.concurrent.ExecutorService;
 import java.util.concurrent.Executors;
 
-import org.zmpp.base.DefaultMemoryAccess;
-import org.zmpp.base.MemoryAccess;
-import org.zmpp.blorb.BlorbResources;
-import org.zmpp.iff.DefaultFormChunk;
-import org.zmpp.iff.FormChunk;
-import org.zmpp.instructions.Interruptable;
+import org.zmpp.base.Interruptable;
 
 /**
  * This class implements the SoundSystem interface. The implementation
@@ -175,36 +168,5 @@ public class SoundSystemImpl implements SoundSystem {
       
       currentTask.stop();
     }
-  }
-  
-  public static void main(String[] args) {
-    
-    File file = new File("testfiles/sherlock.blb");
-    RandomAccessFile rndfile = null;
-    
-    try {
-      
-      rndfile = new RandomAccessFile(file, "r");
-      byte[] data = new byte[(int) rndfile.length()];
-      rndfile.readFully(data);
-      MemoryAccess memaccess = new DefaultMemoryAccess(data);
-      FormChunk formchunk = new DefaultFormChunk(memaccess);
-      
-      BlorbResources resources = new BlorbResources(formchunk);
-      SoundSystem system = new SoundSystemImpl(resources.getSounds());
-      system.play(16, SoundSystem.EFFECT_START, 3, 64, 0);
-      Thread.sleep(2000);
-      
-      // stop method
-      //system.play(16, SoundSystem.EFFECT_STOP, 0, 0, 0);
-      
-    } catch (Exception ex) {
-    
-      ex.printStackTrace();
-      
-    } finally {
-      
-      if (rndfile != null) try { rndfile.close(); } catch (Exception ex) {}
-    }
-  }
+  }  
 }

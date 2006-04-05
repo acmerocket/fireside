@@ -87,6 +87,7 @@ public class MemoryOutputStream implements OutputStream {
    */
   public void flush() {
     
+    // intentionally left empty
   }
   
   /**
@@ -94,12 +95,16 @@ public class MemoryOutputStream implements OutputStream {
    */
   public void close() {
 
+    // intentionally left empty
   }
 
   /**
    * {@inheritDoc}
    */
-  public void deletePrevious(short zchar) { }
+  public void deletePrevious(short zchar) {
+    
+    // intentionally left empty
+  }
   
   /**
    * {@inheritDoc}

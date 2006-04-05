@@ -26,9 +26,9 @@ import java.util.ArrayList;
 import java.util.Collections;
 import java.util.List;
 
+import org.zmpp.base.Interruptable;
 import org.zmpp.base.MemoryAccess;
 import org.zmpp.encoding.ZsciiString;
-import org.zmpp.instructions.Interruptable;
 
 public class CpuImpl implements Cpu, Interruptable {
 
@@ -560,4 +560,11 @@ public class CpuImpl implements Cpu, Interruptable {
     
     // TODO
   }
+  
+  /**
+   * Returns the interrupt status of the cpu object.
+   * 
+   * @return the interrup status
+   */
+  public boolean isExecutingInterrupt() { return executeInterrupt; }
 }

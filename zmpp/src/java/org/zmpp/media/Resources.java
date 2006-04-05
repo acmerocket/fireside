@@ -24,7 +24,6 @@ package org.zmpp.media;
 
 import java.awt.image.BufferedImage;
 
-import org.zmpp.blorb.InformMetadata;
 
 /**
  * This interface defines access to the Z-machine's media resources.

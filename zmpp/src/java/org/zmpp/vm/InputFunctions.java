@@ -302,7 +302,10 @@ public class InputFunctions implements InputLine {
     if (thread != null) {
       
       thread.setRunning(false);
-      try { thread.join(); } catch (Exception ex) { }
+      try { thread.join(); } catch (Exception ex) {
+        
+        ex.printStackTrace(System.err);
+      }
     }    
   }
 
@@ -428,7 +431,10 @@ public class InputFunctions implements InputLine {
     if (thread != null) {
 
       thread.setRunning(false);
-      try { thread.join(); } catch (Exception ex) { }
+      try { thread.join(); } catch (Exception ex) {
+        
+        ex.printStackTrace(System.err);
+      }
     }
     
     displayCursor(false);
