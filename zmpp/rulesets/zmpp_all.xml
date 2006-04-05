@@ -1,0 +1,17 @@
+<?xml version="1.0"?>
+<ruleset name="customruleset"
+  xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
+  xsi:noNamespaceSchemaLocation="http://pmd.sf.net/ruleset_xml_schema.xsd">
+
+  <description>
+  	This is a customized PMD ruleset for ZMPP
+  </description>
+
+  <rule ref="rulesets/unusedcode.xml"/>
+  <rule ref="rulesets/basic.xml"/>
+  <rule ref="rulesets/imports.xml"/>
+  <rule ref="rulesets/design.xml">
+    <exclude name="ImmutableField" />
+  </rule>
+  
+</ruleset>
