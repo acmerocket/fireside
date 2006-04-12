@@ -7,18 +7,26 @@
   	This is a customized PMD ruleset for ZMPP
   </description>
 
-  <rule ref="rulesets/unusedcode.xml"/>
   <rule ref="rulesets/basic.xml"/>
-  <rule ref="rulesets/imports.xml"/>
+  <rule ref="rulesets/braces.xml"/>
+  <rule ref="rulesets/clone.xml"/>
+  <rule ref="rulesets/codesize.xml">
+    <exclude name="CyclomaticComplexity" />
+  </rule>
+  <rule ref="rulesets/coupling.xml"/>
   <rule ref="rulesets/design.xml">
     <exclude name="ImmutableField" />
     <exclude name="MissingBreakInSwitch" />
     <exclude name="AvoidDeeplyNestedIfStmts" />
     <exclude name="AvoidSynchronizedAtMethodLevel" />
   </rule>
-  <rule ref="rulesets/coupling.xml"/>
+  <rule ref="rulesets/finalizers.xml"/>
+  <rule ref="rulesets/imports.xml"/>
+  <rule ref="rulesets/migrating.xml"/>
   <rule ref="rulesets/optimizations.xml">
     <exclude name="AvoidInstantiatingObjectsInLoops" />
   </rule>
+  <rule ref="rulesets/strings.xml"/>
+  <rule ref="rulesets/unusedcode.xml"/>
   
 </ruleset>
