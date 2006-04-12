@@ -12,6 +12,13 @@
   <rule ref="rulesets/imports.xml"/>
   <rule ref="rulesets/design.xml">
     <exclude name="ImmutableField" />
+    <exclude name="MissingBreakInSwitch" />
+    <exclude name="AvoidDeeplyNestedIfStmts" />
+    <exclude name="AvoidSynchronizedAtMethodLevel" />
+  </rule>
+  <rule ref="rulesets/coupling.xml"/>
+  <rule ref="rulesets/optimizations.xml">
+    <exclude name="AvoidInstantiatingObjectsInLoops" />
   </rule>
   
 </ruleset>
