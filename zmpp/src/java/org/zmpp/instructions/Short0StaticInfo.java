@@ -79,7 +79,7 @@ public class Short0StaticInfo implements InstructionStaticInfo {
 
   public static final int OP_PIRACY             = 0x0f;
   
-  public int[] getValidVersions(int opcode) {
+  public int[] getValidVersions(final int opcode) {
 
     return (opcode < VALID_VERSIONS.length) ? VALID_VERSIONS[opcode] :
       new int[0];
@@ -88,7 +88,7 @@ public class Short0StaticInfo implements InstructionStaticInfo {
   /**
    * {@inheritDoc}
    */
-  public boolean isBranch(int opcode, int version) {
+  public boolean isBranch(final int opcode, final int version) {
     
     switch (opcode) {
     
@@ -106,7 +106,7 @@ public class Short0StaticInfo implements InstructionStaticInfo {
   /**
    * {@inheritDoc}
    */
-  public boolean storesResult(int opcode, int version) {
+  public boolean storesResult(final int opcode, final int version) {
     
     switch (opcode) {
     
@@ -123,12 +123,12 @@ public class Short0StaticInfo implements InstructionStaticInfo {
   /**
    * {@inheritDoc}
    */
-  public boolean isOutput(int opcode, int version) {
+  public boolean isOutput(final int opcode, final int version) {
     
     return opcode == OP_NEW_LINE;
   }
   
-  public String getOpName(int opcode, int version) {
+  public String getOpName(final int opcode, final int version) {
     
     switch (opcode) {
     
@@ -143,7 +143,7 @@ public class Short0StaticInfo implements InstructionStaticInfo {
     case Short0StaticInfo.OP_RTRUE: return "RTRUE";
     case Short0StaticInfo.OP_SAVE: return "SAVE";
     case Short0StaticInfo.OP_PIRACY: return "PIRACY";
+    default: return "unknown";
     }
-    return "unknown";
   }  
 }

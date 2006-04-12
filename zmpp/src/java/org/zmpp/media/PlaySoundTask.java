@@ -102,7 +102,7 @@ public class PlaySoundTask implements Runnable, SoundStopListener {
    * 
    * @param flag the played flag
    */
-  private synchronized void setPlayed(boolean flag) {
+  private synchronized void setPlayed(final boolean flag) {
   
     played = flag;
     notifyAll();
@@ -123,7 +123,7 @@ public class PlaySoundTask implements Runnable, SoundStopListener {
    * 
    * @param flag
    */
-  private synchronized void setStopped(boolean flag) {
+  private synchronized void setStopped(final boolean flag) {
     
     stopped = flag;
     notifyAll();
@@ -158,7 +158,7 @@ public class PlaySoundTask implements Runnable, SoundStopListener {
   /**
    * {@inheritDoc}
    */
-  public void soundStopped(SoundEffect sound) {
+  public void soundStopped(final SoundEffect sound) {
 
     setPlayed(true);
   }  

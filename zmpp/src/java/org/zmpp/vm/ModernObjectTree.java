@@ -52,7 +52,7 @@ public class ModernObjectTree extends AbstractObjectTree {
   /**
    * {@inheritDoc}
    */
-  protected ZObject createObject(int objectNum) {
+  protected ZObject createObject(final int objectNum) {
     
     return new ModernZObject(getMemoryAccess(),
         getObjectTreeStart() + (objectNum - 1) * getObjectEntrySize(),
@@ -72,8 +72,9 @@ public class ModernObjectTree extends AbstractObjectTree {
   /**
    * {@inheritDoc}
    */
-  public int getPropertyLength(int propertyAddress) {
+  public int getPropertyLength(final int propertyAddress) {
 
-    return ModernZObject.getPropertyLengthAtData(getMemoryAccess(), propertyAddress);
+    return ModernZObject.getPropertyLengthAtData(getMemoryAccess(),
+        propertyAddress);
   }  
 }

@@ -79,7 +79,7 @@ public class BlorbSounds extends BlorbMediaCollection<SoundEffect> {
   /**
    * {@inheritDoc}
    */
-  protected boolean isHandledResource(byte[] usageId) {
+  protected boolean isHandledResource(final byte[] usageId) {
     
     return usageId[0] == 'S' && usageId[1] == 'n' && usageId[2] == 'd'
            && usageId[3] == ' ';
@@ -88,7 +88,7 @@ public class BlorbSounds extends BlorbMediaCollection<SoundEffect> {
   /**
    * {@inheritDoc}
    */
-  public SoundEffect getResource(int resourcenumber) {
+  public SoundEffect getResource(final int resourcenumber) {
 
     return sounds.get(resourcenumber);
   }
@@ -96,18 +96,18 @@ public class BlorbSounds extends BlorbMediaCollection<SoundEffect> {
   /**
    * {@inheritDoc}
    */
-  protected boolean putToDatabase(Chunk chunk, int resnum) {
+  protected boolean putToDatabase(final Chunk chunk, final int resnum) {
 
-    InputStream aiffStream =
+    final InputStream aiffStream =
       new  MemoryAccessInputStream(chunk.getMemoryAccess(), 0,
           chunk.getSize() + Chunk.CHUNK_HEADER_LENGTH);
     try {
 
-      AudioFileFormat aiffFormat = AudioSystem.getAudioFileFormat(aiffStream);
-      AudioInputStream stream = new AudioInputStream(aiffStream,
-                                                     aiffFormat.getFormat(),
-                                                     (long) chunk.getSize());
-      Clip clip = AudioSystem.getClip();
+      final AudioFileFormat aiffFormat =
+        AudioSystem.getAudioFileFormat(aiffStream);
+      final AudioInputStream stream = new AudioInputStream(aiffStream,
+        aiffFormat.getFormat(), (long) chunk.getSize());
+      final Clip clip = AudioSystem.getClip();
       clip.open(stream);      
       sounds.put(resnum, new DefaultSoundEffect(clip));
       return true;

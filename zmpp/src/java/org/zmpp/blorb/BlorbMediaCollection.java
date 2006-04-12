@@ -108,7 +108,7 @@ public abstract class BlorbMediaCollection<T> implements MediaCollection<T> {
    * @param index the index
    * @return the resource number
    */
-  public int getResourceNumber(int index) {
+  public int getResourceNumber(final int index) {
     
     return resourceNumbers.get(index);
   }
@@ -116,7 +116,7 @@ public abstract class BlorbMediaCollection<T> implements MediaCollection<T> {
   /**
    * {@inheritDoc}
    */
-  public void loadResource(int resourcenumber) {
+  public void loadResource(final int resourcenumber) {
     
     // intentionally left empty for possible future use
   }
@@ -124,7 +124,7 @@ public abstract class BlorbMediaCollection<T> implements MediaCollection<T> {
   /**
    * {@inheritDoc}
    */
-  public void unloadResource(int resourcenumber) {
+  public void unloadResource(final int resourcenumber) {
     
     // intentionally left empty for possible future use
   }  

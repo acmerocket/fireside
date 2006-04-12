@@ -143,8 +143,8 @@ public class Short1Instruction extends AbstractInstruction {
    */
   private void inc() {
     
-    short varNum = getValue(0);
-    short value = getCpu().getVariable(varNum);
+    final short varNum = getValue(0);
+    final short value = getCpu().getVariable(varNum);
     getCpu().setVariable(varNum, (short) (value + 1));
     nextInstruction();
   }
@@ -154,8 +154,8 @@ public class Short1Instruction extends AbstractInstruction {
    */
   private void dec() {
     
-    short varNum = getValue(0);
-    short value = (short) getCpu().getVariable(varNum);
+    final short varNum = getValue(0);
+    final short value = (short) getCpu().getVariable(varNum);
     getCpu().setVariable(varNum, (short) (value - 1));
     nextInstruction();
   }
@@ -165,7 +165,7 @@ public class Short1Instruction extends AbstractInstruction {
    */
   private void not()  {
 	
-	  int notvalue = ~getUnsignedValue(0);
+	  final int notvalue = ~getUnsignedValue(0);
 	  storeResult((short) (notvalue & 0xffff));
 	  nextInstruction();
   }
@@ -184,9 +184,9 @@ public class Short1Instruction extends AbstractInstruction {
    */
   private void load() {
     
-    int varnum = getValue(0);
-    short value = varnum == 0 ? getCpu().getStackTopElement() :
-                                getCpu().getVariable(varnum);
+    final int varnum = getValue(0);
+    final short value = varnum == 0 ? getCpu().getStackTopElement() :
+      getCpu().getVariable(varnum);
     storeResult(value);
     nextInstruction();    
   }
@@ -204,7 +204,7 @@ public class Short1Instruction extends AbstractInstruction {
    */
   private void get_parent() {
 
-    int obj = getUnsignedValue(0);
+    final int obj = getUnsignedValue(0);
     int parent = 0;
     if (obj > 0) {
       
@@ -220,7 +220,7 @@ public class Short1Instruction extends AbstractInstruction {
   
   private void get_sibling() {
 
-    int obj = getUnsignedValue(0);
+    final int obj = getUnsignedValue(0);
     int sibling = 0;
     if (obj > 0) {
       
@@ -236,7 +236,7 @@ public class Short1Instruction extends AbstractInstruction {
   
   private void get_child() {
 
-    int obj = getUnsignedValue(0);
+    final int obj = getUnsignedValue(0);
     int child = 0;
     if (obj > 0) {
       
@@ -270,10 +270,10 @@ public class Short1Instruction extends AbstractInstruction {
   
   private void print_obj() {
     
-    int obj = getUnsignedValue(0);
+    final int obj = getUnsignedValue(0);
     if (obj > 0) {
       
-      ZObject zobj = getObjectTree().getObject(obj);
+      final ZObject zobj = getObjectTree().getObject(obj);
       getMachine().getOutput().printZString(zobj.getPropertiesDescriptionAddress());
       
     } else {
@@ -285,7 +285,7 @@ public class Short1Instruction extends AbstractInstruction {
   
   private void remove_obj() {
     
-    int obj = getUnsignedValue(0);
+    final int obj = getUnsignedValue(0);
     if (obj > 0) {
       
       getObjectTree().removeObject(obj);
@@ -295,8 +295,8 @@ public class Short1Instruction extends AbstractInstruction {
 
   private void get_prop_len() {
     
-    int propertyAddress = getUnsignedValue(0);    
-    short proplen = (short)
+    final int propertyAddress = getUnsignedValue(0);    
+    final short proplen = (short)
       getObjectTree().getPropertyLength(propertyAddress);
     storeResult(proplen);
     nextInstruction();

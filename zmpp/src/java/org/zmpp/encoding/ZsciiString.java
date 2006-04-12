@@ -49,7 +49,7 @@ public class ZsciiString {
    * 
    * @param encoding the encoding
    */
-  public static void initialize(ZsciiEncoding encoding) {
+  public static void initialize(final ZsciiEncoding encoding) {
  
     ZsciiString.encoding = encoding;
   }
@@ -59,8 +59,9 @@ public class ZsciiString {
    * 
    * @param data the source array
    */
-  public ZsciiString(short[] data) {
+  public ZsciiString(final short[] data) {
     
+    super();
     this.data = data;
   }
   
@@ -69,8 +70,9 @@ public class ZsciiString {
    * 
    * @param str the string
    */
-  public ZsciiString(String str) {
+  public ZsciiString(final String str) {
     
+    super();
     this.data = encoding.convertToZscii(str);
   }
 
@@ -80,7 +82,7 @@ public class ZsciiString {
    * @param pos the position
    * @return the character
    */
-  public short charAt(int pos) {
+  public short charAt(final int pos) {
     
     return data[pos];
   }
@@ -102,11 +104,11 @@ public class ZsciiString {
    * @param startIndex the start index
    * @return the first index
    */
-  public int indexOf(ZsciiString str, int startIndex) {
+  public int indexOf(final ZsciiString str, final int startIndex) {
 
     int current = startIndex;
-    int length = length(); 
-    int n = str.length();
+    final int length = length(); 
+    final int n = str.length();
     
     while (current < length) {
       
@@ -137,10 +139,10 @@ public class ZsciiString {
    * @param endindex end index
    * @return the sub string
    */
-  public ZsciiString substring(int startindex, int endindex) {
+  public ZsciiString substring(final int startindex, final int endindex) {
 
-    int n = endindex - startindex;
-    short[] dat = new short[n];
+    final int n = endindex - startindex;
+    final short[] dat = new short[n];
     for (int i = 0; i < n; i++) {
       
       dat[i] = charAt(startindex + i);
@@ -165,12 +167,12 @@ public class ZsciiString {
   /**
    * {@inheritDoc}
    */
-  public boolean equals(Object o) {
+  public boolean equals(final Object o) {
     
     if (o == this) return true;
-    if (o != null && o instanceof ZsciiString) {
+    if (o instanceof ZsciiString) {
       
-      short[] data2 = ((ZsciiString) o).data;
+      final short[] data2 = ((ZsciiString) o).data;
       if (data.length == data2.length) {
         
         for (int i = 0; i < data.length; i++) {
@@ -188,7 +190,7 @@ public class ZsciiString {
    */
   public String toString() {
    
-    StringBuilder builder = new StringBuilder();
+    final StringBuilder builder = new StringBuilder();
     for (int i = 0; i < data.length; i++) {
       
       builder.append(encoding.getUnicodeChar(data[i]));

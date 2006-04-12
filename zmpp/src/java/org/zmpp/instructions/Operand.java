@@ -85,7 +85,7 @@ public class Operand {
    * @param typenum the type number
    * @return the operand type
    */
-  private static OperandType getOperandType(int typenum) {
+  private static OperandType getOperandType(final int typenum) {
     
     switch (typenum) {
     

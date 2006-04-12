@@ -42,8 +42,9 @@ public class WritableFormChunk implements FormChunk {
    * 
    * @param subId the sub id
    */
-  public WritableFormChunk(byte[] subId) {
+  public WritableFormChunk(final byte[] subId) {
   
+    super();
     this.subId = subId;
     this.subChunks = new ArrayList<Chunk>();
   }
@@ -53,7 +54,7 @@ public class WritableFormChunk implements FormChunk {
    * 
    * @param chunk the sub chunk to add
    */
-  public void addChunk(Chunk chunk) {
+  public void addChunk(final Chunk chunk) {
     
     subChunks.add(chunk);
   }
@@ -77,7 +78,7 @@ public class WritableFormChunk implements FormChunk {
   /**
    * {@inheritDoc}
    */
-  public Chunk getSubChunk(byte[] id) {
+  public Chunk getSubChunk(final byte[] id) {
     
     for (Chunk chunk : subChunks) {
     
@@ -92,7 +93,7 @@ public class WritableFormChunk implements FormChunk {
   /**
    * {@inheritDoc}
    */
-  public Chunk getSubChunk(int address) {
+  public Chunk getSubChunk(final int address) {
     
     // We do not need to implement this
     return null;
@@ -145,10 +146,9 @@ public class WritableFormChunk implements FormChunk {
    */
   public byte[] getBytes() {
     
-    int datasize = Chunk.CHUNK_HEADER_LENGTH + getSize();
-    
-    byte[] data = new byte[datasize];
-    MemoryAccess memaccess = new DefaultMemoryAccess(data);
+    final int datasize = Chunk.CHUNK_HEADER_LENGTH + getSize();    
+    final byte[] data = new byte[datasize];
+    final MemoryAccess memaccess = new DefaultMemoryAccess(data);
     memaccess.writeByte(0, (byte) 'F');
     memaccess.writeByte(1, (byte) 'O');
     memaccess.writeByte(2, (byte) 'R');
@@ -167,8 +167,8 @@ public class WritableFormChunk implements FormChunk {
     for (Chunk chunk : subChunks) {
      
       //System.out.println("Chunk: " + (new String(chunk.getId())));
-      byte[] chunkId = chunk.getId();
-      int chunkSize = chunk.getSize();
+      final byte[] chunkId = chunk.getId();
+      final int chunkSize = chunk.getSize();
       
       // Write id
       for (int i = 0; i < chunkId.length; i++) {
@@ -181,7 +181,7 @@ public class WritableFormChunk implements FormChunk {
       offset += 4; // add the size word length
       
       // Write chunk data
-      MemoryAccess chunkMem = chunk.getMemoryAccess();      
+      final MemoryAccess chunkMem = chunk.getMemoryAccess();      
       for (int i = 0; i < chunkSize; i++) {
         
         memaccess.writeByte(offset++,

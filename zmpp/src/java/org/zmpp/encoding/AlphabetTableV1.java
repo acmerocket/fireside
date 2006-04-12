@@ -42,7 +42,7 @@ public class AlphabetTableV1 extends AlphabetTableV2 {
   /**
    * {@inheritDoc}
    */
-  public short getA0Char(byte zchar) {
+  public short getA0Char(final byte zchar) {
     
     if (zchar == 1) return (short) '\n';
     return super.getA0Char(zchar);
@@ -51,7 +51,7 @@ public class AlphabetTableV1 extends AlphabetTableV2 {
   /**
    * {@inheritDoc}
    */
-  public short getA1Char(byte zchar) {
+  public short getA1Char(final byte zchar) {
     
     if (zchar == 1) return (short) '\n';
     return super.getA1Char(zchar);
@@ -60,7 +60,7 @@ public class AlphabetTableV1 extends AlphabetTableV2 {
   /**
    * {@inheritDoc}
    */
-  public short getA2Char(byte zchar) {
+  public short getA2Char(final byte zchar) {
     
     if (zchar == 0) return (short) ' ';
     if (zchar == 1) return (short) '\n';
@@ -70,7 +70,7 @@ public class AlphabetTableV1 extends AlphabetTableV2 {
   /**
    * {@inheritDoc}
    */
-  public final byte getA2CharCode(short zsciiChar) {
+  public final byte getA2CharCode(final short zsciiChar) {
 
     return getCharCodeFor(A2CHARS, zsciiChar);
   }
@@ -78,7 +78,7 @@ public class AlphabetTableV1 extends AlphabetTableV2 {
   /**
    * {@inheritDoc}
    */
-  public boolean isAbbreviation(short zchar) {
+  public boolean isAbbreviation(final short zchar) {
     
     return false;
   }

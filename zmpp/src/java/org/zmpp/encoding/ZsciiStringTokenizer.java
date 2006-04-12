@@ -47,7 +47,8 @@ public class ZsciiStringTokenizer {
    * @param input
    * @param delim
    */
-  public ZsciiStringTokenizer(ZsciiString input, ZsciiString delim) {
+  public ZsciiStringTokenizer(final ZsciiString input,
+      final ZsciiString delim) {
   
     tokenize(input, delim);
   }
@@ -80,16 +81,16 @@ public class ZsciiStringTokenizer {
    * @param input the input string
    * @param delim the delimiter string
    */
-  private void tokenize(ZsciiString input, ZsciiString delim) {
+  private void tokenize(final ZsciiString input, final ZsciiString delim) {
    
-    List<ZsciiString> tokens = new ArrayList<ZsciiString>();
+    final List<ZsciiString> tokens = new ArrayList<ZsciiString>();
     int currentIndex = 0;
-    int inputlength = input.length();
+    final int inputlength = input.length();
     ZsciiStringBuilder currentTokenBuilder = new ZsciiStringBuilder();
     
     while (currentIndex < inputlength) {
       
-      short currentChar = input.charAt(currentIndex);
+      final short currentChar = input.charAt(currentIndex);
       if (isDelimiter(currentChar, delim)) {
 
         if (currentTokenBuilder.length() > 0) {
@@ -122,7 +123,8 @@ public class ZsciiStringTokenizer {
    * @param delim the delimiter string
    * @return true, delimiter, false, otherwise
    */
-  private static boolean isDelimiter(short zsciiChar, ZsciiString delim) {
+  private static boolean isDelimiter(final short zsciiChar,
+      final ZsciiString delim) {
     
     for (int i = 0, n = delim.length(); i < n; i++) {
       

@@ -48,14 +48,15 @@ public abstract class MachineFactory<T> {
    */
   public Machine buildMachine() {
     
-    GameData gamedata = new GameDataImpl(readStoryData(), readResources());
+    final GameData gamedata =
+      new GameDataImpl(readStoryData(), readResources());
   
     if (isInvalidStory(gamedata.getStoryFileHeader().getVersion())) {
     
       reportInvalidStory();
     }
-    Machine machine = new MachineImpl();
-    InstructionDecoder decoder = new DefaultInstructionDecoder();
+    final Machine machine = new MachineImpl();
+    final InstructionDecoder decoder = new DefaultInstructionDecoder();
     machine.initialize(gamedata, decoder);
     initUI(machine);
     initIOSystem(machine);
@@ -144,7 +145,7 @@ public abstract class MachineFactory<T> {
    * @param version the story file version
    * @return true if not supported
    */
-  private boolean isInvalidStory(int version) {
+  private boolean isInvalidStory(final int version) {
     
     return version < 1 || version > 8;
   }
@@ -154,7 +155,7 @@ public abstract class MachineFactory<T> {
    * 
    * @param machine the machine object
    */
-  private void initIOSystem(Machine machine) {
+  private void initIOSystem(final Machine machine) {
   
     initInputStreams(machine);
     initOutputStreams(machine);    
@@ -168,7 +169,7 @@ public abstract class MachineFactory<T> {
    * 
    * @param machine the machine object
    */
-  private void initInputStreams(Machine machine) {
+  private void initInputStreams(final Machine machine) {
     
     machine.getInput().setInputStream(0, getKeyboardInputStream());
     machine.getInput().setInputStream(1, new FileInputStream(getIOSystem(),
@@ -180,9 +181,9 @@ public abstract class MachineFactory<T> {
    * 
    * @param machine the machine object
    */
-  private void initOutputStreams(Machine machine) {
+  private void initOutputStreams(final Machine machine) {
     
-    Output output = machine.getOutput();
+    final Output output = machine.getOutput();
     output.setOutputStream(1, getScreenModel().getOutputStream());
     output.selectOutputStream(1, true);
     output.setOutputStream(2, new TranscriptOutputStream(

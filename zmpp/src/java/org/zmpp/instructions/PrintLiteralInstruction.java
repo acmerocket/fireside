@@ -65,7 +65,7 @@ public class PrintLiteralInstruction extends AbstractInstruction {
    */
   protected String getOperandString() {
 
-    String str =
+    final String str =
       getMachine().getGameData().getZCharDecoder().decode2Zscii(memaccess,
         instructionAddress + 1, 0).toString();
     return "\"" + str + "\"";
@@ -90,7 +90,7 @@ public class PrintLiteralInstruction extends AbstractInstruction {
   /**
    * {@inheritDoc}
    */
-  public void setLength(int length) {
+  public void setLength(final int length) {
 
     // overridden to do nothing
   }

@@ -155,7 +155,8 @@ public class MachineImpl implements Machine {
   /**
    * {@inheritDoc}
    */
-  public void initialize(GameData gamedata, InstructionDecoder decoder) {
+  public void initialize(final GameData gamedata,
+      final InstructionDecoder decoder) {
   
     this.gamedata = gamedata;
     this.random = new UnpredictableRandomGenerator();
@@ -185,7 +186,7 @@ public class MachineImpl implements Machine {
   /**
    * {@inheritDoc}
    */
-  public short random(short range) {
+  public short random(final short range) {
     
     if (range < 0) {
       
@@ -207,7 +208,7 @@ public class MachineImpl implements Machine {
   /**
    * {@inheritDoc}
    */
-  public void warn(String msg) {
+  public void warn(final String msg) {
     
     System.err.println("WARNING: " + msg);
   }
@@ -248,8 +249,8 @@ public class MachineImpl implements Machine {
   /**
    * {@inheritDoc}
    */
-  public void tokenize(int textbuffer, int parsebuffer, int dictionaryAddress,
-                       boolean flag) {
+  public void tokenize(final int textbuffer, final int parsebuffer,
+      final int dictionaryAddress, final boolean flag) {
     
     inputFunctions.tokenize(textbuffer, parsebuffer, dictionaryAddress, flag);
   }
@@ -257,7 +258,8 @@ public class MachineImpl implements Machine {
   /**
    * {@inheritDoc}
    */
-  public short readLine(int textbuffer, int time, int routineAddress) {
+  public short readLine(final int textbuffer, final int time,
+      final int routineAddress) {
     
     return inputFunctions.readLine(textbuffer, time, routineAddress);
   }
@@ -265,7 +267,7 @@ public class MachineImpl implements Machine {
   /**
    * {@inheritDoc}
    */
-  public short readChar(int time, int routineAddress) {
+  public short readChar(final int time, final int routineAddress) {
 
     return inputFunctions.readChar(time, routineAddress);
   }
@@ -289,7 +291,7 @@ public class MachineImpl implements Machine {
   /**
    * {@inheritDoc}
    */
-  public void setSaveGameDataStore(SaveGameDataStore datastore) {
+  public void setSaveGameDataStore(final SaveGameDataStore datastore) {
     
     this.datastore = datastore;
   }
@@ -301,13 +303,13 @@ public class MachineImpl implements Machine {
   
     if (gamedata.getStoryFileHeader().getVersion() <= 3 && statusLine != null) {
       
-      int objNum = cpu.getVariable(0x10);    
-      ZObject obj = gamedata.getObjectTree().getObject(objNum);
-      String objectName = gamedata.getZCharDecoder().decode2Zscii(
+      final int objNum = cpu.getVariable(0x10);    
+      final ZObject obj = gamedata.getObjectTree().getObject(objNum);
+      final String objectName = gamedata.getZCharDecoder().decode2Zscii(
           gamedata.getMemoryAccess(),
           obj.getPropertiesDescriptionAddress(), 0).toString();      
-      int global2 = cpu.getVariable(0x11);
-      int global3 = cpu.getVariable(0x12);
+      final int global2 = cpu.getVariable(0x11);
+      final int global3 = cpu.getVariable(0x12);
       if (gamedata.getStoryFileHeader().isEnabled(Attribute.SCORE_GAME)) {
         
         statusLine.updateStatusScore(objectName, global2, global3);
@@ -321,7 +323,7 @@ public class MachineImpl implements Machine {
   /**
    * {@inheritDoc}
    */
-  public void setStatusLine(StatusLine statusLine) {
+  public void setStatusLine(final StatusLine statusLine) {
     
     this.statusLine = statusLine;
   }
@@ -329,7 +331,7 @@ public class MachineImpl implements Machine {
   /**
    * {@inheritDoc}
    */
-  public void setScreen(ScreenModel screen) {
+  public void setScreen(final ScreenModel screen) {
    
     this.screenModel = screen;
   }
@@ -353,13 +355,13 @@ public class MachineImpl implements Machine {
   /**
    * {@inheritDoc} 
    */
-  public boolean save(int savepc) {
+  public boolean save(final int savepc) {
     
     if (datastore != null) {
       
-      PortableGameState gamestate = new PortableGameState();
+      final PortableGameState gamestate = new PortableGameState();
       gamestate.captureMachineState(this, savepc);
-      WritableFormChunk formChunk = gamestate.exportToFormChunk();
+      final WritableFormChunk formChunk = gamestate.exportToFormChunk();
       return datastore.saveFormChunk(formChunk);
     }
     
@@ -369,9 +371,9 @@ public class MachineImpl implements Machine {
   /**
    * {@inheritDoc}
    */
-  public boolean save_undo(int savepc) {
+  public boolean save_undo(final int savepc) {
     
-    PortableGameState undoGameState = new PortableGameState();
+    final PortableGameState undoGameState = new PortableGameState();
     undoGameState.captureMachineState(this, savepc);
     undostates.add(undoGameState);
     return true;
@@ -384,8 +386,8 @@ public class MachineImpl implements Machine {
     
     if (datastore != null) {
       
-      PortableGameState gamestate = new PortableGameState();
-      FormChunk formchunk = datastore.retrieveFormChunk();
+      final PortableGameState gamestate = new PortableGameState();
+      final FormChunk formchunk = datastore.retrieveFormChunk();
       gamestate.readSaveGame(formchunk);
       
       // verification has to be here
@@ -411,7 +413,7 @@ public class MachineImpl implements Machine {
     // current window state
     if (undostates.size() > 0) {
       
-      PortableGameState undoGameState =
+      final PortableGameState undoGameState =
         undostates.remove(undostates.size() - 1);      
       restart(false);
       undoGameState.transferStateToMachine(this);
@@ -425,10 +427,10 @@ public class MachineImpl implements Machine {
   // ***** Private methods
   // **************************************
   
-  private boolean verifySaveGame(PortableGameState gamestate) {
+  private boolean verifySaveGame(final PortableGameState gamestate) {
     
     // Verify the game according to the standard
-    StoryFileHeader fileHeader = gamedata.getStoryFileHeader();
+    final StoryFileHeader fileHeader = gamedata.getStoryFileHeader();
     int checksum = fileHeader.getChecksum();
     if (checksum == 0) checksum = gamedata.getCalculatedChecksum();
     return gamestate.getRelease() == fileHeader.getRelease()
@@ -463,12 +465,13 @@ public class MachineImpl implements Machine {
     }
   }
   
-  private void restart(boolean resetScreenModel) {
+  private void restart(final boolean resetScreenModel) {
     
     // Transcripting and fixed font bits survive the restart
-    StoryFileHeader fileHeader = gamedata.getStoryFileHeader();
-    boolean fixedFontForced = fileHeader.isEnabled(Attribute.FORCE_FIXED_FONT);
-    boolean transcripting = fileHeader.isEnabled(Attribute.TRANSCRIPTING);
+    final StoryFileHeader fileHeader = gamedata.getStoryFileHeader();
+    final boolean fixedFontForced =
+      fileHeader.isEnabled(Attribute.FORCE_FIXED_FONT);
+    final boolean transcripting = fileHeader.isEnabled(Attribute.TRANSCRIPTING);
     
     gamedata.reset();
     resetState();

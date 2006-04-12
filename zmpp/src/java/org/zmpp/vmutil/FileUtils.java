@@ -52,6 +52,7 @@ public class FileUtils {
   private FileUtils() {
     
     // this of course, does nothing, since there are no instances
+    super();
   }
   
   /**
@@ -60,16 +61,16 @@ public class FileUtils {
    * @param blorbfile the file
    * @return the resources object or null (on failure)
    */
-  public static Resources createResources(File blorbfile) {
+  public static Resources createResources(final File blorbfile) {
     
     RandomAccessFile raf = null;
     try {
       
       raf = new RandomAccessFile(blorbfile, "r");
-      byte[] data = new byte[(int) raf.length()];
+      final byte[] data = new byte[(int) raf.length()];
       raf.readFully(data);
-      MemoryAccess memaccess = new DefaultMemoryAccess(data);
-      FormChunk formchunk = new DefaultFormChunk(memaccess);
+      final MemoryAccess memaccess = new DefaultMemoryAccess(data);
+      final FormChunk formchunk = new DefaultFormChunk(memaccess);
       return new BlorbResources(formchunk);
       
     } catch (IOException ex) {
@@ -92,20 +93,27 @@ public class FileUtils {
    * @param inputstream the input stream
    * @return the bytes or null if the inputstream is null
    */
-  public static byte[] readFileBytes(InputStream inputstream) {
+  public static byte[] readFileBytes(final InputStream inputstream) {
 
     byte[] data = null;
-    if (inputstream == null) return null;
+    
+    if (inputstream == null) {
+      
+      return null;
+    }
     
     try {
       
-      List<Byte> buffer = new ArrayList<Byte>();
+      final List<Byte> buffer = new ArrayList<Byte>();
       
       int databyte = 0;
       do {
         
         databyte = inputstream.read();
-        if (databyte != -1) buffer.add((byte) databyte);
+        if (databyte != -1) {
+          
+          buffer.add((byte) databyte);
+        }
         
       } while (databyte != -1);
       
@@ -135,7 +143,7 @@ public class FileUtils {
    * @param file the file object
    * @return a byte array
    */
-  public static byte[] readFileBytes(File file) {
+  public static byte[] readFileBytes(final File file) {
 
     byte[] data = null;
     

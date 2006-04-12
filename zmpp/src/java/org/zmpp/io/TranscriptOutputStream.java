@@ -48,8 +48,10 @@ public class TranscriptOutputStream implements OutputStream {
    * 
    * @param iosys the I/O system
    */
-  public TranscriptOutputStream(IOSystem iosys, ZsciiEncoding encoding) {
+  public TranscriptOutputStream(final IOSystem iosys,
+      final ZsciiEncoding encoding) {
   
+    super();
     this.iosys = iosys;
     this.encoding = encoding;
     linebuffer = new StringBuilder();
@@ -70,7 +72,7 @@ public class TranscriptOutputStream implements OutputStream {
   /**
    * {@inheritDoc}
    */
-  public void print(short zsciiChar, boolean isInput) {
+  public void print(final short zsciiChar, final boolean isInput) {
     
     initFile();
     if (output != null) {
@@ -93,7 +95,7 @@ public class TranscriptOutputStream implements OutputStream {
   /**
    * {@inheritDoc}
    */
-  public void select(boolean flag) {
+  public void select(final boolean flag) {
   
     enabled = flag;
   }
@@ -161,5 +163,8 @@ public class TranscriptOutputStream implements OutputStream {
   /**
    * {@inheritDoc}
    */
-  public void deletePrevious(short zchar) { }
+  public void deletePrevious(final short zchar) {
+    
+    // transcript does not support deleting
+  }
 }

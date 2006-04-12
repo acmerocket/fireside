@@ -90,7 +90,7 @@ public class Short1StaticInfo implements InstructionStaticInfo {
 
   public static final int OP_CALL_1N            = 0x0f; // Versions >= 5
 
-  public int[] getValidVersions(int opcode) {
+  public int[] getValidVersions(final int opcode) {
 
     return (opcode < VALID_VERSIONS.length) ? VALID_VERSIONS[opcode] :
       new int[0];
@@ -99,7 +99,7 @@ public class Short1StaticInfo implements InstructionStaticInfo {
   /**
    * {@inheritDoc}
    */
-  public boolean storesResult(int opcode, int version) {
+  public boolean storesResult(final int opcode, final int version) {
     
     if (version >= 5
         && opcode == Short1StaticInfo.OP_CALL_1N) {
@@ -125,7 +125,7 @@ public class Short1StaticInfo implements InstructionStaticInfo {
   /**
    * {@inheritDoc}
    */
-  public boolean isBranch(int opcode, int version) {
+  public boolean isBranch(final int opcode, final int version) {
     
     switch (opcode) {
       case Short1StaticInfo.OP_JZ:
@@ -140,12 +140,12 @@ public class Short1StaticInfo implements InstructionStaticInfo {
   /**
    * {@inheritDoc}
    */
-  public boolean isOutput(int opcode, int version) {
+  public boolean isOutput(final int opcode, final int version) {
     
     return opcode == OP_PRINT_ADDR || opcode == OP_PRINT_PADDR;
   }
   
-  public String getOpName(int opcode, int version) {
+  public String getOpName(final int opcode, final int version) {
 
     switch (opcode) {
     
@@ -173,7 +173,7 @@ public class Short1StaticInfo implements InstructionStaticInfo {
     case Short1StaticInfo.OP_REMOVE_OBJ: return "REMOVE_OBJ";
     case Short1StaticInfo.OP_RET: return "RET";
     case Short1StaticInfo.OP_CALL_1S: return "CALL_1S";
+    default: return "unknown";
     }
-    return "unknown";
   }
 }

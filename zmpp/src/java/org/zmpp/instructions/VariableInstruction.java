@@ -208,10 +208,10 @@ public class VariableInstruction extends AbstractInstruction {
     
   private void storew() {
     
-    MemoryAccess memaccess = getMemoryAccess();
-    int array = getUnsignedValue(0);
-    int wordIndex = getUnsignedValue(1);
-    short value = getValue(2);
+    final MemoryAccess memaccess = getMemoryAccess();
+    final int array = getUnsignedValue(0);
+    final int wordIndex = getUnsignedValue(1);
+    final short value = getValue(2);
     
     memaccess.writeShort(array + wordIndex * 2, value);
     nextInstruction();
@@ -219,10 +219,10 @@ public class VariableInstruction extends AbstractInstruction {
   
   private void storeb() {
     
-    MemoryAccess memaccess = getMemoryAccess();
-    int array = getUnsignedValue(0);
-    int byteIndex = getUnsignedValue(1);
-    byte value = (byte) getValue(2);
+    final MemoryAccess memaccess = getMemoryAccess();
+    final int array = getUnsignedValue(0);
+    final int byteIndex = getUnsignedValue(1);
+    final byte value = (byte) getValue(2);
     
     memaccess.writeByte(array + byteIndex, value);
     nextInstruction();
@@ -230,13 +230,13 @@ public class VariableInstruction extends AbstractInstruction {
   
   private void put_prop() {
     
-    int obj = getUnsignedValue(0);
-    int property = getUnsignedValue(1);
-    short value = getValue(2);
+    final int obj = getUnsignedValue(0);
+    final int property = getUnsignedValue(1);
+    final short value = getValue(2);
     
     if (obj > 0) {
       
-      ZObject object = getObjectTree().getObject(obj);
+      final ZObject object = getObjectTree().getObject(obj);
     
       if (object.isPropertyAvailable(property)) {
       
@@ -267,29 +267,29 @@ public class VariableInstruction extends AbstractInstruction {
   
   private void print_char() {
     
-    short zchar = getValue(0);
+    final short zchar = getValue(0);
     getMachine().getOutput().printZsciiChar(zchar, false);
     nextInstruction();
   }
   
   private void print_num() {
     
-    short number = getValue(0);
+    final short number = getValue(0);
     getMachine().getOutput().printNumber(number);
     nextInstruction();
   }
   
   private void push() {
     
-    short value = getValue(0);
+    final short value = getValue(0);
     getCpu().setVariable(0, value);
     nextInstruction();
   }
   
   private void pull() {
     
-    int varnum = getUnsignedValue(0);
-    short value = getCpu().getVariable(0);
+    final int varnum = getUnsignedValue(0);
+    final short value = getCpu().getVariable(0);
     
     // standard 1.1
     if (varnum == 0) {
@@ -306,7 +306,7 @@ public class VariableInstruction extends AbstractInstruction {
   private void output_stream() {
     
     // Stream number should be a signed byte
-    short streamnumber = getValue(0);
+    final short streamnumber = getValue(0);
     
     if (streamnumber < 0 && streamnumber >= -3) {
       
@@ -316,7 +316,7 @@ public class VariableInstruction extends AbstractInstruction {
       
       if (streamnumber == Output.OUTPUTSTREAM_MEMORY) {
        
-        int tableAddress = this.getUnsignedValue(1);
+        final int tableAddress = this.getUnsignedValue(1);
         //System.out.printf("Select stream 3 on table: %x\n", tableAddress);
         getMachine().getOutput().selectOutputStream3(tableAddress);
         
@@ -336,7 +336,7 @@ public class VariableInstruction extends AbstractInstruction {
   
   private void random() {
     
-    short range = getValue(0);
+    final short range = getValue(0);
     storeResult(getMachine().random(range));
     nextInstruction();
   }
@@ -344,13 +344,13 @@ public class VariableInstruction extends AbstractInstruction {
   private void sread() {
     
     //System.out.println("@sread()");
-    int version = getStoryFileVersion();
+    final int version = getStoryFileVersion();
     if (version <= 3) {
       
       getMachine().updateStatusLine();
     }
     
-    int textbuffer = getUnsignedValue(0);
+    final int textbuffer = getUnsignedValue(0);
     int parsebuffer = 0;
     int time = 0;
     short packedAddress = 0;
@@ -359,7 +359,8 @@ public class VariableInstruction extends AbstractInstruction {
     if (getNumOperands() >= 3) time = getUnsignedValue(2);
     if (getNumOperands() >= 4) packedAddress = getValue(3);
     
-    short terminal = getMachine().readLine(textbuffer, time, packedAddress);
+    final short terminal =
+      getMachine().readLine(textbuffer, time, packedAddress);
     
     if (version < 5 || (version >= 5 && parsebuffer > 0)) {
       
@@ -404,7 +405,7 @@ public class VariableInstruction extends AbstractInstruction {
     
     if (getNumOperands() >= 3) {
       
-      int volumeRepeats = getUnsignedValue(2);
+      final int volumeRepeats = getUnsignedValue(2);
       volume = volumeRepeats & 0xff;
       repeats = (volumeRepeats >>> 8) & 0xff;      
       if (repeats <= 0) repeats = 1;
@@ -418,7 +419,7 @@ public class VariableInstruction extends AbstractInstruction {
     // In version 3 repeats is always 1
     if (getStoryFileVersion() == 3) repeats = 1;
         
-    SoundSystem soundSystem = getMachine().getSoundSystem();
+    final SoundSystem soundSystem = getMachine().getSoundSystem();
     soundSystem.play(soundnum, effect, volume, repeats, routine);
     nextInstruction();
   }
@@ -426,7 +427,7 @@ public class VariableInstruction extends AbstractInstruction {
   private void split_window() {
     
     //System.out.printf("@split_window, window: %d\n", getUnsignedValue(0));
-    ScreenModel screenModel = getMachine().getScreen();
+    final ScreenModel screenModel = getMachine().getScreen();
     if (screenModel != null) {
       
       screenModel.splitWindow(getUnsignedValue(0));
@@ -437,7 +438,7 @@ public class VariableInstruction extends AbstractInstruction {
   private void set_window() {
     
     //System.out.printf("@set_window, window: %d\n", getUnsignedValue(0));    
-    ScreenModel screenModel = getMachine().getScreen();
+    final ScreenModel screenModel = getMachine().getScreen();
     if (screenModel != null) {
       
       screenModel.setWindow(getUnsignedValue(0));
@@ -447,7 +448,7 @@ public class VariableInstruction extends AbstractInstruction {
   
   private void set_text_style() {
     
-    ScreenModel screenModel = getMachine().getScreen();
+    final ScreenModel screenModel = getMachine().getScreen();
     if (screenModel != null) {
       
       screenModel.setTextStyle(getUnsignedValue(0));
@@ -457,7 +458,7 @@ public class VariableInstruction extends AbstractInstruction {
   
   private void buffer_mode() {
     
-    ScreenModel screenModel = getMachine().getScreen();
+    final ScreenModel screenModel = getMachine().getScreen();
     if (screenModel != null) {
       
       screenModel.setBufferMode(getUnsignedValue(0) > 0);
@@ -467,7 +468,7 @@ public class VariableInstruction extends AbstractInstruction {
   
   private void erase_window() {
     
-    ScreenModel screenModel = getMachine().getScreen();
+    final ScreenModel screenModel = getMachine().getScreen();
     if (screenModel != null) {
       
       screenModel.eraseWindow(getValue(0));
@@ -477,7 +478,7 @@ public class VariableInstruction extends AbstractInstruction {
   
   private void erase_line() {
     
-    ScreenModel screenModel = getMachine().getScreen();
+    final ScreenModel screenModel = getMachine().getScreen();
     if (screenModel != null) {
       
       screenModel.eraseLine(getValue(0));
@@ -487,10 +488,10 @@ public class VariableInstruction extends AbstractInstruction {
   
   private void set_cursor() {
     
-    ScreenModel screenModel = getMachine().getScreen();
+    final ScreenModel screenModel = getMachine().getScreen();
     if (screenModel != null) {
     
-      int line = getValue(0);
+      final int line = getValue(0);
       int column = 0;
       int window = ScreenModel.CURRENT_WINDOW;
       
@@ -507,12 +508,12 @@ public class VariableInstruction extends AbstractInstruction {
   
   private void get_cursor() {
     
-    ScreenModel screenModel = getMachine().getScreen();
+    final ScreenModel screenModel = getMachine().getScreen();
     if (screenModel != null) {
       
-      TextCursor cursor = screenModel.getTextCursor();
-      MemoryAccess memaccess = getMemoryAccess();
-      int arrayAddr = getUnsignedValue(0);
+      final TextCursor cursor = screenModel.getTextCursor();
+      final MemoryAccess memaccess = getMemoryAccess();
+      final int arrayAddr = getUnsignedValue(0);
       memaccess.writeShort(arrayAddr, (short) cursor.getLine());
       memaccess.writeShort(arrayAddr + 2, (short) cursor.getColumn());
     }
@@ -521,24 +522,24 @@ public class VariableInstruction extends AbstractInstruction {
   
   private void scan_table() {
     
-    MemoryAccess memaccess = getMemoryAccess();
-    short x = getValue(0);
-    int table = getUnsignedValue(1);
-    int length = getUnsignedValue(2);
+    final MemoryAccess memaccess = getMemoryAccess();
+    final short x = getValue(0);
+    final int table = getUnsignedValue(1);
+    final int length = getUnsignedValue(2);
     int form  = 0x82; // default value
     if (getNumOperands() == 4) {
       
       form = getUnsignedValue(3);
     }
-    int fieldlen = form & 0x7f;
-    boolean isWordTable = (form & 0x80) > 0;
+    final int fieldlen = form & 0x7f;
+    final boolean isWordTable = (form & 0x80) > 0;
     int pointer = table;
     boolean found = false;
     
     for (int i = 0; i < length; i++) {
         
-      short current = isWordTable ? memaccess.readShort(pointer) :
-                                    memaccess.readByte(pointer);
+      final short current = isWordTable ? memaccess.readShort(pointer) :
+                                          memaccess.readByte(pointer);
       if (current == x) {
         
         storeResult((short) pointer);
@@ -558,8 +559,7 @@ public class VariableInstruction extends AbstractInstruction {
 
   private void read_char() {
     
-    //System.out.println("@read_char()");
-    
+    //System.out.println("@read_char()");    
     int time = 0;
     int routineAddress = 0;
     if (getNumOperands() >= 2) {
@@ -581,15 +581,15 @@ public class VariableInstruction extends AbstractInstruction {
    */
   private void not()  {
   
-    int notvalue = ~getUnsignedValue(0);
+    final int notvalue = ~getUnsignedValue(0);
     storeResult((short) (notvalue & 0xffff));
     nextInstruction();
   }
   
   private void tokenise() {
     
-    int textbuffer = getUnsignedValue(0);
-    int parsebuffer = getUnsignedValue(1);
+    final int textbuffer = getUnsignedValue(0);
+    final int parsebuffer = getUnsignedValue(1);
     int dictionary = 0;
     int flag = 0;
     if (getNumOperands() >= 3) dictionary = getUnsignedValue(2);
@@ -600,18 +600,18 @@ public class VariableInstruction extends AbstractInstruction {
   
   private void check_arg_count() {
     
-    int argumentNumber = getUnsignedValue(0);
-    int currentNumArgs =
+    final int argumentNumber = getUnsignedValue(0);
+    final int currentNumArgs =
       getCpu().getCurrentRoutineContext().getNumArguments();
     branchOnTest(argumentNumber <= currentNumArgs);
   }
   
   private void copy_table() {
     
-    int first = getUnsignedValue(0);
-    int second = getUnsignedValue(1);
+    final int first = getUnsignedValue(0);
+    final int second = getUnsignedValue(1);
     int size = getValue(2);
-    MemoryAccess memaccess = getMemoryAccess();
+    final MemoryAccess memaccess = getMemoryAccess();
 
     if (second == 0) {
       
@@ -656,8 +656,8 @@ public class VariableInstruction extends AbstractInstruction {
    */
   private void print_table() {
     
-    int zsciiText = getUnsignedValue(0);
-    int width = getUnsignedValue(1);
+    final int zsciiText = getUnsignedValue(0);
+    final int width = getUnsignedValue(1);
     int height = 1;
     int skip = 0;
     if (getNumOperands() >= 3) height = getUnsignedValue(2);
@@ -666,16 +666,16 @@ public class VariableInstruction extends AbstractInstruction {
     //System.out.printf("@print_table, zscii-text = %d, width = %d," +
     //    " height = %d, skip = %d\n", zsciiText, width, height, skip);
     short zchar = 0;
-    MemoryAccess memaccess = getMemoryAccess();
-    TextCursor cursor = getMachine().getScreen().getTextCursor();
-    int column = cursor.getColumn();
+    final MemoryAccess memaccess = getMemoryAccess();
+    final TextCursor cursor = getMachine().getScreen().getTextCursor();
+    final int column = cursor.getColumn();
     int row = cursor.getLine();
     
     for (int i = 0; i < height; i++) {
       
       for (int j = 0; j < width; j++) {
         
-        int offset = (width * i) + j;
+        final int offset = (width * i) + j;
         zchar = memaccess.readUnsignedByte(zsciiText + offset);
         getMachine().getOutput().printZsciiChar(zchar, false);
       }
@@ -688,12 +688,12 @@ public class VariableInstruction extends AbstractInstruction {
   
   private void encode_text() {
     
-    int zsciiText = getUnsignedValue(0);
-    int length = getUnsignedValue(1);
-    int from = getUnsignedValue(2);
-    int codedText = getUnsignedValue(3);
+    final int zsciiText = getUnsignedValue(0);
+    final int length = getUnsignedValue(1);
+    final int from = getUnsignedValue(2);
+    final int codedText = getUnsignedValue(3);    
+    final ZCharEncoder encoder = getMachine().getGameData().getZCharEncoder();
     
-    ZCharEncoder encoder = getMachine().getGameData().getZCharEncoder();
     encoder.encode(getMemoryAccess(), zsciiText + from,
         length, codedText);
     nextInstruction();

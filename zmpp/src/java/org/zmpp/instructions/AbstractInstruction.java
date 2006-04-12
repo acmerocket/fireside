@@ -142,13 +142,15 @@ public abstract class AbstractInstruction implements Instruction {
    * @param machine a reference to the machine state
    * @param opcode the opcode
    */
-  public AbstractInstruction(Machine machine, int opcode) {
+  public AbstractInstruction(final Machine machine, final int opcode) {
     
+    super();
     this.opcode = opcode;
     this.machine = machine;
     this.operands = new ArrayList<Operand>();
     this.branchIfConditionTrue = true;
-    this.storyfileVersion = machine.getGameData().getStoryFileHeader().getVersion();
+    this.storyfileVersion =
+      machine.getGameData().getStoryFileHeader().getVersion();
   }
   
   /**
@@ -205,7 +207,7 @@ public abstract class AbstractInstruction implements Instruction {
    * @param operandNum the operand number, starting with 0 as the first operand.
    * @return the specified operand
    */
-  public Operand getOperand(int operandNum) {
+  public Operand getOperand(final int operandNum) {
     
     return operands.get(operandNum);
   }
@@ -266,42 +268,48 @@ public abstract class AbstractInstruction implements Instruction {
    * 
    * @param opcode the opcode
    */
-  public void setOpcode(int opcode) { this.opcode = opcode; }
+  public void setOpcode(final int opcode) { this.opcode = opcode; }
   
   /**
    * Adds an operand to this object.
    * 
    * @param operand the operand to add
    */
-  public void addOperand(Operand operand) { this.operands.add(operand); }
+  public void addOperand(final Operand operand) { this.operands.add(operand); }
   
   /**
    * Sets the store variable.
    * 
    * @param var the store variable
    */
-  public void setStoreVariable(short var) { this.storeVariable = var; }
+  public void setStoreVariable(final short var) { this.storeVariable = var; }
   
   /**
    * Sets the branch offset.
    * 
    * @param offset the branch offset
    */
-  public void setBranchOffset(short offset) { this.branchOffset = offset; }
+  public void setBranchOffset(final short offset) {
+    
+    this.branchOffset = offset;
+  }
   
   /**
    * Sets the branch if condition true flag.
    * 
    * @param flag the branch if condition true flag
    */
-  public void setBranchIfTrue(boolean flag) { branchIfConditionTrue = flag; }
+  public void setBranchIfTrue(final boolean flag) {
+    
+    branchIfConditionTrue = flag;
+  }
   
   /**
    * Sets the instruction's length in bytes.
    * 
    * @param length the length in bytes
    */
-  public void setLength(int length) { this.length = length; }
+  public void setLength(final int length) { this.length = length; }
   
   /**
    * Returns true, if this instruction stores a result, false, otherwise.
@@ -351,9 +359,9 @@ public abstract class AbstractInstruction implements Instruction {
    * @param operandNum the operand number
    * @return a signed value
    */
-  public short getValue(int operandNum) {
+  public short getValue(final int operandNum) {
     
-    Operand operand = getOperand(operandNum);
+    final Operand operand = getOperand(operandNum);
     switch (operand.getType()) {
     
       case VARIABLE:
@@ -372,9 +380,9 @@ public abstract class AbstractInstruction implements Instruction {
    * @param operandNum the operand number
    * @return the value
    */
-  public int getUnsignedValue(int operandNum) {
+  public int getUnsignedValue(final int operandNum) {
     
-    short signedValue = getValue(operandNum);
+    final short signedValue = getValue(operandNum);
     return signedValue & 0xffff;
   }
   
@@ -383,7 +391,7 @@ public abstract class AbstractInstruction implements Instruction {
    * 
    * @param value the value to store
    */
-  protected void storeResult(short value) {
+  protected void storeResult(final short value) {
     
     getCpu().setVariable(getStoreVariable(), value);
   }
@@ -423,8 +431,8 @@ public abstract class AbstractInstruction implements Instruction {
    */
   private boolean isOpcodeAvailable() {
     
-    int version = getStoryFileVersion();
-    int[] validVersions = getStaticInfo().getValidVersions(getOpcode());
+    final int version = getStoryFileVersion();
+    final int[] validVersions = getStaticInfo().getValidVersions(getOpcode());
     for (int validVersion : validVersions) {
       
       if (validVersion == version) return true;
@@ -434,7 +442,7 @@ public abstract class AbstractInstruction implements Instruction {
   
   public String toString() {
     
-    StringBuilder buffer = new StringBuilder();
+    final StringBuilder buffer = new StringBuilder();
     buffer.append(getStaticInfo().getOpName(getOpcode(),
                   getStoryFileVersion()));
     buffer.append(" ");
@@ -447,7 +455,7 @@ public abstract class AbstractInstruction implements Instruction {
     return buffer.toString();
   }
   
-  private String getVarName(int varnum) {
+  private String getVarName(final int varnum) {
     
     if (varnum == 0) return "(SP)";
     else if (varnum <= 15) {
@@ -460,7 +468,7 @@ public abstract class AbstractInstruction implements Instruction {
     }
   }
   
-  private String getVarValue(int varnum) {
+  private String getVarValue(final int varnum) {
 
     int value = 0;
     if (varnum == 0) {
@@ -476,11 +484,11 @@ public abstract class AbstractInstruction implements Instruction {
   
   protected String getOperandString() {
 
-    StringBuilder buffer = new StringBuilder();
+    final StringBuilder buffer = new StringBuilder();
     for (int i = 0; i < getNumOperands(); i++) {
 
       if (i > 0) buffer.append(", ");
-      Operand operand = getOperand(i);
+      final Operand operand = getOperand(i);
       switch (operand.getType()) {
       
       case SMALL_CONSTANT:
@@ -494,6 +502,7 @@ public abstract class AbstractInstruction implements Instruction {
         buffer.append("[");
         buffer.append(getVarValue(operand.getValue()));
         buffer.append("]");
+      default:
         break;
       }
     }
@@ -520,9 +529,9 @@ public abstract class AbstractInstruction implements Instruction {
    *
    * @param condition the test condition
    */
-  protected void branchOnTest(boolean condition) {
+  protected void branchOnTest(final boolean condition) {
     
-    boolean test = branchIfConditionTrue ? condition : !condition; 
+    final boolean test = branchIfConditionTrue ? condition : !condition; 
     if (test) {
       
       applyBranch();
@@ -541,9 +550,8 @@ public abstract class AbstractInstruction implements Instruction {
    */
   private void applyBranch() {
     
-    Cpu cpu = getCpu();
-    
-    short offset = getBranchOffset();
+    final Cpu cpu = getCpu();    
+    final short offset = getBranchOffset();
 
     if (offset >= 2 || offset < 0) {
       
@@ -564,7 +572,7 @@ public abstract class AbstractInstruction implements Instruction {
    * 
    * @param returnValue the return value
    */
-  protected void returnFromRoutine(short returnValue) {
+  protected void returnFromRoutine(final short returnValue) {
     
     getCpu().popRoutineContext(returnValue);
   }
@@ -576,10 +584,10 @@ public abstract class AbstractInstruction implements Instruction {
    * @param numArgs the number of arguments
    * @param discardResult whether to discard the result
    */
-  protected void call(int numArgs) {
+  protected void call(final int numArgs) {
 
-    int packedAddress = getUnsignedValue(0);
-    short[] args = new short[numArgs];
+    final int packedAddress = getUnsignedValue(0);
+    final short[] args = new short[numArgs];
     for (int i = 0; i < numArgs; i++) {
 
       args[i] = getValue(i + 1);
@@ -587,36 +595,36 @@ public abstract class AbstractInstruction implements Instruction {
     call(packedAddress, args);
   }
   
-  protected void call(int packedRoutineAddress, short[] args) {
+  protected void call(final int packedRoutineAddress, final short[] args) {
 
-    if (packedRoutineAddress != 0) {
+    if (packedRoutineAddress == 0) {
 
-      Cpu cpu = getCpu();      
-      int returnAddress = cpu.getProgramCounter() + getLength();
-      short returnVariable = storesResult() ? getStoreVariable() :
-        RoutineContext.DISCARD_RESULT;
-      
-      cpu.call(packedRoutineAddress, returnAddress, args,
-                        returnVariable);
-      
-    } else {
-      
       if (storesResult()) {
         
         // only if this instruction stores a result
         storeResult(FALSE);
       }
       nextInstruction();
+      
+    } else {
+      
+      final Cpu cpu = getCpu();      
+      final int returnAddress = cpu.getProgramCounter() + getLength();
+      final short returnVariable = storesResult() ? getStoreVariable() :
+        RoutineContext.DISCARD_RESULT;
+      
+      cpu.call(packedRoutineAddress, returnAddress, args,
+                        returnVariable);
     }
   }
   
-  protected void saveToStorage(int pc) {
+  protected void saveToStorage(final int pc) {
     
     // This is a little tricky: In version 3, the program counter needs to
     // point to the branch offset, and not to an instruction position
     // In version 4, this points to the store variable. In both cases this
     // address is the instruction address + 1
-    boolean success = getMachine().save(pc);
+    final boolean success = getMachine().save(pc);
     
     if (getStoryFileVersion() <= 3) {
       
@@ -635,7 +643,7 @@ public abstract class AbstractInstruction implements Instruction {
   
   protected void restoreFromStorage() {
 
-    PortableGameState gamestate = getMachine().restore();
+    final PortableGameState gamestate = getMachine().restore();
     if (getStoryFileVersion() <= 3) {
 
       if (gamestate == null) {
@@ -647,17 +655,17 @@ public abstract class AbstractInstruction implements Instruction {
     } else {
             
       // changed behaviour in version >= 4
-      if (gamestate != null) {
+      if (gamestate == null) {
 
-        int storevar = gamestate.getStoreVariable(getMachine());        
-        getCpu().setVariable(storevar, (short) RESTORE_TRUE);
-        
-      } else {
-        
         storeResult((short) FALSE);
         
         // If failure on restore, just continue
         nextInstruction();
+        
+      } else {
+        
+        final int storevar = gamestate.getStoreVariable(getMachine());        
+        getCpu().setVariable(storevar, (short) RESTORE_TRUE);        
       }
     }
   }  

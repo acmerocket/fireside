@@ -42,8 +42,9 @@ public class DefaultStoryFileHeader implements StoryFileHeader {
    * 
    * @param memaccess a MemoryReadAccess object
    */
-  public DefaultStoryFileHeader(MemoryAccess memaccess) {
+  public DefaultStoryFileHeader(final MemoryAccess memaccess) {
     
+    super();
     this.memaccess = memaccess;
   }
 
@@ -128,7 +129,7 @@ public class DefaultStoryFileHeader implements StoryFileHeader {
   /**
    * {@inheritDoc}
    */
-  public void setInterpreterNumber(int number) {
+  public void setInterpreterNumber(final int number) {
     
     memaccess.writeUnsignedByte(0x1e, (short) number);
   }
@@ -136,7 +137,7 @@ public class DefaultStoryFileHeader implements StoryFileHeader {
   /**
    * {@inheritDoc}
    */
-  public void setInterpreterVersion(int version) {
+  public void setInterpreterVersion(final int version) {
     
     if (getVersion() == 4 || getVersion() == 5) {
       
@@ -151,13 +152,13 @@ public class DefaultStoryFileHeader implements StoryFileHeader {
   /**
    * {@inheritDoc}
    */
-  public void setScreenWidth(int numChars) {
+  public void setScreenWidth(final int numChars) {
 
     //System.out.println("setScreenWidth(): " + numChars);
     memaccess.writeUnsignedByte(0x21, (short) numChars);    
   }
   
-  public void setScreenWidthUnits(int units) {
+  public void setScreenWidthUnits(final int units) {
     
     memaccess.writeUnsignedShort(0x22, units);
   }
@@ -173,12 +174,12 @@ public class DefaultStoryFileHeader implements StoryFileHeader {
   /**
    * {@inheritDoc}
    */
-  public void setScreenHeight(int numLines) {
+  public void setScreenHeight(final int numLines) {
     
     memaccess.writeUnsignedByte(0x20, (short) numLines);
   }
   
-  public void setScreenHeightUnits(int units) {
+  public void setScreenHeightUnits(final int units) {
     
     memaccess.writeUnsignedShort(0x24, units);
   }
@@ -218,7 +219,7 @@ public class DefaultStoryFileHeader implements StoryFileHeader {
   /**
    * {@inheritDoc}
    */
-  public void setDefaultBackgroundColor(int color) {
+  public void setDefaultBackgroundColor(final int color) {
     
     memaccess.writeUnsignedByte(0x2c, (short) color);
   }
@@ -226,7 +227,7 @@ public class DefaultStoryFileHeader implements StoryFileHeader {
   /**
    * {@inheritDoc}
    */
-  public void setDefaultForegroundColor(int color) {
+  public void setDefaultForegroundColor(final int color) {
     
     memaccess.writeUnsignedByte(0x2d, (short) color);
   }
@@ -234,7 +235,7 @@ public class DefaultStoryFileHeader implements StoryFileHeader {
   /**
    * {@inheritDoc}
    */
-  public void setStandardRevision(int major, int minor) {
+  public void setStandardRevision(final int major, final int minor) {
     
     memaccess.writeUnsignedByte(0x32, (short) major);
     memaccess.writeUnsignedByte(0x33, (short) minor);
@@ -251,7 +252,7 @@ public class DefaultStoryFileHeader implements StoryFileHeader {
   /**
    * {@inheritDoc}
    */
-  public void setFontWidth(int units) {
+  public void setFontWidth(final int units) {
 
     if (getVersion() == 6) {
       
@@ -266,7 +267,7 @@ public class DefaultStoryFileHeader implements StoryFileHeader {
   /**
    * {@inheritDoc}
    */
-  public void setFontHeight(int units) {
+  public void setFontHeight(final int units) {
     
     if (getVersion() == 6) {
       
@@ -289,13 +290,13 @@ public class DefaultStoryFileHeader implements StoryFileHeader {
   /**
    * {@inheritDoc}
    */
-  public void setMouseCoordinates(int x, int y) {
+  public void setMouseCoordinates(final int x, final int y) {
     
     // check the extension table
-    int extTable = memaccess.readUnsignedShort(0x36);
+    final int extTable = memaccess.readUnsignedShort(0x36);
     if (extTable > 0) {
       
-      int numwords = memaccess.readUnsignedShort(extTable);
+      final int numwords = memaccess.readUnsignedShort(extTable);
       if (numwords >= 1) {
         
         memaccess.writeUnsignedShort(extTable + 1, x);
@@ -314,11 +315,11 @@ public class DefaultStoryFileHeader implements StoryFileHeader {
     
     // check the extension table
     int result = 0;
-    int extTable = memaccess.readUnsignedShort(0x36);
+    final int extTable = memaccess.readUnsignedShort(0x36);
     
     if (extTable > 0) {
       
-      int numwords = memaccess.readUnsignedShort(extTable);
+      final int numwords = memaccess.readUnsignedShort(extTable);
       if (numwords >= 3) {
         
         result = memaccess.readUnsignedShort(extTable + 2);
@@ -334,7 +335,7 @@ public class DefaultStoryFileHeader implements StoryFileHeader {
   /**
    * {@inheritDoc}
    */
-  public void setEnabled(Attribute attribute, boolean flag) {
+  public void setEnabled(final Attribute attribute, final boolean flag) {
     
     switch (attribute) {
 
@@ -367,6 +368,7 @@ public class DefaultStoryFileHeader implements StoryFileHeader {
       break;
     case SUPPORTS_COLOURS:
       setSupportsColours(flag);
+    default:
       break;
     }
   }
@@ -374,7 +376,7 @@ public class DefaultStoryFileHeader implements StoryFileHeader {
   /**
    * {@inheritDoc}
    */
-  public boolean isEnabled(Attribute attribute) {
+  public boolean isEnabled(final Attribute attribute) {
     
     switch (attribute) {
     
@@ -388,8 +390,9 @@ public class DefaultStoryFileHeader implements StoryFileHeader {
       return defaultFontIsVariablePitch();
     case USE_MOUSE:
       return useMouse();
+    default:
+      return false;
     }
-    return false;
   }
 
   // ************************************************************************
@@ -404,9 +407,9 @@ public class DefaultStoryFileHeader implements StoryFileHeader {
    * @param length the length of the ASCII string
    * @return the ASCII string at the specified position
    */
-  private String extractAscii(int address, int length) {
+  private String extractAscii(final int address, final int length) {
     
-    StringBuilder builder = new StringBuilder();
+    final StringBuilder builder = new StringBuilder();
     for (int i = address; i < address + length; i++) {
       
       builder.append((char) memaccess.readUnsignedByte(i));
@@ -414,7 +417,7 @@ public class DefaultStoryFileHeader implements StoryFileHeader {
     return builder.toString();
   }
     
-  private void setTranscripting(boolean flag) {
+  private void setTranscripting(final boolean flag) {
     
     int flags = memaccess.readUnsignedByte(0x10);
     flags = flag ? (flags | 1) : (flags & 0xfe);
@@ -431,14 +434,14 @@ public class DefaultStoryFileHeader implements StoryFileHeader {
     return (memaccess.readUnsignedByte(0x10) & 2) > 0;
   }
   
-  private void setForceFixedFont(boolean flag) {
+  private void setForceFixedFont(final boolean flag) {
     
     int flags = memaccess.readUnsignedByte(0x10);
     flags = flag ? (flags | 2) : (flags & 0xfd);
     memaccess.writeUnsignedByte(0x10, (short) flags);
   }
   
-  private void setTimedInputAvailable(boolean flag) {
+  private void setTimedInputAvailable(final boolean flag) {
     
     int flags = memaccess.readUnsignedByte(0x01);
     flags = flag ? (flags | 128) : (flags & 0x7f);
@@ -450,42 +453,42 @@ public class DefaultStoryFileHeader implements StoryFileHeader {
     return (memaccess.readUnsignedByte(0x01) & 2) == 0;
   }
   
-  private void setFixedFontAvailable(boolean flag) {
+  private void setFixedFontAvailable(final boolean flag) {
     
     int flags = memaccess.readUnsignedByte(0x01);
     flags = flag ? (flags | 16) : (flags & 0xef);
     memaccess.writeUnsignedByte(0x01, (short) flags);
   }
   
-  private void setBoldFaceAvailable(boolean flag) {
+  private void setBoldFaceAvailable(final boolean flag) {
     
     int flags = memaccess.readUnsignedByte(0x01);
     flags = flag ? (flags | 4) : (flags & 0xfb);
     memaccess.writeUnsignedByte(0x01, (short) flags);
   }  
 
-  private void setItalicAvailable(boolean flag) {
+  private void setItalicAvailable(final boolean flag) {
     
     int flags = memaccess.readUnsignedByte(0x01);
     flags = flag ? (flags | 8) : (flags & 0xf7);
     memaccess.writeUnsignedByte(0x01, (short) flags);
   }
   
-  private void setScreenSplittingAvailable(boolean flag) {
+  private void setScreenSplittingAvailable(final boolean flag) {
     
     int flags = memaccess.readUnsignedByte(0x01);
     flags = flag ? (flags | 32) : (flags & 0xdf);
     memaccess.writeUnsignedByte(0x01, (short) flags);
   }
   
-  private void setStatusLineAvailable(boolean flag) {
+  private void setStatusLineAvailable(final boolean flag) {
     
     int flags = memaccess.readUnsignedByte(0x01);
     flags = flag ? (flags | 16) : (flags & 0xef);
     memaccess.writeUnsignedByte(0x01, (short) flags);
   }  
 
-  private void setDefaultFontIsVariablePitch(boolean flag) {
+  private void setDefaultFontIsVariablePitch(final boolean flag) {
     
     int flags = memaccess.readUnsignedByte(0x01);
     flags = flag ? (flags | 64) : (flags & 0xbf);
@@ -497,7 +500,7 @@ public class DefaultStoryFileHeader implements StoryFileHeader {
     return (memaccess.readUnsignedByte(0x01) & 64) > 0;
   }
   
-  private void setSupportsColours(boolean flag) {
+  private void setSupportsColours(final boolean flag) {
     
     int flags = memaccess.readUnsignedByte(0x01);
     flags = flag ? (flags | 1) : (flags & 0xfe);

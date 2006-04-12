@@ -53,7 +53,7 @@ public class DefaultFormChunk extends DefaultChunk implements FormChunk {
    * 
    * @param memaccess a MemoryAccess object
    */
-  public DefaultFormChunk(MemoryAccess memaccess) {
+  public DefaultFormChunk(final MemoryAccess memaccess) {
 
     super(memaccess, 0);
     initBaseInfo();
@@ -67,7 +67,7 @@ public class DefaultFormChunk extends DefaultChunk implements FormChunk {
     
     // Determine the sub id
     subId = new byte[CHUNK_ID_LENGTH];
-    int offset = CHUNK_HEADER_LENGTH;
+    final int offset = CHUNK_HEADER_LENGTH;
     for (int i = 0; i < 4; i++) {
       
       subId[i] = memaccess.readByte(i + offset);
@@ -82,14 +82,14 @@ public class DefaultFormChunk extends DefaultChunk implements FormChunk {
     subChunks = new ArrayList<Chunk>();
     
     // skip the identifying information
-    int length = getSize();
+    final int length = getSize();
     int offset = CHUNK_HEADER_LENGTH + CHUNK_ID_LENGTH;
     int chunkTotalSize = 0;
     
     while (offset < length) {
-      MemoryAccess memarray = new MemorySection(memaccess, offset,
-                                              length - offset);
-      Chunk subchunk = new DefaultChunk(memarray, offset);
+      final MemoryAccess memarray = new MemorySection(memaccess, offset,
+                                                      length - offset);
+      final Chunk subchunk = new DefaultChunk(memarray, offset);
       subChunks.add(subchunk);
       chunkTotalSize = subchunk.getSize() + CHUNK_HEADER_LENGTH;
       
@@ -127,7 +127,7 @@ public class DefaultFormChunk extends DefaultChunk implements FormChunk {
   /**
    * {@inheritDoc}
    */
-  public Chunk getSubChunk(byte[] id) {
+  public Chunk getSubChunk(final byte[] id) {
 
     for (Chunk chunk : subChunks) {
       
@@ -139,7 +139,7 @@ public class DefaultFormChunk extends DefaultChunk implements FormChunk {
     return null;
   }
   
-  public Chunk getSubChunk(int address) {
+  public Chunk getSubChunk(final int address) {
     
     for (Chunk chunk : subChunks) {
       

@@ -40,8 +40,8 @@ public class StoryMetadata {
     private String description;
     public String getLeafName() { return leafname; }
     public String getDescription() { return description; }
-    public void setLeafName(String name) { leafname = name; }
-    public void setDescription(String text) { description = text; }
+    public void setLeafName(final String name) { leafname = name; }
+    public void setDescription(final String text) { description = text; }
     public String toString() { return leafname; }
   }
   
@@ -56,22 +56,22 @@ public class StoryMetadata {
   private List<Auxiliary> auxiliaries = new ArrayList<Auxiliary>();
   
   public String getTitle() { return title; }
-  public void setTitle(String title) { this.title = title; }
+  public void setTitle(final String title) { this.title = title; }
   public String getHeadline() { return headline; }
-  public void setHeadline(String headline) { this.headline = headline; }
+  public void setHeadline(final String headline) { this.headline = headline; }
   public String getAuthor() { return author; }
-  public void setAuthor(String author) { this.author = author; }
+  public void setAuthor(final String author) { this.author = author; }
   public String getGenre() { return genre; }
-  public void setGenre(String genre) { this.genre = genre; }
+  public void setGenre(final String genre) { this.genre = genre; }
   public String getDescription() { return description; }
-  public void setDescription(String description) { this.description = description; }
+  public void setDescription(final String description) { this.description = description; }
   public String getYear() { return year; }
-  public void setYear(String year) { this.year = year; }
+  public void setYear(final String year) { this.year = year; }
   public int getCoverPicture() { return coverpicture; }
-  public void setCoverPicture(int picnum) { this.coverpicture = picnum; }
-  public void addAuxiliary(Auxiliary auxiliary) { auxiliaries.add(auxiliary); }
+  public void setCoverPicture(final int picnum) { this.coverpicture = picnum; }
+  public void addAuxiliary(final Auxiliary auxiliary) { auxiliaries.add(auxiliary); }
   public String getGroup() { return group; }
-  public void setGroup(String group) { this.group = group; }
+  public void setGroup(final String group) { this.group = group; }
   public List<Auxiliary> getAuxiliaries() {
     
     return Collections.unmodifiableList(auxiliaries);
@@ -79,7 +79,7 @@ public class StoryMetadata {
   
   public String toString() {
     
-    StringBuilder builder = new StringBuilder();
+    final StringBuilder builder = new StringBuilder();
     builder.append("Title: '" + title + "'\n");
     builder.append("Headline: '" + headline + "'\n");
     builder.append("Author: '" + author + "'\n");

@@ -45,10 +45,10 @@ public class BlorbCoverArt {
     readFrontispiece(formchunk);
   }
   
-  private void readFrontispiece(FormChunk formchunk) {
+  private void readFrontispiece(final FormChunk formchunk) {
     
     //System.out.println("SEARCHIN FRONTISPIECE");
-    Chunk fspcchunk = formchunk.getSubChunk("Fspc".getBytes());
+    final Chunk fspcchunk = formchunk.getSubChunk("Fspc".getBytes());
     if (fspcchunk != null) {
       //System.out.println("FOUND FRONTISPIECE");
       coverartnum = (int)

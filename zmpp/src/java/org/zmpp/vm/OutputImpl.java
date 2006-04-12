@@ -37,8 +37,9 @@ public class OutputImpl implements Output {
    */
   private OutputStream[] outputStream;
   
-  public OutputImpl(GameData gamedata, Cpu cpu) {
+  public OutputImpl(final GameData gamedata, final Cpu cpu) {
   
+    super();
     this.cpu = cpu;
     this.gamedata = gamedata;
     outputStream = new OutputStream[3];
@@ -47,7 +48,8 @@ public class OutputImpl implements Output {
   /**
    * {@inheritDoc}
    */
-  public void setOutputStream(int streamnumber, OutputStream stream) {
+  public void setOutputStream(final int streamnumber,
+      final OutputStream stream) {
     
     outputStream[streamnumber - 1] = stream;
   }
@@ -55,7 +57,7 @@ public class OutputImpl implements Output {
   /**
    * {@inheritDoc}
    */
-  public void printZString(int address) {
+  public void printZString(final int address) {
     
     print(gamedata.getZCharDecoder().decode2Zscii(gamedata.getMemoryAccess(),
         address, 0));
@@ -64,7 +66,7 @@ public class OutputImpl implements Output {
   /**
    * {@inheritDoc}
    */
-  public void print(ZsciiString str) {
+  public void print(final ZsciiString str) {
 
     //System.out.println("print: '" + str + "'");
     printZsciiChars(str, false);
@@ -83,7 +85,7 @@ public class OutputImpl implements Output {
   /**
    * {@inheritDoc}
    */
-  public void printZsciiChar(short zchar, boolean isInput) {
+  public void printZsciiChar(final short zchar, final boolean isInput) {
     
     //System.out.println("printZsciiChar: '" + (char) zchar + "'");
     zchars[0] = zchar;
@@ -93,7 +95,7 @@ public class OutputImpl implements Output {
   /**
    * {@inheritDoc}
    */
-  public void deletePreviousZsciiChar(short zchar) {
+  public void deletePreviousZsciiChar(final short zchar) {
     
     if (!outputStream[OUTPUTSTREAM_MEMORY - 1].isSelected()) {
           
@@ -114,7 +116,8 @@ public class OutputImpl implements Output {
    * @param zsciiString the array of ZSCII characters.
    * @param isInput true if in input mode, false otherwise
    */
-  private void printZsciiChars(ZsciiString zsciiString, boolean isInput) {
+  private void printZsciiChars(final ZsciiString zsciiString,
+      final boolean isInput) {
     
     checkTranscriptFlag();
     
@@ -143,7 +146,7 @@ public class OutputImpl implements Output {
   /**
    * {@inheritDoc}
    */
-  public void printNumber(short number) {
+  public void printNumber(final short number) {
     
     print(new ZsciiString(String.valueOf(number)));
   }
@@ -181,7 +184,7 @@ public class OutputImpl implements Output {
   /**
    * {@inheritDoc}
    */
-  public void selectOutputStream(int streamnumber, boolean flag) {
+  public void selectOutputStream(final int streamnumber, final boolean flag) {
     
     outputStream[streamnumber - 1].select(flag);
     
@@ -200,7 +203,7 @@ public class OutputImpl implements Output {
   /**
    * {@inheritDoc}
    */
-  public void selectOutputStream3(int tableAddress) {
+  public void selectOutputStream3(final int tableAddress) {
 
     ((MemoryOutputStream) outputStream[OUTPUTSTREAM_MEMORY - 1]).select(
         tableAddress);

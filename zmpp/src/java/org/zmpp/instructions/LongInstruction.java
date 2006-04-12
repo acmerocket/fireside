@@ -188,7 +188,7 @@ public class LongInstruction extends AbstractInstruction {
   private void je() {
     
     boolean equalsFollowing = false;
-    short op1 = getValue(0);
+    final short op1 = getValue(0);
     if (getNumOperands() <= 1) {
 
       getMachine().getCpu().halt("je expects at least two operands, only " +
@@ -209,22 +209,22 @@ public class LongInstruction extends AbstractInstruction {
     
   private void jl() {
     
-    short op1 = getValue(0);
-    short op2 = getValue(1);
+    final short op1 = getValue(0);
+    final short op2 = getValue(1);
     branchOnTest(op1 < op2);
   }
   
   private void jg() {
     
-    short op1 = getValue(0);
-    short op2 = getValue(1);
+    final short op1 = getValue(0);
+    final short op2 = getValue(1);
     branchOnTest(op1 > op2);
   }
   
   private void jin() {
     
-    int obj1 = getUnsignedValue(0);
-    int obj2 = getUnsignedValue(1);
+    final int obj1 = getUnsignedValue(0);
+    final int obj2 = getUnsignedValue(1);
     int parentOfObj1 = 0;
     
     if (obj1 > 0) {
@@ -240,9 +240,9 @@ public class LongInstruction extends AbstractInstruction {
   
   private void dec_chk() {
     
-    int varnum = getUnsignedValue(0);
-    short value = getValue(1);
-    short varValue = (short) (getCpu().getVariable(varnum) - 1);
+    final int varnum = getUnsignedValue(0);
+    final short value = getValue(1);
+    final short varValue = (short) (getCpu().getVariable(varnum) - 1);
     
     getCpu().setVariable(varnum, varValue);
     branchOnTest(varValue < value);
@@ -250,9 +250,9 @@ public class LongInstruction extends AbstractInstruction {
   
   private void inc_chk() {
     
-    int varnum = getUnsignedValue(0);
-    short value = getValue(1);
-    short varValue = (short) (getCpu().getVariable(varnum) + 1);
+    final int varnum = getUnsignedValue(0);
+    final short value = getValue(1);
+    final short varValue = (short) (getCpu().getVariable(varnum) + 1);
     
     getCpu().setVariable(varnum, varValue);
     branchOnTest(varValue > value);
@@ -260,55 +260,55 @@ public class LongInstruction extends AbstractInstruction {
   
   private void test() {
     
-    int op1 = getUnsignedValue(0);
-    int op2 = getUnsignedValue(1);
+    final int op1 = getUnsignedValue(0);
+    final int op2 = getUnsignedValue(1);
     branchOnTest((op1 & op2) == op2);
   }
   
   private void or() {
     
-    int op1 = getUnsignedValue(0);
-    int op2 = getUnsignedValue(1);
+    final int op1 = getUnsignedValue(0);
+    final int op2 = getUnsignedValue(1);
     storeResult((short) ((op1 | op2) & 0xffff));
     nextInstruction();
   }
   
   private void and() {
     
-    int op1 = getUnsignedValue(0);
-    int op2 = getUnsignedValue(1);
+    final int op1 = getUnsignedValue(0);
+    final int op2 = getUnsignedValue(1);
     storeResult((short) ((op1 & op2) & 0xffff));
     nextInstruction();
   }
   
   private void add() {
     
-    short op1 = getValue(0);
-    short op2 = getValue(1);
+    final short op1 = getValue(0);
+    final short op2 = getValue(1);
     storeResult((short) (op1 + op2));
     nextInstruction();
   }
   
   private void sub() {
     
-    short op1 = getValue(0);
-    short op2 = getValue(1);
+    final short op1 = getValue(0);
+    final short op2 = getValue(1);
     storeResult((short) (op1 - op2));
     nextInstruction();
   }
   
   private void mul() {
     
-    short op1 = getValue(0);
-    short op2 = getValue(1);
+    final short op1 = getValue(0);
+    final short op2 = getValue(1);
     storeResult((short)(op1 * op2));
     nextInstruction();
   }
   
   private void div() {
     
-    short op1 = getValue(0);
-    short op2 = getValue(1);
+    final short op1 = getValue(0);
+    final short op2 = getValue(1);
     
     if (op2 == 0) {
     
@@ -323,8 +323,8 @@ public class LongInstruction extends AbstractInstruction {
   
   private void mod() {
     
-    short op1 = getValue(0);
-    short op2 = getValue(1);
+    final short op1 = getValue(0);
+    final short op2 = getValue(1);
     
     if (op2 == 0) {
       
@@ -338,12 +338,12 @@ public class LongInstruction extends AbstractInstruction {
   
   private void test_attr() {
     
-    int obj = getUnsignedValue(0);
-    int attr = getUnsignedValue(1);
+    final int obj = getUnsignedValue(0);
+    final int attr = getUnsignedValue(1);
     
     if (obj > 0 && isValidAttribute(attr)) {
       
-      ZObject zobj = getObjectTree().getObject(obj);
+      final ZObject zobj = getObjectTree().getObject(obj);
       branchOnTest(zobj.isAttributeSet(attr));
       
     } else {
@@ -355,11 +355,11 @@ public class LongInstruction extends AbstractInstruction {
   
   private void set_attr() {
     
-    int obj = getUnsignedValue(0);
-    int attr = getUnsignedValue(1);
+    final int obj = getUnsignedValue(0);
+    final int attr = getUnsignedValue(1);
     if (obj > 0 && isValidAttribute(attr)) {
       
-      ZObject zobj = getObjectTree().getObject(obj);
+      final ZObject zobj = getObjectTree().getObject(obj);
       zobj.setAttribute(attr);
       
     } else {
@@ -372,11 +372,11 @@ public class LongInstruction extends AbstractInstruction {
   
   private void clear_attr() {
     
-    int obj = getUnsignedValue(0);
-    int attr = getUnsignedValue(1);
+    final int obj = getUnsignedValue(0);
+    final int attr = getUnsignedValue(1);
     if (obj > 0 && isValidAttribute(attr)) {
       
-      ZObject zobj = getObjectTree().getObject(obj);
+      final ZObject zobj = getObjectTree().getObject(obj);
       zobj.clearAttribute(attr);
       
     } else {
@@ -389,8 +389,8 @@ public class LongInstruction extends AbstractInstruction {
   
   private void store() {
     
-    int varnum = getUnsignedValue(0);
-    short value = getValue(1);
+    final int varnum = getUnsignedValue(0);
+    final short value = getValue(1);
     
     // Handle stack variable as a special case (standard 1.1)
     if (varnum == 0) {
@@ -406,11 +406,11 @@ public class LongInstruction extends AbstractInstruction {
   
   private void insert_obj() {
     
-    int obj = getUnsignedValue(0);
-    int dest = getUnsignedValue(1);
+    final int obj = getUnsignedValue(0);
+    final int dest = getUnsignedValue(1);
     if (obj > 0 && dest > 0) {
       
-      ObjectTree objectTree = getObjectTree();
+      final ObjectTree objectTree = getObjectTree();
       objectTree.insertObject(dest, obj);
       
     } else {
@@ -423,31 +423,33 @@ public class LongInstruction extends AbstractInstruction {
   
   private void loadw() {
     
-    int arrayAddress = getUnsignedValue(0);
-    int index = getUnsignedValue(1);
-    MemoryReadAccess memaccess = getMachine().getGameData().getMemoryAccess();
+    final int arrayAddress = getUnsignedValue(0);
+    final int index = getUnsignedValue(1);
+    final MemoryReadAccess memaccess =
+      getMachine().getGameData().getMemoryAccess();
     storeResult(memaccess.readShort(arrayAddress + 2 * index));
     nextInstruction();
   }
   
   private void loadb() {
     
-    int arrayAddress = getUnsignedValue(0);
-    int index = getUnsignedValue(1);
-    MemoryReadAccess memaccess = getMachine().getGameData().getMemoryAccess();
+    final int arrayAddress = getUnsignedValue(0);
+    final int index = getUnsignedValue(1);
+    final MemoryReadAccess memaccess =
+      getMachine().getGameData().getMemoryAccess();
     storeResult((short) memaccess.readUnsignedByte(arrayAddress + index));
     nextInstruction();
   }
   
   private void get_prop() {
     
-    int obj = getUnsignedValue(0);
-    int property = getUnsignedValue(1);
+    final int obj = getUnsignedValue(0);
+    final int property = getUnsignedValue(1);
     
     if (obj > 0) {
       
-      ZObject zobj = getObjectTree().getObject(obj);
-      int numBytes = zobj.getPropertySize(property);
+      final ZObject zobj = getObjectTree().getObject(obj);
+      final int numBytes = zobj.getPropertySize(property);
       short value;
     
       if (!zobj.isPropertyAvailable(property)) {
@@ -461,8 +463,8 @@ public class LongInstruction extends AbstractInstruction {
       
       } else {
       
-        byte byte1 = zobj.getPropertyByte(property, 0);
-        byte byte2 = zobj.getPropertyByte(property, 1);      
+        final byte byte1 = zobj.getPropertyByte(property, 0);
+        final byte byte2 = zobj.getPropertyByte(property, 1);      
         value = (short) (byte1 << 8 | (byte2 & 0xff));
       }
       storeResult(value);
@@ -476,13 +478,13 @@ public class LongInstruction extends AbstractInstruction {
   
   private void get_prop_addr() {
     
-    int obj = getUnsignedValue(0);
-    int property = getUnsignedValue(1);    
+    final int obj = getUnsignedValue(0);
+    final int property = getUnsignedValue(1);    
     
     if (obj > 0) {
       
       short value = 0;
-      ZObject zobj = getObjectTree().getObject(obj);
+      final ZObject zobj = getObjectTree().getObject(obj);
     
       if (zobj.isPropertyAvailable(property)) {
       
@@ -500,13 +502,13 @@ public class LongInstruction extends AbstractInstruction {
   
   private void get_next_prop() {
     
-    int obj = getUnsignedValue(0);
-    int property = getUnsignedValue(1);
+    final int obj = getUnsignedValue(0);
+    final int property = getUnsignedValue(1);
     short value = 0;
     
     if (obj > 0) {
       
-      ZObject zobj = getObjectTree().getObject(obj);
+      final ZObject zobj = getObjectTree().getObject(obj);
     
       if (property == 0 || zobj.isPropertyAvailable(property)) {
       
@@ -544,11 +546,11 @@ public class LongInstruction extends AbstractInstruction {
   
   private void z_throw() {
     
-    short returnValue = getValue(0);
-    int stackFrame = getUnsignedValue(1);
+    final short returnValue = getValue(0);
+    final int stackFrame = getUnsignedValue(1);
     
     // Unwind the stack
-    int currentStackFrame = getCpu().getRoutineContexts().size() - 1;
+    final int currentStackFrame = getCpu().getRoutineContexts().size() - 1;
     if (currentStackFrame < stackFrame) {
       
       getMachine().getCpu().halt("@throw from an invalid stack frame state");
@@ -556,7 +558,7 @@ public class LongInstruction extends AbstractInstruction {
      
       // Pop off the routine contexts until the specified stack frame is
       // reached
-      int diff = currentStackFrame - stackFrame;
+      final int diff = currentStackFrame - stackFrame;
       for (int i = 0; i < diff; i++) {
         
         getCpu().popRoutineContext((short) 0);
@@ -567,9 +569,9 @@ public class LongInstruction extends AbstractInstruction {
     }
   }
   
-  private boolean isValidAttribute(int attribute) {
+  private boolean isValidAttribute(final int attribute) {
     
-    int numAttr = getStoryFileVersion() <= 3 ? 32 : 48;
+    final int numAttr = getStoryFileVersion() <= 3 ? 32 : 48;
     return attribute >= 0 && attribute < numAttr;    
   }
 }

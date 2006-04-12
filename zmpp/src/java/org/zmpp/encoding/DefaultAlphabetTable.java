@@ -36,7 +36,7 @@ public class DefaultAlphabetTable implements AlphabetTable {
   /**
    * {@inheritDoc}
    */
-  public short getA0Char(byte zchar) {
+  public short getA0Char(final byte zchar) {
 
     if (zchar == 0) return ' ';
     return (short) A0CHARS.charAt(zchar - ALPHABET_START);
@@ -45,7 +45,7 @@ public class DefaultAlphabetTable implements AlphabetTable {
   /**
    * {@inheritDoc}
    */
-  public short getA1Char(byte zchar) {
+  public short getA1Char(final byte zchar) {
   
     if (zchar == 0) return ' ';
     return (short) A1CHARS.charAt(zchar - ALPHABET_START);
@@ -54,7 +54,7 @@ public class DefaultAlphabetTable implements AlphabetTable {
   /**
    * {@inheritDoc}
    */
-  public short getA2Char(byte zchar) {
+  public short getA2Char(final byte zchar) {
     
     if (zchar == 0) return ' ';
     return (short) A2CHARS.charAt(zchar - ALPHABET_START);
@@ -63,7 +63,7 @@ public class DefaultAlphabetTable implements AlphabetTable {
   /**
    * {@inheritDoc}
    */
-  public final byte getA0CharCode(short zsciiChar) {
+  public final byte getA0CharCode(final short zsciiChar) {
 
     return getCharCodeFor(A0CHARS, zsciiChar);
   }
@@ -71,7 +71,7 @@ public class DefaultAlphabetTable implements AlphabetTable {
   /**
    * {@inheritDoc}
    */
-  public final byte getA1CharCode(short zsciiChar) {
+  public final byte getA1CharCode(final short zsciiChar) {
 
     return getCharCodeFor(A1CHARS, zsciiChar);
   }
@@ -79,12 +79,13 @@ public class DefaultAlphabetTable implements AlphabetTable {
   /**
    * {@inheritDoc}
    */
-  public byte getA2CharCode(short zsciiChar) {
+  public byte getA2CharCode(final short zsciiChar) {
 
     return getCharCodeFor(A2CHARS, zsciiChar);
   }
 
-  protected static byte getCharCodeFor(String chars, short zsciiChar) {
+  protected static byte getCharCodeFor(final String chars,
+      final short zsciiChar) {
     
     int index = chars.indexOf(zsciiChar);
     if (index >= 0) {
@@ -98,7 +99,7 @@ public class DefaultAlphabetTable implements AlphabetTable {
   /**
    * {@inheritDoc}
    */
-  public boolean isShift1(short zchar) {
+  public boolean isShift1(final short zchar) {
     
     return zchar == SHIFT_4;
   }
@@ -106,7 +107,7 @@ public class DefaultAlphabetTable implements AlphabetTable {
   /**
    * {@inheritDoc}
    */
-  public boolean isShift2(short zchar) {
+  public boolean isShift2(final short zchar) {
     
     return zchar == SHIFT_5;
   }
@@ -114,7 +115,7 @@ public class DefaultAlphabetTable implements AlphabetTable {
   /**
    * {@inheritDoc}
    */
-  public boolean isShift(short zchar) {
+  public boolean isShift(final short zchar) {
     
     return isShift1(zchar) || isShift2(zchar);
   }
@@ -122,7 +123,7 @@ public class DefaultAlphabetTable implements AlphabetTable {
   /**
    * {@inheritDoc}
    */
-  public boolean isShiftLock(short zchar) {
+  public boolean isShiftLock(final short zchar) {
     
     return false;
   }
@@ -130,7 +131,7 @@ public class DefaultAlphabetTable implements AlphabetTable {
   /**
    * {@inheritDoc}
    */
-  public boolean isAbbreviation(short zchar) {
+  public boolean isAbbreviation(final short zchar) {
     
     return 1 <= zchar && zchar <= 3;
   }  

@@ -56,9 +56,11 @@ public abstract class AbstractDictionary implements Dictionary {
    * @param converter a Z char decoder object
    * @param an object specifying the sizes of the dictionary entries
    */
-  public AbstractDictionary(MemoryReadAccess map, int address,
-                            ZCharDecoder decoder, DictionarySizes sizes) {
+  public AbstractDictionary(final MemoryReadAccess map, final int address,
+                            final ZCharDecoder decoder,
+                            final DictionarySizes sizes) {
     
+    super();
     this.memaccess = map;
     this.address = address;
     this.decoder = decoder;
@@ -76,7 +78,7 @@ public abstract class AbstractDictionary implements Dictionary {
   /**
    * {@inheritDoc}
    */
-  public byte getSeparator(int i) {
+  public byte getSeparator(final int i) {
     
     return (byte) memaccess.readUnsignedByte(address + i + 1);
   }
@@ -102,9 +104,9 @@ public abstract class AbstractDictionary implements Dictionary {
   /**
    * {@inheritDoc}
    */
-  public int getEntryAddress(int entryNum) {
+  public int getEntryAddress(final int entryNum) {
    
-    int headerSize = getNumberOfSeparators() + 4;    
+    final int headerSize = getNumberOfSeparators() + 4;    
     return address + headerSize + entryNum * getEntryLength();
   }
   
@@ -123,7 +125,7 @@ public abstract class AbstractDictionary implements Dictionary {
     return sizes;
   }
   
-  protected ZsciiString truncateToken(ZsciiString token) {
+  protected ZsciiString truncateToken(final ZsciiString token) {
     
     // Unfortunately it seems that the maximum size of an entry is not equal 
     // to the size declared in the dictionary header, therefore we take
@@ -144,15 +146,15 @@ public abstract class AbstractDictionary implements Dictionary {
    */
   public String toString() {
 
-    StringBuilder buffer = new StringBuilder();
+    final StringBuilder buffer = new StringBuilder();
     int entryAddress;
     int i = 0;
-    int n = getNumberOfEntries();
+    final int n = getNumberOfEntries();
     
     while (true) {
       
       entryAddress = getEntryAddress(i);
-      String str = getDecoder().decode2Zscii(getMemoryAccess(),
+      final String str = getDecoder().decode2Zscii(getMemoryAccess(),
           entryAddress, sizes.getNumEntryBytes()).toString();
       buffer.append(String.format("[%4d] '%-9s' ", (i + 1), str));
       i++;

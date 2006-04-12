@@ -36,7 +36,7 @@ public class AlphabetTableV2 extends DefaultAlphabetTable {
   /**
    * {@inheritDoc}
    */
-  public boolean isAbbreviation(short zchar) {
+  public boolean isAbbreviation(final short zchar) {
 
     return zchar == 1;
   }
@@ -44,7 +44,7 @@ public class AlphabetTableV2 extends DefaultAlphabetTable {
   /**
    * {@inheritDoc}
    */
-  public boolean isShift1(short zchar) {
+  public boolean isShift1(final short zchar) {
 
     return zchar == SHIFT_2 || zchar == SHIFT_4;
   }
@@ -52,7 +52,7 @@ public class AlphabetTableV2 extends DefaultAlphabetTable {
   /**
    * {@inheritDoc}
    */
-  public boolean isShift2(short zchar) {
+  public boolean isShift2(final short zchar) {
     
     return zchar == SHIFT_3 || zchar == SHIFT_5;
   }
@@ -60,7 +60,7 @@ public class AlphabetTableV2 extends DefaultAlphabetTable {
   /**
    * {@inheritDoc}
    */
-  public boolean isShiftLock(short zchar) {
+  public boolean isShiftLock(final short zchar) {
     
     return zchar == SHIFT_4 || zchar == SHIFT_5;
   }

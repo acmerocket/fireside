@@ -54,22 +54,22 @@ public class BlorbMetadataHandler extends DefaultHandler {
   
   public InformMetadata getMetadata() {
     
-    return (story != null) ? new InformMetadata(story) : null;
+    return (story == null) ? null : new InformMetadata(story);
   }
   
-  private void extractMetadata(FormChunk formchunk) {
+  private void extractMetadata(final FormChunk formchunk) {
 
-    Chunk chunk = formchunk.getSubChunk("IFmd".getBytes());
+    final Chunk chunk = formchunk.getSubChunk("IFmd".getBytes());
     if (chunk != null) {
 
-      MemoryReadAccess memaccess = chunk.getMemoryAccess();
-      MemoryAccessInputStream meminput = new MemoryAccessInputStream(memaccess,
-          Chunk.CHUNK_HEADER_LENGTH,
+      final MemoryReadAccess memaccess = chunk.getMemoryAccess();
+      final MemoryAccessInputStream meminput =
+        new MemoryAccessInputStream(memaccess, Chunk.CHUNK_HEADER_LENGTH,
           chunk.getSize() + Chunk.CHUNK_HEADER_LENGTH);
       
       try {
         
-        SAXParser parser = SAXParserFactory.newInstance().newSAXParser();
+        final SAXParser parser = SAXParserFactory.newInstance().newSAXParser();
         parser.parse(meminput, this);
         
       } catch (Exception ex) {
@@ -83,8 +83,8 @@ public class BlorbMetadataHandler extends DefaultHandler {
   // **** Parsing meta data
   // *********************************
   
-  public void startElement(String uri, String localName, String qname,
-                          Attributes attributes) {
+  public void startElement(final String uri, final String localName,
+      final String qname, final Attributes attributes) {
     
     if ("story".equals(qname)) {
 
@@ -114,25 +114,26 @@ public class BlorbMetadataHandler extends DefaultHandler {
       
       buffer = new StringBuilder();
     }
-    if (qname.equals("auxiliary")) {
+    if ("auxiliary".equals(qname)) {
       
       auxiliary = new Auxiliary();
     }
-    if (qname.equals("group")) {
+    if ("group".equals(qname)) {
       
       buffer = new StringBuilder();
     }
-    if (qname.equals("leafname")) {
+    if ("leafname".equals(qname)) {
       
       buffer = new StringBuilder();
     }
-    if (qname.equals("coverpicture")) {
+    if ("coverpicture".equals(qname)) {
       
       buffer = new StringBuilder();
     }
   }
 
-  public void endElement(String uri, String localName, String qname) {
+  public void endElement(final String uri, final String localName,
+      final String qname) {
 
     if ("title".equals(qname)) {
       
@@ -152,13 +153,13 @@ public class BlorbMetadataHandler extends DefaultHandler {
     }
     if ("description".equals(qname)) {
       
-      if (auxiliary != null) {
+      if (auxiliary == null) {
         
-        auxiliary.setDescription(buffer.toString());
+        story.setDescription(buffer.toString());
         
       } else {
         
-        story.setDescription(buffer.toString());
+        auxiliary.setDescription(buffer.toString());
       }
     }
     if ("year".equals(qname)) {
@@ -171,7 +172,7 @@ public class BlorbMetadataHandler extends DefaultHandler {
     }
     if ("coverpicture".equals(qname)) {
       
-      String val = buffer.toString().trim();
+      final String val = buffer.toString().trim();
       try {
         
         story.setCoverPicture(Integer.parseInt(val));
@@ -193,11 +194,11 @@ public class BlorbMetadataHandler extends DefaultHandler {
     buffer = null;
   }
   
-  public void characters(char[] ch, int start, int length) {
+  public void characters(final char[] ch, final int start, final int length) {
     
     if (buffer != null) {
       
-      StringBuilder partbuilder = new StringBuilder();
+      final StringBuilder partbuilder = new StringBuilder();
       for (int i = start; i < start + length; i++) {
 
         partbuilder.append(ch[i]);

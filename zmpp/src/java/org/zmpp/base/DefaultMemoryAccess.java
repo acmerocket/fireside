@@ -40,15 +40,16 @@ public class DefaultMemoryAccess implements MemoryAccess {
    * 
    * @param data the story file data
    */
-  public DefaultMemoryAccess(byte[] data) {
+  public DefaultMemoryAccess(final byte[] data) {
     
+    super();
     this.data = data;    
   }
   
   /**
    * {@inheritDoc}
    */
-  public long readUnsigned32(int address) {
+  public long readUnsigned32(final int address) {
   
     return (data[address] & 0xff) << 24 | (data[address + 1] & 0xff) << 16
            | (data[address + 2] & 0xff) << 8 | (data[address + 3] & 0xff);
@@ -57,7 +58,7 @@ public class DefaultMemoryAccess implements MemoryAccess {
   /**
    * {@inheritDoc}
    */
-  public long readUnsigned48(int address) {
+  public long readUnsigned48(final int address) {
     
     return (data[address + 0] & 0xff) << 40
          | (data[address + 1] & 0xff) << 32
@@ -71,7 +72,7 @@ public class DefaultMemoryAccess implements MemoryAccess {
   /**
    * {@inheritDoc}
    */
-  public void writeUnsigned48(int address, long value) {
+  public void writeUnsigned48(final int address, final long value) {
     
     data[address + 0] = (byte) ((value & 0xff0000000000l) >> 40);
     data[address + 1] = (byte) ((value & 0x00ff00000000l) >> 32);
@@ -84,7 +85,7 @@ public class DefaultMemoryAccess implements MemoryAccess {
   /**
    * {@inheritDoc}
    */
-  public int readUnsignedShort(int address) {
+  public int readUnsignedShort(final int address) {
     
     return (data[address] & 0xff) << 8 | (data[address + 1] & 0xff);
   }
@@ -92,7 +93,7 @@ public class DefaultMemoryAccess implements MemoryAccess {
   /**
    * {@inheritDoc}
    */
-  public short readShort(int address) {
+  public short readShort(final int address) {
     
     return (short) (data[address] << 8 | (data[address + 1] & 0xff));
   }
@@ -100,7 +101,7 @@ public class DefaultMemoryAccess implements MemoryAccess {
   /**
    * {@inheritDoc}
    */
-  public short readUnsignedByte(int address) {
+  public short readUnsignedByte(final int address) {
     
     return (short) (data[address] & 0xff);
   }
@@ -108,7 +109,7 @@ public class DefaultMemoryAccess implements MemoryAccess {
   /**
    * {@inheritDoc}
    */
-  public byte readByte(int address) {
+  public byte readByte(final int address) {
     
     return data[address];
   }
@@ -119,7 +120,7 @@ public class DefaultMemoryAccess implements MemoryAccess {
    * @param address the address to write to
    * @param value the value to write
    */
-  public void writeUnsignedShort(int address, int value) {
+  public void writeUnsignedShort(final int address, final int value) {
     
     data[address] = (byte) ((value & 0xff00) >> 8);
     data[address + 1] = (byte) (value & 0xff);
@@ -131,7 +132,7 @@ public class DefaultMemoryAccess implements MemoryAccess {
    * @param address the address
    * @param value the value
    */
-  public void writeShort(int address, short value) {
+  public void writeShort(final int address, final short value) {
     
     data[address] = (byte) ((value & 0xff00) >>> 8);
     data[address + 1] = (byte) (value & 0xff);
@@ -143,7 +144,7 @@ public class DefaultMemoryAccess implements MemoryAccess {
    * @param address the address to write to
    * @param value the value to write
    */
-  public void writeUnsignedByte(int address, short value) {
+  public void writeUnsignedByte(final int address, final short value) {
     
     data[address] = (byte) (value & 0xff);
   }
@@ -154,7 +155,7 @@ public class DefaultMemoryAccess implements MemoryAccess {
    * @param address the address
    * @param value the value
    */
-  public void writeByte(int address, byte value) {
+  public void writeByte(final int address, final byte value) {
     
     data[address] = value;
   }
@@ -165,7 +166,7 @@ public class DefaultMemoryAccess implements MemoryAccess {
    * @param address the address to write to
    * @param value the value to write
    */
-  public void writeUnsigned32(int address, long value) {
+  public void writeUnsigned32(final int address, final long value) {
     
     data[address] = (byte) ((value & 0xff000000) >> 24);
     data[address + 1] = (byte) ((value & 0x00ff0000) >> 16);

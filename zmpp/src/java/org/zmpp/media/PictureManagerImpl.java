@@ -40,9 +40,9 @@ public class PictureManagerImpl implements PictureManager {
   /**
    * {@inheritDoc}
    */
-  public Dimension getPictureSize(int picturenum) {
+  public Dimension getPictureSize(final int picturenum) {
     
-    BufferedImage picture = pictures.getResource(picturenum);
+    final BufferedImage picture = pictures.getResource(picturenum);
     if (picture != null) {
       return new Dimension(picture.getWidth(), picture.getHeight());
     }
@@ -52,7 +52,7 @@ public class PictureManagerImpl implements PictureManager {
   /**
    * {@inheritDoc}
    */
-  public BufferedImage getPicture(int picturenum) {
+  public BufferedImage getPicture(final int picturenum) {
     
     return pictures.getResource(picturenum);
   }
@@ -68,8 +68,9 @@ public class PictureManagerImpl implements PictureManager {
   /**
    * {@inheritDoc}
    */
-  public void preload(int[] picnumbers) {
+  public void preload(final int[] picnumbers) {
     
+    // no preloading at the moment
   }
 
   /**
@@ -85,5 +86,6 @@ public class PictureManagerImpl implements PictureManager {
    */
   public void reset() {
     
+    // no resetting supported
   }
 }

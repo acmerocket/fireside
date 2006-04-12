@@ -37,14 +37,14 @@ public class ZsciiStringBuilder {
   /**
    * This list holds the data.
    */
-  List<Short> data = new ArrayList<Short>();
+  private List<Short> data = new ArrayList<Short>();
 
   /**
    * Adds a ZSCII character to the builder object.
    * 
    * @param zsciiChar the ZSCII char to add
    */
-  public void append(short zsciiChar) {
+  public void append(final short zsciiChar) {
     
     data.add(zsciiChar);
   }
@@ -55,7 +55,7 @@ public class ZsciiStringBuilder {
    * 
    * @param str a ZSCII string
    */
-  public void append(ZsciiString str) {
+  public void append(final ZsciiString str) {
     
     for (int i = 0, n = str.length(); i < n; i++) {
       
@@ -70,7 +70,7 @@ public class ZsciiStringBuilder {
    */
   public ZsciiString toZsciiString() {
   
-    short[] strdata = new short[data.size()];
+    final short[] strdata = new short[data.size()];
     for (int i = 0; i < strdata.length; i++) {
       
       strdata[i] = data.get(i);

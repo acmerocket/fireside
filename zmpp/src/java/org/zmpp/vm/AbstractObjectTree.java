@@ -68,8 +68,10 @@ public abstract class AbstractObjectTree implements ObjectTree {
    * @param address the object table's start address
    * @param decoder a ZCharDecoder object
    */
-  public AbstractObjectTree(MemoryAccess memaccess, int address, ZCharDecoder decoder) {
+  public AbstractObjectTree(final MemoryAccess memaccess, final int address,
+      final ZCharDecoder decoder) {
 
+    super();
     this.objectCache = new HashMap<Integer, ZObject>();
     this.memaccess = memaccess;
     this.address = address;
@@ -100,23 +102,23 @@ public abstract class AbstractObjectTree implements ObjectTree {
   /**
    * {@inheritDoc}
    */
-  public short getPropertyDefault(int propertyNum) {
+  public short getPropertyDefault(final int propertyNum) {
     
-    int index = propertyNum - 1;
+    final int index = propertyNum - 1;
     return memaccess.readShort(address + index * 2);
   }
   
   /**
    * {@inheritDoc}
    */
-  public ZObject getObject(int objectNum) {
+  public ZObject getObject(final int objectNum) {
     
     // We can not introduce a real check here since getNumObjects relies
     // on this functions and would result in an endless recursion.
     if (objectNum > 0) {
       
       // flags + (parent, sibling, child) + properties
-      Integer key = new Integer(objectNum);
+      final Integer key = new Integer(objectNum);
       ZObject result = objectCache.get(key);
       if (result == null) {
         
@@ -154,10 +156,10 @@ public abstract class AbstractObjectTree implements ObjectTree {
   /**
    * {@inheritDoc}
    */
-  public void removeObject(int objectNum) {
+  public void removeObject(final int objectNum) {
     
-    ZObject obj = getObject(objectNum);    
-    ZObject parentObj = getObject(obj.getParent());
+    final ZObject obj = getObject(objectNum);    
+    final ZObject parentObj = getObject(obj.getParent());
     obj.setParent((short) 0);
     
     if (parentObj != null) {
@@ -197,10 +199,10 @@ public abstract class AbstractObjectTree implements ObjectTree {
   /**
    * {@inheritDoc}
    */
-  public void insertObject(int parentNum, int objectNum) {
+  public void insertObject(final int parentNum, final int objectNum) {
     
-    ZObject parent = getObject(parentNum);
-    ZObject child = getObject(objectNum);
+    final ZObject parent = getObject(parentNum);
+    final ZObject child = getObject(objectNum);
     
     // we want to ensure, the child has no old parent relationships
     if (child.getParent() > 0) {
@@ -208,8 +210,7 @@ public abstract class AbstractObjectTree implements ObjectTree {
       removeObject(objectNum);
     }
     
-    int oldChild = parent.getChild();
-    
+    final int oldChild = parent.getChild();    
     child.setParent(parentNum);
     parent.setChild(objectNum);
     child.setSibling(oldChild);

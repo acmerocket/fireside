@@ -64,8 +64,9 @@ public class SoundSystemImpl implements SoundSystem {
    * 
    * @param sounds the sound resources
    */
-  public SoundSystemImpl(MediaCollection<SoundEffect> sounds) {
+  public SoundSystemImpl(final MediaCollection<SoundEffect> sounds) {
     
+    super();
     this.sounds = sounds;
 
     // That's pretty cool:
@@ -89,13 +90,14 @@ public class SoundSystemImpl implements SoundSystem {
    */
   public void reset() {
   
+    // no resetting supported
   }
   
   /**
    * {@inheritDoc}
    */
-  public void play(int number, int effect, int volume, int repeats, 
-                   int routine) {
+  public void play(final int number, final int effect, final int volume,
+      final int repeats, final int routine) {
 
     SoundEffect sound = null;
     
@@ -107,8 +109,12 @@ public class SoundSystemImpl implements SoundSystem {
     if (number == 0) return;
     
     if (sounds != null) sound = sounds.getResource(number);
-    if (sound != null) {
+    if (sound == null) {
 
+      Toolkit.getDefaultToolkit().beep();
+      
+    } else {
+      
       if (effect == SoundSystem.EFFECT_START) {
         
         startSound(number, sound, volume, repeats, routine);
@@ -126,10 +132,6 @@ public class SoundSystemImpl implements SoundSystem {
         stopSound(number);
         sounds.unloadResource(number);
       }
-
-    } else {
-      
-      Toolkit.getDefaultToolkit().beep();
     }
   }
   
@@ -142,8 +144,8 @@ public class SoundSystemImpl implements SoundSystem {
    * @param repeats the number of repeats
    * @param routine the interrupt routine
    */
-  private void startSound(int number, SoundEffect sound, int volume,
-                          int repeats, int routine) {
+  private void startSound(final int number, final SoundEffect sound,
+      final int volume, final int repeats, final int routine) {
     
     if (currentTask != null && !currentTask.wasPlayed()) {
       
@@ -161,7 +163,7 @@ public class SoundSystemImpl implements SoundSystem {
    * 
    * @param number the number
    */
-  private void stopSound(int number) {
+  private void stopSound(final int number) {
     
     // only stop the sound if the numbers match
     if (currentTask != null && currentTask.getResourceNumber() == number) {

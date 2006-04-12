@@ -66,10 +66,11 @@ public final class DefaultZCharDecoder implements ZCharDecoder {
    * @param translator the ZStringTranslator o
    * @param abbreviations the abbreviations table used for decoding
    */
-  public DefaultZCharDecoder(ZsciiEncoding encoding,
-      ZCharTranslator translator,
-      AbbreviationsTable abbreviations) { 
+  public DefaultZCharDecoder(final ZsciiEncoding encoding,
+      final ZCharTranslator translator,
+      final AbbreviationsTable abbreviations) { 
     
+    super();
     this.abbreviations = abbreviations;
     this.translator = translator;
     this.encoding = encoding;
@@ -78,13 +79,13 @@ public final class DefaultZCharDecoder implements ZCharDecoder {
   /**
    * {@inheritDoc}
    */
-  public ZsciiString decode2Zscii(MemoryReadAccess memaccess, int address,
-                                  int length) {
+  public ZsciiString decode2Zscii(final MemoryReadAccess memaccess,
+      final int address, final int length) {
 
-    ZsciiStringBuilder builder = new ZsciiStringBuilder();
+    final ZsciiStringBuilder builder = new ZsciiStringBuilder();
     translator.reset();    
     
-    short[] zbytes = extractZbytes(memaccess, address, length);
+    final short[] zbytes = extractZbytes(memaccess, address, length);
     
     short zchar;
     int i = 0, newpos;
@@ -113,26 +114,27 @@ public final class DefaultZCharDecoder implements ZCharDecoder {
     return builder.toZsciiString();
   }
   
-  private int handleAbbreviation(ZsciiStringBuilder builder,
-      MemoryReadAccess memaccess, short[] data, int pos) {
+  private int handleAbbreviation(final ZsciiStringBuilder builder,
+      final MemoryReadAccess memaccess, final short[] data, final int pos) {
     
-    short zchar = data[pos];
+    int position = pos;
+    final short zchar = data[position];
     
     if (translator.isAbbreviation(zchar)) {
     
       // we need to check if we are at the end of the buffer, even if an
       // abbreviation is suggested. This happens e.g. in Zork I
-      if (pos < (data.length - 1)) {
+      if (position < (data.length - 1)) {
       
-        pos++; // retrieve the next byte to determine the abbreviation
+        position++; // retrieve the next byte to determine the abbreviation
     
         // the abbreviations table could be null, simply skip that part in this
         // case
         if (abbreviations != null) {
 
-          int x = data[pos];
-          int entryNum = 32 * (zchar - 1) + x;
-          int entryAddress = abbreviations.getWordAddress(entryNum);
+          final int x = data[position];
+          final int entryNum = 32 * (zchar - 1) + x;
+          final int entryAddress = abbreviations.getWordAddress(entryNum);
           
           if (abbreviationDecoder == null) {
             
@@ -142,38 +144,40 @@ public final class DefaultZCharDecoder implements ZCharDecoder {
             abbreviationDecoder = new DefaultZCharDecoder(encoding,
                   (ZCharTranslator) translator.clone(), null);
           }
-          ZsciiString abbrev = abbreviationDecoder.decode2Zscii(memaccess,
+          final ZsciiString abbrev = abbreviationDecoder.decode2Zscii(memaccess,
               entryAddress, 0);
           builder.append(abbrev);
         }
       }
-      pos++;
+      position++;
     }
-    return pos;
+    return position;
   }
   
-  private int handleEscapeA2(ZsciiStringBuilder builder, short[] data,
-      int pos) {
+  private int handleEscapeA2(final ZsciiStringBuilder builder,
+      final short[] data, final int pos) {
     
-    if (translator.willEscapeA2(data[pos])) {
+    int position = pos;
+    if (translator.willEscapeA2(data[position])) {
 
       // If the data is truncated, do not continue (check if the
       // constant should be 2 or 3)
-      if (pos < data.length - 2) {
+      if (position < data.length - 2) {
       
-        joinToZsciiChar(builder, data[pos + 1], data[pos + 2]);
-        pos += 2; // skip the three characters read (including the loop increment)
+        joinToZsciiChar(builder, data[position + 1], data[position + 2]);
+        // skip the three characters read (including the loop increment)
+        position += 2;
       }
-      pos++;
+      position++;
       translator.resetToLastAlphabet();
     }
-    return pos;
+    return position;
   }
 
   /**
    * {@inheritDoc}
    */
-  public short decodeZChar(short zchar) {
+  public short decodeZChar(final short zchar) {
     
     if (ZsciiEncoding.isAscii(zchar) || ZsciiEncoding.isAccent(zchar)) {
       
@@ -191,9 +195,10 @@ public final class DefaultZCharDecoder implements ZCharDecoder {
    * @param builder a ZsciiStringBuilder object
    * @param zchar the encoded character to decode and add
    */
-  private void decodeZchar(ZsciiStringBuilder builder, short zchar) {
+  private void decodeZchar(final ZsciiStringBuilder builder,
+      final short zchar) {
           
-    short c = decodeZChar(zchar);
+    final short c = decodeZChar(zchar);
     if (c != 0) {
       
       builder.append(c);
@@ -218,7 +223,7 @@ public final class DefaultZCharDecoder implements ZCharDecoder {
    * @param zword the zword
    * @return true if zword is the last word, false, otherwise
    */
-  public static boolean isEndWord(short zword) {
+  public static boolean isEndWord(final short zword) {
     
     return (zword & 0x8000) > 0;
   }
@@ -233,13 +238,13 @@ public final class DefaultZCharDecoder implements ZCharDecoder {
    * unspecified
    * @return the z characters of the string
    */
-  public static short[] extractZbytes(MemoryReadAccess memaccess,
-                                      int address, int length) {
+  public static short[] extractZbytes(final MemoryReadAccess memaccess,
+                                      final int address, final int length) {
     
     //if (length > 0) System.out.println("maximum length is: " + length);
     short zword = 0;
     int currentAddr = address;
-    List<short[]> byteList = new ArrayList<short[]>();
+    final List<short[]> byteList = new ArrayList<short[]>();
     
     do {
       
@@ -256,7 +261,7 @@ public final class DefaultZCharDecoder implements ZCharDecoder {
       
     } while (!isEndWord(zword));
     
-    short[] result = new short[byteList.size() * 3];
+    final short[] result = new short[byteList.size() * 3];
     int i = 0;
     for (short[] triplet : byteList) {
       for (short b : triplet) {
@@ -274,9 +279,9 @@ public final class DefaultZCharDecoder implements ZCharDecoder {
    * @return an array of three bytes containing the three 5-bit ZSCII characters
    * encoded in the word
    */
-  private static short[] extractBytes(short zword) {
+  private static short[] extractBytes(final short zword) {
     
-    short[] result = new short[3];
+    final short[] result = new short[3];
     result[2] = (short) (zword & 0x1f);
     result[1] = (short) ((zword >> 5) & 0x1f);
     result[0] = (short) ((zword >> 10) & 0x1f);
@@ -290,8 +295,8 @@ public final class DefaultZCharDecoder implements ZCharDecoder {
    * @param top the byte holding the top 5 bit of the zchar
    * @param bottom the byte holding the bottom 5 bit of the zchar
    */  
-  private void joinToZsciiChar(ZsciiStringBuilder builder,
-                               short top, short bottom) {
+  private void joinToZsciiChar(final ZsciiStringBuilder builder,
+                               final short top, final short bottom) {
     
     builder.append((short) (top << 5 | bottom));
   }  

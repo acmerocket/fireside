@@ -96,7 +96,7 @@ public class ExtendedStaticInfo implements InstructionStaticInfo {
   public static final int OP_MAKE_MENU            = 0x1b;  
   public static final int OP_PICTURE_TABLE        = 0x1c;  
   
-  public int[] getValidVersions(int opcode) {
+  public int[] getValidVersions(final int opcode) {
 
     return (opcode < VALID_VERSIONS.length) ? VALID_VERSIONS[opcode] :
       new int[0];
@@ -105,7 +105,7 @@ public class ExtendedStaticInfo implements InstructionStaticInfo {
   /**
    * {@inheritDoc}
    */
-  public boolean storesResult(int opcode, int version) {
+  public boolean storesResult(final int opcode, final int version) {
     
     switch (opcode) {
     
@@ -119,14 +119,15 @@ public class ExtendedStaticInfo implements InstructionStaticInfo {
     case ExtendedStaticInfo.OP_CHECK_UNICODE:
     case ExtendedStaticInfo.OP_GET_WIND_PROP:
       return true;
+    default:
+      return false;
     }
-    return false;
   }
   
   /**
    * {@inheritDoc}
    */
-  public boolean isBranch(int opcode, int version) {
+  public boolean isBranch(final int opcode, final int version) {
     
     switch (opcode) {
     
@@ -134,14 +135,15 @@ public class ExtendedStaticInfo implements InstructionStaticInfo {
     case ExtendedStaticInfo.OP_PUSH_STACK:
     case ExtendedStaticInfo.OP_MAKE_MENU:
       return true;
+    default:
+      return false;
     }
-    return false;
   }
   
   /**
    * {@inheritDoc}
    */
-  public boolean isOutput(int opcode, int version) {
+  public boolean isOutput(final int opcode, final int version) {
     
     return opcode == OP_PRINT_UNICODE;
   }
@@ -149,7 +151,7 @@ public class ExtendedStaticInfo implements InstructionStaticInfo {
   /**
    * {@inheritDoc}
    */
-  public String getOpName(int opcode, int version) {
+  public String getOpName(final int opcode, final int version) {
 
     switch (opcode) {
     
@@ -187,7 +189,8 @@ public class ExtendedStaticInfo implements InstructionStaticInfo {
       return "SET_MARGINS";
     case ExtendedStaticInfo.OP_GET_WIND_PROP:
       return "GET_WIND_PROP";
+    default:
+      return "unknown";
     }
-    return "unknown";
   }
 }

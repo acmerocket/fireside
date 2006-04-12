@@ -72,11 +72,11 @@ public class MemoryOutputStream implements OutputStream {
   /**
    * {@inheritDoc}
    */
-  public void print(short zsciiChar, boolean isInput) {
+  public void print(final short zsciiChar, final boolean isInput) {
 
     //System.out.println("memory.print: " + ((char) zsciiChar));
-    TablePosition tablePos = tableStack.get(tableStack.size() - 1);
-    int position = tablePos.tableAddress + 2 + tablePos.bytesWritten;
+    final TablePosition tablePos = tableStack.get(tableStack.size() - 1);
+    final int position = tablePos.tableAddress + 2 + tablePos.bytesWritten;
     machine.getGameData().getMemoryAccess().writeUnsignedByte(
         position, zsciiChar);
     tablePos.bytesWritten++;
@@ -101,7 +101,7 @@ public class MemoryOutputStream implements OutputStream {
   /**
    * {@inheritDoc}
    */
-  public void deletePrevious(short zchar) {
+  public void deletePrevious(final short zchar) {
     
     // intentionally left empty
   }
@@ -109,13 +109,13 @@ public class MemoryOutputStream implements OutputStream {
   /**
    * {@inheritDoc}
    */
-  public void select(boolean flag) {
+  public void select(final boolean flag) {
     
     if (!flag && tableStack.size() > 0) {
       
       // Write the total number of written bytes to the first word
       // of the table
-      TablePosition tablePos = tableStack.remove(tableStack.size() - 1);
+      final TablePosition tablePos = tableStack.remove(tableStack.size() - 1);
       //System.out.println("deselect stream 3, popping off: "
       //                   + tablePos.tableAddress + " # bytes: "
       //                   + tablePos.bytesWritten);
@@ -129,7 +129,7 @@ public class MemoryOutputStream implements OutputStream {
    * 
    * @param tableAddress the table address
    */
-  public void select(int tableAddress) {
+  public void select(final int tableAddress) {
 
     if (tableStack.size() < MAX_NESTING_DEPTH) {
       

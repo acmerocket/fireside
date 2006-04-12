@@ -71,8 +71,9 @@ public class ZsciiEncoding {
    * 
    * @param accentTable the accent table.
    */
-  public ZsciiEncoding(AccentTable accentTable) {
+  public ZsciiEncoding(final AccentTable accentTable) {
   
+    super();
     this.accentTable = accentTable;
   }
   
@@ -82,7 +83,7 @@ public class ZsciiEncoding {
    * @param zchar a ZSCII character
    * @return true if valid, false otherwise
    */
-  public boolean isZsciiCharacter(short zchar) {
+  public boolean isZsciiCharacter(final short zchar) {
    
     switch (zchar) {
     
@@ -104,7 +105,7 @@ public class ZsciiEncoding {
    * @param c a unicode character
    * @return true if c can be converted, false, otherwise
    */
-  public boolean isConvertableToZscii(char c) {
+  public boolean isConvertableToZscii(final char c) {
    
     return isAscii((short) c) || isInTranslationTable(c) || c == '\n'
            || c == 0 || isUnicodeCharacter((short) c);
@@ -117,12 +118,12 @@ public class ZsciiEncoding {
    * @param zchar a ZSCII character.
    * @return the unicode representation
    */
-  public char getUnicodeChar(short zchar) {
+  public char getUnicodeChar(final short zchar) {
     
     if (isAscii(zchar)) return (char) zchar;
     if (isAccent(zchar)) {
       
-      int index = zchar - ACCENT_START;
+      final int index = zchar - ACCENT_START;
       if (index < accentTable.getLength()) {
        
         return (char) accentTable.getAccent(index);
@@ -140,9 +141,9 @@ public class ZsciiEncoding {
    * @param str the input string
    * @return the ZSCII representation
    */
-  public short[] convertToZscii(String str) {
+  public short[] convertToZscii(final String str) {
     
-    short[] result = new short[str.length()];
+    final short[] result = new short[str.length()];
     for (int i = 0; i < str.length(); i++) {
       
       result[i] = getZsciiChar(str.charAt(i));
@@ -157,7 +158,7 @@ public class ZsciiEncoding {
    * @param c the unicode character to convert
    * @return the ZSCII character
    */
-  public short getZsciiChar(char c) {
+  public short getZsciiChar(final char c) {
     
     if (isAscii((short) c)) return (short) c;
     else if (isInTranslationTable(c)) {
@@ -169,7 +170,7 @@ public class ZsciiEncoding {
     return 0;
   }
   
-  private boolean isInTranslationTable(char c) {
+  private boolean isInTranslationTable(final char c) {
     
     for (int i = 0; i < accentTable.getLength(); i++) {
       
@@ -178,7 +179,7 @@ public class ZsciiEncoding {
     return false;
   }
 
-  private int getIndexInTranslationTable(char c) {
+  private int getIndexInTranslationTable(final char c) {
     
     for (int i = 0; i < accentTable.getLength(); i++) {
       
@@ -193,7 +194,7 @@ public class ZsciiEncoding {
    * @param zchar the input character
    * @return true if in the ASCII range, false, otherwise
    */
-  public static boolean isAscii(short zchar) {
+  public static boolean isAscii(final short zchar) {
     
     return zchar >= ASCII_START && zchar <= ASCII_END;
   }
@@ -204,7 +205,7 @@ public class ZsciiEncoding {
    * @param zchar the input character
    * @return true if in special range, false, otherwise
    */
-  public static boolean isAccent(short zchar) {
+  public static boolean isAccent(final short zchar) {
     
     return zchar >= ACCENT_START && zchar <= ACCENT_END;
   }
@@ -215,7 +216,7 @@ public class ZsciiEncoding {
    * @param zsciiChar a cursor key
    * @return true if cursor key, false, otherwise
    */
-  public static boolean isCursorKey(short zsciiChar) {
+  public static boolean isCursorKey(final short zsciiChar) {
     
     return zsciiChar >= CURSOR_UP && zsciiChar <= CURSOR_RIGHT; 
   }
@@ -226,7 +227,7 @@ public class ZsciiEncoding {
    * @param zchar a zscii character
    * @return the unicode character
    */
-  private static boolean isUnicodeCharacter(short zchar) {
+  private static boolean isUnicodeCharacter(final short zchar) {
     
     return zchar >= 256;
   }
@@ -237,7 +238,7 @@ public class ZsciiEncoding {
    * @param zsciiChar the zscii char
    * @return true if function key, false, otherwise
    */
-  public static boolean isFunctionKey(short zsciiChar) {
+  public static boolean isFunctionKey(final short zsciiChar) {
     
     return (zsciiChar >= 129 && zsciiChar <= 154)
            || (zsciiChar >= 252 && zsciiChar <= 254);
@@ -249,7 +250,7 @@ public class ZsciiEncoding {
    * @param zsciiChar the ZSCII character to convert
    * @return the lower case character
    */
-  public short toLower(short zsciiChar) {
+  public short toLower(final short zsciiChar) {
   
     if (isAscii(zsciiChar)) {
       

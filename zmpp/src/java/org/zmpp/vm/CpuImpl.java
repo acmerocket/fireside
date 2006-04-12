@@ -67,8 +67,9 @@ public class CpuImpl implements Cpu, Interruptable {
    */
   private boolean running;  
   
-  public CpuImpl(Machine machine, InstructionDecoder decoder) {
+  public CpuImpl(final Machine machine, final InstructionDecoder decoder) {
   
+    super();
     this.machine = machine;
     this.decoder = decoder;
     this.running = true;
@@ -76,7 +77,7 @@ public class CpuImpl implements Cpu, Interruptable {
   
   public void reset() {
 
-    GameData gamedata = machine.getGameData();
+    final GameData gamedata = machine.getGameData();
     decoder.initialize(machine, gamedata.getMemoryAccess());
     stack = new ArrayList<Short>();
     routineContextStack = new ArrayList<RoutineContext>();
@@ -105,12 +106,12 @@ public class CpuImpl implements Cpu, Interruptable {
   /**
    * {@inheritDoc}
    */
-  public void setProgramCounter(int address) {
+  public void setProgramCounter(final int address) {
 
     programCounter = address;
   }
   
-  public void incrementProgramCounter(int offset) {
+  public void incrementProgramCounter(final int offset) {
     
     programCounter += offset;
   }
@@ -120,17 +121,17 @@ public class CpuImpl implements Cpu, Interruptable {
    */
   public Instruction nextStep() {
     
-    Instruction instruction = decoder.decodeInstruction(getProgramCounter());
-    return instruction;
+    return decoder.decodeInstruction(getProgramCounter());
   }
     
   /**
    * {@inheritDoc}
    */
-  public int translatePackedAddress(int packedAddress, boolean isCall) {
+  public int translatePackedAddress(final int packedAddress,
+      final boolean isCall) {
   
     // Version specific packed address translation
-    GameData gamedata = machine.getGameData();
+    final GameData gamedata = machine.getGameData();
     
     switch (gamedata.getStoryFileHeader().getVersion()) {
     
@@ -153,7 +154,8 @@ public class CpuImpl implements Cpu, Interruptable {
   /**
    * {@inheritDoc} 
    */
-  public int computeBranchTarget(short offset, int instructionLength) {
+  public int computeBranchTarget(final short offset,
+      final int instructionLength) {
         
     return getProgramCounter() + instructionLength + offset - 2;
   }
@@ -161,7 +163,7 @@ public class CpuImpl implements Cpu, Interruptable {
   /**
    * {@inheritDoc}
    */
-  public void halt(String errormsg) {
+  public void halt(final String errormsg) {
   
     machine.getOutput().print(new ZsciiString(errormsg));
     running = false;
@@ -178,7 +180,7 @@ public class CpuImpl implements Cpu, Interruptable {
   /**
    * {@inheritDoc}
    */
-  public void setRunning(boolean flag) {
+  public void setRunning(final boolean flag) {
     
     running = flag;
   }
@@ -200,10 +202,10 @@ public class CpuImpl implements Cpu, Interruptable {
    * 
    * @param stackpointer the new stack pointer value
    */
-  private void setStackPointer(int stackpointer) {
+  private void setStackPointer(final int stackpointer) {
 
     // remove the last diff elements
-    int diff = getStackPointer() - stackpointer;
+    final int diff = getStackPointer() - stackpointer;
     for (int i = 0; i < diff; i++) {
      
       stack.remove(stack.size() - 1);
@@ -225,7 +227,7 @@ public class CpuImpl implements Cpu, Interruptable {
   /**
    * {@inheritDoc}
    */
-  public void setStackTopElement(short value) {
+  public void setStackTopElement(final short value) {
     
     stack.set(stack.size() - 1, value);
   }
@@ -233,7 +235,7 @@ public class CpuImpl implements Cpu, Interruptable {
   /**
    * {@inheritDoc}
    */
-  public short getStackElement(int index) {
+  public short getStackElement(final int index) {
     
     return stack.get(index);
   }
@@ -241,9 +243,9 @@ public class CpuImpl implements Cpu, Interruptable {
   /**
    * {@inheritDoc}
    */
-  public short getVariable(int variableNumber) {
+  public short getVariable(final int variableNumber) {
 
-    Cpu.VariableType varType = getVariableType(variableNumber);
+    final Cpu.VariableType varType = getVariableType(variableNumber);
     if (varType == Cpu.VariableType.STACK) {
       
       if (stack.size() == 0) {
@@ -257,7 +259,7 @@ public class CpuImpl implements Cpu, Interruptable {
       
     } else if (varType == Cpu.VariableType.LOCAL) {
       
-      int localVarNumber = getLocalVariableNumber(variableNumber);
+      final int localVarNumber = getLocalVariableNumber(variableNumber);
       checkLocalVariableAccess(localVarNumber);
       return getCurrentRoutineContext().getLocalVariable(localVarNumber);
       
@@ -271,16 +273,16 @@ public class CpuImpl implements Cpu, Interruptable {
   /**
    * {@inheritDoc}
    */
-  public void setVariable(int variableNumber, short value) {
+  public void setVariable(final int variableNumber, final short value) {
 
-    Cpu.VariableType varType = getVariableType(variableNumber);
+    final Cpu.VariableType varType = getVariableType(variableNumber);
     if (varType == Cpu.VariableType.STACK) {
       
       stack.add(value);
       
     } else if (varType == Cpu.VariableType.LOCAL) {
       
-      int localVarNumber = getLocalVariableNumber(variableNumber);
+      final int localVarNumber = getLocalVariableNumber(variableNumber);
       checkLocalVariableAccess(localVarNumber);
       getCurrentRoutineContext().setLocalVariable(localVarNumber, value);
       
@@ -297,7 +299,7 @@ public class CpuImpl implements Cpu, Interruptable {
    * @param variableNumber the variable number
    * @return STACK if stack variable, LOCAL if local variable, GLOBAL if global
    */
-  public static Cpu.VariableType getVariableType(int variableNumber) {
+  public static Cpu.VariableType getVariableType(final int variableNumber) {
     
     if (variableNumber == 0) return Cpu.VariableType.STACK;
     else if (variableNumber < 0x10) return Cpu.VariableType.LOCAL;
@@ -308,7 +310,7 @@ public class CpuImpl implements Cpu, Interruptable {
   /**
    * {@inheritDoc}
    */
-  public void pushRoutineContext(RoutineContext routineContext) {
+  public void pushRoutineContext(final RoutineContext routineContext) {
 
     routineContext.setInvocationStackPointer(getStackPointer());
     routineContextStack.add(routineContext);
@@ -317,18 +319,18 @@ public class CpuImpl implements Cpu, Interruptable {
   /**
    * {@inheritDoc}
    */
-  public void popRoutineContext(short returnValue) {
+  public void popRoutineContext(final short returnValue) {
     
     if (routineContextStack.size() > 0) {
 
-      RoutineContext popped =
+      final RoutineContext popped =
         routineContextStack.remove(routineContextStack.size() - 1);
       popped.setReturnValue(returnValue);
     
       // Restore stack pointer and pc
       setStackPointer(popped.getInvocationStackPointer());
       setProgramCounter(popped.getReturnAddress());
-      int returnVariable = popped.getReturnVariable();
+      final int returnVariable = popped.getReturnVariable();
       if (returnVariable != RoutineContext.DISCARD_RESULT) {
         
         setVariable(returnVariable, returnValue);
@@ -359,7 +361,7 @@ public class CpuImpl implements Cpu, Interruptable {
   /**
    * {@inheritDoc}
    */
-  public void setRoutineContexts(List<RoutineContext> contexts) {
+  public void setRoutineContexts(final List<RoutineContext> contexts) {
 
     routineContextStack.clear();
     for (RoutineContext context : contexts) {
@@ -378,14 +380,13 @@ public class CpuImpl implements Cpu, Interruptable {
     return routineContextStack.size();
   }
   
-  public RoutineContext call(int packedRoutineAddress, int returnAddress,
-      short[] args, short returnVariable) {
+  public RoutineContext call(final int packedRoutineAddress,
+      final int returnAddress, final short[] args, final short returnVariable) {
     
-    int routineAddress =
+    final int routineAddress =
       translatePackedAddress(packedRoutineAddress, true);
-    int numArgs = args != null ? args.length : 0;
-    
-    RoutineContext routineContext = decodeRoutine(routineAddress);
+    final int numArgs = args == null ? 0 : args.length;    
+    final RoutineContext routineContext = decodeRoutine(routineAddress);
     
     // Sets the number of arguments
     routineContext.setNumArguments(numArgs);
@@ -394,20 +395,20 @@ public class CpuImpl implements Cpu, Interruptable {
     routineContext.setReturnAddress(returnAddress);
     
     // Only if this instruction stores a result
-    if (returnVariable != RoutineContext.DISCARD_RESULT) {
+    if (returnVariable == RoutineContext.DISCARD_RESULT) {
       
-      routineContext.setReturnVariable(returnVariable);
+      routineContext.setReturnVariable(RoutineContext.DISCARD_RESULT);
       
     } else {
       
-      routineContext.setReturnVariable(RoutineContext.DISCARD_RESULT);
+      routineContext.setReturnVariable(returnVariable);
     }      
     
     // Set call parameters into the local variables
     // if there are more parameters than local variables,
     // those are thrown away
-    int numToCopy = Math.min(routineContext.getNumLocalVariables(),
-        numArgs);
+    final int numToCopy = Math.min(routineContext.getNumLocalVariables(),
+                                   numArgs);
     
     for (int i = 0; i < numToCopy; i++) {
       
@@ -435,12 +436,12 @@ public class CpuImpl implements Cpu, Interruptable {
    * @param routineAddress the routine address
    * @return a RoutineContext object
    */
-  private RoutineContext decodeRoutine(int routineAddress) {
+  private RoutineContext decodeRoutine(final int routineAddress) {
 
-    GameData gamedata = machine.getGameData();
-    MemoryAccess memaccess = gamedata.getMemoryAccess();    
-    int numLocals = memaccess.readUnsignedByte(routineAddress);
-    short[] locals = new short[numLocals];
+    final GameData gamedata = machine.getGameData();
+    final MemoryAccess memaccess = gamedata.getMemoryAccess();    
+    final int numLocals = memaccess.readUnsignedByte(routineAddress);
+    final short[] locals = new short[numLocals];
     int currentAddress = routineAddress + 1;
     
     if (gamedata.getStoryFileHeader().getVersion() <= 4) {
@@ -455,7 +456,7 @@ public class CpuImpl implements Cpu, Interruptable {
     }
     //System.out.printf("setting routine start to: %x\n", currentAddress);
     
-    RoutineContext info = new RoutineContext(currentAddress, numLocals);
+    final RoutineContext info = new RoutineContext(currentAddress, numLocals);
     
     for (int i = 0; i < numLocals; i++) {
       
@@ -470,7 +471,7 @@ public class CpuImpl implements Cpu, Interruptable {
    * @param variableNumber the variable number in an operand (0x01-0x0f)
    * @return the local variable number
    */
-  private int getLocalVariableNumber(int variableNumber) {
+  private int getLocalVariableNumber(final int variableNumber) {
     
     return variableNumber - 1;
   }
@@ -481,7 +482,7 @@ public class CpuImpl implements Cpu, Interruptable {
    * @param variableNumber a variable number (0x10-0xff)
    * @return the global variable number
    */
-  private int getGlobalVariableNumber(int variableNumber) {
+  private int getGlobalVariableNumber(final int variableNumber) {
     
     return variableNumber - 0x10;
   }
@@ -493,7 +494,7 @@ public class CpuImpl implements Cpu, Interruptable {
    * 
    * @param localVariableNumber the local variable number
    */
-  private void checkLocalVariableAccess(int localVariableNumber) {
+  private void checkLocalVariableAccess(final int localVariableNumber) {
     
     if (routineContextStack.size() == 0) {
       
@@ -532,18 +533,18 @@ public class CpuImpl implements Cpu, Interruptable {
   /**
    * {@inheritDoc}
    */
-  public short callInterrupt(int routineAddress) {
+  public short callInterrupt(final int routineAddress) {
     
     interruptDidOutput = false;
     executeInterrupt = true;
-    int originalRoutineStackSize = getRoutineContexts().size();
-    RoutineContext routineContext = call(routineAddress,
+    final int originalRoutineStackSize = getRoutineContexts().size();
+    final RoutineContext routineContext = call(routineAddress,
         machine.getCpu().getProgramCounter(),
         new short[0], (short) RoutineContext.DISCARD_RESULT);
     
     for (;;) {
       
-      Instruction instr = nextStep();
+      final Instruction instr = nextStep();
       instr.execute();
       // check if something was printed
       if (instr.isOutput()) interruptDidOutput = true;
@@ -556,7 +557,7 @@ public class CpuImpl implements Cpu, Interruptable {
     return routineContext.getReturnValue();
   }
   
-  public void setInterruptRoutine(int routineAddress) {
+  public void setInterruptRoutine(final int routineAddress) {
     
     // TODO
   }

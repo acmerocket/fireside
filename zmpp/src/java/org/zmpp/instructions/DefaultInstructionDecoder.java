@@ -56,7 +56,8 @@ public class DefaultInstructionDecoder implements InstructionDecoder {
     instructionCache = new HashMap<Integer, Instruction>();
   }
   
-  public void initialize(Machine machine, MemoryReadAccess memaccess) {
+  public void initialize(final Machine machine,
+      final MemoryReadAccess memaccess) {
     
     this.memaccess = memaccess;
     this.machine = machine;
@@ -68,9 +69,9 @@ public class DefaultInstructionDecoder implements InstructionDecoder {
    * @param instructionAddress the current instruction's address
    * @return the instruction at the specified address
    */
-  public Instruction decodeInstruction(int instructionAddress) {
+  public Instruction decodeInstruction(final int instructionAddress) {
   
-    Integer key = new Integer(instructionAddress);
+    final Integer key = new Integer(instructionAddress);
     if (!instructionCache.containsKey(key)) {
       AbstractInstruction info = createBasicInstructionInfo(instructionAddress);
       int currentAddress = extractOperands(info, instructionAddress);
@@ -78,7 +79,7 @@ public class DefaultInstructionDecoder implements InstructionDecoder {
           && info.getOperandCount() == OperandCount.C2OP) {
       
         // Handle the VAR form of C2OP instructions here
-        AbstractInstruction info2 =
+        final AbstractInstruction info2 =
           new LongInstruction(machine, OperandCount.VAR, info.getOpcode());
       
         for (int i = 0; i < info.getNumOperands(); i++) {
@@ -109,11 +110,12 @@ public class DefaultInstructionDecoder implements InstructionDecoder {
    * @param the instruction's start address
    * @return a DefaultInstructionInfo object with basic information
    */
-  private AbstractInstruction createBasicInstructionInfo(int instructionAddress) {
+  private AbstractInstruction createBasicInstructionInfo(
+      final int instructionAddress) {
     
     OperandCount operandCount;
     int opcode;
-    short firstByte = memaccess.readUnsignedByte(instructionAddress);
+    final short firstByte = memaccess.readUnsignedByte(instructionAddress);
     
     // Determine form and operand count type
     if (firstByte == 0xbe) {
@@ -166,7 +168,8 @@ public class DefaultInstructionDecoder implements InstructionDecoder {
    * @param instructionAddress the instruction address
    * @return the current address in decoding
    */
-  private int extractOperands(AbstractInstruction info, int instructionAddress) {
+  private int extractOperands(final AbstractInstruction info,
+      final int instructionAddress) {
 
     int currentAddress = instructionAddress;
     
@@ -174,8 +177,8 @@ public class DefaultInstructionDecoder implements InstructionDecoder {
       
       if (info.getOperandCount() == OperandCount.C1OP) {
         
-        short firstByte = memaccess.readUnsignedByte(currentAddress);
-        byte optype = (byte) ((firstByte & 0x30) >> 4);
+        final short firstByte = memaccess.readUnsignedByte(currentAddress);
+        final byte optype = (byte) ((firstByte & 0x30) >> 4);
         
         currentAddress = extractOperand(info, optype, currentAddress + 1);
         
@@ -187,10 +190,10 @@ public class DefaultInstructionDecoder implements InstructionDecoder {
       
     } else if (info.getInstructionForm() == InstructionForm.LONG) {
 
-      short firstByte = memaccess.readUnsignedByte(instructionAddress);      
-      byte optype1 = ((firstByte & 0x40) > 0) ? Operand.TYPENUM_VARIABLE :
+      final short firstByte = memaccess.readUnsignedByte(instructionAddress);      
+      final byte optype1 = ((firstByte & 0x40) > 0) ? Operand.TYPENUM_VARIABLE :
                                                 Operand.TYPENUM_SMALL_CONSTANT;
-      byte optype2 = ((firstByte & 0x20) > 0) ? Operand.TYPENUM_VARIABLE :
+      final byte optype2 = ((firstByte & 0x20) > 0) ? Operand.TYPENUM_VARIABLE :
                                                 Operand.TYPENUM_SMALL_CONSTANT;
       currentAddress = extractOperand(info, optype1, currentAddress + 1);
       currentAddress = extractOperand(info, optype2, currentAddress);
@@ -200,7 +203,7 @@ public class DefaultInstructionDecoder implements InstructionDecoder {
       // The operand types start after the second opcode byte in EXT form,
       // and after the first otherwise
       currentAddress += (info.getOperandCount() == OperandCount.EXT) ? 2 : 1;      
-      short optypeByte1 = memaccess.readUnsignedByte(currentAddress++);
+      final short optypeByte1 = memaccess.readUnsignedByte(currentAddress++);
       short optypeByte2 = 0;
                 
       // Extract more operands if necessary, if the opcode
@@ -243,8 +246,9 @@ public class DefaultInstructionDecoder implements InstructionDecoder {
    * @param currentAddress the current decoding address
    * @return the new decoding address after extracting the operands
    */
-  private int extractOperandsWithTypeByte(AbstractInstruction info,
-                                          int optypeByte, int currentAddress) {
+  private int extractOperandsWithTypeByte(final AbstractInstruction info,
+                                          final int optypeByte,
+                                          final int currentAddress) {
     
     int nextAddress = currentAddress;
     int oldNumOperands;
@@ -270,8 +274,8 @@ public class DefaultInstructionDecoder implements InstructionDecoder {
    * @param currentAddress the current address in the instruction
    * @return the next address
    */
-  private int extractOperand(AbstractInstruction info, byte optype,
-                             int currentAddress) {
+  private int extractOperand(final AbstractInstruction info, final byte optype,
+                             final int currentAddress) {
     
     int nextAddress = currentAddress;
     if (optype == Operand.TYPENUM_LARGE_CONSTANT) {
@@ -298,7 +302,8 @@ public class DefaultInstructionDecoder implements InstructionDecoder {
    * @param currentAddress the current address in the decoding
    * @return the current decoding address after extraction
    */
-  private int extractStoreVariable(AbstractInstruction info, int currentAddress) {
+  private int extractStoreVariable(final AbstractInstruction info,
+      final int currentAddress) {
     
     if (info.storesResult()) {
       
@@ -315,11 +320,12 @@ public class DefaultInstructionDecoder implements InstructionDecoder {
    * @param currentAddress the current address in decoding processing
    * @return the current decoding address after extraction
    */
-  private int extractBranchOffset(AbstractInstruction info, int currentAddress) {
+  private int extractBranchOffset(final AbstractInstruction info,
+      final int currentAddress) {
     
     if (info.isBranch()) {
       
-      short offsetByte1 = memaccess.readUnsignedByte(currentAddress);
+      final short offsetByte1 = memaccess.readUnsignedByte(currentAddress);
       info.setBranchIfTrue((offsetByte1 & 0x80) > 0);
       
       // Bit 6 set -> only one byte needs to be read
@@ -330,10 +336,11 @@ public class DefaultInstructionDecoder implements InstructionDecoder {
         
       } else {
      
-        short offsetByte2 = memaccess.readUnsignedByte(currentAddress + 1);
+        final short offsetByte2 =
+          memaccess.readUnsignedByte(currentAddress + 1);
         short offset;
         
-        if ((offsetByte1 & 0x20) != 0) { // Bit 14 set = negative
+        if ((offsetByte1 & 0x20) == 0x20) { // Bit 14 set = negative
           
           offset = (short)
             ((0xC000 | ((offsetByte1 << 8) | (offsetByte2 & 0xff))));

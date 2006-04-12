@@ -87,7 +87,7 @@ public class RoutineContext {
    * 
    * @param numArgs the number of arguments
    */
-  public void setNumArguments(int numArgs) {
+  public void setNumArguments(final int numArgs) {
     
     this.numArgs = numArgs;
   }
@@ -109,7 +109,7 @@ public class RoutineContext {
    */
   public int getNumLocalVariables() {
     
-    return (locals != null) ? locals.length : 0;
+    return (locals == null) ? 0 : locals.length;
   }
   
   /**
@@ -118,7 +118,7 @@ public class RoutineContext {
    * @param localNum the local variable number, starting with 0
    * @param value the value
    */
-  public void setLocalVariable(int localNum, short value) {
+  public void setLocalVariable(final int localNum, final short value) {
     
     locals[localNum] = value;
   }
@@ -129,7 +129,7 @@ public class RoutineContext {
    * @param localNum the local variable number, starting at 0
    * @return the value of the specified variable
    */
-  public short getLocalVariable(int localNum) {
+  public short getLocalVariable(final int localNum) {
     
     return locals[localNum];
   }
@@ -159,7 +159,7 @@ public class RoutineContext {
    * 
    * @param address the return address
    */
-  public void setReturnAddress(int address) {
+  public void setReturnAddress(final int address) {
     
     this.returnAddress = address;
   }
@@ -179,7 +179,7 @@ public class RoutineContext {
    * 
    * @param varnum the return variable number or DISCARD_RESULT
    */
-  public void setReturnVariable(int varnum) {
+  public void setReturnVariable(final int varnum) {
     
     returnVarNum = varnum;
   }
@@ -199,7 +199,7 @@ public class RoutineContext {
    * 
    * @param stackpointer the stack pointer at invocation time.
    */
-  public void setInvocationStackPointer(int stackpointer) {
+  public void setInvocationStackPointer(final int stackpointer) {
     
     invocationStackPointer = stackpointer;
   }
@@ -219,7 +219,7 @@ public class RoutineContext {
    * 
    * @param value the return value
    */
-  public void setReturnValue(short value) {
+  public void setReturnValue(final short value) {
     
     returnValue = value;
   }

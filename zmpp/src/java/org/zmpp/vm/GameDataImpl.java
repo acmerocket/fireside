@@ -117,10 +117,10 @@ public class GameDataImpl implements GameData {
   /**
    * {@inheritDoc}
    */
-  public void reset() {
+  public final void reset() {
 
     // Make a copy and initialize from the copy
-    byte[] data = new byte[storyfileData.length];
+    final byte[] data = new byte[storyfileData.length];
     System.arraycopy(storyfileData, 0, data, 0, storyfileData.length);
     
     memaccess = new DefaultMemoryAccess(data);
@@ -143,7 +143,7 @@ public class GameDataImpl implements GameData {
           fileheader.getObjectTableAddress(), decoder);
     }
     
-    DictionarySizes sizes = (fileheader.getVersion() <= 3) ?
+    final DictionarySizes sizes = (fileheader.getVersion() <= 3) ?
         new DictionarySizesV1ToV3() : new DictionarySizesV4ToV8();
     dictionary = new DefaultDictionary(memaccess,
         fileheader.getDictionaryAddress(), decoder, sizes);
@@ -151,7 +151,7 @@ public class GameDataImpl implements GameData {
   
   private void initEncodingSystem() {
     
-    AccentTable accentTable = (fileheader.getCustomAccentTable() == 0) ?
+    final AccentTable accentTable = (fileheader.getCustomAccentTable() == 0) ?
         new DefaultAccentTable() :
         new CustomAccentTable(memaccess, fileheader.getCustomAccentTable());
     encoding = new ZsciiEncoding(accentTable);
@@ -176,11 +176,10 @@ public class GameDataImpl implements GameData {
           fileheader.getCustomAlphabetTable());
     }
     
-    ZCharTranslator translator =
+    final ZCharTranslator translator =
       new DefaultZCharTranslator(alphabetTable);
-    
-    
-    Abbreviations abbreviations = new Abbreviations(memaccess,
+        
+    final Abbreviations abbreviations = new Abbreviations(memaccess,
         fileheader.getAbbreviationsAddress());
     decoder = new DefaultZCharDecoder(encoding, translator, abbreviations);
     encoder = new ZCharEncoder(translator);
@@ -268,7 +267,7 @@ public class GameDataImpl implements GameData {
    */
   private int calculateChecksum() {
     
-    int filelen = fileheader.getFileLength();
+    final int filelen = fileheader.getFileLength();
     int sum = 0;
     
     for (int i = 0x40; i < filelen; i++) {

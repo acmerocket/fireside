@@ -54,7 +54,7 @@ public class DefaultAccentTable implements AccentTable {
   /**
    * {@inheritDoc}
    */
-  public short getAccent(int index) {
+  public short getAccent(final int index) {
     
     return STANDARD_TRANSLATION_TABLE[index];
   }
@@ -62,11 +62,11 @@ public class DefaultAccentTable implements AccentTable {
   /**
    * {@inheritDoc}
    */
-  public int getIndexOfLowerCase(int index) {
+  public int getIndexOfLowerCase(final int index) {
 
-    char c = (char) getAccent(index);
-    char lower = Character.toLowerCase(c);
-    int length = getLength();
+    final char c = (char) getAccent(index);
+    final char lower = Character.toLowerCase(c);
+    final int length = getLength();
     for (int i = 0; i < length; i++) {
       
       if (getAccent(i) == lower) return i;

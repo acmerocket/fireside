@@ -109,7 +109,7 @@ public class VariableStaticInfo implements InstructionStaticInfo {
   /**
    * {@inheritDoc}
    */
-  public int[] getValidVersions(int opcode) {
+  public int[] getValidVersions(final int opcode) {
     
     return (opcode < VALID_VERSIONS.length) ? VALID_VERSIONS[opcode] :
                                               new int[0];
@@ -118,7 +118,7 @@ public class VariableStaticInfo implements InstructionStaticInfo {
   /**
    * {@inheritDoc}
    */
-  public boolean storesResult(int opcode, int version) {
+  public boolean storesResult(final int opcode, final int version) {
 
     if (version >= 5) {
       
@@ -128,6 +128,8 @@ public class VariableStaticInfo implements InstructionStaticInfo {
         case VariableStaticInfo.OP_AREAD:
         case VariableStaticInfo.OP_NOT:
           return true;
+        default:
+          break;
       }
     }
     
@@ -147,7 +149,7 @@ public class VariableStaticInfo implements InstructionStaticInfo {
   /**
    * {@inheritDoc}
    */
-  public boolean isBranch(int opcode, int version) {
+  public boolean isBranch(final int opcode, final int version) {
     
     switch (opcode) {
     
@@ -162,7 +164,7 @@ public class VariableStaticInfo implements InstructionStaticInfo {
   /**
    * {@inheritDoc}
    */
-  public boolean isOutput(int opcode, int version) {
+  public boolean isOutput(final int opcode, final int version) {
     
     switch (opcode) {
     
@@ -172,11 +174,12 @@ public class VariableStaticInfo implements InstructionStaticInfo {
     case OP_ERASE_WINDOW:
     case OP_ERASE_LINE:
       return true;
+    default:
+      return false;
     }
-    return false;
   }
   
-  public String getOpName(int opcode, int version) {
+  public String getOpName(final int opcode, final int version) {
     
     switch (opcode) {
     case VariableStaticInfo.OP_CALL: return "CALL";
@@ -218,7 +221,7 @@ public class VariableStaticInfo implements InstructionStaticInfo {
     case VariableStaticInfo.OP_COPY_TABLE: return "COPY_TABLE";
     case VariableStaticInfo.OP_PRINT_TABLE: return "PRINT_TABLE";
     case VariableStaticInfo.OP_CHECK_ARG_COUNT: return "CHECK_ARG_COUNT";
+    default: return "unknown";
     }
-    return "unknown";
   }
 }

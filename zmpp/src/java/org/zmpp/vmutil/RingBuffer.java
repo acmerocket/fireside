@@ -60,6 +60,7 @@ public class RingBuffer<T> {
    */
   public RingBuffer(int size) {
 
+    super();
     elements = (T[]) new Object[size];
   }
   
@@ -69,12 +70,17 @@ public class RingBuffer<T> {
    * 
    * @param elem the element
    */
-  public void add(T elem) {
+  public void add(final T elem) {
   
     bufferend = bufferend % elements.length;
-    if (size == elements.length)
+    if (size == elements.length) {
+      
       bufferstart = (bufferstart + 1) % elements.length;
-    else size++;
+      
+    } else {
+      
+      size++;
+    }
     elements[bufferend++] = elem;
   }
   
@@ -84,7 +90,7 @@ public class RingBuffer<T> {
    * @param index the replacement index
    * @param elem the replacement element
    */
-  public void set(int index, T elem) {
+  public void set(final int index, final T elem) {
     
     elements[mapIndex(index)] = elem;
   }
@@ -95,7 +101,7 @@ public class RingBuffer<T> {
    * @param index the index
    * @return the object
    */
-  public T get(int index) { return elements[mapIndex(index)]; }
+  public T get(final int index) { return elements[mapIndex(index)]; }
   
   /**
    * Returns the size of this ring buffer.
@@ -110,16 +116,16 @@ public class RingBuffer<T> {
    * @param index the index
    * @return the removed object
    */
-  public T remove(int index) {
+  public T remove(final int index) {
     
     // remember the removed element
-    T elem = get(index);
+    final T elem = get(index);
     
     // move the following element by one to the front
     for (int i = index; i < (size - 1); i++) {
       
-      int idx1 = mapIndex(i);
-      int idx2 = mapIndex(i + 1);
+      final int idx1 = mapIndex(i);
+      final int idx2 = mapIndex(i + 1);
       elements[idx1] = elements[idx2];
     }
     size--;
@@ -133,7 +139,7 @@ public class RingBuffer<T> {
    * @param index the container index
    * @return the buffer index
    */
-  private int mapIndex(int index) {
+  private int mapIndex(final int index) {
     
     return (bufferstart + index) % elements.length;
   }
@@ -143,10 +149,13 @@ public class RingBuffer<T> {
    */
   public String toString() {
 
-    StringBuilder buffer =  new StringBuilder("{ ");
+    final StringBuilder buffer =  new StringBuilder("{ ");
     for (int i = 0; i < size(); i++) {
       
-      if (i > 0) buffer.append(", ");
+      if (i > 0) {
+        
+        buffer.append(", ");
+      }
       buffer.append(get(i));
     }
     buffer.append(" }");

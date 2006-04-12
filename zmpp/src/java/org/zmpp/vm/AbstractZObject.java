@@ -46,6 +46,7 @@ public abstract class AbstractZObject implements ZObject {
     
     public PropertyTable() {
       
+      super();
       propertyAddresses = new int[MAX_NUM_PROPERTIES];
       numProperties = -1;
     }
@@ -79,7 +80,7 @@ public abstract class AbstractZObject implements ZObject {
      */
     private int getDescriptionHeaderSize() {
       
-      int startAddr = getPropertyTableAddress();
+      final int startAddr = getPropertyTableAddress();
       return memaccess.readUnsignedByte(startAddr) * 2 + 1;
     }
     
@@ -105,7 +106,7 @@ public abstract class AbstractZObject implements ZObject {
      * @param index the property index
      * @return the address of the specified property
      */
-    protected int getPropertyAddressAt(int index) {
+    protected int getPropertyAddressAt(final int index) {
 
       // Only calculate the property address once and return the
       // result in the future
@@ -153,7 +154,7 @@ public abstract class AbstractZObject implements ZObject {
      * @param index the property index
      * @return the size of the specified property in bytes
      */
-    public int getSize(int index) {
+    public int getSize(final int index) {
       
       return getPropertySizeAtAddress(getPropertyAddressAt(index));
     }
@@ -166,9 +167,9 @@ public abstract class AbstractZObject implements ZObject {
      * @return the unsigned byte value at the specified position of the
      * property
      */
-    public byte getPropertyByte(int index, int bytenum) {
+    public byte getPropertyByte(final int index, final int bytenum) {
       
-      int addr = getPropertyAddressAt(index);
+      final int addr = getPropertyAddressAt(index);
       return memaccess.readByte(addr + getNumPropertySizeBytes(addr) + bytenum);
     }
     
@@ -179,9 +180,10 @@ public abstract class AbstractZObject implements ZObject {
      * @param bytenum the byte number
      * @param value the value to set
      */
-    public void setPropertyByte(int index, int bytenum, byte value) {
+    public void setPropertyByte(final int index, final int bytenum,
+        final byte value) {
       
-      int addr = getPropertyAddressAt(index);
+      final int addr = getPropertyAddressAt(index);
       memaccess.writeByte(addr + getNumPropertySizeBytes(addr) + bytenum,
                           value);
     }
@@ -192,7 +194,7 @@ public abstract class AbstractZObject implements ZObject {
      * @param index the property index
      * @return the number of size bytes
      */
-    public int getNumSizeBytesForPropertyIndex(int index) {
+    public int getNumSizeBytesForPropertyIndex(final int index) {
     
       return getNumPropertySizeBytes(getPropertyAddressAt(index));
     }
@@ -211,7 +213,7 @@ public abstract class AbstractZObject implements ZObject {
      * @param propertyNum the property number
      * @return the table index
      */
-    public short getPropertyIndex(int propertyNum) {
+    public short getPropertyIndex(final int propertyNum) {
       
       for (int i = 0; i < getNumProperties(); i++) {
         
@@ -264,9 +266,10 @@ public abstract class AbstractZObject implements ZObject {
    * @param address the start address of the object
    * @param decoder a Z char decoder object
    */
-  public AbstractZObject(MemoryAccess memaccess,
-                         int address, ZCharDecoder decoder) {
+  public AbstractZObject(final MemoryAccess memaccess,
+                         final int address, final ZCharDecoder decoder) {
     
+    super();
     this.memaccess = memaccess;
     this.address = address;
     this.propertyTable = createPropertyTable();
@@ -297,18 +300,19 @@ public abstract class AbstractZObject implements ZObject {
   /**
    * {@inheritDoc}
    */
-  public boolean isAttributeSet(int attributeNum) {
+  public boolean isAttributeSet(final int attributeNum) {
     
-    short value = memaccess.readUnsignedByte(address + attributeNum / 8);
+    final short value =
+      memaccess.readUnsignedByte(address + attributeNum / 8);
     return (value & (0x80 >> (attributeNum & 7))) > 0;
   }
 
   /**
    * {@inheritDoc}
    */
-  public void setAttribute(int attributeNum) {
+  public void setAttribute(final int attributeNum) {
     
-    int attributeByteAddress = address + attributeNum / 8;
+    final int attributeByteAddress = address + attributeNum / 8;
     short value = memaccess.readUnsignedByte(attributeByteAddress);
     value |= (0x80 >> (attributeNum & 7));
     memaccess.writeUnsignedByte(attributeByteAddress, value);
@@ -317,9 +321,9 @@ public abstract class AbstractZObject implements ZObject {
   /**
    * {@inheritDoc}
    */
-  public void clearAttribute(int attributeNum) {
+  public void clearAttribute(final int attributeNum) {
 
-    int attributeByteAddress = address + attributeNum / 8;
+    final int attributeByteAddress = address + attributeNum / 8;
     short value = memaccess.readUnsignedByte(attributeByteAddress);
     value &= (~(0x80 >> (attributeNum & 7)));
     memaccess.writeUnsignedByte(attributeByteAddress, value);
@@ -344,35 +348,36 @@ public abstract class AbstractZObject implements ZObject {
   /**
    * {@inheritDoc}
    */
-  public int getPropertySize(int property) {
+  public int getPropertySize(final int property) {
     
-    int index = propertyTable.getPropertyIndex(property);
+    final int index = propertyTable.getPropertyIndex(property);
     return propertyTable.getSize(index);
   }
   
   /**
    * {@inheritDoc}
    */
-  public byte getPropertyByte(int property, int bytenum) {
+  public byte getPropertyByte(final int property, final int bytenum) {
     
-    int index = propertyTable.getPropertyIndex(property);
+    final int index = propertyTable.getPropertyIndex(property);
     return propertyTable.getPropertyByte(index, bytenum);
   }
 
   /**
    * {@inheritDoc}
    */
-  public int getPropertyAddress(int property) {
+  public int getPropertyAddress(final int property) {
     
-    int index = propertyTable.getPropertyIndex(property);    
-    int numSizeBytes = propertyTable.getNumSizeBytesForPropertyIndex(index);
+    final int index = propertyTable.getPropertyIndex(property);    
+    final int numSizeBytes =
+      propertyTable.getNumSizeBytesForPropertyIndex(index);
     return propertyTable.getPropertyAddressAt(index) + numSizeBytes;
   }
 
   /**
    * {@inheritDoc}
    */
-  public boolean isPropertyAvailable(int property) {
+  public boolean isPropertyAvailable(final int property) {
     
     return (propertyTable.getPropertyIndex(property) >= 0);
   }
@@ -380,7 +385,7 @@ public abstract class AbstractZObject implements ZObject {
   /**
    * {@inheritDoc}
    */
-  public int getNextProperty(int property) {
+  public int getNextProperty(final int property) {
     
     if (property == 0) {
       
@@ -388,7 +393,7 @@ public abstract class AbstractZObject implements ZObject {
       
     } else {
       
-      int index = propertyTable.getPropertyIndex(property);
+      final int index = propertyTable.getPropertyIndex(property);
       return propertyTable.getPropertyNum(index + 1);
     }
   }
@@ -396,9 +401,10 @@ public abstract class AbstractZObject implements ZObject {
   /**
    * {@inheritDoc}
    */
-  public void setPropertyByte(int property, int bytenum, byte value) {
+  public void setPropertyByte(final int property, final int bytenum,
+      final byte value) {
     
-    int index = propertyTable.getPropertyIndex(property);
+    final int index = propertyTable.getPropertyIndex(property);
     propertyTable.setPropertyByte(index, bytenum, value);
   }
   
@@ -411,17 +417,17 @@ public abstract class AbstractZObject implements ZObject {
   public String toString() {
 
     // description
-    String str = decoder.decode2Zscii(memaccess,
+    final String str = decoder.decode2Zscii(memaccess,
         getPropertiesDescriptionAddress(), 0).toString(); 
     
     // hierarchy
-    StringBuilder hierarchyBuffer = new StringBuilder();
+    final StringBuilder hierarchyBuffer = new StringBuilder();
     hierarchyBuffer.append("parent: " + getParent());
     hierarchyBuffer.append(" sibling: " + getSibling());
     hierarchyBuffer.append(" child: " + getChild());
     
     // check attributes
-    StringBuilder attrBuff = new StringBuilder("attributes: [");
+    final StringBuilder attrBuff = new StringBuilder("attributes: [");
     for (int j = 0; j < 48; j++) {
       
       if (isAttributeSet(j)) {
@@ -433,7 +439,7 @@ public abstract class AbstractZObject implements ZObject {
     attrBuff.append("]");
     
     // Properties
-    StringBuilder propBuff = new StringBuilder();    
+    final StringBuilder propBuff = new StringBuilder();    
     int nextProperty = 0;
     propBuff.append(String.format("property table address: %04x\n", getPropertyTableAddress()));
     do {
@@ -441,7 +447,7 @@ public abstract class AbstractZObject implements ZObject {
       if (nextProperty != 0) {
         
         propBuff.append("[" + nextProperty + "] ");
-        int propsize = getPropertySize(nextProperty);
+        final int propsize = getPropertySize(nextProperty);
         for (int i = 0; i < propsize; i++) {
 
           propBuff.append(

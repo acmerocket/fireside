@@ -60,8 +60,9 @@ public class DefaultSoundEffect implements SoundEffect, LineListener {
    * 
    * @param clip an audio clip
    */
-  public DefaultSoundEffect(Clip clip) {
+  public DefaultSoundEffect(final Clip clip) {
     
+    super();
     this.clip = clip;
     listeners = new ArrayList<SoundStopListener>();
     clip.addLineListener(this);
@@ -70,7 +71,7 @@ public class DefaultSoundEffect implements SoundEffect, LineListener {
   /**
    * {@inheritDoc}
    */
-  public void play(int number, int volume) {
+  public void play(final int number, final int volume) {
     
     setVolume(volume);
     
@@ -89,13 +90,14 @@ public class DefaultSoundEffect implements SoundEffect, LineListener {
   /**
    * Sets the volume.
    * 
-   * @param volume the volume
+   * @param vol the volume
    */
-  private void setVolume(int volume) {
+  private void setVolume(final int vol) {
     
+    int volume = vol;
     if (volume < 0) volume = MAX_VOLUME;
     float gainDb = 0.0f;
-    FloatControl gain = (FloatControl)
+    final FloatControl gain = (FloatControl)
         clip.getControl(FloatControl.Type.MASTER_GAIN);
     
     if (volume == 0) gainDb = gain.getMinimum();
@@ -122,7 +124,7 @@ public class DefaultSoundEffect implements SoundEffect, LineListener {
   /**
    * {@inheritDoc}
    */
-  public void addSoundStopListener(SoundStopListener l) {
+  public void addSoundStopListener(final SoundStopListener l) {
     
     listeners.add(l);
   }
@@ -130,7 +132,7 @@ public class DefaultSoundEffect implements SoundEffect, LineListener {
   /**
    * {@inheritDoc}
    */
-  public void removeSoundStopListener(SoundStopListener l) {
+  public void removeSoundStopListener(final SoundStopListener l) {
     
     listeners.remove(l);
   }
@@ -138,7 +140,7 @@ public class DefaultSoundEffect implements SoundEffect, LineListener {
   /**
    * {@inheritDoc}
    */
-  public void update(LineEvent e) {
+  public void update(final LineEvent e) {
     
     if (e.getType() == LineEvent.Type.STOP) {
 

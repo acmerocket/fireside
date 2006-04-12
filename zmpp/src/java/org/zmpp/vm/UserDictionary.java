@@ -54,18 +54,18 @@ public class UserDictionary extends AbstractDictionary {
   /**
    * {@inheritDoc}
    */
-  public int lookup(ZsciiString token) {
+  public int lookup(final ZsciiString token) {
 
     // We only implement linear search for the moment
-    int n = Math.abs(getNumberOfEntries());
-    ZsciiString lookupToken = truncateToken(token);
+    final int n = Math.abs(getNumberOfEntries());
+    final ZsciiString lookupToken = truncateToken(token);
     
     for (int i = 0; i < n; i++) {
       
-      int entryAddress = getEntryAddress(i);
-      ZsciiString entry = getDecoder().decode2Zscii(getMemoryAccess(),
-                                                 entryAddress,
-                                                 getEntryLength());
+      final int entryAddress = getEntryAddress(i);
+      final ZsciiString entry = getDecoder().decode2Zscii(getMemoryAccess(),
+                                                          entryAddress,
+                                                          getEntryLength());
       if (lookupToken.equals(entry)) {
         
         return entryAddress;

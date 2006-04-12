@@ -52,7 +52,7 @@ public class ClassicObjectTree extends AbstractObjectTree {
   /**
    * {@inheritDoc}
    */
-  protected ZObject createObject(int objectNum) {
+  protected ZObject createObject(final int objectNum) {
     
     // flags + (parent, sibling, child) + properties
     return new ClassicZObject(getMemoryAccess(),
@@ -73,9 +73,10 @@ public class ClassicObjectTree extends AbstractObjectTree {
   /**
    * {@inheritDoc}
    */
-  public int getPropertyLength(int propertyAddress) {
+  public int getPropertyLength(final int propertyAddress) {
 
-    return ClassicZObject.getPropertyLengthAtData(getMemoryAccess(), propertyAddress);
+    return ClassicZObject.getPropertyLengthAtData(
+        getMemoryAccess(), propertyAddress);
   }  
 }
 

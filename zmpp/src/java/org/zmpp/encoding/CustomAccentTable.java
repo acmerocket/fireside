@@ -49,8 +49,10 @@ public class CustomAccentTable implements AccentTable {
    * @param memaccess a memory access object
    * @param address the table address
    */
-  public CustomAccentTable(MemoryReadAccess memaccess, int address) {
+  public CustomAccentTable(final MemoryReadAccess memaccess,
+      final int address) {
   
+    super();
     this.memaccess = memaccess;
     this.tableAddress = address;
   }
@@ -63,7 +65,7 @@ public class CustomAccentTable implements AccentTable {
     int result = 0;
     if (tableAddress > 0) {
       
-      return memaccess.readUnsignedByte(tableAddress);
+      result = memaccess.readUnsignedByte(tableAddress);
     }
     return result;
   }
@@ -71,13 +73,13 @@ public class CustomAccentTable implements AccentTable {
   /**
    * {@inheritDoc}
    */
-  public short getAccent(int index) {
+  public short getAccent(final int index) {
     
     short result = '?';
     
     if (tableAddress > 0) {
       
-      return memaccess.readShort(tableAddress + (index * 2) + 1);
+      result = memaccess.readShort(tableAddress + (index * 2) + 1);
     }
     return result;
   }
@@ -85,11 +87,11 @@ public class CustomAccentTable implements AccentTable {
   /**
    * {@inheritDoc}
    */
-  public int getIndexOfLowerCase(int index) {
+  public int getIndexOfLowerCase(final int index) {
 
-    char c = (char) getAccent(index);
-    char lower = Character.toLowerCase(c);
-    int length = getLength();
+    final char c = (char) getAccent(index);
+    final char lower = Character.toLowerCase(c);
+    final int length = getLength();
     
     for (int i = 0; i < length; i++) {
       

@@ -35,18 +35,19 @@ public class BlorbStory {
 
   private byte[] storydata;
   
-  public BlorbStory(FormChunk formchunk) {
+  public BlorbStory(final FormChunk formchunk) {
     
+    super();
     storydata = readStoryFromZBlorb(formchunk);
   }
   
   public byte[] getStoryData() { return storydata; }
   
-  private byte[] readStoryFromZBlorb(FormChunk formchunk) {
+  private byte[] readStoryFromZBlorb(final FormChunk formchunk) {
     
-    Chunk chunk = formchunk.getSubChunk("ZCOD".getBytes());
-    int size = chunk.getSize();
-    byte[] data = new byte[size];
+    final Chunk chunk = formchunk.getSubChunk("ZCOD".getBytes());
+    final int size = chunk.getSize();
+    final byte[] data = new byte[size];
     for (int i = 0; i < size; i++) {
       
       data[i] = chunk.getMemoryAccess().readByte(i + Chunk.CHUNK_HEADER_LENGTH);

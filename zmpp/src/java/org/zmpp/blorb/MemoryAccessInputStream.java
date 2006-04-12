@@ -62,9 +62,10 @@ public class MemoryAccessInputStream extends InputStream {
    * @param offset the byte offset
    * @param size the memory size
    */
-  public MemoryAccessInputStream(MemoryReadAccess memaccess, int offset,
-      int size) {
+  public MemoryAccessInputStream(final MemoryReadAccess memaccess,
+      final int offset, final int size) {
   
+    super();
     this.memaccess = memaccess;
     position += offset;
     this.size = size;
@@ -82,7 +83,7 @@ public class MemoryAccessInputStream extends InputStream {
   /**
    * {@inheritDoc}
    */
-  public void mark(int readLimit) {
+  public void mark(final int readLimit) {
     
     mark = position;
   }

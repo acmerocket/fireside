@@ -65,7 +65,7 @@ public class InputImpl implements Input {
   /**
    * {@inheritDoc}
    */
-  public void setInputStream(int streamnumber, InputStream stream) {
+  public void setInputStream(final int streamnumber, final InputStream stream) {
     
     inputStream[streamnumber] = stream;
   }
@@ -73,7 +73,7 @@ public class InputImpl implements Input {
   /**
    * {@inheritDoc}
    */
-  public void selectInputStream(int streamnumber) {
+  public void selectInputStream(final int streamnumber) {
     
     selectedInputStreamIndex = streamnumber;    
     machine.getScreen().setPaging(streamnumber != Input.INPUTSTREAM_FILE);

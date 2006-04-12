@@ -66,9 +66,9 @@ public class DefaultDictionary extends AbstractDictionary {
   /**
    * {@inheritDoc}
    */
-  public int lookup(ZsciiString token) {
+  public int lookup(final ZsciiString token) {
     
-    ZsciiString lookupToken = truncateToken(token);
+    final ZsciiString lookupToken = truncateToken(token);
         
     if (lookupMap.containsKey(lookupToken)) {
       
@@ -104,9 +104,8 @@ public class DefaultDictionary extends AbstractDictionary {
     for (int i = 0, n = getNumberOfEntries(); i < n; i++) {
       
       entryAddress = getEntryAddress(i);      
-      ZsciiString str = getDecoder().decode2Zscii(getMemoryAccess(),
-                                                  entryAddress,
-                                                  getSizes().getNumEntryBytes());
+      final ZsciiString str = getDecoder().decode2Zscii(getMemoryAccess(),
+          entryAddress, getSizes().getNumEntryBytes());
       maxEntrySize = Math.max(str.length(), maxEntrySize);
       lookupMap.put(str, entryAddress);
     }

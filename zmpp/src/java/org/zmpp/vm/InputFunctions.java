@@ -23,10 +23,10 @@
 package org.zmpp.vm;
 
 import java.util.ArrayList;
+import java.util.Collections;
 import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
-import java.util.Vector;
 
 import org.zmpp.base.MemoryAccess;
 import org.zmpp.encoding.ZCharDecoder;
@@ -88,14 +88,14 @@ public class InputFunctions implements InputLine {
       return running;
     }
     
-    public synchronized void setRunning(boolean flag) {
+    public synchronized void setRunning(final boolean flag) {
       
       running = flag;
     }
     
     public void run() {
       
-      Output output = machine.getOutput();
+      final Output output = machine.getOutput();
       
       while (isRunning()) {
         
@@ -104,7 +104,7 @@ public class InputFunctions implements InputLine {
         
         if (isRunning()) {
           displayCursor(false);
-          short retval = machine.getCpu().callInterrupt(routineAddress);
+          final short retval = machine.getCpu().callInterrupt(routineAddress);
           if (retval == 1) {
           
             machine.getInput().getSelectedInputStream().cancelInput();
@@ -151,22 +151,24 @@ public class InputFunctions implements InputLine {
   /**
    * {@inheritDoc}
    */
-  public short readLine(int textbuffer, int time, int routineAddress) {
+  public short readLine(final int textbuffer, final int time,
+      final int routineAddress) {
 
     machine.getOutput().flushOutput();
     displayCursor(true);
     
-    // Using a Vector for synchronization
-    List<Short> inputbuffer = new Vector<Short>();
+    // Using a synchronized list
+    final List<Short> inputbuffer =
+      Collections.synchronizedList(new ArrayList<Short>());
     history.reset();
     
-    int pointer = checkForPreviousInput(textbuffer, inputbuffer);    
+    final int pointer = checkForPreviousInput(textbuffer, inputbuffer);    
     
     // Timed input
-    InterruptThread thread = startInterruptThread(routineAddress, time,
-                                                  inputbuffer);
+    final InterruptThread thread = startInterruptThread(routineAddress, time,
+        inputbuffer);
     
-    short terminateChar = doInputLoop(textbuffer, pointer, inputbuffer);
+    final short terminateChar = doInputLoop(textbuffer, pointer, inputbuffer);
     storeInput(inputbuffer, terminateChar);
     terminateInterruptThread(thread);    
     displayCursor(false);
@@ -177,35 +179,38 @@ public class InputFunctions implements InputLine {
   /**
    * {@inheritDoc}
    */
-  public int deletePreviousChar(List<Short> inputbuffer, int pointer) {
+  public int deletePreviousChar(final List<Short> inputbuffer,
+      final int pointer) {
     
     // Decrement the buffer pointer
+    int newpointer = pointer;
     if (inputbuffer.size() > 0) {
     
-      short deleteChar = inputbuffer.remove(inputbuffer.size() - 1);
-      pointer--;
+      final short deleteChar = inputbuffer.remove(inputbuffer.size() - 1);
+      newpointer--;
       machine.getOutput().deletePreviousZsciiChar(deleteChar);
     }
-    return pointer;
+    return newpointer;
   }
   
   /**
    * {@inheritDoc}
    */
-  public int addChar(List<Short> inputbuffer,
-      int textbuffer, int pointer, short zsciiChar) {
+  public int addChar(final List<Short> inputbuffer, final int textbuffer,
+      final int pointer, final short zsciiChar) {
     
     // Do not include the terminator in the buffer
     // Note: we convert ASCII characters to lower case to allow the
     // transkription of umlauts
-    MemoryAccess memaccess = machine.getGameData().getMemoryAccess();    
-    ZsciiEncoding encoding = machine.getGameData().getZsciiEncoding();
-    memaccess.writeUnsignedByte(textbuffer + pointer,
+    int newpointer = pointer;
+    final MemoryAccess memaccess = machine.getGameData().getMemoryAccess();    
+    final ZsciiEncoding encoding = machine.getGameData().getZsciiEncoding();
+    memaccess.writeUnsignedByte(textbuffer + newpointer,
                                 encoding.toLower(zsciiChar));
     inputbuffer.add(zsciiChar);
-    pointer++;
+    newpointer++;
     machine.getOutput().printZsciiChar(zsciiChar, true);
-    return pointer;
+    return newpointer;
   }
   
   /**
@@ -215,19 +220,20 @@ public class InputFunctions implements InputLine {
    * @param inputbuffer the input buffer
    * @return
    */
-  public int checkForPreviousInput(int textbuffer, List<Short> inputbuffer) {
+  public int checkForPreviousInput(final int textbuffer,
+      final List<Short> inputbuffer) {
     
-    int version = machine.getGameData().getStoryFileHeader().getVersion();
+    final int version = machine.getGameData().getStoryFileHeader().getVersion();
 
     // We determine the start of the input here
     // From V5, the first byte contains the number of characters typed
     // so we skip that first byte      
-    int textbufferstart = determineTextBufferStart(version);
+    final int textbufferstart = determineTextBufferStart(version);
     int pointer = textbufferstart;
     
     if (version >= 5) {
       
-      MemoryAccess memaccess = machine.getGameData().getMemoryAccess();
+      final MemoryAccess memaccess = machine.getGameData().getMemoryAccess();
       
       // The clunky feature to include previous input into the current input
       // Simply adjust the pointer, the differencing at the end of the
@@ -238,7 +244,7 @@ public class InputFunctions implements InputLine {
         
         for (int i = 0; i < numCharactersTyped; i++) {
           
-          short zsciichar = memaccess.readUnsignedByte(
+          final short zsciichar = memaccess.readUnsignedByte(
               textbuffer + textbufferstart + i);
           inputbuffer.add(zsciichar);
         }
@@ -257,17 +263,17 @@ public class InputFunctions implements InputLine {
    * @param textbuffer the text buffer
    * @param textpointer points at the position behind the last input char
    */
-  public void checkTermination(short terminateChar, int textbuffer,
-                               int textpointer) {
+  public void checkTermination(final short terminateChar, final int textbuffer,
+                               final int textpointer) {
     
-    int version = machine.getGameData().getStoryFileHeader().getVersion();
-    MemoryAccess memaccess = machine.getGameData().getMemoryAccess();
+    final int version = machine.getGameData().getStoryFileHeader().getVersion();
+    final MemoryAccess memaccess = machine.getGameData().getMemoryAccess();
     
     if (version >= 5) {
       
       // Check if was cancelled
-      byte numCharsTyped = (terminateChar != ZsciiEncoding.NULL) ?
-          (byte) (textpointer - 2) : 0;
+      final byte numCharsTyped = (terminateChar == ZsciiEncoding.NULL) ?
+          0 : (byte) (textpointer - 2);
           
       // Write the number of characters typed in byte 1
       memaccess.writeUnsignedByte(textbuffer + 1, numCharsTyped);
@@ -276,27 +282,28 @@ public class InputFunctions implements InputLine {
       
       // Terminate with 0 byte in versions < 5
       // Check if input was cancelled
-      if (terminateChar == ZsciiEncoding.NULL) textpointer = 0;
-      memaccess.writeByte(textbuffer + textpointer, (byte) 0);
+      int terminatepos = textpointer;
+      if (terminateChar == ZsciiEncoding.NULL) terminatepos = 0;
+      memaccess.writeByte(textbuffer + terminatepos, (byte) 0);
     }    
   }
   
-  public InterruptThread startInterruptThread(int routineAddress, int time,
-                                               List<Short> inputbuffer) {
+  public InterruptThread startInterruptThread(final int routineAddress,
+      final int time, final List<Short> inputbuffer) {
     
     InterruptThread thread = null;
-    int version = machine.getGameData().getStoryFileHeader().getVersion();
+    final int version = machine.getGameData().getStoryFileHeader().getVersion();
     
     if (version >= 4 && time > 0 && routineAddress != 0) {
       
-      double dtime = ((double) time) / 10.0 * 1000.0;
+      final double dtime = ((double) time) / 10.0 * 1000.0;
       thread = new InterruptThread((int) dtime, routineAddress, inputbuffer);
       thread.start();
     }
     return thread;
   }
   
-  public void terminateInterruptThread(InterruptThread thread) {
+  public void terminateInterruptThread(final InterruptThread thread) {
     
     // Synchronize with timed input thread    
     if (thread != null) {
@@ -318,12 +325,13 @@ public class InputFunctions implements InputLine {
    * @param inputbuffer the input buffer
    * @return the terminating character
    */
-  public short doInputLoop(int textbuffer, int pointer,
-      List<Short> inputbuffer) {
+  public short doInputLoop(final int textbuffer, final int pointer,
+                           final List<Short> inputbuffer) {
     
     short zsciiChar;
-    MemoryAccess memaccess = machine.getGameData().getMemoryAccess();
-    int bufferlen = memaccess.readUnsignedByte(textbuffer);
+    final MemoryAccess memaccess = machine.getGameData().getMemoryAccess();
+    final int bufferlen = memaccess.readUnsignedByte(textbuffer);
+    int newpointer = pointer;
 
     do {
       
@@ -332,46 +340,46 @@ public class InputFunctions implements InputLine {
       
       if (zsciiChar == ZsciiEncoding.DELETE) {
    
-        pointer = deletePreviousChar(inputbuffer, pointer);
+        newpointer = deletePreviousChar(inputbuffer, newpointer);
         
       } else if (!isTerminatingCharacter(zsciiChar)) {
         
         if (history.isHistoryChar(zsciiChar)) {
          
-          pointer = history.switchHistoryEntry(inputbuffer, textbuffer,
-                                           pointer, zsciiChar);
+          newpointer = history.switchHistoryEntry(inputbuffer, textbuffer,
+                                                  newpointer, zsciiChar);
                     
         } else {
     
-          pointer = addChar(inputbuffer, textbuffer, pointer,
-                            zsciiChar);
+          newpointer = addChar(inputbuffer, textbuffer, newpointer,
+                               zsciiChar);
         }
       }
       displayCursor(true);
       
-    } while (!isTerminatingCharacter(zsciiChar) && pointer < bufferlen - 1);
+    } while (!isTerminatingCharacter(zsciiChar) && newpointer < bufferlen - 1);
     
-    checkTermination(zsciiChar, textbuffer, pointer);    
+    checkTermination(zsciiChar, textbuffer, newpointer);    
     return zsciiChar;
   }
   
-  private boolean isTerminatingCharacter(short zsciiChar) {
+  private boolean isTerminatingCharacter(final short zsciiChar) {
     
     return isFileHeaderTerminator(zsciiChar) 
            || zsciiChar == ZsciiEncoding.NEWLINE
            || zsciiChar == ZsciiEncoding.NULL;
   }
   
-  private boolean isFileHeaderTerminator(short zsciiChar) {
+  private boolean isFileHeaderTerminator(final short zsciiChar) {
     
-    StoryFileHeader fileheader = machine.getGameData().getStoryFileHeader();
+    final StoryFileHeader fileheader = machine.getGameData().getStoryFileHeader();
     if (fileheader.getVersion() >= 5) {
    
-      int terminatorTable = fileheader.getTerminatorsAddress();
+      final int terminatorTable = fileheader.getTerminatorsAddress();
       if (terminatorTable == 0) return false;
     
       // Check the terminator table
-      MemoryAccess memaccess = machine.getGameData().getMemoryAccess();
+      final MemoryAccess memaccess = machine.getGameData().getMemoryAccess();
       short terminator;
     
       for (int i = 0; ; i++) {
@@ -394,7 +402,7 @@ public class InputFunctions implements InputLine {
    * @param terminateChar the terminating character
    * @return a terminating character that can be stored as a result
    */
-  public short handleTerminateChar(short terminateChar) {
+  public short handleTerminateChar(final short terminateChar) {
     
     if (terminateChar == ZsciiEncoding.NEWLINE) {
       
@@ -412,7 +420,7 @@ public class InputFunctions implements InputLine {
   /**
    * {@inheritDoc}
    */
-  public short readChar(int time, int routineAddress) {
+  public short readChar(final int time, final int routineAddress) {
     
     machine.getOutput().flushOutput();
     displayCursor(true);
@@ -422,11 +430,12 @@ public class InputFunctions implements InputLine {
     if (machine.getGameData().getStoryFileHeader().getVersion() >= 4
         && time > 0 && routineAddress != 0) {
       
-      double dtime = ((double) time) / 10.0 * 1000.0;
+      final double dtime = ((double) time) / 10.0 * 1000.0;
       thread = new InterruptThread((int) dtime, routineAddress, null);
       thread.start();
     }
-    short result = machine.getInput().getSelectedInputStream().getZsciiChar();
+    final short result =
+      machine.getInput().getSelectedInputStream().getZsciiChar();
     
     if (thread != null) {
 
@@ -445,10 +454,10 @@ public class InputFunctions implements InputLine {
   /**
    * {@inheritDoc}
    */
-  public void tokenize(int textbuffer, int parsebuffer,
-                       int dictionaryAddress, boolean flag) {
+  public void tokenize(final int textbuffer, final int parsebuffer,
+                       final int dictionaryAddress, final boolean flag) {
     
-    MemoryAccess memaccess = machine.getGameData().getMemoryAccess();
+    final MemoryAccess memaccess = machine.getGameData().getMemoryAccess();
     //System.out.printf("tokenize(), textbuffer: %x, parsebuffer: %x, " +
     //    "avail: %d, typed: %d\n", textbuffer, parsebuffer,
     //    memaccess.readUnsignedByte(textbuffer + 0),
@@ -460,25 +469,26 @@ public class InputFunctions implements InputLine {
                          machine.getGameData().getZCharDecoder());
     }
     
-    int version = machine.getGameData().getStoryFileHeader().getVersion();
-    int bufferlen = memaccess.readUnsignedByte(textbuffer);
-    int textbufferstart = determineTextBufferStart(version);
-    int charsTyped = (version >= 5) ?
+    final int version = machine.getGameData().getStoryFileHeader().getVersion();
+    final int bufferlen = memaccess.readUnsignedByte(textbuffer);
+    final int textbufferstart = determineTextBufferStart(version);
+    final int charsTyped = (version >= 5) ?
                       memaccess.readUnsignedByte(textbuffer + 1) :
                       0;
     
     // from version 5, text starts at position 2
-    ZsciiString input = bufferToZscii(textbuffer + textbufferstart, bufferlen,
-                                      charsTyped);
-    List<ZsciiString> tokens = tokenize(input);
+    final ZsciiString input = bufferToZscii(textbuffer + textbufferstart, bufferlen,
+                                            charsTyped);
+    final List<ZsciiString> tokens = tokenize(input);
     
-    Map<ZsciiString, Integer> parsedTokens = new HashMap<ZsciiString, Integer>();
+    final Map<ZsciiString, Integer> parsedTokens =
+      new HashMap<ZsciiString, Integer>();
     
     // Write the number of tokens in byte 1 of the parse buffer
-    int maxwords = memaccess.readUnsignedByte(parsebuffer);
+    final int maxwords = memaccess.readUnsignedByte(parsebuffer);
     
     // Do not go beyond the limit of maxwords
-    int numParsedTokens = Math.min(maxwords, tokens.size());
+    final int numParsedTokens = Math.min(maxwords, tokens.size());
     
     // Write the number of parsed tokens into byte 1 of the parse buffer
     memaccess.writeUnsignedByte(parsebuffer + 1, (short) numParsedTokens);
@@ -487,19 +497,19 @@ public class InputFunctions implements InputLine {
     
     for (int i = 0; i < numParsedTokens; i++) {
       
-      ZsciiString token = tokens.get(i);      
-      int entryAddress = dictionary.lookup(token);
+      final ZsciiString token = tokens.get(i);      
+      final int entryAddress = dictionary.lookup(token);
       //System.out.println("token: '" + token + "' entryAddress: " + entryAddress);
       
       int startIndex = 0;
       if (parsedTokens.containsKey(token)) {
           
-        int timesContained = parsedTokens.get(token);
+        final int timesContained = parsedTokens.get(token);
         parsedTokens.put(token, timesContained + 1);
           
         for (int j = 0; j < timesContained; j++) {
           
-          int found = input.indexOf(token, startIndex);
+          final int found = input.indexOf(token, startIndex);
           startIndex = found + token.length();
         }
           
@@ -543,19 +553,19 @@ public class InputFunctions implements InputLine {
    * to include in the input
    * @return the string contained in the buffer
    */
-  private ZsciiString bufferToZscii(int address, int bufferlen,
-      int charsTyped) {
+  private ZsciiString bufferToZscii(final int address, final int bufferlen,
+      final int charsTyped) {
     
-    MemoryAccess memaccess = machine.getGameData().getMemoryAccess();
+    final MemoryAccess memaccess = machine.getGameData().getMemoryAccess();
     
     // If charsTyped is set, use that value as the limit
-    int numChars = (charsTyped > 0) ? charsTyped : bufferlen;
+    final int numChars = (charsTyped > 0) ? charsTyped : bufferlen;
     
     // read input from text buffer
-    ZsciiStringBuilder buffer = new ZsciiStringBuilder();
+    final ZsciiStringBuilder buffer = new ZsciiStringBuilder();
     for (int i = 0; i < numChars; i++) {
       
-      short charByte = memaccess.readUnsignedByte(address + i);
+      final short charByte = memaccess.readUnsignedByte(address + i);
       if (charByte == 0) break;
       buffer.append(charByte);
     }    
@@ -570,30 +580,30 @@ public class InputFunctions implements InputLine {
    * @param input the input string
    * @return the tokens
    */
-  private List<ZsciiString> tokenize(ZsciiString input) {
+  private List<ZsciiString> tokenize(final ZsciiString input) {
     
-    List<ZsciiString> result = new ArrayList<ZsciiString>();
+    final List<ZsciiString> result = new ArrayList<ZsciiString>();
     
     // Retrieve the defined separators
-    ZsciiStringBuilder separators = new ZsciiStringBuilder();
+    final ZsciiStringBuilder separators = new ZsciiStringBuilder();
     separators.append(WHITESPACE);
     
-    Dictionary dictionary = machine.getGameData().getDictionary();
-    ZCharDecoder decoder =
+    final Dictionary dictionary = machine.getGameData().getDictionary();
+    final ZCharDecoder decoder =
       machine.getGameData().getZCharDecoder();
     for (int i = 0, n = dictionary.getNumberOfSeparators(); i < n; i++) {
       
-      byte delim = dictionary.getSeparator(i);
+      final byte delim = dictionary.getSeparator(i);
       separators.append(decoder.decodeZChar(delim));
     }
     
     // The tokenizer will also return the delimiters
-    ZsciiString delim = separators.toZsciiString();
-    ZsciiStringTokenizer tok = new ZsciiStringTokenizer(input, delim);
+    final ZsciiString delim = separators.toZsciiString();
+    final ZsciiStringTokenizer tok = new ZsciiStringTokenizer(input, delim);
     
     while (tok.hasMoreTokens()) {
       
-      ZsciiString token = tok.nextToken();
+      final ZsciiString token = tok.nextToken();
       if (!Character.isWhitespace(token.charAt(0))) {
         
         result.add(token);
@@ -611,7 +621,7 @@ public class InputFunctions implements InputLine {
    * @param version the story file version
    * @return 1 if version &lt; 4, 2, otherwise
    */
-  private int determineTextBufferStart(int version) {
+  private int determineTextBufferStart(final int version) {
     
     return (version < 5) ? 1 : 2;
   }
@@ -621,7 +631,7 @@ public class InputFunctions implements InputLine {
    * 
    * @param flag true for display, false for clear
    */
-  private synchronized void displayCursor(boolean flag) {
+  private synchronized void displayCursor(final boolean flag) {
     
     machine.getScreen().displayCursor(flag);
     machine.getScreen().redraw();
@@ -631,7 +641,8 @@ public class InputFunctions implements InputLine {
   // ***** History methods
   // ***********************************
 
-  private void storeInput(List<Short> inputbuffer, short terminateChar) {
+  private void storeInput(final List<Short> inputbuffer,
+      final short terminateChar) {
    
     if (terminateChar != ZsciiEncoding.NULL) {
   

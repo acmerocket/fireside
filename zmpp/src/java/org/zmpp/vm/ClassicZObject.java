@@ -43,22 +43,22 @@ public class ClassicZObject extends AbstractZObject {
     /**
      * {@inheritDoc}
      */
-    protected int getNumPropertySizeBytes(int address) { return 1; }
+    protected int getNumPropertySizeBytes(final int address) { return 1; }
     
     /**
      * {@inheritDoc}
      */
-    public short getPropertyNum(int index) {
+    public short getPropertyNum(final int index) {
       
-      int addr = getPropertyAddressAt(index);
-      int sizeByte = getMemoryAccess().readUnsignedByte(addr);
+      final int addr = getPropertyAddressAt(index);
+      final int sizeByte = getMemoryAccess().readUnsignedByte(addr);
       return (short) (sizeByte - 32 * (getPropertySizeAtAddress(addr) - 1));
     }
     
     /**
      * {@inheritDoc}
      */
-    protected int getPropertySizeAtAddress(int address) {
+    protected int getPropertySizeAtAddress(final int address) {
             
       return getPropertyLengthAtData(getMemoryAccess(),
           address + getNumPropertySizeBytes(address));
@@ -97,7 +97,7 @@ public class ClassicZObject extends AbstractZObject {
   /**
    * {@inheritDoc}
    */
-  public void setParent(int parent) {
+  public void setParent(final int parent) {
     
     getMemoryAccess().writeUnsignedByte(getObjectAddress() + OFFSET_PARENT,
                                         (short) (parent & 0xff));
@@ -115,7 +115,7 @@ public class ClassicZObject extends AbstractZObject {
   /**
    * {@inheritDoc}
    */
-  public void setSibling(int sibling) {
+  public void setSibling(final int sibling) {
 
     getMemoryAccess().writeUnsignedByte(getObjectAddress() + OFFSET_SIBLING,
                                         (short) (sibling & 0xff));
@@ -133,7 +133,7 @@ public class ClassicZObject extends AbstractZObject {
   /**
    * {@inheritDoc}
    */
-  public void setChild(int child) {
+  public void setChild(final int child) {
     
     getMemoryAccess().writeUnsignedByte(getObjectAddress() + OFFSET_CHILD,
                                         (short) (child & 0xff));
@@ -157,14 +157,15 @@ public class ClassicZObject extends AbstractZObject {
    * @param addressOfPropertyData the address of the property data
    * @return the length of the property
    */
-  public static int getPropertyLengthAtData(MemoryAccess memaccess,
-                                            int addressOfPropertyData) {
+  public static int getPropertyLengthAtData(final MemoryAccess memaccess,
+                                            final int addressOfPropertyData) {
     
     if (addressOfPropertyData == 0) return 0; // see standard 1.1
 
     // The size byte is always the byte before the property data in any
     // version, so this is consistent
-    short sizebyte = memaccess.readUnsignedByte(addressOfPropertyData - 1);
+    final short sizebyte =
+      memaccess.readUnsignedByte(addressOfPropertyData - 1);
     
     return sizebyte / 32 + 1;
   }  

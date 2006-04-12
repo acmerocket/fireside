@@ -57,8 +57,9 @@ public class DefaultZCharTranslator implements Cloneable, ZCharTranslator {
    * 
    * @param alphabetTable the alphabet table
    */
-  public DefaultZCharTranslator(AlphabetTable alphabetTable) {
+  public DefaultZCharTranslator(final AlphabetTable alphabetTable) {
     
+    super();
     this.alphabetTable = alphabetTable;
     reset();
   }
@@ -66,7 +67,7 @@ public class DefaultZCharTranslator implements Cloneable, ZCharTranslator {
   /**
    * {@inheritDoc}
    */
-  public void reset() {
+  public final void reset() {
     
     currentAlphabet = Alphabet.A0;
     lockAlphabet = null;
@@ -75,14 +76,14 @@ public class DefaultZCharTranslator implements Cloneable, ZCharTranslator {
   
   public void resetToLastAlphabet() {
     
-    if (lockAlphabet != null) {
+    if (lockAlphabet == null) {
       
-      currentAlphabet = lockAlphabet;
-      shiftLock = true;
+      currentAlphabet = Alphabet.A0;
       
     } else {
       
-      currentAlphabet = Alphabet.A0;
+      currentAlphabet = lockAlphabet;
+      shiftLock = true;
     }
   }
   
@@ -113,7 +114,7 @@ public class DefaultZCharTranslator implements Cloneable, ZCharTranslator {
   /**
    * {@inheritDoc}
    */
-  public char translate(short zchar) {
+  public char translate(final short zchar) {
     
     // Handle the shift
     if (shift(zchar)) return '\0';
@@ -153,7 +154,7 @@ public class DefaultZCharTranslator implements Cloneable, ZCharTranslator {
   /**
    * {@inheritDoc}
    */
-  public boolean willEscapeA2(short zchar) {
+  public boolean willEscapeA2(final short zchar) {
    
     return currentAlphabet == Alphabet.A2 && zchar == AlphabetTable.A2_ESCAPE;
   }
@@ -161,7 +162,7 @@ public class DefaultZCharTranslator implements Cloneable, ZCharTranslator {
   /**
    * {@inheritDoc}
    */
-  public boolean isAbbreviation(short zchar) {
+  public boolean isAbbreviation(final short zchar) {
     
     return alphabetTable.isAbbreviation(zchar);
   }
@@ -169,7 +170,7 @@ public class DefaultZCharTranslator implements Cloneable, ZCharTranslator {
   /**
    * {@inheritDoc}
    */
-  public AlphabetElement getAlphabetElementFor(short zsciiChar) {
+  public AlphabetElement getAlphabetElementFor(final short zsciiChar) {
     
     // Special handling for newline !!
     if (zsciiChar == '\n') {
@@ -208,7 +209,7 @@ public class DefaultZCharTranslator implements Cloneable, ZCharTranslator {
    * @param zchar the zchar value
    * @return true if the value is in the alphabet range, false, otherwise
    */
-  private static boolean isInAlphabetRange(short zchar) {
+  private static boolean isInAlphabetRange(final short zchar) {
     
     return 0 <= zchar && zchar <= AlphabetTable.ALPHABET_END;
   }
@@ -219,7 +220,7 @@ public class DefaultZCharTranslator implements Cloneable, ZCharTranslator {
    * @param zchar a z encoded character
    * @return true if a shift was performed, false, otherwise
    */
-  private boolean shift(short zchar) {
+  private boolean shift(final short zchar) {
   
     if (alphabetTable.isShift(zchar)) {
       
@@ -242,7 +243,7 @@ public class DefaultZCharTranslator implements Cloneable, ZCharTranslator {
    * @param shiftChar the shift character
    * @return the resulting alphabet
    */
-  private Alphabet shiftFrom(Alphabet alphabet, short shiftChar) {
+  private Alphabet shiftFrom(final Alphabet alphabet, final short shiftChar) {
 
     Alphabet result = null;
     

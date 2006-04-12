@@ -136,30 +136,30 @@ public class ExtendedInstruction extends AbstractInstruction {
     
     // Target PC offset is two because of the extra opcode byte and 
     // operand type byte compared to the 0OP instruction
-    int pc = getMachine().getCpu().getProgramCounter() + 3;
-    boolean success = getMachine().save_undo(pc);
+    final int pc = getMachine().getCpu().getProgramCounter() + 3;
+    final boolean success = getMachine().save_undo(pc);
     storeResult((short) (success ? TRUE : FALSE));
     nextInstruction();
   }
   
   private void restore_undo() {
     
-    PortableGameState gamestate = getMachine().restore_undo();
-    if (gamestate != null) {
+    final PortableGameState gamestate = getMachine().restore_undo();
+    if (gamestate == null) {
 
-      int storevar = gamestate.getStoreVariable(getMachine());      
-      getCpu().setVariable(storevar, (short) RESTORE_TRUE);
+      storeResult((short) FALSE);
       
     } else {
       
-      storeResult((short) FALSE);
+      final int storevar = gamestate.getStoreVariable(getMachine());      
+      getCpu().setVariable(storevar, (short) RESTORE_TRUE);      
     }
   }
   
   private void art_shift() {
     
     short number = getValue(0);
-    short places = getValue(1);
+    final short places = getValue(1);
     number = (short) ((places >= 0) ? number << places : number >> (-places));
     storeResult(number);
     nextInstruction();
@@ -168,7 +168,7 @@ public class ExtendedInstruction extends AbstractInstruction {
   private void log_shift() {
     
     short number = getValue(0);
-    short places = getValue(1);
+    final short places = getValue(1);
     number = (short) ((places >= 0) ? number << places : number >>> (-places));
     storeResult(number);
     nextInstruction();
@@ -176,7 +176,7 @@ public class ExtendedInstruction extends AbstractInstruction {
   
   private void set_font() {
 
-    int previousFont = getMachine().getScreen().setFont(getValue(0));
+    final int previousFont = getMachine().getScreen().setFont(getValue(0));
     storeResult((short) previousFont);
     nextInstruction();
   }
@@ -198,7 +198,7 @@ public class ExtendedInstruction extends AbstractInstruction {
   
   private void print_unicode() {
  
-    short zchar = getValue(0);
+    final short zchar = getValue(0);
     getMachine().getOutput().printZsciiChar(zchar, false);
     nextInstruction();
   }
@@ -219,8 +219,8 @@ public class ExtendedInstruction extends AbstractInstruction {
   
   private void picture_data() {
     
-    int picnum = getUnsignedValue(0);
-    int array = getUnsignedValue(1);
+    final int picnum = getUnsignedValue(0);
+    final int array = getUnsignedValue(1);
     boolean result = false;
     
     if (picnum == 0) {
@@ -230,11 +230,12 @@ public class ExtendedInstruction extends AbstractInstruction {
       
     } else {
       
-      Dimension picdim =
+      final Dimension picdim =
         getMachine().getPictureManager().getPictureSize(picnum);
       if (picdim != null) {
         
-        MemoryAccess memaccess = getMachine().getGameData().getMemoryAccess();
+        final MemoryAccess memaccess =
+          getMachine().getGameData().getMemoryAccess();
         memaccess.writeUnsignedShort(array, picdim.height);
         memaccess.writeUnsignedShort(array + 2, picdim.width);
         result = true;
@@ -243,9 +244,9 @@ public class ExtendedInstruction extends AbstractInstruction {
     branchOnTest(result);
   }
   
-  private void writePictureFileInfo(int array) {
+  private void writePictureFileInfo(final int array) {
     
-    MemoryAccess memaccess = getMachine().getGameData().getMemoryAccess();
+    final MemoryAccess memaccess = getMachine().getGameData().getMemoryAccess();
     memaccess.writeUnsignedShort(array,
         getMachine().getPictureManager().getNumPictures());
     memaccess.writeUnsignedShort(array + 2,
@@ -254,7 +255,7 @@ public class ExtendedInstruction extends AbstractInstruction {
   
   private void draw_picture() {
     
-    int picnum = getUnsignedValue(0);
+    final int picnum = getUnsignedValue(0);
     int x = 0, y = 0;
     if (getNumOperands() > 1) y = getUnsignedValue(1);
     if (getNumOperands() > 2) x = getUnsignedValue(2);
@@ -272,9 +273,9 @@ public class ExtendedInstruction extends AbstractInstruction {
   
   private void window_size() {
 
-    int window = getValue(0);
-    int height = getValue(1);
-    int width = getValue(2);
+    final int window = getValue(0);
+    final int height = getValue(1);
+    final int width = getValue(2);
     System.out.printf("@window_size %d %d %d\n", window, height, width);
     getMachine().getScreen6().getWindow(window).setSize(height, width);
     nextInstruction();
@@ -305,7 +306,7 @@ public class ExtendedInstruction extends AbstractInstruction {
     nextInstruction();
   }
   
-  private Window6 getWindow(int windownum) {
+  private Window6 getWindow(final int windownum) {
     
     return (windownum == ScreenModel6.CURRENT_WINDOW) ?
             getMachine().getScreen6().getSelectedWindow() :

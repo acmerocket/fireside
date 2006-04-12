@@ -53,8 +53,9 @@ public class Abbreviations implements AbbreviationsTable {
    * @param map the memory map
    * @param address the start address of the abbreviations table
    */
-  public Abbreviations(MemoryReadAccess map, int address) {
+  public Abbreviations(final MemoryReadAccess map, final int address) {
     
+    super();
     this.map = map;
     this.address = address;
   }
@@ -66,7 +67,7 @@ public class Abbreviations implements AbbreviationsTable {
    * @param entryNum the entry index in the abbreviations table
    * @return the word address
    */
-  public int getWordAddress(int entryNum) {
+  public int getWordAddress(final int entryNum) {
     
     return map.readUnsignedShort(address + entryNum * 2) * 2;
   }  

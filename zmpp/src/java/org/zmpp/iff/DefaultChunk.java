@@ -59,8 +59,9 @@ public class DefaultChunk implements Chunk {
    * @param memaccess a memory access object to the chunk data
    * @param address the address within the form chunk
    */
-  public DefaultChunk(MemoryAccess memaccess, int address) {
+  public DefaultChunk(final MemoryAccess memaccess, final int address) {
     
+    super();
     this.memaccess = memaccess;
     this.address = address;
     initBaseInfo();
@@ -75,12 +76,13 @@ public class DefaultChunk implements Chunk {
    * @param chunkdata the data without header information, number of bytes
    * needs to be even
    */
-  public DefaultChunk(byte[] id, byte[] chunkdata) {
+  public DefaultChunk(final byte[] id, final byte[] chunkdata) {
     
+    super();
     this.id = id;
     this.chunkSize = chunkdata.length;
     
-    byte[] chunkDataWithHeader =
+    final byte[] chunkDataWithHeader =
       new byte[chunkSize + Chunk.CHUNK_HEADER_LENGTH];
     this.memaccess = new DefaultMemoryAccess(chunkDataWithHeader);
     int offset = 0;

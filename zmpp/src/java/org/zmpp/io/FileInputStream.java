@@ -56,6 +56,7 @@ public class FileInputStream implements InputStream {
 
   public void cancelInput() {
     
+    // file input can not be cancelled at the moment
   }
   
   /**
@@ -71,7 +72,7 @@ public class FileInputStream implements InputStream {
         
         if (input.ready()) {
           
-          char c = (char) input.read();
+          final char c = (char) input.read();
           if (encoding.isConvertableToZscii(c)) {
             
             return encoding.getZsciiChar((char) c);
