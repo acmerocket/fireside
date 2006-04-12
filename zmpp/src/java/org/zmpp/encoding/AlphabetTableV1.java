@@ -44,7 +44,9 @@ public class AlphabetTableV1 extends AlphabetTableV2 {
    */
   public short getA0Char(final byte zchar) {
     
-    if (zchar == 1) return (short) '\n';
+    if (zchar == 1) {
+      return (short) '\n';
+    }
     return super.getA0Char(zchar);
   }
 
@@ -53,7 +55,9 @@ public class AlphabetTableV1 extends AlphabetTableV2 {
    */
   public short getA1Char(final byte zchar) {
     
-    if (zchar == 1) return (short) '\n';
+    if (zchar == 1) {
+      return (short) '\n';
+    }
     return super.getA1Char(zchar);
   }
   
@@ -62,8 +66,12 @@ public class AlphabetTableV1 extends AlphabetTableV2 {
    */
   public short getA2Char(final byte zchar) {
     
-    if (zchar == 0) return (short) ' ';
-    if (zchar == 1) return (short) '\n';
+    if (zchar == 0) {
+      return (short) ' ';
+    }
+    if (zchar == 1) {
+      return (short) '\n';
+    }
     return (short) A2CHARS.charAt(zchar - ALPHABET_START);
   }
   

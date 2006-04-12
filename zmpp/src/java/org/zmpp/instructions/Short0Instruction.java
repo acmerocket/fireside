@@ -78,8 +78,11 @@ public class Short0Instruction extends AbstractInstruction {
         returnFromRoutine(getCpu().getVariable(0));
         break;
       case Short0StaticInfo.OP_POP:
-        if (getStoryFileVersion() < 5) pop();
-        else z_catch();
+        if (getStoryFileVersion() < 5) {
+          pop();
+        } else {
+          z_catch();
+        }
         break;
       case Short0StaticInfo.OP_NEW_LINE:
         getMachine().getOutput().newline();

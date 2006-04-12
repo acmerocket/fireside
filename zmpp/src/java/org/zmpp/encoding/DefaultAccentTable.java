@@ -69,7 +69,9 @@ public class DefaultAccentTable implements AccentTable {
     final int length = getLength();
     for (int i = 0; i < length; i++) {
       
-      if (getAccent(i) == lower) return i;
+      if (getAccent(i) == lower) {
+        return i;
+      }
     }
     return index;
   }

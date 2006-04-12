@@ -76,7 +76,9 @@ public class MemoryAccessInputStream extends InputStream {
    */
   public int read() throws IOException {
     
-    if (position >= size) return -1;
+    if (position >= size) {
+      return -1;
+    }
     return memaccess.readUnsignedByte(position++);
   }
 

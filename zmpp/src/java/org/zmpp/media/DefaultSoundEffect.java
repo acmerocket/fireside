@@ -95,13 +95,19 @@ public class DefaultSoundEffect implements SoundEffect, LineListener {
   private void setVolume(final int vol) {
     
     int volume = vol;
-    if (volume < 0) volume = MAX_VOLUME;
+    if (volume < 0) {
+      
+      volume = MAX_VOLUME;
+    }
     float gainDb = 0.0f;
     final FloatControl gain = (FloatControl)
         clip.getControl(FloatControl.Type.MASTER_GAIN);
     
-    if (volume == 0) gainDb = gain.getMinimum();
-    else if (volume < MAX_VOLUME) {
+    if (volume == 0) {
+      
+      gainDb = gain.getMinimum();
+      
+    } else if (volume < MAX_VOLUME) {
       
       // The volume algorithm is subtractive: The implementation assumes that
       // the sound is already at maximum volume, so we avoid distortion by

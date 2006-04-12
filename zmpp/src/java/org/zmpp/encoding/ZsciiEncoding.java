@@ -120,7 +120,9 @@ public class ZsciiEncoding {
    */
   public char getUnicodeChar(final short zchar) {
     
-    if (isAscii(zchar)) return (char) zchar;
+    if (isAscii(zchar)) {
+      return (char) zchar;
+    }
     if (isAccent(zchar)) {
       
       final int index = zchar - ACCENT_START;
@@ -129,9 +131,15 @@ public class ZsciiEncoding {
         return (char) accentTable.getAccent(index);
       }
     }
-    if (zchar == NULL) return '\0';
-    if (zchar == NEWLINE || zchar == NEWLINE_10) return '\n';
-    if (isUnicodeCharacter(zchar)) return (char) zchar;
+    if (zchar == NULL) {
+      return '\0';
+    }
+    if (zchar == NEWLINE || zchar == NEWLINE_10) {
+      return '\n';
+    }
+    if (isUnicodeCharacter(zchar)) {
+      return (char) zchar;
+    }
     return '?';
   }
   
@@ -160,13 +168,18 @@ public class ZsciiEncoding {
    */
   public short getZsciiChar(final char c) {
     
-    if (isAscii((short) c)) return (short) c;
-    else if (isInTranslationTable(c)) {
+    if (isAscii((short) c)) {
       
-      return (short)
-        (getIndexInTranslationTable(c) + ACCENT_START);
+      return (short) c;
+      
+    } else if (isInTranslationTable(c)) {
+      
+      return (short) (getIndexInTranslationTable(c) + ACCENT_START);
+      
+    } else if (c == '\n') {
+      
+      return NEWLINE;
     }
-    else if (c == '\n') return NEWLINE;
     return 0;
   }
   
@@ -174,7 +187,9 @@ public class ZsciiEncoding {
     
     for (int i = 0; i < accentTable.getLength(); i++) {
       
-      if (accentTable.getAccent(i) == c) return true;
+      if (accentTable.getAccent(i) == c) {
+        return true;
+      }
     }
     return false;
   }
@@ -183,7 +198,9 @@ public class ZsciiEncoding {
     
     for (int i = 0; i < accentTable.getLength(); i++) {
       
-      if (accentTable.getAccent(i) == c) return i;
+      if (accentTable.getAccent(i) == c) {
+        return i;
+      }
     }
     return -1;
   }

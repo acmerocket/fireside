@@ -167,7 +167,10 @@ public class ModernZObject extends AbstractZObject {
   public static int getPropertyLengthAtData(final MemoryAccess memaccess,
                                             final int addressOfPropertyData) {
     
-    if (addressOfPropertyData == 0) return 0; // see standard 1.1
+    if (addressOfPropertyData == 0) {
+      
+      return 0; // see standard 1.1
+    }
 
     // The size byte is always the byte before the property data in any
     // version, so this is consistent
@@ -179,7 +182,9 @@ public class ModernZObject extends AbstractZObject {
     if ((sizebyte & 0x80) > 0) {
         
       int proplen = sizebyte & 0x3f;
-      if (proplen == 0) proplen = 64; // Std. doc. 1.0, S 12.4.2.1.1
+      if (proplen == 0) {
+        proplen = 64; // Std. doc. 1.0, S 12.4.2.1.1
+      }
       return proplen;
         
     } else {

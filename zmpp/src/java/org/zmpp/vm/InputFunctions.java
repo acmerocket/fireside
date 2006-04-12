@@ -239,7 +239,10 @@ public class InputFunctions implements InputLine {
       // Simply adjust the pointer, the differencing at the end of the
       // function will then calculate the total
       int numCharactersTyped = memaccess.readByte(textbuffer + 1);
-      if (numCharactersTyped < 0) numCharactersTyped = 0;
+      if (numCharactersTyped < 0) {
+        
+        numCharactersTyped = 0;
+      }
       if (numCharactersTyped > 0) {
         
         for (int i = 0; i < numCharactersTyped; i++) {
@@ -283,7 +286,9 @@ public class InputFunctions implements InputLine {
       // Terminate with 0 byte in versions < 5
       // Check if input was cancelled
       int terminatepos = textpointer;
-      if (terminateChar == ZsciiEncoding.NULL) terminatepos = 0;
+      if (terminateChar == ZsciiEncoding.NULL) {
+        terminatepos = 0;
+      }
       memaccess.writeByte(textbuffer + terminatepos, (byte) 0);
     }    
   }
@@ -376,7 +381,9 @@ public class InputFunctions implements InputLine {
     if (fileheader.getVersion() >= 5) {
    
       final int terminatorTable = fileheader.getTerminatorsAddress();
-      if (terminatorTable == 0) return false;
+      if (terminatorTable == 0) {
+        return false;
+      }
     
       // Check the terminator table
       final MemoryAccess memaccess = machine.getGameData().getMemoryAccess();
@@ -385,9 +392,15 @@ public class InputFunctions implements InputLine {
       for (int i = 0; ; i++) {
       
         terminator = memaccess.readUnsignedByte(terminatorTable + i);
-        if (terminator == 0) break;
-        if (terminator == 255) return ZsciiEncoding.isFunctionKey(zsciiChar);
-        if (terminator == zsciiChar) return true;
+        if (terminator == 0) {
+          break;
+        }
+        if (terminator == 255) {
+          return ZsciiEncoding.isFunctionKey(zsciiChar);
+        }
+        if (terminator == zsciiChar) {
+          return true;
+        }
       }
     }
     return false;
@@ -566,7 +579,9 @@ public class InputFunctions implements InputLine {
     for (int i = 0; i < numChars; i++) {
       
       final short charByte = memaccess.readUnsignedByte(address + i);
-      if (charByte == 0) break;
+      if (charByte == 0) {
+        break;
+      }
       buffer.append(charByte);
     }    
     return buffer.toZsciiString();

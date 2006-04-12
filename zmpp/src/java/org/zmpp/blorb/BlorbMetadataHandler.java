@@ -188,7 +188,10 @@ public class BlorbMetadataHandler extends DefaultHandler {
     }
     if ("auxiliary".equals(qname)) {
       
-      if (auxiliary != null) story.addAuxiliary(auxiliary);
+      if (auxiliary != null) {
+        
+        story.addAuxiliary(auxiliary);
+      }
       auxiliary = null;
     }
     buffer = null;

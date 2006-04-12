@@ -60,8 +60,14 @@ public class CommandHistory {
       
       short[] orig = new short[original.size()];
       short[] edit = new short[edited.size()];
-      for (int i = 0; i < original.size(); i++) orig[i] = original.get(i);
-      for (int i = 0; i < edited.size(); i++) edit[i] = edited.get(i);
+      
+      for (int i = 0; i < original.size(); i++) {
+        orig[i] = original.get(i);
+      }
+      
+      for (int i = 0; i < edited.size(); i++) {
+        edit[i] = edited.get(i);
+      }
       
       final StringBuilder buffer = new StringBuilder();
       buffer.append(" (" + new ZsciiString(orig));
@@ -161,10 +167,14 @@ public class CommandHistory {
   public int switchHistoryEntry(final List<Short> inputbuffer,
       final int textbuffer, final int pointer, final short zsciiChar) {
 
-    if (zsciiChar == ZsciiEncoding.CURSOR_UP)
+    if (zsciiChar == ZsciiEncoding.CURSOR_UP) {
+      
       return processHistoryUp(inputbuffer, textbuffer, pointer);
-    else
+      
+    } else {
+      
       return processHistoryDown(inputbuffer, textbuffer, pointer);
+    }
   }
   
   private int processHistoryUp(final List<Short> inputbuffer,

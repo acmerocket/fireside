@@ -90,16 +90,11 @@ public class DefaultZCharTranslator implements Cloneable, ZCharTranslator {
   /**
    * {@inheritDoc}
    */
-  public Object clone() {
+  public Object clone() throws CloneNotSupportedException {
     
     DefaultZCharTranslator clone = null;
-    try {
-      
-      clone = (DefaultZCharTranslator) super.clone();
-      clone.reset();
-      
-    } catch (CloneNotSupportedException ex) { }
-    
+    clone = (DefaultZCharTranslator) super.clone();
+    clone.reset();
     return clone;
   }
   
@@ -117,7 +112,9 @@ public class DefaultZCharTranslator implements Cloneable, ZCharTranslator {
   public char translate(final short zchar) {
     
     // Handle the shift
-    if (shift(zchar)) return '\0';
+    if (shift(zchar)) {
+      return '\0';
+    }
 
     char result;
     
@@ -181,15 +178,23 @@ public class DefaultZCharTranslator implements Cloneable, ZCharTranslator {
     Alphabet alphabet = null;
     int zcharCode = alphabetTable.getA0CharCode(zsciiChar);
     
-    if (zcharCode >= 0) alphabet = Alphabet.A0;      
-    else {
+    if (zcharCode >= 0) {
+      
+      alphabet = Alphabet.A0;
+      
+    } else {
       
       zcharCode = alphabetTable.getA1CharCode(zsciiChar);
-      if (zcharCode >= 0) alphabet = Alphabet.A1;
-      else {
+      if (zcharCode >= 0) {
+        
+        alphabet = Alphabet.A1;
+        
+      } else {
         
         zcharCode = alphabetTable.getA2CharCode(zsciiChar);
-        if (zcharCode >= 0) alphabet = Alphabet.A2;
+        if (zcharCode >= 0) {
+          alphabet = Alphabet.A2;
+        }
       }
     }
     

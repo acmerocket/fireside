@@ -128,7 +128,9 @@ public class ZsciiStringTokenizer {
     
     for (int i = 0, n = delim.length(); i < n; i++) {
       
-      if (zsciiChar == delim.charAt(i)) return true;
+      if (zsciiChar == delim.charAt(i)) {
+        return true;
+      }
     }
     return false;
   }

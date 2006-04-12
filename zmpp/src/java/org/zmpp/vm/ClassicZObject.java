@@ -160,7 +160,9 @@ public class ClassicZObject extends AbstractZObject {
   public static int getPropertyLengthAtData(final MemoryAccess memaccess,
                                             final int addressOfPropertyData) {
     
-    if (addressOfPropertyData == 0) return 0; // see standard 1.1
+    if (addressOfPropertyData == 0) {
+      return 0; // see standard 1.1
+    }
 
     // The size byte is always the byte before the property data in any
     // version, so this is consistent

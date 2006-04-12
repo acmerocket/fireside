@@ -158,8 +158,12 @@ public abstract class AbstractDictionary implements Dictionary {
           entryAddress, sizes.getNumEntryBytes()).toString();
       buffer.append(String.format("[%4d] '%-9s' ", (i + 1), str));
       i++;
-      if ((i % 4) == 0) buffer.append("\n");
-      if (i == n) break;
+      if ((i % 4) == 0) {
+        buffer.append("\n");
+      }
+      if (i == n) {
+        break;
+      }
     }
     return buffer.toString();
   }

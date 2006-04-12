@@ -301,9 +301,18 @@ public class CpuImpl implements Cpu, Interruptable {
    */
   public static Cpu.VariableType getVariableType(final int variableNumber) {
     
-    if (variableNumber == 0) return Cpu.VariableType.STACK;
-    else if (variableNumber < 0x10) return Cpu.VariableType.LOCAL;
-    else return Cpu.VariableType.GLOBAL;
+    if (variableNumber == 0) {
+      
+      return Cpu.VariableType.STACK;
+      
+    } else if (variableNumber < 0x10) {
+      
+      return Cpu.VariableType.LOCAL;
+      
+    } else {
+      
+      return Cpu.VariableType.GLOBAL;
+    }
   }
 
 
@@ -346,7 +355,9 @@ public class CpuImpl implements Cpu, Interruptable {
    */
   public RoutineContext getCurrentRoutineContext() {
     
-    if (routineContextStack.size() == 0) return null;
+    if (routineContextStack.size() == 0) {
+      return null;
+    }
     return routineContextStack.get(routineContextStack.size() - 1);
   }
   
@@ -547,7 +558,9 @@ public class CpuImpl implements Cpu, Interruptable {
       final Instruction instr = nextStep();
       instr.execute();
       // check if something was printed
-      if (instr.isOutput()) interruptDidOutput = true;
+      if (instr.isOutput()) {
+        interruptDidOutput = true;
+      }
       if (getRoutineContexts().size() == originalRoutineStackSize) {
         
         break;

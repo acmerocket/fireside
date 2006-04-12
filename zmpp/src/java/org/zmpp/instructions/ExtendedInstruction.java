@@ -257,8 +257,14 @@ public class ExtendedInstruction extends AbstractInstruction {
     
     final int picnum = getUnsignedValue(0);
     int x = 0, y = 0;
-    if (getNumOperands() > 1) y = getUnsignedValue(1);
-    if (getNumOperands() > 2) x = getUnsignedValue(2);
+    
+    if (getNumOperands() > 1) {
+      y = getUnsignedValue(1);
+    }
+    
+    if (getNumOperands() > 2) {
+      x = getUnsignedValue(2);
+    }
     getMachine().getScreen6().getSelectedWindow().drawPicture(
         getMachine().getPictureManager().getPicture(picnum), y, x);
     nextInstruction();
@@ -284,7 +290,9 @@ public class ExtendedInstruction extends AbstractInstruction {
   private void window_style() {
 
     int operation = 0;
-    if (getNumOperands() > 2) operation = getUnsignedValue(2);
+    if (getNumOperands() > 2) {
+      operation = getUnsignedValue(2);
+    }
     
     getMachine().getScreen6().getWindow(getUnsignedValue(0)).setStyle(
         getUnsignedValue(1), operation);

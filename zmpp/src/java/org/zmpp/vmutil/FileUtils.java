@@ -79,10 +79,12 @@ public class FileUtils {
       
     } finally {
       
-      if (raf != null) try { raf.close(); } catch (Exception ex) {
+      if (raf != null) {
         
-        ex.printStackTrace(System.err);
-      }
+        try { raf.close(); } catch (Exception ex) {
+          ex.printStackTrace(System.err);
+        }
+      }        
     }
     return null;
   }

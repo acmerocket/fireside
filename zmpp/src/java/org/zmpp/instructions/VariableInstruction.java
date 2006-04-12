@@ -355,9 +355,15 @@ public class VariableInstruction extends AbstractInstruction {
     int time = 0;
     short packedAddress = 0;
     
-    if (getNumOperands() >= 2) parsebuffer = getUnsignedValue(1);
-    if (getNumOperands() >= 3) time = getUnsignedValue(2);
-    if (getNumOperands() >= 4) packedAddress = getValue(3);
+    if (getNumOperands() >= 2) {
+      parsebuffer = getUnsignedValue(1);
+    }
+    if (getNumOperands() >= 3) {
+      time = getUnsignedValue(2);
+    }
+    if (getNumOperands() >= 4) {
+      packedAddress = getValue(3);
+    }
     
     final short terminal =
       getMachine().readLine(textbuffer, time, packedAddress);
@@ -408,7 +414,9 @@ public class VariableInstruction extends AbstractInstruction {
       final int volumeRepeats = getUnsignedValue(2);
       volume = volumeRepeats & 0xff;
       repeats = (volumeRepeats >>> 8) & 0xff;      
-      if (repeats <= 0) repeats = 1;
+      if (repeats <= 0) {
+        repeats = 1;
+      }
     }
     
     if (getNumOperands() == 4) {
@@ -417,7 +425,9 @@ public class VariableInstruction extends AbstractInstruction {
     }
     System.out.printf("@sound_effect n: %d, fx: %d, vol: %d, rep: %d, routine: $%04x\n", soundnum, effect, volume, repeats, routine);
     // In version 3 repeats is always 1
-    if (getStoryFileVersion() == 3) repeats = 1;
+    if (getStoryFileVersion() == 3) {
+      repeats = 1;
+    }
         
     final SoundSystem soundSystem = getMachine().getSoundSystem();
     soundSystem.play(soundnum, effect, volume, repeats, routine);
@@ -495,8 +505,12 @@ public class VariableInstruction extends AbstractInstruction {
       int column = 0;
       int window = ScreenModel.CURRENT_WINDOW;
       
-      if (getNumOperands() >= 2) column = getValue(1);
-      if (getNumOperands() >= 3) window = getValue(2);
+      if (getNumOperands() >= 2) {
+        column = getValue(1);
+      }
+      if (getNumOperands() >= 3) {
+        window = getValue(2);
+      }
       
       if (line > 0) {
         
@@ -592,8 +606,12 @@ public class VariableInstruction extends AbstractInstruction {
     final int parsebuffer = getUnsignedValue(1);
     int dictionary = 0;
     int flag = 0;
-    if (getNumOperands() >= 3) dictionary = getUnsignedValue(2);
-    if (getNumOperands() >= 4) flag = getUnsignedValue(3);
+    if (getNumOperands() >= 3) {
+      dictionary = getUnsignedValue(2);
+    }
+    if (getNumOperands() >= 4) {
+      flag = getUnsignedValue(3);
+    }
     getMachine().tokenize(textbuffer, parsebuffer, dictionary, (flag != 0));
     nextInstruction();
   }
@@ -660,8 +678,12 @@ public class VariableInstruction extends AbstractInstruction {
     final int width = getUnsignedValue(1);
     int height = 1;
     int skip = 0;
-    if (getNumOperands() >= 3) height = getUnsignedValue(2);
-    if (getNumOperands() == 4) skip = getUnsignedValue(3);
+    if (getNumOperands() >= 3) {
+      height = getUnsignedValue(2);
+    }
+    if (getNumOperands() == 4) {
+      skip = getUnsignedValue(3);
+    }
     
     //System.out.printf("@print_table, zscii-text = %d, width = %d," +
     //    " height = %d, skip = %d\n", zsciiText, width, height, skip);

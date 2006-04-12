@@ -115,9 +115,18 @@ public class DefaultStoryFileHeader implements StoryFileHeader {
     // depending on the story file version we have to multiply the
     // file length in the header by a constant
     int fileLength = memaccess.readUnsignedShort(0x1a);
-    if (getVersion() <= 3) fileLength *= 2;
-    else if (getVersion() <= 5) fileLength *= 4;
-    else fileLength *= 8;
+    if (getVersion() <= 3) {
+      
+      fileLength *= 2;
+      
+    } else if (getVersion() <= 5) {
+      
+      fileLength *= 4;
+      
+    } else {
+      
+      fileLength *= 8;
+    }
     return fileLength;
   }
   

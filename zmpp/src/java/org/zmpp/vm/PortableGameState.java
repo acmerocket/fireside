@@ -814,8 +814,10 @@ public class PortableGameState {
     for (int i = 0; i < 7; i++) {
       
       andBit = 1 << i;
-      if ((andBit & argspec) > 0) result.add(i);
-      
+      if ((andBit & argspec) > 0) {
+        
+        result.add(i);
+      }      
     }
     final int[] intArray = new int[result.size()];
     for (int i = 0; i < result.size(); i++) {

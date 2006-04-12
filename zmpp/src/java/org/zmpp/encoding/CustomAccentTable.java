@@ -95,7 +95,9 @@ public class CustomAccentTable implements AccentTable {
     
     for (int i = 0; i < length; i++) {
       
-      if (getAccent(i) == lower) return i;
+      if (getAccent(i) == lower) {
+        return i;
+      }
     }
     return index;
   }

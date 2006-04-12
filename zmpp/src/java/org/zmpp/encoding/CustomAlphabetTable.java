@@ -57,7 +57,9 @@ public class CustomAlphabetTable implements AlphabetTable {
    */
   public short getA0Char(final byte zchar) {
     
-    if (zchar == 0) return ' ';
+    if (zchar == 0) {
+      return ' ';
+    }
     return memaccess.readUnsignedByte(tableAddress
                                       + (zchar - ALPHABET_START));
   }
@@ -67,7 +69,9 @@ public class CustomAlphabetTable implements AlphabetTable {
    */
   public short getA1Char(final byte zchar) {
     
-    if (zchar == 0) return ' ';
+    if (zchar == 0) {
+      return ' ';
+    }
     return memaccess.readUnsignedByte(tableAddress
                                       + ALPHABET_SIZE
                                       + (zchar - ALPHABET_START));
@@ -78,8 +82,12 @@ public class CustomAlphabetTable implements AlphabetTable {
    */
   public short getA2Char(final byte zchar) {
     
-    if (zchar == 0) return ' ';
-    if (zchar == 7) return (short) '\n';
+    if (zchar == 0) {
+      return ' ';
+    }
+    if (zchar == 7) {
+      return (short) '\n';
+    }
     return memaccess.readUnsignedByte(tableAddress + 2 * ALPHABET_SIZE
                                       + (zchar - ALPHABET_START));
   }
@@ -91,7 +99,9 @@ public class CustomAlphabetTable implements AlphabetTable {
 
     for (int i = ALPHABET_START; i < ALPHABET_START + ALPHABET_SIZE; i++) {
       
-      if (getA0Char((byte) i) == zsciiChar) return (byte) i;
+      if (getA0Char((byte) i) == zsciiChar) {
+        return (byte) i;
+      }
     }
     return -1;
   }
@@ -103,7 +113,9 @@ public class CustomAlphabetTable implements AlphabetTable {
 
     for (int i = ALPHABET_START; i < ALPHABET_START + ALPHABET_SIZE; i++) {
       
-      if (getA1Char((byte) i) == zsciiChar) return (byte) i;
+      if (getA1Char((byte) i) == zsciiChar) {
+        return (byte) i;
+      }
     }
     return -1;
   }
@@ -115,7 +127,9 @@ public class CustomAlphabetTable implements AlphabetTable {
 
     for (int i = ALPHABET_START; i < ALPHABET_START + ALPHABET_SIZE; i++) {
       
-      if (getA2Char((byte) i) == zsciiChar) return (byte) i;
+      if (getA2Char((byte) i) == zsciiChar) {
+        return (byte) i;
+      }
     }
     return -1;
   }

@@ -71,7 +71,7 @@ public class DefaultInstructionDecoder implements InstructionDecoder {
    */
   public Instruction decodeInstruction(final int instructionAddress) {
   
-    final Integer key = new Integer(instructionAddress);
+    final Integer key = Integer.valueOf(instructionAddress);
     if (!instructionCache.containsKey(key)) {
       AbstractInstruction info = createBasicInstructionInfo(instructionAddress);
       int currentAddress = extractOperands(info, instructionAddress);
@@ -259,7 +259,9 @@ public class DefaultInstructionDecoder implements InstructionDecoder {
       optype = (byte) ((optypeByte >> ((3 - i) * 2)) & 0x03);
       oldNumOperands = info.getNumOperands();
       nextAddress = extractOperand(info, optype, nextAddress);
-      if (info.getNumOperands() == oldNumOperands) break;
+      if (info.getNumOperands() == oldNumOperands) {
+        break;
+      }
     }
     return nextAddress;
   }

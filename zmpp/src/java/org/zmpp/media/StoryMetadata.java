@@ -34,6 +34,8 @@ import java.util.List;
  */
 public class StoryMetadata {
 
+  private static final char NEWLINE = '\n';
+  
   public static class Auxiliary {
   
     private String leafname;
@@ -80,19 +82,19 @@ public class StoryMetadata {
   public String toString() {
     
     final StringBuilder builder = new StringBuilder();
-    builder.append("Title: '" + title + "'\n");
-    builder.append("Headline: '" + headline + "'\n");
-    builder.append("Author: '" + author + "'\n");
-    builder.append("Genre: '" + genre + "'\n");
-    builder.append("Description: '" + description + "'\n");
-    builder.append("Year: '" + year + "'\n");
-    builder.append("Cover picture: " + coverpicture + "\n");
-    builder.append("# aux: '" + auxiliaries.size() + "'\n");
-    builder.append("-------------------------------\n");
+    builder.append("Title: '" + title + NEWLINE);
+    builder.append("Headline: '" + headline + NEWLINE);
+    builder.append("Author: '" + author + NEWLINE);
+    builder.append("Genre: '" + genre + NEWLINE);
+    builder.append("Description: '" + description + NEWLINE);
+    builder.append("Year: '" + year + NEWLINE);
+    builder.append("Cover picture: " + coverpicture + NEWLINE);
+    builder.append("# aux: '" + auxiliaries.size() + NEWLINE);
+    builder.append("-------------------------------" + NEWLINE);
     for (Auxiliary aux : auxiliaries) {
       builder.append(aux.toString());
     }
-    builder.append("Group: '" + group + "'\n");
+    builder.append("Group: '" + group + NEWLINE);
     return builder.toString();
   }
 }

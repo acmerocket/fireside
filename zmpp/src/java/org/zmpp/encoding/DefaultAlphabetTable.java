@@ -38,7 +38,9 @@ public class DefaultAlphabetTable implements AlphabetTable {
    */
   public short getA0Char(final byte zchar) {
 
-    if (zchar == 0) return ' ';
+    if (zchar == 0) {
+      return ' ';
+    }
     return (short) A0CHARS.charAt(zchar - ALPHABET_START);
   }
 
@@ -47,7 +49,9 @@ public class DefaultAlphabetTable implements AlphabetTable {
    */
   public short getA1Char(final byte zchar) {
   
-    if (zchar == 0) return ' ';
+    if (zchar == 0) {
+      return ' ';
+    }
     return (short) A1CHARS.charAt(zchar - ALPHABET_START);
   }
 
@@ -56,7 +60,9 @@ public class DefaultAlphabetTable implements AlphabetTable {
    */
   public short getA2Char(final byte zchar) {
     
-    if (zchar == 0) return ' ';
+    if (zchar == 0) {
+      return ' ';
+    }
     return (short) A2CHARS.charAt(zchar - ALPHABET_START);
   }
   

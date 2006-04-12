@@ -69,7 +69,10 @@ public abstract class BlorbMediaCollection<T> implements MediaCollection<T> {
     
     for (int i = 0; i < numresources; i++) {
 
-      for (int j = 0; j < 4; j++) usage[j] = chunkmem.readByte(offset + j);
+      for (int j = 0; j < 4; j++) {
+        
+        usage[j] = chunkmem.readByte(offset + j);
+      }
       
       if (isHandledResource(usage)) {
 

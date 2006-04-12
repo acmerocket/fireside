@@ -106,9 +106,13 @@ public class SoundSystemImpl implements SoundSystem {
     // be stopped and unloaded. ZMPP's sound system implementation does
     // nothing at the moment (hey, we have plenty of memory and are
     // in a Java environment)
-    if (number == 0) return;
+    if (number == 0) {
+      return;
+    }
     
-    if (sounds != null) sound = sounds.getResource(number);
+    if (sounds != null) {
+      sound = sounds.getResource(number);
+    }
     if (sound == null) {
 
       Toolkit.getDefaultToolkit().beep();

@@ -158,10 +158,12 @@ public class GameDataImpl implements GameData {
 
     // Configure the alphabet table
     if (fileheader.getCustomAlphabetTable() == 0) {
-      
-      
-      if (fileheader.getVersion() == 1) alphabetTable = new AlphabetTableV1();
-      else if (fileheader.getVersion() == 2) {
+            
+      if (fileheader.getVersion() == 1) {
+        
+        alphabetTable = new AlphabetTableV1();
+        
+      } else if (fileheader.getVersion() == 2) {
         
         alphabetTable = new AlphabetTableV2();
       

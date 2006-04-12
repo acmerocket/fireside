@@ -52,7 +52,7 @@ import org.zmpp.encoding.AlphabetTable.Alphabet;
  * @author Wei-ju Wu
  * @version 1.0
  */
-public interface ZCharTranslator {
+public interface ZCharTranslator extends Cloneable {
 
   /**
    * Resets the state of the translator. This should be called before
@@ -71,8 +71,9 @@ public interface ZCharTranslator {
    * Clones this object. Needed, since this object has a modifiable state.
    * 
    * @return a copy of this object
+   * @throws CloneNotSupportedException should not happen
    */
-  Object clone();
+  Object clone() throws CloneNotSupportedException;
   
   /**
    * Returns the current alphabet this object works in.

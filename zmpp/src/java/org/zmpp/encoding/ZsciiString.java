@@ -122,7 +122,9 @@ public class ZsciiString {
             break;
           }
         }
-        if (i == n) return current;
+        if (i == n) {
+          return current;
+        }
       }
       current++;
     }
@@ -169,7 +171,9 @@ public class ZsciiString {
    */
   public boolean equals(final Object o) {
     
-    if (o == this) return true;
+    if (o == this) {
+      return true;
+    }
     if (o instanceof ZsciiString) {
       
       final short[] data2 = ((ZsciiString) o).data;
@@ -177,7 +181,9 @@ public class ZsciiString {
         
         for (int i = 0; i < data.length; i++) {
         
-          if (data[i] != data2[i]) return false;
+          if (data[i] != data2[i]) {
+            return false;
+          }
         }
         return true;
       }

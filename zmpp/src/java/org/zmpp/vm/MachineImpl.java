@@ -432,7 +432,9 @@ public class MachineImpl implements Machine {
     // Verify the game according to the standard
     final StoryFileHeader fileHeader = gamedata.getStoryFileHeader();
     int checksum = fileHeader.getChecksum();
-    if (checksum == 0) checksum = gamedata.getCalculatedChecksum();
+    if (checksum == 0) {
+      checksum = gamedata.getCalculatedChecksum();
+    }
     return gamestate.getRelease() == fileHeader.getRelease()
       && gamestate.getChecksum() == checksum
       && gamestate.getSerialNumber().equals(fileHeader.getSerialNumber());
@@ -476,7 +478,10 @@ public class MachineImpl implements Machine {
     gamedata.reset();
     resetState();
     
-    if (resetScreenModel) screenModel.reset();    
+    if (resetScreenModel) {
+      
+      screenModel.reset();    
+    }
     fileHeader.setEnabled(Attribute.TRANSCRIPTING, transcripting);
     fileHeader.setEnabled(Attribute.FORCE_FIXED_FONT, fixedFontForced);
   }  

@@ -435,7 +435,9 @@ public abstract class AbstractInstruction implements Instruction {
     final int[] validVersions = getStaticInfo().getValidVersions(getOpcode());
     for (int validVersion : validVersions) {
       
-      if (validVersion == version) return true;
+      if (validVersion == version) {
+        return true;
+      }
     }
     return false;
   }
@@ -457,8 +459,11 @@ public abstract class AbstractInstruction implements Instruction {
   
   private String getVarName(final int varnum) {
     
-    if (varnum == 0) return "(SP)";
-    else if (varnum <= 15) {
+    if (varnum == 0) {
+      
+      return "(SP)";
+      
+    } else if (varnum <= 15) {
       
       return String.format("L%02x", (varnum - 1));
       
@@ -487,7 +492,9 @@ public abstract class AbstractInstruction implements Instruction {
     final StringBuilder buffer = new StringBuilder();
     for (int i = 0; i < getNumOperands(); i++) {
 
-      if (i > 0) buffer.append(", ");
+      if (i > 0) {
+        buffer.append(", ");
+      }
       final Operand operand = getOperand(i);
       switch (operand.getType()) {
       

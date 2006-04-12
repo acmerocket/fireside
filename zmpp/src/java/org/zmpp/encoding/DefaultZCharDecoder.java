@@ -141,8 +141,14 @@ public final class DefaultZCharDecoder implements ZCharDecoder {
             // We only use one abbreviation decoder instance here, we need
             // to clone the alphabet table, so the abbreviation decoding
             // will not influence the continuation of the decoding process
-            abbreviationDecoder = new DefaultZCharDecoder(encoding,
+            try {
+              abbreviationDecoder = new DefaultZCharDecoder(encoding,
                   (ZCharTranslator) translator.clone(), null);
+            } catch (CloneNotSupportedException ex) {
+              
+              // should never happen
+              ex.printStackTrace();
+            }
           }
           final ZsciiString abbrev = abbreviationDecoder.decode2Zscii(memaccess,
               entryAddress, 0);

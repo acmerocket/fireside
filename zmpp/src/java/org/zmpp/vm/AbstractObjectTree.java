@@ -118,7 +118,7 @@ public abstract class AbstractObjectTree implements ObjectTree {
     if (objectNum > 0) {
       
       // flags + (parent, sibling, child) + properties
-      final Integer key = new Integer(objectNum);
+      final Integer key = Integer.valueOf(objectNum);
       ZObject result = objectCache.get(key);
       if (result == null) {
         

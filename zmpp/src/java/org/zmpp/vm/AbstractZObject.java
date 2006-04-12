@@ -110,7 +110,9 @@ public abstract class AbstractZObject implements ZObject {
 
       // Only calculate the property address once and return the
       // result in the future
-      if (index < 0) return getPropertyEntriesStart();      
+      if (index < 0) {
+        return getPropertyEntriesStart();      
+      }
       if (propertyAddresses[index] == 0) {
         
         int addr = getPropertyEntriesStart();
@@ -217,7 +219,9 @@ public abstract class AbstractZObject implements ZObject {
       
       for (int i = 0; i < getNumProperties(); i++) {
         
-        if (getPropertyNum(i) == propertyNum) return (short) i;
+        if (getPropertyNum(i) == propertyNum) {
+          return (short) i;
+        }
       }
       return -1;
     }
@@ -432,7 +436,9 @@ public abstract class AbstractZObject implements ZObject {
       
       if (isAttributeSet(j)) {
         
-        if (attrBuff.length() > "attributes: [".length()) attrBuff.append(", ");
+        if (attrBuff.length() > "attributes: [".length()) {
+          attrBuff.append(", ");
+        }
         attrBuff.append(j);
       }
     }
