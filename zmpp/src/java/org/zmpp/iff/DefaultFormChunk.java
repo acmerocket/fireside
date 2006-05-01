@@ -22,6 +22,7 @@
  */
 package org.zmpp.iff;
 
+import java.io.IOException;
 import java.util.ArrayList;
 import java.util.Arrays;
 import java.util.Iterator;
@@ -53,7 +54,7 @@ public class DefaultFormChunk extends DefaultChunk implements FormChunk {
    * 
    * @param memaccess a MemoryAccess object
    */
-  public DefaultFormChunk(final MemoryAccess memaccess) {
+  public DefaultFormChunk(final MemoryAccess memaccess) throws IOException {
 
     super(memaccess, 0);
     initBaseInfo();
@@ -63,8 +64,17 @@ public class DefaultFormChunk extends DefaultChunk implements FormChunk {
   /**
    * Initialize the id field.
    */
-  private void initBaseInfo() {
+  private void initBaseInfo() throws IOException {
     
+    if (!"FORM".equals(new String(getId()))) {
+      
+      for (int i = 0; i < 4; i++) {
+        
+        System.out.printf("%x ", getId()[i]);
+      }
+      System.out.println();
+      throw new IOException("not a valid IFF format");
+    }
     // Determine the sub id
     subId = new byte[CHUNK_ID_LENGTH];
     final int offset = CHUNK_HEADER_LENGTH;
