@@ -196,8 +196,7 @@ implements InputStream, StatusLine, IOSystem {
       setTitle(Main.APPNAME + " - " + storyinfo.getTitle()
           + " (" + storyinfo.getAuthor() + ")");
       
-      JMenuItem aboutGameItem = new JMenuItem("About " + storyinfo.getTitle()
-                                              + " ...");
+      JMenuItem aboutGameItem = new JMenuItem("About this game ...");
       helpMenu.add(aboutGameItem);
       aboutGameItem.addActionListener(new ActionListener() {
         
