@@ -23,6 +23,7 @@
 package org.zmpp.swingui;
 
 import java.io.File;
+import java.io.IOException;
 import java.util.StringTokenizer;
 
 import javax.swing.JFileChooser;
@@ -87,11 +88,21 @@ public class Main {
         File blorbfile = searchForResources(storyfile);
         factory = new ApplicationMachineFactory(storyfile, blorbfile);
       }
-      factory.buildMachine();
-      ZmppFrame frame = factory.getUI();      
-      frame.startMachine();
-      frame.pack();
-      frame.setVisible(true);
+      
+      try {
+        
+        factory.buildMachine();
+        ZmppFrame frame = factory.getUI();      
+        frame.startMachine();
+        frame.pack();
+        frame.setVisible(true);
+        
+      } catch (IOException ex) {
+        
+        JOptionPane.showMessageDialog(null,
+            String.format("Could not read game.\nReason: '%s'", ex.getMessage()),
+            "Story file error", JOptionPane.ERROR_MESSAGE);
+      }
       
     } else {
       
