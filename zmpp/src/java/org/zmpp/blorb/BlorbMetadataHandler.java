@@ -63,6 +63,14 @@ public class BlorbMetadataHandler extends DefaultHandler {
     if (chunk != null) {
 
       final MemoryReadAccess memaccess = chunk.getMemoryAccess();
+      
+      StringBuilder buffer = new StringBuilder();
+      for (int i = 0; i < chunk.getSize(); i++) {
+      
+        buffer.append((char) chunk.getMemoryAccess().readUnsignedByte(i + Chunk.CHUNK_HEADER_LENGTH));
+      }
+      System.out.println(buffer.toString());
+      
       final MemoryAccessInputStream meminput =
         new MemoryAccessInputStream(memaccess, Chunk.CHUNK_HEADER_LENGTH,
           chunk.getSize() + Chunk.CHUNK_HEADER_LENGTH);
@@ -194,7 +202,12 @@ public class BlorbMetadataHandler extends DefaultHandler {
       }
       auxiliary = null;
     }
-    buffer = null;
+    
+    if ("br".equals(qname) && buffer != null) {
+      
+      buffer.append("\n");
+    }
+    //buffer = null;
   }
   
   public void characters(final char[] ch, final int start, final int length) {
