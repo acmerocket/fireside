@@ -22,6 +22,8 @@
  */
 package org.zmpp.vm;
 
+import java.io.IOException;
+
 import org.zmpp.instructions.DefaultInstructionDecoder;
 import org.zmpp.io.FileInputStream;
 import org.zmpp.io.IOSystem;
@@ -46,7 +48,7 @@ public abstract class MachineFactory<T> {
    * 
    * @return the machine
    */
-  public Machine buildMachine() {
+  public Machine buildMachine() throws IOException {
     
     final GameData gamedata =
       new GameDataImpl(readStoryData(), readResources());
@@ -86,15 +88,17 @@ public abstract class MachineFactory<T> {
    * Reads the story data.
    * 
    * @return the story data
+   * @throws IOException if reading story file reveiled an error
    */
-  abstract protected byte[] readStoryData();
+  abstract protected byte[] readStoryData() throws IOException;
   
   /**
    * Reads the resource data.
    * 
    * @return the resource data
+   * @throws IOException if reading resources reveiled an error
    */
-  abstract protected Resources readResources();
+  abstract protected Resources readResources() throws IOException;
   
   /**
    * This function is called to report an invalid story file.
