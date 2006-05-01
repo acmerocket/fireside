@@ -33,7 +33,6 @@ import java.util.ArrayList;
 import java.util.List;
 
 import javax.swing.Box;
-import javax.swing.BoxLayout;
 import javax.swing.DefaultListModel;
 import javax.swing.JButton;
 import javax.swing.JComponent;
@@ -236,10 +235,5 @@ public class GameInfoDialog extends JDialog implements ListSelectionListener {
       Auxiliary aux = (Auxiliary) auxlist.getSelectedValue();
       auxdescarea.setText(aux != null ? aux.getDescription() : "");
     }
-  }
-
-  private String getLabelString(String str) {
-    
-    return str != null ? str : "";
   }
 }
