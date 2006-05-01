@@ -161,7 +161,7 @@ public class PortableGameStateTest extends MockObjectTestCase {
     assertEquals(4, stackFrame.getEvalStack().length);
   }
   
-  public void testExportToFormChunk() {
+  public void testExportToFormChunk() throws Exception {
     
     short[] dummyStack = { (short) 1, (short) 2, (short) 3 };
     StackFrame dummyFrame = new StackFrame();
