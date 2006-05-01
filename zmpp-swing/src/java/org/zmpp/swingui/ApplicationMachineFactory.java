@@ -23,6 +23,7 @@
 package org.zmpp.swingui;
 
 import java.io.File;
+import java.io.IOException;
 
 import javax.swing.JOptionPane;
 
@@ -69,7 +70,7 @@ public class ApplicationMachineFactory extends MachineFactory<ZmppFrame> {
   /**
    * {@inheritDoc}
    */
-  protected byte[] readStoryData() {
+  protected byte[] readStoryData() throws IOException {
         
     if (storyfile != null) {
       
@@ -83,13 +84,19 @@ public class ApplicationMachineFactory extends MachineFactory<ZmppFrame> {
     }
   }
   
-  private FormChunk readBlorb() {
+  private FormChunk readBlorb() throws IOException {
     
     if (blorbchunk == null) {
       
       byte[] data = FileUtils.readFileBytes(blorbfile);
-      if (data != null)
-        blorbchunk = new DefaultFormChunk(new DefaultMemoryAccess(data));      
+      if (data != null) {
+        
+        blorbchunk = new DefaultFormChunk(new DefaultMemoryAccess(data));
+        if (!"IFRS".equals(new String(blorbchunk.getSubId()))) {
+          
+          throw new IOException("not a valid Blorb file");
+        }
+      }
     }
     return blorbchunk;
   }
@@ -97,7 +104,7 @@ public class ApplicationMachineFactory extends MachineFactory<ZmppFrame> {
   /**
    * {@inheritDoc}
    */
-  protected Resources readResources() {
+  protected Resources readResources() throws IOException {
 
     FormChunk formchunk = readBlorb();
     return (formchunk != null) ? new BlorbResources(formchunk) : null;

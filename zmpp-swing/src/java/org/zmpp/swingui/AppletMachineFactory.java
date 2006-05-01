@@ -22,6 +22,7 @@
  */
 package org.zmpp.swingui;
 
+import java.io.IOException;
 import java.net.URL;
 
 import org.zmpp.base.DefaultMemoryAccess;
@@ -103,7 +104,7 @@ public class AppletMachineFactory extends MachineFactory<ZmppApplet> {
   /**
    * {@inheritDoc}
    */
-  protected byte[] readStoryData() {
+  protected byte[] readStoryData() throws IOException {
   
     if (storyis != null) {
       
@@ -117,7 +118,7 @@ public class AppletMachineFactory extends MachineFactory<ZmppApplet> {
     }
   }
   
-  private FormChunk readBlorb() {
+  private FormChunk readBlorb() throws IOException {
     
     if (blorbchunk == null) {
       byte[] data = FileUtils.readFileBytes(resourceis);
@@ -131,7 +132,7 @@ public class AppletMachineFactory extends MachineFactory<ZmppApplet> {
   /**
    * {@inheritDoc}
    */
-  protected Resources readResources() {
+  protected Resources readResources() throws IOException {
 
     FormChunk formchunk = readBlorb();
     return (formchunk != null) ? new BlorbResources(formchunk) : null;
