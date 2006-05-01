@@ -68,11 +68,6 @@ public class DefaultFormChunk extends DefaultChunk implements FormChunk {
     
     if (!"FORM".equals(new String(getId()))) {
       
-      for (int i = 0; i < 4; i++) {
-        
-        System.out.printf("%x ", getId()[i]);
-      }
-      System.out.println();
       throw new IOException("not a valid IFF format");
     }
     // Determine the sub id
