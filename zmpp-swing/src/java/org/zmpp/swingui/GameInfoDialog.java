@@ -26,13 +26,14 @@ import java.awt.BorderLayout;
 import java.awt.Component;
 import java.awt.Dimension;
 import java.awt.FlowLayout;
-import java.awt.Font;
 import java.awt.event.ActionEvent;
 import java.awt.event.ActionListener;
 import java.awt.image.BufferedImage;
+import java.util.ArrayList;
 import java.util.List;
 
 import javax.swing.Box;
+import javax.swing.BoxLayout;
 import javax.swing.DefaultListModel;
 import javax.swing.JButton;
 import javax.swing.JComponent;
@@ -73,12 +74,6 @@ public class GameInfoDialog extends JDialog implements ListSelectionListener {
     JTabbedPane tabPane = new JTabbedPane();
     tabPane.add("Info", createInfoPanel(resources));
     
-    int coverartnum = this.getCoverartNum(resources);    
-    if (coverartnum > 0) {
-      
-      tabPane.add("Cover Art", createPicturePanel(resources, coverartnum));
-    }
-    
     List<Auxiliary> auxiliaries =
       resources.getMetadata().getStoryInfo().getAuxiliaries();
     if (auxiliaries != null && auxiliaries.size() > 0) {
@@ -107,41 +102,42 @@ public class GameInfoDialog extends JDialog implements ListSelectionListener {
   }
   
   private JComponent createInfoPanel(Resources resources) {
-        
+    
     StoryMetadata storyinfo = resources.getMetadata().getStoryInfo();
     Box infopanel = Box.createVerticalBox();
+    JComponent panel = infopanel;
+    
+    // in case cover art is available, stack it into the info panel
+    int coverartnum = getCoverartNum(resources);    
+    if (coverartnum > 0) {
+
+      Box wholepanel = Box.createHorizontalBox();
+      wholepanel.add(createPicturePanel(resources, coverartnum));
+      wholepanel.add(infopanel);
+      panel = wholepanel;
+    }
+    
     infopanel.setAlignmentX(Component.LEFT_ALIGNMENT);
     infopanel.setPreferredSize(new Dimension(STD_WIDTH, 400));
     
-    JLabel[] labels = new JLabel[6];
-    labels[0] = new JLabel("<html><b>Title:</b> " + storyinfo.getTitle()
-                           + "</html>");
-    labels[1] = new JLabel("<html><b>Author:</b> " + storyinfo.getAuthor()
-                           + "</html>");
-    labels[2] = new JLabel("<html><b>Year:</b> " + storyinfo.getYear()
-                           + "</html>");
-    labels[3] = new JLabel("<html><b>Genre:</b> " + storyinfo.getGenre()
-                           + "</html>");
-    labels[4] = new JLabel("<html><b>Group:</b> " + storyinfo.getGroup()
-                           + "</html>");
-    labels[5] = new JLabel("<html><b>Headline:</b> " + storyinfo.getHeadline()
-                           + "</html>");
+    List<JLabel> labels = new ArrayList<JLabel>();
+    labels.add(new JLabel(storyinfo.getTitle()));
     
-    Font labelfont = labels[0].getFont().deriveFont(Font.ROMAN_BASELINE);
-    
-    for (int i = 0; i < labels.length; i++) {
+    if (storyinfo.getHeadline() != null) {
       
-      infopanel.add(labels[i]);
-      labels[i].setFont(labelfont);
-      labels[i].setAlignmentX(Component.LEFT_ALIGNMENT);
+      labels.add(new JLabel(storyinfo.getHeadline()));
+    }
+      
+    labels.add(new JLabel(storyinfo.getAuthor() + " ("
+        + storyinfo.getYear() + ")"));
+        
+    for (JLabel label : labels) {
+      
+      infopanel.add(label);
+      label.setAlignmentX(Component.LEFT_ALIGNMENT);
     }
     
     infopanel.add(Box.createVerticalStrut(6));
-    
-    JLabel desclabel = new JLabel("Description: ");
-    desclabel.setAlignmentX(Component.LEFT_ALIGNMENT);
-    infopanel.add(desclabel);    
-    infopanel.add(Box.createVerticalStrut(3));
     
     JTextArea descarea = new JTextArea(storyinfo.getDescription());    
     descarea.setLineWrap(true);
@@ -153,7 +149,7 @@ public class GameInfoDialog extends JDialog implements ListSelectionListener {
     spane.setPreferredSize(new Dimension(STD_WIDTH, 200));
     spane.setAlignmentX(Component.LEFT_ALIGNMENT);
     infopanel.add(spane);
-    return infopanel;
+    return panel;
   }
   
   private JPanel createButtonPanel() {
@@ -240,5 +236,10 @@ public class GameInfoDialog extends JDialog implements ListSelectionListener {
       Auxiliary aux = (Auxiliary) auxlist.getSelectedValue();
       auxdescarea.setText(aux != null ? aux.getDescription() : "");
     }
+  }
+
+  private String getLabelString(String str) {
+    
+    return str != null ? str : "";
   }
 }
