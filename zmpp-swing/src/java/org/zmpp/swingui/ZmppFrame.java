@@ -24,6 +24,7 @@ package org.zmpp.swingui;
 
 import java.awt.BorderLayout;
 import java.awt.Dimension;
+import java.awt.EventQueue;
 import java.awt.FlowLayout;
 import java.awt.GridLayout;
 import java.awt.event.ActionEvent;
@@ -45,7 +46,6 @@ import javax.swing.JMenuBar;
 import javax.swing.JMenuItem;
 import javax.swing.JOptionPane;
 import javax.swing.JPanel;
-import javax.swing.SwingUtilities;
 
 import org.zmpp.io.IOSystem;
 import org.zmpp.io.InputStream;
@@ -231,7 +231,7 @@ implements InputStream, StatusLine, IOSystem {
   public void updateStatusScore(final String objectName, final int score,
       final int steps) {
 
-    SwingUtilities.invokeLater(new Runnable() {
+    EventQueue.invokeLater(new Runnable() {
       
       public void run() {
         
@@ -244,7 +244,7 @@ implements InputStream, StatusLine, IOSystem {
   public void updateStatusTime(final String objectName, final int hours,
       final int minutes) {
         
-    SwingUtilities.invokeLater(new Runnable() {
+    EventQueue.invokeLater(new Runnable() {
       
       public void run() {
         

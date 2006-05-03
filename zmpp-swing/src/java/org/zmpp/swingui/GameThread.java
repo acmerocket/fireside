@@ -22,8 +22,9 @@
  */
 package org.zmpp.swingui;
 
+import java.awt.EventQueue;
+
 import javax.swing.JComponent;
-import javax.swing.SwingUtilities;
 
 import org.zmpp.vm.Instruction;
 import org.zmpp.vm.Machine;
@@ -51,7 +52,7 @@ public class GameThread extends Thread {
     // back or explicitly request the focus, therefore, do it here, it
     // does no harm on other platforms
     try {
-      SwingUtilities.invokeAndWait(new Runnable() {
+      EventQueue.invokeAndWait(new Runnable() {
         
         public void run() {
           

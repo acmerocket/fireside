@@ -24,6 +24,7 @@ package org.zmpp.swingui;
 
 import java.awt.BorderLayout;
 import java.awt.Dimension;
+import java.awt.EventQueue;
 import java.awt.FlowLayout;
 import java.awt.GridLayout;
 import java.io.File;
@@ -39,7 +40,6 @@ import javax.swing.JComponent;
 import javax.swing.JFileChooser;
 import javax.swing.JLabel;
 import javax.swing.JPanel;
-import javax.swing.SwingUtilities;
 
 import org.zmpp.io.IOSystem;
 import org.zmpp.io.InputStream;
@@ -120,7 +120,7 @@ implements InputStream, StatusLine, IOSystem {
     }
   }
   
-  public void initUI(Machine machine) {
+  private void createUI(Machine machine) {
     
     lineEditor = new LineEditorImpl(machine.getGameData().getStoryFileHeader(),
         machine.getGameData().getZsciiEncoding());
@@ -164,6 +164,21 @@ implements InputStream, StatusLine, IOSystem {
     view.addMouseListener(lineEditor);
   }
   
+  public void initUI(final Machine machine) {
+  
+    try {
+      EventQueue.invokeAndWait(new Runnable() {
+        public void run() {
+        
+          createUI(machine);
+        }
+      });
+    } catch (Exception ex) {
+      
+      ex.printStackTrace();
+    }
+  }
+  
   public void start() {
    
     currentGame = new GameThread(machine, screen);
@@ -182,7 +197,7 @@ implements InputStream, StatusLine, IOSystem {
   public void updateStatusScore(final String objectName, final int score,
       final int steps) {
 
-    SwingUtilities.invokeLater(new Runnable() {
+    EventQueue.invokeLater(new Runnable() {
       
       public void run() {
         
@@ -195,7 +210,7 @@ implements InputStream, StatusLine, IOSystem {
   public void updateStatusTime(final String objectName, final int hours,
       final int minutes) {
         
-    SwingUtilities.invokeLater(new Runnable() {
+    EventQueue.invokeLater(new Runnable() {
       
       public void run() {
         

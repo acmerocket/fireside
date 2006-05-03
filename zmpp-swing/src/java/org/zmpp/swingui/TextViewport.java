@@ -23,13 +23,13 @@
 package org.zmpp.swingui;
 
 import java.awt.Color;
+import java.awt.EventQueue;
 import java.awt.Font;
 import java.awt.FontMetrics;
 import java.awt.Graphics;
 import java.awt.image.BufferedImage;
 
 import javax.swing.JComponent;
-import javax.swing.SwingUtilities;
 
 import org.zmpp.io.OutputStream;
 import org.zmpp.vm.Machine;
@@ -467,7 +467,7 @@ public class TextViewport extends JComponent implements ScreenModel, Viewport {
     
     try {
       
-      SwingUtilities.invokeAndWait(new Runnable() {
+      EventQueue.invokeAndWait(new Runnable() {
         
         public void run() {
           

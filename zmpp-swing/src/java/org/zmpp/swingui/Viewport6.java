@@ -23,13 +23,12 @@
 package org.zmpp.swingui;
 
 import java.awt.Color;
+import java.awt.EventQueue;
 import java.awt.Font;
-import java.awt.FontMetrics;
 import java.awt.Graphics;
 import java.awt.image.BufferedImage;
 
 import javax.swing.JViewport;
-import javax.swing.SwingUtilities;
 
 import org.zmpp.io.OutputStream;
 import org.zmpp.vm.Machine;
@@ -342,7 +341,7 @@ public class Viewport6 extends JViewport implements ScreenModel6, Viewport {
     
     try {
       
-      SwingUtilities.invokeAndWait(new Runnable() {
+      EventQueue.invokeAndWait(new Runnable() {
         
         public void run() {
           
