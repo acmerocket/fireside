@@ -69,6 +69,7 @@ implements InputStream, StatusLine, IOSystem {
   
   public void init() {
         
+    System.setProperty("swing.aatext", "true");
     String story = getParameter("storyfile");
     String blorb = getParameter("blorbfile");
     String saveto = getParameter("saveto");
