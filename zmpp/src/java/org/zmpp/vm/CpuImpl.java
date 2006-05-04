@@ -248,9 +248,9 @@ public class CpuImpl implements Cpu, Interruptable {
     final Cpu.VariableType varType = getVariableType(variableNumber);
     if (varType == Cpu.VariableType.STACK) {
       
-      if (stack.size() == 0) {
+      if (stack.size() == getInvocationStackPointer()) {
         
-        throw new IllegalStateException("stack is empty");
+        throw new IllegalStateException("stack underflow error");
         
       } else {
    
@@ -268,6 +268,17 @@ public class CpuImpl implements Cpu, Interruptable {
       return machine.getGameData().getMemoryAccess().readShort(globalsAddress
           + (getGlobalVariableNumber(variableNumber) * 2));
     }
+  }
+  
+  /**
+   * Returns the current invocation stack pointer.
+   * 
+   * @return the invocation stack pointer
+   */
+  private int getInvocationStackPointer() {
+    
+    return getCurrentRoutineContext() == null ? 0 : 
+      getCurrentRoutineContext().getInvocationStackPointer();
   }
 
   /**
