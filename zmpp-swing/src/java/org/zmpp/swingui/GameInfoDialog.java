@@ -26,32 +26,28 @@ import java.awt.BorderLayout;
 import java.awt.Component;
 import java.awt.Dimension;
 import java.awt.FlowLayout;
+import java.awt.Font;
+import java.awt.Insets;
 import java.awt.event.ActionEvent;
 import java.awt.event.ActionListener;
 import java.awt.image.BufferedImage;
 import java.util.ArrayList;
 import java.util.List;
 
+import javax.swing.BorderFactory;
 import javax.swing.Box;
-import javax.swing.DefaultListModel;
 import javax.swing.JButton;
 import javax.swing.JComponent;
 import javax.swing.JDialog;
 import javax.swing.JFrame;
 import javax.swing.JLabel;
-import javax.swing.JList;
 import javax.swing.JPanel;
 import javax.swing.JScrollPane;
-import javax.swing.JTabbedPane;
 import javax.swing.JTextArea;
-import javax.swing.ListSelectionModel;
-import javax.swing.event.ListSelectionEvent;
-import javax.swing.event.ListSelectionListener;
 
 import org.zmpp.media.InformMetadata;
 import org.zmpp.media.Resources;
 import org.zmpp.media.StoryMetadata;
-import org.zmpp.media.StoryMetadata.Auxiliary;
 
 /**
  * This dialog displays information about a story given its meta information.
@@ -59,31 +55,18 @@ import org.zmpp.media.StoryMetadata.Auxiliary;
  * @author Wei-ju Wu
  * @version 1.0
  */
-public class GameInfoDialog extends JDialog implements ListSelectionListener {
+public class GameInfoDialog extends JDialog {
 
   private static final int STD_WIDTH = 400;
   private static final long serialVersionUID = 1L;
   
-  private JList auxlist;
-  private JTextArea auxdescarea;
-  
   public GameInfoDialog(JFrame owner, Resources resources) {
     
     super(owner, "About " + resources.getMetadata().getStoryInfo().getTitle());
-    JTabbedPane tabPane = new JTabbedPane();
-    tabPane.add("Info", createInfoPanel(resources));
-    
-    List<Auxiliary> auxiliaries =
-      resources.getMetadata().getStoryInfo().getAuxiliaries();
-    if (auxiliaries != null && auxiliaries.size() > 0) {
-      
-      tabPane.add("Auxiliaries", createAuxPanel(auxiliaries));
-    }
-    
-    getContentPane().add(tabPane, BorderLayout.CENTER);
+    getContentPane().add(createInfoPanel(resources));
     getContentPane().add(createButtonPanel(), BorderLayout.SOUTH);
     pack();
-    setLocation(owner.getX() + 60, owner.getY() + 50);
+    setLocationRelativeTo(owner);
   }
 
   private JPanel createPicturePanel(Resources resources, int coverartnum) {
@@ -104,11 +87,12 @@ public class GameInfoDialog extends JDialog implements ListSelectionListener {
     
     StoryMetadata storyinfo = resources.getMetadata().getStoryInfo();
     Box infopanel = Box.createVerticalBox();
+    infopanel.setBorder(BorderFactory.createEmptyBorder(3, 5, 3, 5));
     JComponent panel = infopanel;
     
     // in case cover art is available, stack it into the info panel
     int coverartnum = getCoverartNum(resources);    
-    if (coverartnum > 0) {
+    if (coverartnum > 0 && resources.getImages().getNumResources() > 0) {
 
       Box wholepanel = Box.createHorizontalBox();
       wholepanel.add(createPicturePanel(resources, coverartnum));
@@ -134,6 +118,9 @@ public class GameInfoDialog extends JDialog implements ListSelectionListener {
       
       infopanel.add(label);
       label.setAlignmentX(Component.LEFT_ALIGNMENT);
+      
+      // Ensure that the label fonts are all bold
+      label.setFont(label.getFont().deriveFont(Font.BOLD));
     }
     
     infopanel.add(Box.createVerticalStrut(6));
@@ -142,6 +129,9 @@ public class GameInfoDialog extends JDialog implements ListSelectionListener {
     descarea.setLineWrap(true);
     descarea.setWrapStyleWord(true);
     descarea.setEditable(false);
+    Insets margins = new Insets(3, 3, 3, 3);
+    descarea.setMargin(margins);
+    descarea.setFont(labels.get(0).getFont().deriveFont(Font.PLAIN));
     
     JScrollPane spane = new JScrollPane(descarea);
     spane.setHorizontalScrollBarPolicy(JScrollPane.HORIZONTAL_SCROLLBAR_NEVER);
@@ -177,63 +167,5 @@ public class GameInfoDialog extends JDialog implements ListSelectionListener {
       coverartnum = metadata.getStoryInfo().getCoverPicture();
     }
     return coverartnum;
-  }
-  
-  private JComponent createAuxPanel(List<Auxiliary> auxiliaries) {
-    
-    Box auxpanel = Box.createVerticalBox();
-    auxpanel.setPreferredSize(new Dimension(STD_WIDTH, 400));
-    auxpanel.setAlignmentX(Component.LEFT_ALIGNMENT);
-    
-    JLabel auxlabel = new JLabel("Auxiliaries: ");
-    auxlabel.setAlignmentX(Component.LEFT_ALIGNMENT);
-    auxpanel.add(auxlabel);
-    auxpanel.add(Box.createVerticalStrut(6));
-    
-    DefaultListModel listmodel = new DefaultListModel();
-    for (Auxiliary aux : auxiliaries) listmodel.addElement(aux);
-    
-    auxlist = new JList(listmodel);
-    auxlist.getSelectionModel().setSelectionMode(
-        ListSelectionModel.SINGLE_SELECTION);
-    auxlist.getSelectionModel().addListSelectionListener(this);
-    JScrollPane spane = new JScrollPane(auxlist);
-    spane.setPreferredSize(new Dimension(STD_WIDTH, 50));
-    spane.setAlignmentX(Component.LEFT_ALIGNMENT);
-    spane.setHorizontalScrollBarPolicy(JScrollPane.HORIZONTAL_SCROLLBAR_NEVER);
-    auxpanel.add(spane);
-    
-    auxpanel.add(Box.createVerticalStrut(15));    
-    
-    JLabel desclabel = new JLabel("Description: ");
-    desclabel.setAlignmentX(Component.LEFT_ALIGNMENT);
-    auxpanel.add(desclabel);
-    auxpanel.add(Box.createVerticalStrut(6));
-    
-    auxdescarea = new JTextArea();
-    auxdescarea.setLineWrap(true);
-    auxdescarea.setWrapStyleWord(true);
-    auxdescarea.setEditable(false);
-    
-    JScrollPane spane2 = new JScrollPane(auxdescarea);    
-    spane2.setHorizontalScrollBarPolicy(JScrollPane.HORIZONTAL_SCROLLBAR_NEVER);
-    spane2.setPreferredSize(new Dimension(STD_WIDTH, 50));
-    spane2.setAlignmentX(Component.LEFT_ALIGNMENT);    
-    auxpanel.add(spane2);
-    
-    auxpanel.add(Box.createVerticalGlue());
-    return auxpanel;
-  }
-  
-  /**
-   * {@inheritDoc}
-   */
-  public void valueChanged(ListSelectionEvent e) {
-    
-    if (!e.getValueIsAdjusting()) {
-      
-      Auxiliary aux = (Auxiliary) auxlist.getSelectedValue();
-      auxdescarea.setText(aux != null ? aux.getDescription() : "");
-    }
-  }
+  }  
 }

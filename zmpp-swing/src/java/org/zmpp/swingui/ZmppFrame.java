@@ -196,7 +196,7 @@ implements InputStream, StatusLine, IOSystem {
       setTitle(Main.APPNAME + " - " + storyinfo.getTitle()
           + " (" + storyinfo.getAuthor() + ")");
       
-      JMenuItem aboutGameItem = new JMenuItem("About this game ...");
+      JMenuItem aboutGameItem = new JMenuItem("About this Game ...");
       helpMenu.add(aboutGameItem);
       aboutGameItem.addActionListener(new ActionListener() {
         
@@ -354,6 +354,7 @@ implements InputStream, StatusLine, IOSystem {
     
     PreferencesDialog dialog = new PreferencesDialog(this, preferences,
                                                      settings);
+    dialog.setLocationRelativeTo(this);
     dialog.setVisible(true);
   }
   

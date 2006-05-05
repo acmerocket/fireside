@@ -32,11 +32,10 @@ import org.zmpp.iff.Chunk;
 import org.zmpp.iff.FormChunk;
 import org.zmpp.media.InformMetadata;
 import org.zmpp.media.StoryMetadata;
-import org.zmpp.media.StoryMetadata.Auxiliary;
 
 /**
  * This class parses the metadata chunk in the Blorb file and converts
- * it into an Inform metadata chunk.
+ * it into a Treaty of Babel metadata object. 
  * 
  * @author Wei-ju Wu
  * @version 1.0
@@ -45,7 +44,7 @@ public class BlorbMetadataHandler extends DefaultHandler {
 
   private StoryMetadata story;
   private StringBuilder buffer;
-  private Auxiliary auxiliary;
+  private boolean processAux;
     
   public BlorbMetadataHandler(FormChunk formchunk) {
  
@@ -64,12 +63,14 @@ public class BlorbMetadataHandler extends DefaultHandler {
 
       final MemoryReadAccess memaccess = chunk.getMemoryAccess();
       
+      /*
       StringBuilder buffer = new StringBuilder();
       for (int i = 0; i < chunk.getSize(); i++) {
       
         buffer.append((char) chunk.getMemoryAccess().readUnsignedByte(i + Chunk.CHUNK_HEADER_LENGTH));
       }
       System.out.println(buffer.toString());
+      */
       
       final MemoryAccessInputStream meminput =
         new MemoryAccessInputStream(memaccess, Chunk.CHUNK_HEADER_LENGTH,
@@ -118,23 +119,19 @@ public class BlorbMetadataHandler extends DefaultHandler {
       
       buffer = new StringBuilder();
     }
-    if ("year".equals(qname)) {
+    if (isPublishYear(qname)) {
       
       buffer = new StringBuilder();
     }
     if ("auxiliary".equals(qname)) {
       
-      auxiliary = new Auxiliary();
-    }
-    if ("group".equals(qname)) {
-      
-      buffer = new StringBuilder();
-    }
-    if ("leafname".equals(qname)) {
-      
-      buffer = new StringBuilder();
+      processAux = true;
     }
     if ("coverpicture".equals(qname)) {
+      
+      buffer = new StringBuilder();
+    }
+    if ("group".equals(qname)) {
       
       buffer = new StringBuilder();
     }
@@ -159,18 +156,11 @@ public class BlorbMetadataHandler extends DefaultHandler {
       
       story.setGenre(buffer.toString());
     }
-    if ("description".equals(qname)) {
+    if ("description".equals(qname) && !processAux) {
       
-      if (auxiliary == null) {
-        
-        story.setDescription(buffer.toString());
-        
-      } else {
-        
-        auxiliary.setDescription(buffer.toString());
-      }
+      story.setDescription(buffer.toString());
     }
-    if ("year".equals(qname)) {
+    if (isPublishYear(qname)) {
       
       story.setYear(buffer.toString());
     }
@@ -190,25 +180,16 @@ public class BlorbMetadataHandler extends DefaultHandler {
         System.err.println("NumberFormatException in cover picture: " + val);
       }
     }
-    if ("leafname".equals(qname) && auxiliary != null) {
-      
-      auxiliary.setLeafName(buffer.toString());
-    }
     if ("auxiliary".equals(qname)) {
       
-      if (auxiliary != null) {
-        
-        story.addAuxiliary(auxiliary);
-      }
-      auxiliary = null;
+      processAux = false;
     }
     
     if ("br".equals(qname) && buffer != null) {
       
       buffer.append("\n");
     }
-    //buffer = null;
-  }
+  }  
   
   public void characters(final char[] ch, final int start, final int length) {
     
@@ -221,5 +202,18 @@ public class BlorbMetadataHandler extends DefaultHandler {
       }
       buffer.append(partbuilder.toString().trim());
     }
+  }
+  
+  /**
+   * Unfortunately, year was renamed to firstpublished between the preview
+   * metadata version of Inform 7 and the Treaty of Babel version, so
+   * we handle both here.
+   * 
+   * @param str the qname
+   * @return true if matches, false, otherwise
+   */
+  private boolean isPublishYear(String str) {
+    
+    return "year".equals(str) || "firstpublished".equals(str);
   }
 }

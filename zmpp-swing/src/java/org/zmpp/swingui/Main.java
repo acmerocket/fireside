@@ -28,6 +28,7 @@ import java.util.StringTokenizer;
 
 import javax.swing.JFileChooser;
 import javax.swing.JOptionPane;
+import javax.swing.UIManager;
 
 /**
  * This class starts the ZMPP swing interface.
@@ -41,7 +42,7 @@ public class Main {
    * The application name.
    */
   public static final String APPNAME =
-    "Z-Machine Preservation Project Version 0.91";
+    "Z-Machine Preservation Project Version 0.90";
   
   /**
    * The main method.
@@ -50,16 +51,14 @@ public class Main {
    */
   public static void main(String[] args) {
     
-    System.setProperty("swing.aatext", "true");
-    if (System.getProperty("mrj.version") != null) {
-      System.setProperty("apple.laf.useScreenMenuBar", "true");
-      System.setProperty("com.apple.eawt.CocoaComponent.CompatibilityMode",
-          "false");
-      System.setProperty("com.apple.mrj.application.apple.menu.about.name",
-          "ZMPP");
-    }
-    
     File storyfile = null;
+    try {
+      
+      UIManager.setLookAndFeel(UIManager.getSystemLookAndFeelClassName());
+    } catch (Exception ex) {
+      
+      ex.printStackTrace();
+    }
     
     if (args.length >= 1) {
       
@@ -75,6 +74,26 @@ public class Main {
       }
     }
     
+    runStoryFile(storyfile);
+  }
+  
+  /**
+   * This method opens a frame and runs the specified story file.
+   * 
+   * @param storyfile the story file
+   */
+  public static void runStoryFile(File storyfile) {
+    
+    System.setProperty("swing.aatext", "true");
+    
+    if (System.getProperty("mrj.version") != null) {
+      
+      System.setProperty("apple.laf.useScreenMenuBar", "true");
+      System.setProperty("com.apple.eawt.CocoaComponent.CompatibilityMode",
+          "false");
+      System.setProperty("com.apple.mrj.application.apple.menu.about.name",
+          "ZMPP");
+    }
     // Read in the story file
     if (storyfile != null && storyfile.exists() && storyfile.isFile()) {
       
@@ -113,7 +132,7 @@ public class Main {
           "Story file not found", JOptionPane.ERROR_MESSAGE);
     }
   }
-  
+    
   private static boolean isZblorbSuffix(String filename) {
     
     return filename.endsWith("zblorb") || filename.endsWith("zlb");

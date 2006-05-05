@@ -106,5 +106,5 @@ public class BlorbResources implements Resources {
   /**
    * {@inheritDoc}
    */
-  public boolean hasInfo() { return getCoverArtNum() > 0; }
+  public boolean hasInfo() { return metadata.getMetadata() != null; }
 }

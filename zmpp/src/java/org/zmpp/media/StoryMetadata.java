@@ -22,9 +22,6 @@
  */
 package org.zmpp.media;
 
-import java.util.ArrayList;
-import java.util.Collections;
-import java.util.List;
 
 /**
  * This class holds information about a story.
@@ -36,17 +33,6 @@ public class StoryMetadata {
 
   private static final char NEWLINE = '\n';
   
-  public static class Auxiliary {
-  
-    private String leafname;
-    private String description;
-    public String getLeafName() { return leafname; }
-    public String getDescription() { return description; }
-    public void setLeafName(final String name) { leafname = name; }
-    public void setDescription(final String text) { description = text; }
-    public String toString() { return leafname; }
-  }
-  
   private String title;
   private String headline;
   private String author;
@@ -55,7 +41,6 @@ public class StoryMetadata {
   private String year;
   private int coverpicture;
   private String group;
-  private List<Auxiliary> auxiliaries = new ArrayList<Auxiliary>();
   
   public String getTitle() { return title; }
   public void setTitle(final String title) { this.title = title; }
@@ -71,13 +56,8 @@ public class StoryMetadata {
   public void setYear(final String year) { this.year = year; }
   public int getCoverPicture() { return coverpicture; }
   public void setCoverPicture(final int picnum) { this.coverpicture = picnum; }
-  public void addAuxiliary(final Auxiliary auxiliary) { auxiliaries.add(auxiliary); }
   public String getGroup() { return group; }
   public void setGroup(final String group) { this.group = group; }
-  public List<Auxiliary> getAuxiliaries() {
-    
-    return Collections.unmodifiableList(auxiliaries);
-  }
   
   public String toString() {
     
@@ -89,11 +69,6 @@ public class StoryMetadata {
     builder.append("Description: '" + description + NEWLINE);
     builder.append("Year: '" + year + NEWLINE);
     builder.append("Cover picture: " + coverpicture + NEWLINE);
-    builder.append("# aux: '" + auxiliaries.size() + NEWLINE);
-    builder.append("-------------------------------" + NEWLINE);
-    for (Auxiliary aux : auxiliaries) {
-      builder.append(aux.toString());
-    }
     builder.append("Group: '" + group + NEWLINE);
     return builder.toString();
   }
