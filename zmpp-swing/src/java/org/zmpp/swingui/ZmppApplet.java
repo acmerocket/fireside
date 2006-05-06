@@ -34,6 +34,8 @@ import java.io.OutputStreamWriter;
 import java.io.Reader;
 import java.io.Writer;
 import java.net.URL;
+import java.util.HashMap;
+import java.util.Map;
 
 import javax.swing.JApplet;
 import javax.swing.JComponent;
@@ -56,7 +58,30 @@ import org.zmpp.vm.StatusLine;
 public class ZmppApplet extends JApplet
 implements InputStream, StatusLine, IOSystem {
 
+  /**
+   * The serial version.
+   */
   private static final long serialVersionUID = 1L;
+  
+  /**
+   * The color map maps parameters to color ids.
+   */
+  private static final Map<String, Integer> colormap =
+    new HashMap<String, Integer>();
+  
+  static {
+    
+    colormap.put("black",   2);
+    colormap.put("red",     3);
+    colormap.put("green",   4);
+    colormap.put("yellow",  5);
+    colormap.put("blue",    6);
+    colormap.put("magenta", 7);
+    colormap.put("cyan",    8);
+    colormap.put("white",   9);
+    colormap.put("gray",   10);
+  }
+    
   
   private JLabel global1ObjectLabel;
   private JLabel statusLabel;
@@ -76,24 +101,21 @@ implements InputStream, StatusLine, IOSystem {
     String saveto = getParameter("saveto");
     String fixedfontsize = getParameter("fixedfontsize");
     String stdfontsize = getParameter("stdfontsize");
+    String defbg = getParameter("defaultbg");
+    String deffg = getParameter("defaultfg");
+    
     int sizeStdFont = 12;
     int sizeFixedFont = 12;
     int defaultBackground = ColorTranslator.UNDEFINED;
     int defaultForeground = ColorTranslator.UNDEFINED;
     
     savetofile = "file".equalsIgnoreCase(saveto);
+
+    sizeFixedFont = parseInt(fixedfontsize, sizeFixedFont);
+    sizeStdFont = parseInt(stdfontsize, sizeStdFont);
+    defaultBackground = parseColor(defbg, defaultBackground);
+    defaultForeground = parseColor(deffg, defaultForeground);
     
-    if (fixedfontsize != null) {
-      try {
-        sizeFixedFont = Integer.parseInt(fixedfontsize);
-      } catch (NumberFormatException ignore) { }
-    }
-    
-    if (stdfontsize != null) {
-      try {
-        sizeStdFont = Integer.parseInt(stdfontsize);
-      } catch (NumberFormatException ignore) { }
-    }
     settings = new DisplaySettings(sizeStdFont, sizeFixedFont,
         defaultBackground, defaultForeground);
     
@@ -120,6 +142,37 @@ implements InputStream, StatusLine, IOSystem {
       
       ex.printStackTrace();      
     }
+  }
+  
+  /**
+   * Parses the specified string into an integer and returns it, if str
+   * is null or not an integer, the fallback value is returned.
+   * 
+   * @param str the string to parse
+   * @param fallback the fallback value
+   * @return the integer result
+   */
+  private int parseInt(String str, int fallback) {
+    
+    int result = fallback;
+    if (str != null) {
+      try {
+        result = Integer.parseInt(str);
+      } catch (NumberFormatException ignore) { }
+    }
+    return result;
+  }
+
+  /**
+   * Retrieves the color id for the specified string.
+   * 
+   * @param str the color string
+   * @param fallback the fallback value
+   * @return the color id
+   */
+  private int parseColor(String str, int fallback) {
+    
+    return colormap.get(str) == null ? fallback : colormap.get(str);
   }
   
   private void createUI(Machine machine) {
