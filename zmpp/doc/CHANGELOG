@@ -1,9 +1,17 @@
 Changelog
 
-Version 0.91
+Version 0.90
 ------------
 - customizable fonts sizes/default colors
 - preferences dialog added
+- joined info panel and cover art panel
+- fixed smaller bugs related to metadata and cover art
+- stack underflow check for routines added
+- modified according to Treaty of Babel
+- restructured so ZMPP could be invoked in another Java application
+- set the swing.aatext property by default
+- cosmetic changes
+- focus problem in Mozilla/Opera Linux solved
 
 Version 0.89
 ------------

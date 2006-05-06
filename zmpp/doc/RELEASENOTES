@@ -27,6 +27,7 @@ Features:
 - accented characters and unicode
 - timed input, preinitialized input
 - game-defined dictionaries, alphabet tables and accent tables
+- user defined default colors and font sizes
 - command history
 - multiple undo
 
@@ -41,55 +42,6 @@ TODO:
 - save/restore regions
 - version 6
 
-**************************************
-Running as an application
-*************************************
-
-Command line:
-
-java -jar zmpp.jar [story-file]
-
-On most systems, double clicking on the application jar file should start
-the software as well.
-
-Select a game:
-
-The game can be specified on the command line, if there is no story file
-specified, the application comes up with a file dialog
-
-Reading Blorb files
----------------------
-
-Blorb files must have the same filename as their story files, with a suffix of ".blb". The
-name is case-sensitive, so the name should be exactly the same way as the respective
-story file.
-Note: ZMPP can handle Blorb-wrapped story files which are recognized by
-having either a ".zblb" or ".zblorb" extension.
-
-**************************
-Running as an applet
-**************************
-
-applet parameters:
-
-1. storyfile:
--------------
-the URL of the story file, must be on the same server as the jar file
-
-2. blorbfile (optional):
-------------------------
-the URL of the blorb file, must be on the same server as the jar file
-
-3. saveto (optional):
----------------------
-if set to "file", the applet will try to save a game state to the
-user's file system, the default value is "memory" which saves a game
-within the Java VM's memory
-
-
-Note: if only the blorbfile parameter is specified, the interpreter assumes
-that the story is embedded in the blorb file
-
 
 Operating systems tested on:
 -------------------------
@@ -97,3 +49,24 @@ Operating systems tested on:
 - Linux
 - Windows XP
 - Mac OS X
+
+**************************
+Acknowledgements
+**************************
+
+This project would not have been possible without my dear wife encouraging
+and supporting me to work on software that lets me combine my hobby
+computer games and history and my strive to improve my skills.
+
+Big thanks go to the Interactive Fiction community:
+
+- the rec.arts.int-fiction group and their representatives for providing
+well written specifications
+- Fredrik Ramsberg for contributing his thoughts, suggestions and time towards
+better language support in ZMPP
+- Richard Vivian for selling me his copy "Masterpieces of Infocom"
+- Stefan Jokisch, David Kinder and Andrew Hunter for their interpreter
+that implementations served and still serve as a reference to ZMPP
+- Pichuneke and the spanish "CAAD" forum for their feedback
+- Matthias Schmidt for his suggestions that will hopefully lead to a more
+accessible ZMPP

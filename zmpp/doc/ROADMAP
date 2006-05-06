@@ -10,12 +10,15 @@ TODO:
 
 Version 0.91
 ------------
+- add character graphics font
+- find out why the layout calculation does not work in V6
+
+Version 0.90
+------------
 
 - customizable default colors and font sizes
 - make settings dialog for standalone version
 - fix the problem that leads to focus loss in Mozilla and Opera
-- add character graphics font
-- find out why the layout calculation does not work in V6
 - do more benchmark testing and tuning
 
 Version 0.89
