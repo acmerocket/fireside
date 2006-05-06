@@ -68,8 +68,9 @@ implements InputStream, StatusLine, IOSystem {
   private boolean savetofile;
   
   public void init() {
-        
-    System.setProperty("swing.aatext", "true");
+    
+    requestFocusInWindow();
+    //System.setProperty("swing.aatext", "true");
     String story = getParameter("storyfile");
     String blorb = getParameter("blorbfile");
     String saveto = getParameter("saveto");
