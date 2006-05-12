@@ -146,6 +146,14 @@ public class DefaultStoryFileHeader implements StoryFileHeader {
   /**
    * {@inheritDoc}
    */
+  public int getInterpreterNumber() {
+
+    return memaccess.readUnsignedByte(0x1e);
+  }
+  
+  /**
+   * {@inheritDoc}
+   */
   public void setInterpreterVersion(final int version) {
     
     if (getVersion() == 4 || getVersion() == 5) {
@@ -167,9 +175,20 @@ public class DefaultStoryFileHeader implements StoryFileHeader {
     memaccess.writeUnsignedByte(0x21, (short) numChars);    
   }
   
+  /**
+   * {@inheritDoc}
+   */
   public void setScreenWidthUnits(final int units) {
     
     memaccess.writeUnsignedShort(0x22, units);
+  }
+  
+  /**
+   * {@inheritDoc}
+   */  
+  public int getScreenWidthUnits() {
+    
+    return memaccess.readUnsignedShort(0x22);
   }
   
   /**
@@ -179,6 +198,22 @@ public class DefaultStoryFileHeader implements StoryFileHeader {
     
     return memaccess.readUnsignedByte(0x21);
   }
+
+  /**
+   * {@inheritDoc}
+   */
+  public int getScreenHeight() {
+    
+    return memaccess.readUnsignedByte(0x20);
+  }
+
+  /**
+   * {@inheritDoc}
+   */  
+  public int getScreenHeightUnits() {
+    
+    return memaccess.readUnsignedShort(0x24);
+  }
   
   /**
    * {@inheritDoc}
@@ -187,7 +222,10 @@ public class DefaultStoryFileHeader implements StoryFileHeader {
     
     memaccess.writeUnsignedByte(0x20, (short) numLines);
   }
-  
+
+  /**
+   * {@inheritDoc}
+   */
   public void setScreenHeightUnits(final int units) {
     
     memaccess.writeUnsignedShort(0x24, units);
@@ -276,6 +314,15 @@ public class DefaultStoryFileHeader implements StoryFileHeader {
   /**
    * {@inheritDoc}
    */
+  public int getFontWidth() {
+    
+    return (getVersion() == 6) ? memaccess.readUnsignedByte(0x27)
+        : memaccess.readUnsignedByte(0x26);
+  }
+  
+  /**
+   * {@inheritDoc}
+   */
   public void setFontHeight(final int units) {
     
     if (getVersion() == 6) {
@@ -286,6 +333,15 @@ public class DefaultStoryFileHeader implements StoryFileHeader {
       
       memaccess.writeUnsignedByte(0x27, (short) units);
     }
+  }
+  
+  /**
+   * {@inheritDoc}
+   */
+  public int getFontHeight() {
+    
+    return (getVersion() == 6) ? memaccess.readUnsignedByte(0x26)
+        : memaccess.readUnsignedByte(0x27);
   }
   
   /**
@@ -303,6 +359,7 @@ public class DefaultStoryFileHeader implements StoryFileHeader {
     
     // check the extension table
     final int extTable = memaccess.readUnsignedShort(0x36);
+    System.out.println("setMouseCoordinates(), exttable: " + extTable);
     if (extTable > 0) {
       
       final int numwords = memaccess.readUnsignedShort(extTable);

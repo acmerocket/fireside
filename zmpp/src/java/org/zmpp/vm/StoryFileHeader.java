@@ -136,6 +136,13 @@ public interface StoryFileHeader {
   void setInterpreterNumber(int number);
   
   /**
+   * Returns the interpreter number.
+   * 
+   * @return the interpreter number
+   */
+  int getInterpreterNumber();
+  
+  /**
    * Sets the interpreter version.
    * 
    * @param version the version
@@ -155,7 +162,34 @@ public interface StoryFileHeader {
    */
   void setScreenWidth(int numChars);
   
+  /**
+   * Sets the screen width in units.
+   * 
+   * @param units the number of units
+   */
   void setScreenWidthUnits(int units);
+  
+  /**
+   * Returns the screen width in units.
+   * 
+   * @return the screen width in units
+   * 
+   */
+  int getScreenWidthUnits();
+  
+  /**
+   * Returns the screen height.
+   * 
+   * @return the screen height
+   */
+  int getScreenHeight();
+  
+  /**
+   * Returns the screen height in units.
+   * 
+   * @return the screen height in units
+   */
+  int getScreenHeightUnits();
   
   /**
    * Sets the screen height in number of lines.
@@ -164,6 +198,11 @@ public interface StoryFileHeader {
    */
   void setScreenHeight(int numLines);
   
+  /**
+   * Sets the screen height in units.
+   * 
+   * @param units the number of units
+   */
   void setScreenHeightUnits(int units);
   
   /**
@@ -232,11 +271,25 @@ public interface StoryFileHeader {
   void setFontWidth(int units);
   
   /**
+   * Returns the font width in width of a '0'.
+   * 
+   * @return the font width in units
+   */
+  int getFontWidth();
+  
+  /**
    * Sets the font height in width of a '0'.
    * 
    * @param units the number of units in heights of a '0'
    */
   void setFontHeight(int units);
+  
+  /**
+   * Returns the font height in height of a '0'.
+   * 
+   * @return the font height in units
+   */
+  int getFontHeight();
   
   /**
    * Returns the address of the custom alphabet table.
