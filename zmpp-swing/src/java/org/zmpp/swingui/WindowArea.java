@@ -44,6 +44,9 @@ public class WindowArea {
   private int marginLeft;
   private int marginRight;
   
+  /**
+   * Constructor.
+   */
   public WindowArea() {
     
     this.left = 1;
@@ -54,7 +57,7 @@ public class WindowArea {
   public int getTop() { return top; }
   public int getWidth() { return width; }
   public int getHeight() { return height; }
-  public int getMarginLeft() { return marginLeft; }
+  public int getMarginLeft() { return left + marginLeft; }
   
   public void setPosition(int left, int top) {
     
