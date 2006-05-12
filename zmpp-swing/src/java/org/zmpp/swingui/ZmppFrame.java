@@ -102,7 +102,7 @@ implements InputStream, StatusLine, IOSystem {
     
     if (machine.getGameData().getStoryFileHeader().getVersion() ==  6) {
       
-      view = new Viewport6(machine, lineEditor);
+      view = new Viewport6(machine, lineEditor, settings);
       screen = (ScreenModel) view;
       
     } else {
@@ -249,7 +249,7 @@ implements InputStream, StatusLine, IOSystem {
       public void run() {
         
         global1ObjectLabel.setText(objectName);
-        statusLabel.setText(hours + ":" + minutes);
+        statusLabel.setText(String.format("%02d:%02d", hours, minutes));
       }
     });
   }
@@ -308,36 +308,34 @@ implements InputStream, StatusLine, IOSystem {
   }
   
   /**
-   * Reads a character from the keyboard.
-   * 
-   * @return the next character
+   * {@inheritDoc}
    */
-  public short getZsciiChar() {
+  public short getZsciiChar(boolean flushBeforeGet) {
 
-    enterEditMode();
+    enterEditMode(flushBeforeGet);
     short zsciiChar = lineEditor.nextZsciiChar();
-    leaveEditMode();
+    leaveEditMode(flushBeforeGet);
     return zsciiChar;
   }
   
-  private void enterEditMode() {
+  private void enterEditMode(boolean flushbuffer) {
     
     if (!lineEditor.isInputMode()) {
 
       screen.resetPagers();
-      lineEditor.setInputMode(true);
+      lineEditor.setInputMode(true, flushbuffer);
     }
   }
   
-  private void leaveEditMode() {
+  private void leaveEditMode(boolean flushbuffer) {
     
-    lineEditor.setInputMode(false);
+    lineEditor.setInputMode(false, flushbuffer);
   }
   
   private void about() {
     
     JOptionPane.showMessageDialog(this,
-        Main.APPNAME + "\n? 2005-2006 by Wei-ju Wu\n" +
+        Main.APPNAME + "\n\u00a9 2005-2006 by Wei-ju Wu\n" +
         "This software is released under the GNU public license.",
         "About...",
         JOptionPane.INFORMATION_MESSAGE);
@@ -366,8 +364,9 @@ implements InputStream, StatusLine, IOSystem {
         ColorTranslator.UNDEFINED);
     int defaultbackground = preferences.getInt("defaultbackground",
         ColorTranslator.UNDEFINED);
+    boolean antialias = preferences.getBoolean("antialias", true);
     
     return new DisplaySettings(stdfontsize, fixedfontsize, defaultbackground,
-                               defaultforeground);    
+                               defaultforeground, antialias);    
   }
 }

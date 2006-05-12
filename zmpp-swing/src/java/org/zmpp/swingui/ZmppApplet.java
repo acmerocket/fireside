@@ -95,7 +95,6 @@ implements InputStream, StatusLine, IOSystem {
   public void init() {
     
     requestFocusInWindow();
-    //System.setProperty("swing.aatext", "true");
     String story = getParameter("storyfile");
     String blorb = getParameter("blorbfile");
     String saveto = getParameter("saveto");
@@ -103,11 +102,13 @@ implements InputStream, StatusLine, IOSystem {
     String stdfontsize = getParameter("stdfontsize");
     String defbg = getParameter("defaultbg");
     String deffg = getParameter("defaultfg");
+    String antialiasparam = getParameter("antialias");
     
     int sizeStdFont = 12;
     int sizeFixedFont = 12;
     int defaultBackground = ColorTranslator.UNDEFINED;
     int defaultForeground = ColorTranslator.UNDEFINED;
+    boolean antialias = true;
     
     savetofile = "file".equalsIgnoreCase(saveto);
 
@@ -115,9 +116,10 @@ implements InputStream, StatusLine, IOSystem {
     sizeStdFont = parseInt(stdfontsize, sizeStdFont);
     defaultBackground = parseColor(defbg, defaultBackground);
     defaultForeground = parseColor(deffg, defaultForeground);
+    antialias = parseBoolean(antialiasparam, antialias);
     
     settings = new DisplaySettings(sizeStdFont, sizeFixedFont,
-        defaultBackground, defaultForeground);
+        defaultBackground, defaultForeground, antialias);
     
     try {
 
@@ -175,6 +177,21 @@ implements InputStream, StatusLine, IOSystem {
     return colormap.get(str) == null ? fallback : colormap.get(str);
   }
   
+  /**
+   * Retrievs the boolean value for the specified string. Values can
+   * be true|false or on|off.
+   * 
+   * @param str the string
+   * @param fallback the fallback value
+   * @return the boolean value
+   */
+  private boolean parseBoolean(String str, boolean fallback) {
+    
+    if ("false".equals(str) || "off".equals(str)) return false;
+    if ("true".equals(str) || "on".equals(str)) return true;
+    return fallback;
+  }
+  
   private void createUI(Machine machine) {
     
     lineEditor = new LineEditorImpl(machine.getGameData().getStoryFileHeader(),
@@ -184,7 +201,7 @@ implements InputStream, StatusLine, IOSystem {
     
     if (machine.getGameData().getStoryFileHeader().getVersion() == 6) {
       
-      view = new Viewport6(machine, lineEditor);
+      view = new Viewport6(machine, lineEditor, settings);
       screen = (ScreenModel) view;
       
     } else {
@@ -270,7 +287,7 @@ implements InputStream, StatusLine, IOSystem {
       public void run() {
         
         global1ObjectLabel.setText(objectName);
-        statusLabel.setText(hours + ":" + minutes);
+        statusLabel.setText(String.format("%02d:%02d", hours, minutes));
       }
     });
   }
@@ -310,25 +327,25 @@ implements InputStream, StatusLine, IOSystem {
     lineEditor.cancelInput();
   }
   
-  public short getZsciiChar() {
+  public short getZsciiChar(boolean flushBeforeGet) {
 
-    enterEditMode();
+    enterEditMode(flushBeforeGet);
     short zsciiChar = lineEditor.nextZsciiChar();
-    leaveEditMode();
+    leaveEditMode(flushBeforeGet);
     return zsciiChar;
   }
   
-  private void enterEditMode() {
+  private void enterEditMode(boolean flushbuffer) {
     
     if (!lineEditor.isInputMode()) {
 
       screen.resetPagers();
-      lineEditor.setInputMode(true);
+      lineEditor.setInputMode(true, flushbuffer);
     }
   }
   
-  private void leaveEditMode() {
+  private void leaveEditMode(boolean flushbuffer) {
     
-    lineEditor.setInputMode(false);
+    lineEditor.setInputMode(false, flushbuffer);
   }  
 }
