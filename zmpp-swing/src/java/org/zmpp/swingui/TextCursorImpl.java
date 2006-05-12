@@ -26,6 +26,8 @@ import org.zmpp.vm.TextCursor;
 
 /**
  * This class is the default implementation of the TextCursor interface.
+ * It holds the cursor position in the current unit measure, which is
+ * in V6 and characters in all other versions. 
  * 
  * @author Wei-ju Wu
  * @version 1.0
