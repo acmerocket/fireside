@@ -34,7 +34,7 @@ public class ExtendedStaticInfo implements InstructionStaticInfo {
     { 5, 6, 7, 8 }, // SET_FONT
     { 6 },          // DRAW_PICTURE
     { 6 },          // PICTURE_DATA
-    { },          // ERASE_PICTURE
+    { 6 },          // ERASE_PICTURE
     { 6 },          // SET_MARGINS
     { 5, 6, 7, 8 }, // SAVE_UNDO    
     { 5, 6, 7, 8 }, // RESTORE_UNDO
@@ -48,14 +48,14 @@ public class ExtendedStaticInfo implements InstructionStaticInfo {
     { 6 },          // WINDOW_STYLE
     { 6 },          // GET_WIND_PROP
     { },          // SCROLL_WINDOW
-    { },          // POP_STACK
-    { },          // READ_MOUSE
+    { 6 },          // POP_STACK
+    { 6 },          // READ_MOUSE
     { 6 },          // MOUSE_WINDOW
-    { },          // PUSH_STACK
-    { },          // PUT_WIND_PROP
+    { 6 },          // PUSH_STACK
+    { 6 },          // PUT_WIND_PROP
     { },          // PRINT_FORM
     { },          // MAKE_MENU
-    { },          // PICTURE_TABLE
+    { 6 },          // PICTURE_TABLE
   };
 
   private static final ExtendedStaticInfo instance = new ExtendedStaticInfo();
@@ -179,6 +179,8 @@ public class ExtendedStaticInfo implements InstructionStaticInfo {
       return "PICTURE_DATA";
     case ExtendedStaticInfo.OP_DRAW_PICTURE:
       return "DRAW_PICTURE";
+    case ExtendedStaticInfo.OP_ERASE_PICTURE:
+      return "ERASE_PICTURE";
     case ExtendedStaticInfo.OP_MOVE_WINDOW:
       return "MOVE_WINDOW";
     case ExtendedStaticInfo.OP_WINDOW_SIZE:
@@ -189,6 +191,16 @@ public class ExtendedStaticInfo implements InstructionStaticInfo {
       return "SET_MARGINS";
     case ExtendedStaticInfo.OP_GET_WIND_PROP:
       return "GET_WIND_PROP";
+    case ExtendedStaticInfo.OP_PICTURE_TABLE:
+      return "PICTURE_TABLE";
+    case ExtendedStaticInfo.OP_PUT_WIND_PROP:
+      return "PUT_WIND_PROP";
+    case ExtendedStaticInfo.OP_PUSH_STACK:
+      return "PUSH_STACK";
+    case ExtendedStaticInfo.OP_POP_STACK:
+      return "POP_STACK";
+    case ExtendedStaticInfo.OP_READ_MOUSE:
+      return "READ_MOUSE";
     default:
       return "unknown";
     }

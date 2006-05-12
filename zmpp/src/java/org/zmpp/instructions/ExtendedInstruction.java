@@ -27,6 +27,7 @@ import java.awt.Dimension;
 import org.zmpp.base.MemoryAccess;
 import org.zmpp.vm.Machine;
 import org.zmpp.vm.PortableGameState;
+import org.zmpp.vm.ScreenModel;
 import org.zmpp.vm.ScreenModel6;
 import org.zmpp.vm.Window6;
 
@@ -68,7 +69,10 @@ public class ExtendedInstruction extends AbstractInstruction {
     return ExtendedStaticInfo.getInstance();
   }
   
-  public InstructionResult doInstruction() {
+  /**
+   * {@inheritDoc}
+   */
+  public void doInstruction() {
 
     switch (getOpcode()) {    
 
@@ -108,6 +112,9 @@ public class ExtendedInstruction extends AbstractInstruction {
     case ExtendedStaticInfo.OP_DRAW_PICTURE:
       draw_picture();
       break;
+    case ExtendedStaticInfo.OP_ERASE_PICTURE:
+      erase_picture();
+      break;
     case ExtendedStaticInfo.OP_MOVE_WINDOW:
       move_window();
       break;
@@ -123,13 +130,25 @@ public class ExtendedInstruction extends AbstractInstruction {
     case ExtendedStaticInfo.OP_GET_WIND_PROP:
       get_wind_prop();
       break;
+    case ExtendedStaticInfo.OP_PICTURE_TABLE:
+      picture_table();
+      break;
+    case ExtendedStaticInfo.OP_PUT_WIND_PROP:
+      put_wind_prop();
+      break;
+    case ExtendedStaticInfo.OP_PUSH_STACK:
+      push_stack();
+      break;
+    case ExtendedStaticInfo.OP_POP_STACK:
+      pop_stack();
+      break;
+    case ExtendedStaticInfo.OP_READ_MOUSE:
+      read_mouse();
+      break;
     default:
       throwInvalidOpcode();
       break;
     }
-
-    // TODO
-    return new InstructionResult(TRUE, false);
   }
   
   private void save_undo() {
@@ -269,6 +288,23 @@ public class ExtendedInstruction extends AbstractInstruction {
         getMachine().getPictureManager().getPicture(picnum), y, x);
     nextInstruction();
   }
+
+  private void erase_picture() {
+    
+    final int picnum = getUnsignedValue(0);
+    int x = 1, y = 1;
+    
+    if (getNumOperands() > 1) {
+      y = getUnsignedValue(1);
+    }
+    
+    if (getNumOperands() > 2) {
+      x = getUnsignedValue(2);
+    }
+    getMachine().getScreen6().getSelectedWindow().erasePicture(
+        getMachine().getPictureManager().getPicture(picnum), y, x);
+    nextInstruction();
+  }
   
   private void move_window() {
     
@@ -301,16 +337,96 @@ public class ExtendedInstruction extends AbstractInstruction {
   
   private void set_margins() {
     
-    getMachine().getScreen6().getWindow(getUnsignedValue(2)).setMargins(
-        getUnsignedValue(0), getUnsignedValue(1));
+    int window = ScreenModel.CURRENT_WINDOW;
+    if (getNumOperands() == 3) {
+      
+      window = getUnsignedValue(2);
+    }
+    getWindow(window).setMargins(getUnsignedValue(0), getUnsignedValue(1));
     nextInstruction();
   }
   
   private void get_wind_prop() {
-    
+
+    int window = getValue(0);
+    int propnum = getUnsignedValue(1);
     short result;
-    result = (short) getWindow(getValue(0)).getProperty(getUnsignedValue(1));
+    result = (short) getWindow(window).getProperty(propnum);
+    System.out.printf("@get_wind_prop %d %d value: %04x\n", window, propnum, result);    
     storeResult(result);
+    nextInstruction();
+  }
+
+  private void put_wind_prop() {
+
+    int window = getValue(0);
+    int propnum = getUnsignedValue(1);
+    short value = getValue(2);
+    System.out.printf("@put_wind_prop %d %d value: %04x\n", window, propnum, value);    
+    getWindow(window).putProperty(propnum, value);
+    nextInstruction();
+  }
+  
+  private void picture_table() {
+
+    // @picture_table is a no-op, because all pictures are held in memory
+    // anyways
+    nextInstruction();
+  }
+  
+  private void pop_stack() {
+    
+    int numItems = getUnsignedValue(0);
+    int stack = 0;
+    if (getNumOperands() == 2) {
+      
+      stack = getUnsignedValue(1);
+    }
+    
+    if (stack == 0) {
+      
+      // pop from system stack
+      for (int i = 0; i < numItems; i++) {
+        
+        getCpu().getVariable(0);
+      }
+    } else {
+            
+      // pop from user stack
+      for (int i = 0; i < numItems; i++) {
+        
+        getCpu().popUserStack(stack);
+      }
+    }
+    nextInstruction();
+  }
+  
+  private void push_stack() {
+    
+    short value = getValue(0);
+    int stack = 0;
+    if (getNumOperands() == 2) {
+      
+      stack = getUnsignedValue(1);
+    }
+    
+    boolean ok = true;    
+    if (stack == 0) {
+      
+      getCpu().setVariable(0, value);
+      
+    } else {
+      
+      ok = getCpu().pushUserStack(stack, value);
+    }
+    branchOnTest(ok);
+  }
+  
+  private void read_mouse() {
+    
+    // TODO
+    int array = getUnsignedValue(0);
+    System.out.println("@read_mouse array: " + array);
     nextInstruction();
   }
   
@@ -319,5 +435,5 @@ public class ExtendedInstruction extends AbstractInstruction {
     return (windownum == ScreenModel6.CURRENT_WINDOW) ?
             getMachine().getScreen6().getSelectedWindow() :
             getMachine().getScreen6().getWindow(windownum);
-  }
+  }  
 }
