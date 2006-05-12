@@ -22,7 +22,7 @@
  */
 package org.zmpp.media;
 
-import java.awt.image.BufferedImage;
+import org.zmpp.blorb.BlorbImage;
 
 
 /**
@@ -45,7 +45,7 @@ public interface Resources {
    * 
    * @return the images
    */
-  MediaCollection<BufferedImage> getImages();
+  MediaCollection<BlorbImage> getImages();
 
   /**
    * Returns the sounds of this file.

@@ -23,18 +23,22 @@
 package org.zmpp.media;
 
 import java.awt.Dimension;
-import java.awt.image.BufferedImage;
+
+import org.zmpp.blorb.BlorbImage;
+import org.zmpp.vm.Machine;
 
 public class PictureManagerImpl implements PictureManager {
 
   private int release;
-  private MediaCollection<BufferedImage> pictures;
+  private MediaCollection<BlorbImage> pictures;
+  private Machine machine;
   
-  public PictureManagerImpl(int release,
-                            MediaCollection<BufferedImage> pictures) {
+  public PictureManagerImpl(int release, Machine machine,
+                            MediaCollection<BlorbImage> pictures) {
     
     this.release = release;
     this.pictures = pictures;
+    this.machine = machine;
   }
   
   /**
@@ -42,9 +46,11 @@ public class PictureManagerImpl implements PictureManager {
    */
   public Dimension getPictureSize(final int picturenum) {
     
-    final BufferedImage picture = pictures.getResource(picturenum);
-    if (picture != null) {
-      return new Dimension(picture.getWidth(), picture.getHeight());
+    final BlorbImage img = pictures.getResource(picturenum);
+    if (img != null) {
+      
+      return img.getSize(machine.getScreen6().getWidth(), 
+          machine.getScreen6().getHeight());
     }
     return null;
   }
@@ -52,7 +58,7 @@ public class PictureManagerImpl implements PictureManager {
   /**
    * {@inheritDoc}
    */
-  public BufferedImage getPicture(final int picturenum) {
+  public BlorbImage getPicture(final int picturenum) {
     
     return pictures.getResource(picturenum);
   }

@@ -22,8 +22,7 @@
  */
 package org.zmpp.vm;
 
-import java.awt.image.BufferedImage;
-
+import org.zmpp.blorb.BlorbImage;
 import org.zmpp.encoding.ZsciiString;
 import org.zmpp.iff.FormChunk;
 import org.zmpp.iff.WritableFormChunk;
@@ -167,7 +166,7 @@ public class MachineImpl implements Machine {
     input = new InputImpl(this);
     
     MediaCollection<SoundEffect> sounds = null;
-    MediaCollection<BufferedImage> pictures = null;
+    MediaCollection<BlorbImage> pictures = null;
     int resourceRelease = 0;
     
     if (gamedata.getResources() != null) {
@@ -178,7 +177,7 @@ public class MachineImpl implements Machine {
     }
     
     soundSystem = new SoundSystemImpl(sounds);
-    pictureManager = new PictureManagerImpl(resourceRelease, pictures);
+    pictureManager = new PictureManagerImpl(resourceRelease, this, pictures);
     
     resetState();
   }
@@ -462,6 +461,7 @@ public class MachineImpl implements Machine {
     if (gamedata.getStoryFileHeader().getVersion() >= 4) {
             
       gamedata.getStoryFileHeader().setEnabled(Attribute.SUPPORTS_TIMED_INPUT, true);
+      //gamedata.getStoryFileHeader().setInterpreterNumber(4); // Amiga
       gamedata.getStoryFileHeader().setInterpreterNumber(6); // IBM PC
       gamedata.getStoryFileHeader().setInterpreterVersion(1);
     }

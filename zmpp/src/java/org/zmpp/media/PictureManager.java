@@ -23,7 +23,8 @@
 package org.zmpp.media;
 
 import java.awt.Dimension;
-import java.awt.image.BufferedImage;
+
+import org.zmpp.blorb.BlorbImage;
 
 public interface PictureManager {
 
@@ -43,7 +44,7 @@ public interface PictureManager {
    * @param picturenum the picture number
    * @return the data
    */
-  BufferedImage getPicture(int picturenum);
+  BlorbImage getPicture(int picturenum);
   
   /**
    * Returns the number of pictures.
