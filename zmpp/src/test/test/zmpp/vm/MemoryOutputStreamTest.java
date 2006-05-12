@@ -65,14 +65,14 @@ public class MemoryOutputStreamTest extends MockObjectTestCase {
     mockMemAccess.expects(once()).method("writeUnsignedShort").with(eq(4711), eq(1));
     
     // Selection has to be performed prior to printing - ALWAYS !!!
-    output.select(4711);    
+    output.select(4711, 0);    
     output.print((short) 65, false);
     output.select(false);
   }
   
   public void testIsSelected() {
     
-    output.select(4711);
+    output.select(4711, 0);
     assertTrue(output.isSelected());
   }
   
@@ -88,7 +88,7 @@ public class MemoryOutputStreamTest extends MockObjectTestCase {
     mockCpu.expects(once()).method("halt").with(eq("maximum nesting depth (16) for stream 3 exceeded"));
     for (int i = 0; i < 17; i++) {
       
-      output.select(4710 + 10 * i);
+      output.select(4710 + 10 * i, 0);
     }
   }
   
