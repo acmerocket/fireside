@@ -52,7 +52,7 @@ public class FileInputStreamTest extends MockObjectTestCase {
   public void testReadZsciiChar() {
     
     mockIo.expects(once()).method("getInputStreamReader").will(returnValue(reader));
-    instream.getZsciiChar();
+    instream.getZsciiChar(true);
   }
   
   protected void tearDown() throws Exception {
