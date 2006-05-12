@@ -62,7 +62,7 @@ public class FileInputStream implements InputStream {
   /**
    * {@inheritDoc}
    */
-  public short getZsciiChar() {
+  public short getZsciiChar(boolean flushBeforeGet) {
     
     checkForReader();
     if (input != null) {

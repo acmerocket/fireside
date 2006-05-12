@@ -40,9 +40,10 @@ public interface InputStream {
    * Reads only one ZSCII character from the stream. This is somewhat
    * immediate.
    * 
+   * @param flushBeforeGet flushes the stream before the get operation
    * @return the ZSCII character
    */
-  short getZsciiChar();
+  short getZsciiChar(boolean flushBeforeGet);
   
   /**
    * Release underlying resources.
