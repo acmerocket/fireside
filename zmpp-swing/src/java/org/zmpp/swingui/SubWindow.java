@@ -158,7 +158,11 @@ public abstract class SubWindow implements CursorWindow {
   public void setBackground(int colornum) { background = colornum; }
   
   protected Color getBackgroundColor() {
-    
+  
+    if (background == ColorTranslator.COLOR_UNDER_CURSOR) {
+      
+      return getCanvas().getColorAtPixel(getCurrentX(), getCurrentY());
+    }
     return ColorTranslator.getInstance().translate(background,
         viewport.getDefaultBackground());
   }
@@ -167,6 +171,10 @@ public abstract class SubWindow implements CursorWindow {
   
   protected Color getForegroundColor() {
     
+    if (foreground == ColorTranslator.COLOR_UNDER_CURSOR) {
+      
+      return getCanvas().getColorAtPixel(getCurrentX(), getCurrentY());
+    }
     return ColorTranslator.getInstance().translate(foreground,
         viewport.getDefaultForeground());
   }
@@ -176,7 +184,7 @@ public abstract class SubWindow implements CursorWindow {
    * 
    * @param str a string to pring
    */
-  public void printString(String str) {
+  protected void printString(String str) {
 
     //System.out.printf("printString(), %s: '%s'\n", name, str);
     Canvas canvas = getCanvas();
@@ -273,6 +281,11 @@ public abstract class SubWindow implements CursorWindow {
     cursor.setColumn(cursor.getColumn() + line.length());
   }
   
+  public void flushBuffer() {
+    
+    // default implementation is empty
+  }
+  
   // ************************************************************************
   // ******* Abstract methods
   // *************************************************
@@ -315,7 +328,7 @@ public abstract class SubWindow implements CursorWindow {
    * Resets the internal pager.
    */
   public abstract void resetPager();
-    
+
   protected abstract void sizeUpdated();
   
   protected abstract int getCurrentX();
