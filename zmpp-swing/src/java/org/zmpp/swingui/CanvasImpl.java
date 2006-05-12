@@ -25,6 +25,8 @@ package org.zmpp.swingui;
 import java.awt.Color;
 import java.awt.Font;
 import java.awt.Graphics;
+import java.awt.Graphics2D;
+import java.awt.RenderingHints;
 import java.awt.image.BufferedImage;
 import java.awt.image.ImageObserver;
 
@@ -40,10 +42,18 @@ public class CanvasImpl implements Canvas {
   private Graphics graphics;
   private ImageObserver observer;
   
-  public CanvasImpl(BufferedImage image, ImageObserver observer) {
+  public CanvasImpl(BufferedImage image, ImageObserver observer,
+      boolean antialias) {
     
     this.image = image;
     this.graphics = image.getGraphics();
+    
+    // activate antialiasing if set
+    if (antialias) {
+      
+      ((Graphics2D) graphics).setRenderingHint(RenderingHints.KEY_ANTIALIASING,
+          RenderingHints.VALUE_ANTIALIAS_ON);
+    }
     this.observer = observer;
   }
   
@@ -101,6 +111,9 @@ public class CanvasImpl implements Canvas {
     graphics.drawString(str, x, y);
   }
 
+  /**
+   * {@inheritDoc}
+   */
   public void scrollUp(Color backColor, Font font, int top, int height) {
     
     int fontHeight = getFontHeight(font);
@@ -110,14 +123,33 @@ public class CanvasImpl implements Canvas {
     graphics.fillRect(0, top + height - fontHeight,
                       getWidth(), fontHeight + 1);
   }
+
+  /**
+   * {@inheritDoc}
+   */
+  public void scrollUp(Color backColor, int left, int top,
+      int width, int height, int numPixels) {
+    
+    graphics.copyArea(left, top + numPixels, width,
+                      height - numPixels, 0, -numPixels);
+    graphics.setColor(backColor);
+    graphics.fillRect(left, top + height - numPixels,
+                      width, numPixels + 1);
+  }
   
   public void setClip(int left, int top, int width, int height) {
     
     graphics.setClip(left, top, width, height);
   }
   
-  public void drawImage(BufferedImage image, int x, int y) {
+  public void drawImage(BufferedImage image, int x, int y, int width,
+      int height) {
     
-    graphics.drawImage(image, x, y, observer);
+    graphics.drawImage(image, x, y, width, height, observer);
+  }
+  
+  public Color getColorAtPixel(int x, int y) {
+ 
+    return new Color(image.getRGB(x, y));
   }
 }

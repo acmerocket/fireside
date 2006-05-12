@@ -43,10 +43,33 @@ public interface Canvas {
   int getFontDescent(Font font);
   int getCharWidth(Font font, char c);
   int getStringWidth(Font font, String str);
-    
+  
+  /**
+   * Scroll up one line. For regular games.
+   * 
+   * @param backColor the background color
+   * @param font the font
+   * @param top the top coordinate
+   * @param height the area height
+   */
   void scrollUp(Color backColor, Font font, int top, int height);
+  
+  /**
+   * Scrolling for V6 games.
+   * 
+   * @param backColor the background color
+   * @param left the left coordinate of the area
+   * @param top the top coordinate of the area
+   * @param width the area width
+   * @param height the height
+   * @param numPixels the number of pixels
+   */
+  void scrollUp(Color backColor, int left, int top, int width,
+                int height, int numPixels);
+  
   void fillRect(Color color, int left, int top, int width, int height);
   void drawString(Color color, Font font, int x, int y, String str);
   void setClip(int left, int top, int width, int height);
-  void drawImage(BufferedImage image, int x, int y);
+  void drawImage(BufferedImage image, int x, int y, int width, int height);
+  Color getColorAtPixel(int x, int y);
 }
