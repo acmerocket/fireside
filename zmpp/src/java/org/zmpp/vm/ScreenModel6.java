@@ -46,4 +46,18 @@ public interface ScreenModel6 extends ScreenModel {
    * @return the currently selected window
    */
   Window6 getSelectedWindow();
+
+  /**
+   * Returns the total screen model width.
+   * 
+   * @return the screen width
+   */
+  int getWidth();
+  
+  /**
+   * Returns the total screen model height.
+   * 
+   * @return the screen height
+   */
+  int getHeight();
 }
