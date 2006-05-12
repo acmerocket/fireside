@@ -75,7 +75,7 @@ public class GameInfoDialog extends JDialog {
     
     if (coverartnum > 0) {
       BufferedImage image =
-        resources.getImages().getResource(coverartnum);
+        resources.getImages().getResource(coverartnum).getImage();
       JLabel label = new PictureLabel(image);
       label.setPreferredSize(new Dimension(STD_WIDTH, 400));
       picpanel.add(label);
