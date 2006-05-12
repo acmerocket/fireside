@@ -34,6 +34,7 @@ import javax.swing.BorderFactory;
 import javax.swing.Box;
 import javax.swing.BoxLayout;
 import javax.swing.JButton;
+import javax.swing.JCheckBox;
 import javax.swing.JComboBox;
 import javax.swing.JDialog;
 import javax.swing.JFrame;
@@ -82,16 +83,19 @@ public class PreferencesDialog extends JDialog implements ActionListener {
   private JSpinner fixedfontSpinner;
   private JComboBox foregroundCB;
   private JComboBox backgroundCB;
+  private JCheckBox antialiasCB;
   private Preferences preferences;
+  private DisplaySettings settings;
     
   public PreferencesDialog(JFrame parent, Preferences preferences,
                            DisplaySettings settings) {
     
     super(parent, "Preferences...", true);
     this.preferences = preferences;
+    this.settings = settings;
     
     // Control panel
-    GridLayout grid = new GridLayout(4, 2);
+    GridLayout grid = new GridLayout(5, 2);
     grid.setVgap(3);
     grid.setHgap(3);
     
@@ -121,6 +125,12 @@ public class PreferencesDialog extends JDialog implements ActionListener {
     mainpanel.add(foregroundCB);
     preselect(foregroundCB, settings.getDefaultForeground());
 
+    JLabel antialiasLabel = new JLabel("Antialiased text: ");
+    mainpanel.add(antialiasLabel);
+    antialiasCB = new JCheckBox();
+    antialiasCB.setSelected(settings.getAntialias());
+    mainpanel.add(antialiasCB);
+    
     // Button panel
     Box lowpanel = new Box(BoxLayout.Y_AXIS);
     lowpanel.add(new JSeparator());
@@ -156,16 +166,18 @@ public class PreferencesDialog extends JDialog implements ActionListener {
       
       // Transfer the settings to the user settings only, they will
       // only take effect on the next restart
-      System.out.println("Std font: " + stdfontSpinner.getValue());
-      System.out.println("Fixed font: " + fixedfontSpinner.getValue());
-      System.out.println("Foreground: " + foregroundCB.getSelectedItem());
-      System.out.println("Background: " + backgroundCB.getSelectedItem());
-      preferences.put("stdfontsize", stdfontSpinner.getValue().toString());
-      preferences.put("fixedfontsize", fixedfontSpinner.getValue().toString());
-      preferences.put("defaultbackground",
-          String.valueOf(((ColorItem) backgroundCB.getSelectedItem()).color));
-      preferences.put("defaultforeground",
-          String.valueOf(((ColorItem) foregroundCB.getSelectedItem()).color));
+      int stdfontsize = Integer.valueOf(stdfontSpinner.getValue().toString());
+      int fixedfontsize = Integer.valueOf(fixedfontSpinner.getValue().toString());
+      int bgcolor = ((ColorItem) backgroundCB.getSelectedItem()).color;
+      int fgcolor = ((ColorItem) foregroundCB.getSelectedItem()).color;
+      boolean antialias = antialiasCB.isSelected();
+      
+      preferences.put("stdfontsize", String.valueOf(stdfontsize));
+      preferences.put("fixedfontsize", String.valueOf(fixedfontsize));
+      preferences.put("defaultbackground", String.valueOf(bgcolor));
+      preferences.put("defaultforeground", String.valueOf(fgcolor));
+      preferences.put("antialias", antialias ? "on" : "off");
+      settings.setSettings(stdfontsize, fixedfontsize, bgcolor, fgcolor, antialias);
       try {
         preferences.flush();
       } catch (BackingStoreException ex) {
