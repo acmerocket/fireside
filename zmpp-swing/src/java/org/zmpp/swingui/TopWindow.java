@@ -97,7 +97,10 @@ public class TopWindow extends SubWindow {
     int meanCharWidth = getCanvas().getCharWidth(getFont(), '0');      
     return (getCursor().getColumn() - 1) * meanCharWidth;
   }
-  
+
+  /**
+   * {@inheritDoc}
+   */
   protected int getCurrentY() {
     
     Font font = getFont();
@@ -106,7 +109,19 @@ public class TopWindow extends SubWindow {
            + (canvas.getFontHeight(font) - canvas.getFontDescent(font));
   }
   
+  /**
+   * {@inheritDoc}
+   */
   public void updateCursorCoordinates() {
-    
+
+    // empty
   }
+
+  /**
+   * {@inheritDoc}
+   */
+  public void printChar(char c, boolean isInput) {
+
+    printString(String.valueOf(c));
+  } 
 }
