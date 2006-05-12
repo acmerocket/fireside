@@ -203,10 +203,11 @@ public class OutputImpl implements Output {
   /**
    * {@inheritDoc}
    */
-  public void selectOutputStream3(final int tableAddress) {
+  public void selectOutputStream3(final int tableAddress,
+      final int tableWidth) {
 
     ((MemoryOutputStream) outputStream[OUTPUTSTREAM_MEMORY - 1]).select(
-        tableAddress);
+        tableAddress, tableWidth);
   }
   
   /**

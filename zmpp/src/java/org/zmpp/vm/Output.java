@@ -70,8 +70,9 @@ public interface Output {
    * Selects the output stream 3 which writes to memory.
    * 
    * @param tableAddress the table address to write to
+   * @param tableWidth the table width
    */
-  void selectOutputStream3(int tableAddress);
+  void selectOutputStream3(int tableAddress, int tableWidth);
   
   /**
    * Prints the ZSCII string at the specified address to the active
