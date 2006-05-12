@@ -22,7 +22,7 @@
  */
 package org.zmpp.vm;
 
-import java.awt.image.BufferedImage;
+import org.zmpp.blorb.BlorbImage;
 
 public interface Window6 {
 
@@ -50,7 +50,16 @@ public interface Window6 {
    * @param y the y coordinate
    * @param x the x coordinate
    */
-  void drawPicture(BufferedImage picture, int y, int x);
+  void drawPicture(BlorbImage picture, int y, int x);
+  
+  /**
+   * Clears the area of the specified picture at the given position.
+   * 
+   * @param picture the picture
+   * @param y the y coordinate
+   * @param x the x coordinate
+   */
+  void erasePicture(BlorbImage picture, int y, int x);
   
   /**
    * Moves the window to the specified coordinates in pixels, (1, 1)
@@ -110,4 +119,12 @@ public interface Window6 {
    * @return the property value
    */
   int getProperty(int propertynum);
+  
+  /**
+   * Sets the specified window property.
+   * 
+   * @param propertynum the property number
+   * @param value the value
+   */
+  void putProperty(int propertynum, short value);
 }
