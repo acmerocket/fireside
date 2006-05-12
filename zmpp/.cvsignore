@@ -3,3 +3,4 @@ cobertura.ser
 velocity.log
 target
 javadoc*
+.umlproject
