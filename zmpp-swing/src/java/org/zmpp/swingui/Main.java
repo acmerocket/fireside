@@ -42,7 +42,7 @@ public class Main {
    * The application name.
    */
   public static final String APPNAME =
-    "Z-Machine Preservation Project Version 0.90";
+    "Z-Machine Preservation Project Version 0.93";
   
   /**
    * The main method.
@@ -50,6 +50,8 @@ public class Main {
    * @param args the arguments
    */
   public static void main(String[] args) {
+    
+    System.setProperty("swing.aatext", "true");
     
     File storyfile = null;
     try {
@@ -83,8 +85,6 @@ public class Main {
    * @param storyfile the story file
    */
   public static void runStoryFile(File storyfile) {
-    
-    System.setProperty("swing.aatext", "true");
     
     if (System.getProperty("mrj.version") != null) {
       
