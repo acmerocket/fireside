@@ -47,6 +47,11 @@ public abstract class BlorbMediaCollection<T> implements MediaCollection<T> {
    * The list of resource numbers in the file.
    */
   private List<Integer> resourceNumbers;
+  
+  /**
+   * Access to the form chunk.
+   */
+  private FormChunk formchunk;
 
   /**
    * Constructor.
@@ -56,6 +61,7 @@ public abstract class BlorbMediaCollection<T> implements MediaCollection<T> {
   public BlorbMediaCollection(FormChunk formchunk) {
     
     resourceNumbers = new ArrayList<Integer>();
+    this.formchunk = formchunk;
     initDatabase();
     
     // Ridx chunk
@@ -130,7 +136,17 @@ public abstract class BlorbMediaCollection<T> implements MediaCollection<T> {
   public void unloadResource(final int resourcenumber) {
     
     // intentionally left empty for possible future use
-  }  
+  }
+  
+  /**
+   * Access to the form chunk.
+   * 
+   * @return the form chunk
+   */
+  protected FormChunk getFormChunk() {
+    
+    return formchunk;
+  }
   
   /**
    * Initialize the database.

@@ -22,8 +22,6 @@
  */
 package org.zmpp.blorb;
 
-import java.awt.image.BufferedImage;
-
 import org.zmpp.iff.FormChunk;
 import org.zmpp.media.InformMetadata;
 import org.zmpp.media.MediaCollection;
@@ -42,7 +40,7 @@ public class BlorbResources implements Resources {
   /**
    * The file's images.
    */
-  private MediaCollection<BufferedImage> images;
+  private MediaCollection<BlorbImage> images;
   
   /**
    * The file's sounds.
@@ -70,7 +68,7 @@ public class BlorbResources implements Resources {
    * @param formchunk a form chunk in Blorb format
    */
   public BlorbResources(FormChunk formchunk) {
-  
+
     images = new BlorbImages(formchunk);
     sounds = new BlorbSounds(formchunk);
     coverart = new BlorbCoverArt(formchunk);
@@ -80,7 +78,7 @@ public class BlorbResources implements Resources {
   /**
    * {@inheritDoc}
    */
-  public MediaCollection<BufferedImage> getImages() { return images; }
+  public MediaCollection<BlorbImage> getImages() { return images; }
   
   /**
    * {@inheritDoc}
