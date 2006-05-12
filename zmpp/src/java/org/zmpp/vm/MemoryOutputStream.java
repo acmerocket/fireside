@@ -62,7 +62,17 @@ public class MemoryOutputStream implements OutputStream {
    * Support nested selections.
    */
   private List<TablePosition> tableStack;
+  
+  /**
+   * The table width.
+   */
+  private int tableWidth;
     
+  /**
+   * Constructor.
+   * 
+   * @param machine the machine object
+   */
   public MemoryOutputStream(Machine machine) {
   
     tableStack = new ArrayList<TablePosition>();
@@ -128,9 +138,12 @@ public class MemoryOutputStream implements OutputStream {
    * Selects this memory stream.
    * 
    * @param tableAddress the table address
+   * @param tableWidth the table width
    */
-  public void select(final int tableAddress) {
+  public void select(final int tableAddress, final int tableWidth) {
 
+    this.tableWidth = tableWidth;
+    
     if (tableStack.size() < MAX_NESTING_DEPTH) {
       
       tableStack.add(new TablePosition(tableAddress));
