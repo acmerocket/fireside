@@ -9,18 +9,28 @@ public class DisplaySettings {
   private int fixedFontSize;
   private int defaultForeground;
   private int defaultBackground;
+  private boolean antialias;
   
   public DisplaySettings(int stdFontSize, int fixedFontSize,
-      int defaultBackground, int defaultForeground) {
-    
-    this.stdFontSize = stdFontSize;
-    this.fixedFontSize = fixedFontSize;
-    this.defaultBackground = defaultBackground;
-    this.defaultForeground = defaultForeground;
+      int defaultBackground, int defaultForeground, boolean antialias) {
+
+    setSettings(stdFontSize, fixedFontSize, defaultBackground,
+        defaultForeground, antialias);
   }
   
   public int getStdFontSize() { return stdFontSize; }
   public int getFixedFontSize() { return fixedFontSize; }
   public int getDefaultBackground() { return defaultBackground; }
   public int getDefaultForeground() { return defaultForeground; }
+  public boolean getAntialias() { return antialias; }
+  
+  public void setSettings(int stdFontSize, int fixedFontSize,
+      int defaultBackground, int defaultForeground, boolean antialias) {
+    
+    this.stdFontSize = stdFontSize;
+    this.fixedFontSize = fixedFontSize;
+    this.defaultBackground = defaultBackground;
+    this.defaultForeground = defaultForeground;
+    this.antialias = antialias;
+  }
 }
