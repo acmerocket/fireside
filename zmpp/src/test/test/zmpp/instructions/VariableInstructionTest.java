@@ -110,6 +110,15 @@ public class VariableInstructionTest extends InstructionTestBase {
     assertFalse(callvn2_5.storesResult());
   }
   
+  public void testPullStoresValueInV6() {
+    
+    mockFileHeader.expects(atLeastOnce()).method("getVersion").will(returnValue(6));
+    
+    VariableInstruction pull6 = new VariableInstruction(machine,
+        OperandCount.VAR, VariableStaticInfo.OP_PULL);    
+    assertTrue(pull6.storesResult());
+  }
+  
   
   public void testIsBranch() {
     
@@ -402,7 +411,7 @@ public class VariableInstructionTest extends InstructionTestBase {
     pull.setLength(5);
     pull.execute();
   }
-  
+
   // As long as we did not use mock objects here, we have to initialize the
   // machine state. We check the Standard 1.1 enhancement that pull to the
   // stack will not modify the stack pointer
@@ -421,6 +430,38 @@ public class VariableInstructionTest extends InstructionTestBase {
     pull.execute();
   }
     
+  public void testPullV6NoUserStack() {
+    
+    mockFileHeader.expects(once()).method("getVersion").will(returnValue(6));
+    mockMachine.expects(atLeastOnce()).method("getCpu").will(returnValue(cpu));
+    mockCpu.expects(once()).method("getVariable").with(eq(0x00)).will(returnValue((short) 0x14));;
+    
+    mockCpu.expects(once()).method("setVariable").with(eq(0x15), eq((short) 0x14));
+    mockCpu.expects(once()).method("incrementProgramCounter").with(eq(5));
+
+    VariableInstruction pull = new VariableInstruction(machine,
+        OperandCount.VAR, VariableStaticInfo.OP_PULL);
+    pull.setStoreVariable((short) 0x15);
+    pull.setLength(5);
+    pull.execute();
+  }  
+
+  public void testPullV6UserStack() {
+    
+    mockFileHeader.expects(once()).method("getVersion").will(returnValue(6));
+    mockMachine.expects(atLeastOnce()).method("getCpu").will(returnValue(cpu));
+    mockCpu.expects(once()).method("popUserStack").with(eq(0x1234)).will(returnValue((short) 0x15));    
+    mockCpu.expects(once()).method("setVariable").with(eq(0x15), eq((short) 0x15));
+    mockCpu.expects(once()).method("incrementProgramCounter").with(eq(5));
+
+    VariableInstruction pull = new VariableInstruction(machine,
+        OperandCount.VAR, VariableStaticInfo.OP_PULL);
+    pull.addOperand(new Operand(Operand.TYPENUM_LARGE_CONSTANT, (short) 0x1234));
+    pull.setStoreVariable((short) 0x15);
+    pull.setLength(5);
+    pull.execute();
+  }  
+  
   // *******************************************************************
   // ********* INPUTSTREAM
   // *************************
