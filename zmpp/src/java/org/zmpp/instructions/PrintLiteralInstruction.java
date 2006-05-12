@@ -114,7 +114,7 @@ public class PrintLiteralInstruction extends AbstractInstruction {
   /**
    * {@inheritDoc}
    */
-  public InstructionResult doInstruction() {
+  public void doInstruction() {
 
     if (getOpcode() == PrintLiteralStaticInfo.OP_PRINT_RET) {
       
@@ -131,7 +131,6 @@ public class PrintLiteralInstruction extends AbstractInstruction {
      
       throwInvalidOpcode();
     }
-    return new InstructionResult(TRUE, false);
   }
   
   /**

@@ -259,9 +259,8 @@ public class AbstractInstructionTest extends MockObjectTestCase {
       return InstructionForm.LONG;
     }
     
-    protected InstructionResult doInstruction() {
+    protected void doInstruction() {
     
-      return new InstructionResult(TRUE, false);
     } 
     
     public void execute() {

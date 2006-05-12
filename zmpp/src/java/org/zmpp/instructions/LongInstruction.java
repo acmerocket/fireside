@@ -71,7 +71,7 @@ public class LongInstruction extends AbstractInstruction {
   /**
    * {@inheritDoc}
    */
-  public InstructionResult doInstruction() {
+  public void doInstruction() {
    
     switch (getOpcode()) {
     
@@ -161,10 +161,7 @@ public class LongInstruction extends AbstractInstruction {
         break;
       default:
         throwInvalidOpcode();
-    }
-    
-    // TODO
-    return new InstructionResult(TRUE, false);
+    }    
   }
   
   /**
@@ -537,8 +534,8 @@ public class LongInstruction extends AbstractInstruction {
       
       window = getValue(2);
     }
-    //System.out.printf("@set_colour, foreground: %d, background: %d\n",
-    //    getValue(0), getValue(1));
+    System.out.printf("@set_colour, foreground: %d, background: %d\n",
+        getValue(0), getValue(1));
     getMachine().getScreen().setForegroundColor(getValue(0), window);
     getMachine().getScreen().setBackgroundColor(getValue(1), window);
     nextInstruction();

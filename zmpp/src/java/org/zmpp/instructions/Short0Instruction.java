@@ -48,7 +48,7 @@ public class Short0Instruction extends AbstractInstruction {
   /**
    * {@inheritDoc}
    */
-  public InstructionResult doInstruction() {
+  public void doInstruction() {
     
     switch (getOpcode()) {
 
@@ -102,9 +102,6 @@ public class Short0Instruction extends AbstractInstruction {
       default:        
         throwInvalidOpcode();
     }
-    
-    // TODO
-    return new InstructionResult(TRUE, false);
   }
   
   /**

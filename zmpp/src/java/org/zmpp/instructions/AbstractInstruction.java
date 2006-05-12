@@ -419,10 +419,8 @@ public abstract class AbstractInstruction implements Instruction {
   
   /**
    * Executes the instruction and returns a result.
-   * 
-   * @return the result of the instruction
    */
-  protected abstract InstructionResult doInstruction();
+  protected abstract void doInstruction();
   
   /**
    * Checks the availability of the instruction for the current version.

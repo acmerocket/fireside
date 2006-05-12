@@ -48,7 +48,7 @@ public class Short1Instruction extends AbstractInstruction {
   /**
    * {@inheritDoc}
    */
-  protected InstructionResult doInstruction() {
+  protected void doInstruction() {
     
     switch (getOpcode()) {
       case Short1StaticInfo.OP_JZ:
@@ -109,9 +109,6 @@ public class Short1Instruction extends AbstractInstruction {
       default:
         throwInvalidOpcode();
     }
-    
-    // TODO
-    return new InstructionResult(TRUE, false);
   }
 
   /**
