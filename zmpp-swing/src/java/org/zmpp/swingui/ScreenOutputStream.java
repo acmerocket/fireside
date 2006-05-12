@@ -26,25 +26,42 @@ import org.zmpp.encoding.ZsciiEncoding;
 import org.zmpp.io.OutputStream;
 import org.zmpp.vm.Machine;
 
+/**
+ * This class implements the screen output stream. It mainly acts as a
+ * dispatcher to the current window.
+ * 
+ * @author Wei-ju Wu
+ * @version 1.0
+ */
 public class ScreenOutputStream implements OutputStream {
 
   private boolean isSelected;
-  private StringBuilder streambuffer;
   private Machine machine;
   private Viewport viewport;
-  
+
+  /**
+   * Constructor.
+   * 
+   * @param machine the machine object
+   * @param viewport the viewport
+   */
   public ScreenOutputStream(Machine machine, Viewport viewport) {
   
     this.machine = machine;
     this.viewport = viewport;
-    streambuffer = new StringBuilder();
   }
   
+  /**
+   * {@inheritDoc}
+   */
   public boolean isSelected() {
     
     return isSelected;
   }
-  
+
+  /**
+   * {@inheritDoc}
+   */
   public void select(boolean flag) {
   
     isSelected = flag;
@@ -58,12 +75,13 @@ public class ScreenOutputStream implements OutputStream {
     //System.out.printf("@print %c (isInput: %b)\n", (char) zsciiChar, isInput);    
     if (zsciiChar == ZsciiEncoding.NEWLINE) {
     
-      printChar('\n', isInput);
+      viewport.getCurrentWindow().printChar('\n', isInput);
     
     } else {
     
-      printChar(machine.getGameData().getZsciiEncoding().getUnicodeChar(
-          zsciiChar), isInput);
+      viewport.getCurrentWindow().printChar(
+          machine.getGameData().getZsciiEncoding().getUnicodeChar(zsciiChar),
+          isInput);
     }
   }
 
@@ -76,31 +94,17 @@ public class ScreenOutputStream implements OutputStream {
       machine.getGameData().getZsciiEncoding().getUnicodeChar(zchar);
     viewport.getCurrentWindow().backspace(deleteChar);
   }
-  
+
+  /**
+   * {@inheritDoc}
+   */
   public void flush() {
-    
-    // save some unnecessary flushes
-    if (streambuffer.length() > 0) {
-      
-      viewport.getCurrentWindow().printString(streambuffer.toString());
-      streambuffer = new StringBuilder();
-    }
+
+    viewport.getCurrentWindow().flushBuffer();
   }
     
   /**
    * {@inheritDoc}
    */
   public void close() { }
-  
-  private void printChar(char c, boolean isInput) {
-
-    if (isInput || !viewport.getCurrentWindow().isBuffered()) {
-      
-      viewport.getCurrentWindow().printString(String.valueOf(c));
-      
-    } else {
-      
-      streambuffer.append(c);
-    }
-  } 
 }

@@ -42,6 +42,7 @@ public class BottomWindow extends SubWindow {
   private int currentX;
   private int currentY;
   private int lineHeight;
+  private StringBuilder streambuffer;
   
   /**
    * Constructor.
@@ -55,6 +56,20 @@ public class BottomWindow extends SubWindow {
     super(viewport, "BOTTOM");    
     setBufferMode(true);
     setPagingEnabled(true);
+    streambuffer = new StringBuilder();
+  }
+  
+  /**
+   * {@inheritDoc}
+   */
+  public void flushBuffer() {
+
+    // save some unnecessary flushes
+    if (streambuffer.length() > 0) {
+      
+      printString(streambuffer.toString());
+      streambuffer = new StringBuilder();
+    }
   }
 
   /**
@@ -89,6 +104,9 @@ public class BottomWindow extends SubWindow {
     this.isBuffered = flag;
   }
     
+  /**
+   * Scrolls the window if necessary.
+   */
   private void scrollIfNeeded() {
 
     //System.out.printf("scrollIfNeeded(), current y: %d, window bottom: %d" +
@@ -167,11 +185,11 @@ public class BottomWindow extends SubWindow {
     
     // Do this exclusively to have better thread control, we need to stay
     // in the application thread
-    getEditor().setInputMode(true);
+    getEditor().setInputMode(true, true);
     getEditor().nextZsciiChar();
     resetCursorToHome();
     eraseLine();
-    getEditor().setInputMode(false);
+    getEditor().setInputMode(false, true);
     resetPager();
   }
   
@@ -196,12 +214,20 @@ public class BottomWindow extends SubWindow {
     lineHeight = 0;
   }
 
-  /*
-  public void printString(String str) {
-    
-    System.out.printf("printString(), '%s'\n", str);
-    super.printString(str);
-  }*/
+  /**
+   * {@inheritDoc}
+   */
+  public void printChar(char c, boolean isInput) {
+
+    if (isInput || !isBuffered()) {
+      
+      printString(String.valueOf(c));
+      
+    } else {
+      
+      streambuffer.append(c);
+    }
+  } 
   
   /**
    * {@inheritDoc}
@@ -250,7 +276,10 @@ public class BottomWindow extends SubWindow {
     
     return currentX;
   }
-  
+
+  /**
+   * {@inheritDoc}
+   */
   protected int getCurrentY() {
     
     return currentY;
