@@ -250,7 +250,7 @@ public class TextViewport extends JComponent implements ScreenModel, Viewport {
       
       imageBuffer = new BufferedImage(getWidth(), getHeight(),
           BufferedImage.TYPE_INT_RGB);
-      canvas = new CanvasImpl(imageBuffer, this);
+      canvas = new CanvasImpl(imageBuffer, this, settings.getAntialias());
       
       // Default colors
       setDefaultColors(machine.getGameData().getStoryFileHeader(),
