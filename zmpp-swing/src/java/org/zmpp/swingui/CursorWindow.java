@@ -31,13 +31,36 @@ package org.zmpp.swingui;
  */
 public interface CursorWindow {
 
+  /**
+   * Clears the current window.
+   */
   void clear();
-  
+
+  /**
+   * This method is called after a set_cursor instruction to give the  window
+   * the opportunity to update its internal coordinates.
+   */
   void updateCursorCoordinates();
-  
+
+  /**
+   * A backspace needs to be rendered. The previousChar specifies the previous
+   * character, which is necessary if the window does not buffer the input.
+   * The character needs to be encoded in unicode.
+   * 
+   * @param previousChar the previous character.
+   */
   void backspace(char previousChar);
   
-  void printString(String str);
+  /**
+   * Prints the character. The delegation point for an output stream.
+   * 
+   * @param c the character
+   * @param isInput true if input stream
+   */
+  void printChar(char c, boolean isInput);
   
-  boolean isBuffered();
+  /**
+   * Flushes a buffer if there is one. Delegation point for an output stream.
+   */
+  void flushBuffer();
 }
