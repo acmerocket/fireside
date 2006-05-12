@@ -135,6 +135,23 @@ public interface Cpu {
    */
   short getStackElement(int index);
   
+  /**
+   * Pushes the specified value on the user stack.
+   * 
+   * @param userstackAddress the address of the user stack
+   * @param value the value to push
+   * @return true if operation was ok, false if overflow
+   */
+  boolean pushUserStack(int userstackAddress, short value);
+  
+  /**
+   * Pops the specified value from the user stack.
+   * 
+   * @param userstackAddress the address of the user stack
+   * @return the popped value
+   */
+  short popUserStack(int userstackAddress);
+  
   // ********************************************************************
   // ***** Variable access
   // ***************************************

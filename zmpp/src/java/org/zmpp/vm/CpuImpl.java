@@ -29,9 +29,15 @@ import java.util.List;
 import org.zmpp.base.Interruptable;
 import org.zmpp.base.MemoryAccess;
 import org.zmpp.encoding.ZsciiString;
+import org.zmpp.vmutil.FastShortStack;
 
 public class CpuImpl implements Cpu, Interruptable {
 
+  /**
+   * The stack size is now 64 K.
+   */
+  private static final int STACKSIZE = 32768;
+  
   /**
    * The machine object.
    */
@@ -45,7 +51,7 @@ public class CpuImpl implements Cpu, Interruptable {
   /**
    * This machine's global stack.
    */
-  private List<Short> stack;  
+  private FastShortStack stack;
   
   /**
    * The routine info.
@@ -79,7 +85,7 @@ public class CpuImpl implements Cpu, Interruptable {
 
     final GameData gamedata = machine.getGameData();
     decoder.initialize(machine, gamedata.getMemoryAccess());
-    stack = new ArrayList<Short>();
+    stack = new FastShortStack(STACKSIZE);
     routineContextStack = new ArrayList<RoutineContext>();
     globalsAddress = gamedata.getStoryFileHeader().getGlobalsAddress();
     
@@ -193,7 +199,7 @@ public class CpuImpl implements Cpu, Interruptable {
    */
   public int getStackPointer() {
     
-    return stack.size();
+    return stack.getStackPointer();
   }
   
   /**
@@ -205,10 +211,10 @@ public class CpuImpl implements Cpu, Interruptable {
   private void setStackPointer(final int stackpointer) {
 
     // remove the last diff elements
-    final int diff = getStackPointer() - stackpointer;
+    final int diff = stack.getStackPointer() - stackpointer;
     for (int i = 0; i < diff; i++) {
      
-      stack.remove(stack.size() - 1);
+      stack.pop();
     }
   }
   
@@ -219,7 +225,7 @@ public class CpuImpl implements Cpu, Interruptable {
     
     if (stack.size() > 0) {
       
-      return stack.get(stack.size() - 1);
+      return stack.top();
     }
     return -1;
   }
@@ -229,7 +235,7 @@ public class CpuImpl implements Cpu, Interruptable {
    */
   public void setStackTopElement(final short value) {
     
-    stack.set(stack.size() - 1, value);
+    stack.replaceTopElement(value);
   }
   
   /**
@@ -237,7 +243,35 @@ public class CpuImpl implements Cpu, Interruptable {
    */
   public short getStackElement(final int index) {
     
-    return stack.get(index);
+    return stack.getValueAt(index);
+  }
+  
+  /**
+   * {@inheritDoc}
+   */
+  public short popUserStack(int userstackAddress) {
+
+    MemoryAccess memaccess = machine.getGameData().getMemoryAccess();
+    int numFreeSlots = memaccess.readUnsignedShort(userstackAddress);
+    numFreeSlots++;
+    memaccess.writeUnsignedShort(userstackAddress, numFreeSlots);
+    return memaccess.readShort(userstackAddress + (numFreeSlots * 2));
+  }
+  
+  /**
+   * {@inheritDoc}
+   */
+  public boolean pushUserStack(int userstackAddress, short value) {
+    
+    MemoryAccess memaccess = machine.getGameData().getMemoryAccess();
+    int numFreeSlots = memaccess.readUnsignedShort(userstackAddress);
+    if (numFreeSlots > 0) {
+      
+      memaccess.writeShort(userstackAddress + (numFreeSlots * 2), value);
+      memaccess.writeUnsignedShort(userstackAddress, numFreeSlots - 1);
+      return true;
+    }
+    return false;
   }
   
   /**
@@ -254,7 +288,7 @@ public class CpuImpl implements Cpu, Interruptable {
         
       } else {
    
-        return stack.remove(stack.size() - 1);
+        return stack.pop();
       }
       
     } else if (varType == Cpu.VariableType.LOCAL) {
@@ -289,7 +323,7 @@ public class CpuImpl implements Cpu, Interruptable {
     final Cpu.VariableType varType = getVariableType(variableNumber);
     if (varType == Cpu.VariableType.STACK) {
       
-      stack.add(value);
+      stack.push(value);
       
     } else if (varType == Cpu.VariableType.LOCAL) {
       
