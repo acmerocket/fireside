@@ -292,13 +292,13 @@ public class MachineTest extends MemoryMapSetup {
     
     MemoryOutputStream memstream = new MemoryOutputStream(machine) {
       
-      public void select(int table) {
+      public void select(int table, int tableWidth) {
         
         tableAddress = table;
       }
     };
     output.setOutputStream(Output.OUTPUTSTREAM_MEMORY, memstream);
-    output.selectOutputStream3(4711);
+    output.selectOutputStream3(4711, 0);
     
     assertEquals(4711, tableAddress);
   }
