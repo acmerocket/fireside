@@ -46,12 +46,14 @@ public class LineEditorImpl implements LineEditor, KeyListener, MouseListener {
     editbuffer = new LinkedList<Short>();
   }
   
-  public void setInputMode(boolean flag) {
+  public void setInputMode(boolean flag, boolean flushbuffer) {
     
     synchronized (editbuffer) {
       
       inputmode = flag;
-      editbuffer.clear();
+      if (flushbuffer) {
+        editbuffer.clear();
+      }
       editbuffer.notifyAll();
     }
   }
@@ -156,8 +158,10 @@ public class LineEditorImpl implements LineEditor, KeyListener, MouseListener {
   
   public void mouseClicked(MouseEvent e) {
     
+    System.out.printf("mouseClicked(),  use mouse: %b, x: %d y: %d\n", useMouse(),
+        e.getX(), e.getY());
     // Only if mouse is used
-    if (fileheader.isEnabled(StoryFileHeader.Attribute.USE_MOUSE)) {
+    if (useMouse()) {
       
       fileheader.setMouseCoordinates(e.getX(), e.getY());
       
@@ -166,6 +170,17 @@ public class LineEditorImpl implements LineEditor, KeyListener, MouseListener {
           ZsciiEncoding.MOUSE_SINGLE_CLICK :
           ZsciiEncoding.MOUSE_DOUBLE_CLICK)); 
     }
+  }
+  
+  /**
+   * Returns true if the game should recognize the mouse.
+   * 
+   * @return the mouse
+   */
+  private boolean useMouse() {
+  
+    return fileheader.isEnabled(StoryFileHeader.Attribute.USE_MOUSE)
+      || fileheader.getVersion() == 6;
   }
   
   public void mouseEntered(MouseEvent e) { }

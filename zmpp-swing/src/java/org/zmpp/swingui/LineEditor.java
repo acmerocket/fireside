@@ -34,8 +34,9 @@ public interface LineEditor {
    * Sets the input mode flag.
    * 
    * @param flag the input mode
+   * @param flushbuffer if true, the input buffer is flushed
    */
-  void setInputMode(boolean flag);
+  void setInputMode(boolean flag, boolean flushbuffer);
   
   /**
    * Cancels the input.
