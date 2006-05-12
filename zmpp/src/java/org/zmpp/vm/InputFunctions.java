@@ -337,10 +337,12 @@ public class InputFunctions implements InputLine {
     final MemoryAccess memaccess = machine.getGameData().getMemoryAccess();
     final int bufferlen = memaccess.readUnsignedByte(textbuffer);
     int newpointer = pointer;
+    boolean flushBeforeGet = true;
 
     do {
       
-      zsciiChar = machine.getInput().getSelectedInputStream().getZsciiChar();      
+      zsciiChar = machine.getInput().getSelectedInputStream().getZsciiChar(flushBeforeGet);
+      flushBeforeGet = false; // all subsequent input should not flush the buffer
       displayCursor(false);
       
       if (zsciiChar == ZsciiEncoding.DELETE) {
@@ -448,7 +450,7 @@ public class InputFunctions implements InputLine {
       thread.start();
     }
     final short result =
-      machine.getInput().getSelectedInputStream().getZsciiChar();
+      machine.getInput().getSelectedInputStream().getZsciiChar(true);
     
     if (thread != null) {
 
