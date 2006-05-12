@@ -1,16 +1,42 @@
 Roadmap:
 
+Ideas not yet verified:
+
+- URL transcript stream (transcript could be transferred to an URL)
+
 TODO:
 
 - save and restore with regions
-- input line editing
-- text selection (maybe use text components in swing)
-- cut, copy, paste
-- scrollback
-
-Version 0.91
-------------
+- input line editing (new screen model)
+- text selection (new swing standard text component based screen model)
+- cut, copy, paste (new screen model)
+- scrollback (new screen model)
 - add character graphics font
+- window size should be an option in preferences or the window should be sizable
+
+V6:
+
+opcodes:
+
+- @read_mouse, @make_menu, @scroll_window, @print_form
+
+- handle special case newline interrupt for Zork Zero
+- handle mouse coordinates correctly
+- @outputstream with table width (do something with the table width)
+- implement wrapping and buffering correctly (V6)
+- verify screen model details
+- implement @mouse_window with window restriction
+
+for Shogun: @scroll_window
+for Journey: @read_mouse, @make_menu
+
+Version 0.93
+------------
+- V6 support
+- antialiasing
+- change stack model
+- implement all commands
+- move stream buffering into the sub windows
 - find out why the layout calculation does not work in V6
 
 Version 0.90
