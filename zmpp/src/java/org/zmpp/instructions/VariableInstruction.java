@@ -96,7 +96,7 @@ public class VariableInstruction extends AbstractInstruction {
   /**
    * {@inheritDoc}
    */
-  protected InstructionResult doInstruction() {
+  protected void doInstruction() {
     
     switch (getOpcode()) {
       
@@ -197,8 +197,6 @@ public class VariableInstruction extends AbstractInstruction {
       default:
         throwInvalidOpcode();
     }
-    // TODO
-    return new InstructionResult(TRUE, false);
   }
   
   private void call() {
@@ -287,6 +285,37 @@ public class VariableInstruction extends AbstractInstruction {
   }
   
   private void pull() {
+
+    if (getStoryFileVersion() == 6) {
+    
+      pull_v6();
+      
+    } else {
+
+      pull_std();
+    }
+    nextInstruction();
+  }
+  
+  private void pull_v6() {
+    
+    int userstack = 0;
+    if (getNumOperands() == 1) {
+
+      userstack = getUnsignedValue(0);
+    }
+    
+    if (userstack > 0) {
+      
+      storeResult(getCpu().popUserStack(userstack));
+      
+    } else {
+      
+      storeResult(getCpu().getVariable(0));
+    }
+  }
+  
+  private void pull_std() {
     
     final int varnum = getUnsignedValue(0);
     final short value = getCpu().getVariable(0);
@@ -300,7 +329,6 @@ public class VariableInstruction extends AbstractInstruction {
       
       getCpu().setVariable(varnum, value);
     }
-    nextInstruction();
   }
   
   private void output_stream() {
@@ -316,9 +344,15 @@ public class VariableInstruction extends AbstractInstruction {
       
       if (streamnumber == Output.OUTPUTSTREAM_MEMORY) {
        
-        final int tableAddress = this.getUnsignedValue(1);
+        final int tableAddress = getUnsignedValue(1);
+        int tablewidth = 0;
+        if (getNumOperands() == 3) {
+          
+          tablewidth = getUnsignedValue(2);
+          System.out.printf("@output_stream 3 %x %d\n", tableAddress, tablewidth);
+        }
         //System.out.printf("Select stream 3 on table: %x\n", tableAddress);
-        getMachine().getOutput().selectOutputStream3(tableAddress);
+        getMachine().getOutput().selectOutputStream3(tableAddress, tablewidth);
         
       } else {
       

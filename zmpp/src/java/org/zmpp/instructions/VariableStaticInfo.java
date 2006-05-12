@@ -133,6 +133,11 @@ public class VariableStaticInfo implements InstructionStaticInfo {
       }
     }
     
+    if (version == 6 && opcode == VariableStaticInfo.OP_PULL) {
+      
+      return true;
+    }
+    
     switch (opcode) {
     
       case VariableStaticInfo.OP_CALL:
