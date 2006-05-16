@@ -56,6 +56,7 @@ public class Window6Impl implements Window6, CursorWindow {
   private WindowArea area;
   private WindowStyle style;
   private int windownum;
+  private StringBuilder streambuffer;
 
   /**
    * Constructor.
@@ -69,6 +70,7 @@ public class Window6Impl implements Window6, CursorWindow {
     this.viewport = viewport;
     this.fontFactory = fontFactory;
     this.windownum = num;
+    this.streambuffer = new StringBuilder();
     
     cursor = new TextCursorImpl(this);
     
@@ -121,7 +123,7 @@ public class Window6Impl implements Window6, CursorWindow {
    */
   public void move(int y, int x) {
 
-    System.out.printf("window.move(): %d %d %d\n", windownum, x, y);
+    System.out.printf("@MOVE_WINDOW win: %d x: %d y: %d\n", windownum, x, y);
     area.setPosition(x, y);
   }
 
@@ -167,24 +169,73 @@ public class Window6Impl implements Window6, CursorWindow {
    */
   public int getProperty(int propertynum) {
 
-    //System.out.printf("win: %d getProperty(): %d\n", windownum, propertynum);
+    int result = 0;
+    
     switch (propertynum) {
     case Window6.PROPERTY_Y_COORD: case Window6.PROPERTY_X_COORD:
     case Window6.PROPERTY_Y_SIZE: case Window6.PROPERTY_X_SIZE:
     case Window6.PROPERTY_LEFT_MARGIN: case Window6.PROPERTY_RIGHT_MARGIN:
-      return area.getProperty(propertynum);
-    case Window6.PROPERTY_X_CURSOR: return cursor.getColumn();
-    case Window6.PROPERTY_Y_CURSOR: return cursor.getLine();
-    case Window6.PROPERTY_INTERRUPT_COUNT: return interruptCount;
-    case Window6.PROPERTY_INTERRUPT_ROUTINE: return interruptRoutine;
-    case Window6.PROPERTY_FONT_NUMBER: return font.getNumber();    
-    case Window6.PROPERTY_TEXTSTYLE: return font.getStyle();    
-    case Window6.PROPERTY_COLOURDATA: return getColorData();
-    case Window6.PROPERTY_FONT_SIZE: return getFontSize();
-    case Window6.PROPERTY_ATTRIBUTES: return style.getFlags();
-    case Window6.PROPERTY_LINE_COUNT: return linecount;
-    default: return 0;
+      result = area.getProperty(propertynum);
+      break;
+    case Window6.PROPERTY_X_CURSOR:
+      result = cursor.getColumn();
+      break;
+    case Window6.PROPERTY_Y_CURSOR:
+      result = cursor.getLine();
+      break;
+    case Window6.PROPERTY_INTERRUPT_COUNT:
+      result = interruptCount;
+      break;
+    case Window6.PROPERTY_INTERRUPT_ROUTINE:
+      result = interruptRoutine;
+      break;
+    case Window6.PROPERTY_FONT_NUMBER:
+      result = font.getNumber();
+      break;
+    case Window6.PROPERTY_TEXTSTYLE:
+      result = font.getStyle();
+      break;
+    case Window6.PROPERTY_COLOURDATA:
+      result = getColorData();
+      break;
+    case Window6.PROPERTY_FONT_SIZE:
+      result = getFontSize();
+      break;
+    case Window6.PROPERTY_ATTRIBUTES:
+      result = style.getFlags();
+      break;
+    case Window6.PROPERTY_LINE_COUNT:
+      result = linecount;
+      break;
+    default:
+      break;
     }
+    System.out.printf("getProperty(), win: %d, prop: %s, value: %d\n", windownum,
+        getPropertyName(propertynum), result);
+    return result;
+  }
+  
+  private String getPropertyName(int num) {
+    
+    switch (num) {
+    case Window6.PROPERTY_Y_COORD: return "y_coord";
+    case Window6.PROPERTY_X_COORD: return "x_coord";
+    case Window6.PROPERTY_Y_SIZE: return "y_size";
+    case Window6.PROPERTY_X_SIZE: return "x_size";
+    case Window6.PROPERTY_Y_CURSOR: return "y_cursor";
+    case Window6.PROPERTY_X_CURSOR: return "x_cursor";
+    case Window6.PROPERTY_LEFT_MARGIN: return "l_margin";
+    case Window6.PROPERTY_RIGHT_MARGIN: return "r_margin";
+    case Window6.PROPERTY_INTERRUPT_COUNT: return "interrupt_count";
+    case Window6.PROPERTY_INTERRUPT_ROUTINE: return "interrupt_routine";
+    case Window6.PROPERTY_FONT_NUMBER: return "fontnum";
+    case Window6.PROPERTY_TEXTSTYLE: return "textstyle";
+    case Window6.PROPERTY_COLOURDATA: return "colordata";
+    case Window6.PROPERTY_FONT_SIZE: return "fontsize";
+    case Window6.PROPERTY_ATTRIBUTES: return "attributes";
+    case Window6.PROPERTY_LINE_COUNT: return "linecount";
+    }
+    return "";
   }
 
   /**
@@ -192,8 +243,8 @@ public class Window6Impl implements Window6, CursorWindow {
    */
   public void putProperty(int propertynum, short value) {
     
-    System.out.printf("window %d putProperty() prop: %d value: %d\n",
-        windownum, propertynum, value);
+    System.out.printf("putProperty() win: %d prop: %s value: %d\n",
+        windownum, getPropertyName(propertynum), value);
     
     // this method mainly is to set the interrupt function setup, all
     // other properties are not supported
@@ -314,7 +365,7 @@ public class Window6Impl implements Window6, CursorWindow {
    */
   public void eraseLine(int value) {
   
-    System.out.printf("@erase_line, win: %d value: %d\n", windownum, value);
+    //System.out.printf("@erase_line, win: %d value: %d\n", windownum, value);
     Canvas canvas = getCanvas();
     
     if (value == 1) {
@@ -393,15 +444,6 @@ public class Window6Impl implements Window6, CursorWindow {
     }
   }
   
-  private boolean isZorkZeroSpecial() {
-    
-    StoryFileHeader fileheader =
-      viewport.getMachine().getGameData().getStoryFileHeader();
-    return (fileheader.getInterpreterNumber() == 6
-        && fileheader.getRelease() == 393
-        && "890714".equals(fileheader.getSerialNumber()));    
-  }
-
   /**
    * {@inheritDoc}
    */
@@ -416,7 +458,12 @@ public class Window6Impl implements Window6, CursorWindow {
    */
   public void flushBuffer() {
     
-    // TODO
+    // save some unnecessary flushes
+    if (streambuffer.length() > 0) {
+      
+      printString(streambuffer.toString());
+      streambuffer = new StringBuilder();
+    }
   }
 
   /**
@@ -434,6 +481,13 @@ public class Window6Impl implements Window6, CursorWindow {
     
     area.fill(getCanvas(), getBackgroundColor());
     resetCursorToHome();
+  }
+  
+  public void scroll(int pixels) {
+    
+    System.out.println("@scroll_window: " + pixels);
+    getCanvas().scroll(this.getBackgroundColor(), area.getStartX(),
+        area.getStartY(), area.getWidth(), area.getHeight(), pixels);
   }
   
   // ************************************************************************
@@ -484,6 +538,7 @@ public class Window6Impl implements Window6, CursorWindow {
     
     //System.out.println("window: " + windownum + ", currentX: " + (area.getMarginLeft() + (cursor.getColumn() - 1)));    
     return area.getStartX() + (cursor.getColumn() - 1);
+    //return cursor.getColumn() - 1;
   }
 
   private int getCurrentY() {
@@ -514,7 +569,7 @@ public class Window6Impl implements Window6, CursorWindow {
     // of fontDescent to reserve enough scrolling space
     while (getCurrentY() > (area.getStartY() + area.getHeight() - fontDescent)) {
       
-      getCanvas().scrollUp(getBackgroundColor(), area.getStartX(),
+      getCanvas().scroll(getBackgroundColor(), area.getStartX(),
           area.getStartY(), area.getWidth(), area.getHeight(), getFontHeight());
       getCursor().setLine(getCursor().getLine() - getFontHeight());
     }
@@ -526,19 +581,39 @@ public class Window6Impl implements Window6, CursorWindow {
 
   private void printCharStandard(char c, boolean isInput) {
     
-    handleNewLineInterrupt(c);    
-    printString(String.valueOf(c));
+    if (isNewLineInterrupt(c)) {
+      
+      callNewLineInterrupt();
+      
+    } else {
+      
+      if (isInput || !style.outputIsBuffered()) {
+
+        printString(String.valueOf(c));
+        
+      } else {
+        
+        streambuffer.append(c);      
+      }
+    }    
   }
   
   private void printString(String str) {
 
     int lineLength = area.getOutputWidth();
-    //System.out.printf("printString(): %s  window: %d linelength: %d wrapped: %b buffered: %b x: %d\n",
-    //    str, windownum, lineLength, style.isWrapped(), style.outputIsBuffered(), getCurrentX());    
+    
+    //System.out.printf("printString(): '%s'  window: %d linelength: %d wrapped: %b buffered: %b x: %d\n",
+    //    createDebugString(str), windownum, lineLength, style.isWrapped(), style.outputIsBuffered(), getCurrentX());
+
     WordWrapper wordWrapper =
       new WordWrapper(lineLength, getCanvas(), getFont(), style.isWrapped());
     String[] lines = wordWrapper.wrap(getCurrentX(), str);
-    printLines(lines);
+    printLines(lines);    
+  }
+  
+  private String createDebugString(String str) {
+    
+    return str.replaceAll("\n", "'nl'").replaceAll(" ", "_");
   }
 
   private void printLines(String lines[]) {
@@ -594,30 +669,36 @@ public class Window6Impl implements Window6, CursorWindow {
     
 
   private void newline() {
-    
+   
     cursor.setLine(cursor.getLine() + getFontHeight());
-    cursor.setColumn(1);
+    cursor.setColumn(1); // Cursor position is relative to window    
+  }
+  
+  /**
+   * Checks the condition for a newline interrupt.
+   * 
+   * @param c the character to check
+   * @return true if a newline interrupt should be called
+   */
+  private boolean isNewLineInterrupt(char c) {
+    
+    return c == '\n' && interruptCount > 0;
   }
 
   /**
-   * Check, if newline interrupt needs to be called.
-   * 
-   * @param c the character
+   * Calls the newline interrupt.
    */
-  private void handleNewLineInterrupt(char c) {
+  private void callNewLineInterrupt() {
     
-    if (c == '\n' && interruptCount > 0) {
-      
-      linecount--;
-      System.out.println("line count is now: " + linecount);
-      if (linecount <= 0) {
+    linecount--;
+    System.out.println("line count is now: " + linecount);
+    if (linecount <= 0) {
         
-        linecount = 0;
-        System.out.println("calling interrupt");
-        viewport.getMachine().getCpu().callInterrupt(interruptRoutine);
-        interruptCount--;
-        System.out.println("interrupt count is now: " + interruptCount);
-      }
+      linecount = 0;
+      System.out.println("calling interrupt");
+      viewport.getMachine().getCpu().callInterrupt(interruptRoutine);
+      interruptCount--;
+      System.out.println("interrupt count is now: " + interruptCount);
     }
   }
   
@@ -628,10 +709,36 @@ public class Window6Impl implements Window6, CursorWindow {
   // ****** the window on start up
   // **********************************************
   
+  private boolean isZorkZeroSpecial() {
+    
+    StoryFileHeader fileheader =
+      viewport.getMachine().getGameData().getStoryFileHeader();
+    return (fileheader.getInterpreterNumber() == 6
+        && fileheader.getRelease() == 393
+        && "890714".equals(fileheader.getSerialNumber()));    
+  }
+
   private void printCharZorkZeroSpecial(char c, boolean isInput) {
     
-    // Handle the special case of
-    // release 393.890714 and Interpreter version 6
-    printCharStandard(c, isInput);
+    if (isNewLineInterrupt(c)) {
+
+      System.out.printf("win: %d left: %d startx: %d\n", windownum,
+          area.getLeft(), area.getStartX());
+      newline();
+      callNewLineInterrupt();
+      
+    } else {
+      
+      // Handle the special case of
+      // release 393.890714 and Interpreter version 6
+      if (isInput || !style.outputIsBuffered()) {
+
+        printString(String.valueOf(c));
+        
+      } else {
+        
+        streambuffer.append(c);      
+      }
+    }
   }    
 }

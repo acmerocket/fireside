@@ -115,7 +115,7 @@ public class Viewport6 extends JComponent implements ScreenModel6, Viewport {
   public void setTextCursor(int line, int column, int window) {
 
     int w = (window == ScreenModel.CURRENT_WINDOW) ? currentwindow : window;    
-    System.out.printf("@set_cursor w: %d l: %d c: %d\n", w, line, column);
+    //System.out.printf("@set_cursor w: %d l: %d c: %d\n", w, line, column);
     windows[w].getCursor().setPosition(line, column);
   }
   

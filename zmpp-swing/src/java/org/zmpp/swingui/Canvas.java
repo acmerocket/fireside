@@ -53,7 +53,7 @@ public interface Canvas {
    * @param height the area height
    */
   void scrollUp(Color backColor, Font font, int top, int height);
-  
+
   /**
    * Scrolling for V6 games.
    * 
@@ -64,8 +64,8 @@ public interface Canvas {
    * @param height the height
    * @param numPixels the number of pixels
    */
-  void scrollUp(Color backColor, int left, int top, int width,
-                int height, int numPixels);
+  void scroll(Color backColor, int left, int top, int width,
+      int height, int numPixels);
   
   void fillRect(Color color, int left, int top, int width, int height);
   void drawString(Color color, Font font, int x, int y, String str);

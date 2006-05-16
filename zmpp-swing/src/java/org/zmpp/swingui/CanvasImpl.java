@@ -127,14 +127,21 @@ public class CanvasImpl implements Canvas {
   /**
    * {@inheritDoc}
    */
-  public void scrollUp(Color backColor, int left, int top,
+  public void scroll(Color backColor, int left, int top,
       int width, int height, int numPixels) {
     
-    graphics.copyArea(left, top + numPixels, width,
-                      height - numPixels, 0, -numPixels);
-    graphics.setColor(backColor);
-    graphics.fillRect(left, top + height - numPixels,
-                      width, numPixels + 1);
+    if (numPixels >= 0) {
+      graphics.copyArea(left, top + numPixels, width,
+                        height - numPixels, 0, -numPixels);
+      graphics.setColor(backColor);
+      graphics.fillRect(left, top + height - numPixels,
+                        width, numPixels + 1);
+    } else {
+      
+      graphics.copyArea(left, top, width, height - numPixels, 0, numPixels);
+      graphics.setColor(backColor);
+      graphics.fillRect(left, top, width, numPixels + 1);
+    }
   }
   
   public void setClip(int left, int top, int width, int height) {
