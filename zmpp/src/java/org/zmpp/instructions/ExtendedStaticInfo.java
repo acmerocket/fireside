@@ -47,7 +47,7 @@ public class ExtendedStaticInfo implements InstructionStaticInfo {
     { 6 },          // WINDOW_SIZE
     { 6 },          // WINDOW_STYLE
     { 6 },          // GET_WIND_PROP
-    { },          // SCROLL_WINDOW
+    { 6 },          // SCROLL_WINDOW
     { 6 },          // POP_STACK
     { 6 },          // READ_MOUSE
     { 6 },          // MOUSE_WINDOW
@@ -201,6 +201,8 @@ public class ExtendedStaticInfo implements InstructionStaticInfo {
       return "POP_STACK";
     case ExtendedStaticInfo.OP_READ_MOUSE:
       return "READ_MOUSE";
+    case ExtendedStaticInfo.OP_SCROLL_WINDOW:
+      return "SCROLL_WINDOW";
     default:
       return "unknown";
     }

@@ -379,4 +379,24 @@ public class ExtendedInstructionV6Test extends InstructionTestBase {
     push_stack.setLength(3);
     push_stack.execute();
   }
+
+  // **************************************************************************
+  // ******** SCROLL_WINDOW
+  // **********************************
+  
+  public void testScrollWindow() {
+    
+    mockMachine.expects(atLeastOnce()).method("getCpu").will(returnValue(cpu));
+    mockMachine.expects(once()).method("getScreen6").will(returnValue(screen6));
+    mockscreen6.expects(once()).method("getWindow").with(eq(2)).will(returnValue(window6));
+    mockwindow6.expects(once()).method("scroll").with(eq(5));
+    
+    mockCpu.expects(atLeastOnce()).method("incrementProgramCounter").with(eq(3));
+    
+    ExtendedInstruction scroll_window = new ExtendedInstruction(machine, ExtendedStaticInfo.OP_SCROLL_WINDOW);
+    scroll_window.addOperand(new Operand(Operand.TYPENUM_SMALL_CONSTANT, (short) 2));
+    scroll_window.addOperand(new Operand(Operand.TYPENUM_SMALL_CONSTANT, (short) 5));
+    scroll_window.setLength(3);
+    scroll_window.execute();
+  }
 }

@@ -145,6 +145,9 @@ public class ExtendedInstruction extends AbstractInstruction {
     case ExtendedStaticInfo.OP_READ_MOUSE:
       read_mouse();
       break;
+    case ExtendedStaticInfo.OP_SCROLL_WINDOW:
+      scroll_window();
+      break;
     default:
       throwInvalidOpcode();
       break;
@@ -420,6 +423,12 @@ public class ExtendedInstruction extends AbstractInstruction {
       ok = getCpu().pushUserStack(stack, value);
     }
     branchOnTest(ok);
+  }
+  
+  private void scroll_window() {
+    
+    getWindow(getValue(0)).scroll(getValue(1));
+    nextInstruction();
   }
   
   private void read_mouse() {

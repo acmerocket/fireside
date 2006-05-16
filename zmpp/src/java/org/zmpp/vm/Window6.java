@@ -127,4 +127,12 @@ public interface Window6 {
    * @param value the value
    */
   void putProperty(int propertynum, short value);
+  
+  /**
+   * Scrolls the window by the specified amount of pixels, negative values
+   * scroll down, positive scroll up.
+   * 
+   * @param pixels the number of pixels
+   */
+  void scroll(int pixels);
 }
