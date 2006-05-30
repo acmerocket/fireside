@@ -25,6 +25,8 @@ package org.zmpp.vm;
 import java.util.ArrayList;
 import java.util.List;
 
+import org.zmpp.base.MemoryAccess;
+import org.zmpp.encoding.ZsciiString;
 import org.zmpp.io.OutputStream;
 
 /**
@@ -131,7 +133,25 @@ public class MemoryOutputStream implements OutputStream {
       //                   + tablePos.bytesWritten);
       machine.getGameData().getMemoryAccess().writeUnsignedShort(
           tablePos.tableAddress, tablePos.bytesWritten);
+      
+      if (machine.getGameData().getStoryFileHeader().getVersion() == 6) {
+
+        writeTextWidthInUnits(tablePos);
+      }
     }
+  }
+  
+  private void writeTextWidthInUnits(TablePosition tablepos) {
+
+    int numwords = tablepos.bytesWritten;
+    short[] data = new short[numwords];
+    MemoryAccess memaccess = machine.getGameData().getMemoryAccess();
+    
+    for (int i = 0; i < numwords; i++) {
+      
+      data[i] = memaccess.readUnsignedByte(tablepos.tableAddress + i + 2); 
+    }
+    machine.getScreen6().setTextWidthInUnits(data);
   }
   
   /**
