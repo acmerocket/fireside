@@ -18,19 +18,17 @@ V6:
 
 opcodes:
 
-- @read_mouse, @make_menu, @scroll_window, @print_form
-
-- handle special case newline interrupt for Zork Zero
-- handle mouse coordinates correctly
+- @make_menu, @print_form
 - @outputstream with table width (do something with the table width)
-- implement wrapping and buffering correctly (V6)
 - verify screen model details
 - implement @mouse_window with window restriction
+- @read_mouse should handle menus
 
-for Shogun: @scroll_window
-for Journey: @read_mouse, @make_menu
+@make_menu: Journey
+@print_form: Arthur
+@output_stream 3 params: Arthur (width always 0)
 
-Version 0.93
+Version 0.92
 ------------
 - V6 support
 - antialiasing

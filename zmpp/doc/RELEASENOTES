@@ -13,7 +13,7 @@ Java implementation of the Z-machine specification.
 Features:
 
 - written from scratch using Java 5
-- currently supports story file version 1, 2, 3, 4, 5, 7 and 8
+- supports all story file versions
 - can be run as a Java applet within the web browser
 - saves and reads games in Quetzal 1.4 format
 - reads media in Blorb format
@@ -40,7 +40,6 @@ TODO:
 
 - character graphics
 - save/restore regions
-- version 6
 
 
 Operating systems tested on:

@@ -1,15 +1,17 @@
 Changelog
 
-Version 0.93
+Version 0.92
 ------------
 - picture scaling added
 - V6 cursor handling fixed (was character based, changed to pixel based)
 - fixed get_wind_prop 11 (returned wrong color values)
 - fixed @set_window in V6
+- fixed retrieval of cursor coordinates
 - optimization: cpu stack is now an array of primitives
 - can run Journey for some time
 - placeholder picture support added (needed for Shogun)
-- @picture_table, @erase_picture, @pull (V6), @pop_stack, @push_stack
+- @picture_table, @erase_picture, @pull (V6), @pop_stack, @push_stack,
+  @scroll_window, @read_mouse
 - swing antialiasing enabled, text antialias as an option
 - user stacks added
 - small fix: now displays the time status correctly
@@ -18,6 +20,7 @@ Version 0.93
   multiprocessor machines when typing fast
 - newline interrupts
 - stream buffering moved into sub window classes
+- outputstream 3 reports text width in V6
 
 Version 0.90
 ------------
