@@ -471,7 +471,14 @@ public class Window6Impl implements Window6, CursorWindow {
    */
   public void backspace(char previousChar) {
     
-    // TODO
+    Canvas canvas = getCanvas();
+    int charWidth = canvas.getCharWidth(getFont(), previousChar);
+    
+    // Clears the text under the cursor
+    canvas.fillRect(getBackgroundColor(), getCurrentX() - charWidth,
+                    getCurrentY() - canvas.getFontAscent(getFont()), charWidth,
+                    canvas.getFontHeight(getFont()));
+    cursor.setColumn(cursor.getColumn() - charWidth);
   }
   
   /**
@@ -496,7 +503,7 @@ public class Window6Impl implements Window6, CursorWindow {
   
   private Canvas getCanvas() { return viewport.getCanvas(); }
   
-  private Font getFont() { return font.getFont(); }
+  protected Font getFont() { return font.getFont(); }
   
   private Color getBackgroundColor() {
     
@@ -611,11 +618,6 @@ public class Window6Impl implements Window6, CursorWindow {
     printLines(lines);    
   }
   
-  private String createDebugString(String str) {
-    
-    return str.replaceAll("\n", "'nl'").replaceAll(" ", "_");
-  }
-
   private void printLines(String lines[]) {
     
     Color textColor = getTextColor();
