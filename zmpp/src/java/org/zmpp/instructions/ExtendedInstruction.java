@@ -248,7 +248,9 @@ public class ExtendedInstruction extends AbstractInstruction {
     if (picnum == 0) {
 
       writePictureFileInfo(array);
-      // TODO: Determine if result should be set to true here
+      // branch if any pictures are available: this information is only
+      // available in the 1.1 spec
+      result = getMachine().getPictureManager().getNumPictures() > 0;
       
     } else {
       
@@ -333,8 +335,7 @@ public class ExtendedInstruction extends AbstractInstruction {
       operation = getUnsignedValue(2);
     }
     
-    getMachine().getScreen6().getWindow(getUnsignedValue(0)).setStyle(
-        getUnsignedValue(1), operation);
+    getWindow(getValue(0)).setStyle(getUnsignedValue(1), operation);
     nextInstruction();
   }
   
@@ -343,7 +344,7 @@ public class ExtendedInstruction extends AbstractInstruction {
     int window = ScreenModel.CURRENT_WINDOW;
     if (getNumOperands() == 3) {
       
-      window = getUnsignedValue(2);
+      window = getValue(2);
     }
     getWindow(window).setMargins(getUnsignedValue(0), getUnsignedValue(1));
     nextInstruction();
@@ -433,9 +434,8 @@ public class ExtendedInstruction extends AbstractInstruction {
   
   private void read_mouse() {
     
-    // TODO
     int array = getUnsignedValue(0);
-    System.out.println("@read_mouse array: " + array);
+    getMachine().getScreen6().readMouse(array);
     nextInstruction();
   }
   
