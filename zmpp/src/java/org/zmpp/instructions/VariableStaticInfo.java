@@ -226,6 +226,7 @@ public class VariableStaticInfo implements InstructionStaticInfo {
     case VariableStaticInfo.OP_COPY_TABLE: return "COPY_TABLE";
     case VariableStaticInfo.OP_PRINT_TABLE: return "PRINT_TABLE";
     case VariableStaticInfo.OP_CHECK_ARG_COUNT: return "CHECK_ARG_COUNT";
+    case VariableStaticInfo.OP_SOUND_EFFECT: return "SOUND_EFFECT";
     default: return "unknown";
     }
   }
