@@ -64,3 +64,9 @@ possible values are:
 - cyan
 - white
 - gray
+
+6. antialias (optional):
+------------------------
+
+turns the antialias for text rendering on/off.
+possible values: "on", "off", "true", "false"

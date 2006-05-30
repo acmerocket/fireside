@@ -36,8 +36,8 @@
   </target>
 
   <target name="compile" depends="init">
-    <javac debug="on" srcdir="${src.prj}" destdir="${build.prj}"/>
-    <javac debug="on" srcdir="${src.tests}" destdir="${build.tests}">
+    <javac debug="off" srcdir="${src.prj}" destdir="${build.prj}"/>
+    <javac debug="off" srcdir="${src.tests}" destdir="${build.tests}">
       <classpath>
   			<pathelement location="${build.prj}"/>
   	  </classpath>
