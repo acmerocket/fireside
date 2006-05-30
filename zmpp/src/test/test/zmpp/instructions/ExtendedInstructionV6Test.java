@@ -61,16 +61,19 @@ public class ExtendedInstructionV6Test extends InstructionTestBase {
     
     mockMachine.expects(atLeastOnce()).method("getPictureManager").will(returnValue(picturemanager));
     mockPictureManager.expects(once()).method("getRelease").will(returnValue(2));
-    mockPictureManager.expects(once()).method("getNumPictures").will(returnValue(32));
+    mockPictureManager.expects(atLeastOnce()).method("getNumPictures").will(returnValue(32));
     mockGameData.expects(once()).method("getMemoryAccess").will(returnValue(memoryAccess));
     mockMemAccess.expects(once()).method("writeUnsignedShort").with(eq(1000), eq(32));
     mockMemAccess.expects(once()).method("writeUnsignedShort").with(eq(1002), eq(2));
 
+    // Branch
     mockMachine.expects(atLeastOnce()).method("getCpu").will(returnValue(cpu));
-    mockCpu.expects(atLeastOnce()).method("incrementProgramCounter").with(eq(3));
+    mockCpu.expects(once()).method("computeBranchTarget").with(eq((short) 123), eq(3)).will(returnValue(1234));
+    mockCpu.expects(once()).method("setProgramCounter").with(eq(1234));
     
     ExtendedInstruction picture_data = new ExtendedInstruction(machine, ExtendedStaticInfo.OP_PICTURE_DATA);
     picture_data.setLength(3);
+    picture_data.setBranchOffset((short) 123);
     
     // the 0 value indicates that we want to retrieve the information about
     // the picture file

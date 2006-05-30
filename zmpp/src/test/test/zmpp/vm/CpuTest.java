@@ -150,18 +150,6 @@ public class CpuTest extends MockObjectTestCase {
     assertEquals(-1, cpu.getStackTopElement());
   }
   
-  public void testGetVariableStackUnderflowNoRoutineContext() {
-    
-    try {
-      cpu.getVariable(0);
-      fail("reading from an empty stack should yield an underflow error");
-      
-    } catch (IllegalStateException expected) {
-      
-      assertEquals("stack underflow error", expected.getMessage());
-    }
-  }
-   
   public void testGetVariableStackNonEmptyNoRoutineContext() {
     // Write something to the stack now
     cpu.setVariable(0, (short) 4711);
@@ -169,24 +157,6 @@ public class CpuTest extends MockObjectTestCase {
     int value = cpu.getVariable(0);
     assertEquals(oldStackPointer - 1, cpu.getStackPointer());
     assertEquals(value, 4711);
-  }
-
-  public void testGetVariableStackUnderflowWithRoutineContext() {
-    
-    // Write something to the stack now
-    cpu.setVariable(0, (short) 4711);
-    
-    RoutineContext routineContext = new RoutineContext(12345, 3);
-    cpu.pushRoutineContext(routineContext);
-    
-    try {
-      cpu.getVariable(0);
-      fail("reading from stack from within a routine should yield an underflow error if no values are pushed");
-      
-    } catch (IllegalStateException expected) {
-      
-      assertEquals("stack underflow error", expected.getMessage());
-    }    
   }
 
   public void testGetVariableStackNonEmptyWithRoutineContext() {

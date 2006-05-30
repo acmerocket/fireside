@@ -29,37 +29,41 @@ import org.zmpp.vm.Cpu;
 import org.zmpp.vm.GameData;
 import org.zmpp.vm.Machine;
 import org.zmpp.vm.MemoryOutputStream;
+import org.zmpp.vm.StoryFileHeader;
 
 public class MemoryOutputStreamTest extends MockObjectTestCase {
 
-  private Mock mockMachine;
+  private Mock mockMemAccess, mockMachine, mockGameData, mockCpu, mockFileheader;
   private Machine machine;
-  private Mock mockMemAccess;
   private MemoryAccess memaccess;
   private MemoryOutputStream output;
-  private Mock mockGameData;
   private GameData gamedata;
-  private Mock mockCpu;
   private Cpu cpu;
+  private StoryFileHeader fileheader;
   
   protected void setUp() throws Exception {
 
     mockMachine = mock(Machine.class);
-    machine = (Machine) mockMachine.proxy();
     mockMemAccess = mock(MemoryAccess.class);
-    memaccess = (MemoryAccess) mockMemAccess.proxy();
     mockGameData = mock(GameData.class);
-    gamedata = (GameData) mockGameData.proxy();
     mockCpu = mock(Cpu.class);
+    mockFileheader = mock(StoryFileHeader.class);
+    
+    machine = (Machine) mockMachine.proxy();
+    memaccess = (MemoryAccess) mockMemAccess.proxy();
+    gamedata = (GameData) mockGameData.proxy();
     cpu = (Cpu) mockCpu.proxy();
+    fileheader = (StoryFileHeader) mockFileheader.proxy();
 
     output = new MemoryOutputStream(machine);
   }
   
-  public void testPrint() {
+  public void testPrintVersion5() {
     
     mockMachine.expects(atLeastOnce()).method("getGameData").will(returnValue(gamedata));
     mockGameData.expects(atLeastOnce()).method("getMemoryAccess").will(returnValue(memaccess));
+    mockGameData.expects(atLeastOnce()).method("getStoryFileHeader").will(returnValue(fileheader));
+    mockFileheader.expects(once()).method("getVersion").will(returnValue(5));
     
     mockMemAccess.expects(once()).method("writeUnsignedByte").with(eq(4713), eq((short)65));
     mockMemAccess.expects(once()).method("writeUnsignedShort").with(eq(4711), eq(1));

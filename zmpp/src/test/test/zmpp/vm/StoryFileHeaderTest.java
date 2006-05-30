@@ -420,8 +420,8 @@ public class StoryFileHeaderTest extends MockObjectTestCase {
     
     mockMemAccess.expects(once()).method("readUnsignedShort").with(eq(0x36)).will(returnValue(100));
     mockMemAccess.expects(once()).method("readUnsignedShort").with(eq(100)).will(returnValue(2));
-    mockMemAccess.expects(once()).method("writeUnsignedShort").with(eq(101), eq(1));
-    mockMemAccess.expects(once()).method("writeUnsignedShort").with(eq(102), eq(2));
+    mockMemAccess.expects(once()).method("writeUnsignedShort").with(eq(102), eq(1));
+    mockMemAccess.expects(once()).method("writeUnsignedShort").with(eq(104), eq(2));
     fileHeader.setMouseCoordinates(1, 2);
   }
   
@@ -442,7 +442,7 @@ public class StoryFileHeaderTest extends MockObjectTestCase {
     
     mockMemAccess.expects(once()).method("readUnsignedShort").with(eq(0x36)).will(returnValue(100));
     mockMemAccess.expects(once()).method("readUnsignedShort").with(eq(100)).will(returnValue(3));
-    mockMemAccess.expects(once()).method("readUnsignedShort").with(eq(102)).will(returnValue(1234));
+    mockMemAccess.expects(once()).method("readUnsignedShort").with(eq(106)).will(returnValue(1234));
     assertEquals(1234, fileHeader.getCustomAccentTable());
   }
 }
