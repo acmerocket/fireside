@@ -251,7 +251,7 @@ public class Viewport6 extends JComponent implements ScreenModel6, Viewport {
   public void setMouseWindow(int window) {
 
     // do nothing at the moment
-    System.out.println("setMouseWindow(): " + window);
+    //System.out.println("setMouseWindow(): " + window);
   }
 
   /**

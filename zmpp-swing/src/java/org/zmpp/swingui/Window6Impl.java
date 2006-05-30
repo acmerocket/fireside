@@ -123,7 +123,7 @@ public class Window6Impl implements Window6, CursorWindow {
    */
   public void move(int y, int x) {
 
-    System.out.printf("@MOVE_WINDOW win: %d x: %d y: %d\n", windownum, x, y);
+    //System.out.printf("@MOVE_WINDOW win: %d x: %d y: %d\n", windownum, x, y);
     area.setPosition(x, y);
   }
 
@@ -210,8 +210,8 @@ public class Window6Impl implements Window6, CursorWindow {
     default:
       break;
     }
-    System.out.printf("getProperty(), win: %d, prop: %s, value: %d\n", windownum,
-        getPropertyName(propertynum), result);
+    //System.out.printf("getProperty(), win: %d, prop: %s, value: %d\n", windownum,
+    //    getPropertyName(propertynum), result);
     return result;
   }
   
@@ -243,8 +243,8 @@ public class Window6Impl implements Window6, CursorWindow {
    */
   public void putProperty(int propertynum, short value) {
     
-    System.out.printf("putProperty() win: %d prop: %s value: %d\n",
-        windownum, getPropertyName(propertynum), value);
+    //System.out.printf("putProperty() win: %d prop: %s value: %d\n",
+    //    windownum, getPropertyName(propertynum), value);
     
     // this method mainly is to set the interrupt function setup, all
     // other properties are not supported
@@ -403,7 +403,7 @@ public class Window6Impl implements Window6, CursorWindow {
    */
   public void resize(int lines) {
   
-    System.out.printf("resize(), win: %d, lines: %d\n", windownum, lines);
+    //System.out.printf("resize(), win: %d, lines: %d\n", windownum, lines);
     int height = getCanvas().getFontHeight(getFont()) * lines;
     area.setPosition(1, 1);
     area.setSize(getCanvas().getWidth(), height);
@@ -419,7 +419,7 @@ public class Window6Impl implements Window6, CursorWindow {
    */
   public void setVerticalBounds(int top, int height) {
     
-    System.out.printf("setVerticalBounds(), win: %d, top: %d height: %d\n", windownum, top, height);
+    //System.out.printf("setVerticalBounds(), win: %d, top: %d height: %d\n", windownum, top, height);
     area.setPosition(1, top);
     area.setSize(getCanvas().getWidth(), height);
     cursor.setPosition(1, 1); // XXX This is arbitrarily set by me
@@ -492,7 +492,7 @@ public class Window6Impl implements Window6, CursorWindow {
   
   public void scroll(int pixels) {
     
-    System.out.println("@scroll_window: " + pixels);
+    //System.out.println("@scroll_window: " + pixels);
     getCanvas().scroll(this.getBackgroundColor(), area.getStartX(),
         area.getStartY(), area.getWidth(), area.getHeight(), pixels);
   }
@@ -693,14 +693,14 @@ public class Window6Impl implements Window6, CursorWindow {
   private void callNewLineInterrupt() {
     
     linecount--;
-    System.out.println("line count is now: " + linecount);
+    //System.out.println("line count is now: " + linecount);
     if (linecount <= 0) {
         
       linecount = 0;
-      System.out.println("calling interrupt");
+      //System.out.println("calling interrupt");
       viewport.getMachine().getCpu().callInterrupt(interruptRoutine);
       interruptCount--;
-      System.out.println("interrupt count is now: " + interruptCount);
+      //System.out.println("interrupt count is now: " + interruptCount);
     }
   }
   
@@ -724,8 +724,8 @@ public class Window6Impl implements Window6, CursorWindow {
     
     if (isNewLineInterrupt(c)) {
 
-      System.out.printf("win: %d left: %d startx: %d\n", windownum,
-          area.getLeft(), area.getStartX());
+      //System.out.printf("win: %d left: %d startx: %d\n", windownum,
+      //    area.getLeft(), area.getStartX());
       newline();
       callNewLineInterrupt();
       

@@ -323,7 +323,7 @@ public class ExtendedInstruction extends AbstractInstruction {
     final int window = getValue(0);
     final int height = getValue(1);
     final int width = getValue(2);
-    System.out.printf("@window_size %d %d %d\n", window, height, width);
+    //System.out.printf("@window_size %d %d %d\n", window, height, width);
     getMachine().getScreen6().getWindow(window).setSize(height, width);
     nextInstruction();
   }
@@ -356,7 +356,7 @@ public class ExtendedInstruction extends AbstractInstruction {
     int propnum = getUnsignedValue(1);
     short result;
     result = (short) getWindow(window).getProperty(propnum);
-    System.out.printf("@get_wind_prop %d %d value: %04x\n", window, propnum, result);    
+    //System.out.printf("@get_wind_prop %d %d value: %04x\n", window, propnum, result);    
     storeResult(result);
     nextInstruction();
   }
@@ -366,7 +366,7 @@ public class ExtendedInstruction extends AbstractInstruction {
     int window = getValue(0);
     int propnum = getUnsignedValue(1);
     short value = getValue(2);
-    System.out.printf("@put_wind_prop %d %d value: %04x\n", window, propnum, value);    
+    //System.out.printf("@put_wind_prop %d %d value: %04x\n", window, propnum, value);    
     getWindow(window).putProperty(propnum, value);
     nextInstruction();
   }

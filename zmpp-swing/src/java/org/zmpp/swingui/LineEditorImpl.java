@@ -170,8 +170,8 @@ MouseMotionListener {
   
   public void mouseClicked(MouseEvent e) {
     
-    System.out.printf("mouseClicked(),  use mouse: %b, x: %d y: %d\n", useMouse(),
-        e.getX(), e.getY());
+    //System.out.printf("mouseClicked(),  use mouse: %b, x: %d y: %d\n", useMouse(),
+    //    e.getX(), e.getY());
     // Only if mouse is used
     if (useMouse()) {
       
