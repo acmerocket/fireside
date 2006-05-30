@@ -22,6 +22,8 @@
  */
 package org.zmpp.swingui;
 
+import java.awt.event.MouseEvent;
+
 /**
  * An interface to define line editing functionality.
  * 
@@ -56,4 +58,11 @@ public interface LineEditor {
    * @return the input mode
    */
   boolean isInputMode();
+  
+  /**
+   * Returns the last mouse event.
+   * 
+   * @return the last mouse event0
+   */
+  MouseEvent getLastMouseEvent();
 }

@@ -26,18 +26,22 @@ import java.awt.event.KeyEvent;
 import java.awt.event.KeyListener;
 import java.awt.event.MouseEvent;
 import java.awt.event.MouseListener;
+import java.awt.event.MouseMotionListener;
 import java.util.LinkedList;
 import java.util.List;
 
 import org.zmpp.encoding.ZsciiEncoding;
 import org.zmpp.vm.StoryFileHeader;
 
-public class LineEditorImpl implements LineEditor, KeyListener, MouseListener {
+public class LineEditorImpl implements LineEditor, KeyListener, MouseListener,
+MouseMotionListener {
 
   private boolean inputmode;
   private List<Short> editbuffer;
   private StoryFileHeader fileheader;
   private ZsciiEncoding encoding;
+  
+  private MouseEvent lastMouseEvent;
   
   public LineEditorImpl(StoryFileHeader fileheader, ZsciiEncoding encoding) {
   
@@ -92,6 +96,14 @@ public class LineEditorImpl implements LineEditor, KeyListener, MouseListener {
     synchronized (editbuffer) {
       return inputmode;
     }
+  }
+
+  /**
+   * {@inheritDoc}
+   */
+  public MouseEvent getLastMouseEvent() {
+    
+    return lastMouseEvent;
   }
   
   public void keyPressed(KeyEvent e) {
@@ -163,13 +175,14 @@ public class LineEditorImpl implements LineEditor, KeyListener, MouseListener {
     // Only if mouse is used
     if (useMouse()) {
       
-      fileheader.setMouseCoordinates(e.getX(), e.getY());
+      fileheader.setMouseCoordinates(e.getX() + 1, e.getY() + 1);
       
       // Store single clicks and double clicks with different codes
       addToBuffer((short) ((e.getClickCount() == 1) ?
           ZsciiEncoding.MOUSE_SINGLE_CLICK :
           ZsciiEncoding.MOUSE_DOUBLE_CLICK)); 
     }
+    lastMouseEvent = e;
   }
   
   /**
@@ -183,8 +196,30 @@ public class LineEditorImpl implements LineEditor, KeyListener, MouseListener {
       || fileheader.getVersion() == 6;
   }
   
-  public void mouseEntered(MouseEvent e) { }
-  public void mouseExited(MouseEvent e) { }
-  public void mousePressed(MouseEvent e) { }
-  public void mouseReleased(MouseEvent e) { }
+  public void mouseEntered(MouseEvent e) {
+    
+    lastMouseEvent = e;
+  }
+  public void mouseExited(MouseEvent e) {
+    
+    lastMouseEvent = e;
+  }
+  public void mousePressed(MouseEvent e) { 
+    
+    lastMouseEvent = e;
+  }
+  public void mouseReleased(MouseEvent e) {
+    
+    lastMouseEvent = e;
+  }
+  
+  public void mouseMoved(MouseEvent e) {
+    
+    lastMouseEvent = e;
+  }
+  
+  public void mouseDragged(MouseEvent e) {
+    
+    lastMouseEvent = e;
+  }  
 }
