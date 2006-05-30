@@ -313,6 +313,13 @@ public interface StoryFileHeader {
    */
   int getCustomAccentTable();
   
+  /**
+   * Sets the width of the text sent to output stream 3 in units.
+   * 
+   * @param units the text width in units
+   */
+  void setOutputStream3TextWidth(int units);
+  
   // ********************************************************************
   // ****** Attributes
   // **********************************
