@@ -60,4 +60,19 @@ public interface ScreenModel6 extends ScreenModel {
    * @return the screen height
    */
   int getHeight();
+
+  /**
+   * Instructs the screen model to set the width of the current string
+   * to the header.
+   * 
+   * @param zchars the z character array
+   */
+  void setTextWidthInUnits(short[] zchars);
+  
+  /**
+   * Reads the current mouse data into the specified array.
+   * 
+   * @param array the array address
+   */
+  void readMouse(int array);
 }

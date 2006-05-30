@@ -26,10 +26,13 @@ import java.awt.Color;
 import java.awt.EventQueue;
 import java.awt.Font;
 import java.awt.Graphics;
+import java.awt.event.MouseEvent;
 import java.awt.image.BufferedImage;
 
 import javax.swing.JComponent;
 
+import org.zmpp.base.MemoryAccess;
+import org.zmpp.encoding.ZsciiString;
 import org.zmpp.io.OutputStream;
 import org.zmpp.vm.Machine;
 import org.zmpp.vm.ScreenModel;
@@ -265,6 +268,43 @@ public class Viewport6 extends JComponent implements ScreenModel6, Viewport {
   public Window6 getWindow(int window) {
 
     return windows[window];
+  }
+  
+  /**
+   * {@inheritDoc}
+   */
+  public void setTextWidthInUnits(short[] zchars) {
+    
+    ZsciiString str = new ZsciiString(zchars);
+    int textwidth =
+      canvas.getStringWidth(windows[currentwindow].getFont(), str.toString());
+    machine.getGameData().getStoryFileHeader().setOutputStream3TextWidth(textwidth);
+  }
+  
+  /**
+   * {@inheritDoc}
+   */
+  public void readMouse(int array) {
+
+    MouseEvent event = editor.getLastMouseEvent();
+    MemoryAccess memaccess = machine.getGameData().getMemoryAccess();
+    int buttonmask  = 0;
+    if ((event.getButton() & MouseEvent.BUTTON1) != 0) {
+      
+      buttonmask |= 1;
+    }
+    if ((event.getButton() & MouseEvent.BUTTON2) != 0) {
+      
+      buttonmask |= 2;
+    }
+    if ((event.getButton() & MouseEvent.BUTTON3) != 0) {
+      
+      buttonmask |= 4;
+    }
+    memaccess.writeUnsignedShort(array, event.getY() + 1);
+    memaccess.writeUnsignedShort(array + 2, event.getX() + 1);
+    memaccess.writeUnsignedShort(array + 4, buttonmask);
+    // TODO: Menu items
   }
   
   // ********************************************************************
