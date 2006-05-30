@@ -359,17 +359,16 @@ public class DefaultStoryFileHeader implements StoryFileHeader {
     
     // check the extension table
     final int extTable = memaccess.readUnsignedShort(0x36);
-    System.out.println("setMouseCoordinates(), exttable: " + extTable);
     if (extTable > 0) {
       
       final int numwords = memaccess.readUnsignedShort(extTable);
       if (numwords >= 1) {
         
-        memaccess.writeUnsignedShort(extTable + 1, x);
+        memaccess.writeUnsignedShort(extTable + 2, x);
       }
       if (numwords >= 2) {
         
-        memaccess.writeUnsignedShort(extTable + 2, y);
+        memaccess.writeUnsignedShort(extTable + 4, y);
       }
     }
   }
@@ -388,7 +387,7 @@ public class DefaultStoryFileHeader implements StoryFileHeader {
       final int numwords = memaccess.readUnsignedShort(extTable);
       if (numwords >= 3) {
         
-        result = memaccess.readUnsignedShort(extTable + 2);
+        result = memaccess.readUnsignedShort(extTable + 6);
       }
     }
     return result;
@@ -461,6 +460,28 @@ public class DefaultStoryFileHeader implements StoryFileHeader {
     }
   }
 
+  /**
+   * {@inheritDoc}
+   */
+  public void setOutputStream3TextWidth(int units) {
+    
+    memaccess.writeUnsignedShort(0x30, units);
+  }
+  
+  /**
+   * {@inheritDoc}
+   */
+  public String toString() {
+
+    StringBuilder builder = new StringBuilder();
+    for (int i = 0; i < 55; i++) {
+      
+      builder.append(String.format("Addr: %02x Byte: %02x\n", i, memaccess.readUnsignedByte(i)));
+    }
+    
+    return builder.toString();
+  }
+  
   // ************************************************************************
   // ****** Private section
   // *******************************
