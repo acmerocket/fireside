@@ -284,7 +284,9 @@ public class CpuImpl implements Cpu, Interruptable {
       
       if (stack.size() == getInvocationStackPointer()) {
         
-        throw new IllegalStateException("stack underflow error");
+        //throw new IllegalStateException("stack underflow error");
+        System.err.println("stack underflow error");
+        return 0;
         
       } else {
    
