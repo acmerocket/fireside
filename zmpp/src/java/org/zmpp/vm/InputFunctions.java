@@ -88,9 +88,16 @@ public class InputFunctions implements InputLine {
       return running;
     }
     
-    public synchronized void setRunning(final boolean flag) {
+    public synchronized void terminate() {
       
-      running = flag;
+      running = false;
+      
+      // note: interrupt() can only be executed in a signed applet
+      interrupt();
+      try { join(); } catch (Exception ex) {
+        
+        ex.printStackTrace(System.err);
+      }
     }
     
     public void run() {
@@ -313,11 +320,7 @@ public class InputFunctions implements InputLine {
     // Synchronize with timed input thread    
     if (thread != null) {
       
-      thread.setRunning(false);
-      try { thread.join(); } catch (Exception ex) {
-        
-        ex.printStackTrace(System.err);
-      }
+      thread.terminate();
     }    
   }
 
@@ -440,27 +443,12 @@ public class InputFunctions implements InputLine {
     machine.getOutput().flushOutput();
     displayCursor(true);
     
-    InterruptThread thread = null;
-    
-    if (machine.getGameData().getStoryFileHeader().getVersion() >= 4
-        && time > 0 && routineAddress != 0) {
-      
-      final double dtime = ((double) time) / 10.0 * 1000.0;
-      thread = new InterruptThread((int) dtime, routineAddress, null);
-      thread.start();
-    }
+    InterruptThread thread = startInterruptThread(routineAddress, time, null);
     final short result =
       machine.getInput().getSelectedInputStream().getZsciiChar(true);
+    //System.out.println("readChar(): " + result);
     
-    if (thread != null) {
-
-      thread.setRunning(false);
-      try { thread.join(); } catch (Exception ex) {
-        
-        ex.printStackTrace(System.err);
-      }
-    }
-    
+    terminateInterruptThread(thread);
     displayCursor(false);
     
     return result;
