@@ -137,14 +137,21 @@ public class TextViewport extends JComponent implements ScreenModel, Viewport {
     }
   }
   
+  /**
+   * {@inheritDoc}
+   */
   public TextCursor getTextCursor() {
 
+    windows[activeWindow].flushBuffer();
     return windows[activeWindow].getCursor();
   }
   
+  /**
+   * {@inheritDoc}
+   */
   public void setTextCursor(int line, int column, int window) {
    
-    windows[activeWindow].getCursor().setPosition(line, column);
+    windows[activeWindow].setCursorPosition(line, column);
   }
   
   public void splitWindow(final int linesUpperWindow) {

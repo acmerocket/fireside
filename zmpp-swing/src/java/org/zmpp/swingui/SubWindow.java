@@ -93,6 +93,11 @@ public abstract class SubWindow implements CursorWindow {
     return cursor;
   }
   
+  public void setCursorPosition(int line, int column) {
+    
+    cursor.setPosition(line, column);
+  }
+  
   public int getHeight() {
     
     return height;

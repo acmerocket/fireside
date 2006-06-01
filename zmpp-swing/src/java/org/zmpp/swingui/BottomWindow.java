@@ -136,7 +136,7 @@ public class BottomWindow extends SubWindow {
     //System.out.println("resetCursorToHome()");
     // We calulate an available height with a correction amount
     // of fm.getMaxDescent() to reserve enough scrolling space
-    getCursor().setPosition(getAvailableLines(), 1);
+    setCursorPosition(getAvailableLines(), 1);
     
     currentY = getTop() + getHeight() - getCanvas().getFontDescent(getFont());
   }

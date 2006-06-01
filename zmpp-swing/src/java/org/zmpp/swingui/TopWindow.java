@@ -48,7 +48,7 @@ public class TopWindow extends SubWindow {
    */
   public void resetCursorToHome() {
     
-    getCursor().setPosition(1, 1);
+    setCursorPosition(1, 1);
   }
   
   /**
