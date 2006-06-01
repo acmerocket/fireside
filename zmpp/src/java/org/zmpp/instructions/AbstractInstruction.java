@@ -31,6 +31,8 @@ import org.zmpp.vm.Machine;
 import org.zmpp.vm.ObjectTree;
 import org.zmpp.vm.PortableGameState;
 import org.zmpp.vm.RoutineContext;
+import org.zmpp.vm.ScreenModel6;
+import org.zmpp.vm.Window6;
 
 /**
  * This class represents can be considered as a mutable value object, which
@@ -673,5 +675,18 @@ public abstract class AbstractInstruction implements Instruction {
         getCpu().setVariable(storevar, (short) RESTORE_TRUE);        
       }
     }
+  }
+  
+  /**
+   * Returns the window for a given window number.
+   * 
+   * @param windownum the window number
+   * @return the window
+   */
+  protected Window6 getWindow(final int windownum) {
+    
+    return (windownum == ScreenModel6.CURRENT_WINDOW) ?
+            getMachine().getScreen6().getSelectedWindow() :
+            getMachine().getScreen6().getWindow(windownum);
   }  
 }

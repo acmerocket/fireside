@@ -28,8 +28,6 @@ import org.zmpp.base.MemoryAccess;
 import org.zmpp.vm.Machine;
 import org.zmpp.vm.PortableGameState;
 import org.zmpp.vm.ScreenModel;
-import org.zmpp.vm.ScreenModel6;
-import org.zmpp.vm.Window6;
 
 
 public class ExtendedInstruction extends AbstractInstruction {
@@ -438,11 +436,4 @@ public class ExtendedInstruction extends AbstractInstruction {
     getMachine().getScreen6().readMouse(array);
     nextInstruction();
   }
-  
-  private Window6 getWindow(final int windownum) {
-    
-    return (windownum == ScreenModel6.CURRENT_WINDOW) ?
-            getMachine().getScreen6().getSelectedWindow() :
-            getMachine().getScreen6().getWindow(windownum);
-  }  
 }
