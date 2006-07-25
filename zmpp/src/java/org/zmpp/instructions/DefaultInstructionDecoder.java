@@ -252,7 +252,7 @@ public class DefaultInstructionDecoder implements InstructionDecoder {
     
     int nextAddress = currentAddress;
     int oldNumOperands;
-    byte optype = (byte) ((optypeByte >> 6) & 0x03);
+    byte optype = 0;
     
     for (int i = 0; i < 4; i++) {
       
