@@ -58,6 +58,7 @@ public class RingBuffer<T> {
    * 
    * @param size the size of the buffer
    */
+  @SuppressWarnings({"unchecked"})
   public RingBuffer(int size) {
 
     super();
