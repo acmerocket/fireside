@@ -94,55 +94,40 @@ public abstract class SubWindow implements CursorWindow {
   }
   
   public void setCursorPosition(int line, int column) {
-    
     cursor.setPosition(line, column);
   }
   
-  public int getHeight() {
-    
-    return height;
-  }
+  public int getHeight() { return height; }
   
-  public int getTop() {
-    
-    return top;
-  }
+  public int getTop() { return top; }
   
   public void setVerticalBounds(int top, int height) {
-    
     this.top = top;
     this.height = height;
     sizeUpdated();
   }
   
   public void resize(int numLines) {
-    
     height = getCanvas().getFontHeight(font) * numLines;
     sizeUpdated();
   }
   
   /**
    * Sets this window's current font.
-   * 
-   * @param font the current font
+   * @param aFont the current font
    */
-  public void setFont(Font font) {
-    
-    this.font = font;
-  }
+  public void setFont(Font aFont) { font = aFont; }
   
   /**
    * Returns this window's current font.
-   * 
    * @return the current font
    */
-  public Font getFont() {
-    
-    return font;
-  }
+  public Font getFont() { return font; }
   
+  /**
+   * {@inheritDoc}
+   */
   public void clear() {
-    
     clipToCurrentBounds();
     getCanvas().fillRect(getBackgroundColor(), 0, getTop(),
                          getCanvas().getWidth(), height);
@@ -150,7 +135,6 @@ public abstract class SubWindow implements CursorWindow {
   }
   
   public void eraseLine() {
-    
     Canvas canvas = getCanvas();
     int currentX = getCurrentX();
     clipToCurrentBounds();
@@ -199,7 +183,7 @@ public abstract class SubWindow implements CursorWindow {
     WordWrapper wordWrapper =
       new WordWrapper(lineLength, canvas, font, isBuffered());
     String[] lines = wordWrapper.wrap(getCurrentX(), str);
-    printLines(lines);    
+    printLines(lines);  
   }
  
   public String toString() {
@@ -231,6 +215,11 @@ public abstract class SubWindow implements CursorWindow {
     cursor.setColumn(cursor.getColumn() - 1);
   }
 
+  /**
+   * Scrolls the window if necessary.
+   */
+  abstract protected void scrollIfNeeded();
+
   // **********************************************************************
   // ***** Protected methods
   // **************************************
@@ -243,32 +232,26 @@ public abstract class SubWindow implements CursorWindow {
   }
   
   protected Canvas getCanvas() {
-    
     return viewport.getCanvas();
   }
   
   protected LineEditor getEditor() {
-    
     return viewport.getLineEditor();
   }
   
   protected ScreenModel getScreen() {
-    
     return (ScreenModel) viewport;
   }
   
   protected Viewport getViewport() {
-    
     return viewport;
   }
   
   protected Color getTextBackground() {
-    
     return isReverseVideo ? getForegroundColor() : getBackgroundColor();
   }
   
   protected Color getTextColor() {
-    
     return isReverseVideo ? getBackgroundColor() : getForegroundColor();
   }
   
@@ -287,7 +270,6 @@ public abstract class SubWindow implements CursorWindow {
   }
   
   public void flushBuffer() {
-    
     // default implementation is empty
   }
   
@@ -362,10 +344,12 @@ public abstract class SubWindow implements CursorWindow {
       printLine(line, textbackColor, textColor);
       
       if (endsWithNewLine(line)) {
-        
         newline();
       }
     }
+    // Note: this is a patch for the issue that Fredrik revealed, the
+    // cursor being out of the visible area
+    scrollIfNeeded();
   }  
   
   private static boolean endsWithNewLine(String str) {

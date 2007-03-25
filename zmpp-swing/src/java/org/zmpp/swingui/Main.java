@@ -42,7 +42,7 @@ public class Main {
    * The application name.
    */
   public static final String APPNAME =
-    "Z-Machine Preservation Project Version 0.92";
+    "Z-Machine Preservation Project Version 0.92_02";
   
   /**
    * The main method.

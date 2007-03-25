@@ -31,7 +31,7 @@
   </target>
 
   <target name="compile" depends="init">
-    <javac debug="off" srcdir="${src.prj}" destdir="${build.prj}">
+    <javac debug="off" srcdir="${src.prj}" destdir="${build.prj}" source="1.5" target="1.5">
       <classpath>
   			<pathelement location="${build.prj}"/>
   			<pathelement location="${zmpp.core}"/>
@@ -125,5 +125,14 @@
   <target name="clean">
     <delete dir="target"/>
     <delete file="cobertura.ser"/>
+  </target>
+  
+    <target name="run" depends="compile">
+    <java classname="org.zmpp.swingui.Main" fork="true">
+      <classpath>
+        <pathelement location="${build.prj}"/>
+  	<pathelement location="${zmpp.core}"/>
+      </classpath>
+    </java>    
   </target>
 </project>

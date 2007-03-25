@@ -75,59 +75,23 @@ public class BottomWindow extends SubWindow {
   /**
    * {@inheritDoc}
    */
-  public boolean isBuffered() {
-    
-    return isBuffered;
-  }
+  public boolean isBuffered() { return isBuffered; }
   
   /**
    * {@inheritDoc}
    */
-  public void setPagingEnabled(boolean flag) {
-    
-    isPaged = flag;
-  }
+  public void setPagingEnabled(boolean flag) { isPaged = flag; }
   
   /**
    * {@inheritDoc}
    */
-  public boolean isPagingEnabled() {
-    
-    return isPaged;
-  }
+  public boolean isPagingEnabled() { return isPaged; }
   
   /**
    * {@inheritDoc}
    */
-  public void setBufferMode(boolean flag) {
-  
-    this.isBuffered = flag;
-  }
+  public void setBufferMode(boolean flag) { isBuffered = flag; }
     
-  /**
-   * Scrolls the window if necessary.
-   */
-  private void scrollIfNeeded() {
-
-    //System.out.printf("scrollIfNeeded(), current y: %d, window bottom: %d" +
-    //    ", font descent: %d, font height: %d\n", getCurrentY(),
-    //    (getTop() + getHeight()), getCanvas().getFontDescent(getFont()),
-    //    getCanvas().getFontHeight(getFont()));
-    int fontDescent = getCanvas().getFontDescent(getFont());
-    int fontHeight = getCanvas().getFontHeight(getFont());
-    clipToCurrentBounds();
-    
-    // We calulate an available height with a correction amount
-    // of fontDescent to reserve enough scrolling space
-    while (getCurrentY() > (getTop() + getHeight() - fontDescent)) {
-      
-      getCanvas().scrollUp(getBackgroundColor(), getFont(),
-                           getTop(), getHeight());
-      getCursor().setLine(getCursor().getLine() - 1);
-      currentY -= fontHeight;
-    }
-  }
-
   /**
    * {@inheritDoc}
    */
@@ -201,6 +165,7 @@ public class BottomWindow extends SubWindow {
   /**
    * {@inheritDoc}
    */
+  @Override
   protected void newline() {
     
     //System.out.println("newline()");
@@ -232,6 +197,7 @@ public class BottomWindow extends SubWindow {
   /**
    * {@inheritDoc}
    */
+  @Override
   protected void printLine(String line, Color textbackColor,
       Color textColor) {
     
@@ -264,34 +230,31 @@ public class BottomWindow extends SubWindow {
   /**
    * {@inheritDoc}
    */
-  public void resetPager() {
-  
+  public void resetPager() {  
     verticalTextPixelsPrinted = 0;
   }
 
   /**
    * {@inheritDoc}
    */
-  protected int getCurrentX() {
-    
-    return currentX;
-  }
+  protected int getCurrentX() { return currentX; }
 
   /**
    * {@inheritDoc}
    */
-  protected int getCurrentY() {
-    
-    return currentY;
-  }
-  
+  protected int getCurrentY() { return currentY; }
+
   /**
    * {@inheritDoc}
    */
+  private void setCurrentY(int value) { currentY = value; }
+
+  /**
+   * {@inheritDoc}
+   */
+  @Override
   public void backspace(char c) {
-    
-    super.backspace(c);
-    
+    super.backspace(c);   
     currentX -= getCanvas().getCharWidth(getFont(), c);
     if (currentX < 0) currentX = 0;
   }
@@ -309,5 +272,28 @@ public class BottomWindow extends SubWindow {
     currentX = (currentColumn - 1) * canvas.getCharWidth(font, '0');
     currentY = getTop() + (currentLine - 1) * canvas.getFontHeight(font)
                + (canvas.getFontHeight(font) - canvas.getFontDescent(font));
+  }
+  
+  /**
+   * {@inheritDoc}
+   */
+  protected void scrollIfNeeded() {
+    //System.out.printf("scrollIfNeeded(), current y: %d, window bottom: %d" +
+    //    ", font descent: %d, font height: %d\n", getCurrentY(),
+    //    (getTop() + getHeight()), getCanvas().getFontDescent(getFont()),
+    //    getCanvas().getFontHeight(getFont()));
+    int fontDescent = getCanvas().getFontDescent(getFont());
+    int fontHeight = getCanvas().getFontHeight(getFont());
+    clipToCurrentBounds();
+    
+    // We calulate an available height with a correction amount
+    // of fontDescent to reserve enough scrolling space
+    while (getCurrentY() > (getTop() + getHeight() - fontDescent)) {
+      
+      getCanvas().scrollUp(getBackgroundColor(), getFont(),
+                           getTop(), getHeight());
+      getCursor().setLine(getCursor().getLine() - 1);
+      setCurrentY(getCurrentY() - fontHeight);
+    }
   }
 }

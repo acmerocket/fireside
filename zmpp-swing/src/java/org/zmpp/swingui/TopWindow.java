@@ -78,11 +78,6 @@ public class TopWindow extends SubWindow {
    * {@inheritDoc}
    */
   public void resetPager() { }
-  
-  /**
-   * {@inheritDoc}
-   */
-  protected void scrollIfNeeded() { }
 
   /**
    * {@inheritDoc}
@@ -108,12 +103,16 @@ public class TopWindow extends SubWindow {
     return getTop() + (getCursor().getLine() - 1) * canvas.getFontHeight(font)
            + (canvas.getFontHeight(font) - canvas.getFontDescent(font));
   }
-  
+
+  /**
+   * {@inheritDoc}
+   */
+  protected void scrollIfNeeded() { }
+
   /**
    * {@inheritDoc}
    */
   public void updateCursorCoordinates() {
-
     // empty
   }
 
