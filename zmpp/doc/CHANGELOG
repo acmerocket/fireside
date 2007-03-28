@@ -1,5 +1,12 @@
 Changelog
 
+Version 0.92_02
+---------------
+- fixed a display issue that arises when input is expected, but no prompt
+  string is printed by the game
+- small refactorings in the screen model
+- renewed the certificate which was expired
+
 Version 0.92
 ------------
 - picture scaling added
