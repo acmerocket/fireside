@@ -46,7 +46,7 @@ import javax.swing.border.Border;
 
 public class PreferencesDialog extends JDialog implements ActionListener {
 
-  class ColorItem {
+  static class ColorItem {
     
     int color;
     String name;

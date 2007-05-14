@@ -59,9 +59,11 @@ public class DefaultMemoryAccess implements MemoryAccess {
    * {@inheritDoc}
    */
   public long readUnsigned48(final int address) {
-    
-    return (data[address + 0] & 0xff) << 40
-         | (data[address + 1] & 0xff) << 32
+    long a0 = data[address + 0] & 0xff;
+    a0 <<= 40;
+    long a1 = data[address + 1] & 0xff;
+    a1 <<= 32;
+    return a0 | a1
          | (data[address + 2] & 0xff) << 24
          | (data[address + 3] & 0xff) << 16
          | (data[address + 4] & 0xff) << 8

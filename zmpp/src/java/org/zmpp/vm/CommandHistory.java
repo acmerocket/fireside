@@ -46,7 +46,7 @@ public class CommandHistory {
    * The class HistoryEntry maintains input entries, there is both an original
    * line and a
    */
-  private class HistoryEntry {
+  private static class HistoryEntry {
   
     public List<Short> original;
     public List<Short> edited;

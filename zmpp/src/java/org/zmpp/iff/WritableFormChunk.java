@@ -117,7 +117,7 @@ public class WritableFormChunk implements FormChunk {
     for (Chunk chunk : subChunks) {
       
       int chunkSize = chunk.getSize();
-      if ((chunkSize % 2) == 1) {
+      if ((chunkSize % 2) != 0) {
         chunkSize++; // pad if necessary
       }
       size += (Chunk.CHUNK_HEADER_LENGTH + chunkSize);
@@ -191,7 +191,7 @@ public class WritableFormChunk implements FormChunk {
       }
       
       // Pad if necessary
-      if ((chunkSize % 2) == 1) {
+      if ((chunkSize % 2) != 0) {
         memaccess.writeByte(offset++, (byte) 0);
       }
     }

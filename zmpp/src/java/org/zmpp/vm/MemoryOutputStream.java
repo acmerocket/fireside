@@ -44,7 +44,7 @@ public class MemoryOutputStream implements OutputStream {
    */
   private static final int MAX_NESTING_DEPTH = 16;
   
-  class TablePosition {
+  static class TablePosition {
     
     int tableAddress;
     int bytesWritten;

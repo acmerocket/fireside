@@ -58,7 +58,7 @@ public class ZCharEncoder {
   private static final int NUM_TARGET_BYTES = 6;
   private static final int TARGET_LAST_WORD = 4;
   
-  class EncodingState {
+  static class EncodingState {
     
     public MemoryAccess memaccess;
     public int source;

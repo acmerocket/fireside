@@ -126,7 +126,6 @@ public class DefaultInstructionDecoder implements InstructionDecoder {
     } else if (0x00 <= firstByte && firstByte <= 0x7f) {
       
       opcode = firstByte & 0x1f; // Bottom five bits contain the opcode number
-      operandCount = OperandCount.C2OP;
       return new LongInstruction(machine, opcode);
 
     } else if (0x80 <= firstByte && firstByte <= 0xbf) {

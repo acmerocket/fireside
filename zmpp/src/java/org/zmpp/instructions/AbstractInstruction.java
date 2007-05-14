@@ -80,7 +80,7 @@ public abstract class AbstractInstruction implements Instruction {
   /**
    * This is the result of an instruction.
    */
-  public class InstructionResult {
+  public static class InstructionResult {
   
     private short value;
     private boolean branchCondition;
