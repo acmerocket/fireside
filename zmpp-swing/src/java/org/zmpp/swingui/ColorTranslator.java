@@ -56,9 +56,16 @@ public class ColorTranslator {
   private static final Color CYAN     = new Color(0, 190, 190);
   
   private static ColorTranslator instance = new ColorTranslator();
-  
+
+  /**
+   * Constructor.
+   */
   private ColorTranslator()  { }
-  
+
+  /**
+   * Returns the singleton instance.
+   * @return the singleton instance
+   */
   public static ColorTranslator getInstance() { return instance; }
   
   /**
@@ -95,7 +102,12 @@ public class ColorTranslator {
     }
     return Color.BLACK;
   }
-  
+
+  /**
+   * Translates the specified color number to a Color object.
+   * @param colornum the color number
+   * @return the color
+   */
   public Color translate(int colornum) {
     
     return translate(colornum, UNDEFINED);

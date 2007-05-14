@@ -44,24 +44,40 @@ import javax.swing.JSeparator;
 import javax.swing.JSpinner;
 import javax.swing.border.Border;
 
+/**
+ * A dialog to set the display preferences for the user interface.
+ *
+ * @author Wei-ju Wu
+ * @version 1.0
+ */
 public class PreferencesDialog extends JDialog implements ActionListener {
 
+  /**
+   * An item for the color list.
+   */
   static class ColorItem {
     
     int color;
     String name;
-    
+    /**
+     * Constructor.
+     * @param colornum the color number
+     * @param name the name of the color
+     */
     public ColorItem(int colornum, String name) {
       
       this.color = colornum;
       this.name = name;
     }
-    
+
+    /**
+     * {@inheritDoc}
+     */
+    @Override
     public String toString() { return name; }
   }
   
-  private ColorItem[] colors = {
-    
+  private static final ColorItem[] colors = {
     new ColorItem(ColorTranslator.UNDEFINED, ""),
     new ColorItem(ColorTranslator.COLOR_BLACK, "Black"),
     new ColorItem(ColorTranslator.COLOR_RED, "Red"),
@@ -87,6 +103,12 @@ public class PreferencesDialog extends JDialog implements ActionListener {
   private Preferences preferences;
   private DisplaySettings settings;
     
+  /**
+   * Constructor.
+   * @param parent the parent frame
+   * @param preferences the preferences object
+   * @param settings the display settings
+   */
   public PreferencesDialog(JFrame parent, Preferences preferences,
                            DisplaySettings settings) {
     
@@ -159,11 +181,14 @@ public class PreferencesDialog extends JDialog implements ActionListener {
     pack();
     
   }
-  
+
+  /**
+   * {@inheritDoc}
+   */
   public void actionPerformed(ActionEvent e) {
-   
+
     if (e.getActionCommand().equals("Ok")) {
-      
+
       // Transfer the settings to the user settings only, they will
       // only take effect on the next restart
       int stdfontsize = Integer.valueOf(stdfontSpinner.getValue().toString());
@@ -171,7 +196,7 @@ public class PreferencesDialog extends JDialog implements ActionListener {
       int bgcolor = ((ColorItem) backgroundCB.getSelectedItem()).color;
       int fgcolor = ((ColorItem) foregroundCB.getSelectedItem()).color;
       boolean antialias = antialiasCB.isSelected();
-      
+
       preferences.put("stdfontsize", String.valueOf(stdfontsize));
       preferences.put("fixedfontsize", String.valueOf(fixedfontsize));
       preferences.put("defaultbackground", String.valueOf(bgcolor));
@@ -187,7 +212,11 @@ public class PreferencesDialog extends JDialog implements ActionListener {
     }
     dispose();
   }
-  
+
+  /**
+   * Preselect the specified item in the combobox.
+   * @param value the value to select
+   */
   private void preselect(JComboBox combobox, int value) {
    
     for (int i = 0; i < colors.length; i++) {

@@ -38,22 +38,52 @@ public class ScreenFont {
   private int style;
   private Font font;
   private boolean reverseVideo;
-  
+
+  /**
+   * Constructor.
+   * @param font the font
+   * @param number the font number
+   * @param style the font style
+   */
   public ScreenFont(Font font, int number, int style) {
-  
     this(font, number, style, false);
   }
-  
+
+  /**
+   * Constructor.
+   * @param font the font
+   * @param number the font number
+   * @param style the font style
+   * @param reverseVideo the reverse video flag
+   */
   public ScreenFont(Font font, int number, int style, boolean reverseVideo) {
-    
     this.font = font;
     this.number = number;
     this.style = style;
     this.reverseVideo = reverseVideo;
   }
-  
+
+  /**
+   * Returns the font.
+   * @return the font
+   */
   public Font getFont() { return font; }
+
+  /**
+   * Returns the font number.
+   * @return the font number
+   */
   public int getNumber() { return number; }
+  
+  /**
+   * Returns the font style the font style.
+   * @return the font style
+   */
   public int getStyle() { return style; }
+
+  /**
+   * Returns the reverse video flag.
+   * @return the reverse video flag
+   */
   public boolean isReverseVideo() { return reverseVideo; }
 }
