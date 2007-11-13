@@ -2,13 +2,12 @@
  * $Id$
  * 
  * Created on 11/23/2005
- * Copyright 2005-2006 by Wei-ju Wu
- *
+ * Copyright 2005-2007 by Wei-ju Wu
  * This file is part of The Z-machine Preservation Project (ZMPP).
  *
- * ZMPP is free software; you can redistribute it and/or modify
+ * ZMPP is free software: you can redistribute it and/or modify
  * it under the terms of the GNU General Public License as published by
- * the Free Software Foundation; either version 2 of the License, or
+ * the Free Software Foundation, either version 3 of the License, or
  * (at your option) any later version.
  *
  * ZMPP is distributed in the hope that it will be useful,
@@ -17,8 +16,7 @@
  * GNU General Public License for more details.
  *
  * You should have received a copy of the GNU General Public License
- * along with ZMPP; if not, write to the Free Software
- * Foundation, Inc., 51 Franklin St, Fifth Floor, Boston, MA  02110-1301  USA
+ * along with ZMPP.  If not, see <http://www.gnu.org/licenses/>.
  */
 package org.zmpp.vm;
 
@@ -26,7 +24,6 @@ import java.util.ArrayList;
 import java.util.List;
 
 import org.zmpp.base.MemoryAccess;
-import org.zmpp.encoding.ZsciiString;
 import org.zmpp.io.OutputStream;
 
 /**
@@ -65,11 +62,6 @@ public class MemoryOutputStream implements OutputStream {
    */
   private List<TablePosition> tableStack;
   
-  /**
-   * The table width.
-   */
-  private int tableWidth;
-    
   /**
    * Constructor.
    * 
@@ -162,7 +154,7 @@ public class MemoryOutputStream implements OutputStream {
    */
   public void select(final int tableAddress, final int tableWidth) {
 
-    this.tableWidth = tableWidth;
+    //this.tableWidth = tableWidth;
     
     if (tableStack.size() < MAX_NESTING_DEPTH) {
       
