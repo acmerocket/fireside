@@ -26,7 +26,7 @@ import java.util.Arrays;
 import java.util.Iterator;
 import java.util.List;
 
-import org.zmpp.base.MemoryAccess;
+import org.zmpp.base.Memory;
 import org.zmpp.base.MemorySection;
 
 /**
@@ -49,12 +49,10 @@ public class DefaultFormChunk extends DefaultChunk implements FormChunk {
   
   /**
    * Constructor.
-   * 
-   * @param memaccess a MemoryAccess object
+   * @param memory a MemoryAccess object
    */
-  public DefaultFormChunk(final MemoryAccess memaccess) throws IOException {
-
-    super(memaccess, 0);
+  public DefaultFormChunk(final Memory memory) throws IOException {
+    super(memory, 0);
     initBaseInfo();
     readSubChunks();
   }
@@ -63,17 +61,15 @@ public class DefaultFormChunk extends DefaultChunk implements FormChunk {
    * Initialize the id field.
    */
   private void initBaseInfo() throws IOException {
-    
     if (!"FORM".equals(new String(getId()))) {
-      
       throw new IOException("not a valid IFF format");
     }
     // Determine the sub id
     subId = new byte[CHUNK_ID_LENGTH];
     final int offset = CHUNK_HEADER_LENGTH;
+
     for (int i = 0; i < 4; i++) {
-      
-      subId[i] = memaccess.readByte(i + offset);
+      subId[i] = memory.readByte(i + offset);
     }
   }
   
@@ -81,7 +77,6 @@ public class DefaultFormChunk extends DefaultChunk implements FormChunk {
    * Read this form chunk's sub chunks.
    */
   private void readSubChunks() {
-    
     subChunks = new ArrayList<Chunk>();
     
     // skip the identifying information
@@ -90,7 +85,7 @@ public class DefaultFormChunk extends DefaultChunk implements FormChunk {
     int chunkTotalSize = 0;
     
     while (offset < length) {
-      final MemoryAccess memarray = new MemorySection(memaccess, offset,
+      final Memory memarray = new MemorySection(memory, offset,
                                                       length - offset);
       final Chunk subchunk = new DefaultChunk(memarray, offset);
       subChunks.add(subchunk);
@@ -107,23 +102,18 @@ public class DefaultFormChunk extends DefaultChunk implements FormChunk {
    * {@inheritDoc}
    */
   public boolean isValid() {
-    
     return (new String(getId())).equals("FORM");
   }
   
   /**
    * {@inheritDoc}
    */
-  public byte[] getSubId() {
-    
-    return subId;
-  }
+  public byte[] getSubId() { return subId; }
 
   /**
    * {@inheritDoc}
    */
   public Iterator<Chunk> getSubChunks() {
-
     return subChunks.iterator();
   }
   
@@ -131,7 +121,6 @@ public class DefaultFormChunk extends DefaultChunk implements FormChunk {
    * {@inheritDoc}
    */
   public Chunk getSubChunk(final byte[] id) {
-
     for (Chunk chunk : subChunks) {
       
       if (Arrays.equals(id, chunk.getId())) {
@@ -141,9 +130,11 @@ public class DefaultFormChunk extends DefaultChunk implements FormChunk {
     }
     return null;
   }
-  
+
+  /**
+   * {@inheritDoc}
+   */
   public Chunk getSubChunk(final int address) {
-    
     for (Chunk chunk : subChunks) {
       
       if (chunk.getAddress() == address) {

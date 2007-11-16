@@ -30,96 +30,65 @@ package org.zmpp.vmutil;
  */
 public final class FastShortStack {
 
-  /**
-   * The values of the stack.
-   */
   private short[] values;
-  
-  /**
-   * The current stack pointer.
-   */
   private int stackpointer;
   
   /**
    * Constructor.
-   * 
    * @param size the stack size
    */
   public FastShortStack(final int size) {
-  
     values = new short[size];
     stackpointer = 0;
   }
   
   /**
    * Returns the current stack pointer.
-   * 
    * @return the stack pointer
    */
-  public int getStackPointer() {
-    
-    return stackpointer;
-  }
+  public int getStackPointer() { return stackpointer; }
   
   /**
    * Pushes a value on the stack and increases the stack pointer.
-   * 
    * @param value the value
    */
   public void push(final short value) {
-    
     values[stackpointer++] = value;
   }
   
   /**
    * Returns the top value of the stack without modifying the stack pointer.
-   * 
    * @return the top value
    */
-  public short top() {
-    
-    return values[stackpointer - 1];
-  }
+  public short top() { return values[stackpointer - 1]; }
   
   /**
    * Replaces the top element with the specified value.
-   * 
    * @param value the value to replace
    */
   public void replaceTopElement(final short value) {
-    
     values[stackpointer - 1] = value;
   }
   
   /**
    * Returns the size of the stack. Is equal to stack pointer, but has a
    * different semantic meaning.
-   * 
    * @return the size of the stack
    */
-  public int size() {
-    
-    return stackpointer;
-  }
+  public int size() { return stackpointer; }
   
   /**
    * Returns the top value of the stack and decreases the stack pointer.
-   * 
    * @return the top value
    */
   public short pop() {
-    
     return values[--stackpointer];
   }
   
   /**
    * Returns the value at index of the stack, here stack is treated as an array.
-   * 
    * @param index the index
    * @return the value at the index
    */
-  public short getValueAt(int index) {
-    
-    return values[index];
-  }
+  public short getValueAt(int index) { return values[index]; }
 }

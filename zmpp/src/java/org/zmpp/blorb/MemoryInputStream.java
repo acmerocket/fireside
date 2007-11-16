@@ -1,5 +1,5 @@
 /*
- * $Id$
+ * $Id: MemoryAccessInputStream.java 520 2007-11-13 19:14:51Z weiju $
  * 
  * Created on 2006/02/06
  * Copyright 2005-2007 by Wei-ju Wu
@@ -23,7 +23,7 @@ package org.zmpp.blorb;
 import java.io.IOException;
 import java.io.InputStream;
 
-import org.zmpp.base.MemoryReadAccess;
+import org.zmpp.base.Memory;
 
 /**
  * This class encapsulates the a memory object within an input stream.
@@ -31,12 +31,12 @@ import org.zmpp.base.MemoryReadAccess;
  * @author Wei-ju Wu
  * @version 1.0
  */
-public class MemoryAccessInputStream extends InputStream {
+public class MemoryInputStream extends InputStream {
 
   /**
    * The memory object this stream is based on.
    */
-  private MemoryReadAccess memaccess;
+  private Memory memory;
 
   /**
    * The position in the stream.
@@ -56,15 +56,14 @@ public class MemoryAccessInputStream extends InputStream {
   /**
    * Constructor.
    * 
-   * @param memaccess a memory object
+   * @param memory a memory object
    * @param offset the byte offset
    * @param size the memory size
    */
-  public MemoryAccessInputStream(final MemoryReadAccess memaccess,
+  public MemoryInputStream(final Memory memory,
       final int offset, final int size) {
-  
     super();
-    this.memaccess = memaccess;
+    this.memory = memory;
     position += offset;
     this.size = size;
   }
@@ -73,26 +72,19 @@ public class MemoryAccessInputStream extends InputStream {
    * {@inheritDoc}
    */
   public int read() throws IOException {
-    
     if (position >= size) {
       return -1;
     }
-    return memaccess.readUnsignedByte(position++);
+    return memory.readUnsignedByte(position++);
   }
 
   /**
    * {@inheritDoc}
    */
-  public void mark(final int readLimit) {
-    
-    mark = position;
-  }
+  public void mark(final int readLimit) { mark = position; }
   
   /**
    * {@inheritDoc}
    */
-  public void reset() {
-    
-    position = mark;
-  }  
+  public void reset() { position = mark; }  
 }

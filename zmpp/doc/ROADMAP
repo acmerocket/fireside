@@ -39,7 +39,6 @@ Version 0.92
 
 Version 0.90
 ------------
-
 - customizable default colors and font sizes
 - make settings dialog for standalone version
 - fix the problem that leads to focus loss in Mozilla and Opera

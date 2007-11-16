@@ -22,7 +22,7 @@ package org.zmpp.instructions;
 
 import java.awt.Dimension;
 
-import org.zmpp.base.MemoryAccess;
+import org.zmpp.base.Memory;
 import org.zmpp.vm.Machine;
 import org.zmpp.vm.PortableGameState;
 import org.zmpp.vm.ScreenModel;
@@ -254,10 +254,10 @@ public class ExtendedInstruction extends AbstractInstruction {
         getMachine().getPictureManager().getPictureSize(picnum);
       if (picdim != null) {
         
-        final MemoryAccess memaccess =
-          getMachine().getGameData().getMemoryAccess();
-        memaccess.writeUnsignedShort(array, picdim.height);
-        memaccess.writeUnsignedShort(array + 2, picdim.width);
+        final Memory memory =
+          getMachine().getGameData().getMemory();
+        memory.writeUnsignedShort(array, picdim.height);
+        memory.writeUnsignedShort(array + 2, picdim.width);
         result = true;
       }
     }
@@ -265,16 +265,14 @@ public class ExtendedInstruction extends AbstractInstruction {
   }
   
   private void writePictureFileInfo(final int array) {
-    
-    final MemoryAccess memaccess = getMachine().getGameData().getMemoryAccess();
-    memaccess.writeUnsignedShort(array,
+    final Memory memory = getMachine().getGameData().getMemory();
+    memory.writeUnsignedShort(array,
         getMachine().getPictureManager().getNumPictures());
-    memaccess.writeUnsignedShort(array + 2,
+    memory.writeUnsignedShort(array + 2,
         getMachine().getPictureManager().getRelease());
   }
   
   private void draw_picture() {
-    
     final int picnum = getUnsignedValue(0);
     int x = 0, y = 0;
     
@@ -291,7 +289,6 @@ public class ExtendedInstruction extends AbstractInstruction {
   }
 
   private void erase_picture() {
-    
     final int picnum = getUnsignedValue(0);
     int x = 1, y = 1;
     
@@ -308,14 +305,12 @@ public class ExtendedInstruction extends AbstractInstruction {
   }
   
   private void move_window() {
-    
     getMachine().getScreen6().getWindow(getUnsignedValue(0)).move(
         getUnsignedValue(1), getUnsignedValue(2));
     nextInstruction();
   }
   
   private void window_size() {
-
     final int window = getValue(0);
     final int height = getValue(1);
     final int width = getValue(2);
@@ -325,7 +320,6 @@ public class ExtendedInstruction extends AbstractInstruction {
   }
   
   private void window_style() {
-
     int operation = 0;
     if (getNumOperands() > 2) {
       operation = getUnsignedValue(2);
@@ -336,7 +330,6 @@ public class ExtendedInstruction extends AbstractInstruction {
   }
   
   private void set_margins() {
-    
     int window = ScreenModel.CURRENT_WINDOW;
     if (getNumOperands() == 3) {
       
@@ -347,35 +340,29 @@ public class ExtendedInstruction extends AbstractInstruction {
   }
   
   private void get_wind_prop() {
-
     int window = getValue(0);
     int propnum = getUnsignedValue(1);
     short result;
     result = (short) getWindow(window).getProperty(propnum);
-    //System.out.printf("@get_wind_prop %d %d value: %04x\n", window, propnum, result);    
     storeResult(result);
     nextInstruction();
   }
 
   private void put_wind_prop() {
-
     int window = getValue(0);
     int propnum = getUnsignedValue(1);
     short value = getValue(2);
-    //System.out.printf("@put_wind_prop %d %d value: %04x\n", window, propnum, value);    
     getWindow(window).putProperty(propnum, value);
     nextInstruction();
   }
   
   private void picture_table() {
-
     // @picture_table is a no-op, because all pictures are held in memory
     // anyways
     nextInstruction();
   }
   
   private void pop_stack() {
-    
     int numItems = getUnsignedValue(0);
     int stack = 0;
     if (getNumOperands() == 2) {
@@ -402,7 +389,6 @@ public class ExtendedInstruction extends AbstractInstruction {
   }
   
   private void push_stack() {
-    
     short value = getValue(0);
     int stack = 0;
     if (getNumOperands() == 2) {
@@ -423,13 +409,11 @@ public class ExtendedInstruction extends AbstractInstruction {
   }
   
   private void scroll_window() {
-    
     getWindow(getValue(0)).scroll(getValue(1));
     nextInstruction();
   }
   
   private void read_mouse() {
-    
     int array = getUnsignedValue(0);
     getMachine().getScreen6().readMouse(array);
     nextInstruction();

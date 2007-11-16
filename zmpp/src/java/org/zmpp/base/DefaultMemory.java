@@ -1,5 +1,5 @@
 /*
- * $Id$
+ * $Id: DefaultMemoryAccess.java 520 2007-11-13 19:14:51Z weiju $
  * 
  * Created on 2005/09/23
  * Copyright 2005-2007 by Wei-ju Wu
@@ -26,7 +26,7 @@ package org.zmpp.base;
  * @author Wei-ju Wu
  * @version 1.0
  */
-public class DefaultMemoryAccess implements MemoryAccess {
+public class DefaultMemory implements Memory {
 
   /**
    * The data array containing the story file.
@@ -38,7 +38,7 @@ public class DefaultMemoryAccess implements MemoryAccess {
    * 
    * @param data the story file data
    */
-  public DefaultMemoryAccess(final byte[] data) {
+  public DefaultMemory(final byte[] data) {
     
     super();
     this.data = data;    
@@ -173,5 +173,4 @@ public class DefaultMemoryAccess implements MemoryAccess {
     data[address + 2] = (byte) ((value & 0x0000ff00) >> 8);
     data[address + 3] = (byte) (value & 0x000000ff);
   }
-  
 }

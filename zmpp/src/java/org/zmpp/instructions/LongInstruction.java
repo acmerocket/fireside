@@ -20,11 +20,9 @@
  */
 package org.zmpp.instructions;
 
-import org.zmpp.base.MemoryReadAccess;
+import org.zmpp.base.Memory;
 import org.zmpp.vm.Machine;
-import org.zmpp.vm.ObjectTree;
 import org.zmpp.vm.ScreenModel;
-import org.zmpp.vm.ZObject;
 
 
 /**
@@ -217,17 +215,13 @@ public class LongInstruction extends AbstractInstruction {
   }
   
   private void jin() {
-    
     final int obj1 = getUnsignedValue(0);
     final int obj2 = getUnsignedValue(1);
     int parentOfObj1 = 0;
     
     if (obj1 > 0) {
-      
-      parentOfObj1 = getObjectTree().getObject(obj1).getParent();
-
+      parentOfObj1 = getMachine().getParent(obj1);
     } else {
-      
       getMachine().warn("@jin illegal access to object " + obj1);
     }
     branchOnTest(parentOfObj1 == obj2);
@@ -293,7 +287,6 @@ public class LongInstruction extends AbstractInstruction {
   }
   
   private void mul() {
-    
     final short op1 = getValue(0);
     final short op2 = getValue(1);
     storeResult((short)(op1 * op2));
@@ -301,7 +294,6 @@ public class LongInstruction extends AbstractInstruction {
   }
   
   private void div() {
-    
     final short op1 = getValue(0);
     final short op2 = getValue(1);
     
@@ -317,7 +309,6 @@ public class LongInstruction extends AbstractInstruction {
   }
   
   private void mod() {
-    
     final short op1 = getValue(0);
     final short op2 = getValue(1);
     
@@ -332,15 +323,11 @@ public class LongInstruction extends AbstractInstruction {
   }
   
   private void test_attr() {
-    
     final int obj = getUnsignedValue(0);
     final int attr = getUnsignedValue(1);
     
     if (obj > 0 && isValidAttribute(attr)) {
-      
-      final ZObject zobj = getObjectTree().getObject(obj);
-      branchOnTest(zobj.isAttributeSet(attr));
-      
+      branchOnTest(getMachine().isAttributeSet(obj, attr));
     } else {
       
       getMachine().warn("@test_attr illegal access to object " + obj);
@@ -349,16 +336,11 @@ public class LongInstruction extends AbstractInstruction {
   }
   
   private void set_attr() {
-    
     final int obj = getUnsignedValue(0);
     final int attr = getUnsignedValue(1);
     if (obj > 0 && isValidAttribute(attr)) {
-      
-      final ZObject zobj = getObjectTree().getObject(obj);
-      zobj.setAttribute(attr);
-      
+      getMachine().setAttribute(obj, attr);
     } else {
-      
       getMachine().warn("@set_attr illegal access to object " + obj
                         + " attr: " + attr);
     }
@@ -366,16 +348,11 @@ public class LongInstruction extends AbstractInstruction {
   }
   
   private void clear_attr() {
-    
     final int obj = getUnsignedValue(0);
     final int attr = getUnsignedValue(1);
     if (obj > 0 && isValidAttribute(attr)) {
-      
-      final ZObject zobj = getObjectTree().getObject(obj);
-      zobj.clearAttribute(attr);
-      
+      getMachine().clearAttribute(obj, attr);
     } else {
-      
       getMachine().warn("@clear_attr illegal access to object " + obj
                         + " attr: " + attr);
     }
@@ -383,142 +360,82 @@ public class LongInstruction extends AbstractInstruction {
   }
   
   private void store() {
-    
     final int varnum = getUnsignedValue(0);
     final short value = getValue(1);
     
     // Handle stack variable as a special case (standard 1.1)
     if (varnum == 0) {
-      
       getCpu().setStackTopElement(value);
-      
     } else {
-      
       getCpu().setVariable(varnum, value);
     }
     nextInstruction();
   }
   
   private void insert_obj() {
-    
     final int obj = getUnsignedValue(0);
     final int dest = getUnsignedValue(1);
     if (obj > 0 && dest > 0) {
-      
-      final ObjectTree objectTree = getObjectTree();
-      objectTree.insertObject(dest, obj);
-      
+      getMachine().insertObject(dest, obj);
     } else {
-      
       getMachine().warn("@insert_obj with object 0 called, obj: " + obj
                         + ", dest: " + dest);
     }
     nextInstruction();
   }
-  
-  private void loadw() {
-    
-    final int arrayAddress = getUnsignedValue(0);
-    final int index = getUnsignedValue(1);
-    final MemoryReadAccess memaccess =
-      getMachine().getGameData().getMemoryAccess();
-    storeResult(memaccess.readShort(arrayAddress + 2 * index));
-    nextInstruction();
-  }
-  
+
   private void loadb() {
-    
     final int arrayAddress = getUnsignedValue(0);
     final int index = getUnsignedValue(1);
-    final MemoryReadAccess memaccess =
-      getMachine().getGameData().getMemoryAccess();
-    storeResult((short) memaccess.readUnsignedByte(arrayAddress + index));
+    final Memory memory =
+      getMachine().getGameData().getMemory();
+    storeResult((short) memory.readUnsignedByte(arrayAddress + index));
     nextInstruction();
   }
-  
+
+  private void loadw() {
+    final int arrayAddress = getUnsignedValue(0);
+    final int index = getUnsignedValue(1);
+    final Memory memory =
+      getMachine().getGameData().getMemory();
+    storeResult(memory.readShort(arrayAddress + 2 * index));
+    nextInstruction();
+  }
+
   private void get_prop() {
-    
     final int obj = getUnsignedValue(0);
     final int property = getUnsignedValue(1);
     
     if (obj > 0) {
-      
-      final ZObject zobj = getObjectTree().getObject(obj);
-      final int numBytes = zobj.getPropertySize(property);
-      short value;
-    
-      if (!zobj.isPropertyAvailable(property)) {
-     
-        // Retrieve and store default
-        value = getObjectTree().getPropertyDefault(property);
-      
-      } else if (numBytes == 1) {
-      
-        value = zobj.getPropertyByte(property, 0);
-      
-      } else {
-      
-        final byte byte1 = zobj.getPropertyByte(property, 0);
-        final byte byte2 = zobj.getPropertyByte(property, 1);      
-        value = (short) (byte1 << 8 | (byte2 & 0xff));
-      }
-      storeResult(value);
-      
+      int value = getMachine().getProperty(obj, property);
+      storeResult((short) value); 
     } else {
-      
       getMachine().warn("@get_prop illegal access to object " + obj);
     }
     nextInstruction();
   }
   
   private void get_prop_addr() {
-    
     final int obj = getUnsignedValue(0);
     final int property = getUnsignedValue(1);    
-    
     if (obj > 0) {
-      
-      short value = 0;
-      final ZObject zobj = getObjectTree().getObject(obj);
-    
-      if (zobj.isPropertyAvailable(property)) {
-      
-        value = (short) (zobj.getPropertyAddress(property) & 0xffff);
-      }
-      storeResult(value);
-
+      int value = getMachine().getPropertyAddress(obj, property) & 0xffff;
+      storeResult((short) value);
     } else {
-      
       getMachine().warn("@get_prop_addr illegal access to object " + obj);
     }
-    
     nextInstruction();
   }
   
   private void get_next_prop() {
-    
     final int obj = getUnsignedValue(0);
     final int property = getUnsignedValue(1);
-    short value = 0;
-    
+    short value = 0;    
     if (obj > 0) {
-      
-      final ZObject zobj = getObjectTree().getObject(obj);
-    
-      if (property == 0 || zobj.isPropertyAvailable(property)) {
-      
-        value = (short) (zobj.getNextProperty(property) & 0xffff);
-        storeResult(value);
-        nextInstruction();
-      
-      } else {
-      
-        getMachine().getCpu().halt("the property [" + property + "] of object [" + obj
-                          + "] does not exist");
-      }
-      
+      value = (short) (getMachine().getNextProperty(obj, property) & 0xffff);
+      storeResult(value);
+      nextInstruction();
     } else {
-      
       // issue warning and continue
       getMachine().warn("@get_next_prop illegal access to object " + obj);
       nextInstruction();
@@ -526,21 +443,17 @@ public class LongInstruction extends AbstractInstruction {
   }
   
   private void set_colour() {
-    
     int window = ScreenModel.CURRENT_WINDOW;
     if (getNumOperands() == 3) {
       
       window = getValue(2);
     }
-    //System.out.printf("@set_colour, foreground: %d, background: %d\n",
-    //    getValue(0), getValue(1));
     getMachine().getScreen().setForegroundColor(getValue(0), window);
     getMachine().getScreen().setBackgroundColor(getValue(1), window);
     nextInstruction();
   }
   
   private void z_throw() {
-    
     final short returnValue = getValue(0);
     final int stackFrame = getUnsignedValue(1);
     
@@ -565,7 +478,6 @@ public class LongInstruction extends AbstractInstruction {
   }
   
   private boolean isValidAttribute(final int attribute) {
-    
     final int numAttr = getStoryFileVersion() <= 3 ? 32 : 48;
     return attribute >= 0 && attribute < numAttr;    
   }

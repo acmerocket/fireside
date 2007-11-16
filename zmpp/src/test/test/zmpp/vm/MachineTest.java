@@ -35,7 +35,7 @@ import org.zmpp.vm.ScreenModel;
 import org.zmpp.vm.StatusLine;
 import org.zmpp.vm.StoryFileHeader.Attribute;
 
-public class MachineTest extends MemoryMapSetup {
+public class MachineTest extends MiniZorkSetup {
 
   private MachineImpl machine;
   private Mock mockStatusLine, mockScreen;
@@ -89,7 +89,7 @@ public class MachineTest extends MemoryMapSetup {
   public void testInitialState() {
     
     assertEquals(fileheader, machine.getGameData().getStoryFileHeader());
-    assertEquals(minizorkmap, machine.getGameData().getMemoryAccess());
+    assertEquals(minizorkmap, machine.getGameData().getMemory());
     assertTrue(machine.getGameData().hasValidChecksum());
   }
   
@@ -213,7 +213,7 @@ public class MachineTest extends MemoryMapSetup {
     machine.getCpu().setVariable(0x10, (short) 2);
     mockStatusLine.expects(once()).method("updateStatusTime");
     machine.setStatusLine(statusLine); // set the "time" flag
-    machine.getGameData().getMemoryAccess().writeByte(1, (byte) 2);
+    machine.getGameData().getMemory().writeByte(1, (byte) 2);
     machine.updateStatusLine();
   }
   

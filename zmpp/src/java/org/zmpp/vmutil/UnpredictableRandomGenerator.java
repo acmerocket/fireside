@@ -31,16 +31,12 @@ import java.util.Random;
  */
 public class UnpredictableRandomGenerator implements RandomGenerator {
 
-  /**
-   * The random generator.
-   */
   private Random rand;
   
   /**
    * Constructor.
    */
   public UnpredictableRandomGenerator() {
-    
     rand = new Random(System.currentTimeMillis());
   }
 
@@ -48,7 +44,6 @@ public class UnpredictableRandomGenerator implements RandomGenerator {
    * {@inheritDoc}
    */
   public int next() {
-    
     return rand.nextInt(MAX_VALUE - 1) + 1;
   }
 }

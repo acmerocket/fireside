@@ -25,7 +25,7 @@ import java.util.Collections;
 import java.util.List;
 
 import org.zmpp.base.Interruptable;
-import org.zmpp.base.MemoryAccess;
+import org.zmpp.base.Memory;
 import org.zmpp.encoding.ZsciiString;
 import org.zmpp.vmutil.FastShortStack;
 
@@ -82,7 +82,7 @@ public class CpuImpl implements Cpu, Interruptable {
   public void reset() {
 
     final GameData gamedata = machine.getGameData();
-    decoder.initialize(machine, gamedata.getMemoryAccess());
+    decoder.initialize(machine, gamedata.getMemory());
     stack = new FastShortStack(STACKSIZE);
     routineContextStack = new ArrayList<RoutineContext>();
     globalsAddress = gamedata.getStoryFileHeader().getGlobalsAddress();
@@ -249,24 +249,22 @@ public class CpuImpl implements Cpu, Interruptable {
    */
   public short popUserStack(int userstackAddress) {
 
-    MemoryAccess memaccess = machine.getGameData().getMemoryAccess();
-    int numFreeSlots = memaccess.readUnsignedShort(userstackAddress);
+    Memory memory = machine.getGameData().getMemory();
+    int numFreeSlots = memory.readUnsignedShort(userstackAddress);
     numFreeSlots++;
-    memaccess.writeUnsignedShort(userstackAddress, numFreeSlots);
-    return memaccess.readShort(userstackAddress + (numFreeSlots * 2));
+    memory.writeUnsignedShort(userstackAddress, numFreeSlots);
+    return memory.readShort(userstackAddress + (numFreeSlots * 2));
   }
   
   /**
    * {@inheritDoc}
    */
   public boolean pushUserStack(int userstackAddress, short value) {
-    
-    MemoryAccess memaccess = machine.getGameData().getMemoryAccess();
-    int numFreeSlots = memaccess.readUnsignedShort(userstackAddress);
+    Memory memory = machine.getGameData().getMemory();
+    int numFreeSlots = memory.readUnsignedShort(userstackAddress);
     if (numFreeSlots > 0) {
-      
-      memaccess.writeShort(userstackAddress + (numFreeSlots * 2), value);
-      memaccess.writeUnsignedShort(userstackAddress, numFreeSlots - 1);
+      memory.writeShort(userstackAddress + (numFreeSlots * 2), value);
+      memory.writeUnsignedShort(userstackAddress, numFreeSlots - 1);
       return true;
     }
     return false;
@@ -276,7 +274,6 @@ public class CpuImpl implements Cpu, Interruptable {
    * {@inheritDoc}
    */
   public short getVariable(final int variableNumber) {
-
     final Cpu.VariableType varType = getVariableType(variableNumber);
     if (varType == Cpu.VariableType.STACK) {
       
@@ -299,7 +296,7 @@ public class CpuImpl implements Cpu, Interruptable {
       
     } else { // GLOBAL
       
-      return machine.getGameData().getMemoryAccess().readShort(globalsAddress
+      return machine.getGameData().getMemory().readShort(globalsAddress
           + (getGlobalVariableNumber(variableNumber) * 2));
     }
   }
@@ -310,7 +307,6 @@ public class CpuImpl implements Cpu, Interruptable {
    * @return the invocation stack pointer
    */
   private int getInvocationStackPointer() {
-    
     return getCurrentRoutineContext() == null ? 0 : 
       getCurrentRoutineContext().getInvocationStackPointer();
   }
@@ -319,21 +315,15 @@ public class CpuImpl implements Cpu, Interruptable {
    * {@inheritDoc}
    */
   public void setVariable(final int variableNumber, final short value) {
-
     final Cpu.VariableType varType = getVariableType(variableNumber);
     if (varType == Cpu.VariableType.STACK) {
-      
       stack.push(value);
-      
     } else if (varType == Cpu.VariableType.LOCAL) {
-      
       final int localVarNumber = getLocalVariableNumber(variableNumber);
       checkLocalVariableAccess(localVarNumber);
       getCurrentRoutineContext().setLocalVariable(localVarNumber, value);
-      
     } else {
-      
-      machine.getGameData().getMemoryAccess().writeShort(globalsAddress
+      machine.getGameData().getMemory().writeShort(globalsAddress
           + (getGlobalVariableNumber(variableNumber) * 2), value);
     }
   }
@@ -345,27 +335,19 @@ public class CpuImpl implements Cpu, Interruptable {
    * @return STACK if stack variable, LOCAL if local variable, GLOBAL if global
    */
   public static Cpu.VariableType getVariableType(final int variableNumber) {
-    
     if (variableNumber == 0) {
-      
       return Cpu.VariableType.STACK;
-      
     } else if (variableNumber < 0x10) {
-      
       return Cpu.VariableType.LOCAL;
-      
     } else {
-      
       return Cpu.VariableType.GLOBAL;
     }
   }
-
 
   /**
    * {@inheritDoc}
    */
   public void pushRoutineContext(final RoutineContext routineContext) {
-
     routineContext.setInvocationStackPointer(getStackPointer());
     routineContextStack.add(routineContext);
   }
@@ -374,9 +356,7 @@ public class CpuImpl implements Cpu, Interruptable {
    * {@inheritDoc}
    */
   public void popRoutineContext(final short returnValue) {
-    
     if (routineContextStack.size() > 0) {
-
       final RoutineContext popped =
         routineContextStack.remove(routineContextStack.size() - 1);
       popped.setReturnValue(returnValue);
@@ -390,7 +370,6 @@ public class CpuImpl implements Cpu, Interruptable {
         setVariable(returnVariable, returnValue);
       }
     } else {
-      
       throw new IllegalStateException("no routine context active");
     }
   }
@@ -399,7 +378,6 @@ public class CpuImpl implements Cpu, Interruptable {
    * {@inheritDoc}
    */
   public RoutineContext getCurrentRoutineContext() {
-    
     if (routineContextStack.size() == 0) {
       return null;
     }
@@ -410,7 +388,6 @@ public class CpuImpl implements Cpu, Interruptable {
    * {@inheritDoc}
    */
   public List<RoutineContext> getRoutineContexts() {
-    
     return Collections.unmodifiableList(routineContextStack);
   }
   
@@ -418,7 +395,6 @@ public class CpuImpl implements Cpu, Interruptable {
    * {@inheritDoc}
    */
   public void setRoutineContexts(final List<RoutineContext> contexts) {
-
     routineContextStack.clear();
     for (RoutineContext context : contexts) {
       
@@ -432,7 +408,6 @@ public class CpuImpl implements Cpu, Interruptable {
    * @return the current routine stack pointer
    */
   public int getRoutineStackPointer() {
-    
     return routineContextStack.size();
   }
   
@@ -493,25 +468,20 @@ public class CpuImpl implements Cpu, Interruptable {
    * @return a RoutineContext object
    */
   private RoutineContext decodeRoutine(final int routineAddress) {
-
     final GameData gamedata = machine.getGameData();
-    final MemoryAccess memaccess = gamedata.getMemoryAccess();    
-    final int numLocals = memaccess.readUnsignedByte(routineAddress);
+    final Memory memory = gamedata.getMemory();    
+    final int numLocals = memory.readUnsignedByte(routineAddress);
     final short[] locals = new short[numLocals];
     int currentAddress = routineAddress + 1;
     
     if (gamedata.getStoryFileHeader().getVersion() <= 4) {
-      
       // Only story files <= 4 actually store default values here,
       // after V5 they are assumed as being 0 (standard document 1.0, S.5.2.1) 
       for (int i = 0; i < numLocals; i++) {
-      
-        locals[i] = memaccess.readShort(currentAddress);
+        locals[i] = memory.readShort(currentAddress);
         currentAddress += 2;
       }
     }
-    //System.out.printf("setting routine start to: %x\n", currentAddress);
-    
     final RoutineContext info = new RoutineContext(currentAddress, numLocals);
     
     for (int i = 0; i < numLocals; i++) {

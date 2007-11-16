@@ -20,7 +20,7 @@
  */
 package org.zmpp.encoding;
 
-import org.zmpp.base.MemoryReadAccess;
+import org.zmpp.base.Memory;
 
 /**
  * This accent table is used in case that there is an extension header
@@ -32,9 +32,9 @@ import org.zmpp.base.MemoryReadAccess;
 public class CustomAccentTable implements AccentTable {
 
   /**
-   * The memory access object.
+   * The Memory object.
    */
-  private MemoryReadAccess memaccess;
+  private Memory memory;
   
   /**
    * The table adddress.
@@ -43,15 +43,11 @@ public class CustomAccentTable implements AccentTable {
 
   /**
    * Constructor.
-   * 
-   * @param memaccess a memory access object
+   * @param memory a Memory object
    * @param address the table address
    */
-  public CustomAccentTable(final MemoryReadAccess memaccess,
-      final int address) {
-  
-    super();
-    this.memaccess = memaccess;
+  public CustomAccentTable(final Memory memory, final int address) {
+    this.memory = memory;
     this.tableAddress = address;
   }
   
@@ -59,11 +55,9 @@ public class CustomAccentTable implements AccentTable {
    * {@inheritDoc}
    */
   public int getLength() {
-    
     int result = 0;
     if (tableAddress > 0) {
-      
-      result = memaccess.readUnsignedByte(tableAddress);
+      result = memory.readUnsignedByte(tableAddress);
     }
     return result;
   }
@@ -72,12 +66,9 @@ public class CustomAccentTable implements AccentTable {
    * {@inheritDoc}
    */
   public short getAccent(final int index) {
-    
     short result = '?';
-    
     if (tableAddress > 0) {
-      
-      result = memaccess.readShort(tableAddress + (index * 2) + 1);
+      result = memory.readShort(tableAddress + (index * 2) + 1);
     }
     return result;
   }
@@ -86,13 +77,11 @@ public class CustomAccentTable implements AccentTable {
    * {@inheritDoc}
    */
   public int getIndexOfLowerCase(final int index) {
-
     final char c = (char) getAccent(index);
     final char lower = Character.toLowerCase(c);
     final int length = getLength();
     
     for (int i = 0; i < length; i++) {
-      
       if (getAccent(i) == lower) {
         return i;
       }

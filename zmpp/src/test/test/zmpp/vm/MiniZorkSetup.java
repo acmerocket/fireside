@@ -24,7 +24,7 @@ import java.io.File;
 import java.io.FileInputStream;
 
 import org.jmock.MockObjectTestCase;
-import org.zmpp.base.MemoryAccess;
+import org.zmpp.base.Memory;
 import org.zmpp.encoding.AlphabetTable;
 import org.zmpp.encoding.DefaultAccentTable;
 import org.zmpp.encoding.DefaultAlphabetTable;
@@ -49,9 +49,9 @@ import org.zmpp.vmutil.FileUtils;
  * @author Wei-ju Wu
  * @version 1.0
  */
-public abstract class MemoryMapSetup extends MockObjectTestCase {
+public abstract class MiniZorkSetup extends MockObjectTestCase {
 
-  protected MemoryAccess minizorkmap;
+  protected Memory minizorkmap;
   protected GameData config;
   protected ZCharDecoder converter;
   protected StoryFileHeader fileheader;
@@ -65,7 +65,7 @@ public abstract class MemoryMapSetup extends MockObjectTestCase {
     fileInput = new FileInputStream(zork1);
     byte[] data = FileUtils.readFileBytes(fileInput);
     config = new GameDataImpl(data, null);
-    minizorkmap = config.getMemoryAccess();
+    minizorkmap = config.getMemory();
     fileheader = config.getStoryFileHeader();
     
     abbreviations = new Abbreviations(minizorkmap,

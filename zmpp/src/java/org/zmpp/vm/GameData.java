@@ -20,7 +20,7 @@
  */
 package org.zmpp.vm;
 
-import org.zmpp.base.MemoryAccess;
+import org.zmpp.base.Memory;
 import org.zmpp.encoding.AlphabetTable;
 import org.zmpp.encoding.ZCharDecoder;
 import org.zmpp.encoding.ZCharEncoder;
@@ -29,7 +29,6 @@ import org.zmpp.media.Resources;
 
 /**
  * Interface to access the game specific objects.
- * 
  * @author Wei-ju Wu
  * @version 1.0
  */
@@ -41,78 +40,67 @@ public interface GameData {
   void reset();
   
   /**
-   * Returns the file data as a MemoryAccess object.
-   * 
+   * Returns the file data as a Memory object.
    * @return the file data
    */
-  MemoryAccess getMemoryAccess();
+  Memory getMemory();
   
   /**
    * Returns the story file header.
-   * 
    * @return the story file header
    */
   StoryFileHeader getStoryFileHeader();
   
   /**
    * Returns the dictionary for this game.
-   * 
    * @return the dictionary
    */
   Dictionary getDictionary();
   
   /**
    * Returns the object tree for this game.
-   * 
    * @return the object tree
    */
   ObjectTree getObjectTree();
 
   /**
    * Returns the Z char decoder for this game.
-   * 
    * @return the z char decoder
    */
   ZCharDecoder getZCharDecoder();
   
   /**
    * Returns the Z char encoder for this game.
-   * 
    * @return the z char encoder
    */
   ZCharEncoder getZCharEncoder();
   
   /**
    * Returns the ZSCII encoding object.
-   * 
    * @return the encoding object
    */
   ZsciiEncoding getZsciiEncoding();
   
   /**
    * Returns this game's alphabet table.
-   * 
    * @return the alphabet table
    */
   AlphabetTable getAlphabetTable();
   
   /**
    * Returns the multimedia resources.
-   * 
    * @return the multimedia resources
    */
   Resources getResources();
 
   /**
    * Returns the calculated check sum.
-   * 
    * @return the calculated check sum
    */
   int getCalculatedChecksum();
 
   /**
    * Returns true, if the checksum validation was successful.
-   * 
    * @return true if checksum is valid
    */
   boolean hasValidChecksum();  

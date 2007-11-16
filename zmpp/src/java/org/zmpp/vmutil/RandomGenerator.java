@@ -36,7 +36,6 @@ public interface RandomGenerator {
   
   /**
    * Returns the next random value between 1 and MAX_VALUE.
-   * 
    * @return a random int value
    */
   int next();

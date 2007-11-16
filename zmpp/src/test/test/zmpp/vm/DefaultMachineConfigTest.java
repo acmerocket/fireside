@@ -24,7 +24,7 @@ import java.io.File;
 import java.io.FileInputStream;
 
 import org.jmock.MockObjectTestCase;
-import org.zmpp.base.MemoryAccess;
+import org.zmpp.base.Memory;
 import org.zmpp.vm.Dictionary;
 import org.zmpp.vm.GameDataImpl;
 import org.zmpp.vm.ObjectTree;
@@ -53,10 +53,10 @@ public class DefaultMachineConfigTest extends MockObjectTestCase {
     GameDataImpl config = new GameDataImpl(data, null);
     StoryFileHeader fileheader = config.getStoryFileHeader();
     Dictionary dictionary = config.getDictionary();
-    MemoryAccess memaccess = config.getMemoryAccess();
+    Memory memory = config.getMemory();
     ObjectTree objectTree = config.getObjectTree();
     
-    assertNotNull(memaccess);
+    assertNotNull(memory);
     assertNotNull(dictionary);
     assertNotNull(fileheader);
     assertNotNull(objectTree);
@@ -65,7 +65,7 @@ public class DefaultMachineConfigTest extends MockObjectTestCase {
     
     assertNotSame(fileheader, config.getStoryFileHeader());
     assertNotSame(dictionary, config.getDictionary());
-    assertNotSame(memaccess, config.getMemoryAccess());
+    assertNotSame(memory, config.getMemory());
     assertNotSame(objectTree, config.getObjectTree());
   }  
 }

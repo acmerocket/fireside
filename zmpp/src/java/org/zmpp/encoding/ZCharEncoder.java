@@ -20,7 +20,7 @@
  */
 package org.zmpp.encoding;
 
-import org.zmpp.base.MemoryAccess;
+import org.zmpp.base.Memory;
 import org.zmpp.encoding.AlphabetTable.Alphabet;
 
 /**
@@ -58,7 +58,7 @@ public class ZCharEncoder {
   
   static class EncodingState {
     
-    public MemoryAccess memaccess;
+    public Memory memory;
     public int source;
     public int target;
     public int targetStart;
@@ -72,7 +72,7 @@ public class ZCharEncoder {
     this.translator = translator;
   }
   
-  public void encode(final MemoryAccess memaccess,
+  public void encode(final Memory memory,
       final int sourceAddress, final int length, final int targetAddress) {
 
     final int maxlen = Math.min(length, MAX_ENTRY_LENGTH);
@@ -81,7 +81,7 @@ public class ZCharEncoder {
     state.source = sourceAddress;
     state.target = targetAddress;
     state.targetStart = targetAddress;
-    state.memaccess = memaccess;
+    state.memory = memory;
     
     while (state.source < (sourceAddress + maxlen)) {
     
@@ -97,7 +97,7 @@ public class ZCharEncoder {
     
         resultword = writeByteToWord(resultword, (short) 5, i);
       }
-      state.memaccess.writeUnsignedShort(state.target, resultword);
+      state.memory.writeUnsignedShort(state.target, resultword);
       state.target += 2;
     }
     
@@ -106,20 +106,20 @@ public class ZCharEncoder {
     for (int i = targetOffset; i < NUM_TARGET_BYTES; i+= 2) {
       
       //System.out.println("write padword: " + i);
-      state.memaccess.writeUnsignedShort(targetAddress + i, 0x14a5);
+      state.memory.writeUnsignedShort(targetAddress + i, 0x14a5);
     }
     
     // Always mark the last word as such, the last word is always
     // starting at the fifth byte
     final int lastword =
-      memaccess.readUnsignedShort(targetAddress + TARGET_LAST_WORD);
-    memaccess.writeUnsignedShort(targetAddress + TARGET_LAST_WORD,
+      memory.readUnsignedShort(targetAddress + TARGET_LAST_WORD);
+    memory.writeUnsignedShort(targetAddress + TARGET_LAST_WORD,
                                  lastword | 0x8000);
   }
   
   private void processChar(final EncodingState state) {
     
-    final short zsciiChar = state.memaccess.readUnsignedByte(state.source++);
+    final short zsciiChar = state.memory.readUnsignedByte(state.source++);
     final AlphabetElement element = translator.getAlphabetElementFor(zsciiChar);
     if (element.getAlphabet() == null) {
      
@@ -182,7 +182,7 @@ public class ZCharEncoder {
     if (state.wordPosition > 2 && state.target <= (state.targetStart + 4)) {
       
       // Write the result and increment the target position
-      state.memaccess.writeUnsignedShort(state.target, state.currentWord);
+      state.memory.writeUnsignedShort(state.target, state.currentWord);
       state.target += 2;
       state.currentWord = 0;
       state.wordPosition = 0;

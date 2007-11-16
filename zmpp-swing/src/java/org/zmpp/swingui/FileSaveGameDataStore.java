@@ -27,7 +27,7 @@ import java.io.RandomAccessFile;
 
 import javax.swing.JFileChooser;
 
-import org.zmpp.base.DefaultMemoryAccess;
+import org.zmpp.base.DefaultMemory;
 import org.zmpp.iff.DefaultFormChunk;
 import org.zmpp.iff.FormChunk;
 import org.zmpp.iff.WritableFormChunk;
@@ -102,7 +102,7 @@ public class FileSaveGameDataStore implements SaveGameDataStore {
         raf = new RandomAccessFile(savefile, "r");
         byte[] data = new byte[(int) raf.length()];
         raf.readFully(data);
-        return new DefaultFormChunk(new DefaultMemoryAccess(data));
+        return new DefaultFormChunk(new DefaultMemory(data));
         
       } catch (IOException ex) {
        

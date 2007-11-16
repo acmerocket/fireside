@@ -23,7 +23,7 @@ package org.zmpp.vm;
 import java.util.ArrayList;
 import java.util.List;
 
-import org.zmpp.base.MemoryAccess;
+import org.zmpp.base.Memory;
 import org.zmpp.iff.Chunk;
 import org.zmpp.iff.DefaultChunk;
 import org.zmpp.iff.FormChunk;
@@ -254,7 +254,7 @@ public class PortableGameState {
   private void readIfhdChunk(final FormChunk formChunk) {
     
     final Chunk ifhdChunk = formChunk.getSubChunk("IFhd".getBytes());
-    final MemoryAccess chunkMem = ifhdChunk.getMemoryAccess();
+    final Memory chunkMem = ifhdChunk.getMemory();
     int offset = Chunk.CHUNK_HEADER_LENGTH;
     
     // read release number
@@ -285,7 +285,7 @@ public class PortableGameState {
   private void readStacksChunk(final FormChunk formChunk) {
     
     final Chunk stksChunk = formChunk.getSubChunk("Stks".getBytes());
-    final MemoryAccess chunkMem = stksChunk.getMemoryAccess();
+    final Memory chunkMem = stksChunk.getMemory();
     int offset = Chunk.CHUNK_HEADER_LENGTH;
     final int chunksize = stksChunk.getSize() + Chunk.CHUNK_HEADER_LENGTH;
     
@@ -307,7 +307,7 @@ public class PortableGameState {
    * @return the offset after reading the stack frame
    */
   public int readStackFrame(final StackFrame stackFrame,
-                            final MemoryAccess chunkMem,
+                            final Memory chunkMem,
                             final int offset) {
     
     int tmpoff = offset;
@@ -377,7 +377,7 @@ public class PortableGameState {
    */
   private void readCMemChunk(final Chunk cmemChunk) {
     
-    final MemoryAccess chunkMem = cmemChunk.getMemoryAccess();
+    final Memory chunkMem = cmemChunk.getMemory();
     int offset = Chunk.CHUNK_HEADER_LENGTH;
     final int chunksize = cmemChunk.getSize() + Chunk.CHUNK_HEADER_LENGTH;
     final List<Byte> byteBuffer = new ArrayList<Byte>();
@@ -416,7 +416,7 @@ public class PortableGameState {
    */
   private void readUMemChunk(final Chunk umemChunk) {
     
-    final MemoryAccess chunkMem = umemChunk.getMemoryAccess();
+    final Memory chunkMem = umemChunk.getMemory();
     final int datasize = umemChunk.getSize();
     
     dynamicMem = new byte[datasize];
@@ -448,13 +448,13 @@ public class PortableGameState {
     
     // capture dynamic memory which ends at address(staticsMem) - 1
     // uncompressed
-    final MemoryAccess memaccess = machine.getGameData().getMemoryAccess();
+    final Memory memory = machine.getGameData().getMemory();
     final int staticMemStart = fileheader.getStaticsAddress();
     dynamicMem = new byte[staticMemStart];
     
     for (int i = 0; i < staticMemStart; i++) {
       
-      dynamicMem[i] = memaccess.readByte(i);
+      dynamicMem[i] = memory.readByte(i);
     }
 
     captureStackFrames(machine);
@@ -574,7 +574,7 @@ public class PortableGameState {
     final byte[] id = "IFhd".getBytes();
     final byte[] data = new byte[13];
     final Chunk chunk = new DefaultChunk(id, data);    
-    final MemoryAccess chunkmem = chunk.getMemoryAccess();
+    final Memory chunkmem = chunk.getMemory();
     
     // Write release number
     chunkmem.writeUnsignedShort(8, (short) release);
@@ -698,13 +698,12 @@ public class PortableGameState {
    * @param machine a Machine object
    */
   public void transferStateToMachine(final Machine machine) {
-    
-    final MemoryAccess memaccess = machine.getGameData().getMemoryAccess();
+    final Memory memory = machine.getGameData().getMemory();
     
     // Dynamic memory
     for (int i = 0; i < dynamicMem.length; i++) {
       
-      memaccess.writeByte(i, dynamicMem[i]);
+      memory.writeByte(i, dynamicMem[i]);
     }
     
     // Stack frames
@@ -755,7 +754,7 @@ public class PortableGameState {
       
       // In version 3 this is a branch target that needs to be read
       // Execution is continued at the first instruction after the branch offset
-      pc += getBranchOffsetLength(machine.getGameData().getMemoryAccess(), pc);
+      pc += getBranchOffsetLength(machine.getGameData().getMemory(), pc);
       
     } else if (machine.getGameData().getStoryFileHeader().getVersion() >= 4) {
 
@@ -774,21 +773,21 @@ public class PortableGameState {
   public int getStoreVariable(final Machine machine) {
     
     final int storeVarAddress = getProgramCounter();
-    return machine.getGameData().getMemoryAccess().readUnsignedByte(
+    return machine.getGameData().getMemory().readUnsignedByte(
         storeVarAddress);
   }
 
   /**
    * Determine if the branch offset is one or two bytes long.
    * 
-   * @param memaccess the MemoryAccess object of the current story
+   * @param memory the Memory object of the current story
    * @param offsetAddress the branch offset address
    * @return 1 or 2, depending on the value of the branch offset
    */
-  private static int getBranchOffsetLength(final MemoryAccess memaccess,
+  private static int getBranchOffsetLength(final Memory memory,
       final int offsetAddress) {
     
-    final short offsetByte1 = memaccess.readUnsignedByte(offsetAddress);
+    final short offsetByte1 = memory.readUnsignedByte(offsetAddress);
       
     // Bit 6 set -> only one byte needs to be read
     return ((offsetByte1 & 0x40) > 0) ? 1 : 2;

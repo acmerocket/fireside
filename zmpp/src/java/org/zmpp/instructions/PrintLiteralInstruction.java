@@ -20,7 +20,7 @@
  */
 package org.zmpp.instructions;
 
-import org.zmpp.base.MemoryReadAccess;
+import org.zmpp.base.Memory;
 import org.zmpp.vm.Machine;
 
 /**
@@ -39,22 +39,20 @@ public class PrintLiteralInstruction extends AbstractInstruction {
   /**
    * Memory access object.
    */
-  private MemoryReadAccess memaccess;
+  private Memory memory;
   
   /**
    * Constructor.
    * 
    * @param machineState the machine state reference
    * @param opcode the opcode
-   * @param memaccess the memory access object
+   * @param memory the Memory object
    * @param instrAddress the instruction address
    */
   public PrintLiteralInstruction(Machine machineState, int opcode,
-      MemoryReadAccess memaccess, int instrAddress) {
-    
+      Memory memory, int instrAddress) {
     super(machineState, opcode);
-    
-    this.memaccess = memaccess;
+    this.memory = memory;
     instructionAddress = instrAddress;
   }
   
@@ -64,7 +62,7 @@ public class PrintLiteralInstruction extends AbstractInstruction {
   protected String getOperandString() {
 
     final String str =
-      getMachine().getGameData().getZCharDecoder().decode2Zscii(memaccess,
+      getMachine().getGameData().getZCharDecoder().decode2Zscii(memory,
         instructionAddress + 1, 0).toString();
     return "\"" + str + "\"";
   }
@@ -153,7 +151,7 @@ public class PrintLiteralInstruction extends AbstractInstruction {
     
     do {
       
-      zword = memaccess.readUnsignedShort(currentAddress);
+      zword = memory.readUnsignedShort(currentAddress);
       currentAddress += 2;
       
     } while ((zword & 0x8000) == 0);

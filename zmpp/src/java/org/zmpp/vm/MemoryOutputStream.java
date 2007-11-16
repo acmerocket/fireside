@@ -23,7 +23,7 @@ package org.zmpp.vm;
 import java.util.ArrayList;
 import java.util.List;
 
-import org.zmpp.base.MemoryAccess;
+import org.zmpp.base.Memory;
 import org.zmpp.io.OutputStream;
 
 /**
@@ -81,7 +81,7 @@ public class MemoryOutputStream implements OutputStream {
     //System.out.println("memory.print: " + ((char) zsciiChar));
     final TablePosition tablePos = tableStack.get(tableStack.size() - 1);
     final int position = tablePos.tableAddress + 2 + tablePos.bytesWritten;
-    machine.getGameData().getMemoryAccess().writeUnsignedByte(
+    machine.getGameData().getMemory().writeUnsignedByte(
         position, zsciiChar);
     tablePos.bytesWritten++;
   }
@@ -123,7 +123,7 @@ public class MemoryOutputStream implements OutputStream {
       //System.out.println("deselect stream 3, popping off: "
       //                   + tablePos.tableAddress + " # bytes: "
       //                   + tablePos.bytesWritten);
-      machine.getGameData().getMemoryAccess().writeUnsignedShort(
+      machine.getGameData().getMemory().writeUnsignedShort(
           tablePos.tableAddress, tablePos.bytesWritten);
       
       if (machine.getGameData().getStoryFileHeader().getVersion() == 6) {
@@ -137,11 +137,11 @@ public class MemoryOutputStream implements OutputStream {
 
     int numwords = tablepos.bytesWritten;
     short[] data = new short[numwords];
-    MemoryAccess memaccess = machine.getGameData().getMemoryAccess();
+    Memory memory = machine.getGameData().getMemory();
     
     for (int i = 0; i < numwords; i++) {
       
-      data[i] = memaccess.readUnsignedByte(tablepos.tableAddress + i + 2); 
+      data[i] = memory.readUnsignedByte(tablepos.tableAddress + i + 2); 
     }
     machine.getScreen6().setTextWidthInUnits(data);
   }

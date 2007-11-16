@@ -25,7 +25,7 @@ import java.io.IOException;
 
 import javax.swing.JOptionPane;
 
-import org.zmpp.base.DefaultMemoryAccess;
+import org.zmpp.base.DefaultMemory;
 import org.zmpp.blorb.BlorbResources;
 import org.zmpp.blorb.BlorbStory;
 import org.zmpp.iff.DefaultFormChunk;
@@ -89,7 +89,7 @@ public class ApplicationMachineFactory extends MachineFactory<ZmppFrame> {
       byte[] data = FileUtils.readFileBytes(blorbfile);
       if (data != null) {
         
-        blorbchunk = new DefaultFormChunk(new DefaultMemoryAccess(data));
+        blorbchunk = new DefaultFormChunk(new DefaultMemory(data));
         if (!"IFRS".equals(new String(blorbchunk.getSubId()))) {
           
           throw new IOException("not a valid Blorb file");

@@ -22,7 +22,7 @@ package test.zmpp.instructions;
 
 import org.jmock.Mock;
 import org.jmock.MockObjectTestCase;
-import org.zmpp.base.MemoryAccess;
+import org.zmpp.base.Memory;
 import org.zmpp.instructions.AbstractInstruction;
 import org.zmpp.instructions.InstructionStaticInfo;
 import org.zmpp.instructions.Operand;
@@ -34,9 +34,6 @@ import org.zmpp.vm.Cpu;
 import org.zmpp.vm.Dictionary;
 import org.zmpp.vm.GameData;
 import org.zmpp.vm.Machine;
-import org.zmpp.vm.ObjectTree;
-import org.zmpp.vm.StoryFileHeader;
-import org.zmpp.vm.ZObject;
 
 /**
  * This class tests the InstructionInfo class.
@@ -53,14 +50,8 @@ public class AbstractInstructionTest extends MockObjectTestCase {
   protected GameData gamedata;
   protected Mock mockOutputStream;
   protected OutputStream outputStream;
-  protected Mock mockObjectTree;
-  protected ObjectTree objectTree;
-  protected Mock mockZObject;
-  protected ZObject zobject;
-  protected Mock mockMemAccess;
-  protected MemoryAccess memoryAccess;
-  protected Mock mockFileHeader;
-  protected StoryFileHeader storyfileHeader;
+  protected Mock mockMemory;
+  protected Memory memory;
   protected Mock mockDictionary;
   protected Dictionary dictionary;
   protected Mock mockCpu;
@@ -69,41 +60,28 @@ public class AbstractInstructionTest extends MockObjectTestCase {
   private AbstractInstruction info;
   
   public void setUp() throws Exception {
-    
     mockMachine = mock(Machine.class);
     machine = (Machine) mockMachine.proxy();
     mockOutputStream = mock(OutputStream.class);
     outputStream = (OutputStream) mockOutputStream.proxy();    
-    mockObjectTree = mock(ObjectTree.class);
-    objectTree = (ObjectTree) mockObjectTree.proxy();
-    mockZObject = mock(ZObject.class);
-    zobject = (ZObject) mockZObject.proxy();
-    mockMemAccess = mock(MemoryAccess.class);
-    memoryAccess = (MemoryAccess) mockMemAccess.proxy();
-    mockFileHeader = mock(StoryFileHeader.class);
-    storyfileHeader = (StoryFileHeader) mockFileHeader.proxy();
+    mockMemory = mock(Memory.class);
+    memory = (Memory) mockMemory.proxy();
     mockDictionary = mock(Dictionary.class);
     dictionary = (Dictionary) mockDictionary.proxy();
     mockGameData = mock(GameData.class);
     gamedata = (GameData) mockGameData.proxy();
     mockCpu = mock(Cpu.class);
-    cpu = (Cpu) mockCpu.proxy();
-    
-    mockMachine.expects(atLeastOnce()).method("getGameData").will(returnValue(gamedata));
-    mockGameData.expects(atLeastOnce()).method("getStoryFileHeader").will(returnValue(storyfileHeader));
-    mockFileHeader.expects(atLeastOnce()).method("getVersion").will(returnValue(3));
+    cpu = (Cpu) mockCpu.proxy();    
     info = new VariableInstruction(machine, OperandCount.VAR, 0xe0);
   }
   
   public void testCreateInstructionInfo() {
-    
     assertEquals(InstructionForm.VARIABLE, info.getInstructionForm());
     assertEquals(OperandCount.VAR, info.getOperandCount());
     assertEquals(0xe0, info.getOpcode());
   }
   
   public void testSetters() {
-   
     info.setOpcode(0xe1);
     assertEquals(0xe1, info.getOpcode());
     info.setLength(9);
@@ -119,7 +97,6 @@ public class AbstractInstructionTest extends MockObjectTestCase {
   }
   
   public void testAddOperand() {
-    
     assertEquals(0, info.getNumOperands());
     Operand operand = new Operand(Operand.TYPENUM_SMALL_CONSTANT, (short) 2);
     info.addOperand(operand);
@@ -127,8 +104,7 @@ public class AbstractInstructionTest extends MockObjectTestCase {
     assertEquals(operand, info.getOperand(0));
   }
   
-  public void testGetValue() {
-    
+  public void testGetValue() {    
     mockMachine.expects(atLeastOnce()).method("getCpu").will(returnValue(cpu));
     mockCpu.expects(once()).method("getVariable").with(eq(17)).will(returnValue((short) 1234));
     Operand varOperand = new Operand(Operand.TYPENUM_VARIABLE, (short) 0x11);
@@ -140,7 +116,6 @@ public class AbstractInstructionTest extends MockObjectTestCase {
   }
   
   public void testGetUnsignedValueNegative() {
-    
     mockMachine.expects(atLeastOnce()).method("getCpu").will(returnValue(cpu));
     mockCpu.expects(once()).method("getVariable").with(eq(17)).will(returnValue((short) -2));
     Operand varOperand = new Operand(Operand.TYPENUM_VARIABLE, (short) 0x11);
@@ -155,8 +130,7 @@ public class AbstractInstructionTest extends MockObjectTestCase {
     assertEquals(0xfffd, info.getUnsignedValue(2));
   }
   
-  public void testGetUnsignedValueMaxPositive() {
-    
+  public void testGetUnsignedValueMaxPositive() {    
     mockMachine.expects(atLeastOnce()).method("getCpu").will(returnValue(cpu));
     mockCpu.expects(once()).method("getVariable").with(eq(17)).will(returnValue((short) 32767));
     Operand varOperand = new Operand(Operand.TYPENUM_VARIABLE, (short) 0x11);
@@ -171,8 +145,7 @@ public class AbstractInstructionTest extends MockObjectTestCase {
     assertEquals(0x7f, info.getUnsignedValue(2));
   }
   
-  public void testGetUnsignedValueMinNegative() {
-    
+  public void testGetUnsignedValueMinNegative() {    
     mockMachine.expects(atLeastOnce()).method("getCpu").will(returnValue(cpu));
     mockCpu.expects(once()).method("getVariable").with(eq(17)).will(returnValue((short) -32768));
     Operand varOperand = new Operand(Operand.TYPENUM_VARIABLE, (short) 0x11);
@@ -187,8 +160,7 @@ public class AbstractInstructionTest extends MockObjectTestCase {
     assertEquals(0xff80, info.getUnsignedValue(2));
   }
   
-  public void testConvertToSigned16() {
-   
+  public void testConvertToSigned16() {   
     mockMachine.expects(atLeastOnce()).method("getCpu").will(returnValue(cpu));
     mockCpu.expects(once()).method("getVariable").with(eq(17)).will(returnValue((short) -7));
     Operand operandLargeConstant = new Operand(Operand.TYPENUM_LARGE_CONSTANT, (short) 0xfffd);
@@ -209,34 +181,28 @@ public class AbstractInstructionTest extends MockObjectTestCase {
   // **********************************
   
   class BranchInstructionInfo implements InstructionStaticInfo {
-    
     int[] versions = { 1, 2, 3, 4, 5, 6, 7, 8 };
     
     public int[] getValidVersions(int opcode) {
-    
       return versions;
     }
     
-    public boolean isBranch(int opcode, int version) {
-      
+    public boolean isBranch(int opcode, int version) {      
       return true;
     }
     
-    public boolean storesResult(int opcode, int version) {
-      
+    public boolean storesResult(int opcode, int version) {      
       return true;
     }
 
     /**
      * {@inheritDoc}
      */
-    public boolean isOutput(int opcode, int version) {
-      
+    public boolean isOutput(int opcode, int version) {      
       return false;
     }
 
-    public String getOpName(int opcode, int version) {
-      
+    public String getOpName(int opcode, int version) {      
       return "OP";
     }
   }
@@ -244,30 +210,24 @@ public class AbstractInstructionTest extends MockObjectTestCase {
   class BranchInstruction extends AbstractInstruction {
     
     public BranchInstruction(Machine machine) {
-
       super(machine, 0);
     }
     
     public OperandCount getOperandCount() {
-      
       return OperandCount.C2OP;
     }
-    public InstructionForm getInstructionForm() {
-      
+    
+    public InstructionForm getInstructionForm() {      
       return InstructionForm.LONG;
     }
     
-    protected void doInstruction() {
-    
-    } 
+    protected void doInstruction() { }
     
     public void execute() {
-      
       super.branchOnTest(true);
     }
     
-    protected InstructionStaticInfo getStaticInfo() {
-      
+    protected InstructionStaticInfo getStaticInfo() {      
       return new BranchInstructionInfo();
     }
   }
@@ -276,9 +236,10 @@ public class AbstractInstructionTest extends MockObjectTestCase {
    * Test positive offset branch.
    */
   public void testBranchConditionTrue() {
-    
     mockMachine.expects(atLeastOnce()).method("getCpu").will(returnValue(cpu));
-    mockCpu.expects(once()).method("computeBranchTarget").with(eq((short) 42), eq(12)).will(returnValue(321));
+    mockCpu.expects(once()).method("computeBranchTarget")
+    	.with(eq((short) 42), eq(12))
+    	.will(returnValue(321));
     mockCpu.expects(once()).method("setProgramCounter").with(eq(321));
 
     AbstractInstruction branchInstr = new BranchInstruction(machine);
@@ -292,15 +253,13 @@ public class AbstractInstructionTest extends MockObjectTestCase {
    * Branch on true, but branch condition is false.
    *
    */
-  public void testBranchIfTrueBranchConditionIsFalse() {
-    
+  public void testBranchIfTrueBranchConditionIsFalse() {    
     mockMachine.expects(atLeastOnce()).method("getCpu").will(returnValue(cpu));
     mockCpu.expects(once()).method("incrementProgramCounter").with(eq(12));
  
     AbstractInstruction branchInstr = new BranchInstruction(machine) {
       
-      public void execute() {
-        
+      public void execute() { 
         super.branchOnTest(false);
       }
     };
@@ -316,14 +275,12 @@ public class AbstractInstructionTest extends MockObjectTestCase {
    *
    */
   public void testBranchIfFalseBranchConditionIsTrue() {
-
     mockMachine.expects(atLeastOnce()).method("getCpu").will(returnValue(cpu));
     mockCpu.expects(once()).method("incrementProgramCounter").with(eq(12));
     
     AbstractInstruction branchInstr = new BranchInstruction(machine) {
       
-      public void execute() {
-        
+      public void execute() {        
         super.branchOnTest(true);
       }
     };
@@ -337,16 +294,14 @@ public class AbstractInstructionTest extends MockObjectTestCase {
    * Branch on false, branch condition is false.
    *
    */
-  public void testBranchIfFalseBranchConditionIsFalse() {
-    
+  public void testBranchIfFalseBranchConditionIsFalse() {    
     mockMachine.expects(atLeastOnce()).method("getCpu").will(returnValue(cpu));
     mockCpu.expects(once()).method("computeBranchTarget").with(eq((short) 42), eq(12)).will(returnValue(321));
     mockCpu.expects(once()).method("setProgramCounter").with(eq(321));
 
     AbstractInstruction branchInstr = new BranchInstruction(machine) {
       
-      public void execute() {
-        
+      public void execute() {        
         super.branchOnTest(false);
       }
     };
@@ -356,16 +311,12 @@ public class AbstractInstructionTest extends MockObjectTestCase {
     branchInstr.execute();
   }
   
-  public void testToString() {
-    
-    mockMachine.expects(atLeastOnce()).method("getGameData").will(returnValue(gamedata));
-    mockGameData.expects(atLeastOnce()).method("getStoryFileHeader").will(returnValue(storyfileHeader));
-    mockFileHeader.expects(atLeastOnce()).method("getVersion").will(returnValue(3));
+  public void testToString() {    
+    mockMachine.expects(atLeastOnce()).method("getVersion").will(returnValue(3));
     
     AbstractInstruction branchInstr = new BranchInstruction(machine) {
       
-      public void execute() {
-        
+      public void execute() {        
         super.branchOnTest(false);
       }
     };

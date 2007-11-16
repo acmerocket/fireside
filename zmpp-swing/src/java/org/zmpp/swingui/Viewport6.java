@@ -29,7 +29,7 @@ import java.awt.image.BufferedImage;
 
 import javax.swing.JComponent;
 
-import org.zmpp.base.MemoryAccess;
+import org.zmpp.base.Memory;
 import org.zmpp.encoding.ZsciiString;
 import org.zmpp.io.OutputStream;
 import org.zmpp.vm.Machine;
@@ -285,7 +285,7 @@ public class Viewport6 extends JComponent implements ScreenModel6, Viewport {
   public void readMouse(int array) {
 
     MouseEvent event = editor.getLastMouseEvent();
-    MemoryAccess memaccess = machine.getGameData().getMemoryAccess();
+    Memory memory = machine.getGameData().getMemory();
     int buttonmask  = 0;
     if ((event.getButton() & MouseEvent.BUTTON1) != 0) {
       
@@ -299,9 +299,9 @@ public class Viewport6 extends JComponent implements ScreenModel6, Viewport {
       
       buttonmask |= 4;
     }
-    memaccess.writeUnsignedShort(array, event.getY() + 1);
-    memaccess.writeUnsignedShort(array + 2, event.getX() + 1);
-    memaccess.writeUnsignedShort(array + 4, buttonmask);
+    memory.writeUnsignedShort(array, event.getY() + 1);
+    memory.writeUnsignedShort(array + 2, event.getX() + 1);
+    memory.writeUnsignedShort(array + 4, buttonmask);
     // TODO: Menu items
   }
   

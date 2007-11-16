@@ -31,7 +31,7 @@ import org.zmpp.media.PictureManager;
 import org.zmpp.vm.ScreenModel6;
 import org.zmpp.vm.Window6;
 
-public class ExtendedInstructionV6Test extends InstructionTestBase {
+public class InstructionExtV6Test extends InstructionTestBase {
 
   private Mock mockscreen6, mockwindow6, mockPictureManager;
   
@@ -40,10 +40,8 @@ public class ExtendedInstructionV6Test extends InstructionTestBase {
   private PictureManager picturemanager;
   
   protected void setUp() throws Exception {
-    
     super.setUp();
-    
-    mockFileHeader.expects(atLeastOnce()).method("getVersion").will(returnValue(6));
+    mockMachine.expects(atLeastOnce()).method("getVersion").will(returnValue(6));
     mockscreen6 = mock(ScreenModel6.class);
     screen6 = (ScreenModel6) mockscreen6.proxy();
     mockPictureManager = mock(PictureManager.class);
@@ -78,9 +76,11 @@ public class ExtendedInstructionV6Test extends InstructionTestBase {
     mockMachine.expects(atLeastOnce()).method("getPictureManager").will(returnValue(picturemanager));
     mockPictureManager.expects(once()).method("getRelease").will(returnValue(2));
     mockPictureManager.expects(atLeastOnce()).method("getNumPictures").will(returnValue(32));
-    mockGameData.expects(once()).method("getMemoryAccess").will(returnValue(memoryAccess));
-    mockMemAccess.expects(once()).method("writeUnsignedShort").with(eq(1000), eq(32));
-    mockMemAccess.expects(once()).method("writeUnsignedShort").with(eq(1002), eq(2));
+    mockMachine.expects(atLeastOnce()).method("getGameData")
+    	.will(returnValue(gamedata));
+    mockGameData.expects(once()).method("getMemory").will(returnValue(memory));
+    mockMemory.expects(once()).method("writeUnsignedShort").with(eq(1000), eq(32));
+    mockMemory.expects(once()).method("writeUnsignedShort").with(eq(1002), eq(2));
 
     // Branch
     mockMachine.expects(atLeastOnce()).method("getCpu").will(returnValue(cpu));
@@ -104,9 +104,11 @@ public class ExtendedInstructionV6Test extends InstructionTestBase {
     
     mockMachine.expects(atLeastOnce()).method("getPictureManager").will(returnValue(picturemanager));
     mockPictureManager.expects(once()).method("getPictureSize").with(eq(1)).will(returnValue(new Dimension(320, 200)));
-    mockGameData.expects(once()).method("getMemoryAccess").will(returnValue(memoryAccess));
-    mockMemAccess.expects(once()).method("writeUnsignedShort").with(eq(1000), eq(200));
-    mockMemAccess.expects(once()).method("writeUnsignedShort").with(eq(1002), eq(320));
+    mockMachine.expects(atLeastOnce()).method("getGameData")
+  		.will(returnValue(gamedata));
+    mockGameData.expects(once()).method("getMemory").will(returnValue(memory));
+    mockMemory.expects(once()).method("writeUnsignedShort").with(eq(1000), eq(200));
+    mockMemory.expects(once()).method("writeUnsignedShort").with(eq(1002), eq(320));
     mockMachine.expects(atLeastOnce()).method("getCpu").will(returnValue(cpu));
     
     // computes a branch

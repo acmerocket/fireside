@@ -25,9 +25,8 @@ import java.io.RandomAccessFile;
 
 import org.jmock.Mock;
 import org.jmock.MockObjectTestCase;
-import org.zmpp.base.DefaultMemoryAccess;
-import org.zmpp.base.MemoryAccess;
-import org.zmpp.base.MemoryReadAccess;
+import org.zmpp.base.DefaultMemory;
+import org.zmpp.base.Memory;
 import org.zmpp.encoding.AlphabetTable;
 import org.zmpp.encoding.AlphabetTableV1;
 import org.zmpp.encoding.DefaultAccentTable;
@@ -51,8 +50,8 @@ import org.zmpp.vm.StoryFileHeader;
  */
 public class ZCharDecoderTest extends MockObjectTestCase {
 
-  private Mock mockMemAccess;
-  private MemoryAccess memaccess;
+  private Mock mockMemory;
+  private Memory memory;
   private Mock mockAbbrev;
   private AbbreviationsTable abbrev;
   private ZCharDecoder decoder;
@@ -65,8 +64,8 @@ public class ZCharDecoderTest extends MockObjectTestCase {
    
     mockAbbrev = mock(AbbreviationsTable.class);
     abbrev = (AbbreviationsTable) mockAbbrev.proxy();
-    mockMemAccess = mock(MemoryAccess.class);
-    memaccess = (MemoryAccess) mockMemAccess.proxy();
+    mockMemory = mock(Memory.class);
+    memory = (Memory) mockMemory.proxy();
     
     ZsciiEncoding encoding = new ZsciiEncoding(new DefaultAccentTable());
     ZsciiString.initialize(encoding);
@@ -84,10 +83,10 @@ public class ZCharDecoderTest extends MockObjectTestCase {
   
     byte[] hello = { 0x35, 0x51, (byte) 0xc6, (byte) 0x85 };
     byte[] Hello = { 0x11, (byte) 0xaa, (byte) 0xc6, (byte) 0x34 };
-    MemoryReadAccess memaccess1 = new DefaultMemoryAccess(hello);     
-    MemoryReadAccess memaccess2 = new DefaultMemoryAccess(Hello);     
-    assertEquals("hello", decoder.decode2Zscii(memaccess1, 0, 0).toString());    
-    assertEquals("Hello", decoder.decode2Zscii(memaccess2, 0, 0).toString());    
+    Memory memory1 = new DefaultMemory(hello);     
+    Memory memory2 = new DefaultMemory(Hello);     
+    assertEquals("hello", decoder.decode2Zscii(memory1, 0, 0).toString());    
+    assertEquals("Hello", decoder.decode2Zscii(memory2, 0, 0).toString());    
   }
   
   // *********************************************************************
@@ -103,17 +102,17 @@ public class ZCharDecoderTest extends MockObjectTestCase {
     file.read(zork1data);
     file.close();
     
-    MemoryAccess memaccess = new DefaultMemoryAccess(zork1data);
-    StoryFileHeader fileheader = new DefaultStoryFileHeader(memaccess);
-    AbbreviationsTable abbr = new Abbreviations(memaccess, fileheader.getAbbreviationsAddress());
+    Memory memory = new DefaultMemory(zork1data);
+    StoryFileHeader fileheader = new DefaultStoryFileHeader(memory);
+    AbbreviationsTable abbr = new Abbreviations(memory, fileheader.getAbbreviationsAddress());
 
     ZsciiEncoding encoding = new ZsciiEncoding(new DefaultAccentTable());
     AlphabetTable alphabetTable = new DefaultAlphabetTable(); 
     ZCharTranslator translator = new DefaultZCharTranslator(alphabetTable);
     
     ZCharDecoder decoder = new DefaultZCharDecoder(encoding, translator, abbr);
-    assertEquals("The Great Underground Empire", decoder.decode2Zscii(memaccess, 0xc120, 0).toString());
-    assertEquals("[I don't understand that sentence.]", decoder.decode2Zscii(memaccess, 0x3e6d, 0).toString());
+    assertEquals("The Great Underground Empire", decoder.decode2Zscii(memory, 0xc120, 0).toString());
+    assertEquals("[I don't understand that sentence.]", decoder.decode2Zscii(memory, 0x3e6d, 0).toString());
   }
 
   /**
@@ -163,15 +162,14 @@ public class ZCharDecoderTest extends MockObjectTestCase {
         (byte) 0x28, (byte) 0xd8, (byte) 0xa8, (byte) 0x05, 
     };
     
-    
-    MemoryAccess memaccess = new DefaultMemoryAccess(data);
+    Memory memory = new DefaultMemory(data);
         
     ZsciiEncoding encoding = new ZsciiEncoding(new DefaultAccentTable());
     AlphabetTable alphabetTable = new AlphabetTableV1(); 
     ZCharTranslator translator = new DefaultZCharTranslator(alphabetTable);
     
     ZCharDecoder decoder = new DefaultZCharDecoder(encoding, translator, null);
-    String decoded = decoder.decode2Zscii(memaccess, 0, 0).toString();
+    String decoded = decoder.decode2Zscii(memory, 0, 0).toString();
     assertEquals(originalString, decoded);
   }
   
@@ -187,8 +185,8 @@ public class ZCharDecoderTest extends MockObjectTestCase {
         0x11, (byte) 0xaa, (byte) 0xc6, (byte) 0x34 // Hello
     };
     mockAbbrev.expects(once()).method("getWordAddress").with(eq(2)).will(returnValue(10));
-    MemoryReadAccess memaccess = new DefaultMemoryAccess(helloAbbrev);
-    assertEquals("helloHello", decoder.decode2Zscii(memaccess, 0, 0).toString());    
+    Memory memory = new DefaultMemory(helloAbbrev);
+    assertEquals("helloHello", decoder.decode2Zscii(memory, 0, 0).toString());    
   }
   
   
@@ -202,8 +200,8 @@ public class ZCharDecoderTest extends MockObjectTestCase {
 
   public void testExtractZBytesOneWordOnly() {
     
-    mockMemAccess.expects(once()).method("readShort").will(returnValue((short) 0x9865));
-    short[] data = DefaultZCharDecoder.extractZbytes(memaccess, 0, 0);
+    mockMemory.expects(once()).method("readShort").will(returnValue((short) 0x9865));
+    short[] data = DefaultZCharDecoder.extractZbytes(memory, 0, 0);
     assertEquals(3, data.length);
     assertEquals(6, data[0]);
     assertEquals(3, data[1]);
@@ -212,11 +210,11 @@ public class ZCharDecoderTest extends MockObjectTestCase {
 
   public void testExtractZBytesThreeWords() {
     
-    mockMemAccess.expects(atLeastOnce()).method("readShort").will(
+    mockMemory.expects(atLeastOnce()).method("readShort").will(
         onConsecutiveCalls(returnValue((short) 0x5432),
                            returnValue((short) 0x1234),
                            returnValue((short) 0x9865)));
-    short[] data = DefaultZCharDecoder.extractZbytes(memaccess, 0, 0);
+    short[] data = DefaultZCharDecoder.extractZbytes(memory, 0, 0);
     assertEquals(9, data.length);
   }  
 
@@ -233,23 +231,23 @@ public class ZCharDecoderTest extends MockObjectTestCase {
     
     byte[] data = { (byte) 0x35, (byte) 0x51, (byte) 0x46, (byte) 0x86,
                     (byte) 0xc6, (byte) 0x85 };
-    MemoryReadAccess memaccess = new DefaultMemoryAccess(data);
+    Memory memory = new DefaultMemory(data);
     int length = 4;
     
     // With length = 0
-    assertEquals("helloalo", decoder.decode2Zscii(memaccess, 0, 0).toString());
+    assertEquals("helloalo", decoder.decode2Zscii(memory, 0, 0).toString());
     
     // With length = 4
-    assertEquals("helloa", decoder.decode2Zscii(memaccess, 0, length).toString());    
+    assertEquals("helloa", decoder.decode2Zscii(memory, 0, length).toString());    
   }
 
   public void testTruncateShiftAtEnd() {
     
     byte[] data = { (byte) 0x34, (byte) 0x8a, (byte) 0x45, (byte) 0xc4 };
-    MemoryReadAccess memaccess = new DefaultMemoryAccess(data);
+    Memory memory = new DefaultMemory(data);
     int length = 4;
     
-    assertEquals("hEli", decoder.decode2Zscii(memaccess, 0, length).toString());    
+    assertEquals("hEli", decoder.decode2Zscii(memory, 0, length).toString());    
   }
   
   /**
@@ -259,10 +257,10 @@ public class ZCharDecoderTest extends MockObjectTestCase {
     
     byte[] data = { (byte) 0x34, (byte) 0xd1, (byte) 0x14, (byte) 0xc1,
                     (byte) 0x80, (byte) 0xa5 };
-    MemoryReadAccess memaccess = new DefaultMemoryAccess(data);
+    Memory memory = new DefaultMemory(data);
     int length = 4;
     
-    assertEquals("hal", decoder.decode2Zscii(memaccess, 0, length).toString());    
+    assertEquals("hal", decoder.decode2Zscii(memory, 0, length).toString());    
   }
 
   /**
@@ -272,9 +270,9 @@ public class ZCharDecoderTest extends MockObjectTestCase {
     
     byte[] data = { (byte) 0x34, (byte) 0xd1, (byte) 0x44, (byte) 0xa6,
                     (byte) 0x84, (byte) 0x05 };
-    MemoryReadAccess memaccess = new DefaultMemoryAccess(data);
+    Memory memory = new DefaultMemory(data);
     int length = 4;
     
-    assertEquals("hall", decoder.decode2Zscii(memaccess, 0, length).toString());    
+    assertEquals("hall", decoder.decode2Zscii(memory, 0, length).toString());    
   }
 }

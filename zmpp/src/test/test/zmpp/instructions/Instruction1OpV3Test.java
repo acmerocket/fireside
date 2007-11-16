@@ -1,5 +1,5 @@
 /*
- * $Id$
+ * $Id: Short1InstructionTest.java 524 2007-11-15 00:32:16Z weiju $
  * 
  * Created on 04.10.2005
  * Copyright 2005-2007 by Wei-ju Wu
@@ -20,6 +20,7 @@
  */
 package test.zmpp.instructions;
 
+import org.junit.Test;
 import org.zmpp.instructions.Operand;
 import org.zmpp.instructions.Short1Instruction;
 import org.zmpp.instructions.Short1StaticInfo;
@@ -31,65 +32,21 @@ import org.zmpp.vm.Machine;
  * @author Wei-ju Wu
  * @version 1.0
  */
-public class Short1InstructionTest extends InstructionTestBase {
+public class Instruction1OpV3Test extends InstructionTestBase {
 
-  public void testStoresResultV4() {
-    
-    mockFileHeader.expects(atLeastOnce()).method("getVersion").will(returnValue(4));
-    
-    Short1Instruction info;
-    info = new Short1Instruction(machine, Short1StaticInfo.OP_GET_SIBLING);
-    assertTrue(info.storesResult());
-    info.setOpcode(Short1StaticInfo.OP_GET_CHILD);
-    assertTrue(info.storesResult());
-    info.setOpcode(Short1StaticInfo.OP_GET_PARENT);
-    assertTrue(info.storesResult());
-    info.setOpcode(Short1StaticInfo.OP_GET_PROP_LEN);
-    assertTrue(info.storesResult());
-    info.setOpcode(Short1StaticInfo.OP_LOAD);
-    assertTrue(info.storesResult());
-    info.setOpcode(Short1StaticInfo.OP_NOT);
-    assertTrue(info.storesResult());
-    info.setOpcode(Short1StaticInfo.OP_CALL_1S);
-    assertTrue(info.storesResult());
-    
-    // no store
-    info.setOpcode(Short1StaticInfo.OP_DEC);
-    assertFalse(info.storesResult());    
+  protected void setUp() throws Exception {
+	  super.setUp();
+    mockMachine.expects(atLeastOnce()).method("getVersion")
+    	.will(returnValue(3));
   }
-  
-  public void testStoresResultV5() {
-    
-    mockFileHeader.expects(atLeastOnce()).method("getVersion").will(returnValue(5));
-    Short1Instruction info = new Short1Instruction(machine, Short1StaticInfo.OP_CALL_1N);
-    assertFalse(info.storesResult());
-  }
-  
-  public void testIsBranchV4() {
-    
-    mockFileHeader.expects(atLeastOnce()).method("getVersion").will(returnValue(4));
-    Short1Instruction info;
 
-    info = new Short1Instruction(machine, Short1StaticInfo.OP_JZ);    
-    assertTrue(info.isBranch());
-    info.setOpcode(Short1StaticInfo.OP_GET_SIBLING);
-    assertTrue(info.isBranch());
-    info.setOpcode(Short1StaticInfo.OP_GET_CHILD);
-    assertTrue(info.isBranch());
-    
-    // no branch
-    info.setOpcode(Short1StaticInfo.OP_GET_PARENT);
-    assertFalse(info.isBranch());    
-  }
-  
   // ***********************************************************************
   // ********* ILLEGAL OPCODES
   // ******************************************
   
+  @Test
   public void testIllegalOpcode() {
-
-    mockFileHeader.expects(atLeastOnce()).method("getVersion").will(returnValue(3));
-    Short1InstructionMock illegal = createInstructionMock(0xdd);
+    Instruction1OpMock illegal = createInstructionMock(machine, 0xdd);
     mockMachine.expects(once()).method("getCpu").will(returnValue(cpu));
     mockCpu.expects(once()).method("halt").with(eq(
         "illegal instruction, type: SHORT operand count: C1OP opcode: 221"));
@@ -100,11 +57,10 @@ public class Short1InstructionTest extends InstructionTestBase {
   // ********* INC
   // ******************************************
 
+  @Test
   public void testInc() {
-    
-    mockFileHeader.expects(atLeastOnce()).method("getVersion").will(returnValue(3));
     // Create instruction
-    Short1InstructionMock inc = createInstructionMock(Short1StaticInfo.OP_INC,
+    Instruction1OpMock inc = createInstructionMock(Short1StaticInfo.OP_INC,
         Operand.TYPENUM_SMALL_CONSTANT, (short) 2);
     mockMachine.expects(atLeastOnce()).method("getCpu").will(returnValue(cpu));
     mockCpu.expects(once()).method("getVariable").with(eq(2)).will(returnValue((short) -1));
@@ -117,10 +73,9 @@ public class Short1InstructionTest extends InstructionTestBase {
   // ********* DEC
   // ******************************************
   
+  @Test
   public void testDec() {
-    
-    mockFileHeader.expects(atLeastOnce()).method("getVersion").will(returnValue(3));
-    Short1InstructionMock dec = createInstructionMock(Short1StaticInfo.OP_DEC,
+    Instruction1OpMock dec = createInstructionMock(Short1StaticInfo.OP_DEC,
         Operand.TYPENUM_SMALL_CONSTANT, (short) 6);
     mockMachine.expects(atLeastOnce()).method("getCpu").will(returnValue(cpu));
     mockCpu.expects(once()).method("getVariable").with(eq(6)).will(returnValue((short) 123));
@@ -129,10 +84,9 @@ public class Short1InstructionTest extends InstructionTestBase {
     assertTrue(dec.nextInstructionCalled);
   }
 
-  public void testDec0() {
-    
-    mockFileHeader.expects(atLeastOnce()).method("getVersion").will(returnValue(3));
-    Short1InstructionMock dec = createInstructionMock(Short1StaticInfo.OP_DEC,
+  @Test
+  public void testDec0() {    
+    Instruction1OpMock dec = createInstructionMock(Short1StaticInfo.OP_DEC,
         Operand.TYPENUM_SMALL_CONSTANT, (short) 7);
     mockMachine.expects(atLeastOnce()).method("getCpu").will(returnValue(cpu));
     mockCpu.expects(once()).method("getVariable").with(eq(7)).will(returnValue((short) 0));
@@ -141,39 +95,22 @@ public class Short1InstructionTest extends InstructionTestBase {
     assertTrue(dec.nextInstructionCalled);
   }
   // ***********************************************************************
-  // ********* NOT
-  // ******************************************  
-  
-  public void testNot() {
-	  
-    mockFileHeader.expects(atLeastOnce()).method("getVersion").will(returnValue(4));
-    mockMachine.expects(atLeastOnce()).method("getCpu").will(returnValue(cpu));
-    mockCpu.expects(once()).method("setVariable").with(eq(0x12), eq((short) 0x5555));     
-    
-	  // Create instruction	  
-	  Short1InstructionMock not = createInstructionMock(Short1StaticInfo.OP_NOT,
-        Operand.TYPENUM_LARGE_CONSTANT, (short) 0xaaaa);      
-    not.setStoreVariable((short) 0x12);
-	  not.execute();
-	  assertTrue(not.nextInstructionCalled);
-  }
-  
-  // ***********************************************************************
   // ********* GET_PARENT
   // ******************************************
   
-  public void testGetParent() {
-    
-    mockFileHeader.expects(atLeastOnce()).method("getVersion").will(returnValue(3));
-    Short1InstructionMock get_parent = createInstructionMock(
+  @Test
+  public void testGetParent() {    
+    Instruction1OpMock get_parent = createInstructionMock(
         Short1StaticInfo.OP_GET_PARENT, Operand.TYPENUM_SMALL_CONSTANT,
         (short) 0x02);
     get_parent.setStoreVariable((short)0x10);
-    mockGameData.expects(once()).method("getObjectTree").will(returnValue(objectTree));
-    mockObjectTree.expects(once()).method("getObject").with(eq(2)).will(returnValue(zobject));
-    mockZObject.expects(once()).method("getParent").will(returnValue(27));
-    mockMachine.expects(atLeastOnce()).method("getCpu").will(returnValue(cpu));
-    mockCpu.expects(once()).method("setVariable").with(eq(0x10), eq((short) 27));
+    mockMachine.expects(once()).method("getParent")
+    	.with(eq(2))
+    	.will(returnValue(27));
+    mockMachine.expects(atLeastOnce()).method("getCpu")
+    	.will(returnValue(cpu));
+    mockCpu.expects(once()).method("setVariable")
+    	.with(eq(0x10), eq((short) 27));
     get_parent.execute();
     assertTrue(get_parent.nextInstructionCalled);
   }
@@ -182,10 +119,9 @@ public class Short1InstructionTest extends InstructionTestBase {
   // ********* JUMP
   // ******************************************
   
+  @Test
   public void testJump() {
-    
-    mockFileHeader.expects(atLeastOnce()).method("getVersion").will(returnValue(3));
-    Short1InstructionMock jump = createInstructionMock(Short1StaticInfo.OP_JUMP,
+    Instruction1OpMock jump = createInstructionMock(Short1StaticInfo.OP_JUMP,
         Operand.TYPENUM_LARGE_CONSTANT, (short)0x4711);
     mockMachine.expects(atLeastOnce()).method("getCpu").will(returnValue(cpu));
     mockCpu.expects(once()).method("incrementProgramCounter").with(eq(18194));
@@ -196,10 +132,9 @@ public class Short1InstructionTest extends InstructionTestBase {
   // ********* LOAD
   // ******************************************
 
-  public void testLoadOperandIsVariable() {
-    
-    mockFileHeader.expects(atLeastOnce()).method("getVersion").will(returnValue(3));
-    Short1InstructionMock load = createInstructionMock(Short1StaticInfo.OP_LOAD,
+  @Test
+  public void testLoadOperandIsVariable() {    
+    Instruction1OpMock load = createInstructionMock(Short1StaticInfo.OP_LOAD,
         Operand.TYPENUM_VARIABLE, (short) 0x01);
     // Simulate: value in variable 1 is to, indicating value is retrieved from
     // variable 2
@@ -214,10 +149,9 @@ public class Short1InstructionTest extends InstructionTestBase {
     assertTrue(load.nextInstructionCalled);
   }
 
+  @Test
   public void testLoadOperandIsConstant() {
-    
-    mockFileHeader.expects(atLeastOnce()).method("getVersion").will(returnValue(3));
-    Short1InstructionMock load = createInstructionMock(Short1StaticInfo.OP_LOAD,
+    Instruction1OpMock load = createInstructionMock(Short1StaticInfo.OP_LOAD,
         Operand.TYPENUM_SMALL_CONSTANT, (short) 0x01);
     mockMachine.expects(atLeastOnce()).method("getCpu").will(returnValue(cpu));
     mockCpu.expects(once()).method("getVariable").with(eq(1)).will(returnValue((short) 4715));
@@ -230,10 +164,9 @@ public class Short1InstructionTest extends InstructionTestBase {
   }
   
   // Standard 1.1: Stack reference, the top of stack is read only, not popped
+  @Test
   public void testLoadOperandReferencesStack() {
-    
-    mockFileHeader.expects(atLeastOnce()).method("getVersion").will(returnValue(3));
-    Short1InstructionMock load = createInstructionMock(Short1StaticInfo.OP_LOAD,
+    Instruction1OpMock load = createInstructionMock(Short1StaticInfo.OP_LOAD,
         Operand.TYPENUM_SMALL_CONSTANT, (short) 0x00);
     mockMachine.expects(atLeastOnce()).method("getCpu").will(returnValue(cpu));
     mockCpu.expects(once()).method("getStackTopElement").will(returnValue((short) 4715));
@@ -251,10 +184,9 @@ public class Short1InstructionTest extends InstructionTestBase {
   
   // Situation 1:
   // Sets operand != 0, so the jump will not be performed
-  public void testJzBranchIfTrueNotZero() {
-    
-    mockFileHeader.expects(atLeastOnce()).method("getVersion").will(returnValue(3));
-    Short1InstructionMock jz = createInstructionMock(Short1StaticInfo.OP_JZ,
+  @Test
+  public void testJzBranchIfTrueNotZero() {    
+    Instruction1OpMock jz = createInstructionMock(Short1StaticInfo.OP_JZ,
         Operand.TYPENUM_SMALL_CONSTANT, (short) 0x01);    
     
     jz.execute();
@@ -265,10 +197,9 @@ public class Short1InstructionTest extends InstructionTestBase {
   // Situation 2:
   // Is zero, and branch offset will be 0, so return false from current
   // routine
-  public void testJzBranchIfTrueIsZero() {
-    
-    mockFileHeader.expects(atLeastOnce()).method("getVersion").will(returnValue(3));
-    Short1InstructionMock jz = createInstructionMock(Short1StaticInfo.OP_JZ,
+  @Test
+  public void testJzBranchIfTrueIsZero() {    
+    Instruction1OpMock jz = createInstructionMock(Short1StaticInfo.OP_JZ,
         Operand.TYPENUM_SMALL_CONSTANT, (short) 0x00);
     
     jz.execute();
@@ -281,14 +212,14 @@ public class Short1InstructionTest extends InstructionTestBase {
   // ******************************************
   
   // Object has no next sibling
-  public void testGetSiblingIs0() {
-    
-    mockFileHeader.expects(atLeastOnce()).method("getVersion").will(returnValue(3));
-    Short1InstructionMock get_sibling = createInstructionMock(Short1StaticInfo.OP_GET_SIBLING,
+  @Test
+  public void testGetSiblingIs0() {    
+    Instruction1OpMock get_sibling = createInstructionMock(
+    		Short1StaticInfo.OP_GET_SIBLING,
         Operand.TYPENUM_SMALL_CONSTANT, (short) 0x08);
-    mockGameData.expects(once()).method("getObjectTree").will(returnValue(objectTree));
-    mockObjectTree.expects(once()).method("getObject").with(eq(8)).will(returnValue(zobject));
-    mockZObject.expects(once()).method("getSibling").will(returnValue(0));
+    mockMachine.expects(once()).method("getSibling")
+    	.with(eq(8))
+    	.will(returnValue(0));
     mockMachine.expects(atLeastOnce()).method("getCpu").will(returnValue(cpu));
     mockCpu.expects(once()).method("setVariable").with(eq(1), eq((short) 0));
 
@@ -298,20 +229,19 @@ public class Short1InstructionTest extends InstructionTestBase {
     assertFalse(get_sibling.branchOnTestCondition);
   }
   
-  public void testGetSiblingHasSibling() {
-    
-    mockFileHeader.expects(atLeastOnce()).method("getVersion").will(returnValue(3));
+  @Test
+  public void testGetSiblingHasSibling() {    
     // Object 6 has 152 as its sibling    
-    Short1InstructionMock get_sibling = createInstructionMock(Short1StaticInfo.OP_GET_SIBLING,
+    Instruction1OpMock get_sibling = createInstructionMock(Short1StaticInfo.OP_GET_SIBLING,
         Operand.TYPENUM_SMALL_CONSTANT, (short) 0x06);
     get_sibling.setStoreVariable((short) 0x01);
     
-    mockGameData.expects(once()).method("getObjectTree").will(returnValue(objectTree));
-    mockObjectTree.expects(once()).method("getObject").with(eq(6)).will(returnValue(zobject));
-    mockZObject.expects(once()).method("getSibling").will(returnValue(152));
-    mockMachine.expects(atLeastOnce()).method("getCpu").will(returnValue(cpu));
+    mockMachine.expects(once()).method("getSibling")
+    	.with(eq(6))
+    	.will(returnValue(152));
+    mockMachine.expects(atLeastOnce()).method("getCpu")
+    	.will(returnValue(cpu));
     mockCpu.expects(once()).method("setVariable").with(eq(1), eq((short) 152));
-
     get_sibling.execute();
     
     assertTrue(get_sibling.branchOnTestCalled);
@@ -322,52 +252,46 @@ public class Short1InstructionTest extends InstructionTestBase {
   // ********* GET_CHILD
   // ******************************************
 
+  @Test
   public void testGetChildOfObject0() {
-    
-    mockFileHeader.expects(atLeastOnce()).method("getVersion").will(returnValue(3));
     // Object 0 does not exist
     mockMachine.expects(atLeastOnce()).method("getCpu").will(returnValue(cpu));
     mockMachine.expects(once()).method("warn").with(eq("@get_child illegal access to object 0"));
     mockCpu.expects(once()).method("setVariable").with(eq(0), eq((short) 0));
     
-    Short1InstructionMock get_child = createInstructionMock(Short1StaticInfo.OP_GET_CHILD,
+    Instruction1OpMock get_child = createInstructionMock(Short1StaticInfo.OP_GET_CHILD,
         Operand.TYPENUM_SMALL_CONSTANT, (short) 0x00);
     get_child.execute();    
     assertTrue(get_child.branchOnTestCalled);
     assertFalse(get_child.branchOnTestCondition);
   }
   
-  public void testGetChildIs0() {
-    
-    mockFileHeader.expects(atLeastOnce()).method("getVersion").will(returnValue(3));
+  @Test
+  public void testGetChildIs0() {    
     // Object 4 has no child
-    Short1InstructionMock get_child = createInstructionMock(Short1StaticInfo.OP_GET_CHILD,
+    Instruction1OpMock get_child = createInstructionMock(Short1StaticInfo.OP_GET_CHILD,
         Operand.TYPENUM_SMALL_CONSTANT, (short) 0x04);
     get_child.setStoreVariable((short) 0x01);
     
-    mockGameData.expects(once()).method("getObjectTree").will(returnValue(objectTree));
-    mockObjectTree.expects(once()).method("getObject").with(eq(4)).will(returnValue(zobject));
-    mockZObject.expects(once()).method("getChild").will(returnValue(0));
+    mockMachine.expects(once()).method("getChild")
+    	.with(eq(4))
+    	.will(returnValue(0));
     mockMachine.expects(atLeastOnce()).method("getCpu").will(returnValue(cpu));
     mockCpu.expects(once()).method("setVariable").with(eq(1), eq((short) 0));
     
-    get_child.execute();
-    
+    get_child.execute();    
     assertTrue(get_child.branchOnTestCalled);
     assertFalse(get_child.branchOnTestCondition);
   }
   
+  @Test
   public void testGetChildAndBranch() {
-    
-    mockFileHeader.expects(atLeastOnce()).method("getVersion").will(returnValue(3));
     // Object 7 has 41 as its child    
-    Short1InstructionMock get_child = createInstructionMock(Short1StaticInfo.OP_GET_CHILD,
+    Instruction1OpMock get_child = createInstructionMock(Short1StaticInfo.OP_GET_CHILD,
         Operand.TYPENUM_SMALL_CONSTANT, (short) 0x07);
     get_child.setStoreVariable((short) 0x02);
     
-    mockGameData.expects(once()).method("getObjectTree").will(returnValue(objectTree));
-    mockObjectTree.expects(once()).method("getObject").with(eq(7)).will(returnValue(zobject));
-    mockZObject.expects(once()).method("getChild").will(returnValue(41));
+    mockMachine.expects(once()).method("getChild").with(eq(7)).will(returnValue(41));
     mockMachine.expects(atLeastOnce()).method("getCpu").will(returnValue(cpu));
     mockCpu.expects(once()).method("setVariable").with(eq(2), eq((short) 41));
 
@@ -380,13 +304,12 @@ public class Short1InstructionTest extends InstructionTestBase {
   // ***********************************************************************
   // ********* PRINT_ADDR
   // ******************************************
-  
+
+  @Test
   public void testPrintAddr() {
-    
-    mockFileHeader.expects(atLeastOnce()).method("getVersion").will(returnValue(3));
     mockMachine.expects(atLeastOnce()).method("getOutput").will(returnValue(output));
 
-    Short1InstructionMock print_addr = createInstructionMock(Short1StaticInfo.OP_PRINT_ADDR,
+    Instruction1OpMock print_addr = createInstructionMock(Short1StaticInfo.OP_PRINT_ADDR,
         Operand.TYPENUM_LARGE_CONSTANT, (short) 0x28bc);
     mockOutput.expects(once()).method("printZString").with(eq(0x28bc));
     print_addr.execute();
@@ -397,12 +320,11 @@ public class Short1InstructionTest extends InstructionTestBase {
   // ********* PRINT_PADDR
   // ******************************************
   
+  @Test
   public void testPrintPaddr() {
-    
-    mockFileHeader.expects(atLeastOnce()).method("getVersion").will(returnValue(3));
     mockMachine.expects(atLeastOnce()).method("getOutput").will(returnValue(output));
     
-    Short1InstructionMock print_paddr = createInstructionMock(Short1StaticInfo.OP_PRINT_PADDR,
+    Instruction1OpMock print_paddr = createInstructionMock(Short1StaticInfo.OP_PRINT_PADDR,
         Operand.TYPENUM_LARGE_CONSTANT, (short) 0x145e);
     mockMachine.expects(once()).method("getCpu").will(returnValue(cpu));
     mockCpu.expects(once()).method("translatePackedAddress").with(eq(0x145e), eq(false)).will(returnValue(1234));
@@ -416,10 +338,9 @@ public class Short1InstructionTest extends InstructionTestBase {
   // ********* RET
   // ******************************************
   
+  @Test
   public void testRet() {
-    
-    mockFileHeader.expects(atLeastOnce()).method("getVersion").will(returnValue(3));
-    Short1InstructionMock ret = createInstructionMock(Short1StaticInfo.OP_RET,
+    Instruction1OpMock ret = createInstructionMock(Short1StaticInfo.OP_RET,
         Operand.TYPENUM_LARGE_CONSTANT, (short) 0x145e);    
 
     ret.execute();
@@ -427,10 +348,9 @@ public class Short1InstructionTest extends InstructionTestBase {
     assertEquals((short) 0x145e, ret.returnValue);
   }
   
+  @Test
   public void testRetWithVariable() {
-    
-    mockFileHeader.expects(atLeastOnce()).method("getVersion").will(returnValue(3));
-    Short1InstructionMock ret = createInstructionMock(Short1StaticInfo.OP_RET,
+    Instruction1OpMock ret = createInstructionMock(Short1StaticInfo.OP_RET,
         Operand.TYPENUM_VARIABLE, (short) 0x01);
     mockMachine.expects(atLeastOnce()).method("getCpu").will(returnValue(cpu));
     mockCpu.expects(once()).method("getVariable").with(eq(1)).will(returnValue((short) 0x23));
@@ -444,17 +364,15 @@ public class Short1InstructionTest extends InstructionTestBase {
   // ********* PRINT_OBJ
   // ******************************************
   
-  public void testPrintObj() {
-    
-    mockFileHeader.expects(atLeastOnce()).method("getVersion").will(returnValue(3));
+  @Test
+  public void testPrintObj() {    
     mockMachine.expects(atLeastOnce()).method("getOutput").will(returnValue(output));
     
-    Short1InstructionMock print_obj = createInstructionMock(Short1StaticInfo.OP_PRINT_OBJ,
+    Instruction1OpMock print_obj = createInstructionMock(Short1StaticInfo.OP_PRINT_OBJ,
         Operand.TYPENUM_SMALL_CONSTANT, (short) 0x03);
 
-    mockGameData.expects(once()).method("getObjectTree").will(returnValue(objectTree));
-    mockObjectTree.expects(once()).method("getObject").with(eq(0x03)).will(returnValue(zobject));
-    mockZObject.expects(once()).method("getPropertiesDescriptionAddress").will(returnValue(4712));
+    mockMachine.expects(once()).method("getPropertiesDescriptionAddress")
+    	.with(eq(3)).will(returnValue(4712));
     mockOutput.expects(once()).method("printZString").with(eq(4712));
     print_obj.execute();
     assertTrue(print_obj.nextInstructionCalled);
@@ -464,13 +382,11 @@ public class Short1InstructionTest extends InstructionTestBase {
   // ********* REMOVE_OBJ
   // ******************************************
   
+  @Test
   public void testRemoveObj() {
-    
-    mockFileHeader.expects(atLeastOnce()).method("getVersion").will(returnValue(3));
-    Short1InstructionMock remove_obj = createInstructionMock(Short1StaticInfo.OP_REMOVE_OBJ,
+    Instruction1OpMock remove_obj = createInstructionMock(Short1StaticInfo.OP_REMOVE_OBJ,
         Operand.TYPENUM_SMALL_CONSTANT, (short) 0x03);
-    mockGameData.expects(once()).method("getObjectTree").will(returnValue(objectTree));
-    mockObjectTree.expects(once()).method("removeObject").with(eq(0x03));    
+    mockMachine.expects(once()).method("removeObject").with(eq(0x03));    
     remove_obj.execute();
     assertTrue(remove_obj.nextInstructionCalled);
   }
@@ -479,14 +395,12 @@ public class Short1InstructionTest extends InstructionTestBase {
   // ********* GET_PROP_LEN
   // ******************************************
   
+  @Test
   public void testGetPropLen() {
-    
-    mockFileHeader.expects(atLeastOnce()).method("getVersion").will(returnValue(3));
-    Short1InstructionMock get_prop_len = createInstructionMock(Short1StaticInfo.OP_GET_PROP_LEN,
+    Instruction1OpMock get_prop_len = createInstructionMock(Short1StaticInfo.OP_GET_PROP_LEN,
         Operand.TYPENUM_LARGE_CONSTANT, (short) 0x1889);
     get_prop_len.setStoreVariable((short) 0x15);
-    mockGameData.expects(once()).method("getObjectTree").will(returnValue(objectTree));
-    mockObjectTree.expects(once()).method("getPropertyLength").with(eq(0x1889)).will(returnValue(4));
+    mockMachine.expects(once()).method("getPropertyLength").with(eq(0x1889)).will(returnValue(4));
     mockMachine.expects(atLeastOnce()).method("getCpu").will(returnValue(cpu));
     mockCpu.expects(once()).method("setVariable").with(eq(0x15), eq((short) 4));
     get_prop_len.execute();
@@ -496,23 +410,9 @@ public class Short1InstructionTest extends InstructionTestBase {
   // ***********************************************************************
   // ********* CALL_1S
   // ******************************************
-  
-  public void testCall1sVersion4() {
-
-    short[] args = {};
-    mockFileHeader.expects(atLeastOnce()).method("getVersion").will(returnValue(4));
-    mockMachine.expects(atLeastOnce()).method("getCpu").will(returnValue(cpu));
-    mockCpu.expects(once()).method("getProgramCounter").will(returnValue(4611));
-    mockCpu.expects(once()).method("call").with(eq(4611), eq(4623), eq(args), eq((short) 0));
-    
-    Short1Instruction call1s = createInstructionMock(Short1StaticInfo.OP_CALL_1S,
-        Operand.TYPENUM_LARGE_CONSTANT, (short) 4611);
-    call1s.execute();
-  }
-  
+ 
+  @Test
   public void testCall1SIllegalInVersion3() {
-
-    mockFileHeader.expects(once()).method("getVersion").will(returnValue(3));    
     mockMachine.expects(once()).method("getCpu").will(returnValue(cpu));
     mockCpu.expects(once()).method("halt").with(eq(
         "illegal instruction, type: SHORT operand count: C1OP opcode: 8"));
@@ -525,49 +425,48 @@ public class Short1InstructionTest extends InstructionTestBase {
   // ****** Private helpers
   // ****************************************
   
-  class Short1InstructionMock extends Short1Instruction {
-  
-    
+  static class Instruction1OpMock extends Short1Instruction {
     public boolean nextInstructionCalled;
     public boolean returned;
     public short returnValue;
     public boolean branchOnTestCalled;
     public boolean branchOnTestCondition;
     
-    public Short1InstructionMock(Machine machine, int opcode) {
+    public Instruction1OpMock(Machine machine, int opcode) {
       super(machine, opcode);
     }
     
     protected void nextInstruction() {
-      
       nextInstructionCalled = true;
     }
     
     protected void returnFromRoutine(short retval) {
-      
       returned = true;
       returnValue = retval;
     }
     
     protected void branchOnTest(boolean flag) {
-
       branchOnTestCalled = true;
       branchOnTestCondition = flag;
     }
   }
   
-  private Short1InstructionMock createInstructionMock(int opcode) {
-    
-    Short1InstructionMock result = new Short1InstructionMock(machine, opcode);
+  public static Instruction1OpMock createInstructionMock(Machine machine,
+  		int opcode) {
+    Instruction1OpMock result = new Instruction1OpMock(machine, opcode);
     result.setLength(1);
     
     return result;
   }
   
-  private Short1InstructionMock createInstructionMock(int opcode, int typenum,
-      short value) {
-    
-    Short1InstructionMock result = new Short1InstructionMock(machine, opcode);
+  private Instruction1OpMock createInstructionMock(int opcode, int typenum,
+  		short value) {
+  	return createInstructionMock(machine, opcode, typenum, value);
+  }
+
+  public static Instruction1OpMock createInstructionMock(Machine machine,
+  		int opcode, int typenum, short value) {    
+    Instruction1OpMock result = new Instruction1OpMock(machine, opcode);
     result.addOperand(new Operand(typenum, value));
     result.setLength(12);
     

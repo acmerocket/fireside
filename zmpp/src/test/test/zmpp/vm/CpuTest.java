@@ -24,7 +24,7 @@ import java.util.List;
 
 import org.jmock.Mock;
 import org.jmock.MockObjectTestCase;
-import org.zmpp.base.MemoryAccess;
+import org.zmpp.base.Memory;
 import org.zmpp.vm.Cpu;
 import org.zmpp.vm.CpuImpl;
 import org.zmpp.vm.GameData;
@@ -36,13 +36,14 @@ import org.zmpp.vm.StoryFileHeader;
 
 public class CpuTest extends MockObjectTestCase {
 
-  private Mock mockMachine, mockDecoder, mockGameData, mockFileHeader, mockMemAccess;
+  private Mock mockMachine, mockDecoder, mockGameData, mockFileHeader,
+    mockMemory;
   private Machine machine;
   private InstructionDecoder decoder;
   private GameData gamedata;
   private Cpu cpu;
   private StoryFileHeader fileheader;
-  private MemoryAccess memaccess;
+  private Memory memory;
   private RoutineContext routineInfo;
   
   public void setUp() throws Exception {
@@ -52,13 +53,13 @@ public class CpuTest extends MockObjectTestCase {
     mockDecoder = mock(InstructionDecoder.class);
     mockGameData = mock(GameData.class);
     mockFileHeader = mock(StoryFileHeader.class);
-    mockMemAccess = mock(MemoryAccess.class);
+    mockMemory = mock(Memory.class);
     
     machine = (Machine) mockMachine.proxy();
     decoder = (InstructionDecoder) mockDecoder.proxy();
     gamedata = (GameData) mockGameData.proxy();
     fileheader = (StoryFileHeader) mockFileHeader.proxy();
-    memaccess = (MemoryAccess) mockMemAccess.proxy();
+    memory = (Memory) mockMemory.proxy();
     routineInfo = new RoutineContext(0x4711, 3);
     
     mockMachine.expects(atLeastOnce()).method("getGameData").will(returnValue(gamedata));
@@ -66,8 +67,8 @@ public class CpuTest extends MockObjectTestCase {
     mockFileHeader.expects(once()).method("getProgramStart").will(returnValue(1000));
     mockFileHeader.expects(once()).method("getGlobalsAddress").will(returnValue(5000));
     mockFileHeader.expects(once()).method("getVersion").will(returnValue(5));
-    mockGameData.expects(atLeastOnce()).method("getMemoryAccess").will(returnValue(memaccess));
-    mockDecoder.expects(once()).method("initialize").with(eq(machine), eq(memaccess));
+    mockGameData.expects(atLeastOnce()).method("getMemory").will(returnValue(memory));
+    mockDecoder.expects(once()).method("initialize").with(eq(machine), eq(memory));
     cpu = new CpuImpl(machine, decoder);
     cpu.reset();
   }
@@ -287,7 +288,7 @@ public class CpuTest extends MockObjectTestCase {
     cpu.setVariable(0, (short) 215);
 
     // Set the variable
-    mockMemAccess.expects(once()).method("writeShort").with(eq(5004), eq((short) 42));
+    mockMemory.expects(once()).method("writeShort").with(eq(5004), eq((short) 42));
     
     assertNotSame(oldSp, cpu.getStackPointer());
     cpu.popRoutineContext((short) 42);

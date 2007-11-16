@@ -23,7 +23,7 @@ package org.zmpp.swingui;
 import java.io.IOException;
 import java.net.URL;
 
-import org.zmpp.base.DefaultMemoryAccess;
+import org.zmpp.base.DefaultMemory;
 import org.zmpp.blorb.BlorbResources;
 import org.zmpp.blorb.BlorbStory;
 import org.zmpp.iff.DefaultFormChunk;
@@ -121,7 +121,7 @@ public class AppletMachineFactory extends MachineFactory<ZmppApplet> {
     if (blorbchunk == null) {
       byte[] data = FileUtils.readFileBytes(resourceis);
       if (data != null)
-        blorbchunk = new DefaultFormChunk(new DefaultMemoryAccess(data));
+        blorbchunk = new DefaultFormChunk(new DefaultMemory(data));
     }
     return blorbchunk;
   }

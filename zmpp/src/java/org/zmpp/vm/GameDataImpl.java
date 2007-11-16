@@ -20,8 +20,8 @@
  */
 package org.zmpp.vm;
 
-import org.zmpp.base.DefaultMemoryAccess;
-import org.zmpp.base.MemoryAccess;
+import org.zmpp.base.DefaultMemory;
+import org.zmpp.base.Memory;
 import org.zmpp.encoding.AccentTable;
 import org.zmpp.encoding.AlphabetTable;
 import org.zmpp.encoding.AlphabetTableV1;
@@ -46,67 +46,24 @@ import org.zmpp.media.Resources;
  * @version 1.0
  */
 public class GameDataImpl implements GameData {
-
-  /**
-   * The file header.
-   */
   private StoryFileHeader fileheader;
-  
-  /**
-   * The MemoryAccess object.
-   */
-  private MemoryAccess memaccess;
-  
-  /**
-   * The dictionary.
-   */
+  private Memory memory;
   private Dictionary dictionary;
-  
-  /**
-   * The object tree.
-   */
   private ObjectTree objectTree;
-  
-  /**
-   * The ZSCII encoding object.
-   */
   private ZsciiEncoding encoding;
-  
-  /**
-   * The z char decoder.
-   */
   private ZCharDecoder decoder;
-  
-  /**
-   * The z char encoder.
-   */
-  private ZCharEncoder encoder;
-  
-  /**
-   * The alphabet table.
-   */
-  private AlphabetTable alphabetTable;
-  
-  /**
-   * The media resources.
-   */
-  private Resources resources;
-  
-  /**
-   * The original story file data.
-   */
+  private ZCharEncoder encoder;  
+  private AlphabetTable alphabetTable;  
+  private Resources resources;  
   private byte[] storyfileData;
-  
   private int checksum;  
   
   /**
    * Constructor.
-   * 
    * @param storyfile the story file as a byte array
    * @param resources the media resources
    */
   public GameDataImpl(byte[] storyfile, Resources resources) {
-
     storyfileData = storyfile;
     this.resources = resources;
     reset();
@@ -116,14 +73,12 @@ public class GameDataImpl implements GameData {
    * {@inheritDoc}
    */
   public final void reset() {
-
     // Make a copy and initialize from the copy
     final byte[] data = new byte[storyfileData.length];
     System.arraycopy(storyfileData, 0, data, 0, storyfileData.length);
     
-    memaccess = new DefaultMemoryAccess(data);
-    fileheader = new DefaultStoryFileHeader(memaccess);
-    
+    memory = new DefaultMemory(data);
+    fileheader = new DefaultStoryFileHeader(memory);
     checksum = calculateChecksum();
     
     // Install the whole character code system here
@@ -131,133 +86,92 @@ public class GameDataImpl implements GameData {
     
     // The object tree and dictionaries depend on the code system
     if (fileheader.getVersion() <= 3) {
-      
-      objectTree = new ClassicObjectTree(memaccess,
-          fileheader.getObjectTableAddress(), decoder);
-      
+      objectTree = new ClassicObjectTree(memory,
+          fileheader.getObjectTableAddress());
     } else {
-      
-      objectTree = new ModernObjectTree(memaccess,
-          fileheader.getObjectTableAddress(), decoder);
+      objectTree = new ModernObjectTree(memory,
+          fileheader.getObjectTableAddress());
     }
-    
     final DictionarySizes sizes = (fileheader.getVersion() <= 3) ?
         new DictionarySizesV1ToV3() : new DictionarySizesV4ToV8();
-    dictionary = new DefaultDictionary(memaccess,
+    dictionary = new DefaultDictionary(memory,
         fileheader.getDictionaryAddress(), decoder, sizes);
   }
   
   private void initEncodingSystem() {
-    
     final AccentTable accentTable = (fileheader.getCustomAccentTable() == 0) ?
         new DefaultAccentTable() :
-        new CustomAccentTable(memaccess, fileheader.getCustomAccentTable());
+        new CustomAccentTable(memory, fileheader.getCustomAccentTable());
     encoding = new ZsciiEncoding(accentTable);
 
     // Configure the alphabet table
     if (fileheader.getCustomAlphabetTable() == 0) {
-            
       if (fileheader.getVersion() == 1) {
-        
         alphabetTable = new AlphabetTableV1();
-        
       } else if (fileheader.getVersion() == 2) {
-        
         alphabetTable = new AlphabetTableV2();
-      
       } else {
-        
         alphabetTable = new DefaultAlphabetTable();
       }
-      
     } else {
-      
-      alphabetTable = new CustomAlphabetTable(memaccess,
+      alphabetTable = new CustomAlphabetTable(memory,
           fileheader.getCustomAlphabetTable());
     }
     
     final ZCharTranslator translator =
       new DefaultZCharTranslator(alphabetTable);
         
-    final Abbreviations abbreviations = new Abbreviations(memaccess,
+    final Abbreviations abbreviations = new Abbreviations(memory,
         fileheader.getAbbreviationsAddress());
     decoder = new DefaultZCharDecoder(encoding, translator, abbreviations);
     encoder = new ZCharEncoder(translator);
     ZsciiString.initialize(encoding);
   }
     
-  
   /**
    * {@inheritDoc}
    */
-  public MemoryAccess getMemoryAccess() {
-    
-    return memaccess;
-  }
+  public Memory getMemory() { return memory; }
 
   /**
    * {@inheritDoc}
    */
-  public StoryFileHeader getStoryFileHeader() {
-    
-    return fileheader;
-  }
+  public StoryFileHeader getStoryFileHeader() { return fileheader; }
   
   /**
    * {@inheritDoc}
    */
-  public Dictionary getDictionary() {
-    
-    return dictionary;
-  }
+  public Dictionary getDictionary() { return dictionary; }
   
   /**
    * {@inheritDoc}
    */
-  public ObjectTree getObjectTree() {
-    
-    return objectTree;
-  }
+  public ObjectTree getObjectTree() { return objectTree; }
   
   /**
    * {@inheritDoc}
    */
-  public AlphabetTable getAlphabetTable() {
-
-    return alphabetTable;
-  }
+  public AlphabetTable getAlphabetTable() { return alphabetTable; }
   
   /**
    * {@inheritDoc}
    */
-  public ZCharDecoder getZCharDecoder() {
-   
-    return decoder;
-  }
+  public ZCharDecoder getZCharDecoder() { return decoder; }
   
   /**
    * {@inheritDoc}
    */
-  public ZCharEncoder getZCharEncoder() {
-    
-    return encoder;
-  }
+  public ZCharEncoder getZCharEncoder() { return encoder; }
   
   /**
    * {@inheritDoc}
    */
-  public ZsciiEncoding getZsciiEncoding() {
-    
-    return encoding;
-  }
+  public ZsciiEncoding getZsciiEncoding() { return encoding; }
   
   /**
    * {@inheritDoc}
    */
-  public Resources getResources() {
-    
-    return resources;
-  }
+  public Resources getResources() { return resources; }
 
   /**
    * Calculates the checksum of the file.
@@ -266,19 +180,15 @@ public class GameDataImpl implements GameData {
    * @return the check sum
    */
   private int calculateChecksum() {
-    
     final int filelen = fileheader.getFileLength();
     int sum = 0;
-    
     for (int i = 0x40; i < filelen; i++) {
-    
-      sum += getMemoryAccess().readUnsignedByte(i);
+      sum += getMemory().readUnsignedByte(i);
     }
     return (sum & 0xffff);
   }
   
   public int getCalculatedChecksum() {
-    
     return checksum;
   }
 
@@ -286,7 +196,6 @@ public class GameDataImpl implements GameData {
    * {@inheritDoc}
    */
   public boolean hasValidChecksum() {
-    
     return getStoryFileHeader().getChecksum() == checksum;
   }
 }

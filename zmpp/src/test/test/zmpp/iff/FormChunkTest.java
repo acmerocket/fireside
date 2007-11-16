@@ -26,15 +26,15 @@ import java.util.Iterator;
 import java.util.List;
 
 import org.jmock.MockObjectTestCase;
-import org.zmpp.base.DefaultMemoryAccess;
-import org.zmpp.base.MemoryAccess;
+import org.zmpp.base.DefaultMemory;
+import org.zmpp.base.Memory;
 import org.zmpp.iff.Chunk;
 import org.zmpp.iff.DefaultFormChunk;
 import org.zmpp.iff.FormChunk;
 
 public class FormChunkTest extends MockObjectTestCase {
 
-  private MemoryAccess formChunkData;
+  private Memory formChunkData;
   private FormChunk formChunk; 
   
   protected void setUp() throws Exception {
@@ -43,7 +43,7 @@ public class FormChunkTest extends MockObjectTestCase {
     RandomAccessFile saveFile = new RandomAccessFile(testSaveFile, "r");
     byte[] data = new byte[(int) saveFile.length()];
     saveFile.readFully(data);
-    formChunkData = new DefaultMemoryAccess(data);
+    formChunkData = new DefaultMemory(data);
     formChunk = new DefaultFormChunk(formChunkData);
     saveFile.close();
   }

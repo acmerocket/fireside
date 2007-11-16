@@ -50,7 +50,7 @@ public class BlorbCoverArt {
     if (fspcchunk != null) {
       //System.out.println("FOUND FRONTISPIECE");
       coverartnum = (int)
-        fspcchunk.getMemoryAccess().readUnsigned32(Chunk.CHUNK_HEADER_LENGTH);
+        fspcchunk.getMemory().readUnsigned32(Chunk.CHUNK_HEADER_LENGTH);
     }
   }
   

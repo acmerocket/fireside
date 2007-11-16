@@ -20,7 +20,7 @@
  */
 package org.zmpp.vm;
 
-import org.zmpp.base.MemoryReadAccess;
+import org.zmpp.base.Memory;
 import org.zmpp.encoding.ZCharDecoder;
 import org.zmpp.encoding.ZsciiString;
 
@@ -38,22 +38,20 @@ public class UserDictionary extends AbstractDictionary {
   /**
    * Constructor.
    * 
-   * @param map the memory map
+   * @param memory the Memary object
    * @param address the start address of the dictionary
    * @param converter a Z char decoder object
    * @param sizes a sizes object
    */
-  public UserDictionary(MemoryReadAccess memaccess, int address,
+  public UserDictionary(Memory memory, int address,
                         ZCharDecoder decoder) {
-    
-    super(memaccess, address, decoder, new DictionarySizesV4ToV8());
+    super(memory, address, decoder, new DictionarySizesV4ToV8());
   }
 
   /**
    * {@inheritDoc}
    */
   public int lookup(final ZsciiString token) {
-
     // We only implement linear search for the moment
     final int n = Math.abs(getNumberOfEntries());
     final ZsciiString lookupToken = truncateToken(token);
@@ -61,7 +59,7 @@ public class UserDictionary extends AbstractDictionary {
     for (int i = 0; i < n; i++) {
       
       final int entryAddress = getEntryAddress(i);
-      final ZsciiString entry = getDecoder().decode2Zscii(getMemoryAccess(),
+      final ZsciiString entry = getDecoder().decode2Zscii(getMemory(),
                                                           entryAddress,
                                                           getEntryLength());
       if (lookupToken.equals(entry)) {

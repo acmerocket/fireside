@@ -21,8 +21,8 @@
 package test.zmpp.instructions;
 
 import org.jmock.Mock;
-import org.zmpp.base.DefaultMemoryAccess;
-import org.zmpp.base.MemoryAccess;
+import org.zmpp.base.DefaultMemory;
+import org.zmpp.base.Memory;
 import org.zmpp.instructions.AbstractInstruction;
 import org.zmpp.instructions.DefaultInstructionDecoder;
 import org.zmpp.instructions.LongStaticInfo;
@@ -34,12 +34,10 @@ import org.zmpp.instructions.VariableStaticInfo;
 import org.zmpp.instructions.AbstractInstruction.InstructionForm;
 import org.zmpp.instructions.AbstractInstruction.OperandCount;
 import org.zmpp.instructions.Operand.OperandType;
-import org.zmpp.vm.GameData;
 import org.zmpp.vm.InstructionDecoder;
 import org.zmpp.vm.Machine;
-import org.zmpp.vm.StoryFileHeader;
 
-import test.zmpp.vm.MemoryMapSetup;
+import test.zmpp.vm.MiniZorkSetup;
 
 /**
  * This class contains tests for the InstructionDecoder class.
@@ -47,11 +45,11 @@ import test.zmpp.vm.MemoryMapSetup;
  * @author Wei-ju Wu
  * @version 1.0
  */
-public class InstructionDecoderTest extends MemoryMapSetup {
+public class InstructionDecoderTest extends MiniZorkSetup {
 
   private InstructionDecoder decoder;
   
-  private MemoryAccess amfvmap;
+  private Memory amfvmem;
   private byte[] call_vs2 = {
       (byte) 0xec, 0x25, (byte) 0xbf, 0x3b, (byte) 0xf7, (byte) 0xa0,
       0x10, 0x20, 0x01, 0x00
@@ -273,20 +271,14 @@ public class InstructionDecoderTest extends MemoryMapSetup {
   public void testDecodeCallVs2() {
 
     // Setup for machine 4
-    amfvmap = new DefaultMemoryAccess(call_vs2);
+    amfvmem = new DefaultMemory(call_vs2);
     Mock mockMachine4 = mock(Machine.class);
     Machine machine4 = (Machine) mockMachine4.proxy();
-    Mock mockGameData = mock(GameData.class);
-    GameData gamedata = (GameData) mockGameData.proxy(); 
-    Mock mockFileHeader = mock(StoryFileHeader.class);
-    StoryFileHeader storyFileHeader = (StoryFileHeader) mockFileHeader.proxy();
     
     InstructionDecoder decoder4 = new DefaultInstructionDecoder();
-    decoder4.initialize(machine4, amfvmap);
+    decoder4.initialize(machine4, amfvmem);
     
-    mockMachine4.expects(atLeastOnce()).method("getGameData").will(returnValue(gamedata));
-    mockGameData.expects(atLeastOnce()).method("getStoryFileHeader").will(returnValue(storyFileHeader));    
-    mockFileHeader.expects(atLeastOnce()).method("getVersion").will(returnValue(4));
+    mockMachine4.expects(atLeastOnce()).method("getVersion").will(returnValue(4));
 
     // Expected:
     // ecf4:  CALL_VS2        efdc (G90,#10,#20,L00) -> -(SP)

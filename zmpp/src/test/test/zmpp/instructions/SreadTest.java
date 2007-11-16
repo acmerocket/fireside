@@ -20,6 +20,7 @@
  */
 package test.zmpp.instructions;
 
+import org.junit.Test;
 import org.zmpp.encoding.ZsciiEncoding;
 import org.zmpp.instructions.Operand;
 import org.zmpp.instructions.VariableInstruction;
@@ -37,10 +38,11 @@ public class SreadTest extends InstructionTestBase {
 
   // This is a first template setup for one of the central functions
   // in the Z-machine, the parser.
+  @Test
   public void testSreadVersion3() {
     
     // common things
-    mockFileHeader.expects(atLeastOnce()).method("getVersion").will(returnValue(3));
+    mockMachine.expects(atLeastOnce()).method("getVersion").will(returnValue(3));
     mockMachine.expects(once()).method("updateStatusLine");
     mockMachine.expects(once()).method("readLine").with(eq(4711), eq(0), eq(0)).will(returnValue(ZsciiEncoding.NEWLINE));
     mockMachine.expects(once()).method("tokenize").with(eq(4711), eq(5711), eq(0), eq(false));    

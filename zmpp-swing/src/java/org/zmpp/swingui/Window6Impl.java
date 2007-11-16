@@ -208,8 +208,8 @@ public class Window6Impl implements Window6, CursorWindow {
     default:
       break;
     }
-    //System.out.printf("getProperty(), win: %d, prop: %s, value: %d\n", windownum,
-    //    getPropertyName(propertynum), result);
+    System.out.printf("getProperty(), win: %d, prop: %s, value: %d\n", windownum,
+        getPropertyName(propertynum), result);
     return result;
   }
   

@@ -26,7 +26,7 @@ import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
 
-import org.zmpp.base.MemoryAccess;
+import org.zmpp.base.Memory;
 import org.zmpp.encoding.ZCharDecoder;
 import org.zmpp.encoding.ZsciiEncoding;
 import org.zmpp.encoding.ZsciiString;
@@ -208,9 +208,9 @@ public class InputFunctions implements InputLine {
     // Note: we convert ASCII characters to lower case to allow the
     // transkription of umlauts
     int newpointer = pointer;
-    final MemoryAccess memaccess = machine.getGameData().getMemoryAccess();    
+    final Memory memory = machine.getGameData().getMemory();    
     final ZsciiEncoding encoding = machine.getGameData().getZsciiEncoding();
-    memaccess.writeUnsignedByte(textbuffer + newpointer,
+    memory.writeUnsignedByte(textbuffer + newpointer,
                                 encoding.toLower(zsciiChar));
     inputbuffer.add(zsciiChar);
     newpointer++;
@@ -238,12 +238,12 @@ public class InputFunctions implements InputLine {
     
     if (version >= 5) {
       
-      final MemoryAccess memaccess = machine.getGameData().getMemoryAccess();
+      final Memory memory = machine.getGameData().getMemory();
       
       // The clunky feature to include previous input into the current input
       // Simply adjust the pointer, the differencing at the end of the
       // function will then calculate the total
-      int numCharactersTyped = memaccess.readByte(textbuffer + 1);
+      int numCharactersTyped = memory.readByte(textbuffer + 1);
       if (numCharactersTyped < 0) {
         
         numCharactersTyped = 0;
@@ -252,7 +252,7 @@ public class InputFunctions implements InputLine {
         
         for (int i = 0; i < numCharactersTyped; i++) {
           
-          final short zsciichar = memaccess.readUnsignedByte(
+          final short zsciichar = memory.readUnsignedByte(
               textbuffer + textbufferstart + i);
           inputbuffer.add(zsciichar);
         }
@@ -275,7 +275,7 @@ public class InputFunctions implements InputLine {
                                final int textpointer) {
     
     final int version = machine.getGameData().getStoryFileHeader().getVersion();
-    final MemoryAccess memaccess = machine.getGameData().getMemoryAccess();
+    final Memory memory = machine.getGameData().getMemory();
     
     if (version >= 5) {
       
@@ -284,7 +284,7 @@ public class InputFunctions implements InputLine {
           0 : (byte) (textpointer - 2);
           
       // Write the number of characters typed in byte 1
-      memaccess.writeUnsignedByte(textbuffer + 1, numCharsTyped);
+      memory.writeUnsignedByte(textbuffer + 1, numCharsTyped);
       
     } else {
       
@@ -294,7 +294,7 @@ public class InputFunctions implements InputLine {
       if (terminateChar == ZsciiEncoding.NULL) {
         terminatepos = 0;
       }
-      memaccess.writeByte(textbuffer + terminatepos, (byte) 0);
+      memory.writeByte(textbuffer + terminatepos, (byte) 0);
     }    
   }
   
@@ -335,8 +335,8 @@ public class InputFunctions implements InputLine {
                            final List<Short> inputbuffer) {
     
     short zsciiChar;
-    final MemoryAccess memaccess = machine.getGameData().getMemoryAccess();
-    final int bufferlen = memaccess.readUnsignedByte(textbuffer);
+    final Memory memory = machine.getGameData().getMemory();
+    final int bufferlen = memory.readUnsignedByte(textbuffer);
     int newpointer = pointer;
     boolean flushBeforeGet = true;
 
@@ -389,12 +389,12 @@ public class InputFunctions implements InputLine {
       }
     
       // Check the terminator table
-      final MemoryAccess memaccess = machine.getGameData().getMemoryAccess();
+      final Memory memory = machine.getGameData().getMemory();
       short terminator;
     
       for (int i = 0; ; i++) {
       
-        terminator = memaccess.readUnsignedByte(terminatorTable + i);
+        terminator = memory.readUnsignedByte(terminatorTable + i);
         if (terminator == 0) {
           break;
         }
@@ -457,24 +457,19 @@ public class InputFunctions implements InputLine {
    */
   public void tokenize(final int textbuffer, final int parsebuffer,
                        final int dictionaryAddress, final boolean flag) {
-    
-    final MemoryAccess memaccess = machine.getGameData().getMemoryAccess();
-    //System.out.printf("tokenize(), textbuffer: %x, parsebuffer: %x, " +
-    //    "avail: %d, typed: %d\n", textbuffer, parsebuffer,
-    //    memaccess.readUnsignedByte(textbuffer + 0),
-    //    memaccess.readUnsignedByte(textbuffer + 1));
+    final Memory memory = machine.getGameData().getMemory();
     Dictionary dictionary = machine.getGameData().getDictionary();
     if (dictionaryAddress > 0) {
       
-      dictionary = new UserDictionary(memaccess, dictionaryAddress,
+      dictionary = new UserDictionary(memory, dictionaryAddress,
                          machine.getGameData().getZCharDecoder());
     }
     
     final int version = machine.getGameData().getStoryFileHeader().getVersion();
-    final int bufferlen = memaccess.readUnsignedByte(textbuffer);
+    final int bufferlen = memory.readUnsignedByte(textbuffer);
     final int textbufferstart = determineTextBufferStart(version);
     final int charsTyped = (version >= 5) ?
-                      memaccess.readUnsignedByte(textbuffer + 1) :
+                      memory.readUnsignedByte(textbuffer + 1) :
                       0;
     
     // from version 5, text starts at position 2
@@ -486,13 +481,13 @@ public class InputFunctions implements InputLine {
       new HashMap<ZsciiString, Integer>();
     
     // Write the number of tokens in byte 1 of the parse buffer
-    final int maxwords = memaccess.readUnsignedByte(parsebuffer);
+    final int maxwords = memory.readUnsignedByte(parsebuffer);
     
     // Do not go beyond the limit of maxwords
     final int numParsedTokens = Math.min(maxwords, tokens.size());
     
     // Write the number of parsed tokens into byte 1 of the parse buffer
-    memaccess.writeUnsignedByte(parsebuffer + 1, (short) numParsedTokens);
+    memory.writeUnsignedByte(parsebuffer + 1, (short) numParsedTokens);
     
     int parseaddr = parsebuffer + 2;
     
@@ -535,9 +530,9 @@ public class InputFunctions implements InputLine {
       if (!flag || flag && entryAddress > 0) {
         
         // This is one slot
-        memaccess.writeUnsignedShort(parseaddr, entryAddress);     
-        memaccess.writeUnsignedByte(parseaddr + 2, (short) token.length());
-        memaccess.writeUnsignedByte(parseaddr + 3, (short) tokenIndex);
+        memory.writeUnsignedShort(parseaddr, entryAddress);     
+        memory.writeUnsignedByte(parseaddr + 2, (short) token.length());
+        memory.writeUnsignedByte(parseaddr + 3, (short) tokenIndex);
       }
       parseaddr += 4;
     }
@@ -556,8 +551,7 @@ public class InputFunctions implements InputLine {
    */
   private ZsciiString bufferToZscii(final int address, final int bufferlen,
       final int charsTyped) {
-    
-    final MemoryAccess memaccess = machine.getGameData().getMemoryAccess();
+    final Memory memory = machine.getGameData().getMemory();
     
     // If charsTyped is set, use that value as the limit
     final int numChars = (charsTyped > 0) ? charsTyped : bufferlen;
@@ -566,7 +560,7 @@ public class InputFunctions implements InputLine {
     final ZsciiStringBuilder buffer = new ZsciiStringBuilder();
     for (int i = 0; i < numChars; i++) {
       
-      final short charByte = memaccess.readUnsignedByte(address + i);
+      final short charByte = memory.readUnsignedByte(address + i);
       if (charByte == 0) {
         break;
       }

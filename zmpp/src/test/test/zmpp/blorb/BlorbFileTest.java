@@ -24,9 +24,8 @@ import java.io.RandomAccessFile;
 
 import junit.framework.TestCase;
 
-import org.zmpp.base.DefaultMemoryAccess;
-import org.zmpp.base.MemoryAccess;
-import org.zmpp.base.MemoryReadAccess;
+import org.zmpp.base.DefaultMemory;
+import org.zmpp.base.Memory;
 import org.zmpp.blorb.BlorbResources;
 import org.zmpp.iff.Chunk;
 import org.zmpp.iff.DefaultFormChunk;
@@ -52,8 +51,8 @@ public class BlorbFileTest extends TestCase {
       rndfile = new RandomAccessFile(file, "r");
       byte[] data = new byte[(int) rndfile.length()];
       rndfile.readFully(data);
-      MemoryAccess memaccess = new DefaultMemoryAccess(data);
-      FormChunk formchunk = new DefaultFormChunk(memaccess);
+      Memory memory = new DefaultMemory(data);
+      FormChunk formchunk = new DefaultFormChunk(memory);
       
       // Chunk type
       assertEquals("IFRS", new String(formchunk.getSubId()));
@@ -114,14 +113,14 @@ public class BlorbFileTest extends TestCase {
       rndfile = new RandomAccessFile(file, "r");
       byte[] data = new byte[(int) rndfile.length()];
       rndfile.readFully(data);
-      MemoryAccess memaccess = new DefaultMemoryAccess(data);
-      FormChunk formchunk = new DefaultFormChunk(memaccess);
+      Memory memory = new DefaultMemory(data);
+      FormChunk formchunk = new DefaultFormChunk(memory);
       assertEquals("IFRS", new String(formchunk.getSubId()));
 
       // Ridx chunk
       Chunk ridxChunk = formchunk.getSubChunk("RIdx".getBytes());
       assertNotNull(ridxChunk);
-      MemoryReadAccess chunkmem = ridxChunk.getMemoryAccess();
+      Memory chunkmem = ridxChunk.getMemory();
       int offset = 8;
       int numresources = (int) chunkmem.readUnsigned32(offset);
       assertEquals(134, numresources);

@@ -31,7 +31,7 @@
   </target>
 
   <target name="compile" depends="init">
-    <javac debug="on" srcdir="${src.prj}" destdir="${build.prj}" source="1.5" target="1.5">
+    <javac debug="off" srcdir="${src.prj}" destdir="${build.prj}" source="1.5" target="1.5">
       <classpath>
   			<pathelement location="${build.prj}"/>
   			<pathelement location="${zmpp.core}"/>

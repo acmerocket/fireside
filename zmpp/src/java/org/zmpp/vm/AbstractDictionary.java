@@ -20,7 +20,7 @@
  */
 package org.zmpp.vm;
 
-import org.zmpp.base.MemoryReadAccess;
+import org.zmpp.base.Memory;
 import org.zmpp.encoding.ZCharDecoder;
 import org.zmpp.encoding.ZsciiString;
 
@@ -29,7 +29,7 @@ public abstract class AbstractDictionary implements Dictionary {
   /**
    * The memory map.
    */
-  private MemoryReadAccess memaccess;
+  private Memory memory;
   
   /**
    * The dictionary start address.
@@ -49,17 +49,17 @@ public abstract class AbstractDictionary implements Dictionary {
   /**
    * Constructor.
    * 
-   * @param map the memory map
+   * @param memory the memory object
    * @param address the start address of the dictionary
    * @param converter a Z char decoder object
    * @param an object specifying the sizes of the dictionary entries
    */
-  public AbstractDictionary(final MemoryReadAccess map, final int address,
+  public AbstractDictionary(final Memory memory, final int address,
                             final ZCharDecoder decoder,
                             final DictionarySizes sizes) {
     
     super();
-    this.memaccess = map;
+    this.memory = memory;
     this.address = address;
     this.decoder = decoder;
     this.sizes = sizes;
@@ -69,69 +69,53 @@ public abstract class AbstractDictionary implements Dictionary {
    * {@inheritDoc}
    */
   public int getNumberOfSeparators() {
-    
-    return memaccess.readUnsignedByte(address);
+    return memory.readUnsignedByte(address);
   }
   
   /**
    * {@inheritDoc}
    */
   public byte getSeparator(final int i) {
-    
-    return (byte) memaccess.readUnsignedByte(address + i + 1);
+    return (byte) memory.readUnsignedByte(address + i + 1);
   }
   
   /**
    * {@inheritDoc}
    */
   public int getEntryLength() {
-    
-    return memaccess.readUnsignedByte(address + getNumberOfSeparators() + 1);
+    return memory.readUnsignedByte(address + getNumberOfSeparators() + 1);
   }
   
   /**
    * {@inheritDoc}
    */
   public int getNumberOfEntries() {
-    
     // The number of entries is a signed value so that we can recognize
     // a negative number
-    return memaccess.readShort(address + getNumberOfSeparators() + 2);
+    return memory.readShort(address + getNumberOfSeparators() + 2);
   }
   
   /**
    * {@inheritDoc}
    */
   public int getEntryAddress(final int entryNum) {
-   
     final int headerSize = getNumberOfSeparators() + 4;    
     return address + headerSize + entryNum * getEntryLength();
   }
   
-  protected ZCharDecoder getDecoder() {
-    
-    return decoder;
-  }
+  protected ZCharDecoder getDecoder() { return decoder; }
   
-  protected MemoryReadAccess getMemoryAccess() {
-    
-    return memaccess;
-  }
+  protected Memory getMemory() { return memory; }
   
-  protected DictionarySizes getSizes() {
-    
-    return sizes;
-  }
+  protected DictionarySizes getSizes() { return sizes; }
   
   protected ZsciiString truncateToken(final ZsciiString token) {
-    
     // Unfortunately it seems that the maximum size of an entry is not equal 
     // to the size declared in the dictionary header, therefore we take
     // the maximum length of a token defined in the Z-machine specification.    
     // The lookup token can only be 6 characters long in version 3
     // and 9 in versions >= 4
     if (token.length() > sizes.getMaxEntryChars()) {
-      
       return token.substring(0, sizes.getMaxEntryChars());
     }
     return token;
@@ -143,7 +127,6 @@ public abstract class AbstractDictionary implements Dictionary {
    * @return the string presentation
    */
   public String toString() {
-
     final StringBuilder buffer = new StringBuilder();
     int entryAddress;
     int i = 0;
@@ -152,7 +135,7 @@ public abstract class AbstractDictionary implements Dictionary {
     while (true) {
       
       entryAddress = getEntryAddress(i);
-      final String str = getDecoder().decode2Zscii(getMemoryAccess(),
+      final String str = getDecoder().decode2Zscii(getMemory(),
           entryAddress, sizes.getNumEntryBytes()).toString();
       buffer.append(String.format("[%4d] '%-9s' ", (i + 1), str));
       i++;

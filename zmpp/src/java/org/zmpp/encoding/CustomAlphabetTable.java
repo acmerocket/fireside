@@ -20,7 +20,7 @@
  */
 package org.zmpp.encoding;
 
-import org.zmpp.base.MemoryReadAccess;
+import org.zmpp.base.Memory;
 
 /**
  * If the story file header defines a custom alphabet table, instances
@@ -32,21 +32,16 @@ import org.zmpp.base.MemoryReadAccess;
 public class CustomAlphabetTable implements AlphabetTable {
 
   private static final int ALPHABET_SIZE = 26;
-  
-  private MemoryReadAccess memaccess;
+  private Memory memory;
   private int tableAddress;
  
   /**
    * Constructor.
-   * 
-   * @param memaccess the memory access object
+   * @param memory the Memory object
    * @param address the table address
    */
-  public CustomAlphabetTable(final  MemoryReadAccess memaccess,
-      final int address) {
-    
-    super();
-    this.memaccess = memaccess;
+  public CustomAlphabetTable(final Memory memory, final int address) {
+    this.memory = memory;
     tableAddress = address;
   }
   
@@ -54,11 +49,10 @@ public class CustomAlphabetTable implements AlphabetTable {
    * {@inheritDoc}
    */
   public short getA0Char(final byte zchar) {
-    
     if (zchar == 0) {
       return ' ';
     }
-    return memaccess.readUnsignedByte(tableAddress
+    return memory.readUnsignedByte(tableAddress
                                       + (zchar - ALPHABET_START));
   }
   
@@ -66,11 +60,10 @@ public class CustomAlphabetTable implements AlphabetTable {
    * {@inheritDoc}
    */
   public short getA1Char(final byte zchar) {
-    
     if (zchar == 0) {
       return ' ';
     }
-    return memaccess.readUnsignedByte(tableAddress
+    return memory.readUnsignedByte(tableAddress
                                       + ALPHABET_SIZE
                                       + (zchar - ALPHABET_START));
   }
@@ -86,7 +79,7 @@ public class CustomAlphabetTable implements AlphabetTable {
     if (zchar == 7) {
       return (short) '\n';
     }
-    return memaccess.readUnsignedByte(tableAddress + 2 * ALPHABET_SIZE
+    return memory.readUnsignedByte(tableAddress + 2 * ALPHABET_SIZE
                                       + (zchar - ALPHABET_START));
   }
   
@@ -94,7 +87,6 @@ public class CustomAlphabetTable implements AlphabetTable {
    * {@inheritDoc}
    */
   public final byte getA0CharCode(final short zsciiChar) {
-
     for (int i = ALPHABET_START; i < ALPHABET_START + ALPHABET_SIZE; i++) {
       
       if (getA0Char((byte) i) == zsciiChar) {
@@ -108,7 +100,6 @@ public class CustomAlphabetTable implements AlphabetTable {
    * {@inheritDoc}
    */
   public final byte getA1CharCode(final short zsciiChar) {
-
     for (int i = ALPHABET_START; i < ALPHABET_START + ALPHABET_SIZE; i++) {
       
       if (getA1Char((byte) i) == zsciiChar) {
@@ -122,7 +113,6 @@ public class CustomAlphabetTable implements AlphabetTable {
    * {@inheritDoc}
    */
   public byte getA2CharCode(final short zsciiChar) {
-
     for (int i = ALPHABET_START; i < ALPHABET_START + ALPHABET_SIZE; i++) {
       
       if (getA2Char((byte) i) == zsciiChar) {
@@ -137,7 +127,6 @@ public class CustomAlphabetTable implements AlphabetTable {
    * {@inheritDoc}
    */
   public boolean isAbbreviation(final short zchar) {
-   
     return 1 <= zchar && zchar <= 3;
   }
 
@@ -145,7 +134,6 @@ public class CustomAlphabetTable implements AlphabetTable {
    * {@inheritDoc}
    */
   public boolean isShift1(final short zchar) {
-
     return zchar == AlphabetTable.SHIFT_4;
   }
   
@@ -153,7 +141,6 @@ public class CustomAlphabetTable implements AlphabetTable {
    * {@inheritDoc}
    */
   public boolean isShift2(final short zchar) {
-    
     return zchar == AlphabetTable.SHIFT_5;
   }
   
@@ -161,7 +148,6 @@ public class CustomAlphabetTable implements AlphabetTable {
    * {@inheritDoc}
    */
   public boolean isShiftLock(final short zchar) {
-    
     return false;
   }
 
@@ -169,7 +155,6 @@ public class CustomAlphabetTable implements AlphabetTable {
    * {@inheritDoc}
    */
   public boolean isShift(final short zchar) {
-    
     return isShift1(zchar) || isShift2(zchar);
   }
 }

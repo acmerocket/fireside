@@ -22,66 +22,57 @@ package test.zmpp.base;
 
 import org.jmock.Mock;
 import org.jmock.MockObjectTestCase;
-import org.zmpp.base.MemoryAccess;
+import org.zmpp.base.Memory;
 import org.zmpp.base.MemorySection;
 
 public class MemorySectionTest extends MockObjectTestCase {
 
-  private Mock mockMemaccess;
-  private MemoryAccess memaccess;
+  private Mock mockMemory;
+  private Memory memory;
   private MemorySection section;
   
   protected void setUp() throws Exception {
-
-    mockMemaccess = mock(MemoryAccess.class);
-    memaccess = (MemoryAccess) mockMemaccess.proxy();
-    section = new MemorySection(memaccess, 36, 256);
+    mockMemory = mock(Memory.class);
+    memory = (Memory) mockMemory.proxy();
+    section = new MemorySection(memory, 36, 256);
   }
   
   public void testGetLength() {
-    
     assertEquals(256, section.getLength());
   }
   
   public void testReadUnsigned48() {
-    
-    mockMemaccess.expects(once()).method("readUnsigned48").with(eq(12 + 36)).will(returnValue((long) 1234));
+    mockMemory.expects(once()).method("readUnsigned48").with(eq(12 + 36)).will(returnValue((long) 1234));
     section.readUnsigned48(12);
   }
 
   public void testWriteUnsigned48() {
-    
-    mockMemaccess.expects(once()).method("writeUnsigned48").with(eq(12 + 36), eq((long) 512));
+    mockMemory.expects(once()).method("writeUnsigned48").with(eq(12 + 36), eq((long) 512));
     section.writeUnsigned48(12, 512);
   }
   
   public void testWriteUnsignedShort() {
-    
-    mockMemaccess.expects(once()).method("writeUnsignedShort").with(eq(12 + 36), eq(512));
+    mockMemory.expects(once()).method("writeUnsignedShort").with(eq(12 + 36), eq(512));
     section.writeUnsignedShort(12, 512);
   }
 
   public void testWriteShort() {
-    
-    mockMemaccess.expects(once()).method("writeShort").with(eq(12 + 36), eq((short) 512));
+    mockMemory.expects(once()).method("writeShort").with(eq(12 + 36), eq((short) 512));
     section.writeShort(12, (short) 512);
   }
 
   public void testWriteUnsignedByte() {
-    
-    mockMemaccess.expects(once()).method("writeUnsignedByte").with(eq(12 + 36), eq((short) 120));
+    mockMemory.expects(once()).method("writeUnsignedByte").with(eq(12 + 36), eq((short) 120));
     section.writeUnsignedByte(12, (short) 120);
   }
   
   public void testWriteByte() {
-    
-    mockMemaccess.expects(once()).method("writeByte").with(eq(12 + 36), eq((byte) -120));
+    mockMemory.expects(once()).method("writeByte").with(eq(12 + 36), eq((byte) -120));
     section.writeByte(12, (byte) -120);
   }
   
   public void testWriteUnsigned32() {
-    
-    mockMemaccess.expects(once()).method("writeUnsigned32").with(eq(16 + 36), eq((long) 1120));
+    mockMemory.expects(once()).method("writeUnsigned32").with(eq(16 + 36), eq((long) 1120));
     section.writeUnsigned32(16, (long) 1120);
   }
 }

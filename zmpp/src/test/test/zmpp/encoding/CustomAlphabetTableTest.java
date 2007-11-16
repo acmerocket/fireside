@@ -22,52 +22,48 @@ package test.zmpp.encoding;
 
 import org.jmock.Mock;
 import org.jmock.MockObjectTestCase;
-import org.zmpp.base.MemoryReadAccess;
+import org.zmpp.base.Memory;
 import org.zmpp.encoding.AlphabetTable;
 import org.zmpp.encoding.CustomAlphabetTable;
 
 public class CustomAlphabetTableTest extends MockObjectTestCase {
 
-  private Mock mockMemAccess;
-  private MemoryReadAccess memaccess;
+  private Mock mockMemory;
+  private Memory memory;
   
   private AlphabetTable alphabetTable;
   
   protected void setUp() throws Exception {
-    
-    mockMemAccess = mock(MemoryReadAccess.class);
-    memaccess = (MemoryReadAccess) mockMemAccess.proxy();
-    alphabetTable = new CustomAlphabetTable(memaccess, 1000);
+    mockMemory = mock(Memory.class);
+    memory = (Memory) mockMemory.proxy();
+    alphabetTable = new CustomAlphabetTable(memory, 1000);
   }
   
   public void testGetA0Char() {
-    
-    mockMemAccess.expects(once()).method("readUnsignedByte").with(eq(1000)).will(returnValue((short) 3));
+    mockMemory.expects(once()).method("readUnsignedByte").with(eq(1000)).will(returnValue((short) 3));
     assertEquals(3, alphabetTable.getA0Char((byte) 6));
 
-    mockMemAccess.expects(once()).method("readUnsignedByte").with(eq(1006)).will(returnValue((short) 2));
+    mockMemory.expects(once()).method("readUnsignedByte").with(eq(1006)).will(returnValue((short) 2));
     assertEquals(2, alphabetTable.getA0Char((byte) 12));
     
     assertEquals(' ', alphabetTable.getA0Char((byte) 0));
   }
 
   public void testGetA1Char() {
-    
-    mockMemAccess.expects(once()).method("readUnsignedByte").with(eq(1026)).will(returnValue((short) 3));
+    mockMemory.expects(once()).method("readUnsignedByte").with(eq(1026)).will(returnValue((short) 3));
     assertEquals(3, alphabetTable.getA1Char((byte) 6));
 
-    mockMemAccess.expects(once()).method("readUnsignedByte").with(eq(1032)).will(returnValue((short) 2));
+    mockMemory.expects(once()).method("readUnsignedByte").with(eq(1032)).will(returnValue((short) 2));
     assertEquals(2, alphabetTable.getA1Char((byte) 12));
 
     assertEquals(' ', alphabetTable.getA1Char((byte) 0));
   }
 
   public void testGetA2Char() {
-    
-    mockMemAccess.expects(once()).method("readUnsignedByte").with(eq(1052)).will(returnValue((short) 3));
+    mockMemory.expects(once()).method("readUnsignedByte").with(eq(1052)).will(returnValue((short) 3));
     assertEquals(3, alphabetTable.getA2Char((byte) 6));
 
-    mockMemAccess.expects(once()).method("readUnsignedByte").with(eq(1058)).will(returnValue((short) 2));
+    mockMemory.expects(once()).method("readUnsignedByte").with(eq(1058)).will(returnValue((short) 2));
     assertEquals(2, alphabetTable.getA2Char((byte) 12));
 
     assertEquals(' ', alphabetTable.getA2Char((byte) 0));
@@ -75,29 +71,24 @@ public class CustomAlphabetTableTest extends MockObjectTestCase {
   }
   
   public void testA0IndexOfNotFound() {
-
     for (int i = 0; i < 26; i++) {
-      
-      mockMemAccess.expects(once()).method("readUnsignedByte").with(eq(1000 + i)).will(returnValue((short) 'a'));
+      mockMemory.expects(once()).method("readUnsignedByte").with(eq(1000 + i)).will(returnValue((short) 'a'));
     }
     assertEquals(-1, alphabetTable.getA0CharCode((short) '@'));
   }
 
   public void testA1IndexOfNotFound() {
-
     for (int i = 0; i < 26; i++) {
-      
-      mockMemAccess.expects(once()).method("readUnsignedByte").with(eq(1026 + i)).will(returnValue((short) 'a'));
+      mockMemory.expects(once()).method("readUnsignedByte").with(eq(1026 + i)).will(returnValue((short) 'a'));
     }
     assertEquals(-1, alphabetTable.getA1CharCode((short) '@'));
   }
 
   public void testA2IndexOfNotFound() {
-
-    mockMemAccess.expects(once()).method("readUnsignedByte").with(eq(1052)).will(returnValue((short) 'a'));
+    mockMemory.expects(once()).method("readUnsignedByte").with(eq(1052)).will(returnValue((short) 'a'));
     // char 7 is directly returned !!
     for (int i = 2; i < 26; i++) {
-      mockMemAccess.expects(once()).method("readUnsignedByte").with(eq(1052 + i)).will(returnValue((short) 'a'));
+      mockMemory.expects(once()).method("readUnsignedByte").with(eq(1052 + i)).will(returnValue((short) 'a'));
     }
     assertEquals(-1, alphabetTable.getA2CharCode((short) '@'));
   }

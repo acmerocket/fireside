@@ -25,8 +25,8 @@ import java.util.Arrays;
 import java.util.Iterator;
 import java.util.List;
 
-import org.zmpp.base.DefaultMemoryAccess;
-import org.zmpp.base.MemoryAccess;
+import org.zmpp.base.DefaultMemory;
+import org.zmpp.base.Memory;
 
 public class WritableFormChunk implements FormChunk {
 
@@ -134,9 +134,9 @@ public class WritableFormChunk implements FormChunk {
   /**
    * {@inheritDoc}
    */
-  public MemoryAccess getMemoryAccess() {
+  public Memory getMemory() {
     
-    return new DefaultMemoryAccess(getBytes());
+    return new DefaultMemory(getBytes());
   }
 
   /**
@@ -148,19 +148,19 @@ public class WritableFormChunk implements FormChunk {
     
     final int datasize = Chunk.CHUNK_HEADER_LENGTH + getSize();    
     final byte[] data = new byte[datasize];
-    final MemoryAccess memaccess = new DefaultMemoryAccess(data);
-    memaccess.writeByte(0, (byte) 'F');
-    memaccess.writeByte(1, (byte) 'O');
-    memaccess.writeByte(2, (byte) 'R');
-    memaccess.writeByte(3, (byte) 'M');
-    memaccess.writeUnsigned32(4, getSize());
+    final Memory memory = new DefaultMemory(data);
+    memory.writeByte(0, (byte) 'F');
+    memory.writeByte(1, (byte) 'O');
+    memory.writeByte(2, (byte) 'R');
+    memory.writeByte(3, (byte) 'M');
+    memory.writeUnsigned32(4, getSize());
     
     int offset = Chunk.CHUNK_HEADER_LENGTH;
     
     // Write sub id
     for (int i = 0; i < subId.length; i++) {
      
-      memaccess.writeByte(offset++, subId[i]);
+      memory.writeByte(offset++, subId[i]);
     }
     
     // Write sub chunk data
@@ -173,24 +173,24 @@ public class WritableFormChunk implements FormChunk {
       // Write id
       for (int i = 0; i < chunkId.length; i++) {
         
-        memaccess.writeByte(offset++, chunkId[i]);
+        memory.writeByte(offset++, chunkId[i]);
       }
       
       // Write chunk size
-      memaccess.writeUnsigned32(offset, chunkSize);
+      memory.writeUnsigned32(offset, chunkSize);
       offset += 4; // add the size word length
       
       // Write chunk data
-      final MemoryAccess chunkMem = chunk.getMemoryAccess();      
+      final Memory chunkMem = chunk.getMemory();      
       for (int i = 0; i < chunkSize; i++) {
         
-        memaccess.writeByte(offset++,
+        memory.writeByte(offset++,
             chunkMem.readByte(Chunk.CHUNK_HEADER_LENGTH + i));
       }
       
       // Pad if necessary
       if ((chunkSize % 2) != 0) {
-        memaccess.writeByte(offset++, (byte) 0);
+        memory.writeByte(offset++, (byte) 0);
       }
     }
     

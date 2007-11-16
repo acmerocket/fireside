@@ -20,8 +20,8 @@
  */
 package org.zmpp.iff;
 
-import org.zmpp.base.DefaultMemoryAccess;
-import org.zmpp.base.MemoryAccess;
+import org.zmpp.base.DefaultMemory;
+import org.zmpp.base.Memory;
 
 /**
  * This is the default implementation of the Chunk interface.
@@ -34,7 +34,7 @@ public class DefaultChunk implements Chunk {
   /**
    * The memory access object.
    */
-  protected MemoryAccess memaccess;
+  protected Memory memory;
   
   /**
    * The chunk id.
@@ -54,13 +54,12 @@ public class DefaultChunk implements Chunk {
   /**
    * Constructor. Used for reading files.
    * 
-   * @param memaccess a memory access object to the chunk data
+   * @param memory a Memory object to the chunk data
    * @param address the address within the form chunk
    */
-  public DefaultChunk(final MemoryAccess memaccess, final int address) {
-    
+  public DefaultChunk(final Memory memory, final int address) {
     super();
-    this.memaccess = memaccess;
+    this.memory = memory;
     this.address = address;
     initBaseInfo();
   }
@@ -82,20 +81,20 @@ public class DefaultChunk implements Chunk {
     
     final byte[] chunkDataWithHeader =
       new byte[chunkSize + Chunk.CHUNK_HEADER_LENGTH];
-    this.memaccess = new DefaultMemoryAccess(chunkDataWithHeader);
+    this.memory = new DefaultMemory(chunkDataWithHeader);
     int offset = 0;
     
     // Copy the data
     for (int i = 0; i < id.length; i++) {
       
-      memaccess.writeByte(offset++, id[i]);
+      memory.writeByte(offset++, id[i]);
     }
-    memaccess.writeUnsigned32(offset, chunkSize);
+    memory.writeUnsigned32(offset, chunkSize);
     offset += 4;
     
     for (int i = 0; i < chunkdata.length; i++) {
       
-      memaccess.writeByte(offset++, chunkdata[i]);
+      memory.writeByte(offset++, chunkdata[i]);
     }
   }
   
@@ -108,11 +107,11 @@ public class DefaultChunk implements Chunk {
     id = new byte[CHUNK_ID_LENGTH];
     for (int i = 0; i < CHUNK_ID_LENGTH; i++) {
       
-      id[i] = memaccess.readByte(i);
+      id[i] = memory.readByte(i);
     }
     
     // Determine the chunk size 
-    chunkSize = (int) memaccess.readUnsigned32(CHUNK_ID_LENGTH);    
+    chunkSize = (int) memory.readUnsigned32(CHUNK_ID_LENGTH);    
   }
   
   /**
@@ -142,9 +141,9 @@ public class DefaultChunk implements Chunk {
   /**
    * {@inheritDoc}
    */
-  public MemoryAccess getMemoryAccess() {
+  public Memory getMemory() {
     
-    return memaccess;
+    return memory;
   }
   
   /**

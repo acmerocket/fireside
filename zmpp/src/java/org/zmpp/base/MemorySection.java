@@ -21,25 +21,29 @@
 package org.zmpp.base;
 
 /**
- * A MemorySection object wraps a reference to a MemoryAccess object, a length
- * and a start to support subsections within memory.
+ * A MemorySection object wraps a Memory object, a length and a start to
+ * support subsections within memory.
  * All access functions will be relative to the initialized start offset
  * within the global memory.
  * 
  * @author Wei-ju Wu
  * @version 1.0
  */
-public class MemorySection implements MemoryAccess {
+public class MemorySection implements Memory {
 
-  private MemoryAccess memaccess;
+  private Memory memory;
   private int start;
   private int length;
   
-  public MemorySection(final MemoryAccess memaccess, final int start,
-      final int length) {
-    
+  /**
+   * Constructor.
+   * @param memory the Memory objeci to wrap
+   * @param start the start of the section
+   * @param length the length of the section
+   */
+  public MemorySection(final Memory memory, final int start, final int length) {
     super();
-    this.memaccess = memaccess;
+    this.memory = memory;
     this.start = start;
     this.length = length;
   }
@@ -49,104 +53,89 @@ public class MemorySection implements MemoryAccess {
    * 
    * @return the length in bytes
    */
-  public int getLength() {
-    
-    return length;
-  }
+  public int getLength() { return length; }
     
   /**
    * {@inheritDoc}
    */
   public long readUnsigned48(final int address) {
-  
-    return memaccess.readUnsigned48(address + start);
+    return memory.readUnsigned48(address + start);
   }
   
   /**
    * {@inheritDoc}
    */
   public void writeUnsigned48(final int address, final long value) {
-    
-    memaccess.writeUnsigned48(address + start, value);
+    memory.writeUnsigned48(address + start, value);
   }
   
   /**
    * {@inheritDoc}
    */
   public void writeUnsignedShort(final int address, final int value) {
-    
-    memaccess.writeUnsignedShort(address + start, value);
+    memory.writeUnsignedShort(address + start, value);
   }
 
   /**
    * {@inheritDoc}
    */
   public void writeShort(final int address, final short value) {
-    
-    memaccess.writeShort(address + start, value);
+    memory.writeShort(address + start, value);
   }
 
   /**
    * {@inheritDoc}
    */
   public void writeUnsignedByte(final int address, final short value) {
-
-    memaccess.writeUnsignedByte(address + start, value);
+    memory.writeUnsignedByte(address + start, value);
   }
 
   /**
    * {@inheritDoc}
    */
   public void writeByte(final int address, final byte value) {
-
-    memaccess.writeByte(address + start, value);
+    memory.writeByte(address + start, value);
   }
 
   /**
    * {@inheritDoc}
    */
   public void writeUnsigned32(final int address, final long value) {
-
-    memaccess.writeUnsigned32(address + start, value);
+    memory.writeUnsigned32(address + start, value);
   }
 
   /**
    * {@inheritDoc}
    */
   public long readUnsigned32(final int address) {
-    
-    return memaccess.readUnsigned32(address + start);
+    return memory.readUnsigned32(address + start);
   }
 
   /**
    * {@inheritDoc}
    */
   public int readUnsignedShort(final int address) {
-    
-    return memaccess.readUnsignedShort(address + start);
+    return memory.readUnsignedShort(address + start);
   }
 
   /**
    * {@inheritDoc}
    */
   public short readShort(final int address) {
-    
-    return memaccess.readShort(address + start);
+    return memory.readShort(address + start);
   }
 
   /**
    * {@inheritDoc}
    */
   public short readUnsignedByte(final int address) {
-    
-    return memaccess.readUnsignedByte(address + start);
+    return memory.readUnsignedByte(address + start);
   }
 
   /**
    * {@inheritDoc}
    */
   public byte readByte(final int address) {
-    
-    return memaccess.readByte(address + start);
+    return memory.readByte(address + start);
   }
 }

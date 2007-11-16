@@ -57,7 +57,7 @@ public class OutputImpl implements Output {
    */
   public void printZString(final int address) {
     
-    print(gamedata.getZCharDecoder().decode2Zscii(gamedata.getMemoryAccess(),
+    print(gamedata.getZCharDecoder().decode2Zscii(gamedata.getMemory(),
         address, 0));
   }
   

@@ -25,7 +25,7 @@ import javax.xml.parsers.SAXParserFactory;
 
 import org.xml.sax.Attributes;
 import org.xml.sax.helpers.DefaultHandler;
-import org.zmpp.base.MemoryReadAccess;
+import org.zmpp.base.Memory;
 import org.zmpp.iff.Chunk;
 import org.zmpp.iff.FormChunk;
 import org.zmpp.media.InformMetadata;
@@ -45,33 +45,19 @@ public class BlorbMetadataHandler extends DefaultHandler {
   private boolean processAux;
     
   public BlorbMetadataHandler(FormChunk formchunk) {
- 
     extractMetadata(formchunk);    
   }
   
   public InformMetadata getMetadata() {
-    
     return (story == null) ? null : new InformMetadata(story);
   }
   
   private void extractMetadata(final FormChunk formchunk) {
-
     final Chunk chunk = formchunk.getSubChunk("IFmd".getBytes());
     if (chunk != null) {
-
-      final MemoryReadAccess memaccess = chunk.getMemoryAccess();
-      
-      /*
-      StringBuilder buffer = new StringBuilder();
-      for (int i = 0; i < chunk.getSize(); i++) {
-      
-        buffer.append((char) chunk.getMemoryAccess().readUnsignedByte(i + Chunk.CHUNK_HEADER_LENGTH));
-      }
-      System.out.println(buffer.toString());
-      */
-      
-      final MemoryAccessInputStream meminput =
-        new MemoryAccessInputStream(memaccess, Chunk.CHUNK_HEADER_LENGTH,
+      final Memory chunkmem = chunk.getMemory();      
+      final MemoryInputStream meminput =
+        new MemoryInputStream(chunkmem, Chunk.CHUNK_HEADER_LENGTH,
           chunk.getSize() + Chunk.CHUNK_HEADER_LENGTH);
       
       try {
@@ -94,95 +80,71 @@ public class BlorbMetadataHandler extends DefaultHandler {
       final String qname, final Attributes attributes) {
     
     if ("story".equals(qname)) {
-
       story = new StoryMetadata();
     }
     if ("title".equals(qname)) {
-      
       buffer = new StringBuilder();
     }
     if ("headline".equals(qname)) {
-      
       buffer = new StringBuilder();
     }
     if ("author".equals(qname)) {
-      
       buffer = new StringBuilder();
     }
     if ("genre".equals(qname)) {
-      
       buffer = new StringBuilder();
     }
     if ("description".equals(qname)) {
-      
       buffer = new StringBuilder();
     }
     if (isPublishYear(qname)) {
-      
       buffer = new StringBuilder();
     }
     if ("auxiliary".equals(qname)) {
-      
       processAux = true;
     }
     if ("coverpicture".equals(qname)) {
-      
       buffer = new StringBuilder();
     }
     if ("group".equals(qname)) {
-      
       buffer = new StringBuilder();
     }
   }
 
   public void endElement(final String uri, final String localName,
       final String qname) {
-
     if ("title".equals(qname)) {
-      
       story.setTitle(buffer.toString());
     }
     if ("headline".equals(qname)) {
-      
       story.setHeadline(buffer.toString());
     }
     if ("author".equals(qname)) {
-      
       story.setAuthor(buffer.toString());
     }
     if ("genre".equals(qname)) {
-      
       story.setGenre(buffer.toString());
     }
     if ("description".equals(qname) && !processAux) {
-      
       story.setDescription(buffer.toString());
     }
     if (isPublishYear(qname)) {
-      
       story.setYear(buffer.toString());
     }
     if ("group".equals(qname)) {
-      
       story.setGroup(buffer.toString());
     }
     if ("coverpicture".equals(qname)) {
-      
       final String val = buffer.toString().trim();
       try {
-        
         story.setCoverPicture(Integer.parseInt(val));
-        
       } catch (NumberFormatException ex) {
-        
         System.err.println("NumberFormatException in cover picture: " + val);
       }
     }
-    if ("auxiliary".equals(qname)) {
-      
+    if ("auxiliary".equals(qname)) { 
       processAux = false;
     }
-    
     if ("br".equals(qname) && buffer != null) {
       
       buffer.append("\n");
@@ -190,7 +152,6 @@ public class BlorbMetadataHandler extends DefaultHandler {
   }  
   
   public void characters(final char[] ch, final int start, final int length) {
-    
     if (buffer != null) {
       
       final StringBuilder partbuilder = new StringBuilder();
@@ -211,7 +172,6 @@ public class BlorbMetadataHandler extends DefaultHandler {
    * @return true if matches, false, otherwise
    */
   private boolean isPublishYear(String str) {
-    
     return "year".equals(str) || "firstpublished".equals(str);
   }
 }

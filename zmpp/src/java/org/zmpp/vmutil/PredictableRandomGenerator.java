@@ -32,18 +32,13 @@ import java.util.Random;
  */
 public class PredictableRandomGenerator implements RandomGenerator {
 
-  /**
-   * The random generator.
-   */
   private Random rand;
   
   /**
    * Constructor.
-   * 
    * @param seed the start seed.
    */
   public PredictableRandomGenerator(long seed) {
-    
     rand = new Random(seed);
   }
 
@@ -51,7 +46,6 @@ public class PredictableRandomGenerator implements RandomGenerator {
    * {@inheritDoc}
    */
   public int next() {
-    
     return rand.nextInt(MAX_VALUE - 1) + 1;
   }
 }

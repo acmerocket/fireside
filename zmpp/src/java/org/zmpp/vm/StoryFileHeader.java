@@ -33,7 +33,6 @@ package org.zmpp.vm;
 public interface StoryFileHeader {
 
   enum Attribute {
-    
     DEFAULT_FONT_IS_VARIABLE,
     SCORE_GAME, SUPPORTS_STATUSLINE, SUPPORTS_SCREEN_SPLITTING, // V3 only
     TRANSCRIPTING, FORCE_FIXED_FONT, SUPPORTS_TIMED_INPUT,
@@ -42,203 +41,174 @@ public interface StoryFileHeader {
   };
   /**
    * Returns the story file version.
-   * 
    * @return the story file version
    */
   int getVersion();
   
   /**
    * Returns the release number.
-   * 
    * @return the release number
    */
   int getRelease();
   
   /**
    * Returns the high memory start address.
-   * 
    * @return the start of the high memory
    */
   int getHighMemAddress();
   
   /**
    * Returns the program counter start address.
-   * 
    * @return the PC start address
    */
   int getProgramStart();
   
   /**
    * Returns the dictionary's start address.
-   * 
    * @return the dictionary start address
    */  
   int getDictionaryAddress();
   
   /**
    * Returns the object table's start address.
-   * 
    * @return the object table's start address
    */
   int getObjectTableAddress();
   
   /**
    * Returns the address of the global variables.
-   * 
    * @return the global variables section
    */
   int getGlobalsAddress();
   
   /**
    * Returns the static memory start address.
-   * 
    * @return the start address of the static memory
    */
   int getStaticsAddress();
   
   /**
    * Returns this game's serial number.
-   * 
    * @return the serial number
    */
   String getSerialNumber();
   
   /**
    * Returns the start address of the abbreviations section.
-   * 
    * @return the abbreviations start address
    */
   int getAbbreviationsAddress();
   
   /**
    * Returns this story file's length.
-   * 
    * @return the file length
    */
   int getFileLength();
   
   /**
    * Returns the checksum for the story file.
-   * 
    * @return the checksum
    */
   int getChecksum();
 
   /**
    * Sets the interpreter number.
-   * 
    * @param number the interpreter number
    */
   void setInterpreterNumber(int number);
   
   /**
    * Returns the interpreter number.
-   * 
    * @return the interpreter number
    */
   int getInterpreterNumber();
   
   /**
    * Sets the interpreter version.
-   * 
    * @param version the version
    */
   void setInterpreterVersion(int version);
   
   /**
    * Returns the screen width.
-   * 
    * @return the screen width
    */
   int getScreenWidth();
+
   /**
    * Sets the screen width in number of characters.
-   * 
    * @param numChars the number of characters
    */
   void setScreenWidth(int numChars);
   
   /**
    * Sets the screen width in units.
-   * 
    * @param units the number of units
    */
   void setScreenWidthUnits(int units);
   
   /**
    * Returns the screen width in units.
-   * 
    * @return the screen width in units
-   * 
    */
   int getScreenWidthUnits();
   
   /**
    * Returns the screen height.
-   * 
    * @return the screen height
    */
   int getScreenHeight();
   
   /**
    * Returns the screen height in units.
-   * 
    * @return the screen height in units
    */
   int getScreenHeightUnits();
   
   /**
    * Sets the screen height in number of lines.
-   * 
    * @param numLines the number of lines
    */
   void setScreenHeight(int numLines);
   
   /**
    * Sets the screen height in units.
-   * 
    * @param units the number of units
    */
   void setScreenHeightUnits(int units);
   
   /**
    * Only for V6 and V7 games: the routine offset.
-   * 
    * @return the routine offset
    */
   int getRoutineOffset();
   
   /**
    * Only in V6 and V7: the static string offset.
-   * 
    * @return the static string offset
    */
   int getStaticStringOffset();
   
   /**
    * Returns the default background color.
-   * 
    * @return the default background color
    */
   int getDefaultBackgroundColor();
   
   /**
    * Returns the default foreground color.
-   * 
    * @return the default foreground color
    */
   int getDefaultForegroundColor();
   
   /**
    * Sets the default background color.
-   * 
    * @param color the default background color.
    */
   void setDefaultBackgroundColor(int color);
   
   /**
    * Sets the default foreground color.
-   * 
    * @param color the default foreground color
    */
   void setDefaultForegroundColor(int color);
@@ -246,7 +216,6 @@ public interface StoryFileHeader {
   /**
    * Sets the standard revision number this machine supports to the
    * header.
-   * 
    * @param major major revision number
    * @param minor minor revision number
    */
@@ -254,49 +223,42 @@ public interface StoryFileHeader {
   
   /**
    * Returns the address of the terminating characters table.
-   * 
    * @return the address of the terminating characters table
    */
   int getTerminatorsAddress();
   
   /**
    * Sets the font width in width of a '0'.
-   * 
    * @param units the number of units in widths of a '0'
    */
   void setFontWidth(int units);
   
   /**
    * Returns the font width in width of a '0'.
-   * 
    * @return the font width in units
    */
   int getFontWidth();
   
   /**
    * Sets the font height in width of a '0'.
-   * 
    * @param units the number of units in heights of a '0'
    */
   void setFontHeight(int units);
   
   /**
    * Returns the font height in height of a '0'.
-   * 
    * @return the font height in units
    */
   int getFontHeight();
   
   /**
    * Returns the address of the custom alphabet table.
-   * 
    * @return the custom alphabet table
    */
   int getCustomAlphabetTable();
   
   /**
    * Sets the mouse coordinates.
-   * 
    * @param x the x coordinate
    * @param y the y coordinate
    */
@@ -304,14 +266,12 @@ public interface StoryFileHeader {
   
   /**
    * Returns the address of the cutom unicode translation table.
-   * 
    * @return the address of the custom unicode translation table
    */
   int getCustomAccentTable();
   
   /**
    * Sets the width of the text sent to output stream 3 in units.
-   * 
    * @param units the text width in units
    */
   void setOutputStream3TextWidth(int units);
@@ -322,7 +282,6 @@ public interface StoryFileHeader {
   
   /**
    * Enables the specified attribute.
-   * 
    * @param attribute the attribute to set
    * @param flag the value
    */
@@ -330,7 +289,6 @@ public interface StoryFileHeader {
   
   /**
    * Checks the enabled status of the specified attribute
-   * 
    * @param attribute the attribute name
    * @return true if enabled, false otherwise
    */

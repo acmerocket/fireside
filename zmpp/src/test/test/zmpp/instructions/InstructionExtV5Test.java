@@ -1,5 +1,5 @@
 /*
- * $Id$
+ * $Id: ExtendedInstructionTest.java 520 2007-11-13 19:14:51Z weiju $
  * 
  * Created on 12/08/2005
  * Copyright 2005-2007 by Wei-ju Wu
@@ -31,13 +31,11 @@ import org.zmpp.instructions.Operand;
  * @author Wei-ju Wu
  * @version 1.0
  */
-public class ExtendedInstructionTest extends InstructionTestBase {
+public class InstructionExtV5Test extends InstructionTestBase {
 
   protected void setUp() throws Exception {
-  
     super.setUp();
-    
-    mockFileHeader.expects(atLeastOnce()).method("getVersion").will(returnValue(5));
+    mockMachine.expects(atLeastOnce()).method("getVersion").will(returnValue(5));
   }
   
   public void testStoresResult() {

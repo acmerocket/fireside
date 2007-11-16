@@ -21,8 +21,8 @@
 package test.zmpp.encoding;
 
 import org.jmock.MockObjectTestCase;
-import org.zmpp.base.DefaultMemoryAccess;
-import org.zmpp.base.MemoryAccess;
+import org.zmpp.base.DefaultMemory;
+import org.zmpp.base.Memory;
 import org.zmpp.encoding.AlphabetTable;
 import org.zmpp.encoding.DefaultAlphabetTable;
 import org.zmpp.encoding.DefaultZCharTranslator;
@@ -45,14 +45,14 @@ public class ZCharEncoderTest extends MockObjectTestCase {
   private int sourceAddress = 100;
   private int targetAddress = 199;
   private byte[] data = new byte[206];
-  private MemoryAccess realmem;
+  private Memory realmem;
   
   protected void setUp() throws Exception {
 
     AlphabetTable alphabetTable = new DefaultAlphabetTable();
     ZCharTranslator translator = new DefaultZCharTranslator(alphabetTable);
     encoder = new ZCharEncoder(translator);
-    realmem = new DefaultMemoryAccess(data);
+    realmem = new DefaultMemory(data);
   }
   
   /**

@@ -27,8 +27,8 @@ import java.io.RandomAccessFile;
 import java.util.ArrayList;
 import java.util.List;
 
-import org.zmpp.base.DefaultMemoryAccess;
-import org.zmpp.base.MemoryAccess;
+import org.zmpp.base.DefaultMemory;
+import org.zmpp.base.Memory;
 import org.zmpp.blorb.BlorbResources;
 import org.zmpp.iff.DefaultFormChunk;
 import org.zmpp.iff.FormChunk;
@@ -47,38 +47,26 @@ public class FileUtils {
   /**
    * This class only contains static methods.
    */
-  private FileUtils() {
-    
-    // this of course, does nothing, since there are no instances
-    super();
-  }
+  private FileUtils() { }
   
   /**
    * Creates a resources object from a Blorb file.
-   * 
    * @param blorbfile the file
    * @return the resources object or null (on failure)
    */
   public static Resources createResources(final File blorbfile) {
-    
     RandomAccessFile raf = null;
     try {
-      
       raf = new RandomAccessFile(blorbfile, "r");
       final byte[] data = new byte[(int) raf.length()];
       raf.readFully(data);
-      final MemoryAccess memaccess = new DefaultMemoryAccess(data);
-      final FormChunk formchunk = new DefaultFormChunk(memaccess);
+      final Memory memory = new DefaultMemory(data);
+      final FormChunk formchunk = new DefaultFormChunk(memory);
       return new BlorbResources(formchunk);
-      
     } catch (IOException ex) {
-      
       ex.printStackTrace();
-      
     } finally {
-      
       if (raf != null) {
-        
         try { raf.close(); } catch (Exception ex) {
           ex.printStackTrace(System.err);
         }
@@ -89,48 +77,30 @@ public class FileUtils {
   
   /**
    * Reads an array of bytes from the given input stream.
-   * 
    * @param inputstream the input stream
    * @return the bytes or null if the inputstream is null
    */
   public static byte[] readFileBytes(final InputStream inputstream) {
-
     byte[] data = null;
-    
-    if (inputstream == null) {
-      
-      return null;
-    }
+    if (inputstream == null) return null;
     
     try {
-      
       final List<Byte> buffer = new ArrayList<Byte>();
-      
       int databyte = 0;
       do {
-        
         databyte = inputstream.read();
         if (databyte != -1) {
-          
           buffer.add((byte) databyte);
         }
-        
       } while (databyte != -1);
-      
       data = new byte[buffer.size()];
       for (int i = 0; i < buffer.size(); i++) {
-        
         data[i] = buffer.get(i);
       }
-
     } catch (IOException ex) {
-
       ex.printStackTrace();
-      
     } finally {
-      
       try { inputstream.close(); } catch (Exception ex) {
-        
         ex.printStackTrace(System.err);
       } 
     }
@@ -139,34 +109,22 @@ public class FileUtils {
 
   /**
    * Reads the bytes from the given file if it is a file and it exists.
-   * 
    * @param file the file object
    * @return a byte array
    */
   public static byte[] readFileBytes(final File file) {
-
     byte[] data = null;
-    
     if (file != null && file.exists() && file.isFile()) {
-            
       RandomAccessFile raf = null;
-      
       try {
-        
         raf = new RandomAccessFile(file, "r");
         data = new byte[(int) raf.length()];
         raf.readFully(data);
-        
       } catch (IOException ex) {
-
         ex.printStackTrace();
-      
       } finally {
-      
         if (raf != null) {
-          
           try { raf.close(); } catch (Exception ex) {
-            
             ex.printStackTrace(System.err);
           } 
         } 

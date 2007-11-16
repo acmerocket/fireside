@@ -28,7 +28,7 @@ import java.util.Map;
 
 import javax.imageio.ImageIO;
 
-import org.zmpp.base.MemoryAccess;
+import org.zmpp.base.Memory;
 import org.zmpp.blorb.BlorbImage.Ratio;
 import org.zmpp.blorb.BlorbImage.Resolution;
 import org.zmpp.blorb.BlorbImage.ResolutionInfo;
@@ -73,16 +73,13 @@ public class BlorbImages extends BlorbMediaCollection<BlorbImage> {
    * {@inheritDoc}
    */
   protected void initDatabase() {
-    
     images = new HashMap<Integer, BlorbImage>();    
   }
   
   /**
    * {@inheritDoc}
    */
-  protected boolean isHandledResource(final byte[] usageId) {
-    
-    //System.out.println("isHandled ? : " + (new String(usageId)));
+  protected boolean isHandledResource(final byte[] usageId) {    
     return usageId[0] == 'P' && usageId[1] == 'i' && usageId[2] == 'c'
            && usageId[3] == 't';
   }
@@ -91,7 +88,6 @@ public class BlorbImages extends BlorbMediaCollection<BlorbImage> {
    * {@inheritDoc}
    */
   public BlorbImage getResource(final int resourcenumber) {
-
     return images.get(resourcenumber);
   }
   
@@ -99,11 +95,7 @@ public class BlorbImages extends BlorbMediaCollection<BlorbImage> {
    * {@inheritDoc}
    */
   protected boolean putToDatabase(final Chunk chunk, final int resnum) {
-
-    // TODO: This chunk can be a placeholder picture, check for this
-    // condition first
     if (!handlePlaceholder(chunk, resnum)) {
-      
       return handlePicture(chunk, resnum);
     }
     return true;
@@ -114,9 +106,9 @@ public class BlorbImages extends BlorbMediaCollection<BlorbImage> {
     if ("Rect".equals(new String(chunk.getId()))) {
       
       // Place holder
-      MemoryAccess memaccess = chunk.getMemoryAccess();
-      int width = (int) memaccess.readUnsigned32(Chunk.CHUNK_HEADER_LENGTH);
-      int height = (int) memaccess.readUnsigned32(Chunk.CHUNK_HEADER_LENGTH + 4);      
+      Memory memory = chunk.getMemory();
+      int width = (int) memory.readUnsigned32(Chunk.CHUNK_HEADER_LENGTH);
+      int height = (int) memory.readUnsigned32(Chunk.CHUNK_HEADER_LENGTH + 4);      
       images.put(resnum, new BlorbImage(width, height));
       
       return true;
@@ -126,7 +118,7 @@ public class BlorbImages extends BlorbMediaCollection<BlorbImage> {
   
   private boolean handlePicture(final Chunk chunk, final int resnum) {
     
-    final InputStream is = new MemoryAccessInputStream(chunk.getMemoryAccess(),
+    final InputStream is = new MemoryInputStream(chunk.getMemory(),
         Chunk.CHUNK_HEADER_LENGTH, chunk.getSize() + Chunk.CHUNK_HEADER_LENGTH);
     try {
 
@@ -152,21 +144,21 @@ public class BlorbImages extends BlorbMediaCollection<BlorbImage> {
   
   private void adjustResolution(Chunk resochunk) {
     
-    MemoryAccess memaccess = resochunk.getMemoryAccess();
+    Memory memory = resochunk.getMemory();
     int offset = Chunk.CHUNK_ID_LENGTH;
-    int size = (int) memaccess.readUnsigned32(offset);
+    int size = (int) memory.readUnsigned32(offset);
     offset += Chunk.CHUNK_SIZEWORD_LENGTH;
-    int px = (int) memaccess.readUnsigned32(offset);
+    int px = (int) memory.readUnsigned32(offset);
     offset += 4;
-    int py = (int) memaccess.readUnsigned32(offset);
+    int py = (int) memory.readUnsigned32(offset);
     offset += 4;
-    int minx = (int) memaccess.readUnsigned32(offset);
+    int minx = (int) memory.readUnsigned32(offset);
     offset += 4;
-    int miny = (int) memaccess.readUnsigned32(offset);
+    int miny = (int) memory.readUnsigned32(offset);
     offset += 4;
-    int maxx = (int) memaccess.readUnsigned32(offset);
+    int maxx = (int) memory.readUnsigned32(offset);
     offset += 4;
-    int maxy = (int) memaccess.readUnsigned32(offset);
+    int maxy = (int) memory.readUnsigned32(offset);
     offset += 4;
     
     ResolutionInfo resinfo = new ResolutionInfo(new Resolution(px, py),
@@ -175,19 +167,19 @@ public class BlorbImages extends BlorbMediaCollection<BlorbImage> {
     for (int i = 0; i < getNumResources(); i++) {
       
       if (offset >= size) break;
-      int imgnum = (int) memaccess.readUnsigned32(offset);
+      int imgnum = (int) memory.readUnsigned32(offset);
       offset += 4;
-      int ratnum = (int) memaccess.readUnsigned32(offset);
+      int ratnum = (int) memory.readUnsigned32(offset);
       offset += 4;
-      int ratden = (int) memaccess.readUnsigned32(offset);
+      int ratden = (int) memory.readUnsigned32(offset);
       offset += 4;
-      int minnum = (int) memaccess.readUnsigned32(offset);
+      int minnum = (int) memory.readUnsigned32(offset);
       offset += 4;
-      int minden = (int) memaccess.readUnsigned32(offset);
+      int minden = (int) memory.readUnsigned32(offset);
       offset += 4;
-      int maxnum = (int) memaccess.readUnsigned32(offset);
+      int maxnum = (int) memory.readUnsigned32(offset);
       offset += 4;
-      int maxden = (int) memaccess.readUnsigned32(offset);
+      int maxden = (int) memory.readUnsigned32(offset);
       offset += 4;
       ScaleInfo scaleinfo = new ScaleInfo(resinfo, new Ratio(ratnum, ratden),
           new Ratio(minnum, minden), new Ratio(maxnum, maxden));

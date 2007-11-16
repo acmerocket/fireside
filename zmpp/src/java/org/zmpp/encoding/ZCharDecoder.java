@@ -20,7 +20,7 @@
  */
 package org.zmpp.encoding;
 
-import org.zmpp.base.MemoryReadAccess;
+import org.zmpp.base.Memory;
 
 /**
  * This interface provides decoding for the Z character encoding into
@@ -55,12 +55,12 @@ public interface ZCharDecoder {
    * otherwise. If the provided length is 0, the semantics are
    * equal to the method without the length parameter.
    * 
-   * @param memaccess a MemoryReadAccess object
+   * @param memory a Memory object
    * @param address the address of the string
    * @param length the maximum length in bytes
    * @return the decoded string
    */
-  ZsciiString decode2Zscii(MemoryReadAccess memaccess, int address, int length);
+  ZsciiString decode2Zscii(Memory memory, int address, int length);
   
   /**
    * Decodes the given byte value to the specified buffer using the working

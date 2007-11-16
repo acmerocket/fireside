@@ -97,7 +97,7 @@ public class BlorbSounds extends BlorbMediaCollection<SoundEffect> {
   protected boolean putToDatabase(final Chunk chunk, final int resnum) {
 
     final InputStream aiffStream =
-      new  MemoryAccessInputStream(chunk.getMemoryAccess(), 0,
+      new  MemoryInputStream(chunk.getMemory(), 0,
           chunk.getSize() + Chunk.CHUNK_HEADER_LENGTH);
     try {
 

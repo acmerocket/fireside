@@ -23,7 +23,7 @@ package org.zmpp.blorb;
 import java.util.ArrayList;
 import java.util.List;
 
-import org.zmpp.base.MemoryReadAccess;
+import org.zmpp.base.Memory;
 import org.zmpp.iff.Chunk;
 import org.zmpp.iff.FormChunk;
 import org.zmpp.media.MediaCollection;
@@ -64,12 +64,10 @@ public abstract class BlorbMediaCollection<T> implements MediaCollection<T> {
     
     // Ridx chunk
     Chunk ridxChunk = formchunk.getSubChunk("RIdx".getBytes());
-    //System.out.println("ridxChunk: " + ridxChunk);
-    MemoryReadAccess chunkmem = ridxChunk.getMemoryAccess();
+    Memory chunkmem = ridxChunk.getMemory();
     int numresources = (int) chunkmem.readUnsigned32(8);
     int offset = 12;
     byte[] usage = new byte[4];
-    //System.out.println("num resources: " + numresources);
     
     for (int i = 0; i < numresources; i++) {
 

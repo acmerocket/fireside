@@ -21,7 +21,6 @@
 package org.zmpp.instructions;
 
 import org.zmpp.vm.Machine;
-import org.zmpp.vm.ZObject;
 
 
 /**
@@ -198,15 +197,11 @@ public class Short1Instruction extends AbstractInstruction {
    * get_parent instruction.
    */
   private void get_parent() {
-
     final int obj = getUnsignedValue(0);
     int parent = 0;
     if (obj > 0) {
-      
-      parent = getObjectTree().getObject(obj).getParent();
-
+      parent = getMachine().getParent(obj);
     } else {
-      
       getMachine().warn("@get_parent illegal access to object " + obj);
     }
     storeResult((short) (parent & 0xffff));
@@ -214,15 +209,11 @@ public class Short1Instruction extends AbstractInstruction {
   }
   
   private void get_sibling() {
-
     final int obj = getUnsignedValue(0);
     int sibling = 0;
     if (obj > 0) {
-      
-      sibling = getObjectTree().getObject(obj).getSibling();
-      
+      sibling = getMachine().getSibling(obj);
     } else {
-      
       getMachine().warn("@get_sibling illegal access to object " + obj);
     }
     storeResult((short) (sibling & 0xffff));
@@ -230,15 +221,11 @@ public class Short1Instruction extends AbstractInstruction {
   }
   
   private void get_child() {
-
     final int obj = getUnsignedValue(0);
     int child = 0;
     if (obj > 0) {
-      
-      child = getObjectTree().getObject(obj).getChild();
-
+      child = getMachine().getChild(obj);
     } else {
-      
       getMachine().warn("@get_child illegal access to object " + obj);
     }
     storeResult((short) (child & 0xffff));
@@ -246,64 +233,52 @@ public class Short1Instruction extends AbstractInstruction {
   }
 
   private void print_addr() {
-   
     getMachine().getOutput().printZString(getUnsignedValue(0));
     nextInstruction();
   }
   
   private void print_paddr() {
-    
     getMachine().getOutput().printZString(
         getMachine().getCpu().translatePackedAddress(getUnsignedValue(0), false));
     nextInstruction();
   }
   
   private void ret() {
-    
     returnFromRoutine(getValue(0));
   }
   
   private void print_obj() {
-    
     final int obj = getUnsignedValue(0);
     if (obj > 0) {
-      
-      final ZObject zobj = getObjectTree().getObject(obj);
-      getMachine().getOutput().printZString(zobj.getPropertiesDescriptionAddress());
-      
-    } else {
-      
+      getMachine().getOutput().printZString(
+        getMachine().getPropertiesDescriptionAddress(obj));
+    } else {      
       getMachine().warn("@print_obj illegal access to object " + obj);
     }
     nextInstruction();
   }
   
   private void remove_obj() {
-    
     final int obj = getUnsignedValue(0);
     if (obj > 0) {
-      
-      getObjectTree().removeObject(obj);
+      getMachine().removeObject(obj);
     }
     nextInstruction();
   }  
 
   private void get_prop_len() {
-    
     final int propertyAddress = getUnsignedValue(0);    
     final short proplen = (short)
-      getObjectTree().getPropertyLength(propertyAddress);
+      getMachine().getPropertyLength(propertyAddress);
     storeResult(proplen);
     nextInstruction();
   }
   
   private void call_1s() {
-    
     call(0);
   }
   
   private void call_1n() {
-    
     call(0);
   }
 }

@@ -20,7 +20,7 @@
  */
 package org.zmpp.iff;
 
-import org.zmpp.base.MemoryAccess;
+import org.zmpp.base.Memory;
 
 /**
  * The basic data structure for an IFF file, a chunk.
@@ -48,35 +48,30 @@ public interface Chunk {
   
   /**
    * Returns this IFF chunk's id. An id is a 4 byte array. 
-   * 
    * @return the id
    */
   byte[] getId();
   
   /**
    * The chunk data size, excluding id and size word.
-   * 
    * @return the size
    */
   int getSize();
   
   /**
    * Returns true if this is a valid chunk.
-   * 
    * @return true if valid, false otherwise
    */
   boolean isValid();
   
   /**
-   * Returns a memory access object to the chunk.
-   * 
-   * @return the MemoryAccess object
+   * Returns a memory object to access the chunk.
+   * @return the Memory object
    */
-  MemoryAccess getMemoryAccess();
+  Memory getMemory();
   
   /**
    * Returns the address of the chunk within the global FORM chunk.
-   * 
    * @return the address within the form chunk
    */
   int getAddress();

@@ -24,7 +24,7 @@ import java.util.List;
 
 import org.jmock.Mock;
 import org.jmock.MockObjectTestCase;
-import org.zmpp.base.MemoryAccess;
+import org.zmpp.base.Memory;
 import org.zmpp.encoding.DefaultAccentTable;
 import org.zmpp.encoding.ZsciiEncoding;
 import org.zmpp.io.InputStream;
@@ -49,13 +49,13 @@ import org.zmpp.vm.InputFunctions.InterruptThread;
  */
 public class InputFunctionsTest extends MockObjectTestCase {
 
-  private Mock mockFileHeader, mockMachine, mockMemAccess, mockInputStream,
+  private Mock mockFileHeader, mockMachine, mockMemory, mockInputStream,
                mockScreen, mockGameData, mockOutput, mockInput;
   
   private Machine machine;
   private GameData gamedata;
   private StoryFileHeader fileheader;
-  private MemoryAccess memaccess;
+  private Memory memory;
   private InputStream inputstream;
   private ScreenModel screen;
   private ZsciiEncoding encoding;
@@ -70,7 +70,7 @@ public class InputFunctionsTest extends MockObjectTestCase {
 
     mockMachine = mock(Machine.class);
     mockFileHeader = mock(StoryFileHeader.class);
-    mockMemAccess = mock(MemoryAccess.class);
+    mockMemory = mock(Memory.class);
     mockInputStream = mock(InputStream.class);
     mockScreen = mock(ScreenModel.class);
     mockGameData = mock(GameData.class);
@@ -79,7 +79,7 @@ public class InputFunctionsTest extends MockObjectTestCase {
 
     machine = (Machine) mockMachine.proxy();
     fileheader = (StoryFileHeader) mockFileHeader.proxy();
-    memaccess = (MemoryAccess) mockMemAccess.proxy();
+    memory = (Memory) mockMemory.proxy();
     inputstream = (InputStream) mockInputStream.proxy();
     screen = (ScreenModel) mockScreen.proxy();
     gamedata = (GameData) mockGameData.proxy();
@@ -121,16 +121,16 @@ public class InputFunctionsTest extends MockObjectTestCase {
     mockMachine.expects(atLeastOnce()).method("getGameData").will(returnValue(gamedata));
     mockGameData.expects(atLeastOnce()).method("getStoryFileHeader").will(returnValue(fileheader));
     mockFileHeader.expects(once()).method("getVersion").will(returnValue(5));
-    mockGameData.expects(once()).method("getMemoryAccess").will(returnValue(memaccess));
+    mockGameData.expects(once()).method("getMemory").will(returnValue(memory));
     //mockServices.expects(once()).method("getZsciiEncoding").will(returnValue(encoding));
     
     // Previous input
-    mockMemAccess.expects(once()).method("readByte").with(eq(textbuffer + 1)).will(returnValue((byte) 5));
-    mockMemAccess.expects(once()).method("readUnsignedByte").with(eq(textbuffer + 2)).will(returnValue((short) 'S'));
-    mockMemAccess.expects(once()).method("readUnsignedByte").with(eq(textbuffer + 3)).will(returnValue((short) 't'));
-    mockMemAccess.expects(once()).method("readUnsignedByte").with(eq(textbuffer + 4)).will(returnValue((short) 'a'));
-    mockMemAccess.expects(once()).method("readUnsignedByte").with(eq(textbuffer + 5)).will(returnValue((short) 'r'));
-    mockMemAccess.expects(once()).method("readUnsignedByte").with(eq(textbuffer + 6)).will(returnValue((short) 't'));
+    mockMemory.expects(once()).method("readByte").with(eq(textbuffer + 1)).will(returnValue((byte) 5));
+    mockMemory.expects(once()).method("readUnsignedByte").with(eq(textbuffer + 2)).will(returnValue((short) 'S'));
+    mockMemory.expects(once()).method("readUnsignedByte").with(eq(textbuffer + 3)).will(returnValue((short) 't'));
+    mockMemory.expects(once()).method("readUnsignedByte").with(eq(textbuffer + 4)).will(returnValue((short) 'a'));
+    mockMemory.expects(once()).method("readUnsignedByte").with(eq(textbuffer + 5)).will(returnValue((short) 'r'));
+    mockMemory.expects(once()).method("readUnsignedByte").with(eq(textbuffer + 6)).will(returnValue((short) 't'));
         
     int pointer = inputFunctions.checkForPreviousInput(textbuffer, inputbuffer);
     
@@ -154,10 +154,10 @@ public class InputFunctionsTest extends MockObjectTestCase {
     mockMachine.expects(atLeastOnce()).method("getGameData").will(returnValue(gamedata));
     mockGameData.expects(atLeastOnce()).method("getStoryFileHeader").will(returnValue(fileheader));
     mockFileHeader.expects(once()).method("getVersion").will(returnValue(5));
-    mockGameData.expects(once()).method("getMemoryAccess").will(returnValue(memaccess));
+    mockGameData.expects(once()).method("getMemory").will(returnValue(memory));
     
     // Previous input
-    mockMemAccess.expects(once()).method("readByte").with(eq(4712)).will(returnValue((byte) 0));
+    mockMemory.expects(once()).method("readByte").with(eq(4712)).will(returnValue((byte) 0));
         
     int pointer = inputFunctions.checkForPreviousInput(textbuffer, inputbuffer);
     
@@ -299,8 +299,8 @@ public class InputFunctionsTest extends MockObjectTestCase {
     mockMachine.expects(atLeastOnce()).method("getGameData").will(returnValue(gamedata));
     mockGameData.expects(atLeastOnce()).method("getStoryFileHeader").will(returnValue(fileheader));
     mockFileHeader.expects(atLeastOnce()).method("getVersion").will(returnValue(4));
-    mockGameData.expects(once()).method("getMemoryAccess").will(returnValue(memaccess));
-    mockMemAccess.expects(once()).method("writeByte").with(eq(textbuffer), eq((byte) 0));
+    mockGameData.expects(once()).method("getMemory").will(returnValue(memory));
+    mockMemory.expects(once()).method("writeByte").with(eq(textbuffer), eq((byte) 0));
     
     int textpointer = 6;
     inputFunctions.checkTermination(ZsciiEncoding.NULL, textbuffer, textpointer);
@@ -316,8 +316,8 @@ public class InputFunctionsTest extends MockObjectTestCase {
     mockMachine.expects(atLeastOnce()).method("getGameData").will(returnValue(gamedata));
     mockGameData.expects(atLeastOnce()).method("getStoryFileHeader").will(returnValue(fileheader));
     mockFileHeader.expects(atLeastOnce()).method("getVersion").will(returnValue(4));
-    mockGameData.expects(once()).method("getMemoryAccess").will(returnValue(memaccess));
-    mockMemAccess.expects(once()).method("writeByte").with(eq(textbuffer + textpointer), eq((byte) 0));
+    mockGameData.expects(once()).method("getMemory").will(returnValue(memory));
+    mockMemory.expects(once()).method("writeByte").with(eq(textbuffer + textpointer), eq((byte) 0));
     
     inputFunctions.checkTermination(ZsciiEncoding.NEWLINE, textbuffer, textpointer);
   }
@@ -330,8 +330,8 @@ public class InputFunctionsTest extends MockObjectTestCase {
     mockMachine.expects(atLeastOnce()).method("getGameData").will(returnValue(gamedata));
     mockGameData.expects(atLeastOnce()).method("getStoryFileHeader").will(returnValue(fileheader));
     mockFileHeader.expects(atLeastOnce()).method("getVersion").will(returnValue(5));
-    mockGameData.expects(once()).method("getMemoryAccess").will(returnValue(memaccess));
-    mockMemAccess.expects(once()).method("writeUnsignedByte").with(eq(textbuffer + 1), eq((short) 0));
+    mockGameData.expects(once()).method("getMemory").will(returnValue(memory));
+    mockMemory.expects(once()).method("writeUnsignedByte").with(eq(textbuffer + 1), eq((short) 0));
     
     int textpointer = 6;
     inputFunctions.checkTermination(ZsciiEncoding.NULL, textbuffer, textpointer);
@@ -346,8 +346,8 @@ public class InputFunctionsTest extends MockObjectTestCase {
     mockMachine.expects(atLeastOnce()).method("getGameData").will(returnValue(gamedata));
     mockGameData.expects(atLeastOnce()).method("getStoryFileHeader").will(returnValue(fileheader));
     mockFileHeader.expects(atLeastOnce()).method("getVersion").will(returnValue(5));
-    mockGameData.expects(once()).method("getMemoryAccess").will(returnValue(memaccess));
-    mockMemAccess.expects(once()).method("writeUnsignedByte").with(eq(textbuffer + 1),
+    mockGameData.expects(once()).method("getMemory").will(returnValue(memory));
+    mockMemory.expects(once()).method("writeUnsignedByte").with(eq(textbuffer + 1),
         eq((short) (textpointer - 2)));
     
     inputFunctions.checkTermination(ZsciiEncoding.NEWLINE, textbuffer, textpointer);
@@ -368,17 +368,17 @@ public class InputFunctionsTest extends MockObjectTestCase {
     mockGameData.expects(atLeastOnce()).method("getZsciiEncoding").will(returnValue(encoding));
     mockFileHeader.expects(atLeastOnce()).method("getVersion").will(returnValue(5));
     mockFileHeader.expects(atLeastOnce()).method("getTerminatorsAddress").will(returnValue(0));
-    mockGameData.expects(atLeastOnce()).method("getMemoryAccess").will(returnValue(memaccess));
+    mockGameData.expects(atLeastOnce()).method("getMemory").will(returnValue(memory));
     mockMachine.expects(atLeastOnce()).method("getOutput").will(returnValue(output));
     mockMachine.expects(atLeastOnce()).method("getInput").will(returnValue(input));
     
     // The maximum number of characters
-    mockMemAccess.expects(once()).method("readUnsignedByte").with(eq(textbuffer)).will(returnValue((short) 200));
+    mockMemory.expects(once()).method("readUnsignedByte").with(eq(textbuffer)).will(returnValue((short) 200));
     mockInput.expects(atLeastOnce()).method("getSelectedInputStream").will(returnValue(inputstream));
     mockInputStream.expects(atLeastOnce()).method("getZsciiChar").will(onConsecutiveCalls(
         returnValue((short) 'h'), returnValue((short) 'i'), returnValue(ZsciiEncoding.NEWLINE)));
-    mockMemAccess.expects(once()).method("writeUnsignedByte").with(eq(textbuffer + 2), eq((short) 'h'));
-    mockMemAccess.expects(once()).method("writeUnsignedByte").with(eq(textbuffer + 3), eq((short) 'i'));
+    mockMemory.expects(once()).method("writeUnsignedByte").with(eq(textbuffer + 2), eq((short) 'h'));
+    mockMemory.expects(once()).method("writeUnsignedByte").with(eq(textbuffer + 3), eq((short) 'i'));
     
     // echo
     mockOutput.expects(once()).method("printZsciiChar").with(eq((short) 'h'), eq(true));
@@ -392,7 +392,7 @@ public class InputFunctionsTest extends MockObjectTestCase {
     // We set them to the standard value 2 (1 available byte + 1 typed byte)
     int pointer = 2;
     
-    mockMemAccess.expects(once()).method("writeUnsignedByte").with(eq(textbuffer + 1), eq((short) 2));
+    mockMemory.expects(once()).method("writeUnsignedByte").with(eq(textbuffer + 1), eq((short) 2));
     
     inputFunctions.doInputLoop(textbuffer, pointer, inputbuffer);
   }
@@ -405,21 +405,21 @@ public class InputFunctionsTest extends MockObjectTestCase {
     mockGameData.expects(atLeastOnce()).method("getZsciiEncoding").will(returnValue(encoding));
     mockFileHeader.expects(atLeastOnce()).method("getVersion").will(returnValue(5));
     mockFileHeader.expects(atLeastOnce()).method("getTerminatorsAddress").will(returnValue(1234));
-    mockGameData.expects(atLeastOnce()).method("getMemoryAccess").will(returnValue(memaccess));
+    mockGameData.expects(atLeastOnce()).method("getMemory").will(returnValue(memory));
     mockMachine.expects(atLeastOnce()).method("getOutput").will(returnValue(output));
     mockMachine.expects(atLeastOnce()).method("getInput").will(returnValue(input));
     
     // The maximum number of characters
-    mockMemAccess.expects(once()).method("readUnsignedByte").with(eq(textbuffer)).will(returnValue((short) 200));
+    mockMemory.expects(once()).method("readUnsignedByte").with(eq(textbuffer)).will(returnValue((short) 200));
     mockInput.expects(atLeastOnce()).method("getSelectedInputStream").will(returnValue(inputstream));
     mockInputStream.expects(atLeastOnce()).method("getZsciiChar").will(onConsecutiveCalls(
         returnValue((short) 'h'), returnValue((short) 'i'), returnValue((short) 130)));
-    mockMemAccess.expects(once()).method("writeUnsignedByte").with(eq(textbuffer + 2), eq((short) 'h'));
-    mockMemAccess.expects(once()).method("writeUnsignedByte").with(eq(textbuffer + 3), eq((short) 'i'));
+    mockMemory.expects(once()).method("writeUnsignedByte").with(eq(textbuffer + 2), eq((short) 'h'));
+    mockMemory.expects(once()).method("writeUnsignedByte").with(eq(textbuffer + 3), eq((short) 'i'));
     
     // Read the terminating characters
-    mockMemAccess.expects(atLeastOnce()).method("readUnsignedByte").with(eq(1234)).will(returnValue((short) 130));
-    mockMemAccess.expects(atLeastOnce()).method("readUnsignedByte").with(eq(1235)).will(returnValue((short) 0));
+    mockMemory.expects(atLeastOnce()).method("readUnsignedByte").with(eq(1234)).will(returnValue((short) 130));
+    mockMemory.expects(atLeastOnce()).method("readUnsignedByte").with(eq(1235)).will(returnValue((short) 0));
     
     // echo
     mockOutput.expects(once()).method("printZsciiChar").with(eq((short) 'h'), eq(true));
@@ -433,7 +433,7 @@ public class InputFunctionsTest extends MockObjectTestCase {
     // We set them to the standard value 2 (1 available byte + 1 typed byte)
     int pointer = 2;
     
-    mockMemAccess.expects(once()).method("writeUnsignedByte").with(eq(textbuffer + 1), eq((short) 2));
+    mockMemory.expects(once()).method("writeUnsignedByte").with(eq(textbuffer + 1), eq((short) 2));
     
     inputFunctions.doInputLoop(textbuffer, pointer, inputbuffer);
   }  

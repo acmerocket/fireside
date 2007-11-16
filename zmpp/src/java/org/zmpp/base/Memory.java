@@ -1,8 +1,7 @@
 /*
- * $Id$
+ * $Id: MemoryAccess.java 520 2007-11-13 19:14:51Z weiju $
  * 
- * Created on 09/25/2005
- * Copyright 2005-2007 by Wei-ju Wu
+ * Copyright 2005-2007 Wei-ju Wu
  * This file is part of The Z-machine Preservation Project (ZMPP).
  *
  * ZMPP is free software: you can redistribute it and/or modify
@@ -21,13 +20,20 @@
 package org.zmpp.base;
 
 /**
- * This interface defines an abstract read access to a region of memory.
- *
+ * This class manages read and write access to the byte array which contains
+ * the story file data. It is the only means to read and manipulate the
+ * memory map.
+ * 
  * @author Wei-ju Wu
  * @version 1.0
  */
-public interface MemoryReadAccess {
-  
+public interface Memory {
+
+  // ************************************************************************
+  // ****
+  // **** Read access
+  // ****
+  // *****************************
   /**
    * Reads the 48-bit unsigned word at the specified address. From the
    * specified address, 6 bytes are read and or'ed together.
@@ -76,4 +82,58 @@ public interface MemoryReadAccess {
    * @return the 8 bit signed value
    */
   byte readByte(int address);
+
+  // ************************************************************************
+  // ****
+  // **** Write access
+  // ****
+  // *****************************
+  /**
+   * Writes an unsigned 16 bit value to the specified address.
+   * 
+   * @param address the address to write to
+   * @param value the value to write
+   */
+  void writeUnsignedShort(int address, int value);
+  
+  /**
+   * Writes a short value to the memory.
+   * 
+   * @param address the address
+   * @param value the value
+   */
+  void writeShort(int address, short value);
+
+  /**
+   * Writes an unsigned byte value to the specified address.
+   * 
+   * @param address the address to write to
+   * @param value the value to write
+   */
+  void writeUnsignedByte(int address, short value);
+  
+  /**
+   * Writes a byte value to the specified address.
+   * 
+   * @param address the address
+   * @param value the value
+   */
+  void writeByte(int address, byte value);
+  
+  /**
+   * Writes an unsigned 32 bit value to the specified address.
+   * 
+   * @param address the address to write to
+   * @param value the value to write
+   */
+  void writeUnsigned32(int address, long value);
+  
+  /**
+   * Writes the specified unsigned 48 bit value to the specified address.
+   * The value is written in 6 consecutive bytes.
+   * 
+   * @param address the address
+   * @param value the value
+   */
+  void writeUnsigned48(int address, long value);
 }

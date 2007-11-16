@@ -20,7 +20,7 @@
  */
 package org.zmpp.vm;
 
-import org.zmpp.base.MemoryReadAccess;
+import org.zmpp.base.Memory;
 import org.zmpp.encoding.ZCharDecoder.AbbreviationsTable;
 
 /**
@@ -36,9 +36,9 @@ import org.zmpp.encoding.ZCharDecoder.AbbreviationsTable;
 public class Abbreviations implements AbbreviationsTable {
 
   /**
-   * The memory map.
+   * The memory object.
    */
-  private MemoryReadAccess map;
+  private Memory memory;
   
   /**
    * The start address of the abbreviations table.
@@ -48,13 +48,12 @@ public class Abbreviations implements AbbreviationsTable {
   /**
    * Constructor.
    * 
-   * @param map the memory map
+   * @param memory the memory map
    * @param address the start address of the abbreviations table
    */
-  public Abbreviations(final MemoryReadAccess map, final int address) {
-    
+  public Abbreviations(final Memory memory, final int address) {
     super();
-    this.map = map;
+    this.memory = memory;
     this.address = address;
   }
   
@@ -66,7 +65,6 @@ public class Abbreviations implements AbbreviationsTable {
    * @return the word address
    */
   public int getWordAddress(final int entryNum) {
-    
-    return map.readUnsignedShort(address + entryNum * 2) * 2;
+    return memory.readUnsignedShort(address + entryNum * 2) * 2;
   }  
 }

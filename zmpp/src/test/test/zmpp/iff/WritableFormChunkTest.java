@@ -39,7 +39,7 @@ public class WritableFormChunkTest extends MockObjectTestCase {
   
   public void testGetMemoryAccess() {
     
-    assertNotNull(formChunk.getMemoryAccess());
+    assertNotNull(formChunk.getMemory());
   }
   
   public void testGetSubChunks() {

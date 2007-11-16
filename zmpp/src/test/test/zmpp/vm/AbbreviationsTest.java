@@ -27,7 +27,7 @@ package test.zmpp.vm;
  * @author Wei-ju Wu
  * @version 1.0
  */
-public class AbbreviationsTest extends MemoryMapSetup {
+public class AbbreviationsTest extends MiniZorkSetup {
 
   private static String[] testdata = {
 
