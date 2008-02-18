@@ -152,8 +152,7 @@ public class ClassicObjectTree extends AbstractObjectTree {
    */
   protected int getPropertyNum(final int propertyAddress) {    
     final int sizeByte = getMemory().readUnsignedByte(propertyAddress);
-    return (short) (sizeByte - 32 *
-    		(getPropertyLength(propertyAddress + 1) - 1));
+    return sizeByte - 32 * (getPropertyLength(propertyAddress + 1) - 1);
   }
   
   /**
