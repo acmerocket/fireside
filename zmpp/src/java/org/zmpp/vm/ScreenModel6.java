@@ -65,7 +65,7 @@ public interface ScreenModel6 extends ScreenModel {
    * 
    * @param zchars the z character array
    */
-  void setTextWidthInUnits(short[] zchars);
+  void setTextWidthInUnits(char[] zchars);
   
   /**
    * Reads the current mouse data into the specified array.

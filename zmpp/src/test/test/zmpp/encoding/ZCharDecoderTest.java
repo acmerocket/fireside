@@ -76,7 +76,7 @@ public class ZCharDecoderTest extends MockObjectTestCase {
   
   public void testDecodeByte() {
   
-    assertEquals('a', decoder.decodeZChar((byte) 6));
+    assertEquals('a', decoder.decodeZChar((char) 6));
   }
   
   public void testDecode2Unicode2Params() {
@@ -201,7 +201,7 @@ public class ZCharDecoderTest extends MockObjectTestCase {
   public void testExtractZBytesOneWordOnly() {
     
     mockMemory.expects(once()).method("readShort").will(returnValue((short) 0x9865));
-    short[] data = DefaultZCharDecoder.extractZbytes(memory, 0, 0);
+    char[] data = DefaultZCharDecoder.extractZbytes(memory, 0, 0);
     assertEquals(3, data.length);
     assertEquals(6, data[0]);
     assertEquals(3, data[1]);
@@ -214,7 +214,7 @@ public class ZCharDecoderTest extends MockObjectTestCase {
         onConsecutiveCalls(returnValue((short) 0x5432),
                            returnValue((short) 0x1234),
                            returnValue((short) 0x9865)));
-    short[] data = DefaultZCharDecoder.extractZbytes(memory, 0, 0);
+    char[] data = DefaultZCharDecoder.extractZbytes(memory, 0, 0);
     assertEquals(9, data.length);
   }  
 

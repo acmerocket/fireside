@@ -60,23 +60,19 @@ public class FileInputStream implements InputStream {
   /**
    * {@inheritDoc}
    */
-  public short getZsciiChar(boolean flushBeforeGet) {
+  public char getZsciiChar(boolean flushBeforeGet) {
     
     checkForReader();
     if (input != null) {
       
       // Read from file
       try {
-        
         if (input.ready()) {
-          
           final char c = (char) input.read();
           if (encoding.isConvertableToZscii(c)) {
-            
-            return encoding.getZsciiChar((char) c);
+            return encoding.getZsciiChar(c);
           }
         }
-        
       } catch (IOException ex) {
         
         ex.printStackTrace();

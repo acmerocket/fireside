@@ -36,31 +36,31 @@ package org.zmpp.encoding;
  */
 public class ZsciiEncoding {
 
-  public static final short NULL          = 0;
-  public static final short DELETE        = 8;
-  public static final short NEWLINE_10    = 10;
-  public static final short NEWLINE       = 13;
-  public static final short ESCAPE        = 27;
-  public static final short CURSOR_UP     = 129;
-  public static final short CURSOR_DOWN   = 130;
-  public static final short CURSOR_LEFT   = 131;
-  public static final short CURSOR_RIGHT  = 132;
-  public static final short ASCII_START   = 32;
-  public static final short ASCII_END     = 126;
+  public static final char NULL          = 0;
+  public static final char DELETE        = 8;
+  public static final char NEWLINE_10    = 10;
+  public static final char NEWLINE       = 13;
+  public static final char ESCAPE        = 27;
+  public static final char CURSOR_UP     = 129;
+  public static final char CURSOR_DOWN   = 130;
+  public static final char CURSOR_LEFT   = 131;
+  public static final char CURSOR_RIGHT  = 132;
+  public static final char ASCII_START   = 32;
+  public static final char ASCII_END     = 126;
   
   /**
    * The start of the accent range. 
    */
-  public static final short ACCENT_START = 155;
+  public static final char ACCENT_START = 155;
   
   /**
    * End of the accent range.
    */
-  public static final short ACCENT_END   = 251;
+  public static final char ACCENT_END   = 251;
   
   
-  public static final short MOUSE_DOUBLE_CLICK = 253;
-  public static final short MOUSE_SINGLE_CLICK = 254;
+  public static final char MOUSE_DOUBLE_CLICK = 253;
+  public static final char MOUSE_SINGLE_CLICK = 254;
   
   private AccentTable accentTable;
 
@@ -81,7 +81,7 @@ public class ZsciiEncoding {
    * @param zchar a ZSCII character
    * @return true if valid, false otherwise
    */
-  public boolean isZsciiCharacter(final short zchar) {
+  public boolean isZsciiCharacter(final char zchar) {
    
     switch (zchar) {
     
@@ -105,8 +105,8 @@ public class ZsciiEncoding {
    */
   public boolean isConvertableToZscii(final char c) {
    
-    return isAscii((short) c) || isInTranslationTable(c) || c == '\n'
-           || c == 0 || isUnicodeCharacter((short) c);
+    return isAscii(c) || isInTranslationTable(c) || c == '\n'
+           || c == 0 || isUnicodeCharacter(c);
   }
   
   /**
@@ -116,7 +116,7 @@ public class ZsciiEncoding {
    * @param zchar a ZSCII character.
    * @return the unicode representation
    */
-  public char getUnicodeChar(final short zchar) {
+  public char getUnicodeChar(final char zchar) {
     
     if (isAscii(zchar)) {
       return (char) zchar;
@@ -147,9 +147,9 @@ public class ZsciiEncoding {
    * @param str the input string
    * @return the ZSCII representation
    */
-  public short[] convertToZscii(final String str) {
+  public char[] convertToZscii(final String str) {
     
-    final short[] result = new short[str.length()];
+    final char[] result = new char[str.length()];
     for (int i = 0; i < str.length(); i++) {
       
       result[i] = getZsciiChar(str.charAt(i));
@@ -164,15 +164,15 @@ public class ZsciiEncoding {
    * @param c the unicode character to convert
    * @return the ZSCII character
    */
-  public short getZsciiChar(final char c) {
+  public char getZsciiChar(final char c) {
     
-    if (isAscii((short) c)) {
+    if (isAscii(c)) {
       
-      return (short) c;
+      return c;
       
     } else if (isInTranslationTable(c)) {
       
-      return (short) (getIndexInTranslationTable(c) + ACCENT_START);
+      return (char) (getIndexInTranslationTable(c) + ACCENT_START);
       
     } else if (c == '\n') {
       
@@ -209,7 +209,7 @@ public class ZsciiEncoding {
    * @param zchar the input character
    * @return true if in the ASCII range, false, otherwise
    */
-  public static boolean isAscii(final short zchar) {
+  public static boolean isAscii(final char zchar) {
     
     return zchar >= ASCII_START && zchar <= ASCII_END;
   }
@@ -220,7 +220,7 @@ public class ZsciiEncoding {
    * @param zchar the input character
    * @return true if in special range, false, otherwise
    */
-  public static boolean isAccent(final short zchar) {
+  public static boolean isAccent(final char zchar) {
     
     return zchar >= ACCENT_START && zchar <= ACCENT_END;
   }
@@ -231,7 +231,7 @@ public class ZsciiEncoding {
    * @param zsciiChar a cursor key
    * @return true if cursor key, false, otherwise
    */
-  public static boolean isCursorKey(final short zsciiChar) {
+  public static boolean isCursorKey(final char zsciiChar) {
     
     return zsciiChar >= CURSOR_UP && zsciiChar <= CURSOR_RIGHT; 
   }
@@ -242,7 +242,7 @@ public class ZsciiEncoding {
    * @param zchar a zscii character
    * @return the unicode character
    */
-  private static boolean isUnicodeCharacter(final short zchar) {
+  private static boolean isUnicodeCharacter(final char zchar) {
     
     return zchar >= 256;
   }
@@ -253,7 +253,7 @@ public class ZsciiEncoding {
    * @param zsciiChar the zscii char
    * @return true if function key, false, otherwise
    */
-  public static boolean isFunctionKey(final short zsciiChar) {
+  public static boolean isFunctionKey(final char zsciiChar) {
     
     return (zsciiChar >= 129 && zsciiChar <= 154)
            || (zsciiChar >= 252 && zsciiChar <= 254);
@@ -265,15 +265,15 @@ public class ZsciiEncoding {
    * @param zsciiChar the ZSCII character to convert
    * @return the lower case character
    */
-  public short toLower(final short zsciiChar) {
+  public char toLower(final char zsciiChar) {
   
     if (isAscii(zsciiChar)) {
       
-      return (short) Character.toLowerCase(zsciiChar);
+      return Character.toLowerCase(zsciiChar);
     }
     if (isAccent(zsciiChar)) {
       
-      return (short) (accentTable.getIndexOfLowerCase(zsciiChar - ACCENT_START)
+      return (char) (accentTable.getIndexOfLowerCase(zsciiChar - ACCENT_START)
                       + ACCENT_START);
     }
     return zsciiChar;

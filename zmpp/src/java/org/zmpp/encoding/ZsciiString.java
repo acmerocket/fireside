@@ -40,7 +40,7 @@ public class ZsciiString {
   /**
    * The string data.
    */
-  private short[] data;
+  private char[] data;
   
   /**
    * Global initialization method.
@@ -57,7 +57,7 @@ public class ZsciiString {
    * 
    * @param data the source array
    */
-  public ZsciiString(final short[] data) {
+  public ZsciiString(final char[] data) {
     
     super();
     this.data = data;
@@ -80,7 +80,7 @@ public class ZsciiString {
    * @param pos the position
    * @return the character
    */
-  public short charAt(final int pos) {
+  public char charAt(final int pos) {
     
     return data[pos];
   }
@@ -142,7 +142,7 @@ public class ZsciiString {
   public ZsciiString substring(final int startindex, final int endindex) {
 
     final int n = endindex - startindex;
-    final short[] dat = new short[n];
+    final char[] dat = new char[n];
     for (int i = 0; i < n; i++) {
       
       dat[i] = charAt(startindex + i);
@@ -174,7 +174,7 @@ public class ZsciiString {
     }
     if (o instanceof ZsciiString) {
       
-      final short[] data2 = ((ZsciiString) o).data;
+      final char[] data2 = ((ZsciiString) o).data;
       if (data.length == data2.length) {
         
         for (int i = 0; i < data.length; i++) {

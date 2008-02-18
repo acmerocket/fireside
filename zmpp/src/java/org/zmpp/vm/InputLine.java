@@ -37,7 +37,7 @@ public interface InputLine {
    * @param pointer the pointer
    * @return the new pointer after delete
    */
-  int deletePreviousChar(List<Short> inputbuffer, int pointer);
+  int deletePreviousChar(List<Character> inputbuffer, int pointer);
 
   /**
    * Adds a character to the current input line.
@@ -48,6 +48,6 @@ public interface InputLine {
    * @param zsciiChar the character to add
    * @return the new pointer
    */
-  int addChar(List<Short> inputbuffer, int textbuffer, int pointer,
-              short zsciiChar);
+  int addChar(List<Character> inputbuffer, int textbuffer, int pointer,
+              char zsciiChar);
 }

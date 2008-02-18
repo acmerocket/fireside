@@ -98,14 +98,14 @@ public interface Output {
    * @param zchar the ZSCII character to print
    * @param isInput true if this is echoing input
    */
-  void printZsciiChar(short zchar, boolean isInput);
+  void printZsciiChar(char zchar, boolean isInput);
   
   /**
    * Deletes the specified ZSCII character. This implements a backspace.
    * 
    * @param zchar the character to delete
    */
-  void deletePreviousZsciiChar(short zchar);
+  void deletePreviousZsciiChar(char zchar);
   
   /**
    * Prints the specified signed number.

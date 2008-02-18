@@ -35,15 +35,14 @@ public class ZsciiStringBuilder {
   /**
    * This list holds the data.
    */
-  private List<Short> data = new ArrayList<Short>();
+  private List<Character> data = new ArrayList<Character>();
 
   /**
    * Adds a ZSCII character to the builder object.
    * 
    * @param zsciiChar the ZSCII char to add
    */
-  public void append(final short zsciiChar) {
-    
+  public void append(final char zsciiChar) {
     data.add(zsciiChar);
   }
   
@@ -54,9 +53,7 @@ public class ZsciiStringBuilder {
    * @param str a ZSCII string
    */
   public void append(final ZsciiString str) {
-    
     for (int i = 0, n = str.length(); i < n; i++) {
-      
       append(str.charAt(i));
     }
   }
@@ -67,10 +64,8 @@ public class ZsciiStringBuilder {
    * @return the ZSCII string
    */
   public ZsciiString toZsciiString() {
-  
-    final short[] strdata = new short[data.size()];
+    final char[] strdata = new char[data.size()];
     for (int i = 0; i < strdata.length; i++) {
-      
       strdata[i] = data.get(i);
     }
     return new ZsciiString(strdata);
@@ -82,7 +77,6 @@ public class ZsciiStringBuilder {
    * @return the length
    */
   public int length() {
-    
     return data.size();
   }
   
@@ -90,7 +84,6 @@ public class ZsciiStringBuilder {
    * {@inheritDoc}
    */
   public String toString() {
-    
     return toZsciiString().toString();
   }  
 }

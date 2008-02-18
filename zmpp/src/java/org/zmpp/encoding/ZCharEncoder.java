@@ -119,7 +119,7 @@ public class ZCharEncoder {
   
   private void processChar(final EncodingState state) {
     
-    final short zsciiChar = state.memory.readUnsignedByte(state.source++);
+    final char zsciiChar = (char) state.memory.readUnsignedByte(state.source++);
     final AlphabetElement element = translator.getAlphabetElementFor(zsciiChar);
     if (element.getAlphabet() == null) {
      

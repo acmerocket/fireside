@@ -46,18 +46,17 @@ public class CommandHistory {
    */
   private static class HistoryEntry {
   
-    public List<Short> original;
-    public List<Short> edited;
+    public List<Character> original;
+    public List<Character> edited;
     public HistoryEntry() {
-      
-      original = new ArrayList<Short>();
-      edited = new ArrayList<Short>();
+      original = new ArrayList<Character>();
+      edited = new ArrayList<Character>();
     }
     
     public String toString() {
       
-      short[] orig = new short[original.size()];
-      short[] edit = new short[edited.size()];
+      char[] orig = new char[original.size()];
+      char[] edit = new char[edited.size()];
       
       for (int i = 0; i < original.size(); i++) {
         orig[i] = original.get(i);
@@ -105,7 +104,7 @@ public class CommandHistory {
    * @param zsciiChar the character
    * @return true if history character
    */
-  public boolean isHistoryChar(final short zsciiChar) {
+  public boolean isHistoryChar(final char zsciiChar) {
     
     return zsciiChar == ZsciiEncoding.CURSOR_UP
            || zsciiChar == ZsciiEncoding.CURSOR_DOWN;
@@ -131,7 +130,7 @@ public class CommandHistory {
    * 
    * @param inputbuffer the input buffer
    */
-  public void addInputLine(final List<Short> inputbuffer) {
+  public void addInputLine(final List<Character> inputbuffer) {
     
     final HistoryEntry entry = new HistoryEntry();
     entry.original.addAll(inputbuffer);
@@ -162,8 +161,8 @@ public class CommandHistory {
    * @param zsciiChar the character
    * @return the new pointer in the text buffer
    */
-  public int switchHistoryEntry(final List<Short> inputbuffer,
-      final int textbuffer, final int pointer, final short zsciiChar) {
+  public int switchHistoryEntry(final List<Character> inputbuffer,
+      final int textbuffer, final int pointer, final char zsciiChar) {
 
     if (zsciiChar == ZsciiEncoding.CURSOR_UP) {
       
@@ -175,7 +174,7 @@ public class CommandHistory {
     }
   }
   
-  private int processHistoryUp(final List<Short> inputbuffer,
+  private int processHistoryUp(final List<Character> inputbuffer,
       final int textbuffer, final int pointer) {
     
     int newpointer = pointer;
@@ -189,7 +188,7 @@ public class CommandHistory {
     return newpointer;
   }
   
-  private int processHistoryDown(final List<Short> inputbuffer, 
+  private int processHistoryDown(final List<Character> inputbuffer, 
       final int textbuffer, final int pointer) {
 
     int newpointer = pointer;
@@ -204,13 +203,13 @@ public class CommandHistory {
     return newpointer;
   }
   
-  private int fillInputLineFromHistory(final List<Short> inputbuffer,
+  private int fillInputLineFromHistory(final List<Character> inputbuffer,
       final int textbuffer, final int pointer) {
     
     int newpointer = deleteInputLine(inputbuffer, pointer);
     if (history.size() > historyIndex) {
       
-      final List<Short> input = history.get(historyIndex).edited;
+      final List<Character> input = history.get(historyIndex).edited;
       for (int i = 0; i < input.size(); i++) {
         
         newpointer = inputline.addChar(inputbuffer, textbuffer, newpointer,
@@ -226,7 +225,7 @@ public class CommandHistory {
    * 
    * @param inputbuffer the input buffer
    */
-  private void storeCurrentInput(final List<Short> inputbuffer) {
+  private void storeCurrentInput(final List<Character> inputbuffer) {
     
     if (historyIndex < history.size()) {
       
@@ -250,7 +249,7 @@ public class CommandHistory {
    * @param pointer the pointer in the text buffer
    * @return the new pointer in the text buffer
    */
-  private int deleteInputLine(final List<Short> inputbuffer,
+  private int deleteInputLine(final List<Character> inputbuffer,
       final int pointer) {
 
     final int n = inputbuffer.size();

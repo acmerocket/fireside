@@ -41,7 +41,7 @@ public interface InputStream {
    * @param flushBeforeGet flushes the stream before the get operation
    * @return the ZSCII character
    */
-  short getZsciiChar(boolean flushBeforeGet);
+  char getZsciiChar(boolean flushBeforeGet);
   
   /**
    * Release underlying resources.

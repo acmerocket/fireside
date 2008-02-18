@@ -82,7 +82,7 @@ public class DefaultZCharTranslator implements Cloneable, ZCharTranslator {
   /**
    * {@inheritDoc}
    */
-  public char translate(final short zchar) {
+  public char translate(final char zchar) {
     if (shift(zchar)) {
       return '\0';
     }
@@ -115,21 +115,21 @@ public class DefaultZCharTranslator implements Cloneable, ZCharTranslator {
   /**
    * {@inheritDoc}
    */
-  public boolean willEscapeA2(final short zchar) {
+  public boolean willEscapeA2(final char zchar) {
     return currentAlphabet == Alphabet.A2 && zchar == AlphabetTable.A2_ESCAPE;
   }
   
   /**
    * {@inheritDoc}
    */
-  public boolean isAbbreviation(final short zchar) {
+  public boolean isAbbreviation(final char zchar) {
     return alphabetTable.isAbbreviation(zchar);
   }
 
   /**
    * {@inheritDoc}
    */
-  public AlphabetElement getAlphabetElementFor(final short zsciiChar) {
+  public AlphabetElement getAlphabetElementFor(final char zsciiChar) {
     // Special handling for newline !!
     if (zsciiChar == '\n') {
       return new AlphabetElement(Alphabet.A2, (short) 7);
@@ -166,7 +166,7 @@ public class DefaultZCharTranslator implements Cloneable, ZCharTranslator {
    * @param zchar the zchar value
    * @return true if the value is in the alphabet range, false, otherwise
    */
-  private static boolean isInAlphabetRange(final short zchar) {
+  private static boolean isInAlphabetRange(final char zchar) {
     return 0 <= zchar && zchar <= AlphabetTable.ALPHABET_END;
   }
   
@@ -175,7 +175,7 @@ public class DefaultZCharTranslator implements Cloneable, ZCharTranslator {
    * @param zchar a z encoded character
    * @return true if a shift was performed, false, otherwise
    */
-  private boolean shift(final short zchar) {
+  private boolean shift(final char zchar) {
   
     if (alphabetTable.isShift(zchar)) {
       currentAlphabet = shiftFrom(currentAlphabet, zchar);
@@ -195,7 +195,7 @@ public class DefaultZCharTranslator implements Cloneable, ZCharTranslator {
    * @param shiftChar the shift character
    * @return the resulting alphabet
    */
-  private Alphabet shiftFrom(final Alphabet alphabet, final short shiftChar) {
+  private Alphabet shiftFrom(final Alphabet alphabet, final char shiftChar) {
     Alphabet result = null;
     
     if (alphabetTable.isShift1(shiftChar)) {

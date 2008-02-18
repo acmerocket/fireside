@@ -191,7 +191,7 @@ public class MachineImpl implements Machine {
   /**
    * {@inheritDoc}
    */
-  public short readLine(final int textbuffer, final int time,
+  public char readLine(final int textbuffer, final int time,
       final int routineAddress) {
     return inputFunctions.readLine(textbuffer, time, routineAddress);
   }
@@ -199,7 +199,7 @@ public class MachineImpl implements Machine {
   /**
    * {@inheritDoc}
    */
-  public short readChar(final int time, final int routineAddress) {
+  public char readChar(final int time, final int routineAddress) {
     return inputFunctions.readChar(time, routineAddress);
   }
   

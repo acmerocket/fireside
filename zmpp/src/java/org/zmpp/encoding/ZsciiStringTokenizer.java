@@ -88,7 +88,7 @@ public class ZsciiStringTokenizer {
     
     while (currentIndex < inputlength) {
       
-      final short currentChar = input.charAt(currentIndex);
+      final char currentChar = input.charAt(currentIndex);
       if (isDelimiter(currentChar, delim)) {
 
         if (currentTokenBuilder.length() > 0) {
@@ -96,7 +96,7 @@ public class ZsciiStringTokenizer {
           tokens.add(currentTokenBuilder.toZsciiString());
           currentTokenBuilder = new ZsciiStringBuilder();
         }
-        tokens.add(new ZsciiString(new short[] { currentChar }));
+        tokens.add(new ZsciiString(new char[] { currentChar }));
         
       } else {
         
@@ -121,7 +121,7 @@ public class ZsciiStringTokenizer {
    * @param delim the delimiter string
    * @return true, delimiter, false, otherwise
    */
-  private static boolean isDelimiter(final short zsciiChar,
+  private static boolean isDelimiter(final char zsciiChar,
       final ZsciiString delim) {
     
     for (int i = 0, n = delim.length(); i < n; i++) {

@@ -55,43 +55,42 @@ public class AlphabetTableTest extends TestCase {
   }
   
   public void testIsAbbreviation() {
-    
-    assertFalse(v1Table.isAbbreviation((short)1));
-    assertFalse(v1Table.isAbbreviation((short)2));
-    assertFalse(v1Table.isAbbreviation((short)3));
+    assertFalse(v1Table.isAbbreviation((char) 1));
+    assertFalse(v1Table.isAbbreviation((char) 2));
+    assertFalse(v1Table.isAbbreviation((char) 3));
 
-    assertTrue(v2Table.isAbbreviation((short)1));
-    assertFalse(v2Table.isAbbreviation((short)2));
-    assertFalse(v2Table.isAbbreviation((short)3));
+    assertTrue(v2Table.isAbbreviation((char)  1));
+    assertFalse(v2Table.isAbbreviation((char) 2));
+    assertFalse(v2Table.isAbbreviation((char) 3));
   }
 
   public void testShiftChars() {
     
-    assertTrue(v1Table.isShift(AlphabetTable.SHIFT_2));
-    assertTrue(v1Table.isShift(AlphabetTable.SHIFT_3));
-    assertTrue(v2Table.isShift(AlphabetTable.SHIFT_2));
-    assertTrue(v2Table.isShift(AlphabetTable.SHIFT_3));
-    assertFalse(v1Table.isShiftLock(AlphabetTable.SHIFT_2));
-    assertFalse(v1Table.isShiftLock(AlphabetTable.SHIFT_3));
-    assertFalse(v2Table.isShiftLock(AlphabetTable.SHIFT_2));
-    assertFalse(v2Table.isShiftLock(AlphabetTable.SHIFT_3));
+    assertTrue(v1Table.isShift((char) AlphabetTable.SHIFT_2));
+    assertTrue(v1Table.isShift((char) AlphabetTable.SHIFT_3));
+    assertTrue(v2Table.isShift((char) AlphabetTable.SHIFT_2));
+    assertTrue(v2Table.isShift((char) AlphabetTable.SHIFT_3));
+    assertFalse(v1Table.isShiftLock((char) AlphabetTable.SHIFT_2));
+    assertFalse(v1Table.isShiftLock((char) AlphabetTable.SHIFT_3));
+    assertFalse(v2Table.isShiftLock((char) AlphabetTable.SHIFT_2));
+    assertFalse(v2Table.isShiftLock((char) AlphabetTable.SHIFT_3));
 
-    assertFalse(v1Table.isShiftLock(AlphabetTable.SHIFT_2));
-    assertFalse(v1Table.isShiftLock(AlphabetTable.SHIFT_3));
-    assertFalse(v2Table.isShiftLock(AlphabetTable.SHIFT_2));
-    assertFalse(v2Table.isShiftLock(AlphabetTable.SHIFT_3));
-    assertTrue(v1Table.isShiftLock(AlphabetTable.SHIFT_4));
-    assertTrue(v1Table.isShiftLock(AlphabetTable.SHIFT_5));
-    assertTrue(v2Table.isShiftLock(AlphabetTable.SHIFT_4));
-    assertTrue(v2Table.isShiftLock(AlphabetTable.SHIFT_5));
+    assertFalse(v1Table.isShiftLock((char) AlphabetTable.SHIFT_2));
+    assertFalse(v1Table.isShiftLock((char) AlphabetTable.SHIFT_3));
+    assertFalse(v2Table.isShiftLock((char) AlphabetTable.SHIFT_2));
+    assertFalse(v2Table.isShiftLock((char) AlphabetTable.SHIFT_3));
+    assertTrue(v1Table.isShiftLock((char) AlphabetTable.SHIFT_4));
+    assertTrue(v1Table.isShiftLock((char) AlphabetTable.SHIFT_5));
+    assertTrue(v2Table.isShiftLock((char) AlphabetTable.SHIFT_4));
+    assertTrue(v2Table.isShiftLock((char) AlphabetTable.SHIFT_5));
     
-    assertFalse(defaultTable.isShift(AlphabetTable.SHIFT_2));
-    assertFalse(defaultTable.isShift(AlphabetTable.SHIFT_3));
-    assertTrue(defaultTable.isShift(AlphabetTable.SHIFT_4));
-    assertTrue(defaultTable.isShift(AlphabetTable.SHIFT_5));
-    assertFalse(defaultTable.isShiftLock(AlphabetTable.SHIFT_2));
-    assertFalse(defaultTable.isShiftLock(AlphabetTable.SHIFT_3));
-    assertFalse(defaultTable.isShiftLock(AlphabetTable.SHIFT_4));
-    assertFalse(defaultTable.isShiftLock(AlphabetTable.SHIFT_5));
+    assertFalse(defaultTable.isShift((char) AlphabetTable.SHIFT_2));
+    assertFalse(defaultTable.isShift((char) AlphabetTable.SHIFT_3));
+    assertTrue(defaultTable.isShift((char) AlphabetTable.SHIFT_4));
+    assertTrue(defaultTable.isShift((char) AlphabetTable.SHIFT_5));
+    assertFalse(defaultTable.isShiftLock((char) AlphabetTable.SHIFT_2));
+    assertFalse(defaultTable.isShiftLock((char) AlphabetTable.SHIFT_3));
+    assertFalse(defaultTable.isShiftLock((char) AlphabetTable.SHIFT_4));
+    assertFalse(defaultTable.isShiftLock((char) AlphabetTable.SHIFT_5));
   }
 }

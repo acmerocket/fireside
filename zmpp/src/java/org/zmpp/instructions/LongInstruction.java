@@ -189,8 +189,10 @@ public class LongInstruction extends AbstractInstruction {
     } else {
       
       for (int i = 1; i < getNumOperands(); i++) {
+        short value = getValue(i);
+        //System.out.printf("Compare %d to %d\n", op1, value);
         
-        if (op1 == getValue(i)) {
+        if (op1 == value) {
           
           equalsFollowing = true;
           break;

@@ -64,7 +64,7 @@ public class InputFunctionsTest extends MockObjectTestCase {
   
   private InputFunctions inputFunctions;
   private int textbuffer;
-  private List<Short> inputbuffer;
+  private List<Character> inputbuffer;
 
   protected void setUp() throws Exception {
 
@@ -90,7 +90,7 @@ public class InputFunctionsTest extends MockObjectTestCase {
     
     inputFunctions = new InputFunctions(machine);
     textbuffer = 4711;
-    inputbuffer = new ArrayList<Short>();
+    inputbuffer = new ArrayList<Character>();
   }
 
   // *********************************************************************
@@ -134,12 +134,12 @@ public class InputFunctionsTest extends MockObjectTestCase {
         
     int pointer = inputFunctions.checkForPreviousInput(textbuffer, inputbuffer);
     
-    List<Short> compareBuffer = new ArrayList<Short>();
-    compareBuffer.add((short)'S');
-    compareBuffer.add((short)'t');
-    compareBuffer.add((short)'a');
-    compareBuffer.add((short)'r');
-    compareBuffer.add((short)'t');
+    List<Character> compareBuffer = new ArrayList<Character>();
+    compareBuffer.add('S');
+    compareBuffer.add('t');
+    compareBuffer.add('a');
+    compareBuffer.add('r');
+    compareBuffer.add('t');
     assertEquals(7, pointer);
     assertEquals(5, inputbuffer.size());
     assertEquals(compareBuffer, inputbuffer);
@@ -262,8 +262,7 @@ public class InputFunctionsTest extends MockObjectTestCase {
    * Simple case: NULL as terminator.
    */
   public void testHandleTerminateCharNull() {
-    
-    short result = inputFunctions.handleTerminateChar(ZsciiEncoding.NULL);
+    char result = inputFunctions.handleTerminateChar(ZsciiEncoding.NULL);
     assertEquals(ZsciiEncoding.NULL, result);
   }
 
@@ -271,10 +270,9 @@ public class InputFunctionsTest extends MockObjectTestCase {
    * Simple case: Newline as terminator.
    */
   public void testHandleTerminateCharNewline() {
-    
     mockMachine.expects(once()).method("getOutput").will(returnValue(output));
-    mockOutput.expects(once()).method("printZsciiChar").with(eq((short)ZsciiEncoding.NEWLINE), eq(false));
-    short result = inputFunctions.handleTerminateChar(ZsciiEncoding.NEWLINE);
+    mockOutput.expects(once()).method("printZsciiChar").with(eq((char)ZsciiEncoding.NEWLINE), eq(false));
+    char result = inputFunctions.handleTerminateChar(ZsciiEncoding.NEWLINE);
     assertEquals(ZsciiEncoding.NEWLINE, result);
   }
 
@@ -282,8 +280,7 @@ public class InputFunctionsTest extends MockObjectTestCase {
    * Some other function key.
    */
   public void testHandleTerminateSomeFunctionKey() {
-    
-    short result = inputFunctions.handleTerminateChar((short) 130);
+    char result = inputFunctions.handleTerminateChar((char) 130);
     assertEquals((short) 130, result);
   }
   
@@ -376,13 +373,13 @@ public class InputFunctionsTest extends MockObjectTestCase {
     mockMemory.expects(once()).method("readUnsignedByte").with(eq(textbuffer)).will(returnValue((short) 200));
     mockInput.expects(atLeastOnce()).method("getSelectedInputStream").will(returnValue(inputstream));
     mockInputStream.expects(atLeastOnce()).method("getZsciiChar").will(onConsecutiveCalls(
-        returnValue((short) 'h'), returnValue((short) 'i'), returnValue(ZsciiEncoding.NEWLINE)));
+        returnValue('h'), returnValue('i'), returnValue(ZsciiEncoding.NEWLINE)));
     mockMemory.expects(once()).method("writeUnsignedByte").with(eq(textbuffer + 2), eq((short) 'h'));
     mockMemory.expects(once()).method("writeUnsignedByte").with(eq(textbuffer + 3), eq((short) 'i'));
     
     // echo
-    mockOutput.expects(once()).method("printZsciiChar").with(eq((short) 'h'), eq(true));
-    mockOutput.expects(once()).method("printZsciiChar").with(eq((short) 'i'), eq(true));
+    mockOutput.expects(once()).method("printZsciiChar").with(eq('h'), eq(true));
+    mockOutput.expects(once()).method("printZsciiChar").with(eq('i'), eq(true));
     
     // screen set cursor expected
     mockMachine.expects(atLeastOnce()).method("getScreen").will(returnValue(screen));
@@ -413,7 +410,7 @@ public class InputFunctionsTest extends MockObjectTestCase {
     mockMemory.expects(once()).method("readUnsignedByte").with(eq(textbuffer)).will(returnValue((short) 200));
     mockInput.expects(atLeastOnce()).method("getSelectedInputStream").will(returnValue(inputstream));
     mockInputStream.expects(atLeastOnce()).method("getZsciiChar").will(onConsecutiveCalls(
-        returnValue((short) 'h'), returnValue((short) 'i'), returnValue((short) 130)));
+        returnValue('h'), returnValue('i'), returnValue((char) 130)));
     mockMemory.expects(once()).method("writeUnsignedByte").with(eq(textbuffer + 2), eq((short) 'h'));
     mockMemory.expects(once()).method("writeUnsignedByte").with(eq(textbuffer + 3), eq((short) 'i'));
     
@@ -422,8 +419,8 @@ public class InputFunctionsTest extends MockObjectTestCase {
     mockMemory.expects(atLeastOnce()).method("readUnsignedByte").with(eq(1235)).will(returnValue((short) 0));
     
     // echo
-    mockOutput.expects(once()).method("printZsciiChar").with(eq((short) 'h'), eq(true));
-    mockOutput.expects(once()).method("printZsciiChar").with(eq((short) 'i'), eq(true));
+    mockOutput.expects(once()).method("printZsciiChar").with(eq('h'), eq(true));
+    mockOutput.expects(once()).method("printZsciiChar").with(eq('i'), eq(true));
     
     // screen set cursor expected
     mockMachine.expects(atLeastOnce()).method("getScreen").will(returnValue(screen));

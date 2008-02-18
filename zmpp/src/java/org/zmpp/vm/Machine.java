@@ -122,7 +122,7 @@ public interface Machine extends ObjectTree {
    * @param routineAddress the packed routine address
    * @return the terminating character
    */
-  short readLine(int textbuffer, int time, int routineAddress);
+  char readLine(int textbuffer, int time, int routineAddress);
   
   /**
    * Reads a ZSCII char from the selected input stream.
@@ -130,7 +130,7 @@ public interface Machine extends ObjectTree {
    * @param routineAddress the packed routine address to call (timed input)
    * @return the selected ZSCII char
    */
-  short readChar(int time, int routineAddress);  
+  char readChar(int time, int routineAddress);  
   
   /**
    * Returns the sound system.

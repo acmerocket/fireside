@@ -43,15 +43,13 @@ implements InputLine {
   // ***** Input line functions
   // **************************************
   
-  public int deletePreviousChar(List<Short> inputbuffer, int pointer) {
-   
+  public int deletePreviousChar(List<Character> inputbuffer, int pointer) {
     inputbuffer.remove(inputbuffer.size() - 1);
     return pointer - 1;
   }
   
-  public int addChar(List<Short> inputbuffer,
-      int textbuffer, int pointer, short zchar) {
-    
+  public int addChar(List<Character> inputbuffer,
+      int textbuffer, int pointer, char zchar) {
     inputbuffer.add(zchar);
     return pointer + 1;
   }
@@ -64,7 +62,7 @@ implements InputLine {
     history.reset();
     assertEquals(0, history.getCurrentIndex());
     
-    List<Short> inputline = new ArrayList<Short>();
+    List<Character> inputline = new ArrayList<Character>();
     history.addInputLine(inputline);
     history.reset();
     assertEquals(1, history.getCurrentIndex());
@@ -75,6 +73,6 @@ implements InputLine {
     assertTrue(history.isHistoryChar(ZsciiEncoding.CURSOR_UP));
     assertTrue(history.isHistoryChar(ZsciiEncoding.CURSOR_DOWN));
     assertFalse(history.isHistoryChar(ZsciiEncoding.CURSOR_LEFT));
-    assertFalse(history.isHistoryChar((short) 'a'));
+    assertFalse(history.isHistoryChar('a'));
   }
 }

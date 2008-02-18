@@ -35,7 +35,7 @@ public interface OutputStream {
    * @param zchar the ZSCII character to print
    * @param isInput is true if the character is an echo to the input
    */
-  void print(short zchar, boolean isInput);
+  void print(char zchar, boolean isInput);
   
   /**
    * This function is only used by the input function in order to
@@ -45,7 +45,7 @@ public interface OutputStream {
    * 
    * @param zchar the character to delete
    */
-  void deletePrevious(short zchar);
+  void deletePrevious(char zchar);
   
   /**
    * Close underlying resources.

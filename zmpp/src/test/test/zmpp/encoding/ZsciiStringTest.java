@@ -40,10 +40,9 @@ public class ZsciiStringTest extends TestCase {
     ZsciiString.initialize(encoding);
   }
 
-  public void testCreateString() {
-    
-    short[] chars = { (short) 'H', (short) 'i' };
-    short[] charsAccented = { (short) 'H', (short) 155 };
+  public void testCreateString() { 
+    char[] chars = { (short) 'H', (short) 'i' };
+    char[] charsAccented = { (short) 'H', (short) 155 };
     
     ZsciiString strHi = new ZsciiString(chars);
     ZsciiString strHae = new ZsciiString(charsAccented);
@@ -52,16 +51,14 @@ public class ZsciiStringTest extends TestCase {
   }
   
   public void testStringLength() {
-    
-    short[] chars = { (short) 'H', (short) 'i' };
+    char[] chars = { 'H', 'i' };
     ZsciiString strHi = new ZsciiString(chars);
     assertEquals(2, strHi.length());
   }
   
   public void testNotEquals() {
-    
-    short[] chars = { (short) 'H', (short) 'i' };
-    short[] charsAccented = { (short) 'H', (short) 155 };
+    char[] chars = { 'H', 'i' };
+    char[] charsAccented = { 'H', 155 };
     
     ZsciiString strHi = new ZsciiString(chars);
     ZsciiString strHae = new ZsciiString(charsAccented);
@@ -71,9 +68,8 @@ public class ZsciiStringTest extends TestCase {
   }
   
   public void testEquals() {
-    
-    short[] chars1 = { (short) 'H', (short) 'i' };
-    short[] chars2 = { (short) 'H', (short) 'i' };
+    char[] chars1 = { 'H', 'i' };
+    char[] chars2 = { 'H', 'i' };
     ZsciiString strHi1 = new ZsciiString(chars1);
     ZsciiString strHi2 = new ZsciiString(chars1);
     ZsciiString strHi3 = new ZsciiString(chars2);
@@ -85,9 +81,9 @@ public class ZsciiStringTest extends TestCase {
   
   public void testHashCode() {
     
-    short[] chars1 = { (short) 'H', (short) 'i' };
-    short[] chars2 = { (short) 'H', (short) 'i' };
-    short[] charsAccented = { (short) 'H', (short) 155 };
+    char[] chars1 = { 'H', 'i' };
+    char[] chars2 = { 'H', 'i' };
+    char[] charsAccented = { 'H', 155 };
     ZsciiString strHi1 = new ZsciiString(chars1);
     ZsciiString strHi2 = new ZsciiString(chars1);
     ZsciiString strHi3 = new ZsciiString(chars2);
@@ -100,20 +96,18 @@ public class ZsciiStringTest extends TestCase {
   }
   
   public void testCharAt() {
-    
-    short[] chars1 = { (short) 'H', (short) 'i' };
+    char[] chars1 = { 'H', 'i' };
     ZsciiString strHi1 = new ZsciiString(chars1);
     assertEquals((short) 'H', strHi1.charAt(0));
     assertEquals((short) 'i', strHi1.charAt(1));
   }
   
   public void testIndexOf() {
-    
-    short[] chars = { 'H', 'e', 'l', 'l', 'o', ' ', 'W', 'o', 'r', 'l', 'd' };
-    short[] sub1 = { 'H' };
-    short[] sub2 = { 'l' };
-    short[] sub3 = { 'l', 'o', ' ' };
-    short[] no = { 'n', 'o' };
+    char[] chars = { 'H', 'e', 'l', 'l', 'o', ' ', 'W', 'o', 'r', 'l', 'd' };
+    char[] sub1 = { 'H' };
+    char[] sub2 = { 'l' };
+    char[] sub3 = { 'l', 'o', ' ' };
+    char[] no = { 'n', 'o' };
     ZsciiString hello = new ZsciiString(chars);
     ZsciiString substr1 = new ZsciiString(sub1);
     ZsciiString substr2 = new ZsciiString(sub2);
@@ -129,8 +123,7 @@ public class ZsciiStringTest extends TestCase {
   }
   
   public void testSubstring() {
-    
-    short[] chars = { 'H', 'e', 'l', 'l', 'o', ' ', 'W', 'o', 'r', 'l', 'd' };
+    char[] chars = { 'H', 'e', 'l', 'l', 'o', ' ', 'W', 'o', 'r', 'l', 'd' };
     ZsciiString hello = new ZsciiString(chars);
     ZsciiString sub0 = hello.substring(0, 1);
     ZsciiString sub1 = hello.substring(0, 2);

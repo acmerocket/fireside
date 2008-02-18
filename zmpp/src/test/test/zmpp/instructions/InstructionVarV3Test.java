@@ -188,7 +188,7 @@ public class InstructionVarV3Test extends InstructionTestBase {
   @Test
   public void testPrintChar() {
     mockMachine.expects(once()).method("getOutput").will(returnValue(output));
-    mockOutput.expects(once()).method("printZsciiChar").with(eq((short) 97), eq(false));
+    mockOutput.expects(once()).method("printZsciiChar").with(eq((char) 97), eq(false));
     mockMachine.expects(atLeastOnce()).method("getCpu").will(returnValue(cpu));
     mockCpu.expects(once()).method("incrementProgramCounter").with(eq(5));
     

@@ -70,7 +70,7 @@ public class TranscriptOutputStream implements OutputStream {
   /**
    * {@inheritDoc}
    */
-  public void print(final short zsciiChar, final boolean isInput) {
+  public void print(final char zsciiChar, final boolean isInput) {
     
     initFile();
     if (output != null) {
@@ -161,8 +161,7 @@ public class TranscriptOutputStream implements OutputStream {
   /**
    * {@inheritDoc}
    */
-  public void deletePrevious(final short zchar) {
-    
+  public void deletePrevious(final char zchar) {
     // transcript does not support deleting
   }
 }

@@ -30,7 +30,6 @@ import org.zmpp.encoding.ZsciiStringBuilder;
 public class ZsciiStringBuilderTest extends TestCase {
 
   public void testEmpty() {
-
     ZsciiString.initialize(new ZsciiEncoding(new DefaultAccentTable()));
     ZsciiStringBuilder builder = new ZsciiStringBuilder();
     assertEquals(0, builder.toZsciiString().length());
@@ -38,20 +37,18 @@ public class ZsciiStringBuilderTest extends TestCase {
   }
   
   public void testAppend() {
-    
     ZsciiStringBuilder builder = new ZsciiStringBuilder();
-    builder.append((short) 'a');
+    builder.append('a');
     assertEquals(1, builder.toZsciiString().length());
     assertEquals("a", builder.toZsciiString().toString());
     assertEquals("a", builder.toString());
   }
 
-  public void testAppendString() {
-    
+  public void testAppendString() { 
     ZsciiStringBuilder builder = new ZsciiStringBuilder();
-    short[] zchars = { 'H', 'i' };
+    char[] zchars = { 'H', 'i' };
     ZsciiString str = new ZsciiString(zchars);
-    builder.append((short) 'a');
+    builder.append('a');
     builder.append(str);
     assertEquals(3, builder.toZsciiString().length());
     assertEquals("aHi", builder.toZsciiString().toString());

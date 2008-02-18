@@ -36,8 +36,8 @@ public class ZsciiStringTokenizerTest extends TestCase {
   
   public void testTokenizeWithSpace() {
     
-    ZsciiString input = new ZsciiString(new short[] { 'H', 'i', ' ', 'y', 'o', 'u' });
-    ZsciiString delim = new ZsciiString(new short[] { ' ' });
+    ZsciiString input = new ZsciiString(new char[] { 'H', 'i', ' ', 'y', 'o', 'u' });
+    ZsciiString delim = new ZsciiString(new char[] { ' ' });
       
     ZsciiStringTokenizer tok = new ZsciiStringTokenizer(input, delim);
     assertEquals("Hi", tok.nextToken().toString());
@@ -47,8 +47,8 @@ public class ZsciiStringTokenizerTest extends TestCase {
 
   public void testTokenizeWithCommaAndSpace() {
     
-    ZsciiString input = new ZsciiString(new short[] { 'H', 'i', ',', ' ', 'y', 'o', 'u' });
-    ZsciiString delim = new ZsciiString(new short[] { ' ', ','});
+    ZsciiString input = new ZsciiString(new char[] { 'H', 'i', ',', ' ', 'y', 'o', 'u' });
+    ZsciiString delim = new ZsciiString(new char[] { ' ', ','});
       
     ZsciiStringTokenizer tok = new ZsciiStringTokenizer(input, delim);
     assertEquals("Hi", tok.nextToken().toString());

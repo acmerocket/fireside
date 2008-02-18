@@ -56,7 +56,7 @@ public interface AlphabetTable {
    * @param zchar a Z encoded character
    * @return the specified character from alphabet 0
    */
-  short getA0Char(byte zchar);
+  char getA0Char(byte zchar);
   
   /**
    * Returns the ZSCII character from alphabet 1 at the specified index.
@@ -64,7 +64,7 @@ public interface AlphabetTable {
    * @param zchar a Z encoded character
    * @return the specified character from alphabet 1
    */
-  short getA1Char(byte zchar);
+  char getA1Char(byte zchar);
   
   /**
    * Returns the ZSCII character from alphabet 2 at the specified index.
@@ -72,7 +72,7 @@ public interface AlphabetTable {
    * @param zchar a Z encoded character
    * @return the specified character from alphabet 2
    */
-  short getA2Char(byte zchar);
+  char getA2Char(byte zchar);
   
   /**
    * Returns the index of the specified ZSCII character in alphabet 0.
@@ -80,7 +80,7 @@ public interface AlphabetTable {
    * @param zsciiChar a ZSCII chararacter
    * @return the index of the character in this alphabet or -1
    */
-  byte getA0CharCode(short zsciiChar);
+  byte getA0CharCode(char zsciiChar);
 
   /**
    * Returns the index of the specified ZSCII character in alphabet 2.
@@ -88,7 +88,7 @@ public interface AlphabetTable {
    * @param zsciiChar a ZSCII chararacter
    * @return the index of the character in this alphabet or -1
    */
-  byte getA1CharCode(short zsciiChar);
+  byte getA1CharCode(char zsciiChar);
 
   /**
    * Returns the index of the specified ZSCII character in alphabet 2.
@@ -96,7 +96,7 @@ public interface AlphabetTable {
    * @param zsciiChar a ZSCII chararacter
    * @return the index of the character in this alphabet or -1
    */
-  byte getA2CharCode(short zsciiChar);
+  byte getA2CharCode(char zsciiChar);
   
   /**
    * Determines if the specified character marks a abbreviation. 
@@ -104,7 +104,7 @@ public interface AlphabetTable {
    * @param zchar the zchar
    * @return true if abbreviation, false, otherwise
    */
-  boolean isAbbreviation(short zchar);
+  boolean isAbbreviation(char zchar);
 
   /**
    * Returns true if the specified character is a shift level 1 character.
@@ -112,7 +112,7 @@ public interface AlphabetTable {
    * @param zchar a Z encoded character
    * @return true if shift, false, otherwise
    */
-  boolean isShift1(short zchar);
+  boolean isShift1(char zchar);
 
   /**
    * Returns true if the specified character is a shift level 2 character.
@@ -120,7 +120,7 @@ public interface AlphabetTable {
    * @param zchar a Z encoded character
    * @return true if shift, false, otherwise
    */
-  boolean isShift2(short zchar);
+  boolean isShift2(char zchar);
   
   /**
    * Returns true if the specified character is a shift lock character.
@@ -128,7 +128,7 @@ public interface AlphabetTable {
    * @param zchar a Z encoded character
    * @return true if shift lock, false otherwise
    */
-  boolean isShiftLock(short zchar);  
+  boolean isShiftLock(char zchar);  
   
   /**
    * Returns true if the specified character is a shift character. Includes
@@ -137,5 +137,5 @@ public interface AlphabetTable {
    * @param zchar a Z encoded character
    * @return true if either shift or shift lock
    */
-  boolean isShift(short zchar);
+  boolean isShift(char zchar);
 }

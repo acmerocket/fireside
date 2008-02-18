@@ -58,8 +58,8 @@ public class DictionaryTest extends MockObjectTestCase {//extends MemoryMapSetup
     decoder = (ZCharDecoder) mockDecoder.proxy();
     ZsciiEncoding encoding = new ZsciiEncoding(new DefaultAccentTable());
     ZsciiString.initialize(encoding);
-    ZsciiString get = new ZsciiString(new short[] { 'g', 'e', 't'});
-    ZsciiString look = new ZsciiString(new short[] { 'l', 'o', 'o', 'k' });
+    ZsciiString get = new ZsciiString(new char[] { 'g', 'e', 't'});
+    ZsciiString look = new ZsciiString(new char[] { 'l', 'o', 'o', 'k' });
 
     // num separators
     mockMemory.expects(exactly(5)).method("readUnsignedByte")
@@ -137,8 +137,8 @@ public class DictionaryTest extends MockObjectTestCase {//extends MemoryMapSetup
 
   public void testLookup() {
     
-    short[] get = { 'g', 'e', 't' };
-    short[] nonsense = { 'n', 'o', 'n', 's', 'e', 'n', 's', 'e' };
+    char[] get = { 'g', 'e', 't' };
+    char[] nonsense = { 'n', 'o', 'n', 's', 'e', 'n', 's', 'e' };
     assertEquals(1007, dictionary.lookup(new ZsciiString(get)));
     assertEquals(0, dictionary.lookup(new ZsciiString(nonsense)));
   }  

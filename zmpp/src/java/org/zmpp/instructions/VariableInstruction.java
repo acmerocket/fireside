@@ -235,7 +235,7 @@ public class VariableInstruction extends AbstractInstruction {
   }
   
   private void print_char() {
-    final short zchar = getValue(0);
+    final char zchar = (char) getUnsignedValue(0);
     getMachine().getOutput().printZsciiChar(zchar, false);
     nextInstruction();
   }
@@ -341,7 +341,7 @@ public class VariableInstruction extends AbstractInstruction {
       packedAddress = getValue(3);
     }
     
-    final short terminal =
+    final char terminal =
       getMachine().readLine(textbuffer, time, packedAddress);
     
     if (version < 5 || (version >= 5 && parsebuffer > 0)) {
@@ -352,7 +352,7 @@ public class VariableInstruction extends AbstractInstruction {
     if (storesResult()) {
       // The specification suggests that we store the terminating character
       // here, this can be NULL or NEWLINE at the moment
-      storeResult(terminal);
+      storeResult((short) terminal);
     }
     nextInstruction();
   }
@@ -528,6 +528,8 @@ public class VariableInstruction extends AbstractInstruction {
       
       storeResult((short) 0);
     }
+    System.out.printf("@SCAN_TABLE, X: %d, TABLE: %d LEN: %d POINTER: %d\n",
+      x, table, length, pointer);
     branchOnTest(found);
   }
 
@@ -544,8 +546,7 @@ public class VariableInstruction extends AbstractInstruction {
       
       routineAddress = getValue(2);
     }
-    storeResult(getMachine().readChar(time,
-        routineAddress));
+    storeResult((short) getMachine().readChar(time, routineAddress));
     nextInstruction();
   }
   
@@ -643,18 +644,16 @@ public class VariableInstruction extends AbstractInstruction {
     
     //System.out.printf("@print_table, zscii-text = %d, width = %d," +
     //    " height = %d, skip = %d\n", zsciiText, width, height, skip);
-    short zchar = 0;
+    char zchar = 0;
     final Memory memory = getMemoryAccess();
     final TextCursor cursor = getMachine().getScreen().getTextCursor();
     final int column = cursor.getColumn();
     int row = cursor.getLine();
     
     for (int i = 0; i < height; i++) {
-      
-      for (int j = 0; j < width; j++) {
-        
+      for (int j = 0; j < width; j++) { 
         final int offset = (width * i) + j;
-        zchar = memory.readUnsignedByte(zsciiText + offset);
+        zchar = (char) memory.readUnsignedByte(zsciiText + offset);
         getMachine().getOutput().printZsciiChar(zchar, false);
       }
       row += skip + 1;

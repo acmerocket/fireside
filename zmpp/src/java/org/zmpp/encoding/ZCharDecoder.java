@@ -68,7 +68,7 @@ public interface ZCharDecoder {
    * 
    * @param zchar a z encoded character, needs to be a non-shift character
    */
-  short decodeZChar(short zchar);
+  char decodeZChar(char zchar);
   
   /**
    * Returns the ZStringTranslator.

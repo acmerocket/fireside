@@ -74,16 +74,15 @@ public class OutputImpl implements Output {
    * {@inheritDoc}
    */
   public void newline() {
-    
     printZsciiChar(ZsciiEncoding.NEWLINE, false);
   }
   
-  private short[] zchars = new short[1];
+  private char[] zchars = new char[1];
   
   /**
    * {@inheritDoc}
    */
-  public void printZsciiChar(final short zchar, final boolean isInput) {
+  public void printZsciiChar(final char zchar, final boolean isInput) {
     
     //System.out.println("printZsciiChar: '" + (char) zchar + "'");
     zchars[0] = zchar;
@@ -93,7 +92,7 @@ public class OutputImpl implements Output {
   /**
    * {@inheritDoc}
    */
-  public void deletePreviousZsciiChar(final short zchar) {
+  public void deletePreviousZsciiChar(final char zchar) {
     
     if (!outputStream[OUTPUTSTREAM_MEMORY - 1].isSelected()) {
           

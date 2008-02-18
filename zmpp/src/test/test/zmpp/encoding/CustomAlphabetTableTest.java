@@ -74,14 +74,14 @@ public class CustomAlphabetTableTest extends MockObjectTestCase {
     for (int i = 0; i < 26; i++) {
       mockMemory.expects(once()).method("readUnsignedByte").with(eq(1000 + i)).will(returnValue((short) 'a'));
     }
-    assertEquals(-1, alphabetTable.getA0CharCode((short) '@'));
+    assertEquals(-1, alphabetTable.getA0CharCode('@'));
   }
 
   public void testA1IndexOfNotFound() {
     for (int i = 0; i < 26; i++) {
       mockMemory.expects(once()).method("readUnsignedByte").with(eq(1026 + i)).will(returnValue((short) 'a'));
     }
-    assertEquals(-1, alphabetTable.getA1CharCode((short) '@'));
+    assertEquals(-1, alphabetTable.getA1CharCode('@'));
   }
 
   public void testA2IndexOfNotFound() {
@@ -90,6 +90,6 @@ public class CustomAlphabetTableTest extends MockObjectTestCase {
     for (int i = 2; i < 26; i++) {
       mockMemory.expects(once()).method("readUnsignedByte").with(eq(1052 + i)).will(returnValue((short) 'a'));
     }
-    assertEquals(-1, alphabetTable.getA2CharCode((short) '@'));
+    assertEquals(-1, alphabetTable.getA2CharCode('@'));
   }
 }

@@ -229,9 +229,9 @@ public class MachineTest extends MiniZorkSetup {
     mockOutputStream1.expects(atLeastOnce()).method("isSelected").will(returnValue(true));
     mockOutputStream2.expects(atLeastOnce()).method("isSelected").will(returnValue(false));
     mockOutputStream3.expects(atLeastOnce()).method("isSelected").will(returnValue(false));
-    mockOutputStream1.expects(atLeastOnce()).method("print").with(eq((short) 'e'), eq(false));
-    mockOutputStream1.expects(atLeastOnce()).method("print").with(eq((short) 'r'), eq(false));
-    mockOutputStream1.expects(atLeastOnce()).method("print").with(eq((short) 'o'), eq(false));
+    mockOutputStream1.expects(atLeastOnce()).method("print").with(eq('e'), eq(false));
+    mockOutputStream1.expects(atLeastOnce()).method("print").with(eq('r'), eq(false));
+    mockOutputStream1.expects(atLeastOnce()).method("print").with(eq('o'), eq(false));
     
     machine.start();
     
@@ -307,19 +307,26 @@ public class MachineTest extends MiniZorkSetup {
     mockScreen.expects(atLeastOnce()).method("displayCursor").with(eq(true));
     mockScreen.expects(atLeastOnce()).method("displayCursor").with(eq(false));
     mockScreen.expects(atLeastOnce()).method("redraw");
-    mockInputStream0.expects(atLeastOnce()).method("getZsciiChar").will(
-        onConsecutiveCalls( returnValue((short) 'H'), returnValue((short) 'i'), returnValue((short) ZsciiEncoding.NEWLINE) ));
+    mockInputStream0.expects(atLeastOnce()).method("getZsciiChar")
+    	.will(onConsecutiveCalls(returnValue('H'), returnValue('i'),
+    				returnValue((char) ZsciiEncoding.NEWLINE)));
     
     mockOutputStream2.expects(atLeastOnce()).method("select").with(eq(false));
     
-    mockOutputStream1.expects(atLeastOnce()).method("isSelected").will(returnValue(true));
-    mockOutputStream2.expects(atLeastOnce()).method("isSelected").will(returnValue(false));
-    mockOutputStream3.expects(atLeastOnce()).method("isSelected").will(returnValue(false));
+    mockOutputStream1.expects(atLeastOnce()).method("isSelected")
+    	.will(returnValue(true));
+    mockOutputStream2.expects(atLeastOnce()).method("isSelected")
+    	.will(returnValue(false));
+    mockOutputStream3.expects(atLeastOnce()).method("isSelected")
+    	.will(returnValue(false));
     mockOutputStream1.expects(once()).method("flush");
 
-    mockOutputStream1.expects(atLeastOnce()).method("print").with(eq((short) 'H'), eq(true));
-    mockOutputStream1.expects(atLeastOnce()).method("print").with(eq((short) 'i'), eq(true));
-    mockOutputStream1.expects(atLeastOnce()).method("print").with(eq((short) ZsciiEncoding.NEWLINE), eq(false));
+    mockOutputStream1.expects(atLeastOnce()).method("print")
+    	.with(eq('H'), eq(true));
+    mockOutputStream1.expects(atLeastOnce()).method("print")
+    	.with(eq('i'), eq(true));
+    mockOutputStream1.expects(atLeastOnce()).method("print")
+    	.with(eq((char) ZsciiEncoding.NEWLINE), eq(false));
     
     input.selectInputStream(0);
     machine.readLine(4711, 0, 0);
@@ -331,16 +338,20 @@ public class MachineTest extends MiniZorkSetup {
     mockScreen.expects(atLeastOnce()).method("displayCursor").with(eq(false));
     mockScreen.expects(atLeastOnce()).method("redraw");
     
-    mockOutputStream1.expects(once()).method("isSelected").will(returnValue(true));
-    mockOutputStream2.expects(once()).method("isSelected").will(returnValue(false));
-    mockOutputStream3.expects(atLeastOnce()).method("isSelected").will(returnValue(false));
+    mockOutputStream1.expects(once()).method("isSelected")
+    	.will(returnValue(true));
+    mockOutputStream2.expects(once()).method("isSelected")
+    	.will(returnValue(false));
+    mockOutputStream3.expects(atLeastOnce()).method("isSelected")
+    	.will(returnValue(false));
     mockOutputStream1.expects(once()).method("flush");
     
-    mockInputStream0.expects(once()).method("getZsciiChar").will(returnValue((short) 'L'));
+    mockInputStream0.expects(once()).method("getZsciiChar")
+    	.will(returnValue('L'));
     
     input.setInputStream(0, inputStream0);
     input.setInputStream(1, inputStream1);
-    short zchar = machine.readChar(0, 0);
-    assertEquals((short) 'L', zchar);
+    char zchar = machine.readChar(0, 0);
+    assertEquals('L', zchar);
   }
 }
