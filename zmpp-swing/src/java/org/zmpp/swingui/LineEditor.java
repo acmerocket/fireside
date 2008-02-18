@@ -48,7 +48,7 @@ public interface LineEditor {
    * 
    * @return the next character
    */
-  short nextZsciiChar();
+  char nextZsciiChar();
   
   /**
    * Returns the input mode.

@@ -312,23 +312,20 @@ implements InputStream, StatusLine, IOSystem {
   public void close() { }
   
   public void cancelInput() {
-    
     lineEditor.cancelInput();
   }
   
   /**
    * {@inheritDoc}
    */
-  public short getZsciiChar(boolean flushBeforeGet) {
-
+  public char getZsciiChar(boolean flushBeforeGet) {
     enterEditMode(flushBeforeGet);
-    short zsciiChar = lineEditor.nextZsciiChar();
+    char zsciiChar = lineEditor.nextZsciiChar();
     leaveEditMode(flushBeforeGet);
     return zsciiChar;
   }
   
   private void enterEditMode(boolean flushbuffer) {
-    
     if (!lineEditor.isInputMode()) {
 
       screen.resetPagers();

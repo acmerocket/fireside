@@ -44,7 +44,6 @@ public class ScreenOutputStream implements OutputStream {
    * @param viewport the viewport
    */
   public ScreenOutputStream(Machine machine, Viewport viewport) {
-  
     this.machine = machine;
     this.viewport = viewport;
   }
@@ -53,7 +52,6 @@ public class ScreenOutputStream implements OutputStream {
    * {@inheritDoc}
    */
   public boolean isSelected() {
-    
     return isSelected;
   }
 
@@ -61,22 +59,17 @@ public class ScreenOutputStream implements OutputStream {
    * {@inheritDoc}
    */
   public void select(boolean flag) {
-  
     isSelected = flag;
   }
   
   /**
    * {@inheritDoc}
    */
-  public void print(final short zsciiChar, boolean isInput) {
-
+  public void print(final char zsciiChar, boolean isInput) {
     //System.out.printf("@print %c (isInput: %b)\n", (char) zsciiChar, isInput);    
     if (zsciiChar == ZsciiEncoding.NEWLINE) {
-    
       viewport.getCurrentWindow().printChar('\n', isInput);
-    
     } else {
-    
       viewport.getCurrentWindow().printChar(
           machine.getGameData().getZsciiEncoding().getUnicodeChar(zsciiChar),
           isInput);
@@ -86,8 +79,7 @@ public class ScreenOutputStream implements OutputStream {
   /**
    * {@inheritDoc}
    */
-  public void deletePrevious(short zchar) {
-    
+  public void deletePrevious(char zchar) {   
     char deleteChar =
       machine.getGameData().getZsciiEncoding().getUnicodeChar(zchar);
     viewport.getCurrentWindow().backspace(deleteChar);
@@ -97,7 +89,6 @@ public class ScreenOutputStream implements OutputStream {
    * {@inheritDoc}
    */
   public void flush() {
-
     viewport.getCurrentWindow().flushBuffer();
   }
     

@@ -35,7 +35,7 @@ public class LineEditorImpl implements LineEditor, KeyListener, MouseListener,
 MouseMotionListener {
 
   private boolean inputmode;
-  private List<Short> editbuffer;
+  private List<Character> editbuffer;
   private StoryFileHeader fileheader;
   private ZsciiEncoding encoding;
   
@@ -45,7 +45,7 @@ MouseMotionListener {
   
     this.fileheader = fileheader;
     this.encoding = encoding;
-    editbuffer = new LinkedList<Short>();
+    editbuffer = new LinkedList<Character>();
   }
   
   public void setInputMode(boolean flag, boolean flushbuffer) {
@@ -70,9 +70,9 @@ MouseMotionListener {
     }
   }
   
-  public short nextZsciiChar() {
+  public char nextZsciiChar() {
     
-    short zsciiChar = 0;
+    char zsciiChar = 0;
     synchronized (editbuffer) {
       
       while (editbuffer.size() == 0) {
@@ -112,7 +112,7 @@ MouseMotionListener {
         addToBuffer(ZsciiEncoding.DELETE);
         break;
       case KeyEvent.VK_SPACE:
-        addToBuffer((short) ' ');
+        addToBuffer(' ');
         break;
     }
   }
@@ -149,7 +149,7 @@ MouseMotionListener {
     }
   }
 
-  private void addToBuffer(short zsciiChar) {
+  private void addToBuffer(char zsciiChar) {
     
     if (isInputMode()) {
       
@@ -176,7 +176,7 @@ MouseMotionListener {
       fileheader.setMouseCoordinates(e.getX() + 1, e.getY() + 1);
       
       // Store single clicks and double clicks with different codes
-      addToBuffer((short) ((e.getClickCount() == 1) ?
+      addToBuffer(((e.getClickCount() == 1) ?
           ZsciiEncoding.MOUSE_SINGLE_CLICK :
           ZsciiEncoding.MOUSE_DOUBLE_CLICK)); 
     }

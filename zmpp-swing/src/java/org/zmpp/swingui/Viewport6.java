@@ -271,7 +271,7 @@ public class Viewport6 extends JComponent implements ScreenModel6, Viewport {
   /**
    * {@inheritDoc}
    */
-  public void setTextWidthInUnits(short[] zchars) {
+  public void setTextWidthInUnits(char[] zchars) {
     
     ZsciiString str = new ZsciiString(zchars);
     int textwidth =
