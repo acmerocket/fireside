@@ -2,7 +2,7 @@
  * $Id$
  * 
  * Created on 2005/10/19
- * Copyright 2005-2007 by Wei-ju Wu
+ * Copyright 2005-2008 by Wei-ju Wu
  * This file is part of The Z-machine Preservation Project (ZMPP).
  *
  * ZMPP is free software: you can redistribute it and/or modify
@@ -85,9 +85,7 @@ implements InputStream, StatusLine, IOSystem {
    * @param machine a Machine object
    */
   public ZmppFrame(final Machine machine) {
-    
     super(Main.APPNAME);
-    
     this.machine = machine;
     lineEditor = new LineEditorImpl(machine.getGameData().getStoryFileHeader(),
         machine.getGameData().getZsciiEncoding());
@@ -101,12 +99,9 @@ implements InputStream, StatusLine, IOSystem {
     settings = createDisplaySettings(preferences);
     
     if (machine.getGameData().getStoryFileHeader().getVersion() ==  6) {
-      
       view = new Viewport6(machine, lineEditor, settings);
       screen = (ScreenModel) view;
-      
     } else {
-
       view = new TextViewport(machine, lineEditor, settings);
       screen = (ScreenModel) view;
     }
@@ -114,7 +109,6 @@ implements InputStream, StatusLine, IOSystem {
     view.setMinimumSize(new Dimension(400, 300));
     
     if (machine.getGameData().getStoryFileHeader().getVersion() <= 3) {
-      
       JPanel statusPanel = new JPanel(new GridLayout(1, 2));
       JPanel status1Panel = new JPanel(new FlowLayout(FlowLayout.LEFT));
       JPanel status2Panel = new JPanel(new FlowLayout(FlowLayout.RIGHT));
@@ -128,8 +122,7 @@ implements InputStream, StatusLine, IOSystem {
       getContentPane().add(statusPanel, BorderLayout.NORTH);
       getContentPane().add(view, BorderLayout.CENTER);
       
-    } else {
-      
+    } else { 
       setContentPane(view);
     }
     
@@ -140,46 +133,44 @@ implements InputStream, StatusLine, IOSystem {
     // an explicit File menu
     if (!isMacOs) { 
       
-      JMenu fileMenu = new JMenu("File");
-      fileMenu.setMnemonic('F');
+      JMenu fileMenu = new JMenu(getMessage("menu.file.name"));
+      fileMenu.setMnemonic(getMessage("menu.file.mnemonic").charAt(0));
       menubar.add(fileMenu);
 
       // Quit is already in the application menu
-      JMenuItem exitItem = new JMenuItem("Exit");
-      exitItem.setMnemonic('x');
+      JMenuItem exitItem = new JMenuItem(getMessage("menu.file.quit.name"));
+      exitItem.setMnemonic(getMessage("menu.file.quit.mnemonic").charAt(0));
       fileMenu.add(exitItem);
       exitItem.addActionListener(new ActionListener() {
         public void actionPerformed(ActionEvent e) {
-        
           System.exit(0);
         }
       });      
     }
-    JMenu editMenu = new JMenu("Edit");
+    JMenu editMenu = new JMenu(getMessage("menu.edit.name"));
     menubar.add(editMenu);
-    editMenu.setMnemonic('E');
-    JMenuItem preferencesItem = new JMenuItem("Preferences...");
-    preferencesItem.setMnemonic('P');
+    editMenu.setMnemonic(getMessage("menu.edit.mnemonic").charAt(0));
+    JMenuItem preferencesItem =
+    		new JMenuItem(getMessage("menu.edit.prefs.name"));
+    preferencesItem.setMnemonic(getMessage("menu.edit.prefs.mnemonic")
+    			.charAt(0));
     editMenu.add(preferencesItem);
-    preferencesItem.addActionListener(new ActionListener() {
-      
-      public void actionPerformed(ActionEvent e) {
-        
+    preferencesItem.addActionListener(new ActionListener() { 
+      public void actionPerformed(ActionEvent e) {   
         editPreferences();
       }
     });
     
-    JMenu helpMenu = new JMenu("Help");
+    JMenu helpMenu = new JMenu(getMessage("menu.help.name"));
     menubar.add(helpMenu);
-    helpMenu.setMnemonic('H');
+    helpMenu.setMnemonic(getMessage("menu.help.mnemonic").charAt(0));
     
-    JMenuItem aboutItem = new JMenuItem("About ZMPP...");
-    aboutItem.setMnemonic('A');
+    JMenuItem aboutItem = new JMenuItem(getMessage("menu.help.about.name"));
+    aboutItem.setMnemonic(getMessage("menu.help.about.mnemonic")
+    			.charAt(0));
     helpMenu.add(aboutItem);
     aboutItem.addActionListener(new ActionListener() {
-      
       public void actionPerformed(ActionEvent e) {
-
         about();
       }
     });
@@ -205,12 +196,11 @@ implements InputStream, StatusLine, IOSystem {
       setTitle(Main.APPNAME + " - " + storyinfo.getTitle()
           + " (" + storyinfo.getAuthor() + ")");
       
-      JMenuItem aboutGameItem = new JMenuItem("About this Game ...");
+      JMenuItem aboutGameItem =
+      		new JMenuItem(getMessage("menu.help.aboutgame.name"));
       helpMenu.add(aboutGameItem);
       aboutGameItem.addActionListener(new ActionListener() {
-        
         public void actionPerformed(ActionEvent e) {
-
           aboutGame();
         }
       });
@@ -219,16 +209,13 @@ implements InputStream, StatusLine, IOSystem {
 
   /**
    * Access to screen model.
-   * 
    * @return the screen model
    */
   public ScreenModel getScreenModel() {
-    
     return screen;
   }
   
   public void startMachine() {
-    
     currentGame = new GameThread(machine, screen);
     currentGame.start();
   }
@@ -239,11 +226,8 @@ implements InputStream, StatusLine, IOSystem {
   
   public void updateStatusScore(final String objectName, final int score,
       final int steps) {
-
     EventQueue.invokeLater(new Runnable() {
-      
       public void run() {
-        
         global1ObjectLabel.setText(objectName);
         statusLabel.setText(score + "/" + steps);
       }
@@ -252,11 +236,8 @@ implements InputStream, StatusLine, IOSystem {
   
   public void updateStatusTime(final String objectName, final int hours,
       final int minutes) {
-        
     EventQueue.invokeLater(new Runnable() {
-      
-      public void run() {
-        
+      public void run() { 
         global1ObjectLabel.setText(objectName);
         statusLabel.setText(String.format("%02d:%02d", hours, minutes));
       }
@@ -268,7 +249,6 @@ implements InputStream, StatusLine, IOSystem {
   // ******************************************
 
   public Writer getTranscriptWriter() {
-    
     File currentdir = new File(System.getProperty("user.dir"));    
     JFileChooser fileChooser = new JFileChooser(currentdir);
     fileChooser.setDialogTitle("Set transcript file ...");
@@ -292,13 +272,9 @@ implements InputStream, StatusLine, IOSystem {
     JFileChooser fileChooser = new JFileChooser(currentdir);
     fileChooser.setDialogTitle("Set input stream file ...");
     if (fileChooser.showOpenDialog(this) == JFileChooser.APPROVE_OPTION) {
-      
       try {
-        
         return new FileReader(fileChooser.getSelectedFile());
-        
       } catch (IOException ex) {
-        
         ex.printStackTrace();
       }
     }
@@ -327,35 +303,29 @@ implements InputStream, StatusLine, IOSystem {
   
   private void enterEditMode(boolean flushbuffer) {
     if (!lineEditor.isInputMode()) {
-
       screen.resetPagers();
       lineEditor.setInputMode(true, flushbuffer);
     }
   }
   
   private void leaveEditMode(boolean flushbuffer) {
-    
     lineEditor.setInputMode(false, flushbuffer);
   }
   
   private void about() {
-    
     JOptionPane.showMessageDialog(this,
-        Main.APPNAME + "\n\u00a9 2005-2006 by Wei-ju Wu\n" +
-        "This software is released under the GNU public license.",
-        "About...",
+        Main.APPNAME + getMessage("dialog.about.msg"),
+        getMessage("dialog.about.title"),
         JOptionPane.INFORMATION_MESSAGE);
   }
 
   private void aboutGame() {
-    
     GameInfoDialog dialog = new GameInfoDialog(this,
         machine.getGameData().getResources());
     dialog.setVisible(true);
   }
   
   private void editPreferences() {
-    
     PreferencesDialog dialog = new PreferencesDialog(this, preferences,
                                                      settings);
     dialog.setLocationRelativeTo(this);
@@ -363,7 +333,6 @@ implements InputStream, StatusLine, IOSystem {
   }
   
   private DisplaySettings createDisplaySettings(Preferences preferences) {
-    
     int stdfontsize = preferences.getInt("stdfontsize", 12);
     int fixedfontsize = preferences.getInt("fixedfontsize", 12);
     int defaultforeground = preferences.getInt("defaultforeground",
@@ -374,5 +343,9 @@ implements InputStream, StatusLine, IOSystem {
     
     return new DisplaySettings(stdfontsize, fixedfontsize, defaultbackground,
                                defaultforeground, antialias);    
+  }
+  
+  private String getMessage(String key) {
+  	return Main.getMessage(key);
   }
 }
