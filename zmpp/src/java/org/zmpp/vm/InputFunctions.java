@@ -2,7 +2,7 @@
  * $Id$
  * 
  * Created on 12/22/2005
- * Copyright 2005-2007 by Wei-ju Wu
+ * Copyright 2005-2008 by Wei-ju Wu
  * This file is part of The Z-machine Preservation Project (ZMPP).
  *
  * ZMPP is free software: you can redistribute it and/or modify
@@ -32,7 +32,6 @@ import org.zmpp.encoding.ZsciiEncoding;
 import org.zmpp.encoding.ZsciiString;
 import org.zmpp.encoding.ZsciiStringBuilder;
 import org.zmpp.encoding.ZsciiStringTokenizer;
-
 
 /**
  * This class contains functions that deal with user input.

@@ -1,8 +1,8 @@
 /*
  * $Id: LongInstructionTest.java 524 2007-11-15 00:32:16Z weiju $
  * 
- * Created on 04.10.2005
- * Copyright 2005-2007 by Wei-ju Wu
+ * Created on 10/04/2005
+ * Copyright 2005-2008 by Wei-ju Wu
  * This file is part of The Z-machine Preservation Project (ZMPP).
  *
  * ZMPP is free software: you can redistribute it and/or modify

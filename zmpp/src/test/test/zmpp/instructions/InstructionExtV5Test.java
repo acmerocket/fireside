@@ -2,7 +2,7 @@
  * $Id: ExtendedInstructionTest.java 520 2007-11-13 19:14:51Z weiju $
  * 
  * Created on 12/08/2005
- * Copyright 2005-2007 by Wei-ju Wu
+ * Copyright 2005-2008 by Wei-ju Wu
  * This file is part of The Z-machine Preservation Project (ZMPP).
  *
  * ZMPP is free software: you can redistribute it and/or modify

@@ -1,8 +1,8 @@
 /*
  * $Id$
  * 
- * Created on 2006/03/10
- * Copyright 2005-2007 by Wei-ju Wu
+ * Created on 03/10/2006
+ * Copyright 2005-2008 by Wei-ju Wu
  * This file is part of The Z-machine Preservation Project (ZMPP).
  *
  * ZMPP is free software: you can redistribute it and/or modify

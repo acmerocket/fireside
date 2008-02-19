@@ -2,7 +2,7 @@
  * $Id$
  * 
  * Created on 10/03/2005
- * Copyright 2005-2007 by Wei-ju Wu
+ * Copyright 2005-2008 by Wei-ju Wu
  * This file is part of The Z-machine Preservation Project (ZMPP).
  *
  * ZMPP is free software: you can redistribute it and/or modify
@@ -23,7 +23,6 @@ package org.zmpp.instructions;
 import org.zmpp.base.Memory;
 import org.zmpp.vm.Machine;
 import org.zmpp.vm.ScreenModel;
-
 
 /**
  * This class represents instructions of type LONG, 2OP.

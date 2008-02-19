@@ -1,7 +1,7 @@
 /*
  * $Id: MemoryAccess.java 520 2007-11-13 19:14:51Z weiju $
  * 
- * Copyright 2005-2007 Wei-ju Wu
+ * Copyright 2005-2008 Wei-ju Wu
  * This file is part of The Z-machine Preservation Project (ZMPP).
  *
  * ZMPP is free software: you can redistribute it and/or modify

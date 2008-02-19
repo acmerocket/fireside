@@ -1,5 +1,14 @@
 Changelog
 
+Version 1.0
+-----------
+
+- revamped object system
+- revamped dictionary and encoding
+- fixed unicode representation
+- updated to GPL V3
+- internationalized user interface
+
 Version 0.92_02
 ---------------
 - fixed a display issue that arises when input is expected, but no prompt
