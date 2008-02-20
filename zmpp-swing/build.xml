@@ -91,6 +91,7 @@
     	</manifest>
     	<fileset dir="${build.prj}" />
     	<fileset dir="${zmpp.core}" />
+      <fileset dir="${resources}" />
     </jar>
   </target>
 

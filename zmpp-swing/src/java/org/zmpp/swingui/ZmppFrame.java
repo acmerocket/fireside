@@ -251,13 +251,10 @@ implements InputStream, StatusLine, IOSystem {
   public Writer getTranscriptWriter() {
     File currentdir = new File(System.getProperty("user.dir"));    
     JFileChooser fileChooser = new JFileChooser(currentdir);
-    fileChooser.setDialogTitle("Set transcript file ...");
+    fileChooser.setDialogTitle(getMessage("dialog.settranscript.title"));
     if (fileChooser.showSaveDialog(this) == JFileChooser.APPROVE_OPTION) {
-      
       try {
-        
         return new FileWriter(fileChooser.getSelectedFile());
-        
       } catch (IOException ex) {
       
         ex.printStackTrace();
@@ -267,10 +264,9 @@ implements InputStream, StatusLine, IOSystem {
   }
   
   public Reader getInputStreamReader() {
-    
     File currentdir = new File(System.getProperty("user.dir"));    
     JFileChooser fileChooser = new JFileChooser(currentdir);
-    fileChooser.setDialogTitle("Set input stream file ...");
+    fileChooser.setDialogTitle(getMessage("dialog.setinput.title"));
     if (fileChooser.showOpenDialog(this) == JFileChooser.APPROVE_OPTION) {
       try {
         return new FileReader(fileChooser.getSelectedFile());

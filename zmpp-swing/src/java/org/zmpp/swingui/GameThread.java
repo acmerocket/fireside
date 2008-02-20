@@ -32,16 +32,19 @@ public class GameThread extends Thread {
 
   private ScreenModel screen;
   private Machine machine;
-  private static final boolean DEBUG = false;
   
+  /**
+   * Constructor.
+   * @param machine a Machine object
+   * @param viewport a ScreenModel object
+   */
   public GameThread(Machine machine, ScreenModel viewport) {
-    
     this.machine = machine;
     this.screen = viewport;
   }
   
   public void run() {
-    
+  	boolean DEBUG = "true".equals(System.getProperty("DEBUG"));
     screen.waitInitialized();  
     machine.start();
     
@@ -51,9 +54,7 @@ public class GameThread extends Thread {
     // does no harm on other platforms
     try {
       EventQueue.invokeAndWait(new Runnable() {
-        
         public void run() {
-          
           ((JComponent) screen).requestFocusInWindow();
         }
       });
@@ -61,7 +62,6 @@ public class GameThread extends Thread {
     
     int line = 1;
     while (machine.getCpu().isRunning()) {
-      
       Instruction instr = machine.getCpu().nextStep();
       if (DEBUG) {
         System.out.println(String.format("%04d - %05x: %s", line,

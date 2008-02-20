@@ -54,9 +54,9 @@ public class PreferencesDialog extends JDialog implements ActionListener {
    * An item for the color list.
    */
   static class ColorItem {
-    
     int color;
     String name;
+
     /**
      * Constructor.
      * @param colornum the color number
@@ -77,15 +77,16 @@ public class PreferencesDialog extends JDialog implements ActionListener {
   
   private static final ColorItem[] colors = {
     new ColorItem(ColorTranslator.UNDEFINED, ""),
-    new ColorItem(ColorTranslator.COLOR_BLACK, "Black"),
-    new ColorItem(ColorTranslator.COLOR_RED, "Red"),
-    new ColorItem(ColorTranslator.COLOR_GREEN, "Green"),
-    new ColorItem(ColorTranslator.COLOR_YELLOW, "Yellow"),
-    new ColorItem(ColorTranslator.COLOR_BLUE, "Blue"),
-    new ColorItem(ColorTranslator.COLOR_MAGENTA, "Magenta"),
-    new ColorItem(ColorTranslator.COLOR_CYAN, "Cyan"),
-    new ColorItem(ColorTranslator.COLOR_WHITE, "White"),
-    new ColorItem(ColorTranslator.COLOR_MS_DOS_DARKISH_GREY, "Dark Gray"),
+    new ColorItem(ColorTranslator.COLOR_BLACK, getMessage("caption.black")),
+    new ColorItem(ColorTranslator.COLOR_RED, getMessage("caption.red")),
+    new ColorItem(ColorTranslator.COLOR_GREEN, getMessage("caption.green")),
+    new ColorItem(ColorTranslator.COLOR_YELLOW, getMessage("caption.yellow")),
+    new ColorItem(ColorTranslator.COLOR_BLUE, getMessage("caption.blue")),
+    new ColorItem(ColorTranslator.COLOR_MAGENTA, getMessage("caption.magenta")),
+    new ColorItem(ColorTranslator.COLOR_CYAN, getMessage("caption.cyan")),
+    new ColorItem(ColorTranslator.COLOR_WHITE, getMessage("caption.white")),
+    new ColorItem(ColorTranslator.COLOR_MS_DOS_DARKISH_GREY,
+    		getMessage("caption.darkgray")),
   };
   
   /**
@@ -109,8 +110,7 @@ public class PreferencesDialog extends JDialog implements ActionListener {
    */
   public PreferencesDialog(JFrame parent, Preferences preferences,
                            DisplaySettings settings) {
-    
-    super(parent, "Preferences...", true);
+    super(parent, getMessage("dialog.prefs.title"), true);
     this.preferences = preferences;
     this.settings = settings;
     
@@ -121,31 +121,33 @@ public class PreferencesDialog extends JDialog implements ActionListener {
     
     JPanel mainpanel = new JPanel(grid);
     
-    JLabel stdfontLabel = new JLabel("Size of standard font: ");
+    JLabel stdfontLabel = new JLabel(getMessage("caption.stdfont.size"));
     mainpanel.add(stdfontLabel);
     stdfontSpinner = new JSpinner();
     stdfontSpinner.setValue(settings.getStdFontSize());
     mainpanel.add(stdfontSpinner);
 
-    JLabel fixedfontLabel = new JLabel("Size of fixed font: ");
+    JLabel fixedfontLabel = new JLabel(getMessage("caption.fixedfont.size"));
     mainpanel.add(fixedfontLabel);    
     fixedfontSpinner = new JSpinner();
     fixedfontSpinner.setValue(settings.getFixedFontSize());
     mainpanel.add(fixedfontSpinner);
     
-    JLabel backgroundLabel = new JLabel("Default background: ");
+    JLabel backgroundLabel = new JLabel(getMessage(
+    		"caption.default.background"));
     mainpanel.add(backgroundLabel);
     backgroundCB = new JComboBox(colors);
     mainpanel.add(backgroundCB);
     preselect(backgroundCB, settings.getDefaultBackground());
     
-    JLabel foregroundLabel = new JLabel("Default foreground: ");
+    JLabel foregroundLabel = new JLabel(getMessage(
+    		"caption.default.foreground"));
     mainpanel.add(foregroundLabel);
     foregroundCB = new JComboBox(colors);
     mainpanel.add(foregroundCB);
     preselect(foregroundCB, settings.getDefaultForeground());
 
-    JLabel antialiasLabel = new JLabel("Antialiased text: ");
+    JLabel antialiasLabel = new JLabel(getMessage("caption.antialias"));
     mainpanel.add(antialiasLabel);
     antialiasCB = new JCheckBox();
     antialiasCB.setSelected(settings.getAntialias());
@@ -157,8 +159,8 @@ public class PreferencesDialog extends JDialog implements ActionListener {
     JPanel buttonpanel = new JPanel(new FlowLayout(FlowLayout.RIGHT));
     lowpanel.add(buttonpanel);
     
-    JButton okbutton = new JButton("Ok");
-    JButton cancelbutton = new JButton("Cancel");
+    JButton okbutton = new JButton(getMessage("caption.ok"));
+    JButton cancelbutton = new JButton(getMessage("caption.cancel"));
     getRootPane().setDefaultButton(okbutton);
     buttonpanel.add(okbutton);
     buttonpanel.add(cancelbutton);
@@ -167,8 +169,7 @@ public class PreferencesDialog extends JDialog implements ActionListener {
     
     getContentPane().add(mainpanel, BorderLayout.NORTH);
     getContentPane().add(
-        new JLabel("<html><body><i>(Note: Changes only take effect after a " +
-                   "restart)</i></body></html>"),
+        new JLabel(getMessage("caption.restarttochange")),
                    BorderLayout.CENTER);
     getContentPane().add(lowpanel, BorderLayout.SOUTH);
     
@@ -185,7 +186,7 @@ public class PreferencesDialog extends JDialog implements ActionListener {
    */
   public void actionPerformed(ActionEvent e) {
 
-    if (e.getActionCommand().equals("Ok")) {
+    if (e.getActionCommand().equals(getMessage("caption.ok"))) {
 
       // Transfer the settings to the user settings only, they will
       // only take effect on the next restart
@@ -216,14 +217,15 @@ public class PreferencesDialog extends JDialog implements ActionListener {
    * @param value the value to select
    */
   private void preselect(JComboBox combobox, int value) {
-   
     for (int i = 0; i < colors.length; i++) {
-      
       if (colors[i].color == value) {
-        
         combobox.setSelectedItem(colors[i]);
         break;
       }
     }
+  }
+  
+  private static String getMessage(String key) {
+  	return Main.getMessage(key);
   }
 }

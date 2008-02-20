@@ -64,6 +64,7 @@ public class Main {
    */
   public static void main(String[] args) {    
     System.setProperty("swing.aatext", "true");
+    System.getProperties().list(System.out);
     try {
       UIManager.setLookAndFeel(UIManager.getSystemLookAndFeelClassName());
     } catch (Exception ex) {

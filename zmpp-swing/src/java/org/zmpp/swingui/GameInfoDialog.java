@@ -58,9 +58,9 @@ public class GameInfoDialog extends JDialog {
   private static final int STD_WIDTH = 400;
   private static final long serialVersionUID = 1L;
   
-  public GameInfoDialog(JFrame owner, Resources resources) {
-    
-    super(owner, "About " + resources.getMetadata().getStoryInfo().getTitle());
+  public GameInfoDialog(JFrame owner, Resources resources) {    
+    super(owner, Main.getMessage("caption.about") + " " +
+    			resources.getMetadata().getStoryInfo().getTitle());
     getContentPane().add(createInfoPanel(resources));
     getContentPane().add(createButtonPanel(), BorderLayout.SOUTH);
     pack();
@@ -143,7 +143,7 @@ public class GameInfoDialog extends JDialog {
     
     // Set up the other controls
     JPanel buttonPanel = new JPanel(new FlowLayout(FlowLayout.RIGHT));
-    JButton okButton = new JButton("Ok");
+    JButton okButton = new JButton(Main.getMessage("caption.ok"));
     okButton.addActionListener(new ActionListener() {
       public void actionPerformed(ActionEvent e) {
         setVisible(false);
