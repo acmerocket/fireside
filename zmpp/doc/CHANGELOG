@@ -7,7 +7,8 @@ Version 1.0
 - revamped dictionary and encoding
 - fixed unicode representation
 - updated to GPL V3
-- internationalized user interface
+- internationalized user interface for English and German
+- improved Mac OS X integration
 
 Version 0.92_02
 ---------------
