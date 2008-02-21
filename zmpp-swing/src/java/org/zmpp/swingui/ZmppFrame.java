@@ -55,6 +55,8 @@ import org.zmpp.vm.Machine;
 import org.zmpp.vm.ScreenModel;
 import org.zmpp.vm.StatusLine;
 
+import apple.dts.osxadapter.OSXAdapter;
+
 /**
  * This class is the main frame for ZMPP run as an application. 
  * 
@@ -90,7 +92,7 @@ implements InputStream, StatusLine, IOSystem {
     lineEditor = new LineEditorImpl(machine.getGameData().getStoryFileHeader(),
         machine.getGameData().getZsciiEncoding());
     
-    isMacOs = (System.getProperty("mrj.version") != null);
+    isMacOs = Main.isMacOsX();
     setDefaultCloseOperation(JFrame.EXIT_ON_CLOSE);
     setResizable(false);
     JComponent view = null;
@@ -128,6 +130,7 @@ implements InputStream, StatusLine, IOSystem {
     
     JMenuBar menubar = new JMenuBar();
     setJMenuBar(menubar);
+    JMenu helpMenu = null;
     
     // Menus need to be slightly different on MacOS X, they do not have
     // an explicit File menu
@@ -143,37 +146,48 @@ implements InputStream, StatusLine, IOSystem {
       fileMenu.add(exitItem);
       exitItem.addActionListener(new ActionListener() {
         public void actionPerformed(ActionEvent e) {
-          System.exit(0);
+          quit();
         }
       });      
-    }
-    JMenu editMenu = new JMenu(getMessage("menu.edit.name"));
-    menubar.add(editMenu);
-    editMenu.setMnemonic(getMessage("menu.edit.mnemonic").charAt(0));
-    JMenuItem preferencesItem =
+      JMenu editMenu = new JMenu(getMessage("menu.edit.name"));
+      menubar.add(editMenu);
+      editMenu.setMnemonic(getMessage("menu.edit.mnemonic").charAt(0));
+      JMenuItem preferencesItem =
     		new JMenuItem(getMessage("menu.edit.prefs.name"));
-    preferencesItem.setMnemonic(getMessage("menu.edit.prefs.mnemonic")
+      preferencesItem.setMnemonic(getMessage("menu.edit.prefs.mnemonic")
     			.charAt(0));
-    editMenu.add(preferencesItem);
-    preferencesItem.addActionListener(new ActionListener() { 
-      public void actionPerformed(ActionEvent e) {   
-        editPreferences();
-      }
-    });
+      editMenu.add(preferencesItem);
+      preferencesItem.addActionListener(new ActionListener() { 
+      	public void actionPerformed(ActionEvent e) {   
+      		editPreferences();
+      	}
+      });
     
-    JMenu helpMenu = new JMenu(getMessage("menu.help.name"));
-    menubar.add(helpMenu);
-    helpMenu.setMnemonic(getMessage("menu.help.mnemonic").charAt(0));
+      helpMenu = new JMenu(getMessage("menu.help.name"));
+      menubar.add(helpMenu);
+      helpMenu.setMnemonic(getMessage("menu.help.mnemonic").charAt(0));
     
-    JMenuItem aboutItem = new JMenuItem(getMessage("menu.help.about.name"));
-    aboutItem.setMnemonic(getMessage("menu.help.about.mnemonic")
+      JMenuItem aboutItem = new JMenuItem(getMessage("menu.help.about.name"));
+      aboutItem.setMnemonic(getMessage("menu.help.about.mnemonic")
     			.charAt(0));
-    helpMenu.add(aboutItem);
-    aboutItem.addActionListener(new ActionListener() {
-      public void actionPerformed(ActionEvent e) {
-        about();
-      }
-    });
+      helpMenu.add(aboutItem);
+      aboutItem.addActionListener(new ActionListener() {
+      	public void actionPerformed(ActionEvent e) {
+      		about();
+      	}
+      });
+    } else {
+    	try {
+    		OSXAdapter.setAboutHandler(this,
+    			ZmppFrame.class.getDeclaredMethod("about"));
+    		OSXAdapter.setQuitHandler(this,
+    				ZmppFrame.class.getDeclaredMethod("quit"));
+    		OSXAdapter.setPreferencesHandler(this,
+    				ZmppFrame.class.getDeclaredMethod("editPreferences"));
+    	} catch (Exception ignore) {
+    		ignore.printStackTrace();
+    	}
+    }
     
     //addKeyListener(lineEditor);
     view.addKeyListener(lineEditor);
@@ -181,9 +195,7 @@ implements InputStream, StatusLine, IOSystem {
     
     // just for debugging
     view.addMouseMotionListener(new MouseMotionAdapter() {
-      
-      public void mouseMoved(MouseEvent e) {
-        
+      public void mouseMoved(MouseEvent e) {    
         //System.out.printf("mouse pos: %d %d\n", e.getX(), e.getY());
       }
     });
@@ -195,7 +207,10 @@ implements InputStream, StatusLine, IOSystem {
       StoryMetadata storyinfo = resources.getMetadata().getStoryInfo();
       setTitle(Main.APPNAME + " - " + storyinfo.getTitle()
           + " (" + storyinfo.getAuthor() + ")");
-      
+      if (isMacOs) {
+        helpMenu = new JMenu(getMessage("menu.help.name"));
+        menubar.add(helpMenu);
+      }
       JMenuItem aboutGameItem =
       		new JMenuItem(getMessage("menu.help.aboutgame.name"));
       helpMenu.add(aboutGameItem);
@@ -308,11 +323,15 @@ implements InputStream, StatusLine, IOSystem {
     lineEditor.setInputMode(false, flushbuffer);
   }
   
-  private void about() {
+  public void about() {
     JOptionPane.showMessageDialog(this,
         Main.APPNAME + getMessage("dialog.about.msg"),
         getMessage("dialog.about.title"),
         JOptionPane.INFORMATION_MESSAGE);
+  }
+  
+  public void quit() {
+  	System.exit(0);
   }
 
   private void aboutGame() {
@@ -321,7 +340,7 @@ implements InputStream, StatusLine, IOSystem {
     dialog.setVisible(true);
   }
   
-  private void editPreferences() {
+  public void editPreferences() {
     PreferencesDialog dialog = new PreferencesDialog(this, preferences,
                                                      settings);
     dialog.setLocationRelativeTo(this);

@@ -64,7 +64,7 @@ public class Main {
    */
   public static void main(String[] args) {    
     System.setProperty("swing.aatext", "true");
-    System.getProperties().list(System.out);
+    setMacOsXProperties();
     try {
       UIManager.setLookAndFeel(UIManager.getSystemLookAndFeelClassName());
     } catch (Exception ex) {
@@ -94,19 +94,26 @@ public class Main {
     });
   }
   
-  /**
-   * This method opens a frame and runs the specified story file.
-   * 
-   * @param storyfile the story file
-   */
-  public static void runStoryFile(File storyfile) {
-    if (System.getProperty("mrj.version") != null) {
+  public static boolean isMacOsX() {
+  	return System.getProperty("mrj.version") != null;
+  }
+  
+  private static void setMacOsXProperties() {
+    if (isMacOsX()) {
       System.setProperty("apple.laf.useScreenMenuBar", "true");
       System.setProperty("com.apple.eawt.CocoaComponent.CompatibilityMode",
           "false");
       System.setProperty("com.apple.mrj.application.apple.menu.about.name",
           "ZMPP");
     }
+  }
+  
+  /**
+   * This method opens a frame and runs the specified story file.
+   * 
+   * @param storyfile the story file
+   */
+  public static void runStoryFile(File storyfile) {
     // Read in the story file
     if (storyfile != null && storyfile.exists() && storyfile.isFile()) {
       ApplicationMachineFactory factory; 
