@@ -28,6 +28,12 @@ opcodes:
 @print_form: Arthur
 @output_stream 3 params: Arthur (width always 0)
 
+Version 1.0
+-----------
+- fix design flaws
+- internationalized UI
+- MacOS X integration
+
 Version 0.92
 ------------
 - V6 support
