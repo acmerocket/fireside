@@ -14,10 +14,11 @@ Running as an application
 
 Command line:
 
-java -jar zmpp.jar [story-file]
+java [-DDEBUG] -jar zmpp.jar [story-file]
 
 On most systems, double clicking on the application jar file should start
 the software as well.
+The debug option enables printing the executed instructions to the command line
 
 Select a game:
 

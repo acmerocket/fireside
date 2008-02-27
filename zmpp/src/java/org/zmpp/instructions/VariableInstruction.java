@@ -528,8 +528,8 @@ public class VariableInstruction extends AbstractInstruction {
       
       storeResult((short) 0);
     }
-    System.out.printf("@SCAN_TABLE, X: %d, TABLE: %d LEN: %d POINTER: %d\n",
-      x, table, length, pointer);
+    //System.out.printf("@SCAN_TABLE, X: %d, TABLE: %d LEN: %d POINTER: %d\n",
+    //  x, table, length, pointer);
     branchOnTest(found);
   }
 
