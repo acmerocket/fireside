@@ -1,5 +1,11 @@
 Changelog
 
+Version 1.01
+------------
+- French translation of UI (by Eric Forgeot)
+- application version can read from URL as well
+- DEBUG flag can now only be used in application version
+
 Version 1.0
 -----------
 

@@ -44,7 +44,6 @@ public class GameThread extends Thread {
   }
   
   public void run() {
-  	boolean DEBUG = "true".equals(System.getProperty("DEBUG"));
     screen.waitInitialized();  
     machine.start();
     
@@ -63,7 +62,7 @@ public class GameThread extends Thread {
     int line = 1;
     while (machine.getCpu().isRunning()) {
       Instruction instr = machine.getCpu().nextStep();
-      if (DEBUG) {
+      if (Main.DEBUG) {
         System.out.println(String.format("%04d - %05x: %s", line,
           machine.getCpu().getProgramCounter(), instr.toString()));
       }

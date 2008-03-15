@@ -271,7 +271,6 @@ implements InputStream, StatusLine, IOSystem {
       try {
         return new FileWriter(fileChooser.getSelectedFile());
       } catch (IOException ex) {
-      
         ex.printStackTrace();
       }
     }

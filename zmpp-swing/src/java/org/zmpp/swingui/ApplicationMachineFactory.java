@@ -21,24 +21,17 @@
 package org.zmpp.swingui;
 
 import java.io.File;
-import java.io.IOException;
+import java.net.URL;
 
 import javax.swing.JOptionPane;
 
-import org.zmpp.base.DefaultMemory;
-import org.zmpp.blorb.BlorbResources;
-import org.zmpp.blorb.BlorbStory;
-import org.zmpp.iff.DefaultFormChunk;
-import org.zmpp.iff.FormChunk;
 import org.zmpp.io.IOSystem;
 import org.zmpp.io.InputStream;
-import org.zmpp.media.Resources;
 import org.zmpp.vm.Machine;
 import org.zmpp.vm.MachineFactory;
 import org.zmpp.vm.SaveGameDataStore;
 import org.zmpp.vm.ScreenModel;
 import org.zmpp.vm.StatusLine;
-import org.zmpp.vmutil.FileUtils;
 
 /**
  * This class implements machine creation for a standalone application.
@@ -48,66 +41,21 @@ import org.zmpp.vmutil.FileUtils;
  */
 public class ApplicationMachineFactory extends MachineFactory<ZmppFrame> {
 
-  private File storyfile;
-  private File blorbfile;
   private ZmppFrame frame;
-  private FormChunk blorbchunk;
   private SaveGameDataStore savegamestore;
   
   public ApplicationMachineFactory(File storyfile, File blorbfile) {
-  
-    this.storyfile = storyfile;
-    this.blorbfile = blorbfile;
+  	super(storyfile, blorbfile);
   }
 
   public ApplicationMachineFactory(File blorbfile) {
-    
-    this.blorbfile = blorbfile;
+  	super(blorbfile);
   }
   
-  /**
-   * {@inheritDoc}
-   */
-  protected byte[] readStoryData() throws IOException {
-        
-    if (storyfile != null) {
-      
-      return FileUtils.readFileBytes(storyfile);
-      
-    } else {
-      
-      // Read from Z BLORB
-      FormChunk formchunk = readBlorb();
-      return formchunk != null ? new BlorbStory(formchunk).getStoryData() : null;
-    }
+  public ApplicationMachineFactory(URL storyurl) {
+  	super(storyurl, null);
   }
   
-  private FormChunk readBlorb() throws IOException {
-    
-    if (blorbchunk == null) {
-      
-      byte[] data = FileUtils.readFileBytes(blorbfile);
-      if (data != null) {
-        
-        blorbchunk = new DefaultFormChunk(new DefaultMemory(data));
-        if (!"IFRS".equals(new String(blorbchunk.getSubId()))) {
-          
-          throw new IOException("not a valid Blorb file");
-        }
-      }
-    }
-    return blorbchunk;
-  }
-  
-  /**
-   * {@inheritDoc}
-   */
-  protected Resources readResources() throws IOException {
-
-    FormChunk formchunk = readBlorb();
-    return (formchunk != null) ? new BlorbResources(formchunk) : null;
-  }
-
   /**
    * {@inheritDoc}
    */

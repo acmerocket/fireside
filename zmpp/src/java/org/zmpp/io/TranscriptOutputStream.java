@@ -40,6 +40,7 @@ public class TranscriptOutputStream implements OutputStream {
   private boolean enabled;
   private StringBuilder linebuffer;
   private ZsciiEncoding encoding;
+  private boolean initialized;
 
   /**
    * Constructor.
@@ -59,11 +60,12 @@ public class TranscriptOutputStream implements OutputStream {
    * {@inheritDoc}
    */
   private void initFile() {
-    
-    if (transcriptWriter == null) {
-      
+    if (!initialized && transcriptWriter == null) {
       transcriptWriter = iosys.getTranscriptWriter();
-      output = new BufferedWriter(transcriptWriter);
+      if (transcriptWriter != null) {
+      	output = new BufferedWriter(transcriptWriter);
+      }
+      initialized = true;
     }
   }
   
@@ -71,57 +73,43 @@ public class TranscriptOutputStream implements OutputStream {
    * {@inheritDoc}
    */
   public void print(final char zsciiChar, final boolean isInput) {
-    
+    //System.out.println("TRANSCRIPT: PRINT: '" + zsciiChar + "'");
     initFile();
     if (output != null) {
-      
-      if (zsciiChar == ZsciiEncoding.NEWLINE) {
-        
+      if (zsciiChar == ZsciiEncoding.NEWLINE) { 
         flush();
         
       } else if (zsciiChar == ZsciiEncoding.DELETE) {
-        
         linebuffer.deleteCharAt(linebuffer.length() - 1);
-        
       } else {
         
         linebuffer.append(encoding.getUnicodeChar(zsciiChar));
       }
+      flush();
     }
   }
   
   /**
    * {@inheritDoc}
    */
-  public void select(final boolean flag) {
-  
-    enabled = flag;
-  }
+  public void select(final boolean flag) { enabled = flag; }
 
   /**
    * {@inheritDoc}
    */
-  public boolean isSelected() {
-    
-    return enabled;
-  }
+  public boolean isSelected() { return enabled; }
   
   /**
    * {@inheritDoc}
    */
   public void flush() {
-    
     try {
-
-      if (output != null) {
-        
+      if (output != null) {        
         output.write(linebuffer.toString());
         output.write("\n");
         linebuffer = new StringBuilder();
       }
-      
-    } catch (IOException ex) {
-      
+    } catch (IOException ex) { 
       ex.printStackTrace(System.err);
     }
   }
@@ -130,32 +118,24 @@ public class TranscriptOutputStream implements OutputStream {
    * {@inheritDoc}
    */
   public void close() {
-
     if (output != null) {
-      
       try {
-        
         output.close();
         output = null;
-        
       } catch (Exception ex) {
-        
         ex.printStackTrace(System.err);
       }      
     }
     
     if (transcriptWriter != null) {
-      
       try {
-        
         transcriptWriter.close();
         transcriptWriter = null;
-        
       } catch (Exception ex) {
-        
         ex.printStackTrace(System.err);
       }      
     }
+    initialized = false;
   }
   
   /**

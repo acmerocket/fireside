@@ -60,7 +60,7 @@ public class FileSaveGameDataStore implements SaveGameDataStore {
     
     File currentdir = new File(System.getProperty("user.dir"));    
     JFileChooser fileChooser = new JFileChooser(currentdir);
-    fileChooser.setDialogTitle("Save game ...");
+    fileChooser.setDialogTitle(Main.getMessage("dialog.savegame.title"));
     
     if (fileChooser.showSaveDialog(parent) == JFileChooser.APPROVE_OPTION) {
       
@@ -92,7 +92,7 @@ public class FileSaveGameDataStore implements SaveGameDataStore {
     
     File currentdir = new File(System.getProperty("user.dir"));    
     JFileChooser fileChooser = new JFileChooser(currentdir);
-    fileChooser.setDialogTitle("Restore game...");
+    fileChooser.setDialogTitle(Main.getMessage("dialog.restoregame.title"));
     if (fileChooser.showOpenDialog(parent) == JFileChooser.APPROVE_OPTION) {
       
       File savefile = fileChooser.getSelectedFile();

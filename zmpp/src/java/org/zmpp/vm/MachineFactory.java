@@ -20,14 +20,22 @@
  */
 package org.zmpp.vm;
 
+import java.io.File;
 import java.io.IOException;
+import java.net.URL;
 
+import org.zmpp.base.DefaultMemory;
+import org.zmpp.blorb.BlorbResources;
+import org.zmpp.blorb.BlorbStory;
+import org.zmpp.iff.DefaultFormChunk;
+import org.zmpp.iff.FormChunk;
 import org.zmpp.instructions.DefaultInstructionDecoder;
 import org.zmpp.io.FileInputStream;
 import org.zmpp.io.IOSystem;
 import org.zmpp.io.InputStream;
 import org.zmpp.io.TranscriptOutputStream;
 import org.zmpp.media.Resources;
+import org.zmpp.vmutil.FileUtils;
 
 /**
  * Constructing a Machine object is a very complex task, the building process
@@ -41,6 +49,28 @@ import org.zmpp.media.Resources;
  */
 public abstract class MachineFactory<T> {
 
+	private File storyfile, blorbfile;
+	private URL storyurl, blorburl;
+  private FormChunk blorbchunk;
+
+	public MachineFactory(File storyfile, File blorbfile) {
+		this.storyfile = storyfile;
+		this.blorbfile = blorbfile;
+	}
+	
+	public MachineFactory(File blorbfile) {
+		this(null, blorbfile);
+	}
+	
+	public MachineFactory(URL storyurl, URL blorburl) {
+		this.storyurl = storyurl;
+		this.blorburl = blorburl;
+	}
+	
+	public MachineFactory(URL blorburl) {
+		this(null, blorburl);
+	}
+
   /**
    * This is the main creation function.
    * 
@@ -52,7 +82,6 @@ public abstract class MachineFactory<T> {
       new GameDataImpl(readStoryData(), readResources());
   
     if (isInvalidStory(gamedata.getStoryFileHeader().getVersion())) {
-    
       reportInvalidStory();
     }
     final Machine machine = new MachineImpl();
@@ -86,18 +115,93 @@ public abstract class MachineFactory<T> {
    * Reads the story data.
    * 
    * @return the story data
-   * @throws IOException if reading story file reveiled an error
+   * @throws IOException if reading story file revealed an error
    */
-  abstract protected byte[] readStoryData() throws IOException;
+  protected byte[] readStoryData() throws IOException {
+  	if (storyfile != null || blorbfile != null) return readStoryDataFromFile();
+  	if (storyurl != null || blorburl != null) return readStoryDataFromUrl();
+  	return null;
+  }
+
+  /**
+   * {@inheritDoc}
+   */
+  private byte[] readStoryDataFromUrl() throws IOException {
+  	java.io.InputStream storyis = null, blorbis = null;
+    try {
+      storyis = storyurl.openStream();
+      if (blorburl != null) {
+        blorbis = blorburl.openStream();
+      }      
+    } catch (Exception ex) {
+      ex.printStackTrace();      
+    }
+
+    if (storyis != null) {
+      return FileUtils.readFileBytes(storyis);
+    } else {
+      return new BlorbStory(readBlorb(blorbis)).getStoryData();
+    }
+  }
+
+  /**
+   * {@inheritDoc}
+   */
+  private byte[] readStoryDataFromFile() throws IOException {        
+    if (storyfile != null) {
+      return FileUtils.readFileBytes(storyfile);
+    } else {
+      // Read from Z BLORB
+      FormChunk formchunk = readBlorbFromFile();
+      return formchunk != null ? new BlorbStory(formchunk).getStoryData() : null;
+    }
+  }
   
   /**
    * Reads the resource data.
    * 
    * @return the resource data
-   * @throws IOException if reading resources reveiled an error
+   * @throws IOException if reading resources revealed an error
    */
-  abstract protected Resources readResources() throws IOException;
+  protected Resources readResources() throws IOException {
+  	if (blorbfile != null) return readResourcesFromFile();
+  	if (blorburl != null) return readResourcesFromUrl();
+  	return null;
+  }
   
+  private FormChunk readBlorbFromFile() throws IOException {    
+    if (blorbchunk == null) {
+      byte[] data = FileUtils.readFileBytes(blorbfile);
+      if (data != null) {        
+        blorbchunk = new DefaultFormChunk(new DefaultMemory(data));
+        if (!"IFRS".equals(new String(blorbchunk.getSubId()))) {
+          throw new IOException("not a valid Blorb file");
+        }
+      }
+    }
+    return blorbchunk;
+  }  
+
+  private Resources readResourcesFromFile() throws IOException {
+    FormChunk formchunk = readBlorbFromFile();
+    return (formchunk != null) ? new BlorbResources(formchunk) : null;
+  }
+
+  private FormChunk readBlorb(java.io.InputStream blorbis) throws IOException {
+  	if (blorbchunk == null) {
+    	byte[] data = FileUtils.readFileBytes(blorbis);
+      if (data != null) {
+        blorbchunk = new DefaultFormChunk(new DefaultMemory(data));
+      }
+  	}
+  	return blorbchunk;
+  }
+
+  private Resources readResourcesFromUrl() throws IOException {
+    FormChunk formchunk = readBlorb(blorburl.openStream());
+    return (formchunk != null) ? new BlorbResources(formchunk) : null;
+  }
+
   /**
    * This function is called to report an invalid story file.
    */

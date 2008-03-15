@@ -22,6 +22,7 @@ package org.zmpp.swingui;
 
 import java.io.File;
 import java.io.IOException;
+import java.net.URL;
 import java.text.MessageFormat;
 import java.util.PropertyResourceBundle;
 import java.util.StringTokenizer;
@@ -46,6 +47,7 @@ public class Main {
    * The application name.
    */
   public static final String APPNAME = getMessage("app.name");
+	public static boolean DEBUG = false;
 
   /**
    * Global function to return the message string.
@@ -56,23 +58,21 @@ public class Main {
     return MESSAGE_BUNDLE.getString(property);
   }
 
-  private static File storyfile;
-
   /**
    * The main method.
    * @param args the arguments
    */
   public static void main(String[] args) {    
     System.setProperty("swing.aatext", "true");
+  	DEBUG = "true".equals(System.getProperty("DEBUG"));
     setMacOsXProperties();
     try {
       UIManager.setLookAndFeel(UIManager.getSystemLookAndFeelClassName());
     } catch (Exception ex) {
       ex.printStackTrace();
     }
-    
     if (args.length >= 1) {
-      storyfile = new File(args[0]);      
+    	runWithParameters(args);
     } else {
     	try {
     	SwingUtilities.invokeAndWait(new Runnable() {
@@ -81,17 +81,17 @@ public class Main {
     					new JFileChooser(System.getProperty("user.dir"));
     			fileChooser.setDialogTitle(getMessage("dialog.open.msg"));
     			if (fileChooser.showOpenDialog(null) == JFileChooser.APPROVE_OPTION) {        
-    				storyfile = fileChooser.getSelectedFile();
+    				final File storyfile = fileChooser.getSelectedFile();
+    		    SwingUtilities.invokeLater(new Runnable() {  
+    		    	public void run() {
+    		        runStoryFile(storyfile);
+    		    	}
+    		    });
     			}
     		}
     	});
     	} catch (Exception ignore) {}
     }
-    SwingUtilities.invokeLater(new Runnable() {  
-    	public void run() {
-        runStoryFile(storyfile);
-    	}
-    });
   }
   
   public static boolean isMacOsX() {
@@ -108,39 +108,73 @@ public class Main {
     }
   }
   
+  private static void runWithParameters(String[] args)
+  {
+  	if (isFile(args[0])) {
+      runStoryFile(new File(args[0]));
+  	} else if (isUrl(args[0])) {
+  		try {
+  			runStoryUrl(new URL(args[0]));
+  		} catch (Exception ex) {
+  			ex.printStackTrace();
+  		}
+  	} else {
+      JOptionPane.showMessageDialog(null,
+      	MessageFormat.format(getMessage("error.open.msg"), ""),
+        getMessage("error.open.title"), JOptionPane.ERROR_MESSAGE);
+  	}
+  }
+  
+  private static void runStoryUrl(URL url) {
+  	runStory(createFactoryFromUrl(url));
+  }
+  
+  private static ApplicationMachineFactory createFactoryFromUrl(URL url) {
+  	return new ApplicationMachineFactory(url);
+  }
+  
+  private static void runStoryFile(File file) {
+  	runStory(createFactoryFromFile(file));
+  }
+  
+  private static ApplicationMachineFactory createFactoryFromFile(File file) {
+    if (isZblorbSuffix(file.getName())) {
+      return new ApplicationMachineFactory(file);
+    } else {
+      File blorbfile = searchForResources(file);
+      return new ApplicationMachineFactory(file, blorbfile);
+    }
+  }
+  
+  private static boolean isFile(String str) {
+  	File file = new File(str);
+  	return file.exists() && file.isFile();
+  }
+  
+  private static boolean isUrl(String str) {
+  	try {
+  		new URL(str);
+  		return true;
+  	} catch (Exception ex) {
+  		return false;
+  	}
+  }
+
   /**
    * This method opens a frame and runs the specified story file.
-   * 
    * @param storyfile the story file
    */
-  public static void runStoryFile(File storyfile) {
-    // Read in the story file
-    if (storyfile != null && storyfile.exists() && storyfile.isFile()) {
-      ApplicationMachineFactory factory; 
-      if (isZblorbSuffix(storyfile.getName())) {
-        factory = new ApplicationMachineFactory(storyfile);
-      } else {
-        File blorbfile = searchForResources(storyfile);
-        factory = new ApplicationMachineFactory(storyfile, blorbfile);
-      }
-      
-      try {
-        factory.buildMachine();
-        ZmppFrame frame = factory.getUI();      
-        frame.startMachine();
-        frame.pack();
-        frame.setVisible(true);
-      } catch (IOException ex) {
-      	MessageFormat.format(getMessage("error.open.msg"), ex.getMessage());
-        JOptionPane.showMessageDialog(null,
-        		MessageFormat.format(getMessage("error.open.msg"), ex.getMessage()),
-            getMessage("error.open.title"), JOptionPane.ERROR_MESSAGE);
-      }
-    } else {
+  private static void runStory(ApplicationMachineFactory factory) {
+    try {
+      factory.buildMachine();
+      ZmppFrame frame = factory.getUI();      
+      frame.startMachine();
+      frame.pack();
+      frame.setVisible(true);
+    } catch (IOException ex) {
       JOptionPane.showMessageDialog(null,
-      		MessageFormat.format(getMessage("error.notfound.msg"),
-      				storyfile != null ? storyfile.getPath() : ""),
-          getMessage("error.notfound.title"), JOptionPane.ERROR_MESSAGE);
+      		MessageFormat.format(getMessage("error.open.msg"), ex.getMessage()),
+          getMessage("error.open.title"), JOptionPane.ERROR_MESSAGE);
     }
   }
     
