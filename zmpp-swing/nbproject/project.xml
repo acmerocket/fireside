@@ -69,6 +69,7 @@
             <compilation-unit>
                 <package-root>src/test</package-root>
                 <unit-tests/>
+                <classpath mode="compile">../zmpp/target/classes:lib/jmock-SNAPSHOT.jar:../zmpp/lib/junit-4.0.jar:target/classes</classpath>
                 <source-level>1.5</source-level>
             </compilation-unit>
         </java-data>
