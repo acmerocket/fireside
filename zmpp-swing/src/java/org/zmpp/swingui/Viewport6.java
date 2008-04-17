@@ -312,6 +312,7 @@ public class Viewport6 extends JComponent implements ScreenModel6, Viewport {
   /**
    * {@inheritDoc}
    */
+  @Override
   public void paintComponent(Graphics g) {
 
     if (imageBuffer == null) {
@@ -320,8 +321,8 @@ public class Viewport6 extends JComponent implements ScreenModel6, Viewport {
           BufferedImage.TYPE_INT_RGB);
 
       // Default colors
-      defaultBackground = ColorTranslator.COLOR_WHITE;
-      defaultForeground = ColorTranslator.COLOR_BLACK;
+      defaultBackground = settings.getDefaultBackground();
+      defaultForeground = settings.getDefaultForeground();
             
       canvas = new CanvasImpl(imageBuffer, this, settings.getAntialias());
       for (int i = 0; i < NUM_V6_WINDOWS; i++) {

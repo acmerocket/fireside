@@ -48,9 +48,11 @@ public class CanvasImpl implements Canvas {
     
     // activate antialiasing if set
     if (antialias) {
-      
       ((Graphics2D) graphics).setRenderingHint(RenderingHints.KEY_ANTIALIASING,
           RenderingHints.VALUE_ANTIALIAS_ON);
+    } else {
+      ((Graphics2D) graphics).setRenderingHint(RenderingHints.KEY_ANTIALIASING,
+          RenderingHints.VALUE_ANTIALIAS_OFF);
     }
     this.observer = observer;
   }

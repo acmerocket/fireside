@@ -200,7 +200,7 @@ public class PreferencesDialog extends JDialog implements ActionListener {
       preferences.put("fixedfontsize", String.valueOf(fixedfontsize));
       preferences.put("defaultbackground", String.valueOf(bgcolor));
       preferences.put("defaultforeground", String.valueOf(fgcolor));
-      preferences.put("antialias", antialias ? "on" : "off");
+      preferences.put("antialias", antialias ? "true" : "false");
       settings.setSettings(stdfontsize, fixedfontsize, bgcolor, fgcolor, antialias);
       try {
         preferences.flush();
