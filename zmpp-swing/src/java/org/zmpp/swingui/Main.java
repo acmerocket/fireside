@@ -130,6 +130,9 @@ public class Main {
   }
   
   private static ApplicationMachineFactory createFactoryFromUrl(URL url) {
+    if (url.getPath().endsWith("zblorb") || url.getPath().endsWith("zblb")) {
+      return new ApplicationMachineFactory(null, url);
+    }
   	return new ApplicationMachineFactory(url);
   }
   

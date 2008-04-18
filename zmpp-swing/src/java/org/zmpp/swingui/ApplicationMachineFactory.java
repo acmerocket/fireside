@@ -53,7 +53,11 @@ public class ApplicationMachineFactory extends MachineFactory<ZmppFrame> {
   }
   
   public ApplicationMachineFactory(URL storyurl) {
-  	super(storyurl, null);
+  	super(storyurl);
+  }
+  
+  public ApplicationMachineFactory(URL storyurl, URL blorburl) {
+    super(storyurl, blorburl);
   }
   
   /**
