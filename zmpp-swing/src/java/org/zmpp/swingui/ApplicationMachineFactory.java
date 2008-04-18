@@ -52,10 +52,6 @@ public class ApplicationMachineFactory extends MachineFactory<ZmppFrame> {
   	super(blorbfile);
   }
   
-  public ApplicationMachineFactory(URL storyurl) {
-  	super(storyurl);
-  }
-  
   public ApplicationMachineFactory(URL storyurl, URL blorburl) {
     super(storyurl, blorburl);
   }

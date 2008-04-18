@@ -61,7 +61,7 @@ public class AppletMachineFactory extends MachineFactory<ZmppApplet> {
   public AppletMachineFactory(ZmppApplet applet, URL zblorburl,
                               boolean savetofile)
     throws Exception {
-  	super(zblorburl);
+  	super(null, zblorburl);
     this.applet = applet;
     savegamestore = savetofile ? new FileSaveGameDataStore(applet) :
       new MemorySaveGameDataStore();

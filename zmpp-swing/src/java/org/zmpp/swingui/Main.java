@@ -133,7 +133,7 @@ public class Main {
     if (url.getPath().endsWith("zblorb") || url.getPath().endsWith("zblb")) {
       return new ApplicationMachineFactory(null, url);
     }
-  	return new ApplicationMachineFactory(url);
+  	return new ApplicationMachineFactory(url, null);
   }
   
   private static void runStoryFile(File file) {
