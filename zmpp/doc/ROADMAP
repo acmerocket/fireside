@@ -1,8 +1,13 @@
 Roadmap:
 
+ZMPP is undergoing a number of significant changes now. The main
+focus is on restructuring the core to make it more reusable in different
+contexts.
+
 Ideas not yet verified:
 
-- URL transcript stream (transcript could be transferred to an URL)
+- URL transcript stream (transcript could be transferred to an URL, that's
+  actually an idea I saw Emily Short mentioning on several occasions)
 
 TODO:
 
@@ -27,6 +32,14 @@ opcodes:
 @make_menu: Journey
 @print_form: Arthur
 @output_stream 3 params: Arthur (width always 0)
+
+Version 1.x
+-----------
+- yet to be determined
+
+Version 1.01
+------------
+- maintenance release
 
 Version 1.0
 -----------

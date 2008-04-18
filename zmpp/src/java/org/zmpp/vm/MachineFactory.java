@@ -129,7 +129,9 @@ public abstract class MachineFactory<T> {
   private byte[] readStoryDataFromUrl() throws IOException {
   	java.io.InputStream storyis = null, blorbis = null;
     try {
-      storyis = storyurl.openStream();
+      if (storyurl != null) {
+        storyis = storyurl.openStream();
+      }
       if (blorburl != null) {
         blorbis = blorburl.openStream();
       }      
