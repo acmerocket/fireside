@@ -67,10 +67,6 @@ public abstract class MachineFactory<T> {
 		this.blorburl = blorburl;
 	}
 	
-	public MachineFactory(URL blorburl) {
-		this(null, blorburl);
-	}
-
   /**
    * This is the main creation function.
    * 
