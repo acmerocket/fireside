@@ -1,12 +1,13 @@
 Changelog
 
-Version 1.02
+Version 1.5
+-----------
+
+Version 1.01
 ------------
 - French translation of UI (by Eric Forgeot)
-- Eric has added an JNLP file for Webstart
 - application version can read from URL as well
 - DEBUG flag can now only be used in application version
-- default colors can be overridden in V6 games
 
 Version 1.0
 -----------

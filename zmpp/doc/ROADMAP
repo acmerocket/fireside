@@ -1,13 +1,8 @@
 Roadmap:
 
-ZMPP is undergoing a number of significant changes now. The main
-focus is on restructuring the core to make it more reusable in different
-contexts.
-
 Ideas not yet verified:
 
-- URL transcript stream (transcript could be transferred to an URL, that's
-  actually an idea I saw Emily Short mentioning on several occasions)
+- URL transcript stream (transcript could be transferred to an URL)
 
 TODO:
 
@@ -33,13 +28,25 @@ opcodes:
 @print_form: Arthur
 @output_stream 3 params: Arthur (width always 0)
 
-Version 1.x
------------
-- yet to be determined
+Version 1.5 ("Schmalzy Core")
+-----------------------------
+This is a major redesign. Changes include:
 
-Version 1.01
-------------
-- maintenance release
+- cut dependencies to AWT and Swing in the core -> done
+- change core to use resume/continue execution model like in Schmalz -> in progress
+- implement abstract I/O model that does heavy lifting for the user
+  interface (ZmppIO), with an additional Glk interface for Glulx
+- move timed input out of the core (-> ZmppIO)
+- move command history out of the core  (-> ZmppIO)
+- move sound rendering out of the core (-> ZmppIO)
+- use Swing standard components for display ("zmpp-swing2")
+- simplify public interface and VM setup (replace MachineFactory by initialization scheme) -> done
+- make instruction decoding like Schmalz
+- make Z-encoding like Schmalz
+- make tokenization like Schmalz (Binary search match)
+- make instruction caching optional
+- make caching of original game memory chunk optional
+- make core classes Serializable for easier web application support
 
 Version 1.0
 -----------

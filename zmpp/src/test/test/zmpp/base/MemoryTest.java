@@ -60,7 +60,7 @@ public class MemoryTest extends TestCase {
   public void testReadUnsigned32(){
     byte[] data32 = { (byte) 0xd7, (byte) 0x4b, (byte) 0xd7, (byte) 0x53 };
     Memory memaccess = new DefaultMemory(data32);
-    assertEquals(0xd74bd753, memaccess.readUnsigned32(0x00));
+    assertEquals(0xd74bd753L, memaccess.readUnsigned32(0x00));
   }
   
   public void testWriteUnsignedByte() {
@@ -80,11 +80,11 @@ public class MemoryTest extends TestCase {
   }
   
   public void testWriteUnsigned32() {
-    memory.writeUnsigned32(0x00, 0xffffffff);
-    assertEquals(0x00000000ffffffff, memory.readUnsigned32(0x00));
+    memory.writeUnsigned32(0x00, 0xffffffffL);
+    assertEquals(0x00000000ffffffffL, memory.readUnsigned32(0x00));
     
-    memory.writeUnsigned32(0x00, 0xf0f00f0f);
-    assertEquals(0x00000000f0f00f0f, memory.readUnsigned32(0x00));
+    memory.writeUnsigned32(0x00, 0xf0f00f0fL);
+    assertEquals(0x00000000f0f00f0fL, memory.readUnsigned32(0x00));
   }
   
   public void testWriteUnsigned48() {

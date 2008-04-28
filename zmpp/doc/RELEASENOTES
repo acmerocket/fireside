@@ -57,22 +57,12 @@ This project would not have been possible without my dear wife encouraging
 and supporting me to work on software that lets me combine my hobby
 computer games and history and my strive to improve my skills.
 
-Big thanks go to the Interactive Fiction community. Recently, ZMPP is becoming
-more a project where improvements are driven by users and other developers and
-I am very happy about this, thanks to everyone who helps to make ZMPP a better
-interpreter !
-
-Credits go to:
+Big thanks go to the Interactive Fiction community:
 
 - the rec.arts.int-fiction group and their representatives for providing
 well written specifications
 - Fredrik Ramsberg for contributing his thoughts, suggestions and time towards
 better language support in ZMPP
-- Eric Forgeot from IFiction-Fr (http://ifiction.free.fr) for the french
-  user interface translation, improvement suggestions to support WebStart,
-  bug reports and homepage redesign
-- Sandy McArthur for his patches and reminding me to merge ideas from Smeagol
-  and Schmalz into the main ZMPP.
 - Richard Vivian for selling me his copy "Masterpieces of Infocom"
 - Stefan Jokisch, David Kinder, Andrew Plotkin, Jon Zeppieri and Andrew Hunter
   for their Z-code/Glulx interpreters, that implementations served and still

@@ -53,9 +53,7 @@ public class Main {
             new AppMachineInitCallback());
       try {
         Machine machine = factory.buildMachine();
-        machine.start();
-        GameThread gameThread = new GameThread(machine, view);
-        gameThread.start();      
+        view.runMachine(machine);
       } catch (IOException ex) {
         ex.printStackTrace();
       }
