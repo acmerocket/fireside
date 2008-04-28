@@ -48,9 +48,13 @@ public class DefaultMemory implements Memory {
    * {@inheritDoc}
    */
   public long readUnsigned32(final int address) {
-  
-    return (data[address] & 0xff) << 24 | (data[address + 1] & 0xff) << 16
-           | (data[address + 2] & 0xff) << 8 | (data[address + 3] & 0xff);
+
+      final long a24 = (data[address] & 0xffL) << 24;
+      final long a16 = (data[address + 1] & 0xffL) << 16;
+      final long a8  = (data[address + 2] & 0xffL) << 8;
+      final long a0  = (data[address + 3] & 0xffL);
+
+      return a24 | a16 | a8 | a0;
   }
   
   /**

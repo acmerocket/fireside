@@ -20,9 +20,10 @@
  */
 package org.zmpp.vm;
 
+import java.io.Closeable;
 import org.zmpp.io.InputStream;
 
-public class InputImpl implements Input {
+public class InputImpl implements Input, Closeable {
 
   /**
    * This is the array of input streams.
@@ -47,13 +48,9 @@ public class InputImpl implements Input {
   }
   
   public void close() {
-    
     if (inputStream != null) {
-
       for (int i = 0; i < inputStream.length; i++) {
-        
         if (inputStream[i] != null) {
-          
           inputStream[i].close();
         }
       }
@@ -61,10 +58,11 @@ public class InputImpl implements Input {
   }
   
   /**
-   * {@inheritDoc}
+   * Sets an input stream to the specified number.
+   * @param streamnumber the input stream number
+   * @param stream the input stream to set
    */
-  public void setInputStream(final int streamnumber, final InputStream stream) {
-    
+  public void setInputStream(final int streamnumber, final InputStream stream) {    
     inputStream[streamnumber] = stream;
   }
   

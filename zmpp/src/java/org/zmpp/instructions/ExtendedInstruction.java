@@ -20,9 +20,9 @@
  */
 package org.zmpp.instructions;
 
-import java.awt.Dimension;
 
 import org.zmpp.base.Memory;
+import org.zmpp.blorb.BlorbImage.Resolution;
 import org.zmpp.vm.Machine;
 import org.zmpp.vm.PortableGameState;
 import org.zmpp.vm.ScreenModel;
@@ -216,7 +216,7 @@ public class ExtendedInstruction extends AbstractInstruction {
   
   private void print_unicode() {
     final char zchar = (char) getUnsignedValue(0);
-    getMachine().getOutput().printZsciiChar(zchar, false);
+    getMachine().printZsciiChar(zchar, false);
     nextInstruction();
   }
   
@@ -249,14 +249,14 @@ public class ExtendedInstruction extends AbstractInstruction {
       
     } else {
       
-      final Dimension picdim =
+      final Resolution picdim =
         getMachine().getPictureManager().getPictureSize(picnum);
       if (picdim != null) {
         
         final Memory memory =
           getMachine().getGameData().getMemory();
-        memory.writeUnsignedShort(array, picdim.height);
-        memory.writeUnsignedShort(array + 2, picdim.width);
+        memory.writeUnsignedShort(array, picdim.getHeight());
+        memory.writeUnsignedShort(array + 2, picdim.getWidth());
         result = true;
       }
     }

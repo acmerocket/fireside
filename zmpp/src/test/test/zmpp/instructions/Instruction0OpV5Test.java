@@ -33,6 +33,7 @@ import test.zmpp.instructions.Instruction0OpV3Test.Instruction0OpMock;
 
 public class Instruction0OpV5Test extends InstructionTestBase {
 
+  @Override
   @Before
   protected void setUp() throws Exception {
 	  super.setUp();
@@ -48,8 +49,7 @@ public class Instruction0OpV5Test extends InstructionTestBase {
   
   @Test
   public void testSaveIllegalInV5() {    
-    mockMachine.expects(atLeastOnce()).method("getCpu").will(returnValue(cpu));
-    mockCpu.expects(once()).method("halt").with(eq(
+    mockMachine.expects(once()).method("halt").with(eq(
       "illegal instruction, type: SHORT operand count: C0OP opcode: 5"));
     Short0Instruction save = new Short0Instruction(machine, Short0StaticInfo.OP_SAVE);
     save.execute();
@@ -57,8 +57,7 @@ public class Instruction0OpV5Test extends InstructionTestBase {
     
   @Test
   public void testRestoreIllegalInV5() {    
-    mockMachine.expects(atLeastOnce()).method("getCpu").will(returnValue(cpu));
-    mockCpu.expects(once()).method("halt").with(eq(
+    mockMachine.expects(once()).method("halt").with(eq(
       "illegal instruction, type: SHORT operand count: C0OP opcode: 6"));
     Short0Instruction restore = new Short0Instruction(machine, Short0StaticInfo.OP_RESTORE);
     restore.execute();
@@ -66,8 +65,7 @@ public class Instruction0OpV5Test extends InstructionTestBase {
 
   @Test
   public void testShowStatusVersion5IsIllegal() {    
-    mockMachine.expects(atLeastOnce()).method("getCpu").will(returnValue(cpu));
-    mockCpu.expects(once()).method("halt").with(eq(
+    mockMachine.expects(once()).method("halt").with(eq(
       "illegal instruction, type: SHORT operand count: C0OP opcode: 12"));
     
     Instruction0OpMock showstatus = createInstructionMock(Short0StaticInfo.OP_SHOW_STATUS);

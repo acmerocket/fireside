@@ -19,11 +19,12 @@
  */
 package test.zmpp.instructions;
 
-import java.awt.Dimension;
 import java.awt.image.BufferedImage;
 
 import org.jmock.Mock;
 import org.zmpp.blorb.BlorbImage;
+import org.zmpp.blorb.BlorbImage.Resolution;
+import org.zmpp.blorb.NativeImage;
 import org.zmpp.instructions.ExtendedInstruction;
 import org.zmpp.instructions.ExtendedStaticInfo;
 import org.zmpp.instructions.Operand;
@@ -103,7 +104,7 @@ public class InstructionExtV6Test extends InstructionTestBase {
   public void testPictureDataGetPictureInfo() {
     
     mockMachine.expects(atLeastOnce()).method("getPictureManager").will(returnValue(picturemanager));
-    mockPictureManager.expects(once()).method("getPictureSize").with(eq(1)).will(returnValue(new Dimension(320, 200)));
+    mockPictureManager.expects(once()).method("getPictureSize").with(eq(1)).will(returnValue(new Resolution(320, 200)));
     mockMachine.expects(atLeastOnce()).method("getGameData")
   		.will(returnValue(gamedata));
     mockGameData.expects(once()).method("getMemory").will(returnValue(memory));
@@ -154,9 +155,11 @@ public class InstructionExtV6Test extends InstructionTestBase {
   // ******** DRAW_PICTURE
   // **********************************
 
-  public void testDrawPicture() {
-    
-    BufferedImage image = new BufferedImage(320, 200, BufferedImage.TYPE_4BYTE_ABGR);
+  public void testDrawPicture() {   
+    NativeImage image = new NativeImage() {
+      public int getWidth() { return 320; }
+      public int getHeight() { return 200; }      
+    };
     BlorbImage blorbimage = new BlorbImage(image);
     
     mockMachine.expects(atLeastOnce()).method("getPictureManager").will(returnValue(picturemanager));
@@ -183,8 +186,10 @@ public class InstructionExtV6Test extends InstructionTestBase {
   // **********************************
 
   public void testErasePicture() {
-    
-    BufferedImage image = new BufferedImage(320, 200, BufferedImage.TYPE_4BYTE_ABGR);
+    NativeImage image = new NativeImage() {
+      public int getWidth() { return 320; }
+      public int getHeight() { return 200; }      
+    };
     BlorbImage blorbimage = new BlorbImage(image);
     
     mockMachine.expects(atLeastOnce()).method("getPictureManager").will(returnValue(picturemanager));

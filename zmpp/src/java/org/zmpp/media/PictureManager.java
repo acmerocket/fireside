@@ -20,9 +20,8 @@
  */
 package org.zmpp.media;
 
-import java.awt.Dimension;
-
 import org.zmpp.blorb.BlorbImage;
+import org.zmpp.blorb.BlorbImage.Resolution;
 
 public interface PictureManager {
 
@@ -33,7 +32,7 @@ public interface PictureManager {
    * @param picturenum the number of the picture
    * @return the size
    */
-  Dimension getPictureSize(int picturenum);
+  Resolution getPictureSize(int picturenum);
   
   /**
    * Returns the data of the specified picture. If it is not available, this

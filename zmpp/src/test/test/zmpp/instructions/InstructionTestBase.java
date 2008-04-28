@@ -27,7 +27,6 @@ import org.zmpp.vm.Cpu;
 import org.zmpp.vm.Dictionary;
 import org.zmpp.vm.GameData;
 import org.zmpp.vm.Machine;
-import org.zmpp.vm.Output;
 
 public abstract class InstructionTestBase extends MockObjectTestCase {
 
@@ -43,12 +42,11 @@ public abstract class InstructionTestBase extends MockObjectTestCase {
 	protected Dictionary dictionary;
 	protected Mock mockCpu;
 	protected Cpu cpu;
-	protected Mock mockOutput;
-	protected Output output;
 
 	/**
 	 * {@inheritDoc}
 	 */
+  @Override
 	protected void setUp() throws Exception { 
 		super.setUp();
 		mockMachine = mock(Machine.class);
@@ -63,7 +61,5 @@ public abstract class InstructionTestBase extends MockObjectTestCase {
 		dictionary = (Dictionary) mockDictionary.proxy();
 		mockCpu = mock(Cpu.class);
 		cpu = (Cpu) mockCpu.proxy();
-		mockOutput = mock(Output.class);
-		output = (Output) mockOutput.proxy();
 	}
 }

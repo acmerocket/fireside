@@ -147,8 +147,7 @@ public class ZsciiEncoding {
    * @param str the input string
    * @return the ZSCII representation
    */
-  public char[] convertToZscii(final String str) {
-    
+  public char[] convertToZscii(final String str) {    
     final char[] result = new char[str.length()];
     for (int i = 0; i < str.length(); i++) {
       

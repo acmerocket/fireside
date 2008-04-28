@@ -35,27 +35,6 @@ public interface Cpu {
   void reset();
 
   /**
-   * Indicates if the virtual machine is running.
-   * 
-   * @return true if the machine is running, false, otherwise
-   */
-  boolean isRunning();
-  
-  /**
-   * Sets the running status.
-   * 
-   * @param flag the running status
-   */
-  void setRunning(boolean flag);
-  
-  /**
-   * Halts the machine with the specified error message.
-   * 
-   * @param errormsg the error message
-   */
-  void halt(String errormsg);
-  
-  /**
    * Returns the next instruction.
    * 
    * @return the next instruction

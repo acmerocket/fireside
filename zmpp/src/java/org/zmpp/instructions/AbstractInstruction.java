@@ -309,7 +309,7 @@ public abstract class AbstractInstruction implements Instruction {
    * Halt the virtual machine with an error message about this instruction.
    */
   protected void throwInvalidOpcode() {
-    getCpu().halt("illegal instruction, type: " + getInstructionForm() +
+    getMachine().halt("illegal instruction, type: " + getInstructionForm() +
         " operand count: " + getOperandCount() + " opcode: " + getOpcode());
   }
   

@@ -20,14 +20,15 @@
  */
 package org.zmpp.vm;
 
+import java.io.Closeable;
 import org.zmpp.encoding.ZsciiEncoding;
 import org.zmpp.encoding.ZsciiString;
 import org.zmpp.io.OutputStream;
 import org.zmpp.vm.StoryFileHeader.Attribute;
 
-public class OutputImpl implements Output {
+public class OutputImpl implements Output, Closeable {
 
-  private Cpu cpu;
+  private Machine machine;
   private GameData gamedata;
   
   /**
@@ -35,16 +36,18 @@ public class OutputImpl implements Output {
    */
   private OutputStream[] outputStream;
   
-  public OutputImpl(final GameData gamedata, final Cpu cpu) {
+  public OutputImpl(final GameData gamedata, final Machine machine) {
   
     super();
-    this.cpu = cpu;
+    this.machine = machine;
     this.gamedata = gamedata;
     outputStream = new OutputStream[3];
   }
   
-  /**
-   * {@inheritDoc}
+  /**  
+   * Sets the output stream to the specified number.
+   * @param streamnumber the stream number
+   * @param stream the output stream
    */
   public void setOutputStream(final int streamnumber,
       final OutputStream stream) {
@@ -193,7 +196,7 @@ public class OutputImpl implements Output {
       
     } else if (streamnumber == OUTPUTSTREAM_MEMORY && flag) {
       
-      cpu.halt("invalid selection of memory stream");
+      machine.halt("invalid selection of memory stream");
     }
   }
   
@@ -211,13 +214,9 @@ public class OutputImpl implements Output {
    * {@inheritDoc}
    */
   public void close() {
-    
     if (outputStream != null) {
-
       for (int i = 0; i < outputStream.length; i++) {
-        
         if (outputStream[i] != null) {
-          
           outputStream[i].flush();
           outputStream[i].close();
         }
@@ -228,12 +227,9 @@ public class OutputImpl implements Output {
   /**
    * {@inheritDoc}
    */
-  public void reset() {
-    
+  public void reset() {    
     for (int i = 0; i < outputStream.length; i++) {
-      
       if (outputStream[i] != null) {
-        
         outputStream[i].flush();
       }
     }

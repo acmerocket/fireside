@@ -24,6 +24,7 @@ import org.zmpp.base.Memory;
 import org.zmpp.encoding.ZCharEncoder;
 import org.zmpp.media.SoundSystem;
 import org.zmpp.vm.Machine;
+import org.zmpp.vm.Machine.MachineRunState;
 import org.zmpp.vm.Output;
 import org.zmpp.vm.ScreenModel;
 import org.zmpp.vm.TextCursor;
@@ -236,13 +237,13 @@ public class VariableInstruction extends AbstractInstruction {
   
   private void print_char() {
     final char zchar = (char) getUnsignedValue(0);
-    getMachine().getOutput().printZsciiChar(zchar, false);
+    getMachine().printZsciiChar(zchar, false);
     nextInstruction();
   }
   
   private void print_num() {
     final short number = getValue(0);
-    getMachine().getOutput().printNumber(number);
+    getMachine().printNumber(number);
     nextInstruction();
   }
   
@@ -290,7 +291,7 @@ public class VariableInstruction extends AbstractInstruction {
     final short streamnumber = getValue(0);
     
     if (streamnumber < 0 && streamnumber >= -3) {
-      getMachine().getOutput().selectOutputStream(-streamnumber, false);
+      getMachine().selectOutputStream(-streamnumber, false);
     } else if (streamnumber > 0 && streamnumber <= 3) {
       if (streamnumber == Output.OUTPUTSTREAM_MEMORY) {
         final int tableAddress = getUnsignedValue(1);
@@ -300,16 +301,16 @@ public class VariableInstruction extends AbstractInstruction {
           System.out.printf("@output_stream 3 %x %d\n", tableAddress, tablewidth);
         }
         //System.out.printf("Select stream 3 on table: %x\n", tableAddress);
-        getMachine().getOutput().selectOutputStream3(tableAddress, tablewidth);
+        getMachine().selectOutputStream3(tableAddress, tablewidth);
       } else {
-        getMachine().getOutput().selectOutputStream(streamnumber, true);
+        getMachine().selectOutputStream(streamnumber, true);
       }
     }
     nextInstruction();
   }
   
   private void input_stream() {
-    getMachine().getInput().selectInputStream(getUnsignedValue(0));
+    getMachine().selectInputStream(getUnsignedValue(0));
     nextInstruction();
   }
   
@@ -320,12 +321,64 @@ public class VariableInstruction extends AbstractInstruction {
   }
   
   private void sread() {
-    //System.out.println("@sread()");
+    if (getMachine().getRunState() == MachineRunState.RUNNING) {
+      sreadStage1();
+    } else {
+      sreadStage2();
+    }
+  }
+  
+  private void sreadStage1() {
+    getMachine().setRunState(MachineRunState.SREAD);
     final int version = getStoryFileVersion();
+    int time = 0;
+    short packedAddress = 0;
+    if (getNumOperands() >= 3) {
+      time = getUnsignedValue(2);
+    }
+    if (getNumOperands() >= 4) {
+      packedAddress = getValue(3);
+    }    
+    
+    // We probably do not need this
     if (version <= 3) {
       getMachine().updateStatusLine();
     }
+    getMachine().flushOutput();
+    //getMachine().getScreen().displayCursor(true);
+  }
+  
+  private void sreadStage2() {
+    getMachine().setRunState(MachineRunState.RUNNING);
     
+    final int version = getStoryFileVersion();
+    final int textbuffer = getUnsignedValue(0);
+    int parsebuffer = 0;
+    if (getNumOperands() >= 2) {
+      parsebuffer = getUnsignedValue(1);
+    }
+    // Here the Z-machine needs to be paused and the user interface
+    // handles the whole input
+    final char terminal =
+      getMachine().readLine(textbuffer);
+    
+    if (version < 5 || (version >= 5 && parsebuffer > 0)) {
+      // Do not tokenise if parsebuffer is 0 (See specification of read)
+      getMachine().tokenize(textbuffer, parsebuffer, 0, false);
+    }
+    
+    if (storesResult()) {
+      // The specification suggests that we store the terminating character
+      // here, this can be NULL or NEWLINE at the moment
+      storeResult((short) terminal);
+    }
+    nextInstruction();
+  }
+  
+  /*
+  private void sread_old() {
+    final int version = getStoryFileVersion();
+    //System.out.println("@sread()");
     final int textbuffer = getUnsignedValue(0);
     int parsebuffer = 0;
     int time = 0;
@@ -341,9 +394,12 @@ public class VariableInstruction extends AbstractInstruction {
       packedAddress = getValue(3);
     }
     
+    // Here the Z-machine needs to be paused and the user interface
+    // handles the whole input
     final char terminal =
       getMachine().readLine(textbuffer, time, packedAddress);
     
+    // This is the resume part
     if (version < 5 || (version >= 5 && parsebuffer > 0)) {
       // Do not tokenise if parsebuffer is 0 (See specification of read)
       getMachine().tokenize(textbuffer, parsebuffer, 0, false);
@@ -356,7 +412,7 @@ public class VariableInstruction extends AbstractInstruction {
     }
     nextInstruction();
   }
-  
+  */
   
   /**
    * Implements the sound_effect instruction.
@@ -533,6 +589,7 @@ public class VariableInstruction extends AbstractInstruction {
     branchOnTest(found);
   }
 
+  // TODO: split in resumable command
   private void read_char() {
     
     //System.out.println("@read_char()");    
@@ -546,7 +603,9 @@ public class VariableInstruction extends AbstractInstruction {
       
       routineAddress = getValue(2);
     }
-    storeResult((short) getMachine().readChar(time, routineAddress));
+    // Here the machine should be resumed to
+    // allow the user interface to do input
+    storeResult((short) getMachine().readChar());
     nextInstruction();
   }
   
@@ -654,7 +713,7 @@ public class VariableInstruction extends AbstractInstruction {
       for (int j = 0; j < width; j++) { 
         final int offset = (width * i) + j;
         zchar = (char) memory.readUnsignedByte(zsciiText + offset);
-        getMachine().getOutput().printZsciiChar(zchar, false);
+        getMachine().printZsciiChar(zchar, false);
       }
       row += skip + 1;
       getMachine().getScreen().setTextCursor(row, column,

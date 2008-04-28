@@ -103,7 +103,6 @@ public class PrintLiteralInstruction extends AbstractInstruction {
    * {@inheritDoc}
    */
   protected InstructionStaticInfo getStaticInfo() {
-    
     return PrintLiteralStaticInfo.getInstance();
   }
 
@@ -111,20 +110,14 @@ public class PrintLiteralInstruction extends AbstractInstruction {
    * {@inheritDoc}
    */
   public void doInstruction() {
-
     if (getOpcode() == PrintLiteralStaticInfo.OP_PRINT_RET) {
-      
-      getMachine().getOutput().printZString(instructionAddress + 1);
-      getMachine().getOutput().newline();
+      getMachine().printZString(instructionAddress + 1);
+      getMachine().newline();
       returnFromRoutine(TRUE);
-      
-    } else if (getOpcode() == PrintLiteralStaticInfo.OP_PRINT) {
-      
-      getMachine().getOutput().printZString(instructionAddress + 1);
+    } else if (getOpcode() == PrintLiteralStaticInfo.OP_PRINT) {      
+      getMachine().printZString(instructionAddress + 1);
       nextInstruction();
-      
     } else {
-     
       throwInvalidOpcode();
     }
   }

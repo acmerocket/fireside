@@ -24,12 +24,16 @@ import java.io.File;
 import java.io.IOException;
 import java.io.InputStream;
 import java.io.RandomAccessFile;
+import java.nio.ByteBuffer;
+import java.nio.channels.Channels;
+import java.nio.channels.ReadableByteChannel;
 import java.util.ArrayList;
 import java.util.List;
 
 import org.zmpp.base.DefaultMemory;
 import org.zmpp.base.Memory;
 import org.zmpp.blorb.BlorbResources;
+import org.zmpp.blorb.NativeImageFactory;
 import org.zmpp.iff.DefaultFormChunk;
 import org.zmpp.iff.FormChunk;
 import org.zmpp.media.Resources;
@@ -51,10 +55,12 @@ public class FileUtils {
   
   /**
    * Creates a resources object from a Blorb file.
+   * @param imageFactory the NativeImageFactory
    * @param blorbfile the file
    * @return the resources object or null (on failure)
    */
-  public static Resources createResources(final File blorbfile) {
+  public static Resources createResources(NativeImageFactory imageFactory,
+          final File blorbfile) {
     RandomAccessFile raf = null;
     try {
       raf = new RandomAccessFile(blorbfile, "r");
@@ -62,7 +68,7 @@ public class FileUtils {
       raf.readFully(data);
       final Memory memory = new DefaultMemory(data);
       final FormChunk formchunk = new DefaultFormChunk(memory);
-      return new BlorbResources(formchunk);
+      return new BlorbResources(imageFactory, formchunk);
     } catch (IOException ex) {
       ex.printStackTrace();
     } finally {
@@ -81,30 +87,56 @@ public class FileUtils {
    * @return the bytes or null if the inputstream is null
    */
   public static byte[] readFileBytes(final InputStream inputstream) {
-    byte[] data = null;
     if (inputstream == null) return null;
-    
+
+    // Start with a buffer size between 1K and 1M based on available memory.
+    final int minBufferSize = (int)Math.max(1024, Math.min(Runtime.getRuntime().freeMemory()/10, 1024 * 1024));
+
+    List<ByteBuffer> buffers = new ArrayList<ByteBuffer>();
+    int totalBytesRead = 0;
+
+    // Fill buffer lists
     try {
-      final List<Byte> buffer = new ArrayList<Byte>();
-      int databyte = 0;
-      do {
-        databyte = inputstream.read();
-        if (databyte != -1) {
-          buffer.add((byte) databyte);
+      final ReadableByteChannel rbc = Channels.newChannel(inputstream);
+      ByteBuffer bb = ByteBuffer.allocate(minBufferSize);
+      buffers.add(bb);
+
+      int bytesRead;
+      while ((bytesRead = rbc.read(bb)) != -1) {
+        totalBytesRead += bytesRead;
+        // if this buffer is mostly full, create another one and avoid small read iterations
+        if (bb.remaining() < 16) {
+          bb.flip();
+          bb = ByteBuffer.allocate(Math.max(minBufferSize, totalBytesRead/2));
+          buffers.add(bb);
         }
-      } while (databyte != -1);
-      data = new byte[buffer.size()];
-      for (int i = 0; i < buffer.size(); i++) {
-        data[i] = buffer.get(i);
       }
-    } catch (IOException ex) {
-      ex.printStackTrace();
-    } finally {
-      try { inputstream.close(); } catch (Exception ex) {
-        ex.printStackTrace(System.err);
-      } 
+      bb.flip();
+
+    } catch (IOException e) {
+      throw new RuntimeException("Unable to read file bytes", e);
     }
-    return data;
+
+    // merge the buffers so we can convert to a byte array.
+    final ByteBuffer data =  ByteBuffer.allocate(totalBytesRead);
+    for (final ByteBuffer buf : buffers) {
+      data.put(buf);
+    }
+    data.flip();
+
+    // allow intermeditate buffers to be collected before we create a possibly big array
+    buffers = null;
+
+    // is the data buffer backed by a byte array?
+    if (data.hasArray()) {
+      // just use the buffer's backing array since it's no longer needed and avoid the copy.
+      return data.array();
+    } else {
+      // we need to copy the bytes into a byte array.
+      final byte[] bytes = new byte[data.remaining()];
+      data.get(bytes);
+      return bytes;
+    }
   }
 
   /**

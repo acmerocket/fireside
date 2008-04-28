@@ -27,12 +27,13 @@ import java.net.URL;
 import org.zmpp.base.DefaultMemory;
 import org.zmpp.blorb.BlorbResources;
 import org.zmpp.blorb.BlorbStory;
+import org.zmpp.blorb.NativeImageFactory;
 import org.zmpp.iff.DefaultFormChunk;
 import org.zmpp.iff.FormChunk;
 import org.zmpp.instructions.DefaultInstructionDecoder;
 import org.zmpp.io.FileInputStream;
-import org.zmpp.io.IOSystem;
 import org.zmpp.io.InputStream;
+import org.zmpp.io.IOSystem;
 import org.zmpp.io.TranscriptOutputStream;
 import org.zmpp.media.Resources;
 import org.zmpp.vmutil.FileUtils;
@@ -40,31 +41,50 @@ import org.zmpp.vmutil.FileUtils;
 /**
  * Constructing a Machine object is a very complex task, the building process
  * deals with creating the game objects, the UI and the I/O system. 
- * This factory class offers a template for the building and leaves the
- * concrete implementation which are dependent on specific input sources
- * and UI technologies to sub classes.
+ * Initialization was changed so it is not necessary to create a subclass
+ * of MachineFactory. Instead, an init struct and a init callback object
+ * should be provided.
  * 
  * @author Wei-ju Wu
- * @version 1.0
+ * @version 2.0
  */
-public abstract class MachineFactory<T> {
+public class MachineFactory {
 
-	private File storyfile, blorbfile;
-	private URL storyurl, blorburl;
+  public static class MachineInitStruct {
+    public File storyFile, blorbFile;
+    public URL storyURL, blorbURL;
+    public InputStream keyboardInputStream;
+    public StatusLine statusLine;
+    public ScreenModel screenModel;
+    public IOSystem ioSystem;
+    public SaveGameDataStore saveGameDataStore;
+    public NativeImageFactory nativeImageFactory;
+  }
+  
+  public interface MachineInitCallback {
+   /**
+     * Initializes the user interface objects.
+     * 
+     * @param machine the machine object
+     * @return the resulting top level user interface object
+     */
+    void initUI(Machine machine);
+  
+    /**
+     * This function is called to report an invalid story file.
+     */
+    void reportInvalidStory();
+  
+  }
+  
+  private MachineInitStruct initStruct;
+  private MachineInitCallback initCallback;
   private FormChunk blorbchunk;
 
-	public MachineFactory(File storyfile, File blorbfile) {
-		this.storyfile = storyfile;
-		this.blorbfile = blorbfile;
-	}
-	
-	public MachineFactory(File blorbfile) {
-		this(null, blorbfile);
-	}
-	
-	public MachineFactory(URL storyurl, URL blorburl) {
-		this.storyurl = storyurl;
-		this.blorburl = blorburl;
+	public MachineFactory(MachineInitStruct initStruct,
+                        MachineInitCallback initCallback) {
+		this.initStruct = initStruct;
+    this.initCallback = initCallback;
 	}
 	
   /**
@@ -73,49 +93,33 @@ public abstract class MachineFactory<T> {
    * @return the machine
    */
   public Machine buildMachine() throws IOException {
-    
     final GameData gamedata =
       new GameDataImpl(readStoryData(), readResources());
-  
     if (isInvalidStory(gamedata.getStoryFileHeader().getVersion())) {
-      reportInvalidStory();
+      initCallback.reportInvalidStory();
     }
-    final Machine machine = new MachineImpl();
+    final MachineImpl machine = new MachineImpl();
     final InstructionDecoder decoder = new DefaultInstructionDecoder();
     machine.initialize(gamedata, decoder);
-    initUI(machine);
+    initCallback.initUI(machine);
     initIOSystem(machine);
     return machine;
   }
 
   // ***********************************************************************
-  // ****** Protected methods to be overridden
-  // ***************************************************
-  
-  /**
-   * Initializes the user interface objects.
-   * 
-   * @param machine the machine object
-   * @return the resulting top level user interface object
-   */
-  abstract protected T initUI(Machine machine);
-  
-  /**
-   * Returns the top level user interface object.
-   * 
-   * @return the top level user interface object
-   */
-  abstract public T getUI();
-  
+  // ****** Helpers
+  // *****************************
   /**
    * Reads the story data.
    * 
    * @return the story data
    * @throws IOException if reading story file revealed an error
    */
-  protected byte[] readStoryData() throws IOException {
-  	if (storyfile != null || blorbfile != null) return readStoryDataFromFile();
-  	if (storyurl != null || blorburl != null) return readStoryDataFromUrl();
+  private byte[] readStoryData() throws IOException {
+  	if (initStruct.storyFile != null || initStruct.blorbFile != null)
+      return readStoryDataFromFile();
+  	if (initStruct.storyURL != null || initStruct.blorbURL != null)
+      return readStoryDataFromUrl();
   	return null;
   }
 
@@ -125,11 +129,11 @@ public abstract class MachineFactory<T> {
   private byte[] readStoryDataFromUrl() throws IOException {
   	java.io.InputStream storyis = null, blorbis = null;
     try {
-      if (storyurl != null) {
-        storyis = storyurl.openStream();
+      if (initStruct.storyURL != null) {
+        storyis = initStruct.storyURL.openStream();
       }
-      if (blorburl != null) {
-        blorbis = blorburl.openStream();
+      if (initStruct.blorbURL != null) {
+        blorbis = initStruct.blorbURL.openStream();
       }      
     } catch (Exception ex) {
       ex.printStackTrace();      
@@ -146,8 +150,8 @@ public abstract class MachineFactory<T> {
    * {@inheritDoc}
    */
   private byte[] readStoryDataFromFile() throws IOException {        
-    if (storyfile != null) {
-      return FileUtils.readFileBytes(storyfile);
+    if (initStruct.storyFile != null) {
+      return FileUtils.readFileBytes(initStruct.storyFile);
     } else {
       // Read from Z BLORB
       FormChunk formchunk = readBlorbFromFile();
@@ -157,19 +161,18 @@ public abstract class MachineFactory<T> {
   
   /**
    * Reads the resource data.
-   * 
    * @return the resource data
    * @throws IOException if reading resources revealed an error
    */
   protected Resources readResources() throws IOException {
-  	if (blorbfile != null) return readResourcesFromFile();
-  	if (blorburl != null) return readResourcesFromUrl();
+  	if (initStruct.blorbFile != null) return readResourcesFromFile();
+  	if (initStruct.blorbURL != null) return readResourcesFromUrl();
   	return null;
   }
   
   private FormChunk readBlorbFromFile() throws IOException {    
     if (blorbchunk == null) {
-      byte[] data = FileUtils.readFileBytes(blorbfile);
+      byte[] data = FileUtils.readFileBytes(initStruct.blorbFile);
       if (data != null) {        
         blorbchunk = new DefaultFormChunk(new DefaultMemory(data));
         if (!"IFRS".equals(new String(blorbchunk.getSubId()))) {
@@ -182,7 +185,8 @@ public abstract class MachineFactory<T> {
 
   private Resources readResourcesFromFile() throws IOException {
     FormChunk formchunk = readBlorbFromFile();
-    return (formchunk != null) ? new BlorbResources(formchunk) : null;
+    return (formchunk != null) ?
+      new BlorbResources(initStruct.nativeImageFactory, formchunk) : null;
   }
 
   private FormChunk readBlorb(java.io.InputStream blorbis) throws IOException {
@@ -196,49 +200,10 @@ public abstract class MachineFactory<T> {
   }
 
   private Resources readResourcesFromUrl() throws IOException {
-    FormChunk formchunk = readBlorb(blorburl.openStream());
-    return (formchunk != null) ? new BlorbResources(formchunk) : null;
+    FormChunk formchunk = readBlorb(initStruct.blorbURL.openStream());
+    return (formchunk != null) ?
+      new BlorbResources(initStruct.nativeImageFactory, formchunk) : null;
   }
-
-  /**
-   * This function is called to report an invalid story file.
-   */
-  abstract protected void reportInvalidStory();
-  
-  /**
-   * The IOSystem object.
-   * 
-   * @return the IOSystem object
-   */
-  abstract protected IOSystem getIOSystem();
-  
-  /**
-   * The keyboard input stream object.
-   * 
-   * @return the keyboard input stream
-   */
-  abstract protected InputStream getKeyboardInputStream();
-  
-  /**
-   * Returns the status line object.
-   * 
-   * @return the status line object
-   */
-  abstract protected StatusLine getStatusLine();
-  
-  /**
-   * Returns the screen model object.
-   * 
-   * @return the screen model
-   */
-  abstract protected ScreenModel getScreenModel();
-  
-  /**
-   * Returns the save game data store object.
-   * 
-   * @return the save game data store
-   */
-  abstract protected SaveGameDataStore getSaveGameDataStore();
 
   // ************************************************************************
   // ****** Private methods
@@ -259,13 +224,12 @@ public abstract class MachineFactory<T> {
    * 
    * @param machine the machine object
    */
-  private void initIOSystem(final Machine machine) {
-  
+  private void initIOSystem(final MachineImpl machine) {
     initInputStreams(machine);
     initOutputStreams(machine);    
-    machine.setStatusLine(getStatusLine());
-    machine.setScreen(getScreenModel());
-    machine.setSaveGameDataStore(getSaveGameDataStore());    
+    machine.setStatusLine(initStruct.statusLine);
+    machine.setScreen(initStruct.screenModel);
+    machine.setSaveGameDataStore(initStruct.saveGameDataStore);    
   }
   
   /**
@@ -273,10 +237,10 @@ public abstract class MachineFactory<T> {
    * 
    * @param machine the machine object
    */
-  private void initInputStreams(final Machine machine) {
+  private void initInputStreams(final MachineImpl machine) {
     
-    machine.getInput().setInputStream(0, getKeyboardInputStream());
-    machine.getInput().setInputStream(1, new FileInputStream(getIOSystem(),
+    machine.setInputStream(0, initStruct.keyboardInputStream);
+    machine.setInputStream(1, new FileInputStream(initStruct.ioSystem,
         machine.getGameData().getZsciiEncoding()));
   }
 
@@ -285,15 +249,13 @@ public abstract class MachineFactory<T> {
    * 
    * @param machine the machine object
    */
-  private void initOutputStreams(final Machine machine) {
-    
-    final Output output = machine.getOutput();
-    output.setOutputStream(1, getScreenModel().getOutputStream());
-    output.selectOutputStream(1, true);
-    output.setOutputStream(2, new TranscriptOutputStream(
-        getIOSystem(), machine.getGameData().getZsciiEncoding()));
-    output.selectOutputStream(2, false);
-    output.setOutputStream(3, new MemoryOutputStream(machine));
-    output.selectOutputStream(3, false);
+  private void initOutputStreams(final MachineImpl machine) {
+    machine.setOutputStream(1, initStruct.screenModel.getOutputStream());
+    machine.selectOutputStream(1, true);
+    machine.setOutputStream(2, new TranscriptOutputStream(
+        initStruct.ioSystem, machine.getGameData().getZsciiEncoding()));
+    machine.selectOutputStream(2, false);
+    machine.setOutputStream(3, new MemoryOutputStream(machine));
+    machine.selectOutputStream(3, false);
   }
 }

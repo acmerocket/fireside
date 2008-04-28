@@ -183,7 +183,7 @@ public class LongInstruction extends AbstractInstruction {
     final short op1 = getValue(0);
     if (getNumOperands() <= 1) {
 
-      getMachine().getCpu().halt("je expects at least two operands, only " +
+      getMachine().halt("je expects at least two operands, only " +
                         "one provided");
     } else {
       
@@ -300,7 +300,7 @@ public class LongInstruction extends AbstractInstruction {
     
     if (op2 == 0) {
     
-      getMachine().getCpu().halt("@div division by zero");
+      getMachine().halt("@div division by zero");
       
     } else {
     
@@ -315,7 +315,7 @@ public class LongInstruction extends AbstractInstruction {
     
     if (op2 == 0) {
       
-      getMachine().getCpu().halt("@mod division by zero");
+      getMachine().halt("@mod division by zero");
     } else {
     
       storeResult((short) (op1 % op2));
@@ -462,7 +462,7 @@ public class LongInstruction extends AbstractInstruction {
     final int currentStackFrame = getCpu().getRoutineContexts().size() - 1;
     if (currentStackFrame < stackFrame) {
       
-      getMachine().getCpu().halt("@throw from an invalid stack frame state");
+      getMachine().halt("@throw from an invalid stack frame state");
     } else {
      
       // Pop off the routine contexts until the specified stack frame is

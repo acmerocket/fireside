@@ -41,19 +41,6 @@ public interface Output {
   final static int OUTPUTSTREAM_MEMORY = 3;
   
   /**
-   * Closes the managed streams.
-   */
-  void close();
-  
-  /**  
-   * Sets the output stream to the specified number.
-   * 
-   * @param streamnumber the stream number
-   * @param stream the output stream
-   */
-  void setOutputStream(int streamnumber, OutputStream stream);
-  
-  /**
    * Selects/unselects the specified output stream. If the streamnumber
    * is negative, |streamnumber| is deselected, if positive, it is selected.
    * Stream 3 (the memory stream) can not be selected by this function,

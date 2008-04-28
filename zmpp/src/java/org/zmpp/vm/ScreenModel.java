@@ -154,31 +154,9 @@ public interface ScreenModel {
   void setForegroundColor(int colornumber, int window);
   
   /**
-   * Forces a redraw.
-   */
-  void redraw();
-  
-  /**
-   * Displays the cursor.
-   * 
-   * @param flag true if display, false for clear
-   */
-  void displayCursor(boolean flag);
-  
-  /**
    * Returns the output stream associated with the screen.
    * 
    * @return the output stream
    */
-  OutputStream getOutputStream();
-  
-  /**
-   * Wait until this object is initialized.
-   */
-  void waitInitialized();
-  
-  /**
-   * Reset the internal pagers.
-   */
-  void resetPagers();
+  OutputStream getOutputStream();  
 }

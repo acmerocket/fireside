@@ -136,6 +136,7 @@ public class MemorySection implements Memory {
    * {@inheritDoc}
    */
   public byte readByte(final int address) {
+    assert address < length : "Accessing an address beyond section length: address: " + address + ", length: " + length + ", start: "  + start;
     return memory.readByte(address + start);
   }
 }

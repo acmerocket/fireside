@@ -20,9 +20,8 @@
  */
 package org.zmpp.media;
 
-import java.awt.Dimension;
-
 import org.zmpp.blorb.BlorbImage;
+import org.zmpp.blorb.BlorbImage.Resolution;
 import org.zmpp.vm.Machine;
 
 public class PictureManagerImpl implements PictureManager {
@@ -42,7 +41,7 @@ public class PictureManagerImpl implements PictureManager {
   /**
    * {@inheritDoc}
    */
-  public Dimension getPictureSize(final int picturenum) {
+  public Resolution getPictureSize(final int picturenum) {
     
     final BlorbImage img = pictures.getResource(picturenum);
     if (img != null) {

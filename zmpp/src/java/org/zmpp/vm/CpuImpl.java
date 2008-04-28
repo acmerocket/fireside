@@ -16,7 +16,7 @@
  * GNU General Public License for more details.
  *
  * You should have received a copy of the GNU General Public License
- * along with ZMPP.  If not, see <http://www.gnu.org/licenses/>.
+ * along with ZMPP.  If not,` see <http://www.gnu.org/licenses/>.
  */
 package org.zmpp.vm;
 
@@ -26,7 +26,6 @@ import java.util.List;
 
 import org.zmpp.base.Interruptable;
 import org.zmpp.base.Memory;
-import org.zmpp.encoding.ZsciiString;
 import org.zmpp.vmutil.FastShortStack;
 
 public class CpuImpl implements Cpu, Interruptable {
@@ -162,31 +161,6 @@ public class CpuImpl implements Cpu, Interruptable {
       final int instructionLength) {
         
     return getProgramCounter() + instructionLength + offset - 2;
-  }
-  
-  /**
-   * {@inheritDoc}
-   */
-  public void halt(final String errormsg) {
-  
-    machine.getOutput().print(new ZsciiString(errormsg));
-    running = false;
-  }  
-
-  /**
-   * {@inheritDoc}
-   */
-  public boolean isRunning() {
-    
-    return running;
-  }
-  
-  /**
-   * {@inheritDoc}
-   */
-  public void setRunning(final boolean flag) {
-    
-    running = flag;
   }
   
   // ********************************************************************

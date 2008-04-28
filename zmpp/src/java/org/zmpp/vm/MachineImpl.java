@@ -24,6 +24,8 @@ import org.zmpp.blorb.BlorbImage;
 import org.zmpp.encoding.ZsciiString;
 import org.zmpp.iff.FormChunk;
 import org.zmpp.iff.WritableFormChunk;
+import org.zmpp.io.InputStream;
+import org.zmpp.io.OutputStream;
 import org.zmpp.media.MediaCollection;
 import org.zmpp.media.PictureManager;
 import org.zmpp.media.PictureManagerImpl;
@@ -50,6 +52,7 @@ public class MachineImpl implements Machine {
   private static final int NUM_UNDO = 5;
   
   private GameData gamedata;
+  private MachineRunState runstate;
   private RandomGenerator random;
   private StatusLine statusLine;
   private ScreenModel screenModel;
@@ -59,8 +62,8 @@ public class MachineImpl implements Machine {
   private SoundSystem soundSystem;
   private PictureManager pictureManager;  
   private Cpu cpu;
-  private Output output;
-  private Input input;
+  private OutputImpl output;
+  private InputImpl input;
   
   /**
    * Constructor.
@@ -86,16 +89,87 @@ public class MachineImpl implements Machine {
    */
   public Cpu getCpu() { return cpu; }
   
-  /**
-   * {@inheritDoc}
+  // **********************************************************************
+  // ***** Output stream management, implemented by the OutputImpl object
+  // **********************************************************************
+  /**  
+   * Sets the output stream to the specified number.
+   * @param streamnumber the stream number
+   * @param stream the output stream
    */
-  public Output getOutput() { return output; }
+  public void setOutputStream(int streamnumber, OutputStream stream) {
+    output.setOutputStream(streamnumber, stream);
+  }
+
+  public void selectOutputStream(int streamnumber, boolean flag) {
+    output.selectOutputStream(streamnumber, flag);
+  }
+
+  public void selectOutputStream3(int tableAddress, int tableWidth) {
+    output.selectOutputStream3(tableAddress, tableWidth);
+  }
+
+  public void printZString(int stringAddress) {
+    output.printZString(stringAddress);
+  }
+
+  public void print(ZsciiString str) {
+    output.print(str);
+  }
+
+  public void newline() {
+    output.newline();
+  }
+
+  public void printZsciiChar(char zchar, boolean isInput) {
+    output.printZsciiChar(zchar, isInput);
+  }
+
+  public void deletePreviousZsciiChar(char zchar) {
+    output.deletePreviousZsciiChar(zchar);
+  }
+
+  public void printNumber(short num) {
+    output.printNumber(num);
+  }
+
+  public void flushOutput() {
+    output.flushOutput();
+  }
+
+  public void reset() {
+    output.reset();
+  }
+  
+  // **********************************************************************
+  // ***** Input stream management, implemented by the InputImpl object
+  // ********************************************************************
+  /**
+   * Sets an input stream to the specified number.
+   * @param streamnumber the input stream number
+   * @param stream the input stream to set
+   */
+  public void setInputStream(int streamNumber, InputStream stream) {
+    input.setInputStream(streamNumber, stream);
+  }
   
   /**
    * {@inheritDoc}
    */
-  public Input getInput() { return input; }
+  public InputStream getSelectedInputStream() {
+    return input.getSelectedInputStream();
+  }
   
+  /**
+   * {@inheritDoc}
+   */
+  public void selectInputStream(int streamNumber) {
+    input.selectInputStream(streamNumber);
+  }
+  
+  // **********************************************************************
+  // ***** Initialization
+  // **************************************
   /**
    * {@inheritDoc}
    */
@@ -106,7 +180,7 @@ public class MachineImpl implements Machine {
     this.undostates = new RingBuffer<PortableGameState>(NUM_UNDO);
     
     cpu = new CpuImpl(this, decoder);
-    output = new OutputImpl(gamedata, cpu);
+    output = new OutputImpl(gamedata, this);
     input = new InputImpl(this);
     
     MediaCollection<SoundEffect> sounds = null;
@@ -146,6 +220,28 @@ public class MachineImpl implements Machine {
   /**
    * {@inheritDoc}
    */
+  public MachineRunState getRunState() {
+    return runstate;
+  }
+  
+  /**
+   * {@inheritDoc}
+   */
+  public void setRunState(MachineRunState runstate) {
+    this.runstate = runstate;
+  }
+
+  /**
+   * {@inheritDoc}
+   */
+  public void halt(final String errormsg) {
+    print(new ZsciiString(errormsg));
+    runstate = MachineRunState.STOPPED;
+  }  
+
+  /**
+   * {@inheritDoc}
+   */
   public void warn(final String msg) {
     System.err.println("WARNING: " + msg);
   }
@@ -161,19 +257,17 @@ public class MachineImpl implements Machine {
    * {@inheritDoc} 
    */
   public void quit() {
-    cpu.setRunning(false);
-    
+    runstate = MachineRunState.STOPPED;    
     // On quit, close the streams
     output.print(new ZsciiString("*Game ended*"));
     closeStreams();
-    screenModel.redraw();
   }
   
   /**
    * {@inheritDoc}
    */
   public void start() {
-    cpu.setRunning(true);
+    runstate = MachineRunState.RUNNING;
   }
   
   // ************************************************************************
@@ -191,16 +285,15 @@ public class MachineImpl implements Machine {
   /**
    * {@inheritDoc}
    */
-  public char readLine(final int textbuffer, final int time,
-      final int routineAddress) {
-    return inputFunctions.readLine(textbuffer, time, routineAddress);
+  public char readLine(final int textbuffer) {
+    return inputFunctions.readLine(textbuffer);
   }
   
   /**
    * {@inheritDoc}
    */
-  public char readChar(final int time, final int routineAddress) {
-    return inputFunctions.readChar(time, routineAddress);
+  public char readChar() {
+    return inputFunctions.readChar();
   }
   
   /**
@@ -515,4 +608,5 @@ public class MachineImpl implements Machine {
   public int getNextProperty(int objectNum, int property) {
 	return getObjectTree().getNextProperty(objectNum, property);
   }
+
 }

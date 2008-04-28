@@ -20,7 +20,6 @@
  */
 package org.zmpp.media;
 
-import java.awt.Toolkit;
 import java.util.concurrent.ExecutorService;
 import java.util.concurrent.Executors;
 
@@ -113,7 +112,8 @@ public class SoundSystemImpl implements SoundSystem {
     }
     if (sound == null) {
 
-      Toolkit.getDefaultToolkit().beep();
+      // TODO: Beep ?
+      //Toolkit.getDefaultToolkit().beep();
       
     } else {
       

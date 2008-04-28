@@ -59,6 +59,7 @@ public class AbstractInstructionTest extends MockObjectTestCase {
   
   private AbstractInstruction info;
   
+  @Override
   public void setUp() throws Exception {
     mockMachine = mock(Machine.class);
     machine = (Machine) mockMachine.proxy();

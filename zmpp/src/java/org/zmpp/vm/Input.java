@@ -34,15 +34,12 @@ public interface Input {
    */
   final static int INPUTSTREAM_FILE = 1;
   
-  void close();
-  
   /**
    * Sets an input stream to the specified number.
-   * 
    * @param streamnumber the input stream number
    * @param stream the input stream to set
    */
-  void setInputStream(int streamnumber, InputStream stream);
+  //void setInputStream(int streamnumber, InputStream stream);
   
   /**
    * Selects an input stream.

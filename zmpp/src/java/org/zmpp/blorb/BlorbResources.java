@@ -63,11 +63,11 @@ public class BlorbResources implements Resources {
   /**
    * Constructor.
    * 
+   * @param imageFactory a NativeImageFactory
    * @param formchunk a form chunk in Blorb format
    */
-  public BlorbResources(FormChunk formchunk) {
-
-    images = new BlorbImages(formchunk);
+  public BlorbResources(NativeImageFactory imageFactory, FormChunk formchunk) {
+    images = new BlorbImages(imageFactory, formchunk);
     sounds = new BlorbSounds(formchunk);
     coverart = new BlorbCoverArt(formchunk);
     metadata = new BlorbMetadataHandler(formchunk);

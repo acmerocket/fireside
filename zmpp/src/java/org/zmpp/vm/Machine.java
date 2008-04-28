@@ -29,7 +29,9 @@ import org.zmpp.media.SoundSystem;
  * @author Wei-ju Wu
  * @version 1.0
  */
-public interface Machine extends ObjectTree {
+public interface Machine extends ObjectTree, Input, Output {
+
+  public enum MachineRunState { RUNNING, STOPPED, SREAD, READ_CHAR }
 
   /**
    * Initialization function.
@@ -60,22 +62,28 @@ public interface Machine extends ObjectTree {
    * @return the Cpu object
    */
   Cpu getCpu();
-  
-  /**
-   * Returns the Output object.
-   * @return the Output object
-   */
-  Output getOutput();
-  
-  /**
-   * Returns the Input object.
-   * @return the Input object
-   */
-  Input getInput();  
-  
+
   // ************************************************************************
   // ****** Control functions
   // ************************************************
+
+  /**
+   * Returns the current run state of the machine
+   * @return the run state
+   */
+  MachineRunState getRunState();
+  
+  /**
+   * Sets the current run state of the machine
+   * @param runstate the run state
+   */
+  void setRunState(MachineRunState runstate);
+
+  /**
+   * Halts the machine with the specified error message.
+   * @param errormsg the error message
+   */
+  void halt(String errormsg);
 
   /**
    * Restarts the virtual machine.
@@ -116,21 +124,18 @@ public interface Machine extends ObjectTree {
                 boolean flag);
   
   /**
-   * Reads a string from the selected input stream.
-   * @param textbuffer the text buffer address in memory
-   * @param time the time interval to call routine
-   * @param routineAddress the packed routine address
-   * @return the terminating character
+   * Reads a string from the currently selected input stream into
+   * the text buffer address.
+   * @param textbuffer the text buffer address
+   * @return the terminator character
    */
-  char readLine(int textbuffer, int time, int routineAddress);
+  char readLine(int textbuffer);
   
   /**
    * Reads a ZSCII char from the selected input stream.
-   * @param time the time interval to call routine (timed input)
-   * @param routineAddress the packed routine address to call (timed input)
    * @return the selected ZSCII char
    */
-  char readChar(int time, int routineAddress);  
+  char readChar();  
   
   /**
    * Returns the sound system.

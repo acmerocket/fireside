@@ -21,7 +21,6 @@
 package org.zmpp.vm;
 
 import java.util.ArrayList;
-import java.util.Collections;
 import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
@@ -35,104 +34,18 @@ import org.zmpp.encoding.ZsciiStringTokenizer;
 
 /**
  * This class contains functions that deal with user input.
+ * Note: For version 2.0 a number of changes will be performed on this
+ * class. Timed input will be eliminated completely, as well as leftover.
+ * Command history might be left out as well
  * 
  * @author Wei-ju Wu
- * @version 1.0
+ * @version 2.0
  */
-public class InputFunctions implements InputLine {
-
-  private CommandHistory history;  
+public class InputFunctions {
   private Machine machine;
   private static final ZsciiString WHITESPACE =
     new ZsciiString(new char[] { ' ', '\n', '\t', '\r' });
 
-  /**
-   * This class represents the interrupt method in timed input.
-   */
-  public class InterruptThread extends Thread {
-  
-    /**
-     * The interval in milliseconds.
-     */
-    private int time;
-    
-    /**
-     * The packed routine address.
-     */
-    private int routineAddress;
-    
-    /**
-     * The input buffer.
-     */
-    private List<Character> inputbuffer;
-    
-    /**
-     * Status variable.
-     */ 
-    public boolean running;
-    
-    public InterruptThread(int time, int routineAddress,
-                           List<Character> inputbuffer) {
-      
-      this.time = time;
-      this.routineAddress = routineAddress;
-      this.inputbuffer = inputbuffer;
-      this.running = true;
-    }
-    
-    public synchronized boolean isRunning() {
-      
-      return running;
-    }
-    
-    public synchronized void terminate() {
-      
-      running = false;
-      
-      // note: interrupt() can only be executed in a signed applet
-      interrupt();
-      try { join(); } catch (Exception ex) {
-        
-        ex.printStackTrace(System.err);
-      }
-    }
-    
-    public void run() {
-      
-      final Output output = machine.getOutput();
-      
-      while (isRunning()) {
-        
-        // We sleep for the given time
-        try { Thread.sleep(time); } catch (InterruptedException ex) { }
-        
-        if (isRunning()) {
-          displayCursor(false);
-          final short retval = machine.getCpu().callInterrupt(routineAddress);
-          if (retval == 1) {
-          
-            machine.getInput().getSelectedInputStream().cancelInput();
-            break;
-          }
-        
-          // REDISPLAY INPUT HERE
-          // We need to find out if the routine has printed anything to
-          // the screen if yes, the input needs to be redisplayed
-          if (inputbuffer != null
-              && machine.getCpu().interruptDidOutput()) {
-          
-            for (char zsciiChar : inputbuffer) {
-            
-              output.printZsciiChar(zsciiChar, false);
-            }
-          }
-          output.flushOutput();
-          displayCursor(true);
-        }
-      }
-    }    
-  }
-  
   /**
    * Constructor.
    * 
@@ -141,7 +54,6 @@ public class InputFunctions implements InputLine {
   public InputFunctions(Machine machine) {
     
     this.machine = machine;
-    this.history = new CommandHistory(this);
   }
 
   // *********************************************************************
@@ -153,112 +65,15 @@ public class InputFunctions implements InputLine {
   // *********************************************************************
   
   /**
-   * {@inheritDoc}
-   */
-  public char readLine(final int textbuffer, final int time,
-      final int routineAddress) {
-
-    machine.getOutput().flushOutput();
-    displayCursor(true);
-    
-    // Using a synchronized list
-    final List<Character> inputbuffer =
-      Collections.synchronizedList(new ArrayList<Character>());
-    history.reset();
-    
-    final int pointer = checkForPreviousInput(textbuffer, inputbuffer);    
-    
-    // Timed input
-    final InterruptThread thread = startInterruptThread(routineAddress, time,
-        inputbuffer);
-    
-    final char terminateChar = doInputLoop(textbuffer, pointer, inputbuffer);
-    storeInput(inputbuffer, terminateChar);
-    terminateInterruptThread(thread);    
-    displayCursor(false);
-    
-    return handleTerminateChar(terminateChar);
-  }
-  
-  /**
-   * {@inheritDoc}
-   */
-  public int deletePreviousChar(final List<Character> inputbuffer,
-      final int pointer) {
-    
-    // Decrement the buffer pointer
-    int newpointer = pointer;
-    if (inputbuffer.size() > 0) {
-    
-      final char deleteChar = inputbuffer.remove(inputbuffer.size() - 1);
-      newpointer--;
-      machine.getOutput().deletePreviousZsciiChar(deleteChar);
-    }
-    return newpointer;
-  }
-  
-  /**
-   * {@inheritDoc}
-   */
-  public int addChar(final List<Character> inputbuffer, final int textbuffer,
-      final int pointer, final char zsciiChar) {
-    
-    // Do not include the terminator in the buffer
-    // Note: we convert ASCII characters to lower case to allow the
-    // transcription of umlauts
-    int newpointer = pointer;
-    final Memory memory = machine.getGameData().getMemory();    
-    final ZsciiEncoding encoding = machine.getGameData().getZsciiEncoding();
-    memory.writeUnsignedByte(textbuffer + newpointer,
-                             (short) encoding.toLower(zsciiChar));
-    inputbuffer.add(zsciiChar);
-    newpointer++;
-    machine.getOutput().printZsciiChar(zsciiChar, true);
-    return newpointer;
-  }
-  
-  /**
-   * This method checks the buffer for previous input.
-   * 
-   * @param textbuffer the text buffer
-   * @param inputbuffer the input buffer
+   * By delegating responsibility for timed input to the user interface,
+   * reading input is strongly simplified.
+   * @param textbuffer
    * @return
    */
-  public int checkForPreviousInput(final int textbuffer,
-      final List<Character> inputbuffer) {
-    
-    final int version = machine.getGameData().getStoryFileHeader().getVersion();
-
-    // We determine the start of the input here
-    // From V5, the first byte contains the number of characters typed
-    // so we skip that first byte      
-    final int textbufferstart = determineTextBufferStart(version);
-    int pointer = textbufferstart;
-    
-    if (version >= 5) {
-      
-      final Memory memory = machine.getGameData().getMemory();
-      
-      // The clunky feature to include previous input into the current input
-      // Simply adjust the pointer, the differencing at the end of the
-      // function will then calculate the total
-      int numCharactersTyped = memory.readByte(textbuffer + 1);
-      if (numCharactersTyped < 0) {
-        
-        numCharactersTyped = 0;
-      }
-      if (numCharactersTyped > 0) {
-        
-        for (int i = 0; i < numCharactersTyped; i++) {
-          
-          final char zsciichar = (char) memory.readUnsignedByte(
-              textbuffer + textbufferstart + i);
-          inputbuffer.add(zsciichar);
-        }
-      }
-      pointer += numCharactersTyped;
-    }
-    return pointer;
+  public char readLine(final int textbuffer) {
+    String inputLine = machine.getSelectedInputStream().readLine();
+    processInput(textbuffer, inputLine);
+    return inputLine.charAt(inputLine.length() - 1);
   }
   
   /**
@@ -285,92 +100,27 @@ public class InputFunctions implements InputLine {
       // Write the number of characters typed in byte 1
       memory.writeUnsignedByte(textbuffer + 1, numCharsTyped);
       
-    } else {
-      
+    } else {      
       // Terminate with 0 byte in versions < 5
       // Check if input was cancelled
-      int terminatepos = textpointer;
+      int terminatepos = textpointer; // (textpointer - textbuffer + 2);
       if (terminateChar == ZsciiEncoding.NULL) {
         terminatepos = 0;
       }
       memory.writeByte(textbuffer + terminatepos, (byte) 0);
-    }    
-  }
-  
-  public InterruptThread startInterruptThread(final int routineAddress,
-      final int time, final List<Character> inputbuffer) {
-    
-    InterruptThread thread = null;
-    final int version = machine.getGameData().getStoryFileHeader().getVersion();
-    
-    if (version >= 4 && time > 0 && routineAddress != 0) {
-      
-      final double dtime = ((double) time) / 10.0 * 1000.0;
-      thread = new InterruptThread((int) dtime, routineAddress, inputbuffer);
-      thread.start();
     }
-    return thread;
   }
   
-  public void terminateInterruptThread(final InterruptThread thread) {
-    
-    // Synchronize with timed input thread    
-    if (thread != null) {
-      
-      thread.terminate();
-    }    
-  }
-
-  /**
-   * This is the main input loop.
-   * 
-   * @param textbuffer the text buffer address
-   * @param pointerstart the offset of the text pointer start, either 0 or 1
-   * @param pointer the starting pointer including previous input
-   * @param inputbuffer the input buffer
-   * @return the terminating character
-   */
-  public char doInputLoop(final int textbuffer, final int pointer,
-                          final List<Character> inputbuffer) {
-    
-    char zsciiChar;
+  private void processInput(final int textbuffer, String inputString) {
     final Memory memory = machine.getGameData().getMemory();
     final int bufferlen = memory.readUnsignedByte(textbuffer);
-    int newpointer = pointer;
-    boolean flushBeforeGet = true;
-
-    do {
-      
-      zsciiChar = machine.getInput().getSelectedInputStream()
-      	.getZsciiChar(flushBeforeGet);
-      flushBeforeGet = false; // all subsequent input should not flush the buffer
-      displayCursor(false);
-      
-      if (zsciiChar == ZsciiEncoding.DELETE) {
-   
-        newpointer = deletePreviousChar(inputbuffer, newpointer);
-        
-      } else if (!isTerminatingCharacter(zsciiChar)) {
-        
-        if (history.isHistoryChar(zsciiChar)) {
-         
-          newpointer = history.switchHistoryEntry(inputbuffer, textbuffer,
-                                                  newpointer, zsciiChar);
-                    
-        } else {
-    
-          newpointer = addChar(inputbuffer, textbuffer, newpointer,
-                               zsciiChar);
-        }
-      }
-      displayCursor(true);
-      
-    } while (!isTerminatingCharacter(zsciiChar) && newpointer < bufferlen - 1);
-    
-    checkTermination(zsciiChar, textbuffer, newpointer);    
-    return zsciiChar;
+    for (int i = 0; i < inputString.length(); i++) {
+      memory.writeByte(textbuffer + i + 1, (byte) inputString.charAt(i));
+    }
+    char terminateChar = inputString.charAt(inputString.length() - 1);
+    checkTermination(terminateChar, textbuffer, inputString.length() + 1);
   }
-  
+
   private boolean isTerminatingCharacter(final char zsciiChar) {
     
     return isFileHeaderTerminator(zsciiChar) 
@@ -425,7 +175,7 @@ public class InputFunctions implements InputLine {
       // Echo a newline into the streams
       // must be called with isInput == false since we are not
       // in input mode anymore when we receive NEWLINE
-      machine.getOutput().printZsciiChar(ZsciiEncoding.NEWLINE, false);      
+      machine.printZsciiChar(ZsciiEncoding.NEWLINE, false);      
     }      
     return terminateChar;
   }
@@ -436,20 +186,8 @@ public class InputFunctions implements InputLine {
   /**
    * {@inheritDoc}
    */
-  public char readChar(final int time, final int routineAddress) {
-    
-    machine.getOutput().flushOutput();
-    displayCursor(true);
-    
-    InterruptThread thread = startInterruptThread(routineAddress, time, null);
-    final char result =
-      machine.getInput().getSelectedInputStream().getZsciiChar(true);
-    //System.out.println("readChar(): " + result);
-    
-    terminateInterruptThread(thread);
-    displayCursor(false);
-    
-    return result;
+  public char readChar() {
+    return 0;
   }
   
   /**
@@ -620,27 +358,4 @@ public class InputFunctions implements InputLine {
     
     return (version < 5) ? 1 : 2;
   }
-  
-  /**
-   * Draws the cursor and refreshes the screen.
-   * 
-   * @param flag true for display, false for clear
-   */
-  private synchronized void displayCursor(final boolean flag) {
-    
-    machine.getScreen().displayCursor(flag);
-    machine.getScreen().redraw();
-  }
-  
-  // *********************************************************************
-  // ***** History methods
-  // ***********************************
-
-  private void storeInput(final List<Character> inputbuffer,
-      final char terminateChar) {
-    if (terminateChar != ZsciiEncoding.NULL) {
-      history.addInputLine(inputbuffer);
-    }
-  }
-  
 }

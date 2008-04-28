@@ -51,15 +51,18 @@ public abstract class BlorbMediaCollection<T> implements MediaCollection<T> {
    */
   private FormChunk formchunk;
 
+  protected NativeImageFactory imageFactory;
+  
   /**
    * Constructor.
    * 
    * @param formchunk the Blorb file form chunk
    */
-  public BlorbMediaCollection(FormChunk formchunk) {
-    
+  public BlorbMediaCollection(NativeImageFactory imageFactory,
+          FormChunk formchunk) {
     resourceNumbers = new ArrayList<Integer>();
     this.formchunk = formchunk;
+    this.imageFactory = imageFactory;
     initDatabase();
     
     // Ridx chunk

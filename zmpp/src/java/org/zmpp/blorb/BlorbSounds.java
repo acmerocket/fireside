@@ -53,15 +53,14 @@ public class BlorbSounds extends BlorbMediaCollection<SoundEffect> {
    * @param formchunk the form chunk
    */
   public BlorbSounds(FormChunk formchunk) {
-
-    super(formchunk);
+    super(null, formchunk);
   }
   
   /**
    * {@inheritDoc}
    */
+  @Override
   public void clear() {
-    
     super.clear();
     sounds.clear();
   }

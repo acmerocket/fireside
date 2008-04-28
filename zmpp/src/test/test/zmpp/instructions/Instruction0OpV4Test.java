@@ -97,8 +97,7 @@ public class Instruction0OpV4Test extends InstructionTestBase {
 
   @Test
   public void testShowStatusVersion4IsIllegal() {    
-    mockMachine.expects(atLeastOnce()).method("getCpu").will(returnValue(cpu));
-    mockCpu.expects(once()).method("halt").with(eq(
+    mockMachine.expects(once()).method("halt").with(eq(
       "illegal instruction, type: SHORT operand count: C0OP opcode: 12"));
     
     Instruction0OpMock showstatus = createInstructionMock(Short0StaticInfo.OP_SHOW_STATUS);

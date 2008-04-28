@@ -20,9 +20,6 @@
  */
 package org.zmpp.blorb;
 
-import java.awt.Dimension;
-import java.awt.image.BufferedImage;
-
 /**
  * This class contains informations related to Blorb images and their
  * scaling. Scaling information is optional and probably only relevant
@@ -54,10 +51,11 @@ public class BlorbImage {
     public boolean isDefined() {
       return !(numerator == 0 && denominator == 0);
     }
+    @Override
     public String toString() { return numerator + "/" + denominator; }
   }
   
-  protected static class Resolution {
+  public static class Resolution {
     
     private int width;
     private int height;
@@ -70,6 +68,7 @@ public class BlorbImage {
     
     public int getWidth() { return width; }
     public int getHeight() { return height; }
+    @Override
     public String toString() { return width + "x" + height; }
   }
   
@@ -93,13 +92,12 @@ public class BlorbImage {
     public Resolution getMinimum() { return minimum; }
     public Resolution getMaximum() { return maximum; }
     public float computeERF(int screenwidth, int screenheight) {
-      
       return Math.min(screenwidth / standard.getWidth(),
           screenheight / standard.getHeight());
     }
     
+    @Override
     public String toString() {
-      
       return "Std: " + standard.toString() + " Min: " + minimum.toString() +
         " Max: " + maximum.toString();
     }
@@ -139,59 +137,57 @@ public class BlorbImage {
       return value;
     }
     
+    @Override
     public String toString() {
-      
       return String.format("std: %s, min: %s, max: %s\n",
           standard.toString(), minimum.toString(), maximum.toString());
     }
   }
   
-  private BufferedImage image;
+  private NativeImage image;
   private Resolution resolution;
   private ScaleInfo scaleinfo;
   
-  public BlorbImage(BufferedImage image) {
-    
+  public BlorbImage(NativeImage image) {
     this.image = image;
   }
   
   public BlorbImage(int width, int height) {
-    
     resolution = new Resolution(width, height);
   }
   
-  public BufferedImage getImage() { return image; }
+  public NativeImage getImage() { return image; }
   public ScaleInfo getScaleInfo() { return scaleinfo; }
   
-  public Dimension getSize(int screenwidth, int screenheight) {
-    
+  /**
+   * Returns the size of the image, scaled to the specified screen
+   * dimensions
+   * @param screenwidth screen width
+   * @param screenheight screen height
+   * @return the scaled size
+   */
+  public Resolution getSize(int screenwidth, int screenheight) {
     if (scaleinfo != null) {
-      
       float ratio = scaleinfo.computeScaleRatio(screenwidth, screenheight);
       if (image != null) {
-        
-        return new Dimension((int) (image.getWidth() * ratio),
+        return new Resolution((int) (image.getWidth() * ratio),
           (int) (image.getHeight() * ratio));
         
-      } else {
-        
-        return new Dimension((int) (resolution.getWidth() * ratio),
+      } else { 
+        return new Resolution((int) (resolution.getWidth() * ratio),
             (int) (resolution.getHeight() * ratio));
       }
-      
     } else {
-     
       if (image != null) {
-        return new Dimension(image.getWidth(), image.getHeight());
+        return new Resolution(image.getWidth(), image.getHeight());
       } else {
         
-        return new Dimension(resolution.getWidth(), resolution.getHeight());
+        return new Resolution(resolution.getWidth(), resolution.getHeight());
       }
     }    
   }
   
   protected void setScaleInfo(ScaleInfo scaleinfo) {
-    
     this.scaleinfo = scaleinfo;
   }
 }

@@ -233,12 +233,12 @@ public class Short1Instruction extends AbstractInstruction {
   }
 
   private void print_addr() {
-    getMachine().getOutput().printZString(getUnsignedValue(0));
+    getMachine().printZString(getUnsignedValue(0));
     nextInstruction();
   }
   
   private void print_paddr() {
-    getMachine().getOutput().printZString(
+    getMachine().printZString(
         getMachine().getCpu().translatePackedAddress(getUnsignedValue(0), false));
     nextInstruction();
   }
@@ -250,7 +250,7 @@ public class Short1Instruction extends AbstractInstruction {
   private void print_obj() {
     final int obj = getUnsignedValue(0);
     if (obj > 0) {
-      getMachine().getOutput().printZString(
+      getMachine().printZString(
         getMachine().getPropertiesDescriptionAddress(obj));
     } else {      
       getMachine().warn("@print_obj illegal access to object " + obj);

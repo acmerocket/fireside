@@ -34,6 +34,7 @@ import org.zmpp.vm.Machine;
  */
 public class Instruction1OpV3Test extends InstructionTestBase {
 
+  @Override
   protected void setUp() throws Exception {
 	  super.setUp();
     mockMachine.expects(atLeastOnce()).method("getVersion")
@@ -47,8 +48,7 @@ public class Instruction1OpV3Test extends InstructionTestBase {
   @Test
   public void testIllegalOpcode() {
     Instruction1OpMock illegal = createInstructionMock(machine, 0xdd);
-    mockMachine.expects(once()).method("getCpu").will(returnValue(cpu));
-    mockCpu.expects(once()).method("halt").with(eq(
+    mockMachine.expects(once()).method("halt").with(eq(
         "illegal instruction, type: SHORT operand count: C1OP opcode: 221"));
     illegal.execute();
   }
@@ -307,11 +307,9 @@ public class Instruction1OpV3Test extends InstructionTestBase {
 
   @Test
   public void testPrintAddr() {
-    mockMachine.expects(atLeastOnce()).method("getOutput").will(returnValue(output));
-
     Instruction1OpMock print_addr = createInstructionMock(Short1StaticInfo.OP_PRINT_ADDR,
         Operand.TYPENUM_LARGE_CONSTANT, (short) 0x28bc);
-    mockOutput.expects(once()).method("printZString").with(eq(0x28bc));
+    mockMachine.expects(once()).method("printZString").with(eq(0x28bc));
     print_addr.execute();
     assertTrue(print_addr.nextInstructionCalled);
   }
@@ -322,13 +320,11 @@ public class Instruction1OpV3Test extends InstructionTestBase {
   
   @Test
   public void testPrintPaddr() {
-    mockMachine.expects(atLeastOnce()).method("getOutput").will(returnValue(output));
-    
     Instruction1OpMock print_paddr = createInstructionMock(Short1StaticInfo.OP_PRINT_PADDR,
         Operand.TYPENUM_LARGE_CONSTANT, (short) 0x145e);
     mockMachine.expects(once()).method("getCpu").will(returnValue(cpu));
     mockCpu.expects(once()).method("translatePackedAddress").with(eq(0x145e), eq(false)).will(returnValue(1234));
-    mockOutput.expects(once()).method("printZString").with(eq(1234));
+    mockMachine.expects(once()).method("printZString").with(eq(1234));
     
     print_paddr.execute();
     assertTrue(print_paddr.nextInstructionCalled);
@@ -366,14 +362,12 @@ public class Instruction1OpV3Test extends InstructionTestBase {
   
   @Test
   public void testPrintObj() {    
-    mockMachine.expects(atLeastOnce()).method("getOutput").will(returnValue(output));
-    
     Instruction1OpMock print_obj = createInstructionMock(Short1StaticInfo.OP_PRINT_OBJ,
         Operand.TYPENUM_SMALL_CONSTANT, (short) 0x03);
 
     mockMachine.expects(once()).method("getPropertiesDescriptionAddress")
     	.with(eq(3)).will(returnValue(4712));
-    mockOutput.expects(once()).method("printZString").with(eq(4712));
+    mockMachine.expects(once()).method("printZString").with(eq(4712));
     print_obj.execute();
     assertTrue(print_obj.nextInstructionCalled);
   }
@@ -413,8 +407,7 @@ public class Instruction1OpV3Test extends InstructionTestBase {
  
   @Test
   public void testCall1SIllegalInVersion3() {
-    mockMachine.expects(once()).method("getCpu").will(returnValue(cpu));
-    mockCpu.expects(once()).method("halt").with(eq(
+    mockMachine.expects(once()).method("halt").with(eq(
         "illegal instruction, type: SHORT operand count: C1OP opcode: 8"));
     Short1Instruction call1s = createInstructionMock(Short1StaticInfo.OP_CALL_1S,
         Operand.TYPENUM_LARGE_CONSTANT, (short) 4611);
@@ -436,15 +429,18 @@ public class Instruction1OpV3Test extends InstructionTestBase {
       super(machine, opcode);
     }
     
+    @Override
     protected void nextInstruction() {
       nextInstructionCalled = true;
     }
     
+    @Override
     protected void returnFromRoutine(short retval) {
       returned = true;
       returnValue = retval;
     }
     
+    @Override
     protected void branchOnTest(boolean flag) {
       branchOnTestCalled = true;
       branchOnTestCondition = flag;

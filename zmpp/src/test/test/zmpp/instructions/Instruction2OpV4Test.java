@@ -89,8 +89,7 @@ public class Instruction2OpV4Test extends InstructionTestBase {
   // ******************************************
   
   public void testCall2nIllegalInVersion4() {
-    mockMachine.expects(once()).method("getCpu").will(returnValue(cpu));
-    mockCpu.expects(once()).method("halt").with(eq(
+    mockMachine.expects(once()).method("halt").with(eq(
         "illegal instruction, type: LONG operand count: C2OP opcode: 26"        
         ));
     LongInstruction call2n = createInstructionMock(LongStaticInfo.OP_CALL_2N,

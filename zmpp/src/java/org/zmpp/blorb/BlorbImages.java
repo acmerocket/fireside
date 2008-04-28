@@ -20,13 +20,10 @@
  */
 package org.zmpp.blorb;
 
-import java.awt.image.BufferedImage;
 import java.io.IOException;
 import java.io.InputStream;
 import java.util.HashMap;
 import java.util.Map;
-
-import javax.imageio.ImageIO;
 
 import org.zmpp.base.Memory;
 import org.zmpp.blorb.BlorbImage.Ratio;
@@ -54,17 +51,16 @@ public class BlorbImages extends BlorbMediaCollection<BlorbImage> {
    * 
    * @param formchunk the form chunk
    */
-  public BlorbImages(FormChunk formchunk) {
-    
-    super(formchunk);
+  public BlorbImages(NativeImageFactory imageFactory, FormChunk formchunk) {
+    super(imageFactory, formchunk);
     handleResoChunk();
   }
   
   /**
    * {@inheritDoc}
    */
+  @Override
   public void clear() {
-    
     super.clear();
     images.clear();
   }
@@ -121,11 +117,8 @@ public class BlorbImages extends BlorbMediaCollection<BlorbImage> {
     final InputStream is = new MemoryInputStream(chunk.getMemory(),
         Chunk.CHUNK_HEADER_LENGTH, chunk.getSize() + Chunk.CHUNK_HEADER_LENGTH);
     try {
-
-      final BufferedImage img = ImageIO.read(is);
-      images.put(resnum, new BlorbImage(img));
+      images.put(resnum, new BlorbImage(imageFactory.createImage(is)));
       return true;
-
     } catch (IOException ex) {
 
       ex.printStackTrace();
@@ -143,7 +136,6 @@ public class BlorbImages extends BlorbMediaCollection<BlorbImage> {
   }
   
   private void adjustResolution(Chunk resochunk) {
-    
     Memory memory = resochunk.getMemory();
     int offset = Chunk.CHUNK_ID_LENGTH;
     int size = (int) memory.readUnsigned32(offset);
@@ -164,8 +156,7 @@ public class BlorbImages extends BlorbMediaCollection<BlorbImage> {
     ResolutionInfo resinfo = new ResolutionInfo(new Resolution(px, py),
         new Resolution(minx, miny), new Resolution(maxx, maxy));    
     
-    for (int i = 0; i < getNumResources(); i++) {
-      
+    for (int i = 0; i < getNumResources(); i++) {      
       if (offset >= size) break;
       int imgnum = (int) memory.readUnsigned32(offset);
       offset += 4;
@@ -186,7 +177,6 @@ public class BlorbImages extends BlorbMediaCollection<BlorbImage> {
       BlorbImage img = images.get(imgnum);
       
       if (img != null) {
-        
         img.setScaleInfo(scaleinfo);
       }
     }

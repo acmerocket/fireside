@@ -72,8 +72,7 @@ public class InstructionVarV4Test extends InstructionTestBase {
 
   @Test
   public void testCallVNIllegalForVersion4() {
-    mockMachine.expects(atLeastOnce()).method("getCpu").will(returnValue(cpu));
-    mockCpu.expects(once()).method("halt").with(eq(
+    mockMachine.expects(once()).method("halt").with(eq(
       "illegal instruction, type: VARIABLE operand count: VAR opcode: 25"));
     
     VariableInstruction call = new VariableInstruction(machine,
@@ -86,8 +85,7 @@ public class InstructionVarV4Test extends InstructionTestBase {
   
   @Test
   public void testCallVN2IllegalForVersion4() {
-    mockMachine.expects(atLeastOnce()).method("getCpu").will(returnValue(cpu));
-    mockCpu.expects(once()).method("halt").with(eq(
+    mockMachine.expects(once()).method("halt").with(eq(
       "illegal instruction, type: VARIABLE operand count: VAR opcode: 26"));
     
     VariableInstruction call = new VariableInstruction(machine,
@@ -191,8 +189,7 @@ public class InstructionVarV4Test extends InstructionTestBase {
   }  
 
   public void testNotIsIllegalPriorV5() {
-    mockMachine.expects(atLeastOnce()).method("getCpu").will(returnValue(cpu));
-    mockCpu.expects(once()).method("halt").with(eq(
+    mockMachine.expects(once()).method("halt").with(eq(
         "illegal instruction, type: VARIABLE operand count: VAR opcode: 24"));    
     
     VariableInstructionMock not =
@@ -201,8 +198,7 @@ public class InstructionVarV4Test extends InstructionTestBase {
   }
 
   public void testTokeniseIllegalPriorV5() {
-    mockMachine.expects(atLeastOnce()).method("getCpu").will(returnValue(cpu));
-    mockCpu.expects(once()).method("halt").with(eq(
+    mockMachine.expects(once()).method("halt").with(eq(
         "illegal instruction, type: VARIABLE operand count: VAR opcode: 27"));    
     
     VariableInstructionMock tokenise =

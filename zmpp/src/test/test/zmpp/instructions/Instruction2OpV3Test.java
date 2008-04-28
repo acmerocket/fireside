@@ -72,8 +72,7 @@ public class Instruction2OpV3Test extends InstructionTestBase {
     LongInstruction illegal = createInstructionMock(0xee,
         Operand.TYPENUM_SMALL_CONSTANT, (short) 1 ,
         Operand.TYPENUM_SMALL_CONSTANT, (short) 2);
-    mockMachine.expects(once()).method("getCpu").will(returnValue(cpu));
-    mockCpu.expects(once()).method("halt").with(eq(
+    mockMachine.expects(once()).method("halt").with(eq(
         "illegal instruction, type: LONG operand count: C2OP opcode: 238"        
         ));
     illegal.execute();
@@ -81,8 +80,7 @@ public class Instruction2OpV3Test extends InstructionTestBase {
 
 	@Test
   public void testCall2SIllegalInVersion3() {
-    mockMachine.expects(once()).method("getCpu").will(returnValue(cpu));
-    mockCpu.expects(once()).method("halt").with(eq(
+    mockMachine.expects(once()).method("halt").with(eq(
         "illegal instruction, type: LONG operand count: C2OP opcode: 25"        
         ));
     LongInstruction call2s = createInstructionMock(LongStaticInfo.OP_CALL_2S,
@@ -100,8 +98,7 @@ public class Instruction2OpV3Test extends InstructionTestBase {
   public void testJe1Operand() {
     Instruction2OpMock je1 = createInstructionMockVarOps(LongStaticInfo.OP_JE);
     je1.addOperand(new Operand(Operand.TYPENUM_SMALL_CONSTANT, (byte) 0x01));
-    mockMachine.expects(once()).method("getCpu").will(returnValue(cpu));
-    mockCpu.expects(once()).method("halt").with(eq(
+    mockMachine.expects(once()).method("halt").with(eq(
         "je expects at least two operands, only one provided"));
     je1.execute();
   }
@@ -408,8 +405,7 @@ public class Instruction2OpV3Test extends InstructionTestBase {
         Operand.TYPENUM_LARGE_CONSTANT, (short) 7,
         Operand.TYPENUM_LARGE_CONSTANT, (short) 0);
     div0.setStoreVariable((short) 0x12);
-    mockMachine.expects(once()).method("getCpu").will(returnValue(cpu));
-    mockCpu.expects(once()).method("halt").with(eq("@div division by zero"));
+    mockMachine.expects(once()).method("halt").with(eq("@div division by zero"));
     div0.execute();
   }
   
@@ -435,8 +431,7 @@ public class Instruction2OpV3Test extends InstructionTestBase {
         Operand.TYPENUM_LARGE_CONSTANT, (short) 7,
         Operand.TYPENUM_LARGE_CONSTANT, (short) 0);
     mod0.setStoreVariable((short) 0x12);
-    mockMachine.expects(once()).method("getCpu").will(returnValue(cpu));
-    mockCpu.expects(once()).method("halt").with(eq("@mod division by zero"));
+    mockMachine.expects(once()).method("halt").with(eq("@mod division by zero"));
     mod0.execute();
   }
   

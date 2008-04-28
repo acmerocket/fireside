@@ -57,7 +57,7 @@ public class Instruction2OpV5Test extends InstructionTestBase {
     contexts.add(new RoutineContext(1000, 1));
     contexts.add(new RoutineContext(2000, 2));    mockMachine.expects(atLeastOnce()).method("getCpu").will(returnValue(cpu));
     mockCpu.expects(once()).method("getRoutineContexts").will(returnValue(contexts));
-    mockCpu.expects(once()).method("halt").with(eq("@throw from an invalid stack frame state"));
+    mockMachine.expects(once()).method("halt").with(eq("@throw from an invalid stack frame state"));
     
     Instruction2OpMock z_throw = createInstructionMock(
         LongStaticInfo.OP_THROW,

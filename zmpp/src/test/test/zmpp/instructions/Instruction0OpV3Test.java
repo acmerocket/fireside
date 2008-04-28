@@ -36,6 +36,7 @@ import org.zmpp.vm.PortableGameState;
  */
 public class Instruction0OpV3Test extends InstructionTestBase {
 
+  @Override
   @Before
   protected void setUp() throws Exception {
 	  super.setUp();
@@ -60,8 +61,7 @@ public class Instruction0OpV3Test extends InstructionTestBase {
   @Test
   public void testIllegalOpcode() {
     Instruction0OpMock illegal = createInstructionMock(0xee);
-    mockMachine.expects(atLeastOnce()).method("getCpu").will(returnValue(cpu));
-    mockCpu.expects(once()).method("halt").with(eq(
+    mockMachine.expects(once()).method("halt").with(eq(
         "illegal instruction, type: SHORT operand count: C0OP opcode: 238"));
     illegal.execute();
   }
@@ -187,10 +187,8 @@ public class Instruction0OpV3Test extends InstructionTestBase {
   
   @Test
   public void testNewLine() {
-    mockMachine.expects(once()).method("getOutput").will(returnValue(output));
-
     Instruction0OpMock newline = createInstructionMock(Short0StaticInfo.OP_NEW_LINE);
-    mockOutput.expects(once()).method("newline");
+    mockMachine.expects(once()).method("newline");
     newline.execute();
     assertTrue(newline.nextInstructionCalled);
   }
@@ -269,15 +267,18 @@ public class Instruction0OpV3Test extends InstructionTestBase {
       super(machine, opcode);
     }
     
+    @Override
     protected void nextInstruction() {
       nextInstructionCalled = true;
     }
     
+    @Override
     protected void returnFromRoutine(short retval) {
       returned = true;
       returnValue = retval;
     }
     
+    @Override
     protected void branchOnTest(boolean flag) {
       branchOnTestCalled = true;
       branchOnTestCondition = flag;
