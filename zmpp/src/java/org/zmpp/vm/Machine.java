@@ -31,7 +31,7 @@ import org.zmpp.media.SoundSystem;
  */
 public interface Machine extends ObjectTree, Input, Output {
 
-  public enum MachineRunState { RUNNING, STOPPED, SREAD, READ_CHAR }
+  public enum MachineRunState { RUNNING, STOPPED, READ_LINE, READ_CHAR  }
 
   /**
    * Initialization function.

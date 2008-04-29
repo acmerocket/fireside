@@ -329,7 +329,7 @@ public class VariableInstruction extends AbstractInstruction {
   }
   
   private void sreadStage1() {
-    getMachine().setRunState(MachineRunState.SREAD);
+    getMachine().setRunState(MachineRunState.READ_LINE);
     final int version = getStoryFileVersion();
     int time = 0;
     short packedAddress = 0;
@@ -340,12 +340,10 @@ public class VariableInstruction extends AbstractInstruction {
       packedAddress = getValue(3);
     }    
     
-    // We probably do not need this
     if (version <= 3) {
       getMachine().updateStatusLine();
     }
     getMachine().flushOutput();
-    //getMachine().getScreen().displayCursor(true);
   }
   
   private void sreadStage2() {
@@ -591,20 +589,31 @@ public class VariableInstruction extends AbstractInstruction {
 
   // TODO: split in resumable command
   private void read_char() {
-    
-    //System.out.println("@read_char()");    
+    if (getMachine().getRunState() == MachineRunState.RUNNING) {
+      readCharStage1();
+    } else {
+      readCharStage2();
+    }
+  }
+  
+  private void readCharStage1() {
+    getMachine().setRunState(MachineRunState.READ_CHAR);
+    if (getMachine().getVersion() <= 3) {
+      getMachine().updateStatusLine();
+    }
     int time = 0;
     int routineAddress = 0;
-    if (getNumOperands() >= 2) {
-     
+    if (getNumOperands() >= 2) {     
       time = getUnsignedValue(1);
     }
     if (getNumOperands() >= 3) {
-      
       routineAddress = getValue(2);
     }
-    // Here the machine should be resumed to
-    // allow the user interface to do input
+    getMachine().flushOutput();
+  }
+  
+  private void readCharStage2() {
+    getMachine().setRunState(MachineRunState.RUNNING);
     storeResult((short) getMachine().readChar());
     nextInstruction();
   }

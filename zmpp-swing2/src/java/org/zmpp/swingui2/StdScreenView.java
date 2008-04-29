@@ -64,7 +64,7 @@ public class StdScreenView extends JPanel
   private BufferedScreenModel screenModel = new BufferedScreenModel();
   private LineBufferInputStream inputStream = new LineBufferInputStream();
   private int editStart;
-  private boolean isEditing;
+  private boolean isReadLine, isReadChar;
   private GameExecutor executor;
   
   public StdScreenView() {
@@ -117,8 +117,13 @@ public class StdScreenView extends JPanel
     }
   }
   
-  public void setEditing(boolean flag) {
-    isEditing = flag;
+  public void setReadLine(boolean flag) {
+    isReadLine = flag;
+    viewCursor(flag);
+  }
+  
+  public void setReadChar(boolean flag) {
+    isReadChar = flag;
     viewCursor(flag);
   }
   
@@ -127,6 +132,11 @@ public class StdScreenView extends JPanel
   }
   
   private void preventKeyActionIfNeeded(KeyEvent e) {
+    if (isReadChar) {
+      // Blabla TODO
+      inputStream.addInputLine("\r");
+      consumeKeyEvent(e);
+    }
     if (e.getKeyCode() == KeyEvent.VK_UP) {
       // Handle up key
       consumeKeyEvent(e);
@@ -145,20 +155,24 @@ public class StdScreenView extends JPanel
   }
   
   private void handleEnterKey(KeyEvent e) {
-    if (isEditing) {
+    if (isReadLine) {
       Document doc = bottomWindow.getDocument();
       try {
         String input = doc.getText(editStart, doc.getLength() - editStart);
         System.out.println("ENTER PRESSED, input: " + input);
-        inputStream.addInputLine(input);
+        inputStream.addInputLine(convertToZsciiInputLine(input));
         consumeKeyEvent(e);
         doc.insertString(doc.getLength(), "\n", null);
-        setEditing(false);
+        setReadLine(false);
         executor.resume();
       } catch (BadLocationException ex) {
         ex.printStackTrace();
       }
     }
+  }
+  
+  private String convertToZsciiInputLine(String input) {
+    return input + "\r";
   }
   
   private boolean keyCodeLeadsToPreviousPosition(int keyCode) {

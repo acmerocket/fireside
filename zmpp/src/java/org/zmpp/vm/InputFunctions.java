@@ -187,7 +187,8 @@ public class InputFunctions {
    * {@inheritDoc}
    */
   public char readChar() {
-    return 0;
+    String inputLine = machine.getSelectedInputStream().readLine();
+    return inputLine.charAt(0);
   }
   
   /**

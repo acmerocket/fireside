@@ -64,10 +64,12 @@ public class GameExecutor implements Runnable {
       instr.execute();
         
       // handle input situations here
-      if (machine.getRunState() == MachineRunState.SREAD) {
+      if (machine.getRunState() == MachineRunState.READ_LINE) {
         // display cursor
-        view.setEditing(true);
+        view.setReadLine(true);
         break;
+      } else if (machine.getRunState() == MachineRunState.READ_CHAR) {
+        view.setReadChar(true);
       } else {
         step++;
       }
