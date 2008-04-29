@@ -25,6 +25,7 @@ import java.util.ArrayList;
 import java.util.List;
 import org.zmpp.io.OutputStream;
 import org.zmpp.vm.ScreenModel;
+import org.zmpp.vm.StatusLine;
 import org.zmpp.vm.TextCursor;
 
 /**
@@ -36,15 +37,22 @@ import org.zmpp.vm.TextCursor;
  * 
  * @author Wei-ju Wu
  */
-public class BufferedScreenModel implements ScreenModel, OutputStream {
+public class BufferedScreenModel implements ScreenModel, StatusLine,
+        OutputStream {
   
   private int current = 0;
   private BufferedTextWindow windows[] = new BufferedTextWindow[1];
-  private List<ScreenModelListener> modelListeners =
+  private List<ScreenModelListener> screenModelListeners =
     new ArrayList<ScreenModelListener>();
+  private List<StatusLineListener> statusLineListeners =
+    new ArrayList<StatusLineListener>();
   
   public interface ScreenModelListener {
     void screenModelUpdated(BufferedScreenModel screenModel);
+  }
+  
+  public interface StatusLineListener {
+    void statusLineUpdated(String objectDescription, String status);
   }
 
   public BufferedScreenModel() {
@@ -52,7 +60,11 @@ public class BufferedScreenModel implements ScreenModel, OutputStream {
   }
   
   public void addScreenModelListener(ScreenModelListener l) {
-    modelListeners.add(l);
+    screenModelListeners.add(l);
+  }
+  
+  public void addStatusLineListener(StatusLineListener l) {
+    statusLineListeners.add(l);
   }
   
   public BufferedTextWindow getWindow(int windowNum) {
@@ -134,7 +146,7 @@ public class BufferedScreenModel implements ScreenModel, OutputStream {
    * Notify listeners that.
    */
   public void flush() {
-    for (ScreenModelListener l : modelListeners) {
+    for (ScreenModelListener l : screenModelListeners) {
       l.screenModelUpdated(this);
     }
   }
@@ -147,4 +159,18 @@ public class BufferedScreenModel implements ScreenModel, OutputStream {
     return selected;
   }
 
+  // ***********************************************************************
+  // ***** StatusLine implementation
+  // ***************************************
+  public void updateStatusScore(String objectName, int score, int steps) {
+    for (StatusLineListener l : statusLineListeners) {
+      l.statusLineUpdated(objectName, score + "/" + steps);
+    }
+  }
+
+  public void updateStatusTime(String objectName, int hours, int minutes) {
+    for (StatusLineListener l : statusLineListeners) {
+      l.statusLineUpdated(objectName, hours + ":" + minutes);
+    }
+  }
 }

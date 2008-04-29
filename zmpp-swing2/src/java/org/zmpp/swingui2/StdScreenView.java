@@ -21,13 +21,15 @@
 package org.zmpp.swingui2;
 
 import java.awt.event.KeyEvent;
-import org.zmpp.zscreen.StatusLineModel;
 import java.awt.BorderLayout;
 import java.awt.Dimension;
+import java.awt.FlowLayout;
+import java.awt.GridLayout;
 import java.awt.event.KeyListener;
 import java.util.List;
 import javax.swing.text.AttributeSet;
 import javax.swing.JEditorPane;
+import javax.swing.JLabel;
 import javax.swing.JPanel;
 import javax.swing.JScrollPane;
 import javax.swing.SwingUtilities;
@@ -35,9 +37,11 @@ import javax.swing.text.BadLocationException;
 import javax.swing.text.Document;
 import org.zmpp.io.InputStream;
 import org.zmpp.vm.Machine;
+import org.zmpp.vm.StatusLine;
 import org.zmpp.windowing.AnnotatedText;
 import org.zmpp.zscreen.BufferedScreenModel;
 import org.zmpp.zscreen.BufferedScreenModel.ScreenModelListener;
+import org.zmpp.zscreen.BufferedScreenModel.StatusLineListener;
 
 /**
  * A standard Swing component to act as main user interface to the Z-machine.
@@ -49,13 +53,15 @@ import org.zmpp.zscreen.BufferedScreenModel.ScreenModelListener;
  * @version 1.0
  */
 public class StdScreenView extends JPanel
-  implements ScreenModelListener {
+  implements ScreenModelListener, StatusLineListener {
 
   private static String EDITOR_TYPE = "text/html";
+  private JPanel mainPanel = new JPanel(new BorderLayout());
   private JEditorPane topWindow, bottomWindow;
   private JScrollPane scrollPane;
+  private JLabel objectDescLabel = new JLabel(" "),
+                 statusLabel = new JLabel(" ");  
   private BufferedScreenModel screenModel = new BufferedScreenModel();
-  private StatusLineModel statusLineModel = new StatusLineModel(screenModel);
   private LineBufferInputStream inputStream = new LineBufferInputStream();
   private int editStart;
   private boolean isEditing;
@@ -63,23 +69,45 @@ public class StdScreenView extends JPanel
   
   public StdScreenView() {
     super(new BorderLayout());
+    createTopWindow();
+    createBottomWindow();
+    add(createStatusPanel(), BorderLayout.NORTH);
+    add(mainPanel, BorderLayout.CENTER);
+    mainPanel.setBorder(null);
+    mainPanel.add(topWindow, BorderLayout.NORTH);    
+    mainPanel.add(scrollPane, BorderLayout.CENTER);
+    screenModel.addScreenModelListener(this);
+    screenModel.addStatusLineListener(this);
+    installBottomWindowHandlers();
+  }
+  
+  private void createTopWindow() {
     topWindow = new JEditorPane(EDITOR_TYPE, "");
+    topWindow.setBorder(null);
+    topWindow.setPreferredSize(new Dimension(640, 0));    
+  }
+
+  private void createBottomWindow() {
     bottomWindow = new JEditorPane(EDITOR_TYPE, "");
     bottomWindow.setBorder(null);
-    topWindow.setBorder(null);
-    
     scrollPane = new JScrollPane(bottomWindow);
     scrollPane.setBorder(null);
     scrollPane.setVerticalScrollBarPolicy(
             JScrollPane.VERTICAL_SCROLLBAR_AS_NEEDED);
     scrollPane.setHorizontalScrollBarPolicy(
             JScrollPane.HORIZONTAL_SCROLLBAR_NEVER);
-    topWindow.setPreferredSize(new Dimension(640, 30));
     scrollPane.setPreferredSize(new Dimension(640, 480));
-    add(topWindow, BorderLayout.NORTH);
-    add(scrollPane, BorderLayout.CENTER);
-    screenModel.addScreenModelListener(this); 
-    installBottomWindowHandlers();
+  }
+  
+  private JPanel createStatusPanel() {
+    JPanel statusPanel = new JPanel(new GridLayout(1, 2));
+    JPanel leftPanel = new JPanel(new FlowLayout(FlowLayout.LEFT));
+    JPanel rightPanel = new JPanel(new FlowLayout(FlowLayout.RIGHT));
+    statusPanel.add(leftPanel);
+    statusPanel.add(rightPanel);
+    leftPanel.add(objectDescLabel);
+    rightPanel.add(statusLabel);
+    return statusPanel;
   }
   
   public void runMachine(Machine machine) {
@@ -162,8 +190,8 @@ public class StdScreenView extends JPanel
     return screenModel;
   }
   
-  public StatusLineModel getStatusLineModel() {
-    return statusLineModel;
+  public StatusLine getStatusLineModel() {
+    return screenModel;
   }
   
   public InputStream getKeyboardInputStream() {
@@ -208,6 +236,14 @@ public class StdScreenView extends JPanel
         }
       }
     });
+  }
+
+  /**
+   * {@inheritDoc}
+   */
+  public void statusLineUpdated(String objectDescription, String status) {
+    objectDescLabel.setText(objectDescription);
+    statusLabel.setText(status);
   }
   
   /**
