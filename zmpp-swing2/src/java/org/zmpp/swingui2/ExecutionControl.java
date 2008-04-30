@@ -25,36 +25,32 @@ import org.zmpp.vm.Machine;
 import org.zmpp.vm.Machine.MachineRunState;
 
 /**
- * This is the execution instance. Execution is handled by temporarily
+ * This is the execution control instance. Execution is handled by temporarily
  * suspending the VM on an input instruction, resuming after the input
  * buffer was filled and picking up from there.
  * 
  * @author Wei-ju Wu
  * @version 1.0
  */
-public class GameExecutor implements Runnable {
+public class ExecutionControl {
 
-  private StdScreenView view;
+  private ScreenView view;
   private Machine machine;
   private int step = 1;
   private static final boolean DEBUG = false;
   
-  public GameExecutor(Machine machine, StdScreenView view) {
+  /**
+   * Constructor.
+   * @param machine
+   * @param view
+   */
+  public ExecutionControl(Machine machine, StdScreenView view) {
     this.view = view;
     this.machine = machine;
-    initialize();
-  }
-  
-  private void initialize() {
     machine.start();
   }
   
-  public void resume() {
-    System.out.println("RESUME");
-    run();
-  }
-  
-  public void run() {
+  public MachineRunState run() {
     while (machine.getRunState() != MachineRunState.STOPPED) {
       int pc = machine.getCpu().getProgramCounter();
       Instruction instr = machine.getCpu().nextStep();
@@ -74,6 +70,6 @@ public class GameExecutor implements Runnable {
         step++;
       }
     }
-    System.out.println("PAUSE");
+    return machine.getRunState();
   }
 }

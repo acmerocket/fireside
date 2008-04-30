@@ -26,18 +26,22 @@ import java.awt.Dimension;
 import java.awt.FlowLayout;
 import java.awt.GridLayout;
 import java.awt.event.KeyListener;
+import java.io.File;
+import java.io.IOException;
 import java.util.List;
 import javax.swing.text.AttributeSet;
 import javax.swing.JEditorPane;
+import javax.swing.JFrame;
 import javax.swing.JLabel;
 import javax.swing.JPanel;
 import javax.swing.JScrollPane;
 import javax.swing.SwingUtilities;
 import javax.swing.text.BadLocationException;
 import javax.swing.text.Document;
-import org.zmpp.io.InputStream;
 import org.zmpp.vm.Machine;
-import org.zmpp.vm.StatusLine;
+import org.zmpp.vm.MachineFactory;
+import org.zmpp.vm.MachineFactory.MachineInitCallback;
+import org.zmpp.vm.MachineFactory.MachineInitStruct;
 import org.zmpp.windowing.AnnotatedText;
 import org.zmpp.zscreen.BufferedScreenModel;
 import org.zmpp.zscreen.BufferedScreenModel.ScreenModelListener;
@@ -53,7 +57,8 @@ import org.zmpp.zscreen.BufferedScreenModel.StatusLineListener;
  * @version 1.0
  */
 public class StdScreenView extends JPanel
-  implements ScreenModelListener, StatusLineListener {
+  implements ScreenView, ScreenModelListener, StatusLineListener,
+             MachineInitCallback {
 
   private static String EDITOR_TYPE = "text/html";
   private JPanel mainPanel = new JPanel(new BorderLayout());
@@ -65,9 +70,14 @@ public class StdScreenView extends JPanel
   private LineBufferInputStream inputStream = new LineBufferInputStream();
   private int editStart;
   private boolean isReadLine, isReadChar;
-  private GameExecutor executor;
+  private ExecutionControl executionControl;
+  private JFrame frame;
   
-  public StdScreenView() {
+  /**
+   * Constructor.
+   * @param frame the application frame, can be null in case of applet mode
+   */
+  public StdScreenView(JFrame frame) {
     super(new BorderLayout());
     createTopWindow();
     createBottomWindow();
@@ -81,6 +91,13 @@ public class StdScreenView extends JPanel
     installBottomWindowHandlers();
   }
   
+  /**
+   * Constructor.
+   */
+  public StdScreenView() {
+    this(null);
+  }
+
   private void createTopWindow() {
     topWindow = new JEditorPane(EDITOR_TYPE, "");
     topWindow.setBorder(null);
@@ -109,22 +126,116 @@ public class StdScreenView extends JPanel
     rightPanel.add(statusLabel);
     return statusPanel;
   }
+
+  private void installBottomWindowHandlers() {
+    // TODO: Mouse clicks can as well influence typing position
+    // Make sure mouse clicks do not change caret position
+    bottomWindow.addKeyListener(new KeyListener() {
+      public void keyTyped(KeyEvent e) {        
+        //System.out.println("keyTyped(): " + e.getKeyChar() + " code: " + e.getKeyCode());
+      }
+
+      public void keyPressed(KeyEvent e) {
+        //System.out.println("-------------------------");
+        //System.out.println("keyPressed(): " + e.getKeyChar() + " code: " + e.getKeyCode());
+        preventKeyActionIfNeeded(e);
+      }
+
+      public void keyReleased(KeyEvent e) {
+        //System.out.println("keyReleased(): " + e.getKeyChar() + " code: " + e.getKeyCode());
+        //preventKeyActionIfNeeded(e);
+      }
+    });
+  }
   
-  public void runMachine(Machine machine) {
+  // *********************************************************************
+  // ****** MachineInitCallback
+  // ***************************************
+  
+  /**
+   * {@inheritDoc}
+   */
+  public void initUI(Machine machine) {
+    int version = machine.getVersion();
+    System.out.println("initUI, story file version: " + version);
+  }
+
+  /**
+   * {@inheritDoc}
+   */
+  public void reportInvalidStory() {
+    System.out.println("invalid story");
+  }
+  
+  // *********************************************************************
+  // ****** ScreenModelListener
+  // ***************************************
+  /**
+   * {@inheritDoc}
+   */
+  public void screenModelUpdated(final BufferedScreenModel screenModel) {
+    runInUIThread(new Runnable() {
+      public void run() {
+        List<AnnotatedText> buffer = screenModel.getWindow(0).getBuffer();
+        for (AnnotatedText str : buffer) {
+          appendToBottom(getViewString(str.getText()));
+        }
+      }
+    });
+  }
+
+  // *********************************************************************
+  // ****** StatusLineListener
+  // ***************************************
+  /**
+   * {@inheritDoc}
+   */
+  public void statusLineUpdated(String objectDescription, String status) {
+    objectDescLabel.setText(objectDescription);
+    statusLabel.setText(status);
+  }
+  
+  // *********************************************************************
+  // ****** ScreenView
+  // ***************************************
+  
+  /**
+   * {@inheritDoc}
+   */
+  public void startGame(File storyFile) throws IOException {
+    MachineInitStruct initStruct = new MachineInitStruct();
+    initStruct.storyFile = storyFile;
+    initStruct.screenModel = screenModel;
+    initStruct.statusLine = screenModel;
+    initStruct.keyboardInputStream = inputStream;
+    
+    MachineFactory factory = new MachineFactory(initStruct, this);
+    Machine machine = factory.buildMachine();
     if (this.isVisible()) {
-      executor = new GameExecutor(machine, this);
-      executor.run();    
+      executionControl = new ExecutionControl(machine, this);
+      executionControl.run();    
     }
   }
   
+  /**
+   * {@inheritDoc}
+   */
   public void setReadLine(boolean flag) {
     isReadLine = flag;
     viewCursor(flag);
   }
   
+  /**
+   * {@inheritDoc}
+   */
   public void setReadChar(boolean flag) {
     isReadChar = flag;
     viewCursor(flag);
+  }
+  
+  private void resetToRunMode() {
+    setReadLine(false);
+    setReadChar(false);
   }
   
   private void consumeKeyEvent(KeyEvent e) {
@@ -136,6 +247,7 @@ public class StdScreenView extends JPanel
       // Blabla TODO
       inputStream.addInputLine("\r");
       consumeKeyEvent(e);
+      resetToRunMode();
     }
     if (e.getKeyCode() == KeyEvent.VK_UP) {
       // Handle up key
@@ -163,8 +275,8 @@ public class StdScreenView extends JPanel
         inputStream.addInputLine(convertToZsciiInputLine(input));
         consumeKeyEvent(e);
         doc.insertString(doc.getLength(), "\n", null);
-        setReadLine(false);
-        executor.resume();
+        resetToRunMode();
+        executionControl.run();
       } catch (BadLocationException ex) {
         ex.printStackTrace();
       }
@@ -177,39 +289,6 @@ public class StdScreenView extends JPanel
   
   private boolean keyCodeLeadsToPreviousPosition(int keyCode) {
     return keyCode == KeyEvent.VK_BACK_SPACE || keyCode == KeyEvent.VK_LEFT;            
-  }
-  
-  private void installBottomWindowHandlers() {
-    // TODO: Mouse clicks can as well influence typing position
-    // Make sure mouse clicks do not change caret position
-    bottomWindow.addKeyListener(new KeyListener() {
-      public void keyTyped(KeyEvent e) {        
-        //System.out.println("keyTyped(): " + e.getKeyChar() + " code: " + e.getKeyCode());
-      }
-
-      public void keyPressed(KeyEvent e) {
-        //System.out.println("-------------------------");
-        //System.out.println("keyPressed(): " + e.getKeyChar() + " code: " + e.getKeyCode());
-        preventKeyActionIfNeeded(e);
-      }
-
-      public void keyReleased(KeyEvent e) {
-        //System.out.println("keyReleased(): " + e.getKeyChar() + " code: " + e.getKeyCode());
-        //preventKeyActionIfNeeded(e);
-      }
-    });
-  }
-  
-  public BufferedScreenModel getScreenModel() {
-    return screenModel;
-  }
-  
-  public StatusLine getStatusLineModel() {
-    return screenModel;
-  }
-  
-  public InputStream getKeyboardInputStream() {
-    return inputStream;
   }
   
   private void viewCursor(final boolean flag) {
@@ -236,28 +315,6 @@ public class StdScreenView extends JPanel
     } catch (BadLocationException ex) {
       ex.printStackTrace();
     }
-  }
-  
-  /**
-   * {@inheritDoc}
-   */
-  public void screenModelUpdated(final BufferedScreenModel screenModel) {
-    runInUIThread(new Runnable() {
-      public void run() {
-        List<AnnotatedText> buffer = screenModel.getWindow(0).getBuffer();
-        for (AnnotatedText str : buffer) {
-          appendToBottom(getViewString(str.getText()));
-        }
-      }
-    });
-  }
-
-  /**
-   * {@inheritDoc}
-   */
-  public void statusLineUpdated(String objectDescription, String status) {
-    objectDescLabel.setText(objectDescription);
-    statusLabel.setText(status);
   }
   
   /**

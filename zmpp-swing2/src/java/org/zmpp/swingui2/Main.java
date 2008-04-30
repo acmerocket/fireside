@@ -24,39 +24,27 @@ import java.io.File;
 import java.io.IOException;
 import javax.swing.JFrame;
 import javax.swing.SwingUtilities;
-import org.zmpp.vm.Machine;
-import org.zmpp.vm.MachineFactory;
-import org.zmpp.vm.MachineFactory.MachineInitStruct;
 
 public class Main {
   
   public static void main(String[] args) {
 
     try {
-      final StdScreenView view = new StdScreenView();
       SwingUtilities.invokeAndWait(new Runnable() {
         public void run() {
           JFrame frame = new JFrame("Z-machine Preservation Project 1.5");
+          StdScreenView view = new StdScreenView(frame);
           frame.setDefaultCloseOperation(JFrame.EXIT_ON_CLOSE);
           frame.getContentPane().add(view);
           frame.pack();
           frame.setVisible(true);
+          try {
+            view.startGame(new File("testfiles/minizork.z3"));
+          } catch (IOException ex) {
+            ex.printStackTrace();
+          }
         }
       });
-      MachineInitStruct initStruct = new MachineInitStruct();
-      initStruct.storyFile = new File("testfiles/minizork.z3");
-      initStruct.screenModel = view.getScreenModel();
-      initStruct.statusLine = view.getStatusLineModel();
-      initStruct.keyboardInputStream = view.getKeyboardInputStream();
-    
-      MachineFactory factory = new MachineFactory(initStruct,
-            new AppMachineInitCallback());
-      try {
-        Machine machine = factory.buildMachine();
-        view.runMachine(machine);
-      } catch (IOException ex) {
-        ex.printStackTrace();
-      }
     } catch (Exception ex) {
       ex.printStackTrace();
     }
