@@ -27,6 +27,7 @@ import org.zmpp.io.OutputStream;
 import org.zmpp.vm.ScreenModel;
 import org.zmpp.vm.StatusLine;
 import org.zmpp.vm.TextCursor;
+import org.zmpp.windowing.BufferedTextGrid;
 
 /**
  * BufferedScreenModel is the attempt to provide a reusable screen model
@@ -40,8 +41,11 @@ import org.zmpp.vm.TextCursor;
 public class BufferedScreenModel implements ScreenModel, StatusLine,
         OutputStream {
   
+  public static final int WINDOW_BOTTOM = 0;
+  public static final int WINDOW_TOP    = 1;
   private int current = 0;
-  private BufferedTextWindow windows[] = new BufferedTextWindow[1];
+  private BufferedTextGrid topWindow = new BufferedTextGrid();
+  private BufferedTextWindow bottomWindow = new BufferedTextWindow();
   private List<ScreenModelListener> screenModelListeners =
     new ArrayList<ScreenModelListener>();
   private List<StatusLineListener> statusLineListeners =
@@ -49,14 +53,12 @@ public class BufferedScreenModel implements ScreenModel, StatusLine,
   
   public interface ScreenModelListener {
     void screenModelUpdated(BufferedScreenModel screenModel);
+    void screenSplit(int linesUpperWindow);
+    void windowErased(int window);
   }
   
   public interface StatusLineListener {
     void statusLineUpdated(String objectDescription, String status);
-  }
-
-  public BufferedScreenModel() {
-    windows[0] = new BufferedTextWindow();
   }
   
   public void addScreenModelListener(ScreenModelListener l) {
@@ -67,8 +69,10 @@ public class BufferedScreenModel implements ScreenModel, StatusLine,
     statusLineListeners.add(l);
   }
   
-  public BufferedTextWindow getWindow(int windowNum) {
-    return windows[windowNum];
+  public BufferedTextWindow getBottomWindow() { return bottomWindow; }
+  public BufferedTextGrid getTopWindow() { return topWindow; }
+  public void setNumCharsPerRow(int numCharsPerRow) {
+    topWindow.resize(topWindow.getNumRows(), numCharsPerRow);
   }
 
   public void reset() {
@@ -76,19 +80,25 @@ public class BufferedScreenModel implements ScreenModel, StatusLine,
   }
 
   public void splitWindow(int linesUpperWindow) {
-    throw new UnsupportedOperationException("Not supported yet.");
+    for (ScreenModelListener l : screenModelListeners) {
+      l.screenSplit(linesUpperWindow);
+    }
   }
 
   public void setWindow(int window) {
-    throw new UnsupportedOperationException("Not supported yet.");
+    System.out.println("SET_WINDOW (TODO): " + window);
+    current = window;
+    //throw new UnsupportedOperationException("Not supported yet.");
   }
 
   public void setTextStyle(int style) {
-    throw new UnsupportedOperationException("Not supported yet.");
+    System.out.println("SET_TEXT_STYLE (TODO): " + style);
+    //throw new UnsupportedOperationException("Not supported yet.");
   }
 
   public void setBufferMode(boolean flag) {
-    throw new UnsupportedOperationException("Not supported yet.");
+    System.out.println("SET_BUFFER_MODE (TODO): " + flag);
+    //throw new UnsupportedOperationException("Not supported yet.");
   }
 
   public void eraseLine(int value) {
@@ -96,11 +106,17 @@ public class BufferedScreenModel implements ScreenModel, StatusLine,
   }
 
   public void eraseWindow(int window) {
-    throw new UnsupportedOperationException("Not supported yet.");
+    System.out.println("ERASE_WINDOW (TODO): " + window);
+    for (ScreenModelListener l : screenModelListeners) {
+      l.windowErased(window);
+    }
+    //throw new UnsupportedOperationException("Not supported yet.");
   }
 
   public void setTextCursor(int line, int column, int window) {
-    throw new UnsupportedOperationException("Not supported yet.");
+    System.out.printf("SET_TEXT_CURSOR (TODO), line: %d, column: %d, " +
+            "window: %d\n", line, column, window);
+    //throw new UnsupportedOperationException("Not supported yet.");
   }
 
   public TextCursor getTextCursor() {
@@ -133,7 +149,7 @@ public class BufferedScreenModel implements ScreenModel, StatusLine,
   
   public void print(char zchar, boolean isInput) {
     if (zchar == '>') System.out.println("PROMPT");
-    windows[current].printChar(zchar);
+    bottomWindow.printChar(zchar);
   }
 
   public void deletePrevious(char zchar) {

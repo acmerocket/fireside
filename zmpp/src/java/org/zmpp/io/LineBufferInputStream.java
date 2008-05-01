@@ -18,11 +18,10 @@
  * You should have received a copy of the GNU General Public License
  * along with ZMPP.  If not, see <http://www.gnu.org/licenses/>.
  */
-package org.zmpp.swingui2;
+package org.zmpp.io;
 
 import java.util.LinkedList;
 import java.util.Queue;
-import org.zmpp.io.InputStream;
 
 /**
  * The LineBufferInputStream is the default implementation for the keyboard

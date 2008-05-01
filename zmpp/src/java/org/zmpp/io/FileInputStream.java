@@ -52,33 +52,29 @@ public class FileInputStream implements InputStream {
     this.encoding = encoding;
   }
 
-  public void cancelInput() {
-    
-    // file input can not be cancelled at the moment
-  }
-  
   /**
    * {@inheritDoc}
    */
-  public char getZsciiChar(boolean flushBeforeGet) {
+  public String readLine() {
     
     checkForReader();
     if (input != null) {
-      
       // Read from file
       try {
         if (input.ready()) {
-          final char c = (char) input.read();
+          String line = input.readLine();
+          /*
           if (encoding.isConvertableToZscii(c)) {
             return encoding.getZsciiChar(c);
-          }
+          }*/
+          return new String(encoding.convertToZscii(line));
         }
       } catch (IOException ex) {
         
         ex.printStackTrace();
       }
     }
-    return 0;
+    return null;
   }
 
   /**

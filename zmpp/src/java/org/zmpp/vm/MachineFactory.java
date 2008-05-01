@@ -61,30 +61,15 @@ public class MachineFactory {
     public NativeImageFactory nativeImageFactory;
   }
   
-  public interface MachineInitCallback {
-   /**
-     * Initializes the user interface objects.
-     * 
-     * @param machine the machine object
-     * @return the resulting top level user interface object
-     */
-    void initUI(Machine machine);
-  
-    /**
-     * This function is called to report an invalid story file.
-     */
-    void reportInvalidStory();
-  
-  }
-  
   private MachineInitStruct initStruct;
-  private MachineInitCallback initCallback;
   private FormChunk blorbchunk;
 
-	public MachineFactory(MachineInitStruct initStruct,
-                        MachineInitCallback initCallback) {
+  /**
+   * Constructor.
+   * @param initStruct an initialization structure
+   */
+	public MachineFactory(MachineInitStruct initStruct) {
 		this.initStruct = initStruct;
-    this.initCallback = initCallback;
 	}
 	
   /**
@@ -92,16 +77,15 @@ public class MachineFactory {
    * 
    * @return the machine
    */
-  public Machine buildMachine() throws IOException {
+  public Machine buildMachine() throws IOException, InvalidStoryException {
     final GameData gamedata =
       new GameDataImpl(readStoryData(), readResources());
     if (isInvalidStory(gamedata.getStoryFileHeader().getVersion())) {
-      initCallback.reportInvalidStory();
+      throw new InvalidStoryException();
     }
     final MachineImpl machine = new MachineImpl();
     final InstructionDecoder decoder = new DefaultInstructionDecoder();
     machine.initialize(gamedata, decoder);
-    initCallback.initUI(machine);
     initIOSystem(machine);
     return machine;
   }

@@ -1,7 +1,7 @@
 /*
  * $Id$
  * 
- * Created on 10/07/2005
+ * Created on 2008/04/25
  * Copyright 2005-2008 by Wei-ju Wu
  * This file is part of The Z-machine Preservation Project (ZMPP).
  *
@@ -18,26 +18,13 @@
  * You should have received a copy of the GNU General Public License
  * along with ZMPP.  If not, see <http://www.gnu.org/licenses/>.
  */
-package org.zmpp.io;
-
+package org.zmpp.vm;
 
 /**
- * This interface defines a Z-machine input stream.
- * 
+ * A simple exception to report an invalid story file
  * @author Wei-ju Wu
  * @version 1.0
  */
-public interface InputStream {
+public class InvalidStoryException extends Exception {
 
-  /**
-   * Reads the next available line of ZSCII characters from the stream.
-   * This is somewhat immediate.
-   * @return the next line of available ZSCII characters
-   */
-  String readLine();
-  
-  /**
-   * Release underlying resources.
-   */
-  void close();  
 }

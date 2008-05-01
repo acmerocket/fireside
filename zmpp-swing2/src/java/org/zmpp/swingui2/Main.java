@@ -21,7 +21,6 @@
 package org.zmpp.swingui2;
 
 import java.io.File;
-import java.io.IOException;
 import javax.swing.JFrame;
 import javax.swing.SwingUtilities;
 
@@ -40,7 +39,7 @@ public class Main {
           frame.setVisible(true);
           try {
             view.startGame(new File("testfiles/minizork.z3"));
-          } catch (IOException ex) {
+          } catch (Exception ex) {
             ex.printStackTrace();
           }
         }
