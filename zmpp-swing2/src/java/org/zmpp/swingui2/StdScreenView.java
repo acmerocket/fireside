@@ -62,6 +62,11 @@ import org.zmpp.zscreen.BufferedScreenModel.StatusLineListener;
  * previous versions. It employs an underlying BufferedScreenModel as its
  * model component and listens to update events from the model in order
  * to update the view.
+ * Note: StdScreenView is an evolutionary dead end, since it relies on
+ * JTextPane, which does not work. For the time being, it serves as a
+ * template for the new interaction pattern between the core and the
+ * user interface.
+ * 
  * @author Wei-ju Wu
  * @version 1.0
  */
