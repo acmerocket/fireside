@@ -20,13 +20,15 @@
  */
 package org.zmpp.swingui2;
 
+import java.awt.BorderLayout;
 import java.awt.Dimension;
-import java.awt.Font;
-import java.awt.Graphics;
-import java.awt.Graphics2D;
-import java.awt.event.ComponentEvent;
-import java.awt.event.ComponentListener;
+import java.awt.event.AdjustmentEvent;
+import java.awt.event.AdjustmentListener;
+import java.awt.event.MouseWheelEvent;
+import java.awt.event.MouseWheelListener;
 import javax.swing.JComponent;
+import javax.swing.JScrollBar;
+import org.zmpp.swingui2.ScreenModelSplitView.MainViewListener;
 
 /**
  * A Swing component that hosts sub views that represent the Z-machine
@@ -36,80 +38,73 @@ import javax.swing.JComponent;
  * @version 1.0
  */
 public class ScreenModelView extends JComponent
-  implements ComponentListener {
-  private TextGridView topWindow;
-  private TextWindowView bottomWindow;
-  private int topWindowHeight, splitGap = 5;
-  //private static final Font STD_FONT = new Font("Baskerville", Font.PLAIN, 20);
-  private static final Font STD_FONT = new Font("American Typewriter", Font.PLAIN, 16);
-  private static final Font FIXED_FONT = new Font("Monaco", Font.PLAIN, 16);
-  private FontSelector fontSelector = new FontSelector();
+implements AdjustmentListener, MainViewListener, MouseWheelListener {
 
+  private ScreenModelSplitView mainView = new ScreenModelSplitView();
+  private JScrollBar scrollbar;
+  
   public ScreenModelView() {
-    setPreferredSize(new Dimension(640, 480));
-    setDefaultFonts();
-    addComponentListener(this);
+    setLayout(new BorderLayout());
+    mainView.setPreferredSize(new Dimension(640, 480));
+    mainView.split(5);
+    add(mainView, BorderLayout.CENTER);
+    scrollbar = new JScrollBar();
+    scrollbar.addAdjustmentListener(this);
+    scrollbar.addMouseWheelListener(this);
+    mainView.addMouseWheelListener(this);
+    add(scrollbar, BorderLayout.EAST);
+    mainView.addMainViewListener(this);
   }
   
-  private void setDefaultFonts() {
-    /*
-    String[] fontNames = GraphicsEnvironment.getLocalGraphicsEnvironment()
-            .getAvailableFontFamilyNames();
-    for (String fontName : fontNames) {
-      System.out.println("Font name: " + fontName);
-    }*/
-    fontSelector.setFixedFont(FIXED_FONT);
-    fontSelector.setStandardFont(STD_FONT);    
+  /**
+   * Called when the scrollbar has changed in some way.
+   * @param viewHeight the new view height
+   * @param viewportHeight the new viewport height
+   * @param currentPos the current position of the view
+   */
+  public void viewDimensionsChanged(int viewHeight, int viewportHeight,
+          int currentViewPos) {
+    scrollbar.setMinimum(0);
+    scrollbar.setMaximum(viewHeight);
+    scrollbar.setValue(mapViewPosToScrollPos(currentViewPos));
+    scrollbar.setVisibleAmount(viewportHeight);
   }
-  
-  private void initWindows() {
-    if (topWindow == null && bottomWindow == null) {
-      topWindow = new TextGridView(this, fontSelector);
-      bottomWindow = new TextWindowView(this, fontSelector);
-      setSplit(30);
+
+  /**
+   * Called when the scrollbar was moved.
+   * @param e the AdjustmentEvent
+   */
+  public void adjustmentValueChanged(AdjustmentEvent e) {
+    if (e.getValueIsAdjusting()) {
+      scrollToScrollbarPos();
     }
   }
   
-  private void setSplit(int topWindowHeight) {
-    this.topWindowHeight = topWindowHeight;
-    topWindow.setBounds(0, 0, getWidth(), topWindowHeight);
-    int upperHeight = topWindowHeight + splitGap;
-    bottomWindow.setBounds(0, upperHeight, getWidth(),
-                           getHeight() - upperHeight);
-  }
+  /**
+   * Maps a scroll bar position to a view position
+   * @param scrollPos the scroll position
+   * @return the view position
+   */
+  private int mapScrollPosToViewPos(int scrollPos) { return -scrollPos; }
   
   /**
-   * {@inheritDoc}
+   * Maps a view position to the scroll bar's position.
+   * @param viewPos the view position
+   * @return the position of the scroll bar
    */
-  @Override
-  public void paintComponent(Graphics g) {
-    super.paintComponent(g);
-    Graphics2D g2d = (Graphics2D) g;
-    topWindow.paint(g2d);
-    bottomWindow.paint(g2d);
-  }
+  private int mapViewPosToScrollPos(int viewPos) { return -viewPos; }
 
-  // ************************************************************************
-  // ***** ComponentListener interface
-  // ************************************************************************
-  
   /**
-   * Invalidate sub views and force them to redo their layout on a resize.
-   * @param e ComponentEvent.
+   * 
+   * @param e
    */
-  public void componentResized(ComponentEvent e) {
-    initWindows();
-    topWindow.invalidate();
-    bottomWindow.invalidate();
-    setSplit(topWindowHeight);
+  public void mouseWheelMoved(MouseWheelEvent e) {
+    int units = e.getUnitsToScroll();
+    scrollbar.setValue(scrollbar.getValue() + units);
+    scrollToScrollbarPos();
   }
-
-  /** {@inheritDoc} */
-  public void componentMoved(ComponentEvent e) { }
-
-  /** {@inheritDoc} */
-  public void componentShown(ComponentEvent e) { }
-
-  /** {@inheritDoc} */
-  public void componentHidden(ComponentEvent e) { }    
+  
+  private void scrollToScrollbarPos() {
+    mainView.scroll(mapScrollPosToViewPos(scrollbar.getValue()));    
+  }
 }

@@ -232,16 +232,16 @@ public class StdScreenView extends JPanel
   public void screenSplit(int linesUpperWindow) {
     System.out.println("Screen Split, # lines upper: " + linesUpperWindow);
     topWindow.setPreferredSize(new Dimension(getWidth(), charHeight * linesUpperWindow));
-    screenModel.getTopWindow().resize(linesUpperWindow, screenModel.getTopWindow().getNumColumns());
+    //screenModel.getTopWindow().resize(linesUpperWindow, screenModel.getTopWindow().getNumColumns());
     doLayout();
     windowErased(0);
   }
 
   public void windowErased(int window) {
     topWindow.setCaretPosition(0);
-    int rows = screenModel.getTopWindow().getNumRows();
-    int cols = screenModel.getTopWindow().getNumColumns();
-    System.out.println("Window erased, rows: " + rows + " cols: " + cols);
+    //int rows = screenModel.getTopWindow().getNumRows();
+    //int cols = screenModel.getTopWindow().getNumColumns();
+    //System.out.println("Window erased, rows: " + rows + " cols: " + cols);
     int offset = 0;
     
     clearTopWindow();
@@ -251,12 +251,13 @@ public class StdScreenView extends JPanel
     StyleConstants.setFontFamily(attrs, "Monospaced");
     
     StyledDocument doc = topWindow.getStyledDocument();
+    /*
     for (int i = 0; i < rows; i++) {
       for (int j = 0; j < cols; j++) {
         setTopCharacter(doc, offset++, 'D', attrs);
       }
       setTopCharacter(doc, offset++, '\n', attrs);
-    }
+    }*/
   }
   
   private void clearTopWindow() {

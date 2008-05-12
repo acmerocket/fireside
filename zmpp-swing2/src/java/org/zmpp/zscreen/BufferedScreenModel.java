@@ -27,7 +27,6 @@ import org.zmpp.io.OutputStream;
 import org.zmpp.vm.ScreenModel;
 import org.zmpp.vm.StatusLine;
 import org.zmpp.vm.TextCursor;
-import org.zmpp.windowing.BufferedTextGrid;
 
 /**
  * BufferedScreenModel is the attempt to provide a reusable screen model
@@ -44,7 +43,6 @@ public class BufferedScreenModel implements ScreenModel, StatusLine,
   public static final int WINDOW_BOTTOM = 0;
   public static final int WINDOW_TOP    = 1;
   private int current = 0;
-  private BufferedTextGrid topWindow = new BufferedTextGrid();
   private BufferedTextWindow bottomWindow = new BufferedTextWindow();
   private List<ScreenModelListener> screenModelListeners =
     new ArrayList<ScreenModelListener>();
@@ -70,9 +68,7 @@ public class BufferedScreenModel implements ScreenModel, StatusLine,
   }
   
   public BufferedTextWindow getBottomWindow() { return bottomWindow; }
-  public BufferedTextGrid getTopWindow() { return topWindow; }
   public void setNumCharsPerRow(int numCharsPerRow) {
-    topWindow.resize(topWindow.getNumRows(), numCharsPerRow);
   }
 
   public void reset() {

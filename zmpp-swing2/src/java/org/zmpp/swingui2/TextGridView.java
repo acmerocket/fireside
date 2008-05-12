@@ -1,7 +1,7 @@
 /*
  * $Id$
  * 
- * Created on 2008/05/01
+ * Created on 2008/05/10
  * Copyright 2005-2008 by Wei-ju Wu
  * This file is part of The Z-machine Preservation Project (ZMPP).
  *
@@ -22,7 +22,8 @@ package org.zmpp.swingui2;
 
 import java.awt.Color;
 import java.awt.Font;
-import java.awt.Graphics2D;
+import java.awt.FontMetrics;
+import java.awt.Graphics;
 import javax.swing.JComponent;
 import org.zmpp.vm.ScreenModel;
 
@@ -34,29 +35,25 @@ import org.zmpp.vm.ScreenModel;
  * @author Wei-ju Wu
  * @version 1.0
  */
-public class TextGridView extends VirtualView {
+public class TextGridView extends JComponent {
 
-  public TextGridView(JComponent hostingComponent, FontSelector fontSelector) {
-    super(hostingComponent, fontSelector);
+  private FontSelector fontSelector;
+
+  public void setFontSelector(FontSelector selector) {
+    this.fontSelector = selector;
   }
-  
+
   @Override
-  public void paint(Graphics2D g2d) {
-    super.paint(g2d);
-    g2d.setColor(Color.BLACK);
-    int textY = getUsableTop(); // - 8;
-    Font font = getFixedFont();
-    g2d.setFont(font);
-    g2d.drawString("Fixed text", getUsableLeft(), textY + g2d.getFontMetrics(font).getAscent());
-  }
-  
-  /**
-   * Returns the fixed font in roman. For grids, only fixed width fonts
-   * make sense.
-   * @return the fixed font
-   */
-  private Font getFixedFont() {
-    return getFontSelector().getFont(ScreenModel.FONT_FIXED,
-                                     ScreenModel.TEXTSTYLE_ROMAN);
+  public void paintComponent(Graphics g) {
+    //super.paintComponent(g);
+    // TODO: Render with Insets as margins
+    Font fixedFont = fontSelector.getFont(ScreenModel.FONT_FIXED,
+            ScreenModel.TEXTSTYLE_ROMAN);
+    g.setFont(fixedFont);
+    g.setColor(Color.BLACK);
+    FontMetrics fontMetrics = g.getFontMetrics();
+    g.drawString("This is a text", 0, fontMetrics.getAscent());
+    g.drawString("This is a text", 0, fontMetrics.getAscent() + fontMetrics.getHeight());
+    g.drawString("This is a text", 0, fontMetrics.getAscent() + fontMetrics.getHeight() * 2);
   }
 }
