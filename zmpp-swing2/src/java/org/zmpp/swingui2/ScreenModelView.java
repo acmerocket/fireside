@@ -22,31 +22,51 @@ package org.zmpp.swingui2;
 
 import java.awt.BorderLayout;
 import java.awt.Dimension;
+import java.awt.FlowLayout;
+import java.awt.GridLayout;
 import java.awt.event.AdjustmentEvent;
 import java.awt.event.AdjustmentListener;
 import java.awt.event.MouseWheelEvent;
 import java.awt.event.MouseWheelListener;
+import java.io.File;
+import java.io.IOException;
 import javax.swing.JComponent;
+import javax.swing.JLabel;
+import javax.swing.JPanel;
 import javax.swing.JScrollBar;
 import org.zmpp.swingui2.ScreenModelSplitView.MainViewListener;
+import org.zmpp.vm.ExecutionControl;
+import org.zmpp.vm.InvalidStoryException;
+import org.zmpp.vm.Machine.MachineRunState;
+import org.zmpp.vm.MachineFactory.MachineInitStruct;
+import org.zmpp.zscreen.BufferedScreenModel;
+import org.zmpp.zscreen.BufferedScreenModel.StatusLineListener;
 
 /**
  * A Swing component that hosts sub views that represent the Z-machine
- * screen model's windows.
+ * screen model's windows. This component delegates a majority of the
+ * functionality to its main view, which is a ScreenModelSplitView and
+ * mainly deals with displaying and managing a scroll bar and a status
+ * line.
  * 
  * @author Wei-ju Wu
  * @version 1.0
  */
 public class ScreenModelView extends JComponent
-implements AdjustmentListener, MainViewListener, MouseWheelListener {
+implements AdjustmentListener, MainViewListener, MouseWheelListener,
+           StatusLineListener {
 
   private ScreenModelSplitView mainView = new ScreenModelSplitView();
+  private BufferedScreenModel screenModel = new BufferedScreenModel();
   private JScrollBar scrollbar;
+  private ExecutionControl executionControl;
+  private JPanel statusPanel;
+  private JLabel objectDescLabel = new JLabel(" "),
+                 statusLabel = new JLabel(" ");  
   
   public ScreenModelView() {
     setLayout(new BorderLayout());
     mainView.setPreferredSize(new Dimension(640, 480));
-    mainView.split(5);
     add(mainView, BorderLayout.CENTER);
     scrollbar = new JScrollBar();
     scrollbar.addAdjustmentListener(this);
@@ -54,8 +74,23 @@ implements AdjustmentListener, MainViewListener, MouseWheelListener {
     mainView.addMouseWheelListener(this);
     add(scrollbar, BorderLayout.EAST);
     mainView.addMainViewListener(this);
+    
+    screenModel.addScreenModelListener(mainView);
+    screenModel.addStatusLineListener(this);
+    add(createStatusPanel(), BorderLayout.NORTH);
   }
   
+  private JPanel createStatusPanel() {
+    statusPanel = new JPanel(new GridLayout(1, 2));
+    JPanel leftPanel = new JPanel(new FlowLayout(FlowLayout.LEFT));
+    JPanel rightPanel = new JPanel(new FlowLayout(FlowLayout.RIGHT));
+    statusPanel.add(leftPanel);
+    statusPanel.add(rightPanel);
+    leftPanel.add(objectDescLabel);
+    rightPanel.add(statusLabel);
+    return statusPanel;
+  }
+
   /**
    * Called when the scrollbar has changed in some way.
    * @param viewHeight the new view height
@@ -106,5 +141,67 @@ implements AdjustmentListener, MainViewListener, MouseWheelListener {
   
   private void scrollToScrollbarPos() {
     mainView.scroll(mapScrollPosToViewPos(scrollbar.getValue()));    
+  }
+  
+  // *************************************************************************
+  // ****** StatusLineListener
+  // ***************************************
+  public void statusLineUpdated(String objectDescription, String status) {
+    objectDescLabel.setText(objectDescription);
+    statusLabel.setText(status);
+  }
+
+  /**
+   * {@inheritDoc}
+   */
+  public void startGame(File storyFile)
+      throws IOException, InvalidStoryException {
+    MachineInitStruct initStruct = new MachineInitStruct();
+    initStruct.storyFile = storyFile;
+    initStruct.screenModel = screenModel;
+    initStruct.statusLine = screenModel;
+    
+    if (this.isVisible()) {
+      executionControl = new ExecutionControl(initStruct);
+      initUI();
+      MachineRunState runState = executionControl.run();
+      System.out.println("PAUSING WITH STATE: " + runState);
+      switchModeOnRunState(runState);
+    }
+  }
+  
+  private void initUI() {
+    int version = executionControl.getVersion();
+    System.out.println("initUI, story file version: " + version);
+    statusPanel.setVisible(version <= 3);
+    setSizes();
+  }
+  
+  private void setSizes() {
+    int componentWidth = getWidth();
+    int componentHeight = getHeight();
+    int charWidth = mainView.getFixedFontWidth();
+    int charHeight = mainView.getFixedFontHeight();
+    int numCharsPerRow = componentWidth / charWidth;
+    int numRows = componentHeight / charHeight;
+    screenModel.setNumCharsPerRow(numCharsPerRow);
+    
+    System.out.println("Char width: " + charWidth + " component width: " +
+            componentWidth + " # chars/row: " + numCharsPerRow +
+            " char height: " + charHeight + " # rows: " + numRows);
+    executionControl.resizeScreen(numRows, numCharsPerRow);
+  }
+
+  private void switchModeOnRunState(MachineRunState runState) {
+    if (runState == MachineRunState.READ_CHAR) setReadChar(true);
+    else if (runState == MachineRunState.READ_LINE) setReadLine(true);
+  }
+  
+  private void setReadChar(boolean flag) {
+    // TODO
+  }
+  
+  private void setReadLine(boolean flag) {
+    // TODO
   }
 }

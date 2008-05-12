@@ -26,6 +26,7 @@ import java.awt.Font;
 import java.awt.event.ComponentAdapter;
 import java.awt.event.ComponentEvent;
 import java.awt.event.MouseWheelListener;
+import java.util.List;
 import javax.swing.BorderFactory;
 import javax.swing.JLayeredPane;
 import javax.swing.JTextPane;
@@ -33,9 +34,15 @@ import javax.swing.JViewport;
 import javax.swing.border.Border;
 import javax.swing.event.ChangeEvent;
 import javax.swing.event.ChangeListener;
+import javax.swing.text.BadLocationException;
+import javax.swing.text.Document;
+import org.zmpp.vm.ScreenModel;
+import org.zmpp.windowing.AnnotatedText;
+import org.zmpp.zscreen.BufferedScreenModel;
+import org.zmpp.zscreen.BufferedScreenModel.ScreenModelListener;
 
 /**
- * The MainView class is the real component. It contains the upper and
+ * The MainView class is the main view component. It contains the upper and
  * the lower windows.
  * While the lower window is layed out so that its boundaries start
  * at the split position, the upper window component always uses up the
@@ -43,7 +50,8 @@ import javax.swing.event.ChangeListener;
  * lower window, which is controlled by implementing the MainView as a
  * JLayeredPane.
  */
-public class ScreenModelSplitView extends JLayeredPane {
+public class ScreenModelSplitView extends JLayeredPane
+implements ScreenModelListener {
 
   //private static final Font STD_FONT = new Font("Baskerville", Font.PLAIN, 20);
   private static final Font STD_FONT = new Font("American Typewriter", Font.PLAIN, 16);
@@ -94,8 +102,8 @@ public class ScreenModelSplitView extends JLayeredPane {
             BorderFactory.createEmptyBorder(5, 5, 5, 5));
     lower.setEditable(true);
     lower.setEnabled(true);
-    lower.setBackground(Color.BLUE);
-    lower.setForeground(Color.YELLOW);
+    lower.setBackground(Color.WHITE);
+    lower.setForeground(Color.BLACK);
     lowerViewport = new JViewport();
     lowerViewport.setView(lower);
     lowerViewport.addChangeListener(new ChangeListener() {
@@ -119,9 +127,12 @@ public class ScreenModelSplitView extends JLayeredPane {
 
     Border upperBorder = BorderFactory.createEmptyBorder(5, 5, 5, 5);
     upper.setBorder(upperBorder);
-    addStringsToLower();
     add(upper, JLayeredPane.PALETTE_LAYER);
     add(lowerViewport, JLayeredPane.DEFAULT_LAYER);
+    
+    // Debugging
+    //addStringsToLower();
+    split(0);
   }
 
   private void addStringsToLower() {
@@ -151,13 +162,56 @@ public class ScreenModelSplitView extends JLayeredPane {
     repaint();
   }
   
-  public void split(int numRowsUpper) {
+  private void split(int numRowsUpper) {
     layout.setNumRowsUpper(numRowsUpper);
   }
 
   private void viewSizeChanged() {
     listener.viewDimensionsChanged(lower.getHeight(), lowerViewport.getHeight(),
                                 lower.getY());
+  }
+  
+  public int getFixedFontWidth() {
+    return upper.getGraphics().getFontMetrics(
+      getRomanFixedFont()).charWidth('0');
+  }
+  
+  public int getFixedFontHeight() {
+    return upper.getGraphics().getFontMetrics(
+      getRomanFixedFont()).getHeight();
+  }
+  
+  private Font getRomanFixedFont() {
+    return fontSelector.getFont(ScreenModel.FONT_FIXED,
+                                ScreenModel.TEXTSTYLE_ROMAN);
+  }
+
+  // *************************************************************************
+  // ****** ScreenModelListener
+  // ***************************************
+  public void screenModelUpdated(BufferedScreenModel screenModel) {
+    List<AnnotatedText> text = screenModel.getBottomWindow().getBuffer();
+    Document doc = lower.getDocument();
+    for (AnnotatedText segment : text) {
+      try {
+        doc.insertString(doc.getLength(), zsciiToUnicode(segment.getText()),
+                null);
+      } catch (BadLocationException ex) {
+        ex.printStackTrace();
+      }
+    }
+  }
+  
+  private String zsciiToUnicode(String str) {
+    return str.replace("\r", "\n");
+  }
+
+  public void screenSplit(int linesUpperWindow) {
+    split(linesUpperWindow);
+  }
+
+  public void windowErased(int window) {
+    throw new UnsupportedOperationException("Not supported yet.");
   }
 }
   

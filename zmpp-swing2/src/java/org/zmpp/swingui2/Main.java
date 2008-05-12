@@ -20,10 +20,9 @@
  */
 package org.zmpp.swingui2;
 
-import java.awt.Dimension;
+import java.io.File;
 import javax.swing.JComponent;
 import javax.swing.JFrame;
-import javax.swing.JScrollPane;
 import javax.swing.SwingUtilities;
 
 public class Main {
@@ -35,15 +34,15 @@ public class Main {
         public void run() {
           JFrame frame = new JFrame("Z-machine Preservation Project 1.5");
           frame.setDefaultCloseOperation(JFrame.EXIT_ON_CLOSE);
-          frame.getContentPane().add(createView2(frame));
+          ScreenModelView view = createView(frame);
+          frame.getContentPane().add(view);
           frame.pack();
           frame.setVisible(true);
-          /*
           try {
             view.startGame(new File("testfiles/minizork.z3"));
           } catch (Exception ex) {
             ex.printStackTrace();
-          }*/
+          }
         }
       });
     } catch (Exception ex) {
@@ -51,11 +50,7 @@ public class Main {
     }
   }
   
-  private static JComponent createView(JFrame frame) {
-    return new StdScreenView(frame);
-  }
-  
-  private static JComponent createView2(JFrame frame) {
+  private static ScreenModelView createView(JFrame frame) {
     return new ScreenModelView();
   }
 }
