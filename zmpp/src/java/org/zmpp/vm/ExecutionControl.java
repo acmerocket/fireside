@@ -67,6 +67,10 @@ public class ExecutionControl {
     enableHeaderFlag(Attribute.SUPPORTS_ITALIC);
     enableHeaderFlag(Attribute.SUPPORTS_STATUSLINE);
     enableHeaderFlag(Attribute.SUPPORTS_TIMED_INPUT);
+    machine.getGameData().getStoryFileHeader().setDefaultBackgroundColor(
+      ScreenModel.COLOR_WHITE);
+    machine.getGameData().getStoryFileHeader().setDefaultForegroundColor(
+      ScreenModel.COLOR_BLACK);
   }
 
   private void enableHeaderFlag(Attribute attr) {
@@ -104,6 +108,7 @@ public class ExecutionControl {
       if (machine.getRunState() == MachineRunState.READ_LINE) {
         break;
       } else if (machine.getRunState() == MachineRunState.READ_CHAR) {
+        break;
       } else {
         step++;
       }
