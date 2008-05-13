@@ -180,5 +180,5 @@ implements AdjustmentListener, MainViewListener, MouseWheelListener,
     //System.out.println("initUI, story file version: " + version);
     statusPanel.setVisible(version <= 3);
     mainView.initUI(screenModel, executionControl);
-  }  
+  }
 }

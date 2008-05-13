@@ -201,7 +201,7 @@ public class BufferedScreenModel implements ScreenModel, StatusLine,
     if (current == WINDOW_BOTTOM) {
       bottomWindow.printChar(zchar);
     } else if (current == WINDOW_TOP) {
-      System.out.println("PRINT: [" + zchar + "]");
+      //System.out.println("PRINT: [" + zchar + "]");
       for (ScreenModelListener l : screenModelListeners) {
         l.topWindowUpdated(topWindow.cursorx, topWindow.cursory,
                            topWindow.annotateCharacter(zchar));

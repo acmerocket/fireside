@@ -27,6 +27,7 @@ import java.awt.Graphics;
 import javax.swing.JComponent;
 import org.zmpp.vm.ScreenModel;
 import org.zmpp.windowing.AnnotatedCharacter;
+import org.zmpp.windowing.TextAnnotation;
 
 /**
  * A class representing a text grid in a Z-machine or Glk screen model.
@@ -50,16 +51,25 @@ public class TextGridView extends JComponent {
   }
   
   public void clear() {
-    /*
     for (int row = 0; row < grid.length; row++) {
       for (int col = 0; col < grid[row].length; col++) {
         grid[row][col] = null;
       }
-    }*/
+    }
   }
 
-  private void clearCharacter(Graphics g, int row, int col) {
-    ColorTranslator colTranslator = ColorTranslator.getInstance();
+  private void visualizeCursorPosition(Graphics g, int row, int col) {
+    
+    // Draw it
+    AnnotatedCharacter c = grid[row][col];
+    if (c != null) {
+      drawCharacter(g, row, col);
+    } else {
+      //clearCursorPosition(g, row, col);
+    }
+  }
+
+  private void clearCursorPosition(Graphics g, int row, int col) {
     FontMetrics fontMetrics = g.getFontMetrics(fontSelector.getFixedFont());
     int posy = row * fontMetrics.getHeight() + fontMetrics.getAscent();
     int posx = col * fontMetrics.charWidth('0');
@@ -72,15 +82,22 @@ public class TextGridView extends JComponent {
     // Draw it
     AnnotatedCharacter c = grid[row][col];
     if (c != null) {
-      ColorTranslator colTranslator = ColorTranslator.getInstance();
-      Color foreground = colTranslator.translate(
-        c.getAnnotation().getForeground(), ScreenModel.COLOR_BLACK);
-      g.setColor(Color.BLACK);    
-      Font drawfont = fontSelector.getFont(c.getAnnotation());
+      TextAnnotation annotation = c.getAnnotation();
+      Font drawfont = fontSelector.getFont(annotation);
       g.setFont(drawfont);
       FontMetrics fontMetrics = g.getFontMetrics();
       int posy = row * fontMetrics.getHeight() + fontMetrics.getAscent();
       int posx = col * fontMetrics.charWidth('0');
+      
+      ColorTranslator colTranslator = ColorTranslator.getInstance();
+      Color foreground = colTranslator.translate(
+        annotation.getForeground(), ScreenModel.COLOR_BLACK);
+      Color background = colTranslator.translate(
+        annotation.getBackground(), ScreenModel.COLOR_WHITE);
+      g.setColor(background);
+      g.fillRect(posx, row * fontMetrics.getHeight(),
+                 fontMetrics.charWidth('0'), fontMetrics.getHeight());
+      g.setColor(foreground);    
       g.drawString(String.valueOf(c.getCharacter()), posx, posy);
     }
   }
@@ -91,10 +108,10 @@ public class TextGridView extends JComponent {
 
   @Override
   public void paintComponent(Graphics g) {
-    super.paintComponent(g);
+    //super.paintComponent(g);
     for (int row = 0; row < grid.length; row++) {
       for (int col = 0; col < grid[row].length; col++) {
-        drawCharacter(g, row, col);
+        visualizeCursorPosition(g, row, col);
       }
     }
   }

@@ -63,7 +63,7 @@ implements ScreenModelListener {
 
   //private static final Font STD_FONT = new Font("Baskerville", Font.PLAIN, 16);
   private static final Font STD_FONT = new Font("American Typewriter", Font.PLAIN, 14);
-  private static final Font FIXED_FONT = new Font("Monaco", Font.PLAIN, 16);
+  private static final Font FIXED_FONT = new Font("Monaco", Font.PLAIN, 14);
   private int editStart;
   private ExecutionControl executionControl;
   private BufferedScreenModel screenModel;
@@ -137,8 +137,10 @@ implements ScreenModelListener {
             BorderFactory.createEmptyBorder(5, 5, 5, 5));
     lower.setEditable(true);
     lower.setEnabled(true);
-    lower.setBackground(Color.WHITE);
-    lower.setForeground(Color.BLACK);
+    //lower.setBackground(Color.WHITE);
+    //lower.setForeground(Color.BLACK);
+    lower.setBackground(Color.BLUE);
+    lower.setForeground(Color.WHITE);
     lowerViewport = new JViewport();
     lowerViewport.setView(lower);
     lowerViewport.addChangeListener(new ChangeListener() {
@@ -191,7 +193,8 @@ implements ScreenModelListener {
   private void preventKeyActionIfNeeded(KeyEvent e) {
     if (isReadChar) {
       System.out.println("HAHAHAHA");
-      switchModeOnRunState(executionControl.resumeWithInput("\n"));
+      switchModeOnRunState(executionControl.resumeWithInput(
+              String.valueOf(e.getKeyChar())));
       consumeKeyEvent(e);
     }
     if (e.getKeyCode() == KeyEvent.VK_UP) {
@@ -232,8 +235,8 @@ implements ScreenModelListener {
   }
 
   public void switchModeOnRunState(MachineRunState runState) {
-    if (runState == MachineRunState.READ_CHAR) this.setReadChar(true);
-    else if (runState == MachineRunState.READ_LINE) this.setReadLine(true);
+    if (runState == MachineRunState.READ_CHAR) setReadChar();
+    else if (runState == MachineRunState.READ_LINE) setReadLine();
   }
   
   // ***********************************************************************
@@ -258,9 +261,9 @@ implements ScreenModelListener {
     int numRows = componentHeight / charHeight;
     screenModel.setNumCharsPerRow(numCharsPerRow);
     
-    //System.out.println("Char width: " + charWidth + " component width: " +
-    //        componentWidth + " # chars/row: " + numCharsPerRow +
-    //        " char height: " + charHeight + " # rows: " + numRows);
+    System.out.println("Char width: " + charWidth + " component width: " +
+            componentWidth + " # chars/row: " + numCharsPerRow +
+            " char height: " + charHeight + " # rows: " + numRows);
     upper.setGridSize(numRows, numCharsPerRow);
     executionControl.resizeScreen(numRows, numCharsPerRow);
   }
@@ -373,14 +376,16 @@ implements ScreenModelListener {
   // *************************************************************************
   // ****** Game control
   // ***************************************
-  public void setReadChar(boolean flag) {
-    this.isReadChar = flag;
-    viewCursor(flag);
+  public void setReadChar() {
+    this.isReadLine = false;
+    this.isReadChar = true;
+    viewCursor(true);
   }
   
-  public void setReadLine(boolean flag) {
-    this.isReadLine = flag;
-    viewCursor(flag);
+  public void setReadLine() {
+    this.isReadChar = false;
+    this.isReadLine = true;
+    viewCursor(true);
   }
 
   private void viewCursor(final boolean flag) {
