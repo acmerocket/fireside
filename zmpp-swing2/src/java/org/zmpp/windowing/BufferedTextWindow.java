@@ -22,6 +22,7 @@ package org.zmpp.windowing;
 
 import java.util.ArrayList;
 import java.util.List;
+import org.zmpp.vm.ScreenModel;
 
 /**
  * BufferedTextWindow is part of the BufferedScreenModel, it represents a
@@ -34,6 +35,15 @@ public class BufferedTextWindow {
   private TextAnnotation currentAnnotation = new TextAnnotation(
           TextAnnotation.FONT_NORMAL, TextAnnotation.TEXTSTYLE_ROMAN);
   private StringBuilder currentRun = new StringBuilder();
+  private int currentFont = ScreenModel.FONT_NORMAL;
+  private int currentTextStyle = ScreenModel.TEXTSTYLE_ROMAN;
+  
+  public int setCurrentFont(int font) {
+    int previousFont = currentFont;
+    currentFont = font;
+    return previousFont;
+  }
+  public void setCurrentTextStyle(int style) { currentTextStyle = style; }
   
   public void printChar(char zchar) {
     currentRun.append(zchar);

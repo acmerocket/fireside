@@ -51,6 +51,7 @@ import javax.swing.text.StyledDocument;
 import org.zmpp.vm.InvalidStoryException;
 import org.zmpp.vm.Machine.MachineRunState;
 import org.zmpp.vm.MachineFactory.MachineInitStruct;
+import org.zmpp.windowing.AnnotatedCharacter;
 import org.zmpp.windowing.AnnotatedText;
 import org.zmpp.zscreen.BufferedScreenModel;
 import org.zmpp.zscreen.BufferedScreenModel.ScreenModelListener;
@@ -429,5 +430,9 @@ public class StdScreenView extends JPanel
         ex.printStackTrace();
       }
     }
+  }
+
+  public void topWindowUpdated(int cursorx, int cursory, AnnotatedCharacter c) {
+    throw new UnsupportedOperationException("Not supported yet.");
   }
 }

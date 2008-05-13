@@ -20,6 +20,8 @@
  */
 package org.zmpp.windowing;
 
+import org.zmpp.vm.ScreenModel;
+
 /**
  * An annotation to indicate how a sequence of characters should be printed.
  * @author Wei-ju Wu
@@ -48,13 +50,17 @@ public class TextAnnotation {
     this.background = background;
     this.foreground = foreground;
   }
-  
+
   public TextAnnotation(int font, int style) {
-    this(font, style, -1, -1);
+    this(font, style, ScreenModel.COLOR_DEFAULT, ScreenModel.COLOR_DEFAULT);
   }
   
   public int getFont() { return font; }
   public int getStyle() { return style; }
-  public int getBackground() { return background; }
-  public int getForeground() { return foreground; }
+  public int getBackground() {
+    return background;
+  }
+  public int getForeground() {
+    return foreground;
+  }
 }

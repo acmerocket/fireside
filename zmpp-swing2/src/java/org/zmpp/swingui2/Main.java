@@ -39,7 +39,8 @@ public class Main {
           frame.pack();
           frame.setVisible(true);
           try {
-            view.startGame(new File("testfiles/minizork.z3"));
+            //view.startGame(new File("testfiles/minizork.z3"));
+            view.startGame(new File("testfiles/curses.z5"));
           } catch (Exception ex) {
             ex.printStackTrace();
           }

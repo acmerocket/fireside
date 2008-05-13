@@ -26,6 +26,7 @@ import java.awt.FontMetrics;
 import java.awt.Graphics;
 import javax.swing.JComponent;
 import org.zmpp.vm.ScreenModel;
+import org.zmpp.windowing.AnnotatedCharacter;
 
 /**
  * A class representing a text grid in a Z-machine or Glk screen model.
@@ -38,22 +39,63 @@ import org.zmpp.vm.ScreenModel;
 public class TextGridView extends JComponent {
 
   private FontSelector fontSelector;
+  private AnnotatedCharacter[][] grid;
 
   public void setFontSelector(FontSelector selector) {
     this.fontSelector = selector;
   }
+  
+  public void setGridSize(int numrows, int numcols) {
+    grid = new AnnotatedCharacter[numrows][numcols];
+  }
+  
+  public void clear() {
+    /*
+    for (int row = 0; row < grid.length; row++) {
+      for (int col = 0; col < grid[row].length; col++) {
+        grid[row][col] = null;
+      }
+    }*/
+  }
+
+  private void clearCharacter(Graphics g, int row, int col) {
+    ColorTranslator colTranslator = ColorTranslator.getInstance();
+    FontMetrics fontMetrics = g.getFontMetrics(fontSelector.getFixedFont());
+    int posy = row * fontMetrics.getHeight() + fontMetrics.getAscent();
+    int posx = col * fontMetrics.charWidth('0');
+    g.clearRect(posx, posy, fontMetrics.charWidth('0'),
+            fontMetrics.getHeight());
+  }
+
+  private void drawCharacter(Graphics g, int row, int col) {
+    
+    // Draw it
+    AnnotatedCharacter c = grid[row][col];
+    if (c != null) {
+      ColorTranslator colTranslator = ColorTranslator.getInstance();
+      Color foreground = colTranslator.translate(
+        c.getAnnotation().getForeground(), ScreenModel.COLOR_BLACK);
+      g.setColor(Color.BLACK);    
+      Font drawfont = fontSelector.getFont(c.getAnnotation());
+      g.setFont(drawfont);
+      FontMetrics fontMetrics = g.getFontMetrics();
+      int posy = row * fontMetrics.getHeight() + fontMetrics.getAscent();
+      int posx = col * fontMetrics.charWidth('0');
+      g.drawString(String.valueOf(c.getCharacter()), posx, posy);
+    }
+  }
+
+  public void setCharacter(int line, int column, AnnotatedCharacter c) {
+    grid[line - 1][column - 1] = c;
+  }
 
   @Override
   public void paintComponent(Graphics g) {
-    //super.paintComponent(g);
-    // TODO: Render with Insets as margins
-    Font fixedFont = fontSelector.getFont(ScreenModel.FONT_FIXED,
-            ScreenModel.TEXTSTYLE_ROMAN);
-    g.setFont(fixedFont);
-    g.setColor(Color.BLACK);
-    FontMetrics fontMetrics = g.getFontMetrics();
-    g.drawString("This is a text", 0, fontMetrics.getAscent());
-    g.drawString("This is a text", 0, fontMetrics.getAscent() + fontMetrics.getHeight());
-    g.drawString("This is a text", 0, fontMetrics.getAscent() + fontMetrics.getHeight() * 2);
+    super.paintComponent(g);
+    for (int row = 0; row < grid.length; row++) {
+      for (int col = 0; col < grid[row].length; col++) {
+        drawCharacter(g, row, col);
+      }
+    }
   }
 }

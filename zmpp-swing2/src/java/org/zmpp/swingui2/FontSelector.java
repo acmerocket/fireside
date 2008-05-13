@@ -22,6 +22,7 @@ package org.zmpp.swingui2;
 
 import java.awt.Font;
 import org.zmpp.vm.ScreenModel;
+import org.zmpp.windowing.TextAnnotation;
 
 /**
  * Helper class to select a font from a font number and a style number.
@@ -40,6 +41,10 @@ public class FontSelector {
     stdFont = font;
   }
   
+  public Font getFont(TextAnnotation annotation) {
+    return getFont(annotation.getFont(), annotation.getStyle());
+  }
+
   public Font getFont(int fontnum, int style) {
     if (fontnum == ScreenModel.FONT_FIXED ||
         (style & ScreenModel.TEXTSTYLE_FIXED) == ScreenModel.TEXTSTYLE_FIXED) {
@@ -48,6 +53,10 @@ public class FontSelector {
       return getStandardFont(style);
     }
     return null;
+  }
+  
+  public Font getFixedFont() {
+    return getFixedFont(ScreenModel.TEXTSTYLE_ROMAN);
   }
   
   private Font getFixedFont(int style) {

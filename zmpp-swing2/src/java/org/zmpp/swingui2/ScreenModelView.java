@@ -21,6 +21,7 @@
 package org.zmpp.swingui2;
 
 import java.awt.BorderLayout;
+import java.awt.Color;
 import java.awt.Dimension;
 import java.awt.FlowLayout;
 import java.awt.GridLayout;
@@ -30,6 +31,7 @@ import java.awt.event.MouseWheelEvent;
 import java.awt.event.MouseWheelListener;
 import java.io.File;
 import java.io.IOException;
+import javax.swing.BorderFactory;
 import javax.swing.JComponent;
 import javax.swing.JLabel;
 import javax.swing.JPanel;
@@ -75,7 +77,6 @@ implements AdjustmentListener, MainViewListener, MouseWheelListener,
     add(scrollbar, BorderLayout.EAST);
     mainView.addMainViewListener(this);
     
-    screenModel.addScreenModelListener(mainView);
     screenModel.addStatusLineListener(this);
     add(createStatusPanel(), BorderLayout.NORTH);
   }
@@ -88,6 +89,7 @@ implements AdjustmentListener, MainViewListener, MouseWheelListener,
     statusPanel.add(rightPanel);
     leftPanel.add(objectDescLabel);
     rightPanel.add(statusLabel);
+    statusPanel.setBorder(BorderFactory.createLineBorder(Color.BLACK));
     return statusPanel;
   }
 
@@ -151,6 +153,9 @@ implements AdjustmentListener, MainViewListener, MouseWheelListener,
     statusLabel.setText(status);
   }
 
+  // *************************************************************************
+  // ****** Game controls
+  // ***************************************
   /**
    * {@inheritDoc}
    */
@@ -166,42 +171,14 @@ implements AdjustmentListener, MainViewListener, MouseWheelListener,
       initUI();
       MachineRunState runState = executionControl.run();
       System.out.println("PAUSING WITH STATE: " + runState);
-      switchModeOnRunState(runState);
+      mainView.switchModeOnRunState(runState);
     }
   }
   
   private void initUI() {
     int version = executionControl.getVersion();
-    System.out.println("initUI, story file version: " + version);
+    //System.out.println("initUI, story file version: " + version);
     statusPanel.setVisible(version <= 3);
-    setSizes();
-  }
-  
-  private void setSizes() {
-    int componentWidth = getWidth();
-    int componentHeight = getHeight();
-    int charWidth = mainView.getFixedFontWidth();
-    int charHeight = mainView.getFixedFontHeight();
-    int numCharsPerRow = componentWidth / charWidth;
-    int numRows = componentHeight / charHeight;
-    screenModel.setNumCharsPerRow(numCharsPerRow);
-    
-    System.out.println("Char width: " + charWidth + " component width: " +
-            componentWidth + " # chars/row: " + numCharsPerRow +
-            " char height: " + charHeight + " # rows: " + numRows);
-    executionControl.resizeScreen(numRows, numCharsPerRow);
-  }
-
-  private void switchModeOnRunState(MachineRunState runState) {
-    if (runState == MachineRunState.READ_CHAR) setReadChar(true);
-    else if (runState == MachineRunState.READ_LINE) setReadLine(true);
-  }
-  
-  private void setReadChar(boolean flag) {
-    // TODO
-  }
-  
-  private void setReadLine(boolean flag) {
-    // TODO
-  }
+    mainView.initUI(screenModel, executionControl);
+  }  
 }

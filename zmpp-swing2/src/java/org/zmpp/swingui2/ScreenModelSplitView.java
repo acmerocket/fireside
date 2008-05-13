@@ -25,18 +25,26 @@ import java.awt.Dimension;
 import java.awt.Font;
 import java.awt.event.ComponentAdapter;
 import java.awt.event.ComponentEvent;
+import java.awt.event.KeyEvent;
+import java.awt.event.KeyListener;
 import java.awt.event.MouseWheelListener;
 import java.util.List;
 import javax.swing.BorderFactory;
 import javax.swing.JLayeredPane;
 import javax.swing.JTextPane;
 import javax.swing.JViewport;
+import javax.swing.SwingUtilities;
 import javax.swing.border.Border;
 import javax.swing.event.ChangeEvent;
 import javax.swing.event.ChangeListener;
 import javax.swing.text.BadLocationException;
 import javax.swing.text.Document;
+import javax.swing.text.MutableAttributeSet;
+import javax.swing.text.StyleConstants;
+import org.zmpp.vm.ExecutionControl;
+import org.zmpp.vm.Machine.MachineRunState;
 import org.zmpp.vm.ScreenModel;
+import org.zmpp.windowing.AnnotatedCharacter;
 import org.zmpp.windowing.AnnotatedText;
 import org.zmpp.zscreen.BufferedScreenModel;
 import org.zmpp.zscreen.BufferedScreenModel.ScreenModelListener;
@@ -53,9 +61,13 @@ import org.zmpp.zscreen.BufferedScreenModel.ScreenModelListener;
 public class ScreenModelSplitView extends JLayeredPane
 implements ScreenModelListener {
 
-  //private static final Font STD_FONT = new Font("Baskerville", Font.PLAIN, 20);
-  private static final Font STD_FONT = new Font("American Typewriter", Font.PLAIN, 16);
+  //private static final Font STD_FONT = new Font("Baskerville", Font.PLAIN, 16);
+  private static final Font STD_FONT = new Font("American Typewriter", Font.PLAIN, 14);
   private static final Font FIXED_FONT = new Font("Monaco", Font.PLAIN, 16);
+  private int editStart;
+  private ExecutionControl executionControl;
+  private BufferedScreenModel screenModel;
+  private boolean isReadLine, isReadChar;
 
   public interface MainViewListener {
     /**
@@ -88,14 +100,37 @@ implements ScreenModelListener {
   private ScreenModelLayout layout = new ScreenModelLayout();
   private FontSelector fontSelector = new FontSelector();
 
+  /**
+   * Constructor.
+   */
   public ScreenModelSplitView() {
+    initLayout();
+    createUpperView();
+    createLowerView();
+    split(0);
+  }
+  
+  // ************************************************************************
+  // **** User interface setup
+  // ************************************
+  
+  private void initLayout() {
     setOpaque(true);
-    fontSelector.setFixedFont(FIXED_FONT);
-    fontSelector.setStandardFont(STD_FONT);
-    upper.setFontSelector(fontSelector);
-    layout.setFontSelector(fontSelector);
-    setLayout(layout);
     setPreferredSize(new Dimension(640, 480));
+    fontSelector.setFixedFont(FIXED_FONT);
+    fontSelector.setStandardFont(STD_FONT);    
+    layout.setFontSelector(fontSelector);
+    setLayout(layout);    
+  }
+
+  private void createUpperView() {
+    upper.setFontSelector(fontSelector);    
+    Border upperBorder = BorderFactory.createEmptyBorder(5, 5, 5, 5);
+    upper.setBorder(upperBorder);
+    add(upper, JLayeredPane.PALETTE_LAYER);
+  }
+  
+  private void createLowerView() {
 
     Border lowerBorder = BorderFactory.createCompoundBorder(
             BorderFactory.createLineBorder(Color.BLACK),
@@ -124,29 +159,112 @@ implements ScreenModelListener {
       }
     });
     lower.setBorder(lowerBorder);
-
-    Border upperBorder = BorderFactory.createEmptyBorder(5, 5, 5, 5);
-    upper.setBorder(upperBorder);
-    add(upper, JLayeredPane.PALETTE_LAYER);
     add(lowerViewport, JLayeredPane.DEFAULT_LAYER);
-    
-    // Debugging
-    //addStringsToLower();
-    split(0);
+    installLowerHandlers();
   }
 
-  private void addStringsToLower() {
-    try {
-      StringBuilder builder = new StringBuilder();
-      for (int i = 0; i < 40; i++) {
-        builder.append("This is line: " + i + "\n");
+  private void installLowerHandlers() {
+    // TODO: Mouse clicks can as well influence typing position
+    // Make sure mouse clicks do not change caret position
+    lower.addKeyListener(new KeyListener() {
+      public void keyTyped(KeyEvent e) {        
+        //System.out.println("keyTyped(): " + e.getKeyChar() + " code: " + e.getKeyCode());
       }
-      lower.getDocument().insertString(0, builder.toString(), null);
-    } catch (Exception ex) {
-      ex.printStackTrace();
+
+      public void keyPressed(KeyEvent e) {
+        //System.out.println("-------------------------");
+        //System.out.println("keyPressed(): " + e.getKeyChar() + " code: " + e.getKeyCode());
+        preventKeyActionIfNeeded(e);
+      }
+
+      public void keyReleased(KeyEvent e) {
+        //System.out.println("keyReleased(): " + e.getKeyChar() + " code: " + e.getKeyCode());
+        //preventKeyActionIfNeeded(e);
+      }
+    });
+  }
+  
+  private void consumeKeyEvent(KeyEvent e) {
+    if (e != null) e.consume();
+  }
+  
+  private void preventKeyActionIfNeeded(KeyEvent e) {
+    if (isReadChar) {
+      System.out.println("HAHAHAHA");
+      switchModeOnRunState(executionControl.resumeWithInput("\n"));
+      consumeKeyEvent(e);
+    }
+    if (e.getKeyCode() == KeyEvent.VK_UP) {
+      // Handle up key
+      consumeKeyEvent(e);
+    }
+    if (e.getKeyCode() == KeyEvent.VK_DOWN) {
+      // Handle down key
+      consumeKeyEvent(e);
+    }
+    if (e.getKeyCode() == KeyEvent.VK_ENTER) {
+      handleEnterKey(e);
+    }
+    if (lower.getCaretPosition() <= editStart &&
+        keyCodeLeadsToPreviousPosition(e.getKeyCode())) {
+      consumeKeyEvent(e);
     }
   }
   
+  private boolean keyCodeLeadsToPreviousPosition(int keyCode) {
+    return keyCode == KeyEvent.VK_BACK_SPACE || keyCode == KeyEvent.VK_LEFT;            
+  }
+  
+  
+  private void handleEnterKey(KeyEvent e) {
+    if (isReadLine) {
+      Document doc = lower.getDocument();
+      try {
+        String input = doc.getText(editStart, doc.getLength() - editStart);
+        System.out.println("ENTER PRESSED, input: " + input);
+        consumeKeyEvent(e);
+        doc.insertString(doc.getLength(), "\n", null);
+        switchModeOnRunState(executionControl.resumeWithInput(input));
+      } catch (BadLocationException ex) {
+        ex.printStackTrace();
+      }
+    }
+  }
+
+  public void switchModeOnRunState(MachineRunState runState) {
+    if (runState == MachineRunState.READ_CHAR) this.setReadChar(true);
+    else if (runState == MachineRunState.READ_LINE) this.setReadLine(true);
+  }
+  
+  // ***********************************************************************
+  // **** Public interface
+  // *********************************
+  
+  public void initUI(BufferedScreenModel screenModel,
+                     ExecutionControl control) {
+    executionControl = control;
+    this.screenModel = screenModel;
+    screenModel.addScreenModelListener(this);
+    setSizes();
+    setLowerFontStyles();
+  }
+  
+  private void setSizes() {
+    int componentWidth = getWidth();
+    int componentHeight = getHeight();
+    int charWidth = getFixedFontWidth();
+    int charHeight = getFixedFontHeight();
+    int numCharsPerRow = componentWidth / charWidth;
+    int numRows = componentHeight / charHeight;
+    screenModel.setNumCharsPerRow(numCharsPerRow);
+    
+    //System.out.println("Char width: " + charWidth + " component width: " +
+    //        componentWidth + " # chars/row: " + numCharsPerRow +
+    //        " char height: " + charHeight + " # rows: " + numRows);
+    upper.setGridSize(numRows, numCharsPerRow);
+    executionControl.resizeScreen(numRows, numCharsPerRow);
+  }
+
   public void addMainViewListener(MainViewListener l) {
     listener = l;
   }
@@ -185,21 +303,46 @@ implements ScreenModelListener {
     return fontSelector.getFont(ScreenModel.FONT_FIXED,
                                 ScreenModel.TEXTSTYLE_ROMAN);
   }
+  
+  private Font getRomanStdFont() {
+    return fontSelector.getFont(ScreenModel.FONT_NORMAL,
+                                ScreenModel.TEXTSTYLE_ROMAN);
+  }
 
   // *************************************************************************
   // ****** ScreenModelListener
   // ***************************************
   public void screenModelUpdated(BufferedScreenModel screenModel) {
     List<AnnotatedText> text = screenModel.getBottomWindow().getBuffer();
-    Document doc = lower.getDocument();
     for (AnnotatedText segment : text) {
-      try {
-        doc.insertString(doc.getLength(), zsciiToUnicode(segment.getText()),
-                null);
-      } catch (BadLocationException ex) {
-        ex.printStackTrace();
-      }
+      appendToLower(segment);
     }
+  }
+  
+  public void topWindowUpdated(int cursorx, int cursory, AnnotatedCharacter c) {
+    upper.setCharacter(cursory, cursorx, c);
+    repaint();
+  }
+
+  private void appendToLower(AnnotatedText segment) {
+    Document doc = lower.getDocument();
+    MutableAttributeSet attributes = getLowerAttributes();
+    try {
+      doc.insertString(doc.getLength(), zsciiToUnicode(segment.getText()),
+                       attributes);
+    } catch (BadLocationException ex) {
+      ex.printStackTrace();
+    }
+  }
+  
+  private void setLowerFontStyles() {
+    MutableAttributeSet bottomAttrs = getLowerAttributes();
+    StyleConstants.setFontFamily(bottomAttrs, getRomanStdFont().getFamily());
+    StyleConstants.setFontSize(bottomAttrs, getRomanStdFont().getSize());
+  }
+  
+  private MutableAttributeSet getLowerAttributes() {
+    return lower.getInputAttributes();
   }
   
   private String zsciiToUnicode(String str) {
@@ -211,7 +354,64 @@ implements ScreenModelListener {
   }
 
   public void windowErased(int window) {
-    throw new UnsupportedOperationException("Not supported yet.");
+    if (window == -1) {
+      clearAll();
+    } else {
+      throw new UnsupportedOperationException("Not supported yet.");
+    }
   }
+  
+  private void clearAll() {
+    try {
+      lower.getDocument().remove(0, lower.getDocument().getLength());
+    } catch (BadLocationException ex) {
+      ex.printStackTrace();
+    }
+    upper.clear();
+  }
+  
+  // *************************************************************************
+  // ****** Game control
+  // ***************************************
+  public void setReadChar(boolean flag) {
+    this.isReadChar = flag;
+    viewCursor(flag);
+  }
+  
+  public void setReadLine(boolean flag) {
+    this.isReadLine = flag;
+    viewCursor(flag);
+  }
+
+  private void viewCursor(final boolean flag) {
+    runInUIThread(new Runnable() {
+      public void run() {
+        if (flag) {
+          editStart = lower.getDocument().getLength();
+          lower.setCaretPosition(editStart);
+          lower.requestFocusInWindow();
+        } else {
+          // might set caret to invisible
+        }
+      }
+    });
+  }
+
+  /**
+   * A little more readable to execute Runnable within UI thread.
+   * @param runnable the Runnable
+   */
+  private void runInUIThread(Runnable runnable) {
+    if (SwingUtilities.isEventDispatchThread()) {
+      runnable.run();
+    } else {
+      try {
+        SwingUtilities.invokeAndWait(runnable);
+      } catch (Exception ex) {
+        ex.printStackTrace();
+      }
+    }
+  }
+
 }
   

@@ -27,6 +27,8 @@ import org.zmpp.io.OutputStream;
 import org.zmpp.vm.ScreenModel;
 import org.zmpp.vm.StatusLine;
 import org.zmpp.vm.TextCursor;
+import org.zmpp.windowing.AnnotatedCharacter;
+import org.zmpp.windowing.TextAnnotation;
 
 /**
  * BufferedScreenModel is the attempt to provide a reusable screen model
@@ -40,10 +42,31 @@ import org.zmpp.vm.TextCursor;
 public class BufferedScreenModel implements ScreenModel, StatusLine,
         OutputStream {
   
+  class TopWindow {
+    public int font = ScreenModel.FONT_FIXED;
+    public int textStyle = ScreenModel.TEXTSTYLE_ROMAN;
+    public int cursorx = 1, cursory = 1;
+    public int background = ScreenModel.COLOR_BLACK;
+    public int foreground = ScreenModel.COLOR_WHITE;
+    
+    public int setFont(int font) {
+      int previousFont = this.font;
+      this.font = font;
+      return previousFont;
+    }
+    public AnnotatedCharacter annotateCharacter(char zchar) {
+      TextAnnotation annot = new TextAnnotation(font, textStyle, background,
+          foreground);
+      return new AnnotatedCharacter(annot, zchar);
+    }
+
+  }
+
   public static final int WINDOW_BOTTOM = 0;
   public static final int WINDOW_TOP    = 1;
-  private int current = 0;
+  private int current = WINDOW_BOTTOM;
   private BufferedTextWindow bottomWindow = new BufferedTextWindow();
+  private TopWindow topWindow = new TopWindow();
   private List<ScreenModelListener> screenModelListeners =
     new ArrayList<ScreenModelListener>();
   private List<StatusLineListener> statusLineListeners =
@@ -51,6 +74,7 @@ public class BufferedScreenModel implements ScreenModel, StatusLine,
   
   public interface ScreenModelListener {
     void screenModelUpdated(BufferedScreenModel screenModel);
+    void topWindowUpdated(int cursorx, int cursory, AnnotatedCharacter c);
     void screenSplit(int linesUpperWindow);
     void windowErased(int window);
   }
@@ -82,14 +106,17 @@ public class BufferedScreenModel implements ScreenModel, StatusLine,
   }
 
   public void setWindow(int window) {
-    System.out.println("SET_WINDOW (TODO): " + window);
+    System.out.println("SET_WINDOW: " + window);
     current = window;
-    //throw new UnsupportedOperationException("Not supported yet.");
   }
 
   public void setTextStyle(int style) {
-    System.out.println("SET_TEXT_STYLE (TODO): " + style);
-    //throw new UnsupportedOperationException("Not supported yet.");
+    System.out.println("SET_TEXT_STYLE: " + style);
+    if (current == WINDOW_TOP) {
+      topWindow.textStyle = style;
+    } else {
+      bottomWindow.setCurrentTextStyle(style);
+    }
   }
 
   public void setBufferMode(boolean flag) {
@@ -112,7 +139,30 @@ public class BufferedScreenModel implements ScreenModel, StatusLine,
   public void setTextCursor(int line, int column, int window) {
     System.out.printf("SET_TEXT_CURSOR (TODO), line: %d, column: %d, " +
             "window: %d\n", line, column, window);
-    //throw new UnsupportedOperationException("Not supported yet.");
+    if (window == ScreenModel.CURRENT_WINDOW) {
+      setTextCursorCurrentWindow(line, column);
+    } else if (window == WINDOW_TOP) {
+      setTextCursorTopWindow(line, column);
+    } else {
+      setTextCursorBottomWindow(line, column);
+    }
+  }
+  
+  private void setTextCursorCurrentWindow(int line, int column) {
+    if (current == WINDOW_BOTTOM) {
+      setTextCursorBottomWindow(line, column);
+    } else {
+      setTextCursorTopWindow(line, column);
+    }
+  }
+  
+  private void setTextCursorBottomWindow(int line, int column) {
+    throw new UnsupportedOperationException("Not supported yet.");      
+  }
+
+  private void setTextCursorTopWindow(int line, int column) {
+    topWindow.cursory = line;
+    topWindow.cursorx = column;
   }
 
   public TextCursor getTextCursor() {
@@ -124,8 +174,11 @@ public class BufferedScreenModel implements ScreenModel, StatusLine,
   }
 
   public int setFont(int fontnumber) {
-    //windows[0].set
-    throw new UnsupportedOperationException("Not supported yet.");
+    if (current == WINDOW_TOP) {
+      return topWindow.setFont(fontnumber);
+    } else {
+      return bottomWindow.setCurrentFont(fontnumber);
+    }
   }
 
   public void setBackgroundColor(int colornumber, int window) {
@@ -145,9 +198,18 @@ public class BufferedScreenModel implements ScreenModel, StatusLine,
   
   public void print(char zchar, boolean isInput) {
     if (zchar == '>') System.out.println("PROMPT");
-    bottomWindow.printChar(zchar);
+    if (current == WINDOW_BOTTOM) {
+      bottomWindow.printChar(zchar);
+    } else if (current == WINDOW_TOP) {
+      System.out.println("PRINT: [" + zchar + "]");
+      for (ScreenModelListener l : screenModelListeners) {
+        l.topWindowUpdated(topWindow.cursorx, topWindow.cursory,
+                           topWindow.annotateCharacter(zchar));
+      }
+      topWindow.cursorx++;
+    }
   }
-
+  
   public void deletePrevious(char zchar) {
     throw new UnsupportedOperationException("Not supported yet.");
   }
