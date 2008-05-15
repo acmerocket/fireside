@@ -137,8 +137,8 @@ public class BufferedScreenModel implements ScreenModel, StatusLine,
   }
 
   public void setTextCursor(int line, int column, int window) {
-    System.out.printf("SET_TEXT_CURSOR (TODO), line: %d, column: %d, " +
-            "window: %d\n", line, column, window);
+    //System.out.printf("SET_TEXT_CURSOR (TODO), line: %d, column: %d, " +
+    //        "window: %d\n", line, column, window);
     if (window == ScreenModel.CURRENT_WINDOW) {
       setTextCursorCurrentWindow(line, column);
     } else if (window == WINDOW_TOP) {
@@ -197,7 +197,6 @@ public class BufferedScreenModel implements ScreenModel, StatusLine,
   private boolean selected;
   
   public void print(char zchar, boolean isInput) {
-    if (zchar == '>') System.out.println("PROMPT");
     if (current == WINDOW_BOTTOM) {
       bottomWindow.printChar(zchar);
     } else if (current == WINDOW_TOP) {

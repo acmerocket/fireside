@@ -59,13 +59,10 @@ public class TextGridView extends JComponent {
   }
 
   private void visualizeCursorPosition(Graphics g, int row, int col) {
-    
     // Draw it
     AnnotatedCharacter c = grid[row][col];
     if (c != null) {
       drawCharacter(g, row, col);
-    } else {
-      //clearCursorPosition(g, row, col);
     }
   }
 
@@ -103,6 +100,9 @@ public class TextGridView extends JComponent {
   }
 
   public void setCharacter(int line, int column, AnnotatedCharacter c) {
+    // Guarding writing out of bounds, some games do this
+    if ((line - 1) >= grid.length) return;
+    if ((column - 1) >= grid[line - 1].length) return;
     grid[line - 1][column - 1] = c;
   }
 

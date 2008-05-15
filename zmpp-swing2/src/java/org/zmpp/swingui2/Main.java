@@ -21,12 +21,13 @@
 package org.zmpp.swingui2;
 
 import java.io.File;
-import javax.swing.JComponent;
 import javax.swing.JFrame;
 import javax.swing.SwingUtilities;
 
 public class Main {
-  
+
+  private static final String TESTFILE = "testfiles/curses.z5";
+  //private static final String TESTFILE = "testfiles/minizork.z3";
   public static void main(String[] args) {
 
     try {
@@ -39,8 +40,7 @@ public class Main {
           frame.pack();
           frame.setVisible(true);
           try {
-            //view.startGame(new File("testfiles/minizork.z3"));
-            view.startGame(new File("testfiles/curses.z5"));
+            view.startGame(new File(TESTFILE));
           } catch (Exception ex) {
             ex.printStackTrace();
           }
