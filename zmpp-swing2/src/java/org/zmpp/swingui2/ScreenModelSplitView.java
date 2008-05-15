@@ -25,8 +25,6 @@ import java.awt.Dimension;
 import java.awt.Font;
 import java.awt.event.ComponentAdapter;
 import java.awt.event.ComponentEvent;
-import java.awt.event.KeyEvent;
-import java.awt.event.KeyListener;
 import java.awt.event.MouseWheelListener;
 import java.util.List;
 import javax.swing.BorderFactory;
@@ -62,8 +60,8 @@ public class ScreenModelSplitView extends JLayeredPane
 implements ScreenModelListener {
 
   //private static final Font STD_FONT = new Font("Baskerville", Font.PLAIN, 16);
-  private static final Font STD_FONT = new Font("American Typewriter", Font.PLAIN, 14);
-  private static final Font FIXED_FONT = new Font("Monaco", Font.PLAIN, 14);
+  private static final Font STD_FONT = new Font("American Typewriter", Font.PLAIN, 15);
+  private static final Font FIXED_FONT = new Font("Monaco", Font.PLAIN, 15);
   private int editStart;
   private ExecutionControl executionControl;
   private BufferedScreenModel screenModel;
@@ -168,80 +166,33 @@ implements ScreenModelListener {
   private void installLowerHandlers() {
     // TODO: Mouse clicks can as well influence typing position
     // Make sure mouse clicks do not change caret position
-    lower.addKeyListener(new KeyListener() {
-      public void keyTyped(KeyEvent e) {        
-        //System.out.println("keyTyped(): " + e.getKeyChar() + " code: " + e.getKeyCode());
-      }
+    ScreenModelViewInputHandler inputHandler =
+      new ScreenModelViewInputHandler(this);
+    lower.addKeyListener(inputHandler);
 
-      public void keyPressed(KeyEvent e) {
-        //System.out.println("-------------------------");
-        //System.out.println("keyPressed(): " + e.getKeyChar() + " code: " + e.getKeyCode());
-        preventKeyActionIfNeeded(e);
-      }
+    // In order to influence the caret position on a mouse click, we need to
+    // override caret behaviour
+    lower.getCaret().addChangeListener(inputHandler);
+  }
+  
+  // ***********************************************************************
+  // **** Protected interface
+  // *********************************
 
-      public void keyReleased(KeyEvent e) {
-        //System.out.println("keyReleased(): " + e.getKeyChar() + " code: " + e.getKeyCode());
-        //preventKeyActionIfNeeded(e);
-      }
-    });
-  }
-  
-  private void consumeKeyEvent(KeyEvent e) {
-    if (e != null) e.consume();
-  }
-  
-  private void preventKeyActionIfNeeded(KeyEvent e) {
-    if (isReadChar) {
-      System.out.println("HAHAHAHA");
-      switchModeOnRunState(executionControl.resumeWithInput(
-              String.valueOf(e.getKeyChar())));
-      consumeKeyEvent(e);
-    }
-    if (e.getKeyCode() == KeyEvent.VK_UP) {
-      // Handle up key
-      consumeKeyEvent(e);
-    }
-    if (e.getKeyCode() == KeyEvent.VK_DOWN) {
-      // Handle down key
-      consumeKeyEvent(e);
-    }
-    if (e.getKeyCode() == KeyEvent.VK_ENTER) {
-      handleEnterKey(e);
-    }
-    if (lower.getCaretPosition() <= editStart &&
-        keyCodeLeadsToPreviousPosition(e.getKeyCode())) {
-      consumeKeyEvent(e);
-    }
-  }
-  
-  private boolean keyCodeLeadsToPreviousPosition(int keyCode) {
-    return keyCode == KeyEvent.VK_BACK_SPACE || keyCode == KeyEvent.VK_LEFT;            
-  }
-  
-  
-  private void handleEnterKey(KeyEvent e) {
-    if (isReadLine) {
-      Document doc = lower.getDocument();
-      try {
-        String input = doc.getText(editStart, doc.getLength() - editStart);
-        System.out.println("ENTER PRESSED, input: " + input);
-        consumeKeyEvent(e);
-        doc.insertString(doc.getLength(), "\n", null);
-        switchModeOnRunState(executionControl.resumeWithInput(input));
-      } catch (BadLocationException ex) {
-        ex.printStackTrace();
-      }
-    }
-  }
-
-  public void switchModeOnRunState(MachineRunState runState) {
-    if (runState == MachineRunState.READ_CHAR) setReadChar();
-    else if (runState == MachineRunState.READ_LINE) setReadLine();
-  }
+  JTextPane getLower() { return lower; }
+  int getEditStart() { return editStart; }
+  boolean isReadChar() { return isReadChar; }
+  boolean isReadLine() { return isReadLine; }
+  ExecutionControl getExecutionControl() { return executionControl; }
   
   // ***********************************************************************
   // **** Public interface
   // *********************************
+  
+  public void switchModeOnRunState(MachineRunState runState) {
+    if (runState == MachineRunState.READ_CHAR) enterReadCharMode();
+    else if (runState == MachineRunState.READ_LINE) enterReadLineMode();
+  }
   
   public void initUI(BufferedScreenModel screenModel,
                      ExecutionControl control) {
@@ -376,13 +327,13 @@ implements ScreenModelListener {
   // *************************************************************************
   // ****** Game control
   // ***************************************
-  public void setReadChar() {
+  private void enterReadCharMode() {
     this.isReadLine = false;
     this.isReadChar = true;
     viewCursor(true);
   }
   
-  public void setReadLine() {
+  private void enterReadLineMode() {
     this.isReadChar = false;
     this.isReadLine = true;
     viewCursor(true);
@@ -417,6 +368,5 @@ implements ScreenModelListener {
       }
     }
   }
-
 }
-  
+
