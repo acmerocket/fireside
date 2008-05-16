@@ -29,6 +29,7 @@ import java.awt.event.MouseWheelListener;
 import java.util.List;
 import javax.swing.BorderFactory;
 import javax.swing.JLayeredPane;
+import javax.swing.JScrollPane;
 import javax.swing.JTextPane;
 import javax.swing.JViewport;
 import javax.swing.SwingUtilities;
@@ -93,7 +94,8 @@ implements ScreenModelListener {
     }
   };
   private JViewport lowerViewport;
-  private TextGridView upper = new TextGridView();
+  //private TextGridView upper = new TextGridView();
+  private TextPaneGridView upper = new TextPaneGridView();
   private MainViewListener listener;
   private ScreenModelLayout layout = new ScreenModelLayout();
   private FontSelector fontSelector = new FontSelector();
@@ -122,10 +124,17 @@ implements ScreenModelListener {
   }
 
   private void createUpperView() {
-    upper.setFontSelector(fontSelector);    
-    Border upperBorder = BorderFactory.createEmptyBorder(5, 5, 5, 5);
-    upper.setBorder(upperBorder);
-    add(upper, JLayeredPane.PALETTE_LAYER);
+    upper.setFontSelector(fontSelector);
+    if (upper.getClass().getName().contains("TextGridView")) {      
+      Border upperBorder = BorderFactory.createEmptyBorder(5, 5, 5, 5);
+      upper.setBorder(upperBorder);
+      add(upper, JLayeredPane.PALETTE_LAYER);
+    } else {
+      JViewport viewport = new JViewport();
+      viewport.setView(upper);
+      viewport.setOpaque(false);
+      add(viewport, JLayeredPane.PALETTE_LAYER);
+    }
   }
   
   private void createLowerView() {
