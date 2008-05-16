@@ -26,7 +26,8 @@ public class TextPaneGridView extends JTextPane {
   private int numRows, numColumns;
   public TextPaneGridView() {
     this.setOpaque(false);
-    //this.setEditable(false);
+    this.setEditable(false);
+    this.setHighlighter(null);
     // Here is a demonstration of focus transfer:
     // if this component gets it, it gets rid of it
     this.addFocusListener(new FocusAdapter() {
@@ -66,12 +67,12 @@ public class TextPaneGridView extends JTextPane {
       for (int col = 0; col < numColumns; col++) {
         screenContent.append(" ");
       }
-      screenContent.append("\n");
+      //screenContent.append("\n");
     }
     try {
       MutableAttributeSet attributes = getInputAttributes();
-      StyleConstants.setBackground(attributes, Color.GREEN);
-      //attributes.removeAttribute(StyleConstants.Background);
+      //StyleConstants.setBackground(attributes, Color.GREEN);
+      attributes.removeAttribute(StyleConstants.Background);
       getDocument().insertString(0, screenContent.toString(),
                                  attributes);
     } catch (Exception ex) {
@@ -83,6 +84,8 @@ public class TextPaneGridView extends JTextPane {
     // Guarding writing out of bounds, some games do this
     if (outOfBounds(line, column)) return;
     int offset = getOffset(line, column);
+    System.out.println("SetCharacter, line: " + line + " col: " + column +
+            " offset: " + offset + " length: " + getDocument().getLength());
     try {
       TextAnnotation annotation = c.getAnnotation();
       Color foreground = colorTranslator.translate(
@@ -105,6 +108,7 @@ public class TextPaneGridView extends JTextPane {
   }
   
   private int getOffset(int line, int column) {
-    return (line - 1) * numColumns + (column - 1) + line;
+    int result = (line - 1) * numColumns + (column - 1);
+    return line == 1 ? result : result - line;
   }
 }

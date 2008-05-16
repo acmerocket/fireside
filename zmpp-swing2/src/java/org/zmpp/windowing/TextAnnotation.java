@@ -29,10 +29,14 @@ import org.zmpp.vm.ScreenModel;
  */
 public class TextAnnotation {
 
+  // Font flags have the same bit layout as in the ScreenModel interface so
+  // so the flags are compatible
   public static final int FONT_NORMAL  = 1;
   public static final int FONT_CHARACTER_GRAPHICS  = 3;
   public static final int FONT_FIXED   = 4;
 
+  // Text styles have the same bit layout as in the ScreenModel interface
+  // so the flags are compatible
   public static final int TEXTSTYLE_ROMAN          = 0;
   public static final int TEXTSTYLE_REVERSE_VIDEO  = 1;
   public static final int TEXTSTYLE_BOLD           = 2;
@@ -53,6 +57,26 @@ public class TextAnnotation {
 
   public TextAnnotation(int font, int style) {
     this(font, style, ScreenModel.COLOR_DEFAULT, ScreenModel.COLOR_DEFAULT);
+  }
+  
+  public TextAnnotation deriveFont(int newFont) {
+    return new TextAnnotation(newFont, this.style, this.background,
+                              this.foreground);
+  }
+  
+  public TextAnnotation deriveStyle(int newStyle) {
+    return new TextAnnotation(this.font, newStyle, this.background,
+                              this.foreground);
+  }
+  
+  public TextAnnotation deriveBackground(int newBackground) {
+    return new TextAnnotation(this.font, this.style, newBackground,
+                              this.foreground);
+  }
+  
+  public TextAnnotation deriveForeground(int newForeground) {
+    return new TextAnnotation(this.font, this.style, this.background,
+                              newForeground);
   }
   
   public int getFont() { return font; }

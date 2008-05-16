@@ -48,24 +48,29 @@ public class FontSelector {
   public Font getFont(int fontnum, int style) {
     if (fontnum == ScreenModel.FONT_FIXED ||
         (style & ScreenModel.TEXTSTYLE_FIXED) == ScreenModel.TEXTSTYLE_FIXED) {
-      return getFixedFont(style);
+      return getStyledFont(fixedFont, style);
     } else if (fontnum == ScreenModel.FONT_NORMAL) {
-      return getStandardFont(style);
+      return getStyledFont(stdFont, style);
     }
     return null;
   }
   
   public Font getFixedFont() {
-    return getFixedFont(ScreenModel.TEXTSTYLE_ROMAN);
+    return getStyledFont(fixedFont, ScreenModel.TEXTSTYLE_ROMAN);
   }
   
-  private Font getFixedFont(int style) {
-    // TODO: styles
-    return fixedFont;
-  }
-  
-  private Font getStandardFont(int style) {
-    // TODO: styles
-    return stdFont;
+  private Font getStyledFont(Font romanFont, int style) {
+    Font font = romanFont;
+    if ((style & ScreenModel.TEXTSTYLE_FIXED) == ScreenModel.TEXTSTYLE_FIXED) {
+      font = fixedFont;
+    }
+    if ((style & ScreenModel.TEXTSTYLE_BOLD) == ScreenModel.TEXTSTYLE_BOLD) {
+      font = font.deriveFont(Font.BOLD);
+    }
+    if ((style & ScreenModel.TEXTSTYLE_ITALIC) == ScreenModel.TEXTSTYLE_ITALIC) {
+      font = font.deriveFont(Font.ITALIC);
+    }
+    
+    return font;
   }
 }

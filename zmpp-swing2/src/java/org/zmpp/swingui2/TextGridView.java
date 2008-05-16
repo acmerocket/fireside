@@ -39,6 +39,7 @@ import org.zmpp.windowing.TextAnnotation;
  */
 public class TextGridView extends JComponent {
 
+  private static final char REF_CHAR = '0';
   private FontSelector fontSelector;
   private AnnotatedCharacter[][] grid;
 
@@ -66,14 +67,6 @@ public class TextGridView extends JComponent {
     }
   }
 
-  private void clearCursorPosition(Graphics g, int row, int col) {
-    FontMetrics fontMetrics = g.getFontMetrics(fontSelector.getFixedFont());
-    int posy = row * fontMetrics.getHeight() + fontMetrics.getAscent();
-    int posx = col * fontMetrics.charWidth('0');
-    g.clearRect(posx, posy, fontMetrics.charWidth('0'),
-            fontMetrics.getHeight());
-  }
-
   private void drawCharacter(Graphics g, int row, int col) {
     
     // Draw it
@@ -84,11 +77,11 @@ public class TextGridView extends JComponent {
       g.setFont(drawfont);
       FontMetrics fontMetrics = g.getFontMetrics();
       int posy = row * fontMetrics.getHeight() + fontMetrics.getAscent();
-      int posx = col * fontMetrics.charWidth('0');
+      int posx = col * fontMetrics.charWidth(REF_CHAR);
       
       ColorTranslator colTranslator = ColorTranslator.getInstance();
       Color foreground = colTranslator.translate(
-        annotation.getForeground(), ScreenModel.COLOR_BLACK);
+        annotation.getForeground(), ScreenModel.COLOR_BLUE);
       Color background = colTranslator.translate(
         annotation.getBackground(), ScreenModel.COLOR_WHITE);
       g.setColor(background);
@@ -108,7 +101,6 @@ public class TextGridView extends JComponent {
 
   @Override
   public void paintComponent(Graphics g) {
-    //super.paintComponent(g);
     for (int row = 0; row < grid.length; row++) {
       for (int col = 0; col < grid[row].length; col++) {
         visualizeCursorPosition(g, row, col);

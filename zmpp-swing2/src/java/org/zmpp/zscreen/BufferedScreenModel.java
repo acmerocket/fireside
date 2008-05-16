@@ -59,7 +59,6 @@ public class BufferedScreenModel implements ScreenModel, StatusLine,
           foreground);
       return new AnnotatedCharacter(annot, zchar);
     }
-
   }
 
   public static final int WINDOW_BOTTOM = 0;
@@ -182,11 +181,23 @@ public class BufferedScreenModel implements ScreenModel, StatusLine,
   }
 
   public void setBackgroundColor(int colornumber, int window) {
-    throw new UnsupportedOperationException("Not supported yet.");
+    if (getTargetWindow(window) == WINDOW_TOP) {
+      topWindow.background = colornumber;
+    } else {
+      bottomWindow.setBackground(colornumber);
+    }
   }
 
   public void setForegroundColor(int colornumber, int window) {
-    throw new UnsupportedOperationException("Not supported yet.");
+    if (getTargetWindow(window) == WINDOW_TOP) {
+      topWindow.background = colornumber;
+    } else {
+      bottomWindow.setBackground(colornumber);
+    }
+  }
+  
+  private int getTargetWindow(int window) {
+    return window == ScreenModel.CURRENT_WINDOW ? current : window;
   }
 
   public OutputStream getOutputStream() {

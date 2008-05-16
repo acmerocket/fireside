@@ -29,7 +29,6 @@ import java.awt.event.MouseWheelListener;
 import java.util.List;
 import javax.swing.BorderFactory;
 import javax.swing.JLayeredPane;
-import javax.swing.JScrollPane;
 import javax.swing.JTextPane;
 import javax.swing.JViewport;
 import javax.swing.SwingUtilities;
@@ -45,6 +44,7 @@ import org.zmpp.vm.Machine.MachineRunState;
 import org.zmpp.vm.ScreenModel;
 import org.zmpp.windowing.AnnotatedCharacter;
 import org.zmpp.windowing.AnnotatedText;
+import org.zmpp.windowing.TextAnnotation;
 import org.zmpp.zscreen.BufferedScreenModel;
 import org.zmpp.zscreen.BufferedScreenModel.ScreenModelListener;
 
@@ -61,8 +61,10 @@ public class ScreenModelSplitView extends JLayeredPane
 implements ScreenModelListener {
 
   //private static final Font STD_FONT = new Font("Baskerville", Font.PLAIN, 16);
-  private static final Font STD_FONT = new Font("American Typewriter", Font.PLAIN, 15);
-  private static final Font FIXED_FONT = new Font("Monaco", Font.PLAIN, 15);
+  private static final Font STD_FONT = new Font("American Typewriter", Font.PLAIN, 14);
+  private static final Font FIXED_FONT = new Font("Monaco", Font.PLAIN, 14);
+  private static final int DEFAULT_FOREGROUND = ScreenModel.COLOR_WHITE;
+  private static final int DEFAULT_BACKGROUND = ScreenModel.COLOR_BLUE;
   private int editStart;
   private ExecutionControl executionControl;
   private BufferedScreenModel screenModel;
@@ -94,8 +96,8 @@ implements ScreenModelListener {
     }
   };
   private JViewport lowerViewport;
-  //private TextGridView upper = new TextGridView();
-  private TextPaneGridView upper = new TextPaneGridView();
+  private TextGridView upper = new TextGridView();
+  //private TextPaneGridView upper = new TextPaneGridView();
   private MainViewListener listener;
   private ScreenModelLayout layout = new ScreenModelLayout();
   private FontSelector fontSelector = new FontSelector();
@@ -125,7 +127,8 @@ implements ScreenModelListener {
 
   private void createUpperView() {
     upper.setFontSelector(fontSelector);
-    if (upper.getClass().getName().contains("TextGridView")) {      
+    //if (upper.getClass().getName().contains("TextGridView")) {
+    if (true) {
       Border upperBorder = BorderFactory.createEmptyBorder(5, 5, 5, 5);
       upper.setBorder(upperBorder);
       add(upper, JLayeredPane.PALETTE_LAYER);
@@ -144,10 +147,8 @@ implements ScreenModelListener {
             BorderFactory.createEmptyBorder(5, 5, 5, 5));
     lower.setEditable(true);
     lower.setEnabled(true);
-    //lower.setBackground(Color.WHITE);
-    //lower.setForeground(Color.BLACK);
-    lower.setBackground(Color.BLUE);
-    lower.setForeground(Color.WHITE);
+    lower.setBackground(getColor(DEFAULT_BACKGROUND));
+    lower.setForeground(getColor(DEFAULT_FOREGROUND));
     lowerViewport = new JViewport();
     lowerViewport.setView(lower);
     lowerViewport.addChangeListener(new ChangeListener() {
@@ -184,6 +185,10 @@ implements ScreenModelListener {
     lower.getCaret().addChangeListener(inputHandler);
   }
   
+  private Color getColor(int screenModelColor) {
+    return ColorTranslator.getInstance().translate(screenModelColor);
+  }
+  
   // ***********************************************************************
   // **** Protected interface
   // *********************************
@@ -206,6 +211,8 @@ implements ScreenModelListener {
   public void initUI(BufferedScreenModel screenModel,
                      ExecutionControl control) {
     executionControl = control;
+    executionControl.setDefaultColors(DEFAULT_BACKGROUND,
+                                      DEFAULT_FOREGROUND);
     this.screenModel = screenModel;
     screenModel.addScreenModelListener(this);
     setSizes();
@@ -289,13 +296,29 @@ implements ScreenModelListener {
 
   private void appendToLower(AnnotatedText segment) {
     Document doc = lower.getDocument();
-    MutableAttributeSet attributes = getLowerAttributes();
     try {
       doc.insertString(doc.getLength(), zsciiToUnicode(segment.getText()),
-                       attributes);
+                       getStyleAttributes(segment.getAnnotation()));
     } catch (BadLocationException ex) {
       ex.printStackTrace();
     }
+  }
+  
+  private MutableAttributeSet getStyleAttributes(TextAnnotation annotation) {
+     MutableAttributeSet attributes = getLowerAttributes();
+     Font font = fontSelector.getFont(annotation);
+     StyleConstants.setFontFamily(attributes, font.getFamily());
+     StyleConstants.setFontSize(attributes, font.getSize());
+     StyleConstants.setBold(attributes, font.isBold());
+     StyleConstants.setItalic(attributes, font.isItalic());
+     ColorTranslator colorTranslator = ColorTranslator.getInstance();
+     Color background = colorTranslator.translate(annotation.getBackground(),
+       DEFAULT_BACKGROUND);
+     Color foreground = colorTranslator.translate(annotation.getForeground(),
+       DEFAULT_FOREGROUND);
+     StyleConstants.setBackground(attributes, background);
+     StyleConstants.setForeground(attributes, foreground);
+     return attributes;
   }
   
   private void setLowerFontStyles() {

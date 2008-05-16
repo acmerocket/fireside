@@ -22,7 +22,6 @@ package org.zmpp.windowing;
 
 import java.util.ArrayList;
 import java.util.List;
-import org.zmpp.vm.ScreenModel;
 
 /**
  * BufferedTextWindow is part of the BufferedScreenModel, it represents a
@@ -35,15 +34,35 @@ public class BufferedTextWindow {
   private TextAnnotation currentAnnotation = new TextAnnotation(
           TextAnnotation.FONT_NORMAL, TextAnnotation.TEXTSTYLE_ROMAN);
   private StringBuilder currentRun = new StringBuilder();
-  private int currentFont = ScreenModel.FONT_NORMAL;
-  private int currentTextStyle = ScreenModel.TEXTSTYLE_ROMAN;
   
   public int setCurrentFont(int font) {
-    int previousFont = currentFont;
-    currentFont = font;
+    int previousFont = currentAnnotation.getFont();
+    startNewAnnotatedRun(currentAnnotation.deriveFont(font));
     return previousFont;
   }
-  public void setCurrentTextStyle(int style) { currentTextStyle = style; }
+  public void setCurrentTextStyle(int style) {
+    int currentTextStyle = currentAnnotation.getStyle();
+    if (style == TextAnnotation.TEXTSTYLE_ROMAN) {
+      currentTextStyle = style;
+    } else {
+      currentTextStyle |= style;
+    }
+    startNewAnnotatedRun(currentAnnotation.deriveStyle(currentTextStyle));
+  }
+  
+  public void setBackground(int background) {
+    startNewAnnotatedRun(currentAnnotation.deriveBackground(background));
+  }
+  
+  public void setForeground(int foreground) {
+    startNewAnnotatedRun(currentAnnotation.deriveForeground(foreground));
+  }
+
+  private void startNewAnnotatedRun(TextAnnotation annotation) {
+    textBuffer.add(new AnnotatedText(currentAnnotation, currentRun.toString()));
+    currentRun = new StringBuilder();
+    currentAnnotation = annotation;    
+  }
   
   public void printChar(char zchar) {
     currentRun.append(zchar);
