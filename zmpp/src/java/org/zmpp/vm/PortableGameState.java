@@ -439,8 +439,7 @@ public class PortableGameState {
    */
   public void captureMachineState(final Machine machine, final int savePc) {
     
-    final StoryFileHeader fileheader =
-      machine.getGameData().getStoryFileHeader();
+    final StoryFileHeader fileheader = machine.getFileHeader();
     release = fileheader.getRelease();
     checksum = fileheader.getChecksum();
     serialBytes = fileheader.getSerialNumber().getBytes();
@@ -448,7 +447,7 @@ public class PortableGameState {
     
     // capture dynamic memory which ends at address(staticsMem) - 1
     // uncompressed
-    final Memory memory = machine.getGameData().getMemory();
+    final Memory memory = machine.getMemory();
     final int staticMemStart = fileheader.getStaticsAddress();
     dynamicMem = new byte[staticMemStart];
     
@@ -466,10 +465,8 @@ public class PortableGameState {
    * 
    * @param machine the machine object
    */
-  private void captureStackFrames(final Machine machine) {
-    
-    final Cpu cpu = machine.getCpu();
-    final List<RoutineContext> contexts = cpu.getRoutineContexts();
+  private void captureStackFrames(final Machine machine) {    
+    final List<RoutineContext> contexts = machine.getRoutineContexts();
 
     // Put in initial dummy stack frame
     final StackFrame dummyFrame = new StackFrame();
@@ -478,8 +475,7 @@ public class PortableGameState {
     int numElements = calculateNumStackElements(machine, contexts, 0, 0);
     dummyFrame.evalStack = new short[numElements];
     for (int i = 0; i < numElements; i++) {
-      
-      dummyFrame.evalStack[i] = cpu.getStackElement(i);
+      dummyFrame.evalStack[i] = machine.getStackElement(i);
     }
     stackFrames.add(dummyFrame);
     
@@ -513,7 +509,7 @@ public class PortableGameState {
       stackFrame.evalStack = new short[numElements];
       for (int i = 0; i < numElements; i++) {
         
-        stackFrame.evalStack[i] = cpu.getStackElement(localStackStart + i);
+        stackFrame.evalStack[i] = machine.getStackElement(localStackStart + i);
       }
       
       stackFrames.add(stackFrame);
@@ -539,13 +535,10 @@ public class PortableGameState {
       final int localStackStart) {
     
     if (contextIndex < contexts.size()) {
-      
       final RoutineContext context = contexts.get(contextIndex);
       return context.getInvocationStackPointer() - localStackStart;
-      
     } else {
-      
-      return machine.getCpu().getStackPointer() - localStackStart; 
+      return machine.getSP() - localStackStart; 
     }
   }
   
@@ -698,7 +691,7 @@ public class PortableGameState {
    * @param machine a Machine object
    */
   public void transferStateToMachine(final Machine machine) {
-    final Memory memory = machine.getGameData().getMemory();
+    final Memory memory = machine.getMemory();
     
     // Dynamic memory
     for (int i = 0; i < dynamicMem.length; i++) {
@@ -711,13 +704,11 @@ public class PortableGameState {
             
     // Dummy frame, only the stack is interesting
     if (stackFrames.size() > 0) {
-      
       final StackFrame dummyFrame = stackFrames.get(0);
       
       // Stack
       for (int s = 0; s < dummyFrame.getEvalStack().length; s++) {
-        
-        machine.getCpu().setVariable(0, dummyFrame.getEvalStack()[s]);
+        machine.setVariable(0, dummyFrame.getEvalStack()[s]);
       }
     }
     
@@ -742,26 +733,23 @@ public class PortableGameState {
       // Stack
       for (int s = 0; s < stackFrame.evalStack.length; s++) {
         
-        machine.getCpu().setVariable(0, stackFrame.evalStack[s]);
+        machine.setVariable(0, stackFrame.evalStack[s]);
       }
       contexts.add(context);      
     }    
-    machine.getCpu().setRoutineContexts(contexts);
+    machine.setRoutineContexts(contexts);
 
     // Prepare the machine continue
-    int pc = getProgramCounter();
-    if (machine.getGameData().getStoryFileHeader().getVersion() <= 3) {
-      
+    int resumePc = getProgramCounter();
+    if (machine.getVersion() <= 3) {
       // In version 3 this is a branch target that needs to be read
       // Execution is continued at the first instruction after the branch offset
-      pc += getBranchOffsetLength(machine.getGameData().getMemory(), pc);
-      
-    } else if (machine.getGameData().getStoryFileHeader().getVersion() >= 4) {
-
+      resumePc += getBranchOffsetLength(machine.getMemory(), resumePc);
+    } else if (machine.getVersion() >= 4) {
       // in version 4 and later, this is always 1
-      pc++;
+      resumePc++;
     }
-    machine.getCpu().setProgramCounter(pc);
+    machine.setPC(resumePc);
   }
   
   /**
@@ -773,7 +761,7 @@ public class PortableGameState {
   public int getStoreVariable(final Machine machine) {
     
     final int storeVarAddress = getProgramCounter();
-    return machine.getGameData().getMemory().readUnsignedByte(
+    return machine.getMemory().readUnsignedByte(
         storeVarAddress);
   }
 
@@ -832,8 +820,7 @@ public class PortableGameState {
    * @param b2 byte 2
    * @return the resulting program counter
    */
-  private int decodePcBytes(final byte b0, final byte b1, final byte b2) {
-    
+  private int decodePcBytes(final byte b0, final byte b1, final byte b2) {    
     return ((b0 & 0xff) << 16) | ((b1 & 0xff) << 8) | (b2 & 0xff);
   }
 }

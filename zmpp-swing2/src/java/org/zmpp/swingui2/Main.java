@@ -26,7 +26,8 @@ import javax.swing.SwingUtilities;
 
 public class Main {
 
-  private static final String TESTFILE = "testfiles/curses.z5";
+  //private static final String TESTFILE = "testfiles/curses.z5";
+  private static final String TESTFILE = "testfiles/photopia.z5";
   //private static final String TESTFILE = "testfiles/minizork.z3";
   public static void main(String[] args) {
 

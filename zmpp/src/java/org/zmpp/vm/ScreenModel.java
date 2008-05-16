@@ -144,7 +144,7 @@ public interface ScreenModel {
    * 
    * @param flag true to enable paging, false to disable
    */
-  void setPaging(boolean flag);
+  //void setPaging(boolean flag);
   
   /**
    * Sets the font in the current window.

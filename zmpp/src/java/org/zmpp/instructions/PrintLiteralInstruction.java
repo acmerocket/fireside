@@ -59,11 +59,10 @@ public class PrintLiteralInstruction extends AbstractInstruction {
   /**
    * {@inheritDoc}
    */
+  @Override
   protected String getOperandString() {
-
     final String str =
-      getMachine().getGameData().getZCharDecoder().decode2Zscii(memory,
-        instructionAddress + 1, 0).toString();
+      getMachine().decode2Zscii(instructionAddress + 1, 0).toString();
     return "\"" + str + "\"";
   }
   
@@ -71,7 +70,6 @@ public class PrintLiteralInstruction extends AbstractInstruction {
    * {@inheritDoc}
    */
   public InstructionForm getInstructionForm() {
-    
     return InstructionForm.SHORT;
   }
 
@@ -79,23 +77,22 @@ public class PrintLiteralInstruction extends AbstractInstruction {
    * {@inheritDoc}
    */
   public OperandCount getOperandCount() {
-    
     return OperandCount.C0OP;
   }
   
   /**
    * {@inheritDoc}
    */
+  @Override
   public void setLength(final int length) {
-
     // overridden to do nothing
   }
   
   /**
    * {@inheritDoc}
    */
+  @Override
   public int getLength() {
-    
     return getLiteralLengthInBytes() + 1;
   }
 

@@ -35,7 +35,6 @@ import org.zmpp.iff.DefaultFormChunk;
 import org.zmpp.iff.FormChunk;
 import org.zmpp.iff.WritableFormChunk;
 import org.zmpp.instructions.DefaultInstructionDecoder;
-import org.zmpp.vm.Cpu;
 import org.zmpp.vm.GameData;
 import org.zmpp.vm.Machine;
 import org.zmpp.vm.MachineImpl;
@@ -54,26 +53,22 @@ public class PortableGameStateTest extends MockObjectTestCase {
 
   private PortableGameState gameState;
   private FormChunk formChunk;
-  private Mock mockMachine, mockFileheader, mockMemory, mockGameData;
+  private Mock mockMachine, mockFileheader, mockMemory, mockGamedata;
   private Machine machine;
   private GameData gamedata;
   private StoryFileHeader fileheader;
   private Memory memory;
-  private Mock mockCpu;
-  private Cpu cpu;
-  
+
+  @Override
   protected void setUp() throws Exception {
-  
     mockMachine = mock(Machine.class);
     machine = (Machine) mockMachine.proxy();
     mockFileheader = mock(StoryFileHeader.class);
     fileheader = (StoryFileHeader) mockFileheader.proxy();
     mockMemory = mock(Memory.class);
     memory = (Memory) mockMemory.proxy();
-    mockGameData = mock(GameData.class);
-    gamedata = (GameData) mockGameData.proxy();
-    mockCpu = mock(Cpu.class);
-    cpu = (Cpu) mockCpu.proxy();
+    mockGamedata = mock(GameData.class);
+    gamedata = (GameData) mockGamedata.proxy();
     
     File testSaveFile = new File("testfiles/leathersave.ifzs");
     RandomAccessFile saveFile = new RandomAccessFile(testSaveFile, "r");
@@ -134,13 +129,11 @@ public class PortableGameStateTest extends MockObjectTestCase {
     List<RoutineContext> emptyContexts = new ArrayList<RoutineContext>();
     
     // Expectations
-    mockMachine.expects(atLeastOnce()).method("getGameData").will(returnValue(gamedata));
-    mockGameData.expects(atLeastOnce()).method("getStoryFileHeader").will(returnValue(fileheader));
-    mockGameData.expects(once()).method("getMemory").will(returnValue(memory));
-    mockMachine.expects(atLeastOnce()).method("getCpu").will(returnValue(cpu));
-    mockCpu.expects(once()).method("getRoutineContexts").will(returnValue(emptyContexts));
-    mockCpu.expects(once()).method("getStackPointer").will(returnValue(4));
-    mockCpu.expects(atLeastOnce()).method("getStackElement").will(returnValue((short) 42));
+    mockMachine.expects(atLeastOnce()).method("getFileHeader").will(returnValue(fileheader));
+    mockMachine.expects(once()).method("getMemory").will(returnValue(memory));
+    mockMachine.expects(once()).method("getRoutineContexts").will(returnValue(emptyContexts));
+    mockMachine.expects(once()).method("getSP").will(returnValue(4));
+    mockMachine.expects(atLeastOnce()).method("getStackElement").will(returnValue((short) 42));
     
     mockFileheader.expects(once()).method("getRelease").will(returnValue(42));
     mockFileheader.expects(once()).method("getChecksum").will(returnValue(4712));
@@ -313,9 +306,9 @@ public class PortableGameStateTest extends MockObjectTestCase {
     
     gamestate.setDynamicMem(dynMem);
    
-    mockGameData.expects(atLeastOnce()).method("getMemory").will(returnValue(memory));
-    mockGameData.expects(atLeastOnce()).method("getStoryFileHeader").will(returnValue(fileheader));
-    mockGameData.expects(atLeastOnce()).method("getResources").will(returnValue(null));
+    mockGamedata.expects(atLeastOnce()).method("getMemory").will(returnValue(memory));
+    mockGamedata.expects(atLeastOnce()).method("getStoryFileHeader").will(returnValue(fileheader));
+    mockGamedata.expects(atLeastOnce()).method("getResources").will(returnValue(null));
     mockFileheader.expects(once()).method("getProgramStart").will(returnValue(4711));
     mockFileheader.expects(once()).method("getGlobalsAddress").will(returnValue(5711));
     mockFileheader.expects(atLeastOnce()).method("getVersion").will(returnValue(5));
@@ -332,7 +325,6 @@ public class PortableGameStateTest extends MockObjectTestCase {
     // completely copied
     Machine machine = new MachineImpl();
     machine.initialize(gamedata, new DefaultInstructionDecoder());
-        
     gamestate.transferStateToMachine(machine);
   }
   

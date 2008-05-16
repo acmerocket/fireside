@@ -79,9 +79,8 @@ public class Instruction0OpV5Test extends InstructionTestBase {
     routineContexts.add(new RoutineContext(2345, 0));
     routineContexts.add(new RoutineContext(3456, 2));
     
-    mockMachine.expects(atLeastOnce()).method("getCpu").will(returnValue(cpu));
-    mockCpu.expects(once()).method("getRoutineContexts").will(returnValue(routineContexts));
-    mockCpu.expects(once()).method("setVariable").with(eq(0x12), eq((short) 2));
+    mockMachine.expects(once()).method("getRoutineContexts").will(returnValue(routineContexts));
+    mockMachine.expects(once()).method("setVariable").with(eq(0x12), eq((short) 2));
 
     Instruction0OpMock zcatch = createInstructionMock(Short0StaticInfo.OP_POP);
     zcatch.setStoreVariable((short) 0x12);

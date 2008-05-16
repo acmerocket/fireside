@@ -44,11 +44,9 @@ public class InstructionVarV6Test extends InstructionTestBase {
   
   @Test
   public void testPullV6NoUserStack() {
-    mockMachine.expects(atLeastOnce()).method("getCpu").will(returnValue(cpu));
-    mockCpu.expects(once()).method("getVariable").with(eq(0x00)).will(returnValue((short) 0x14));;
-    
-    mockCpu.expects(once()).method("setVariable").with(eq(0x15), eq((short) 0x14));
-    mockCpu.expects(once()).method("incrementProgramCounter").with(eq(5));
+    mockMachine.expects(once()).method("popStack").with(eq(0x00)).will(returnValue((short) 0x14));    
+    mockMachine.expects(once()).method("setVariable").with(eq(0x15), eq((short) 0x14));
+    mockMachine.expects(once()).method("incrementPC").with(eq(5));
 
     VariableInstruction pull = new VariableInstruction(machine,
         OperandCount.VAR, VariableStaticInfo.OP_PULL);
@@ -58,10 +56,9 @@ public class InstructionVarV6Test extends InstructionTestBase {
   }  
 
   public void testPullV6UserStack() {
-    mockMachine.expects(atLeastOnce()).method("getCpu").will(returnValue(cpu));
-    mockCpu.expects(once()).method("popUserStack").with(eq(0x1234)).will(returnValue((short) 0x15));    
-    mockCpu.expects(once()).method("setVariable").with(eq(0x15), eq((short) 0x15));
-    mockCpu.expects(once()).method("incrementProgramCounter").with(eq(5));
+    mockMachine.expects(once()).method("popStack").with(eq(0x1234)).will(returnValue((short) 0x15));    
+    mockMachine.expects(once()).method("setVariable").with(eq(0x15), eq((short) 0x15));
+    mockMachine.expects(once()).method("incrementPC").with(eq(5));
 
     VariableInstruction pull = new VariableInstruction(machine,
         OperandCount.VAR, VariableStaticInfo.OP_PULL);

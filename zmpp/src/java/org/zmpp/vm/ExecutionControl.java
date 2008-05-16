@@ -67,22 +67,23 @@ public class ExecutionControl {
     enableHeaderFlag(Attribute.SUPPORTS_ITALIC);
     enableHeaderFlag(Attribute.SUPPORTS_STATUSLINE);
     enableHeaderFlag(Attribute.SUPPORTS_TIMED_INPUT);
-    machine.getGameData().getStoryFileHeader().setDefaultBackgroundColor(
-      ScreenModel.COLOR_WHITE);
-    machine.getGameData().getStoryFileHeader().setDefaultForegroundColor(
-      ScreenModel.COLOR_BLACK);
+    machine.getFileHeader().setDefaultBackgroundColor(ScreenModel.COLOR_WHITE);
+    machine.getFileHeader().setDefaultForegroundColor(ScreenModel.COLOR_BLACK);
   }
 
   private void enableHeaderFlag(Attribute attr) {
     getFileHeader().setEnabled(attr, true);
   }
   
-  private StoryFileHeader getFileHeader() {
-    return machine.getGameData().getStoryFileHeader();
-  }
+  private StoryFileHeader getFileHeader() { return machine.getFileHeader(); }
   
   public int getVersion() { return machine.getVersion(); }
   
+  public void setDefaultColors(int defaultBackground, int defaultForeground) {
+    getFileHeader().setDefaultBackgroundColor(defaultBackground);
+    getFileHeader().setDefaultForegroundColor(defaultForeground);
+  }
+
   public void resizeScreen(int numRows, int numCharsPerRow) {
     if (getVersion() == 4) {
       getFileHeader().setScreenHeight(numRows);
@@ -97,8 +98,8 @@ public class ExecutionControl {
 
   public MachineRunState run() {
     while (machine.getRunState() != MachineRunState.STOPPED) {
-      int pc = machine.getCpu().getProgramCounter();
-      Instruction instr = machine.getCpu().nextStep();
+      int pc = machine.getPC();
+      Instruction instr = machine.nextInstruction();
       // if the print is executed after execute(), the result is different !!
       if (DEBUG && machine.getRunState() == MachineRunState.RUNNING)
         System.out.printf("%03d: $%04x %s\n", step, pc, instr.toString());

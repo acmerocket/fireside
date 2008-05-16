@@ -80,7 +80,7 @@ public class MemoryOutputStream implements OutputStream {
     //System.out.println("memory.print: " + ((char) zsciiChar));
     final TablePosition tablePos = tableStack.get(tableStack.size() - 1);
     final int position = tablePos.tableAddress + 2 + tablePos.bytesWritten;
-    machine.getGameData().getMemory().writeUnsignedByte(
+    machine.getMemory().writeUnsignedByte(
         position, (short) zsciiChar);
     tablePos.bytesWritten++;
   }
@@ -121,10 +121,10 @@ public class MemoryOutputStream implements OutputStream {
       //System.out.println("deselect stream 3, popping off: "
       //                   + tablePos.tableAddress + " # bytes: "
       //                   + tablePos.bytesWritten);
-      machine.getGameData().getMemory().writeUnsignedShort(
+      machine.getMemory().writeUnsignedShort(
           tablePos.tableAddress, tablePos.bytesWritten);
       
-      if (machine.getGameData().getStoryFileHeader().getVersion() == 6) {
+      if (machine.getVersion() == 6) {
 
         writeTextWidthInUnits(tablePos);
       }
@@ -135,10 +135,9 @@ public class MemoryOutputStream implements OutputStream {
 
     int numwords = tablepos.bytesWritten;
     char[] data = new char[numwords];
-    Memory memory = machine.getGameData().getMemory();
+    Memory memory = machine.getMemory();
     
     for (int i = 0; i < numwords; i++) {
-      
       data[i] = (char) memory.readUnsignedByte(tablepos.tableAddress + i + 2); 
     }
     machine.getScreen6().setTextWidthInUnits(data);

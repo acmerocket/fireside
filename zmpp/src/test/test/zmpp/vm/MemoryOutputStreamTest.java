@@ -23,43 +23,28 @@ package test.zmpp.vm;
 import org.jmock.Mock;
 import org.jmock.MockObjectTestCase;
 import org.zmpp.base.Memory;
-import org.zmpp.vm.Cpu;
-import org.zmpp.vm.GameData;
 import org.zmpp.vm.Machine;
 import org.zmpp.vm.MemoryOutputStream;
-import org.zmpp.vm.StoryFileHeader;
 
 public class MemoryOutputStreamTest extends MockObjectTestCase {
 
-  private Mock mockMemory, mockMachine, mockGameData, mockCpu, mockFileheader;
+  private Mock mockMemory, mockMachine, mockCpu, mockFileheader;
   private Machine machine;
   private Memory memory;
   private MemoryOutputStream output;
-  private GameData gamedata;
-  private Cpu cpu;
-  private StoryFileHeader fileheader;
-  
+
+  @Override
   protected void setUp() throws Exception {
     mockMachine = mock(Machine.class);
     mockMemory = mock(Memory.class);
-    mockGameData = mock(GameData.class);
-    mockCpu = mock(Cpu.class);
-    mockFileheader = mock(StoryFileHeader.class);
-    
     machine = (Machine) mockMachine.proxy();
     memory = (Memory) mockMemory.proxy();
-    gamedata = (GameData) mockGameData.proxy();
-    cpu = (Cpu) mockCpu.proxy();
-    fileheader = (StoryFileHeader) mockFileheader.proxy();
-
     output = new MemoryOutputStream(machine);
   }
   
   public void testPrintVersion5() {
-    mockMachine.expects(atLeastOnce()).method("getGameData").will(returnValue(gamedata));
-    mockGameData.expects(atLeastOnce()).method("getMemory").will(returnValue(memory));
-    mockGameData.expects(atLeastOnce()).method("getStoryFileHeader").will(returnValue(fileheader));
-    mockFileheader.expects(once()).method("getVersion").will(returnValue(5));
+    mockMachine.expects(atLeastOnce()).method("getMemory").will(returnValue(memory));
+    mockMachine.expects(once()).method("getVersion").will(returnValue(5));
     
     mockMemory.expects(once()).method("writeUnsignedByte").with(eq(4713), eq((short)65));
     mockMemory.expects(once()).method("writeUnsignedShort").with(eq(4711), eq(1));
@@ -81,12 +66,10 @@ public class MemoryOutputStreamTest extends MockObjectTestCase {
   }
   
   public void testSelectMaxNesting() {
-    mockMachine.expects(once()).method("getCpu").will(returnValue(cpu));
-    mockCpu.expects(once()).method("halt").with(eq("maximum nesting depth (16) for stream 3 exceeded"));
+    mockMachine.expects(once()).method("halt").with(eq("maximum nesting depth (16) for stream 3 exceeded"));
     for (int i = 0; i < 17; i++) {
       
       output.select(4710 + 10 * i, 0);
     }
-  }
-  
+  }  
 }

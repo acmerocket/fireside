@@ -20,11 +20,17 @@
  */
 package org.zmpp.vm;
 
+import java.util.List;
+import org.zmpp.base.Memory;
+import org.zmpp.encoding.ZsciiEncoding;
+import org.zmpp.encoding.ZsciiString;
 import org.zmpp.media.PictureManager;
 import org.zmpp.media.SoundSystem;
 
 /**
  * This interface acts as a central access point to the Z-Machine's components.
+ * It is mainly provided as a service point for the instructions to manipulate
+ * and read the VM's internal state.
  * 
  * @author Wei-ju Wu
  * @version 1.0
@@ -47,22 +53,62 @@ public interface Machine extends ObjectTree, Input, Output {
    */
   int getVersion();
   
+  boolean hasValidChecksum();
+
   // **********************************************************************
   // **** Main machine objects
   // *******************************
   
   /**
-   * Returns the GameData object.
-   * @return the GameData object
+   * Returns the memory object. TODO: Fold into the machine interface
+   * @return the memory object
    */
-  GameData getGameData();
-  
-  /**
-   * Returns the Cpu object.
-   * @return the Cpu object
-   */
-  Cpu getCpu();
+  Memory getMemory();
 
+  //
+  StoryFileHeader getFileHeader();
+  
+  // **********************************************************************
+  // **** CPU functions
+  // **********************************************************
+  Instruction nextInstruction();
+  short getVariable(int varnum);
+  void setVariable(int varnum, short value);
+  int getSP();
+  short getStackTop();
+  short getStackElement(int index);
+  void setStackTop(short value);
+  short popStack(int stack);
+  boolean pushStack(int stack, short value);
+  void incrementPC(int length);
+  int getPC();
+  void setPC(int address);
+  List<RoutineContext> getRoutineContexts();
+  void setRoutineContexts(List<RoutineContext> routineContexts);
+  void returnWith(short returnValue);
+  RoutineContext getCurrentRoutineContext();
+  int unpackStringAddress(int packedAddress);
+  void call(int packedAddress, int returnAddress, short[] args, int returnVar);
+  int computeBranchTarget(short offset, int instructionLength);
+  void doBranch(short branchOffset, int instructionLength);
+
+  // **********************************************************************
+  // **** Tokenizing functions
+  // **** We could refine this by exposing the tokenizers
+  // **** instead of dictionary functionality
+  // **********************************************************
+  
+  int lookupToken(int dictionaryAddress, ZsciiString token);
+  ZsciiString getDictionaryDelimiters();
+  
+  // **********************************************************************
+  // **** Encoding functions
+  // **********************************************************
+  
+  ZsciiEncoding getZsciiEncoding();
+  void encode(int source, int length, int destination);
+  ZsciiString decode2Zscii(int address, int length);
+  
   // ************************************************************************
   // ****** Control functions
   // ************************************************

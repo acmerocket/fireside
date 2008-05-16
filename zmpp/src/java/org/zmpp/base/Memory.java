@@ -35,15 +35,6 @@ public interface Memory {
   // ****
   // *****************************
   /**
-   * Reads the 48-bit unsigned word at the specified address. From the
-   * specified address, 6 bytes are read and or'ed together.
-   *  
-   * @param address the address to read from
-   * @return the word at the specified address
-   */
-  long readUnsigned48(int address);  
-  
-  /**
    * Reads the unsigned 32 bit word at the specified address.
    * 
    * @param address the address
@@ -127,13 +118,4 @@ public interface Memory {
    * @param value the value to write
    */
   void writeUnsigned32(int address, long value);
-  
-  /**
-   * Writes the specified unsigned 48 bit value to the specified address.
-   * The value is written in 6 consecutive bytes.
-   * 
-   * @param address the address
-   * @param value the value
-   */
-  void writeUnsigned48(int address, long value);
 }

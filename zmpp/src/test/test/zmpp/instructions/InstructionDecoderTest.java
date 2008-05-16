@@ -55,12 +55,11 @@ public class InstructionDecoderTest extends MiniZorkSetup {
       0x10, 0x20, 0x01, 0x00
   };
   
+  @Override
   protected void setUp() throws Exception {
-    
     super.setUp();
     decoder = new DefaultInstructionDecoder();
-    decoder.initialize(machineState, minizorkmap);
-    
+    decoder.initialize(machineState);
   }
 
   /**
@@ -276,10 +275,11 @@ public class InstructionDecoderTest extends MiniZorkSetup {
     Machine machine4 = (Machine) mockMachine4.proxy();
     
     InstructionDecoder decoder4 = new DefaultInstructionDecoder();
-    decoder4.initialize(machine4, amfvmem);
+    decoder4.initialize(machine4);
     
     mockMachine4.expects(atLeastOnce()).method("getVersion").will(returnValue(4));
-
+    mockMachine4.expects(atLeastOnce()).method("getMemory").will(returnValue(amfvmem));
+    
     // Expected:
     // ecf4:  CALL_VS2        efdc (G90,#10,#20,L00) -> -(SP)
     AbstractInstruction call_vs2 = (AbstractInstruction) decoder4.decodeInstruction(0);

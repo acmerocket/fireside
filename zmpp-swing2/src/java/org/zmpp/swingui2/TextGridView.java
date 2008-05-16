@@ -51,6 +51,11 @@ public class TextGridView extends JComponent {
     grid = new AnnotatedCharacter[numrows][numcols];
   }
   
+  public int getNumRows() { return grid == null ? 0 : grid.length; }
+  public int getNumColumns() {
+    return grid == null || grid.length == 0 ? 0 : grid[0].length;
+  }
+  
   public void clear() {
     for (int row = 0; row < grid.length; row++) {
       for (int col = 0; col < grid[row].length; col++) {

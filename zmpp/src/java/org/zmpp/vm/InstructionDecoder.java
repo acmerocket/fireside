@@ -20,8 +20,6 @@
  */
 package org.zmpp.vm;
 
-import org.zmpp.base.Memory;
-
 /**
  * The instruction decoder decodes an instruction at a specified address.
  * 
@@ -30,7 +28,7 @@ import org.zmpp.base.Memory;
  */
 public interface InstructionDecoder {
     
-  public void initialize(Machine machine, Memory memory);
+  public void initialize(Machine machine);
   
   /**
    * Decode the instruction at the specified address.

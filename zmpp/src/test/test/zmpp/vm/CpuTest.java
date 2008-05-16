@@ -27,7 +27,6 @@ import org.jmock.MockObjectTestCase;
 import org.zmpp.base.Memory;
 import org.zmpp.vm.Cpu;
 import org.zmpp.vm.CpuImpl;
-import org.zmpp.vm.GameData;
 import org.zmpp.vm.Instruction;
 import org.zmpp.vm.InstructionDecoder;
 import org.zmpp.vm.Machine;
@@ -36,69 +35,64 @@ import org.zmpp.vm.StoryFileHeader;
 
 public class CpuTest extends MockObjectTestCase {
 
-  private Mock mockMachine, mockDecoder, mockGameData, mockFileHeader,
-    mockMemory;
+  private Mock mockMachine, mockDecoder, mockFileHeader, mockMemory;
   private Machine machine;
   private InstructionDecoder decoder;
-  private GameData gamedata;
   private Cpu cpu;
   private StoryFileHeader fileheader;
   private Memory memory;
   private RoutineContext routineInfo;
   
+  @Override
   public void setUp() throws Exception {
-    
-
     mockMachine = mock(Machine.class);
     mockDecoder = mock(InstructionDecoder.class);
-    mockGameData = mock(GameData.class);
     mockFileHeader = mock(StoryFileHeader.class);
     mockMemory = mock(Memory.class);
     
     machine = (Machine) mockMachine.proxy();
     decoder = (InstructionDecoder) mockDecoder.proxy();
-    gamedata = (GameData) mockGameData.proxy();
     fileheader = (StoryFileHeader) mockFileHeader.proxy();
     memory = (Memory) mockMemory.proxy();
     routineInfo = new RoutineContext(0x4711, 3);
     
-    mockMachine.expects(atLeastOnce()).method("getGameData").will(returnValue(gamedata));
-    mockGameData.expects(atLeastOnce()).method("getStoryFileHeader").will(returnValue(fileheader));
+    mockMachine.expects(atLeastOnce()).method("getFileHeader").will(returnValue(fileheader));
     mockFileHeader.expects(once()).method("getProgramStart").will(returnValue(1000));
     mockFileHeader.expects(once()).method("getGlobalsAddress").will(returnValue(5000));
-    mockFileHeader.expects(once()).method("getVersion").will(returnValue(5));
-    mockGameData.expects(atLeastOnce()).method("getMemory").will(returnValue(memory));
-    mockDecoder.expects(once()).method("initialize").with(eq(machine), eq(memory));
+
+    initializeMockDecoder();
     cpu = new CpuImpl(machine, decoder);
     cpu.reset();
   }
   
+  private void initializeMockDecoder() {
+    mockMachine.expects(once()).method("getVersion").will(returnValue(5));
+    mockDecoder.expects(once()).method("initialize").with(eq(machine));
+  }
+  
   public void testInitialState() {
-    
-    assertEquals(1000, cpu.getProgramCounter());
+    assertEquals(1000, cpu.getPC());
     assertEquals(0, cpu.getStackPointer());
     assertEquals(0, ((CpuImpl)cpu).getRoutineStackPointer());
   }
   
   public void testSetProgramCounter() {
-   
-    cpu.setProgramCounter(1234);
-    assertEquals(1234, cpu.getProgramCounter());
+    cpu.setPC(1234);
+    assertEquals(1234, cpu.getPC());
   }  
   
   public void testIncrementProgramCounter() {
+    cpu.setPC(1000);
+    cpu.incrementPC(0);
+    assertEquals(1000, cpu.getPC());
     
-    cpu.setProgramCounter(1000);
-    cpu.incrementProgramCounter(0);
-    assertEquals(1000, cpu.getProgramCounter());
+    cpu.setPC(1000);
+    cpu.incrementPC(123);
+    assertEquals(1123, cpu.getPC());
     
-    cpu.setProgramCounter(1000);
-    cpu.incrementProgramCounter(123);
-    assertEquals(1123, cpu.getProgramCounter());
-    
-    cpu.setProgramCounter(1000);
-    cpu.incrementProgramCounter(-32);
-    assertEquals(968, cpu.getProgramCounter());
+    cpu.setPC(1000);
+    cpu.incrementPC(-32);
+    assertEquals(968, cpu.getPC());
   }
 
   public void testGetVariableType() {
@@ -254,7 +248,7 @@ public class CpuTest extends MockObjectTestCase {
   public void testPopRoutineContextIllegal() {
     
     try {
-      cpu.popRoutineContext((short) 42);
+      cpu.returnWith((short) 42);
       fail();
     } catch (IllegalStateException expected) {
      
@@ -264,10 +258,11 @@ public class CpuTest extends MockObjectTestCase {
 
   public void testCallAndReturn() {
     
+    mockMachine.expects(atLeastOnce()).method("getMemory").will(returnValue(memory));    
     // Setup the environment
     cpu.setVariable(0, (short) 10); // write something on the stack
     int oldSp = cpu.getStackPointer();
-    cpu.setProgramCounter(0x747);
+    cpu.setPC(0x747);
     int returnAddress = 0x749;
     
     // Initialize the routine context
@@ -277,7 +272,7 @@ public class CpuTest extends MockObjectTestCase {
     // simulate a call
     context.setReturnAddress(returnAddress); // save the return address in the context
     cpu.pushRoutineContext(context);
-    cpu.setProgramCounter(0x0815);
+    cpu.setPC(0x0815);
     
     // assert that the context has saved the old stack pointer
     assertEquals(oldSp, context.getInvocationStackPointer());
@@ -291,60 +286,51 @@ public class CpuTest extends MockObjectTestCase {
     mockMemory.expects(once()).method("writeShort").with(eq(5004), eq((short) 42));
     
     assertNotSame(oldSp, cpu.getStackPointer());
-    cpu.popRoutineContext((short) 42);
-    assertEquals(returnAddress, cpu.getProgramCounter());
+    cpu.returnWith((short) 42);
+    assertEquals(returnAddress, cpu.getPC());
     assertEquals(oldSp, cpu.getStackPointer());
   }  
 
   public void testNextStep() {
-    
-    Instruction myinstr = new Instruction() {
-      
+    Instruction myinstr = new Instruction() {      
       public void execute() { }
       public boolean isOutput() { return false; }
     };
-    
     mockDecoder.expects(once()).method("decodeInstruction").with(eq(1000)).will(returnValue(myinstr));
     Instruction instr = cpu.nextStep();
     assertEquals(myinstr, instr);
   }
   
   public void testTranslatePackedAddressV3() {
-    
-    mockFileHeader.expects(once()).method("getVersion").will(returnValue(3));
+    mockMachine.expects(atLeastOnce()).method("getVersion").will(returnValue(3));
     int byteAddress = cpu.translatePackedAddress(2312, true);
     assertEquals(2312 * 2, byteAddress);
   }  
 
   public void testTranslatePackedAddressV4() {
-    
-    mockFileHeader.expects(once()).method("getVersion").will(returnValue(4));
+    mockMachine.expects(atLeastOnce()).method("getVersion").will(returnValue(4));
     assertEquals(4711 * 4, cpu.translatePackedAddress(4711, true));
   }
 
   public void testTranslatePackedAddressV5() {
-    
-    mockFileHeader.expects(once()).method("getVersion").will(returnValue(5));
+    mockMachine.expects(atLeastOnce()).method("getVersion").will(returnValue(5));
     assertEquals(4711 * 4, cpu.translatePackedAddress(4711, true));
   }
 
   public void testTranslatePackedAddressV7Call() {
-    
     mockFileHeader.expects(once()).method("getRoutineOffset").will(returnValue(5));
-    mockFileHeader.expects(once()).method("getVersion").will(returnValue(7));
+    mockMachine.expects(atLeastOnce()).method("getVersion").will(returnValue(7));
     assertEquals(4711 * 4 + 8 * 5, cpu.translatePackedAddress(4711, true));
   }
 
   public void testTranslatePackedAddressV7String() {
-    
     mockFileHeader.expects(once()).method("getStaticStringOffset").will(returnValue(6));
-    mockFileHeader.expects(once()).method("getVersion").will(returnValue(7));
+    mockMachine.expects(atLeastOnce()).method("getVersion").will(returnValue(7));
     assertEquals(4711 * 4 + 8 * 6, cpu.translatePackedAddress(4711, false));
   }
   
   public void testTranslatePackedAddressV8() {
-    
-    mockFileHeader.expects(once()).method("getVersion").will(returnValue(8));
+    mockMachine.expects(atLeastOnce()).method("getVersion").will(returnValue(8));
     assertEquals(4711 * 8, cpu.translatePackedAddress(4711, true));
   }
 }

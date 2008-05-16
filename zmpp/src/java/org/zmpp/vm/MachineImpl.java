@@ -20,8 +20,14 @@
  */
 package org.zmpp.vm;
 
+import java.util.List;
+import org.zmpp.base.Memory;
 import org.zmpp.blorb.BlorbImage;
+import org.zmpp.encoding.ZCharDecoder;
+import org.zmpp.encoding.ZCharEncoder;
+import org.zmpp.encoding.ZsciiEncoding;
 import org.zmpp.encoding.ZsciiString;
+import org.zmpp.encoding.ZsciiStringBuilder;
 import org.zmpp.iff.FormChunk;
 import org.zmpp.iff.WritableFormChunk;
 import org.zmpp.io.InputStream;
@@ -76,19 +82,140 @@ public class MachineImpl implements Machine {
    * {@inheritDoc}
    */
   public int getVersion() {
-	return gamedata.getStoryFileHeader().getVersion();
+    return gamedata.getStoryFileHeader().getVersion();
+  }
+  
+  public boolean hasValidChecksum() {
+    return gamedata.hasValidChecksum();
   }
   
   /**
    * {@inheritDoc}
    */
-  public GameData getGameData() { return gamedata; }
+  public Memory getMemory() { return gamedata.getMemory(); }
   
   /**
    * {@inheritDoc}
    */
-  public Cpu getCpu() { return cpu; }
+  public StoryFileHeader getFileHeader() {
+    return gamedata.getStoryFileHeader();
+  }
+
+  // **********************************************************************
+  // ***** Execution state functionality
+  // **********************************************************************
+  private Cpu getCpu() { return cpu; }
+  public Instruction nextInstruction() { return getCpu().nextStep(); }
+  public short getVariable(int varnum) { return getCpu().getVariable(varnum); }
+  public void setVariable(int varnum, short value) {
+    getCpu().setVariable(varnum, value);
+  }
+  public short getStackTop() { return getCpu().getStackTopElement(); }
+  public short getStackElement(int index) {
+    return getCpu().getStackElement(index);
+  }
+  public void setStackTop(short value) {
+    getCpu().setStackTopElement(value);
+  }
+  public void incrementPC(int length) {
+    getCpu().incrementPC(length);
+  }
+  public void setPC(int address) {
+    getCpu().setPC(address);
+  }
+  public int getPC() { return getCpu().getPC(); }
+  public int getSP() { return getCpu().getStackPointer(); }
+  public short popStack(int stack) {
+    return stack == 0 ? getVariable(0) : getCpu().popUserStack(stack);
+  }
+  public boolean pushStack(int stack, short value) {
+    if (stack == 0) {
+      setVariable(0, value);
+      return true;
+    } else {
+      return getCpu().pushUserStack(stack, value);
+    }    
+  }
+  public List<RoutineContext> getRoutineContexts() {
+    return getCpu().getRoutineContexts();
+  }
+  public void setRoutineContexts(List<RoutineContext> routineContexts) {
+    getCpu().setRoutineContexts(routineContexts);
+  }
+  public void returnWith(short returnValue) {
+    getCpu().returnWith(returnValue);
+  }
+  public RoutineContext getCurrentRoutineContext() {
+    return getCpu().getCurrentRoutineContext();
+  }
+
+  public int unpackStringAddress(int packedAddress) {
+    return getCpu().translatePackedAddress(packedAddress, false);
+  }
+  public void call(int packedAddress, int returnAddress, short[] args,
+                   int returnVar) {
+    getCpu().call(packedAddress, returnAddress, args, returnVar);
+  }
+  public int computeBranchTarget(short offset, int instructionLength) {
+    return getCpu().computeBranchTarget(offset, instructionLength);
+  }
   
+  public void doBranch(short branchOffset, int instructionLength) {
+    if (branchOffset >= 2 || branchOffset < 0) {
+      setPC(computeBranchTarget(branchOffset, instructionLength));
+    } else {
+      // FALSE is defined as 0, TRUE as 1, so simply return the offset
+      // since we do not have negative offsets
+      returnWith(branchOffset);
+    }
+  }
+
+  // **********************************************************************
+  // ***** Dictionary functionality
+  // **********************************************************************
+  private static final ZsciiString WHITESPACE =
+    new ZsciiString(new char[] { ' ', '\n', '\t', '\r' });
+  
+  private Dictionary getDictionary() { return gamedata.getDictionary(); }
+
+  public int lookupToken(int dictionaryAddress, ZsciiString token) {
+    if (dictionaryAddress == 0) {
+      return getDictionary().lookup(token);
+    }
+    return new UserDictionary(getMemory(), dictionaryAddress,
+                              getZCharDecoder()).lookup(token);
+  }
+  
+  public ZsciiString getDictionaryDelimiters() {
+    // Retrieve the defined separators
+    final ZsciiStringBuilder separators = new ZsciiStringBuilder();
+    separators.append(WHITESPACE);    
+    final ZCharDecoder decoder = getZCharDecoder();
+    for (int i = 0, n = getDictionary().getNumberOfSeparators(); i < n; i++) {
+      separators.append(decoder.decodeZChar((char)
+              getDictionary().getSeparator(i)));
+    }
+    // The tokenizer will also return the delimiters
+    return separators.toZsciiString();
+  }
+
+  // **********************************************************************
+  // ***** Encoding functionality
+  // **********************************************************************
+  private ZCharDecoder getZCharDecoder() { return gamedata.getZCharDecoder(); }
+  private ZCharEncoder getZCharEncoder() { return gamedata.getZCharEncoder(); }
+  public ZsciiEncoding getZsciiEncoding() {
+    return gamedata.getZsciiEncoding();
+  }
+  
+  public void encode(int source, int length, int destination) {
+    getZCharEncoder().encode(getMemory(), source, length, destination);
+  }
+
+  public ZsciiString decode2Zscii(int address, int length) {
+    return getZCharDecoder().decode2Zscii(getMemory(), address, length);
+  }
+
   // **********************************************************************
   // ***** Output stream management, implemented by the OutputImpl object
   // **********************************************************************
@@ -421,7 +548,7 @@ public class MachineImpl implements Machine {
         undostates.remove(undostates.size() - 1);      
       restart(false);
       undoGameState.transferStateToMachine(this);
-      System.out.printf("restore(), pc is: %4x\n", cpu.getProgramCounter());
+      System.out.printf("restore(), pc is: %4x\n", cpu.getPC());
       return undoGameState;
     }
     return null;

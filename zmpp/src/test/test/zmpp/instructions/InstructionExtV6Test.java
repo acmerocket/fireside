@@ -40,6 +40,7 @@ public class InstructionExtV6Test extends InstructionTestBase {
   private Window6 window6;
   private PictureManager picturemanager;
   
+  @Override
   protected void setUp() throws Exception {
     super.setUp();
     mockMachine.expects(atLeastOnce()).method("getVersion").will(returnValue(6));
@@ -59,8 +60,7 @@ public class InstructionExtV6Test extends InstructionTestBase {
     
     mockMachine.expects(atLeastOnce()).method("getScreen6").will(returnValue(screen6));
     mockscreen6.expects(once()).method("setMouseWindow").with(eq(3));
-    mockMachine.expects(atLeastOnce()).method("getCpu").will(returnValue(cpu));
-    mockCpu.expects(atLeastOnce()).method("incrementProgramCounter").with(eq(3));
+    mockMachine.expects(atLeastOnce()).method("incrementPC").with(eq(3));
     
     ExtendedInstruction mouse_window = new ExtendedInstruction(machine, ExtendedStaticInfo.OP_MOUSE_WINDOW);
     mouse_window.setLength(3);
@@ -77,16 +77,12 @@ public class InstructionExtV6Test extends InstructionTestBase {
     mockMachine.expects(atLeastOnce()).method("getPictureManager").will(returnValue(picturemanager));
     mockPictureManager.expects(once()).method("getRelease").will(returnValue(2));
     mockPictureManager.expects(atLeastOnce()).method("getNumPictures").will(returnValue(32));
-    mockMachine.expects(atLeastOnce()).method("getGameData")
-    	.will(returnValue(gamedata));
-    mockGameData.expects(once()).method("getMemory").will(returnValue(memory));
+    mockMachine.expects(once()).method("getMemory").will(returnValue(memory));
     mockMemory.expects(once()).method("writeUnsignedShort").with(eq(1000), eq(32));
     mockMemory.expects(once()).method("writeUnsignedShort").with(eq(1002), eq(2));
 
     // Branch
-    mockMachine.expects(atLeastOnce()).method("getCpu").will(returnValue(cpu));
-    mockCpu.expects(once()).method("computeBranchTarget").with(eq((short) 123), eq(3)).will(returnValue(1234));
-    mockCpu.expects(once()).method("setProgramCounter").with(eq(1234));
+    mockMachine.expects(once()).method("doBranch").with(eq((short) 123), eq(3));
     
     ExtendedInstruction picture_data = new ExtendedInstruction(machine, ExtendedStaticInfo.OP_PICTURE_DATA);
     picture_data.setLength(3);
@@ -105,16 +101,12 @@ public class InstructionExtV6Test extends InstructionTestBase {
     
     mockMachine.expects(atLeastOnce()).method("getPictureManager").will(returnValue(picturemanager));
     mockPictureManager.expects(once()).method("getPictureSize").with(eq(1)).will(returnValue(new Resolution(320, 200)));
-    mockMachine.expects(atLeastOnce()).method("getGameData")
-  		.will(returnValue(gamedata));
-    mockGameData.expects(once()).method("getMemory").will(returnValue(memory));
+    mockMachine.expects(once()).method("getMemory").will(returnValue(memory));
     mockMemory.expects(once()).method("writeUnsignedShort").with(eq(1000), eq(200));
     mockMemory.expects(once()).method("writeUnsignedShort").with(eq(1002), eq(320));
-    mockMachine.expects(atLeastOnce()).method("getCpu").will(returnValue(cpu));
     
     // computes a branch
-    mockCpu.expects(atLeastOnce()).method("computeBranchTarget").with(eq((short) 42), eq(3)).will(returnValue(4711));
-    mockCpu.expects(atLeastOnce()).method("setProgramCounter").with(eq(4711));
+    mockMachine.expects(atLeastOnce()).method("doBranch").with(eq((short) 42), eq(3));
     
     ExtendedInstruction picture_data = new ExtendedInstruction(machine, ExtendedStaticInfo.OP_PICTURE_DATA);
     picture_data.setLength(3);
@@ -136,8 +128,7 @@ public class InstructionExtV6Test extends InstructionTestBase {
     
     mockMachine.expects(atLeastOnce()).method("getPictureManager").will(returnValue(picturemanager));
     mockPictureManager.expects(once()).method("getPictureSize").with(eq(55)).will(returnValue(null));
-    mockMachine.expects(atLeastOnce()).method("getCpu").will(returnValue(cpu));
-    mockCpu.expects(atLeastOnce()).method("incrementProgramCounter").with(eq(3));
+    mockMachine.expects(atLeastOnce()).method("incrementPC").with(eq(3));
     
     ExtendedInstruction picture_data = new ExtendedInstruction(machine, ExtendedStaticInfo.OP_PICTURE_DATA);
     picture_data.setLength(3);
@@ -168,8 +159,7 @@ public class InstructionExtV6Test extends InstructionTestBase {
     mockscreen6.expects(once()).method("getSelectedWindow").will(returnValue(window6));
     mockwindow6.expects(once()).method("drawPicture").with(eq(blorbimage), eq(2), eq(3));
     
-    mockMachine.expects(atLeastOnce()).method("getCpu").will(returnValue(cpu));
-    mockCpu.expects(atLeastOnce()).method("incrementProgramCounter").with(eq(3));
+    mockMachine.expects(atLeastOnce()).method("incrementPC").with(eq(3));
     
     ExtendedInstruction draw_picture = new ExtendedInstruction(machine, ExtendedStaticInfo.OP_DRAW_PICTURE);
     draw_picture.setLength(3);
@@ -198,8 +188,7 @@ public class InstructionExtV6Test extends InstructionTestBase {
     mockscreen6.expects(once()).method("getSelectedWindow").will(returnValue(window6));
     mockwindow6.expects(once()).method("erasePicture").with(eq(blorbimage), eq(2), eq(3));
     
-    mockMachine.expects(atLeastOnce()).method("getCpu").will(returnValue(cpu));
-    mockCpu.expects(atLeastOnce()).method("incrementProgramCounter").with(eq(3));
+    mockMachine.expects(atLeastOnce()).method("incrementPC").with(eq(3));
     
     ExtendedInstruction erase_picture = new ExtendedInstruction(machine, ExtendedStaticInfo.OP_ERASE_PICTURE);
     erase_picture.setLength(3);
@@ -219,8 +208,7 @@ public class InstructionExtV6Test extends InstructionTestBase {
     mockMachine.expects(atLeastOnce()).method("getScreen6").will(returnValue(screen6));
     mockscreen6.expects(once()).method("getWindow").with(eq(1)).will(returnValue(window6));
     mockwindow6.expects(once()).method("move").with(eq(2), eq(3));
-    mockMachine.expects(atLeastOnce()).method("getCpu").will(returnValue(cpu));
-    mockCpu.expects(atLeastOnce()).method("incrementProgramCounter").with(eq(3));
+    mockMachine.expects(atLeastOnce()).method("incrementPC").with(eq(3));
     
     ExtendedInstruction move_window = new ExtendedInstruction(machine, ExtendedStaticInfo.OP_MOVE_WINDOW);
     move_window.setLength(3);
@@ -241,8 +229,7 @@ public class InstructionExtV6Test extends InstructionTestBase {
     mockMachine.expects(atLeastOnce()).method("getScreen6").will(returnValue(screen6));
     mockscreen6.expects(once()).method("getWindow").with(eq(1)).will(returnValue(window6));
     mockwindow6.expects(once()).method("setSize").with(eq(2), eq(3));
-    mockMachine.expects(atLeastOnce()).method("getCpu").will(returnValue(cpu));
-    mockCpu.expects(atLeastOnce()).method("incrementProgramCounter").with(eq(3));
+    mockMachine.expects(atLeastOnce()).method("incrementPC").with(eq(3));
     
     ExtendedInstruction window_size = new ExtendedInstruction(machine, ExtendedStaticInfo.OP_WINDOW_SIZE);
     window_size.setLength(3);
@@ -263,8 +250,7 @@ public class InstructionExtV6Test extends InstructionTestBase {
     mockMachine.expects(atLeastOnce()).method("getScreen6").will(returnValue(screen6));
     mockscreen6.expects(once()).method("getWindow").with(eq(1)).will(returnValue(window6));
     mockwindow6.expects(once()).method("setStyle").with(eq(2), eq(3));
-    mockMachine.expects(atLeastOnce()).method("getCpu").will(returnValue(cpu));
-    mockCpu.expects(atLeastOnce()).method("incrementProgramCounter").with(eq(3));
+    mockMachine.expects(atLeastOnce()).method("incrementPC").with(eq(3));
     
     ExtendedInstruction window_style = new ExtendedInstruction(machine, ExtendedStaticInfo.OP_WINDOW_STYLE);
     window_style.setLength(3);
@@ -281,8 +267,7 @@ public class InstructionExtV6Test extends InstructionTestBase {
     mockMachine.expects(atLeastOnce()).method("getScreen6").will(returnValue(screen6));
     mockscreen6.expects(once()).method("getWindow").with(eq(1)).will(returnValue(window6));
     mockwindow6.expects(once()).method("setStyle").with(eq(2), eq(0));
-    mockMachine.expects(atLeastOnce()).method("getCpu").will(returnValue(cpu));
-    mockCpu.expects(atLeastOnce()).method("incrementProgramCounter").with(eq(3));
+    mockMachine.expects(atLeastOnce()).method("incrementPC").with(eq(3));
     
     ExtendedInstruction window_style = new ExtendedInstruction(machine, ExtendedStaticInfo.OP_WINDOW_STYLE);
     window_style.setLength(3);
@@ -303,8 +288,7 @@ public class InstructionExtV6Test extends InstructionTestBase {
     mockscreen6.expects(once()).method("getWindow").with(eq(3)).will(returnValue(window6));
     mockwindow6.expects(once()).method("setMargins").with(eq(1), eq(2));
     
-    mockMachine.expects(atLeastOnce()).method("getCpu").will(returnValue(cpu));
-    mockCpu.expects(atLeastOnce()).method("incrementProgramCounter").with(eq(3));
+    mockMachine.expects(atLeastOnce()).method("incrementPC").with(eq(3));
     
     ExtendedInstruction set_margins = new ExtendedInstruction(machine, ExtendedStaticInfo.OP_SET_MARGINS);
     set_margins.setLength(3);
@@ -321,9 +305,7 @@ public class InstructionExtV6Test extends InstructionTestBase {
   // **********************************
   
   public void testPictureTable() {
-    
-    mockMachine.expects(atLeastOnce()).method("getCpu").will(returnValue(cpu));
-    mockCpu.expects(atLeastOnce()).method("incrementProgramCounter").with(eq(3));
+    mockMachine.expects(atLeastOnce()).method("incrementPC").with(eq(3));
     
     ExtendedInstruction picture_table = new ExtendedInstruction(machine, ExtendedStaticInfo.OP_PICTURE_TABLE);
     picture_table.setLength(3);
@@ -335,11 +317,8 @@ public class InstructionExtV6Test extends InstructionTestBase {
   // **********************************
   
   public void testPushStackStdStack() {
-    
-    mockMachine.expects(atLeastOnce()).method("getCpu").will(returnValue(cpu));
-    mockCpu.expects(once()).method("setVariable").with(eq(0), eq((short) 11));
-    mockCpu.expects(atLeastOnce()).method("computeBranchTarget").with(eq((short) 13), eq(3)).will(returnValue(5412));
-    mockCpu.expects(atLeastOnce()).method("setProgramCounter").with(eq(5412));
+    mockMachine.expects(once()).method("pushStack").with(eq(0), eq((short) 11)).will(returnValue(true));
+    mockMachine.expects(atLeastOnce()).method("doBranch").with(eq((short) 13), eq(3));
     
     ExtendedInstruction push_stack = new ExtendedInstruction(machine, ExtendedStaticInfo.OP_PUSH_STACK);
     push_stack.addOperand(new Operand(Operand.TYPENUM_SMALL_CONSTANT, (short) 11));
@@ -349,11 +328,8 @@ public class InstructionExtV6Test extends InstructionTestBase {
   }
   
   public void testPushStackUserStackOk() {
-    
-    mockMachine.expects(atLeastOnce()).method("getCpu").will(returnValue(cpu));
-    mockCpu.expects(once()).method("pushUserStack").with(eq(1112), eq((short) 11)).will(returnValue(true));
-    mockCpu.expects(atLeastOnce()).method("computeBranchTarget").with(eq((short) 13), eq(3)).will(returnValue(5412));
-    mockCpu.expects(atLeastOnce()).method("setProgramCounter").with(eq(5412));
+    mockMachine.expects(once()).method("pushStack").with(eq(1112), eq((short) 11)).will(returnValue(true));
+    mockMachine.expects(atLeastOnce()).method("doBranch").with(eq((short) 13), eq(3));
     
     ExtendedInstruction push_stack = new ExtendedInstruction(machine, ExtendedStaticInfo.OP_PUSH_STACK);
     push_stack.addOperand(new Operand(Operand.TYPENUM_SMALL_CONSTANT, (short) 11));
@@ -364,10 +340,8 @@ public class InstructionExtV6Test extends InstructionTestBase {
   }
 
   public void testPushStackUserStackOverflow() {
-    
-    mockMachine.expects(atLeastOnce()).method("getCpu").will(returnValue(cpu));
-    mockCpu.expects(once()).method("pushUserStack").with(eq(1112), eq((short) 11)).will(returnValue(false));
-    mockCpu.expects(atLeastOnce()).method("incrementProgramCounter").with(eq(3));
+    mockMachine.expects(once()).method("pushStack").with(eq(1112), eq((short) 11)).will(returnValue(false));
+    mockMachine.expects(atLeastOnce()).method("incrementPC").with(eq(3));
     
     ExtendedInstruction push_stack = new ExtendedInstruction(machine, ExtendedStaticInfo.OP_PUSH_STACK);
     push_stack.addOperand(new Operand(Operand.TYPENUM_SMALL_CONSTANT, (short) 11));
@@ -382,10 +356,8 @@ public class InstructionExtV6Test extends InstructionTestBase {
   // **********************************
   
   public void testPopStackStdStack() {
-    
-    mockMachine.expects(atLeastOnce()).method("getCpu").will(returnValue(cpu));
-    mockCpu.expects(exactly(5)).method("getVariable").with(eq(0)).will(returnValue((short) 11));
-    mockCpu.expects(atLeastOnce()).method("incrementProgramCounter").with(eq(3));
+    mockMachine.expects(exactly(5)).method("popStack").with(eq(0)).will(returnValue((short) 11));
+    mockMachine.expects(atLeastOnce()).method("incrementPC").with(eq(3));
     
     ExtendedInstruction push_stack = new ExtendedInstruction(machine, ExtendedStaticInfo.OP_POP_STACK);
     push_stack.addOperand(new Operand(Operand.TYPENUM_SMALL_CONSTANT, (short) 5));
@@ -394,10 +366,8 @@ public class InstructionExtV6Test extends InstructionTestBase {
   }
   
   public void testPopStackUserStack() {
-    
-    mockMachine.expects(atLeastOnce()).method("getCpu").will(returnValue(cpu));
-    mockCpu.expects(exactly(3)).method("popUserStack").with(eq(1113)).will(returnValue((short) 11));
-    mockCpu.expects(atLeastOnce()).method("incrementProgramCounter").with(eq(3));
+    mockMachine.expects(exactly(3)).method("popStack").with(eq(1113)).will(returnValue((short) 11));
+    mockMachine.expects(atLeastOnce()).method("incrementPC").with(eq(3));
     
     ExtendedInstruction push_stack = new ExtendedInstruction(machine, ExtendedStaticInfo.OP_POP_STACK);
     push_stack.addOperand(new Operand(Operand.TYPENUM_SMALL_CONSTANT, (short) 3));
@@ -411,13 +381,11 @@ public class InstructionExtV6Test extends InstructionTestBase {
   // **********************************
   
   public void testScrollWindow() {
-    
-    mockMachine.expects(atLeastOnce()).method("getCpu").will(returnValue(cpu));
     mockMachine.expects(once()).method("getScreen6").will(returnValue(screen6));
     mockscreen6.expects(once()).method("getWindow").with(eq(2)).will(returnValue(window6));
     mockwindow6.expects(once()).method("scroll").with(eq(5));
     
-    mockCpu.expects(atLeastOnce()).method("incrementProgramCounter").with(eq(3));
+    mockMachine.expects(atLeastOnce()).method("incrementPC").with(eq(3));
     
     ExtendedInstruction scroll_window = new ExtendedInstruction(machine, ExtendedStaticInfo.OP_SCROLL_WINDOW);
     scroll_window.addOperand(new Operand(Operand.TYPENUM_SMALL_CONSTANT, (short) 2));

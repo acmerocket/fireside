@@ -21,7 +21,6 @@
 package test.zmpp.vm;
 
 import org.jmock.Mock;
-import org.zmpp.encoding.ZsciiEncoding;
 import org.zmpp.encoding.ZsciiString;
 import org.zmpp.instructions.DefaultInstructionDecoder;
 import org.zmpp.io.InputStream;
@@ -34,6 +33,7 @@ import org.zmpp.vm.SaveGameDataStore;
 import org.zmpp.vm.ScreenModel;
 import org.zmpp.vm.StatusLine;
 import org.zmpp.vm.StoryFileHeader.Attribute;
+import org.zmpp.vm.Machine.MachineRunState;
 
 public class MachineTest extends MiniZorkSetup {
 
@@ -47,11 +47,9 @@ public class MachineTest extends MiniZorkSetup {
   private ScreenModel screen;
   private Mock mockDataStore;
   private SaveGameDataStore datastore;
-  private Output output;
-  private Input input;
-  
-  protected void setUp() throws Exception {
 
+  @Override
+  protected void setUp() throws Exception {
     super.setUp();
     machine = new MachineImpl();
     machine.initialize(config, new DefaultInstructionDecoder());
@@ -73,14 +71,12 @@ public class MachineTest extends MiniZorkSetup {
     
     machine.setScreen(screen);
     
-    output = machine.getOutput();    
-    output.setOutputStream(Output.OUTPUTSTREAM_SCREEN, outputStream1);
-    output.setOutputStream(Output.OUTPUTSTREAM_TRANSCRIPT, outputStream2);
-    output.setOutputStream(Output.OUTPUTSTREAM_MEMORY, outputStream3);
+    machine.setOutputStream(Output.OUTPUTSTREAM_SCREEN, outputStream1);
+    machine.setOutputStream(Output.OUTPUTSTREAM_TRANSCRIPT, outputStream2);
+    machine.setOutputStream(Output.OUTPUTSTREAM_MEMORY, outputStream3);
     
-    input = machine.getInput();
-    input.setInputStream(Input.INPUTSTREAM_KEYBOARD, inputStream0);
-    input.setInputStream(Input.INPUTSTREAM_FILE, inputStream1);
+    machine.setInputStream(Input.INPUTSTREAM_KEYBOARD, inputStream0);
+    machine.setInputStream(Input.INPUTSTREAM_FILE, inputStream1);
     
     mockDataStore = mock(SaveGameDataStore.class);
     datastore = (SaveGameDataStore) mockDataStore.proxy();
@@ -88,9 +84,9 @@ public class MachineTest extends MiniZorkSetup {
   
   public void testInitialState() {
     
-    assertEquals(fileheader, machine.getGameData().getStoryFileHeader());
-    assertEquals(minizorkmap, machine.getGameData().getMemory());
-    assertTrue(machine.getGameData().hasValidChecksum());
+    assertEquals(fileheader, machine.getFileHeader());
+    assertEquals(minizorkmap, machine.getMemory());
+    assertTrue(machine.hasValidChecksum());
   }
   
   public void testSetOutputStream() {
@@ -101,37 +97,27 @@ public class MachineTest extends MiniZorkSetup {
     mockOutputStream2.expects(atLeastOnce()).method("isSelected").will(returnValue(false));
     mockOutputStream3.expects(atLeastOnce()).method("isSelected").will(returnValue(false));
     mockOutputStream1.expects(atLeastOnce()).method("print").withAnyArguments();
-    output.selectOutputStream(1, true);
-    
-    output.print(new ZsciiString("test"));
+    machine.selectOutputStream(1, true);    
+    machine.print(new ZsciiString("test"));
   }
   
   public void testSelectOutputStream() {
-    
     mockOutputStream1.expects(once()).method("select").with(eq(true));
-    output.selectOutputStream(1, true);
+    machine.selectOutputStream(1, true);
   }
   
   public void testInputStream1() {
-    
-    mockScreen.expects(once()).method("setPaging").with(eq(false));
-    
-    input.setInputStream(Input.INPUTSTREAM_KEYBOARD, inputStream0);
-    input.setInputStream(Input.INPUTSTREAM_FILE, inputStream1);
-    
-    input.selectInputStream(Input.INPUTSTREAM_FILE);
-    assertEquals(inputStream1, input.getSelectedInputStream());
+    machine.setInputStream(Input.INPUTSTREAM_KEYBOARD, inputStream0);
+    machine.setInputStream(Input.INPUTSTREAM_FILE, inputStream1);    
+    machine.selectInputStream(Input.INPUTSTREAM_FILE);
+    assertEquals(inputStream1, machine.getSelectedInputStream());
   }
 
-  public void testInputStream0() {
-    
-    mockScreen.expects(once()).method("setPaging").with(eq(true));
-    
-    input.setInputStream(Input.INPUTSTREAM_KEYBOARD, inputStream0);
-    input.setInputStream(Input.INPUTSTREAM_FILE, inputStream1);
-    
-    input.selectInputStream(Input.INPUTSTREAM_KEYBOARD);
-    assertEquals(inputStream0, input.getSelectedInputStream());
+  public void testInputStream0() {    
+    machine.setInputStream(Input.INPUTSTREAM_KEYBOARD, inputStream0);
+    machine.setInputStream(Input.INPUTSTREAM_FILE, inputStream1);
+    machine.selectInputStream(Input.INPUTSTREAM_KEYBOARD);
+    assertEquals(inputStream0, machine.getSelectedInputStream());
   }
   
   public void testRandom() {
@@ -182,8 +168,6 @@ public class MachineTest extends MiniZorkSetup {
     mockOutputStream3.expects(atLeastOnce()).method("isSelected").will(returnValue(false));
     mockOutputStream1.expects(atLeastOnce()).method("print").withAnyArguments();
     
-    mockScreen.expects(once()).method("redraw");
-    
     mockOutputStream1.expects(atLeastOnce()).method("flush");
     mockOutputStream1.expects(once()).method("close");
     mockOutputStream2.expects(atLeastOnce()).method("flush");
@@ -195,25 +179,23 @@ public class MachineTest extends MiniZorkSetup {
     mockInputStream1.expects(once()).method("close");
     
     machine.start();
-    assertTrue(machine.getCpu().isRunning());
+    assertEquals(MachineRunState.RUNNING, machine.getRunState());
     machine.quit();
-    assertFalse(machine.getCpu().isRunning());
+    assertEquals(MachineRunState.STOPPED, machine.getRunState());
   }
   
-  public void testStatusLineScore() {
-    
-    machine.getCpu().setVariable(0x10, (short) 2);
+  public void testStatusLineScore() {    
+    machine.setVariable(0x10, (short) 2);
     mockStatusLine.expects(once()).method("updateStatusScore");
     machine.setStatusLine(statusLine);
     machine.updateStatusLine();
   }
   
   public void testStatusLineTime() {
-    
-    machine.getCpu().setVariable(0x10, (short) 2);
+    machine.setVariable(0x10, (short) 2);
     mockStatusLine.expects(once()).method("updateStatusTime");
     machine.setStatusLine(statusLine); // set the "time" flag
-    machine.getGameData().getMemory().writeByte(1, (byte) 2);
+    machine.getMemory().writeByte(1, (byte) 2);
     machine.updateStatusLine();
   }
   
@@ -235,9 +217,9 @@ public class MachineTest extends MiniZorkSetup {
     
     machine.start();
     
-    assertTrue(machine.getCpu().isRunning());
-    machine.getCpu().halt("error");
-    assertFalse(machine.getCpu().isRunning());
+    assertEquals(MachineRunState.RUNNING, machine.getRunState());
+    machine.halt("error");
+    assertEquals(MachineRunState.STOPPED, machine.getRunState());
   }
   
   public void testRestart() {
@@ -256,21 +238,13 @@ public class MachineTest extends MiniZorkSetup {
     assertTrue(machine.save(4711));
   }
   
-  public void testGetDictionary() {
-    
-    assertNotNull(machine.getGameData().getDictionary());
-  }
-  
   public void testSelectTranscriptOutputStream() {
-    
     mockOutputStream2.expects(once()).method("select").with(eq(true));
-
-    output.selectOutputStream(Output.OUTPUTSTREAM_TRANSCRIPT, true);
-    assertTrue(machine.getGameData().getStoryFileHeader().isEnabled(Attribute.TRANSCRIPTING));    
+    machine.selectOutputStream(Output.OUTPUTSTREAM_TRANSCRIPT, true);
+    assertTrue(machine.getFileHeader().isEnabled(Attribute.TRANSCRIPTING));    
   }
   
   public void testSelectMemoryOutputStreamWithoutTable() {
-    
     mockOutputStream2.expects(atLeastOnce()).method("select").with(eq(false));
     mockOutputStream3.expects(once()).method("select").with(eq(true));
     
@@ -281,77 +255,22 @@ public class MachineTest extends MiniZorkSetup {
     // for the error message
     mockOutputStream1.expects(atLeastOnce()).method("print").withAnyArguments();
     
-    output.selectOutputStream(Output.OUTPUTSTREAM_MEMORY, true);
+    machine.selectOutputStream(Output.OUTPUTSTREAM_MEMORY, true);
   }
   
   private int tableAddress;
   
-  public void testSelectMemoryOutputStreamWithTable() {
-    
+  public void testSelectMemoryOutputStreamWithTable() {  
     MemoryOutputStream memstream = new MemoryOutputStream(machine) {
       
+      @Override
       public void select(int table, int tableWidth) {
-        
         tableAddress = table;
       }
     };
-    output.setOutputStream(Output.OUTPUTSTREAM_MEMORY, memstream);
-    output.selectOutputStream3(4711, 0);
+    machine.setOutputStream(Output.OUTPUTSTREAM_MEMORY, memstream);
+    machine.selectOutputStream3(4711, 0);
     
     assertEquals(4711, tableAddress);
-  }
-  
-  public void testReadLine() {
-    
-    mockScreen.expects(once()).method("setPaging").with(eq(true));
-    mockScreen.expects(atLeastOnce()).method("displayCursor").with(eq(true));
-    mockScreen.expects(atLeastOnce()).method("displayCursor").with(eq(false));
-    mockScreen.expects(atLeastOnce()).method("redraw");
-    mockInputStream0.expects(atLeastOnce()).method("getZsciiChar")
-    	.will(onConsecutiveCalls(returnValue('H'), returnValue('i'),
-    				returnValue((char) ZsciiEncoding.NEWLINE)));
-    
-    mockOutputStream2.expects(atLeastOnce()).method("select").with(eq(false));
-    
-    mockOutputStream1.expects(atLeastOnce()).method("isSelected")
-    	.will(returnValue(true));
-    mockOutputStream2.expects(atLeastOnce()).method("isSelected")
-    	.will(returnValue(false));
-    mockOutputStream3.expects(atLeastOnce()).method("isSelected")
-    	.will(returnValue(false));
-    mockOutputStream1.expects(once()).method("flush");
-
-    mockOutputStream1.expects(atLeastOnce()).method("print")
-    	.with(eq('H'), eq(true));
-    mockOutputStream1.expects(atLeastOnce()).method("print")
-    	.with(eq('i'), eq(true));
-    mockOutputStream1.expects(atLeastOnce()).method("print")
-    	.with(eq((char) ZsciiEncoding.NEWLINE), eq(false));
-    
-    input.selectInputStream(0);
-    machine.readLine(4711, 0, 0);
-  }
-  
-  public void testReadChar() {
-
-    mockScreen.expects(atLeastOnce()).method("displayCursor").with(eq(true));
-    mockScreen.expects(atLeastOnce()).method("displayCursor").with(eq(false));
-    mockScreen.expects(atLeastOnce()).method("redraw");
-    
-    mockOutputStream1.expects(once()).method("isSelected")
-    	.will(returnValue(true));
-    mockOutputStream2.expects(once()).method("isSelected")
-    	.will(returnValue(false));
-    mockOutputStream3.expects(atLeastOnce()).method("isSelected")
-    	.will(returnValue(false));
-    mockOutputStream1.expects(once()).method("flush");
-    
-    mockInputStream0.expects(once()).method("getZsciiChar")
-    	.will(returnValue('L'));
-    
-    input.setInputStream(0, inputStream0);
-    input.setInputStream(1, inputStream1);
-    char zchar = machine.readChar(0, 0);
-    assertEquals('L', zchar);
-  }
+  }  
 }

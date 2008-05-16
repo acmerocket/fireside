@@ -116,8 +116,7 @@ public class Instruction0OpV3Test extends InstructionTestBase {
   
   @Test
   public void testSaveSuccess() {
-    mockMachine.expects(atLeastOnce()).method("getCpu").will(returnValue(cpu));
-    mockCpu.expects(once()).method("getProgramCounter").will(returnValue(1234));
+    mockMachine.expects(once()).method("getPC").will(returnValue(1234));
     mockMachine.expects(once()).method("save").will(returnValue(true));    
     Instruction0OpMock save = createInstructionMock(Short0StaticInfo.OP_SAVE);
     save.execute();
@@ -126,9 +125,8 @@ public class Instruction0OpV3Test extends InstructionTestBase {
   }
   
   @Test
-  public void testSaveFail() {    
-    mockMachine.expects(atLeastOnce()).method("getCpu").will(returnValue(cpu));
-    mockCpu.expects(once()).method("getProgramCounter").will(returnValue(1234));
+  public void testSaveFail() {
+    mockMachine.expects(once()).method("getPC").will(returnValue(1234));
     mockMachine.expects(once()).method("save").will(returnValue(false));
     
     Instruction0OpMock save = createInstructionMock(Short0StaticInfo.OP_SAVE);
@@ -200,8 +198,7 @@ public class Instruction0OpV3Test extends InstructionTestBase {
   @Test
   public void testRetPopped() {    
     Instruction0OpMock ret_popped = createInstructionMock(Short0StaticInfo.OP_RET_POPPED);
-    mockMachine.expects(atLeastOnce()).method("getCpu").will(returnValue(cpu));
-    mockCpu.expects(once()).method("getVariable").with(eq(0)).will(returnValue((short)15));
+    mockMachine.expects(once()).method("getVariable").with(eq(0)).will(returnValue((short)15));
     ret_popped.execute();    
     assertTrue(ret_popped.returned);
     assertEquals(15, ret_popped.returnValue);
@@ -214,8 +211,7 @@ public class Instruction0OpV3Test extends InstructionTestBase {
   @Test
   public void testPop() {
     Instruction0OpMock pop = createInstructionMock(Short0StaticInfo.OP_POP);
-    mockMachine.expects(atLeastOnce()).method("getCpu").will(returnValue(cpu));
-    mockCpu.expects(once()).method("getVariable").with(eq(0)).will(returnValue((short)42));
+    mockMachine.expects(once()).method("getVariable").with(eq(0)).will(returnValue((short)42));
     pop.execute();
     assertTrue(pop.nextInstructionCalled);
   }
@@ -227,8 +223,7 @@ public class Instruction0OpV3Test extends InstructionTestBase {
   @Test
   public void testVerifyTrue() {
     Instruction0OpMock verify = createInstructionMock(Short0StaticInfo.OP_VERIFY);
-    mockMachine.expects(once()).method("getGameData").will(returnValue(gamedata));
-    mockGameData.expects(once()).method("hasValidChecksum").will(returnValue(true));    
+    mockMachine.expects(once()).method("hasValidChecksum").will(returnValue(true));    
     verify.execute();
     assertTrue(verify.branchOnTestCalled);
     assertTrue(verify.branchOnTestCondition);
@@ -237,8 +232,7 @@ public class Instruction0OpV3Test extends InstructionTestBase {
   @Test
   public void testVerifyFalse() {
     Instruction0OpMock verify = createInstructionMock(Short0StaticInfo.OP_VERIFY);
-    mockMachine.expects(once()).method("getGameData").will(returnValue(gamedata));
-    mockGameData.expects(once()).method("hasValidChecksum").will(returnValue(false));    
+    mockMachine.expects(once()).method("hasValidChecksum").will(returnValue(false));    
     verify.execute();
     assertTrue(verify.branchOnTestCalled);
     assertFalse(verify.branchOnTestCondition);

@@ -82,15 +82,6 @@ public class VariableInstruction extends AbstractInstruction {
   }
   
   /**
-   * Returns the memory access object.
-   * 
-   * @return the memory access object
-   */
-  private Memory getMemoryAccess() {
-    return getMachine().getGameData().getMemory();
-  }
-  
-  /**
    * {@inheritDoc}
    */
   protected void doInstruction() {
@@ -201,7 +192,7 @@ public class VariableInstruction extends AbstractInstruction {
   }
     
   private void storew() {
-    final Memory memory = getMemoryAccess();
+    final Memory memory = getMemory();
     final int array = getUnsignedValue(0);
     final int wordIndex = getUnsignedValue(1);
     final short value = getValue(2);
@@ -211,7 +202,7 @@ public class VariableInstruction extends AbstractInstruction {
   }
   
   private void storeb() {
-    final Memory memory = getMemoryAccess();
+    final Memory memory = getMemory();
     final int array = getUnsignedValue(0);
     final int byteIndex = getUnsignedValue(1);
     final byte value = (byte) getValue(2);
@@ -249,7 +240,7 @@ public class VariableInstruction extends AbstractInstruction {
   
   private void push() {
     final short value = getValue(0);
-    getCpu().setVariable(0, value);
+    getMachine().setVariable(0, value);
     nextInstruction();
   }
   
@@ -263,26 +254,22 @@ public class VariableInstruction extends AbstractInstruction {
   }
   
   private void pull_v6() {
-    int userstack = 0;
+    int stack = 0;
     if (getNumOperands() == 1) {
-      userstack = getUnsignedValue(0);
+      stack = getUnsignedValue(0);
     }    
-    if (userstack > 0) {
-      storeResult(getCpu().popUserStack(userstack));
-    } else {
-      storeResult(getCpu().getVariable(0));
-    }
+    storeResult(getMachine().popStack(stack));
   }
   
   private void pull_std() {
     final int varnum = getUnsignedValue(0);
-    final short value = getCpu().getVariable(0);
+    final short value = getMachine().getVariable(0);
     
     // standard 1.1
     if (varnum == 0) {
-      getCpu().setStackTopElement(value);
+      getMachine().setStackTop(value);
     } else {
-      getCpu().setVariable(varnum, value);
+      getMachine().setVariable(varnum, value);
     }
   }
   
@@ -543,7 +530,7 @@ public class VariableInstruction extends AbstractInstruction {
     if (screenModel != null) {
       
       final TextCursor cursor = screenModel.getTextCursor();
-      final Memory memory = getMemoryAccess();
+      final Memory memory = getMemory();
       final int arrayAddr = getUnsignedValue(0);
       memory.writeShort(arrayAddr, (short) cursor.getLine());
       memory.writeShort(arrayAddr + 2, (short) cursor.getColumn());
@@ -552,7 +539,7 @@ public class VariableInstruction extends AbstractInstruction {
   }
   
   private void scan_table() {    
-    final Memory memory = getMemoryAccess();
+    final Memory memory = getMemory();
     final short x = getValue(0);
     final int table = getUnsignedValue(1);
     final int length = getUnsignedValue(2);
@@ -646,7 +633,7 @@ public class VariableInstruction extends AbstractInstruction {
   private void check_arg_count() {
     final int argumentNumber = getUnsignedValue(0);
     final int currentNumArgs =
-      getCpu().getCurrentRoutineContext().getNumArguments();
+      getMachine().getCurrentRoutineContext().getNumArguments();
     branchOnTest(argumentNumber <= currentNumArgs);
   }
   
@@ -654,7 +641,7 @@ public class VariableInstruction extends AbstractInstruction {
     final int first = getUnsignedValue(0);
     final int second = getUnsignedValue(1);
     int size = getValue(2);
-    final Memory memory = getMemoryAccess();
+    final Memory memory = getMemory();
 
     if (second == 0) {
       
@@ -713,7 +700,7 @@ public class VariableInstruction extends AbstractInstruction {
     //System.out.printf("@print_table, zscii-text = %d, width = %d," +
     //    " height = %d, skip = %d\n", zsciiText, width, height, skip);
     char zchar = 0;
-    final Memory memory = getMemoryAccess();
+    final Memory memory = getMemory();
     final TextCursor cursor = getMachine().getScreen().getTextCursor();
     final int column = cursor.getColumn();
     int row = cursor.getLine();
@@ -732,15 +719,11 @@ public class VariableInstruction extends AbstractInstruction {
   }
   
   private void encode_text() {
-    
     final int zsciiText = getUnsignedValue(0);
     final int length = getUnsignedValue(1);
     final int from = getUnsignedValue(2);
-    final int codedText = getUnsignedValue(3);    
-    final ZCharEncoder encoder = getMachine().getGameData().getZCharEncoder();
-    
-    encoder.encode(getMemoryAccess(), zsciiText + from,
-        length, codedText);
+    final int codedText = getUnsignedValue(3);
+    getMachine().encode(zsciiText + from, length, codedText);
     nextInstruction();
   }
 }

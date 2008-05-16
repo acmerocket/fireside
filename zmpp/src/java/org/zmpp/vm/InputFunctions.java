@@ -43,9 +43,6 @@ import org.zmpp.encoding.ZsciiStringTokenizer;
  */
 public class InputFunctions {
   private Machine machine;
-  private static final ZsciiString WHITESPACE =
-    new ZsciiString(new char[] { ' ', '\n', '\t', '\r' });
-
   /**
    * Constructor.
    * 
@@ -88,8 +85,8 @@ public class InputFunctions {
   public void checkTermination(final char terminateChar, final int textbuffer,
                                final int textpointer) {
     
-    final int version = machine.getGameData().getStoryFileHeader().getVersion();
-    final Memory memory = machine.getGameData().getMemory();
+    final int version = machine.getVersion();
+    final Memory memory = machine.getMemory();
     
     if (version >= 5) {
       
@@ -112,10 +109,12 @@ public class InputFunctions {
   }
   
   private void processInput(final int textbuffer, String inputString) {
-    final Memory memory = machine.getGameData().getMemory();
+    final Memory memory = machine.getMemory();
     final int bufferlen = memory.readUnsignedByte(textbuffer);
+    int storeOffset = machine.getVersion() <= 4 ? 1 : 2;
     for (int i = 0; i < inputString.length(); i++) {
-      memory.writeByte(textbuffer + i + 1, (byte) inputString.charAt(i));
+      memory.writeByte(textbuffer + i + storeOffset,
+              (byte) inputString.charAt(i));
     }
     char terminateChar = inputString.charAt(inputString.length() - 1);
     checkTermination(terminateChar, textbuffer, inputString.length() + 1);
@@ -129,17 +128,15 @@ public class InputFunctions {
   }
   
   private boolean isFileHeaderTerminator(final char zsciiChar) {
-    
-    final StoryFileHeader fileheader = machine.getGameData().getStoryFileHeader();
-    if (fileheader.getVersion() >= 5) {
-   
+    if (machine.getVersion() >= 5) {  
+      final StoryFileHeader fileheader = machine.getFileHeader();
       final int terminatorTable = fileheader.getTerminatorsAddress();
       if (terminatorTable == 0) {
         return false;
       }
     
       // Check the terminator table
-      final Memory memory = machine.getGameData().getMemory();
+      final Memory memory = machine.getMemory();
       short terminator;
     
       for (int i = 0; ; i++) {
@@ -196,15 +193,8 @@ public class InputFunctions {
    */
   public void tokenize(final int textbuffer, final int parsebuffer,
                        final int dictionaryAddress, final boolean flag) {
-    final Memory memory = machine.getGameData().getMemory();
-    Dictionary dictionary = machine.getGameData().getDictionary();
-    if (dictionaryAddress > 0) {
-      
-      dictionary = new UserDictionary(memory, dictionaryAddress,
-                         machine.getGameData().getZCharDecoder());
-    }
-    
-    final int version = machine.getGameData().getStoryFileHeader().getVersion();
+    final Memory memory = machine.getMemory();
+    final int version = machine.getVersion();
     final int bufferlen = memory.readUnsignedByte(textbuffer);
     final int textbufferstart = determineTextBufferStart(version);
     final int charsTyped = (version >= 5) ?
@@ -232,8 +222,8 @@ public class InputFunctions {
     
     for (int i = 0; i < numParsedTokens; i++) {
       
-      final ZsciiString token = tokens.get(i);      
-      final int entryAddress = dictionary.lookup(token);
+      final ZsciiString token = tokens.get(i);   
+      final int entryAddress = machine.lookupToken(dictionaryAddress, token);
       //System.out.println("token: '" + token + "' entryAddress: " + entryAddress);
       
       int startIndex = 0;
@@ -243,13 +233,10 @@ public class InputFunctions {
         parsedTokens.put(token, timesContained + 1);
           
         for (int j = 0; j < timesContained; j++) {
-          
           final int found = input.indexOf(token, startIndex);
           startIndex = found + token.length();
-        }
-          
-      } else {
-          
+        }    
+      } else { 
         parsedTokens.put(token, 1);          
       }
       
@@ -258,7 +245,6 @@ public class InputFunctions {
       tokenIndex++; // adjust by the buffer length byte
       
       if (version >= 5) {
-        
         // if version >= 5, there is also numbers typed byte
         tokenIndex++;
       }
@@ -290,7 +276,7 @@ public class InputFunctions {
    */
   private ZsciiString bufferToZscii(final int address, final int bufferlen,
       final int charsTyped) {
-    final Memory memory = machine.getGameData().getMemory();
+    final Memory memory = machine.getMemory();
     
     // If charsTyped is set, use that value as the limit
     final int numChars = (charsTyped > 0) ? charsTyped : bufferlen;
@@ -318,25 +304,12 @@ public class InputFunctions {
    */
   private List<ZsciiString> tokenize(final ZsciiString input) {
     
-    final List<ZsciiString> result = new ArrayList<ZsciiString>();
-    
-    // Retrieve the defined separators
-    final ZsciiStringBuilder separators = new ZsciiStringBuilder();
-    separators.append(WHITESPACE);
-    
-    final Dictionary dictionary = machine.getGameData().getDictionary();
-    final ZCharDecoder decoder =
-      machine.getGameData().getZCharDecoder();
-    for (int i = 0, n = dictionary.getNumberOfSeparators(); i < n; i++) {
-      separators.append(decoder.decodeZChar((char) dictionary.getSeparator(i)));
-    }
-    
+    final List<ZsciiString> result = new ArrayList<ZsciiString>();    
     // The tokenizer will also return the delimiters
-    final ZsciiString delim = separators.toZsciiString();
+    final ZsciiString delim = machine.getDictionaryDelimiters();
     final ZsciiStringTokenizer tok = new ZsciiStringTokenizer(input, delim);
     
-    while (tok.hasMoreTokens()) {
-      
+    while (tok.hasMoreTokens()) {      
       final ZsciiString token = tok.nextToken();
       if (!Character.isWhitespace(token.charAt(0))) {
         

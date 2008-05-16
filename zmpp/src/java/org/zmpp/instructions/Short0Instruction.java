@@ -58,7 +58,7 @@ public class Short0Instruction extends AbstractInstruction {
         nextInstruction();
         break;
       case Short0StaticInfo.OP_SAVE:
-        saveToStorage(getMachine().getCpu().getProgramCounter() + 1);
+        saveToStorage(getMachine().getPC() + 1);
         break;
       case Short0StaticInfo.OP_RESTORE:
         
@@ -71,7 +71,7 @@ public class Short0Instruction extends AbstractInstruction {
         getMachine().quit();
         break;
       case Short0StaticInfo.OP_RET_POPPED:        
-        returnFromRoutine(getCpu().getVariable(0));
+        returnFromRoutine(getMachine().getVariable(0));
         break;
       case Short0StaticInfo.OP_POP:
         if (getStoryFileVersion() < 5) {
@@ -90,7 +90,7 @@ public class Short0Instruction extends AbstractInstruction {
         nextInstruction();
         break;
       case Short0StaticInfo.OP_VERIFY:
-        branchOnTest(getMachine().getGameData().hasValidChecksum());
+        branchOnTest(getMachine().hasValidChecksum());
         break;
       case Short0StaticInfo.OP_PIRACY:
         branchOnTest(true);
@@ -119,15 +119,13 @@ public class Short0Instruction extends AbstractInstruction {
   }
   
   private void pop() {
-    
-    getCpu().getVariable(0);
+    getMachine().getVariable(0);
     nextInstruction();    
   }
   
   private void z_catch() {
-    
     // Stores the index of the current stack frame
-    storeResult((short) (getCpu().getRoutineContexts().size() - 1));
+    storeResult((short) (getMachine().getRoutineContexts().size() - 1));
     nextInstruction();
   }
 }

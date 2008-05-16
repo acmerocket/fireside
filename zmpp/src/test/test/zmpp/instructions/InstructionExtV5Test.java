@@ -54,11 +54,10 @@ public class InstructionExtV5Test extends InstructionTestBase {
   
   public void testSaveUndoSuccess() {
     
-    mockMachine.expects(atLeastOnce()).method("getCpu").will(returnValue(cpu));
-    mockCpu.expects(once()).method("getProgramCounter").will(returnValue(1234));
-    mockCpu.expects(once()).method("incrementProgramCounter").with(eq(3));
+    mockMachine.expects(once()).method("getPC").will(returnValue(1234));
+    mockMachine.expects(once()).method("incrementPC").with(eq(3));
     mockMachine.expects(atLeastOnce()).method("save_undo").will(returnValue(true));
-    mockCpu.expects(atLeastOnce()).method("setVariable").with(eq(0), eq((short) 1));
+    mockMachine.expects(atLeastOnce()).method("setVariable").with(eq(0), eq((short) 1));
     
     ExtendedInstruction save_undo = new ExtendedInstruction(machine, ExtendedStaticInfo.OP_SAVE_UNDO);
     save_undo.setLength(3);
@@ -66,12 +65,10 @@ public class InstructionExtV5Test extends InstructionTestBase {
   }
 
   public void testSaveUndoFail() {
-    
-    mockMachine.expects(atLeastOnce()).method("getCpu").will(returnValue(cpu));
-    mockCpu.expects(once()).method("getProgramCounter").will(returnValue(1234));
-    mockCpu.expects(once()).method("incrementProgramCounter").with(eq(3));
+    mockMachine.expects(once()).method("getPC").will(returnValue(1234));
+    mockMachine.expects(once()).method("incrementPC").with(eq(3));
     mockMachine.expects(atLeastOnce()).method("save_undo").will(returnValue(false));
-    mockCpu.expects(atLeastOnce()).method("setVariable").with(eq(0), eq((short) 0));
+    mockMachine.expects(atLeastOnce()).method("setVariable").with(eq(0), eq((short) 0));
     
     ExtendedInstruction save_undo = new ExtendedInstruction(machine, ExtendedStaticInfo.OP_SAVE_UNDO);
     save_undo.setLength(3);
@@ -83,10 +80,8 @@ public class InstructionExtV5Test extends InstructionTestBase {
   // **********************************
   
   public void testArtShift0() {
-    
-    mockMachine.expects(atLeastOnce()).method("getCpu").will(returnValue(cpu));
-    mockCpu.expects(atLeastOnce()).method("incrementProgramCounter").with(eq(3));
-    mockCpu.expects(once()).method("setVariable").with(eq(1), eq((short) 12));
+    mockMachine.expects(atLeastOnce()).method("incrementPC").with(eq(3));
+    mockMachine.expects(once()).method("setVariable").with(eq(1), eq((short) 12));
     
     ExtendedInstruction art_shift = new ExtendedInstruction(machine, ExtendedStaticInfo.OP_ART_SHIFT);
     art_shift.setLength(3);
@@ -97,10 +92,8 @@ public class InstructionExtV5Test extends InstructionTestBase {
   }
     
   public void testArtShiftPositivePositiveShift() {
-
-    mockMachine.expects(atLeastOnce()).method("getCpu").will(returnValue(cpu));
-    mockCpu.expects(atLeastOnce()).method("incrementProgramCounter").with(eq(3));
-    mockCpu.expects(once()).method("setVariable").with(eq(1), eq((short) 24));
+    mockMachine.expects(atLeastOnce()).method("incrementPC").with(eq(3));
+    mockMachine.expects(once()).method("setVariable").with(eq(1), eq((short) 24));
     
     ExtendedInstruction art_shift = new ExtendedInstruction(machine, ExtendedStaticInfo.OP_ART_SHIFT);
     art_shift.setLength(3);
@@ -112,10 +105,8 @@ public class InstructionExtV5Test extends InstructionTestBase {
   }    
 
   public void testArtShiftNegativePositiveShift() {
-
-    mockMachine.expects(atLeastOnce()).method("getCpu").will(returnValue(cpu));
-    mockCpu.expects(atLeastOnce()).method("incrementProgramCounter").with(eq(3));
-    mockCpu.expects(once()).method("setVariable").with(eq(1), eq((short) -24));
+    mockMachine.expects(atLeastOnce()).method("incrementPC").with(eq(3));
+    mockMachine.expects(once()).method("setVariable").with(eq(1), eq((short) -24));
     
     ExtendedInstruction art_shift = new ExtendedInstruction(machine, ExtendedStaticInfo.OP_ART_SHIFT);
     art_shift.setLength(3);
@@ -126,10 +117,8 @@ public class InstructionExtV5Test extends InstructionTestBase {
   }    
 
   public void testArtShiftPositiveNegativeShift() {
-
-    mockMachine.expects(atLeastOnce()).method("getCpu").will(returnValue(cpu));
-    mockCpu.expects(atLeastOnce()).method("incrementProgramCounter").with(eq(3));
-    mockCpu.expects(once()).method("setVariable").with(eq(1), eq((short) 6));
+    mockMachine.expects(atLeastOnce()).method("incrementPC").with(eq(3));
+    mockMachine.expects(once()).method("setVariable").with(eq(1), eq((short) 6));
     
     ExtendedInstruction art_shift = new ExtendedInstruction(machine, ExtendedStaticInfo.OP_ART_SHIFT);
     art_shift.setLength(3);
@@ -140,10 +129,8 @@ public class InstructionExtV5Test extends InstructionTestBase {
   }    
 
   public void testArtShiftNegativeNegativeShift() {
-
-    mockMachine.expects(atLeastOnce()).method("getCpu").will(returnValue(cpu));
-    mockCpu.expects(atLeastOnce()).method("incrementProgramCounter").with(eq(3));
-    mockCpu.expects(once()).method("setVariable").with(eq(1), eq((short) -6));
+    mockMachine.expects(atLeastOnce()).method("incrementPC").with(eq(3));
+    mockMachine.expects(once()).method("setVariable").with(eq(1), eq((short) -6));
     
     ExtendedInstruction art_shift = new ExtendedInstruction(machine, ExtendedStaticInfo.OP_ART_SHIFT);
     art_shift.setLength(3);

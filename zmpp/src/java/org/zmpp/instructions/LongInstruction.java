@@ -232,9 +232,9 @@ public class LongInstruction extends AbstractInstruction {
     
     final int varnum = getUnsignedValue(0);
     final short value = getValue(1);
-    final short varValue = (short) (getCpu().getVariable(varnum) - 1);
+    final short varValue = (short) (getMachine().getVariable(varnum) - 1);
     
-    getCpu().setVariable(varnum, varValue);
+    getMachine().setVariable(varnum, varValue);
     branchOnTest(varValue < value);
   }
   
@@ -242,9 +242,9 @@ public class LongInstruction extends AbstractInstruction {
     
     final int varnum = getUnsignedValue(0);
     final short value = getValue(1);
-    final short varValue = (short) (getCpu().getVariable(varnum) + 1);
+    final short varValue = (short) (getMachine().getVariable(varnum) + 1);
     
-    getCpu().setVariable(varnum, varValue);
+    getMachine().setVariable(varnum, varValue);
     branchOnTest(varValue > value);
   }
   
@@ -366,9 +366,9 @@ public class LongInstruction extends AbstractInstruction {
     
     // Handle stack variable as a special case (standard 1.1)
     if (varnum == 0) {
-      getCpu().setStackTopElement(value);
+      getMachine().setStackTop(value);
     } else {
-      getCpu().setVariable(varnum, value);
+      getMachine().setVariable(varnum, value);
     }
     nextInstruction();
   }
@@ -388,8 +388,7 @@ public class LongInstruction extends AbstractInstruction {
   private void loadb() {
     final int arrayAddress = getUnsignedValue(0);
     final int index = getUnsignedValue(1);
-    final Memory memory =
-      getMachine().getGameData().getMemory();
+    final Memory memory = getMemory();
     storeResult((short) memory.readUnsignedByte(arrayAddress + index));
     nextInstruction();
   }
@@ -397,8 +396,7 @@ public class LongInstruction extends AbstractInstruction {
   private void loadw() {
     final int arrayAddress = getUnsignedValue(0);
     final int index = getUnsignedValue(1);
-    final Memory memory =
-      getMachine().getGameData().getMemory();
+    final Memory memory = getMemory();
     storeResult(memory.readShort(arrayAddress + 2 * index));
     nextInstruction();
   }
@@ -459,9 +457,8 @@ public class LongInstruction extends AbstractInstruction {
     final int stackFrame = getUnsignedValue(1);
     
     // Unwind the stack
-    final int currentStackFrame = getCpu().getRoutineContexts().size() - 1;
+    final int currentStackFrame = getMachine().getRoutineContexts().size() - 1;
     if (currentStackFrame < stackFrame) {
-      
       getMachine().halt("@throw from an invalid stack frame state");
     } else {
      
@@ -469,8 +466,7 @@ public class LongInstruction extends AbstractInstruction {
       // reached
       final int diff = currentStackFrame - stackFrame;
       for (int i = 0; i < diff; i++) {
-        
-        getCpu().popRoutineContext((short) 0);
+        getMachine().returnWith((short) 0);
       }
       
       // and return with the return value

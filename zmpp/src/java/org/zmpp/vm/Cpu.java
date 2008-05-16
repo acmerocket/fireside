@@ -63,21 +63,21 @@ public interface Cpu {
    * 
    * @return the current program counter
    */
-  int getProgramCounter();
+  int getPC();
   
   /**
    * Sets the program counter to a new address.
    * 
    * @param address the new address
    */
-  void setProgramCounter(int address);
+  void setPC(int address);
   
   /**
    * Increments the program counter by the specified offset.
    * 
    * @param offset the offset
    */
-  void incrementProgramCounter(int offset);
+  void incrementPC(int offset);
 
   // ********************************************************************
   // ***** Stack operations
@@ -174,7 +174,7 @@ public interface Cpu {
    * @param returnValue the return value
    * @throws IllegalStateException if no RoutineContext exists
    */
-  void popRoutineContext(short returnValue);
+  void returnWith(short returnValue);
   
   /**
    * Returns the state of the current routine context stack as a non-
@@ -211,7 +211,7 @@ public interface Cpu {
    * @return the routine context created
    */
   RoutineContext call(int routineAddress, int returnAddress, short[] args,
-      short returnVariable);  
+                      int returnVariable);  
 
   // ***********************************************************************
   // **** Interrupt routines

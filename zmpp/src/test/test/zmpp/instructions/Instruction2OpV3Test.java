@@ -36,6 +36,7 @@ import org.zmpp.vm.Machine;
  */
 public class Instruction2OpV3Test extends InstructionTestBase {
 
+  @Override
 	@Before
   public void setUp() throws Exception {
     super.setUp();
@@ -110,8 +111,7 @@ public class Instruction2OpV3Test extends InstructionTestBase {
     je3.addOperand(new Operand(Operand.TYPENUM_LARGE_CONSTANT, (short) 0x04));
     je3.addOperand(new Operand(Operand.TYPENUM_VARIABLE, (short) 0x11));
     
-    mockMachine.expects(atLeastOnce()).method("getCpu").will(returnValue(cpu));
-    mockCpu.expects(once()).method("getVariable").with(eq(0x11)).will(returnValue((short) 1));
+    mockMachine.expects(once()).method("getVariable").with(eq(0x11)).will(returnValue((short) 1));
     je3.execute();
     
     assertTrue(je3.branchOnTestCalled);
@@ -223,9 +223,8 @@ public class Instruction2OpV3Test extends InstructionTestBase {
         LongStaticInfo.OP_DEC_CHK,
         Operand.TYPENUM_SMALL_CONSTANT, (short) 0x11,
         Operand.TYPENUM_SMALL_CONSTANT, (short) 5);
-    mockMachine.expects(atLeastOnce()).method("getCpu").will(returnValue(cpu));
-    mockCpu.expects(once()).method("getVariable").with(eq(0x11)).will(returnValue((short) 6));
-    mockCpu.expects(once()).method("setVariable").with(eq(0x11), eq((short) 5));
+    mockMachine.expects(once()).method("getVariable").with(eq(0x11)).will(returnValue((short) 6));
+    mockMachine.expects(once()).method("setVariable").with(eq(0x11), eq((short) 5));
     dec_chk_nobranch.execute();
     assertTrue(dec_chk_nobranch.branchOnTestCalled);
     assertFalse(dec_chk_nobranch.branchOnTestCondition);
@@ -237,9 +236,8 @@ public class Instruction2OpV3Test extends InstructionTestBase {
         LongStaticInfo.OP_DEC_CHK,
         Operand.TYPENUM_SMALL_CONSTANT, (short) 0x11,
         Operand.TYPENUM_SMALL_CONSTANT, (short) 5);
-    mockMachine.expects(atLeastOnce()).method("getCpu").will(returnValue(cpu));
-    mockCpu.expects(once()).method("getVariable").with(eq(0x11)).will(returnValue((short) 5));
-    mockCpu.expects(once()).method("setVariable").with(eq(0x11), eq((short) 4));
+    mockMachine.expects(once()).method("getVariable").with(eq(0x11)).will(returnValue((short) 5));
+    mockMachine.expects(once()).method("setVariable").with(eq(0x11), eq((short) 4));
     
     dec_chk_branch.execute();
     assertTrue(dec_chk_branch.branchOnTestCalled);
@@ -256,9 +254,8 @@ public class Instruction2OpV3Test extends InstructionTestBase {
         LongStaticInfo.OP_INC_CHK,
         Operand.TYPENUM_SMALL_CONSTANT, (short) 0x11,
         Operand.TYPENUM_SMALL_CONSTANT, (short) 7);
-    mockMachine.expects(atLeastOnce()).method("getCpu").will(returnValue(cpu));
-    mockCpu.expects(once()).method("getVariable").with(eq(0x11)).will(returnValue((short) 6));
-    mockCpu.expects(once()).method("setVariable").with(eq(0x11), eq((short) 7));
+    mockMachine.expects(once()).method("getVariable").with(eq(0x11)).will(returnValue((short) 6));
+    mockMachine.expects(once()).method("setVariable").with(eq(0x11), eq((short) 7));
 
     inc_chk_nobranch.execute();
     assertTrue(inc_chk_nobranch.branchOnTestCalled);
@@ -271,9 +268,8 @@ public class Instruction2OpV3Test extends InstructionTestBase {
         LongStaticInfo.OP_INC_CHK,
         Operand.TYPENUM_SMALL_CONSTANT, (short) 0x11,
         Operand.TYPENUM_SMALL_CONSTANT, (short) 5);
-    mockMachine.expects(atLeastOnce()).method("getCpu").will(returnValue(cpu));
-    mockCpu.expects(once()).method("getVariable").with(eq(0x11)).will(returnValue((short) 5));
-    mockCpu.expects(once()).method("setVariable").with(eq(0x11), eq((short) 6));
+    mockMachine.expects(once()).method("getVariable").with(eq(0x11)).will(returnValue((short) 5));
+    mockMachine.expects(once()).method("setVariable").with(eq(0x11), eq((short) 6));
     inc_chk_branch.execute();
     assertTrue(inc_chk_branch.branchOnTestCalled);
     assertTrue(inc_chk_branch.branchOnTestCondition);
@@ -313,8 +309,7 @@ public class Instruction2OpV3Test extends InstructionTestBase {
         Operand.TYPENUM_LARGE_CONSTANT, (short) 0x00ff,
         Operand.TYPENUM_LARGE_CONSTANT, (short) 0xff00);
     or.setStoreVariable((short) 0x12);
-    mockMachine.expects(atLeastOnce()).method("getCpu").will(returnValue(cpu));
-    mockCpu.expects(once()).method("setVariable").with(eq(0x12), eq((short) 0xffff));
+    mockMachine.expects(once()).method("setVariable").with(eq(0x12), eq((short) 0xffff));
     or.execute();
     assertTrue(or.nextInstructionCalled);
   }
@@ -329,8 +324,7 @@ public class Instruction2OpV3Test extends InstructionTestBase {
         Operand.TYPENUM_LARGE_CONSTANT, (short) 0x00ff,
         Operand.TYPENUM_LARGE_CONSTANT, (short) 0xff00);
     and.setStoreVariable((short) 0x12);
-    mockMachine.expects(atLeastOnce()).method("getCpu").will(returnValue(cpu));
-    mockCpu.expects(once()).method("setVariable").with(eq(0x12), eq((short) 0x0000));
+    mockMachine.expects(once()).method("setVariable").with(eq(0x12), eq((short) 0x0000));
     and.execute();
     assertTrue(and.nextInstructionCalled);    
   }
@@ -344,8 +338,7 @@ public class Instruction2OpV3Test extends InstructionTestBase {
     Instruction2OpMock add = createInstructionMock(LongStaticInfo.OP_ADD,
         Operand.TYPENUM_LARGE_CONSTANT, (short) -1,
         Operand.TYPENUM_LARGE_CONSTANT, (short) 3);
-    mockMachine.expects(atLeastOnce()).method("getCpu").will(returnValue(cpu));
-    mockCpu.expects(once()).method("setVariable").with(eq(0x12), eq((short) 2));
+    mockMachine.expects(once()).method("setVariable").with(eq(0x12), eq((short) 2));
     add.setStoreVariable((short) 0x12);
     add.execute();
     assertTrue(add.nextInstructionCalled);
@@ -360,8 +353,7 @@ public class Instruction2OpV3Test extends InstructionTestBase {
     Instruction2OpMock sub = createInstructionMock(LongStaticInfo.OP_SUB,
         Operand.TYPENUM_LARGE_CONSTANT, (short) -1,
         Operand.TYPENUM_LARGE_CONSTANT, (short) 3);
-    mockMachine.expects(atLeastOnce()).method("getCpu").will(returnValue(cpu));
-    mockCpu.expects(once()).method("setVariable").with(eq(0x12), eq((short) -4));
+    mockMachine.expects(once()).method("setVariable").with(eq(0x12), eq((short) -4));
     sub.setStoreVariable((short) 0x12);
     sub.execute();
     assertTrue(sub.nextInstructionCalled);
@@ -377,8 +369,7 @@ public class Instruction2OpV3Test extends InstructionTestBase {
         Operand.TYPENUM_LARGE_CONSTANT, (short) -4,
         Operand.TYPENUM_LARGE_CONSTANT, (short) 3);
     mul.setStoreVariable((short) 0x12);
-    mockMachine.expects(atLeastOnce()).method("getCpu").will(returnValue(cpu));
-    mockCpu.expects(once()).method("setVariable").with(eq(0x12), eq((short) -12));
+    mockMachine.expects(once()).method("setVariable").with(eq(0x12), eq((short) -12));
     mul.execute();
     assertTrue(mul.nextInstructionCalled);
   }
@@ -393,8 +384,7 @@ public class Instruction2OpV3Test extends InstructionTestBase {
         Operand.TYPENUM_LARGE_CONSTANT, (short) -7,
         Operand.TYPENUM_LARGE_CONSTANT, (short) 3);
     div.setStoreVariable((short) 0x12);
-    mockMachine.expects(atLeastOnce()).method("getCpu").will(returnValue(cpu));
-    mockCpu.expects(once()).method("setVariable").with(eq(0x12), eq((short) -2));
+    mockMachine.expects(once()).method("setVariable").with(eq(0x12), eq((short) -2));
     div.execute();
     assertTrue(div.nextInstructionCalled);
   }
@@ -418,8 +408,7 @@ public class Instruction2OpV3Test extends InstructionTestBase {
     Instruction2OpMock mod = createInstructionMock(LongStaticInfo.OP_MOD,
         Operand.TYPENUM_LARGE_CONSTANT, (short) -7,
         Operand.TYPENUM_LARGE_CONSTANT, (short) 3);
-    mockMachine.expects(atLeastOnce()).method("getCpu").will(returnValue(cpu));
-    mockCpu.expects(once()).method("setVariable").with(eq(0x12), eq((short) -1));
+    mockMachine.expects(once()).method("setVariable").with(eq(0x12), eq((short) -1));
     mod.setStoreVariable((short) 0x12);
     mod.execute();
     assertTrue(mod.nextInstructionCalled);
@@ -507,8 +496,7 @@ public class Instruction2OpV3Test extends InstructionTestBase {
     Instruction2OpMock store = createInstructionMock(LongStaticInfo.OP_STORE,
         Operand.TYPENUM_SMALL_CONSTANT, (byte) 0x11,
         Operand.TYPENUM_SMALL_CONSTANT, (byte) 42);
-    mockMachine.expects(atLeastOnce()).method("getCpu").will(returnValue(cpu));
-    mockCpu.expects(once()).method("setVariable").with(eq(0x11), eq((short) 42));
+    mockMachine.expects(once()).method("setVariable").with(eq(0x11), eq((short) 42));
     store.execute();
     assertTrue(store.nextInstructionCalled);
   }
@@ -519,8 +507,7 @@ public class Instruction2OpV3Test extends InstructionTestBase {
     Instruction2OpMock store = createInstructionMock(LongStaticInfo.OP_STORE,
         Operand.TYPENUM_SMALL_CONSTANT, (byte) 0x00,
         Operand.TYPENUM_SMALL_CONSTANT, (byte) 42);
-    mockMachine.expects(atLeastOnce()).method("getCpu").will(returnValue(cpu));
-    mockCpu.expects(once()).method("setStackTopElement").with(eq((short) 42));
+    mockMachine.expects(once()).method("setStackTop").with(eq((short) 42));
     store.execute();
     assertTrue(store.nextInstructionCalled);
   }
@@ -536,12 +523,9 @@ public class Instruction2OpV3Test extends InstructionTestBase {
         Operand.TYPENUM_SMALL_CONSTANT, (short) 1);
     loadw.setStoreVariable((short) 0x11);
   
-    mockMachine.expects(atLeastOnce()).method("getGameData")
-      .will(returnValue(gamedata));
-    mockGameData.expects(once()).method("getMemory").will(returnValue(memory));
+    mockMachine.expects(once()).method("getMemory").will(returnValue(memory));
     mockMemory.expects(once()).method("readShort").with(eq(0x0010 + 2)).will(returnValue((short) 123));
-    mockMachine.expects(atLeastOnce()).method("getCpu").will(returnValue(cpu));
-    mockCpu.expects(once()).method("setVariable").with(eq(0x11), eq((short)123));
+    mockMachine.expects(once()).method("setVariable").with(eq(0x11), eq((short)123));
     loadw.execute();
     assertTrue(loadw.nextInstructionCalled);
   }
@@ -557,12 +541,9 @@ public class Instruction2OpV3Test extends InstructionTestBase {
         Operand.TYPENUM_LARGE_CONSTANT, (short) 0x0010,
         Operand.TYPENUM_SMALL_CONSTANT, (byte) 1);
     loadb.setStoreVariable((short) 0x11);
-    mockMachine.expects(atLeastOnce()).method("getGameData")
-    	.will(returnValue(gamedata));
-    mockGameData.expects(once()).method("getMemory").will(returnValue(memory));
+    mockMachine.expects(once()).method("getMemory").will(returnValue(memory));
     mockMemory.expects(once()).method("readUnsignedByte").with(eq(0x0010 + 1)).will(returnValue((short) 42));
-    mockMachine.expects(atLeastOnce()).method("getCpu").will(returnValue(cpu));
-    mockCpu.expects(once()).method("setVariable").with(eq(0x11), eq((short) 42));
+    mockMachine.expects(once()).method("setVariable").with(eq(0x11), eq((short) 42));
     
     loadb.execute();
     assertTrue(loadb.nextInstructionCalled);
@@ -574,12 +555,11 @@ public class Instruction2OpV3Test extends InstructionTestBase {
   
 	@Test
   public void testGetProp() {
-    mockMachine.expects(atLeastOnce()).method("getCpu").will(returnValue(cpu));
     mockMachine.expects(once()).method("getProperty")
     	.with(eq(1), eq(18))
     	.will(returnValue(0x01ee));
-    mockCpu.expects(once()).method("setVariable").with(eq(17), eq((short) 494));
-    mockCpu.expects(once()).method("incrementProgramCounter").with(eq(6));
+    mockMachine.expects(once()).method("setVariable").with(eq(17), eq((short) 494));
+    mockMachine.expects(once()).method("incrementPC").with(eq(6));
     
     // Two-byte property, Object 1, property 18
     LongInstruction get_prop_two = createInstruction(
@@ -612,11 +592,10 @@ public class Instruction2OpV3Test extends InstructionTestBase {
   
 	@Test
   public void testGetPropAddr() {
-    mockMachine.expects(atLeastOnce()).method("getCpu").will(returnValue(cpu));
     mockMachine.expects(once()).method("getPropertyAddress")
     	.with(eq(1), eq(18)).will(returnValue(0x0a55));
-    mockCpu.expects(once()).method("setVariable").with(eq(17), eq((short) 0x0a55));
-    mockCpu.expects(once()).method("incrementProgramCounter").with(eq(6));
+    mockMachine.expects(once()).method("setVariable").with(eq(17), eq((short) 0x0a55));
+    mockMachine.expects(once()).method("incrementPC").with(eq(6));
 
     LongInstruction get_prop_addr_exists = createInstruction(
         LongStaticInfo.OP_GET_PROP_ADDR,
@@ -635,8 +614,7 @@ public class Instruction2OpV3Test extends InstructionTestBase {
   public void testGetNextProp() {
     mockMachine.expects(once()).method("getNextProperty")
     	.with(eq(1), eq(12)).will(returnValue(15));
-    mockMachine.expects(atLeastOnce()).method("getCpu").will(returnValue(cpu));
-    mockCpu.expects(once()).method("setVariable").with(eq(0x11), eq((short) 15));
+    mockMachine.expects(once()).method("setVariable").with(eq(0x11), eq((short) 15));
 
     Instruction2OpMock get_next_prop = createInstructionMock(
         LongStaticInfo.OP_GET_NEXT_PROP,
@@ -667,23 +645,24 @@ public class Instruction2OpV3Test extends InstructionTestBase {
         int opcode) {
       super(machine, operandCount, opcode);
     }
-    
+    @Override
     protected void nextInstruction() {
       nextInstructionCalled = true;
     }
     
+    @Override
     protected void returnFromRoutine(short retval) {
       returned = true;
       returnValue = retval;
     }
-    
+    @Override
     protected void branchOnTest(boolean flag) {
       branchOnTestCalled = true;
       branchOnTestCondition = flag;
     }
   }
     
-  public static Instruction2OpMock createInstructionMock(Machine machine,
+  static Instruction2OpMock createInstructionMock(Machine machine,
   		int opcode, int typenum1, short value1, int typenum2, short value2) {
     Instruction2OpMock result = new Instruction2OpMock(machine, opcode);
     result.addOperand(new Operand(typenum1, value1));

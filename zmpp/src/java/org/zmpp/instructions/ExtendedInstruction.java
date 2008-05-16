@@ -154,7 +154,7 @@ public class ExtendedInstruction extends AbstractInstruction {
     
     // Target PC offset is two because of the extra opcode byte and 
     // operand type byte compared to the 0OP instruction
-    final int pc = getMachine().getCpu().getProgramCounter() + 3;
+    final int pc = getMachine().getPC() + 3;
     final boolean success = getMachine().save_undo(pc);
     storeResult((short) (success ? TRUE : FALSE));
     nextInstruction();
@@ -170,7 +170,7 @@ public class ExtendedInstruction extends AbstractInstruction {
     } else {
       
       final int storevar = gamestate.getStoreVariable(getMachine());      
-      getCpu().setVariable(storevar, (short) RESTORE_TRUE);      
+      getMachine().setVariable(storevar, (short) RESTORE_TRUE);      
     }
   }
   
@@ -204,7 +204,7 @@ public class ExtendedInstruction extends AbstractInstruction {
     // Saving to tables is not supported yet, this is the standard save feature
     // Offset is 3 because there are two opcode bytes + 1 optype byte before
     // the actual store var byte
-    saveToStorage(getMachine().getCpu().getProgramCounter() + 3);
+    saveToStorage(getMachine().getPC() + 3);
   }
   
   private void restore() {
@@ -253,8 +253,7 @@ public class ExtendedInstruction extends AbstractInstruction {
         getMachine().getPictureManager().getPictureSize(picnum);
       if (picdim != null) {
         
-        final Memory memory =
-          getMachine().getGameData().getMemory();
+        final Memory memory = getMemory();
         memory.writeUnsignedShort(array, picdim.getHeight());
         memory.writeUnsignedShort(array + 2, picdim.getWidth());
         result = true;
@@ -264,7 +263,7 @@ public class ExtendedInstruction extends AbstractInstruction {
   }
   
   private void writePictureFileInfo(final int array) {
-    final Memory memory = getMachine().getGameData().getMemory();
+    final Memory memory = getMemory();
     memory.writeUnsignedShort(array,
         getMachine().getPictureManager().getNumPictures());
     memory.writeUnsignedShort(array + 2,
@@ -364,25 +363,11 @@ public class ExtendedInstruction extends AbstractInstruction {
   private void pop_stack() {
     int numItems = getUnsignedValue(0);
     int stack = 0;
-    if (getNumOperands() == 2) {
-      
+    if (getNumOperands() == 2) {      
       stack = getUnsignedValue(1);
     }
-    
-    if (stack == 0) {
-      
-      // pop from system stack
-      for (int i = 0; i < numItems; i++) {
-        
-        getCpu().getVariable(0);
-      }
-    } else {
-            
-      // pop from user stack
-      for (int i = 0; i < numItems; i++) {
-        
-        getCpu().popUserStack(stack);
-      }
+    for (int i = 0; i < numItems; i++) {
+      getMachine().popStack(stack);
     }
     nextInstruction();
   }
@@ -390,21 +375,10 @@ public class ExtendedInstruction extends AbstractInstruction {
   private void push_stack() {
     short value = getValue(0);
     int stack = 0;
-    if (getNumOperands() == 2) {
-      
+    if (getNumOperands() == 2) {      
       stack = getUnsignedValue(1);
     }
-    
-    boolean ok = true;    
-    if (stack == 0) {
-      
-      getCpu().setVariable(0, value);
-      
-    } else {
-      
-      ok = getCpu().pushUserStack(stack, value);
-    }
-    branchOnTest(ok);
+    branchOnTest(getMachine().pushStack(stack, value));
   }
   
   private void scroll_window() {

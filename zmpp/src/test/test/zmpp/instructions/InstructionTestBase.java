@@ -23,25 +23,19 @@ import org.jmock.Mock;
 import org.jmock.MockObjectTestCase;
 import org.zmpp.base.Memory;
 import org.zmpp.io.OutputStream;
-import org.zmpp.vm.Cpu;
 import org.zmpp.vm.Dictionary;
-import org.zmpp.vm.GameData;
 import org.zmpp.vm.Machine;
 
 public abstract class InstructionTestBase extends MockObjectTestCase {
 
 	protected Mock mockMachine;
 	protected Machine machine;
-	protected Mock mockGameData;
-	protected GameData gamedata;
 	protected Mock mockOutputStream;
 	protected OutputStream outputStream;
 	protected Mock mockMemory;
 	protected Memory memory;
 	protected Mock mockDictionary;
 	protected Dictionary dictionary;
-	protected Mock mockCpu;
-	protected Cpu cpu;
 
 	/**
 	 * {@inheritDoc}
@@ -51,15 +45,11 @@ public abstract class InstructionTestBase extends MockObjectTestCase {
 		super.setUp();
 		mockMachine = mock(Machine.class);
 		machine = (Machine) mockMachine.proxy();
-		mockGameData = mock(GameData.class);
-		gamedata = (GameData) mockGameData.proxy();
 		mockOutputStream = mock(OutputStream.class);
 		outputStream = (OutputStream) mockOutputStream.proxy();
 		mockMemory = mock(Memory.class);
 		memory = (Memory) mockMemory.proxy();
 		mockDictionary = mock(Dictionary.class);
 		dictionary = (Dictionary) mockDictionary.proxy();
-		mockCpu = mock(Cpu.class);
-		cpu = (Cpu) mockCpu.proxy();
 	}
 }

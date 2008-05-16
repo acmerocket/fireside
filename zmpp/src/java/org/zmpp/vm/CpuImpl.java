@@ -79,29 +79,24 @@ public class CpuImpl implements Cpu, Interruptable {
   }
   
   public void reset() {
-
-    final GameData gamedata = machine.getGameData();
-    decoder.initialize(machine, gamedata.getMemory());
+    decoder.initialize(machine);
     stack = new FastShortStack(STACKSIZE);
     routineContextStack = new ArrayList<RoutineContext>();
-    globalsAddress = gamedata.getStoryFileHeader().getGlobalsAddress();
+    globalsAddress = machine.getFileHeader().getGlobalsAddress();
     
-    if (gamedata.getStoryFileHeader().getVersion() == 6) {
-      
+    if (machine.getVersion() == 6) {
       // Call main function in version 6
-      call(gamedata.getStoryFileHeader().getProgramStart(), 0, new short[0],
-           (short) 0);
-      
+      call(machine.getFileHeader().getProgramStart(), 0, new short[0],
+           (short) 0);     
     } else {
-      
-      programCounter = gamedata.getStoryFileHeader().getProgramStart();
+      programCounter = machine.getFileHeader().getProgramStart();
     }
   }
  
   /**
    * {@inheritDoc}
    */
-  public int getProgramCounter() {
+  public int getPC() {
     
     return programCounter;
   }
@@ -109,12 +104,12 @@ public class CpuImpl implements Cpu, Interruptable {
   /**
    * {@inheritDoc}
    */
-  public void setProgramCounter(final int address) {
+  public void setPC(final int address) {
 
     programCounter = address;
   }
   
-  public void incrementProgramCounter(final int offset) {
+  public void incrementPC(final int offset) {
     
     programCounter += offset;
   }
@@ -124,7 +119,7 @@ public class CpuImpl implements Cpu, Interruptable {
    */
   public Instruction nextStep() {
     
-    return decoder.decodeInstruction(getProgramCounter());
+    return decoder.decodeInstruction(getPC());
   }
     
   /**
@@ -133,10 +128,8 @@ public class CpuImpl implements Cpu, Interruptable {
   public int translatePackedAddress(final int packedAddress,
       final boolean isCall) {
   
-    // Version specific packed address translation
-    final GameData gamedata = machine.getGameData();
-    
-    switch (gamedata.getStoryFileHeader().getVersion()) {
+    // Version specific packed address translation    
+    switch (machine.getVersion()) {
     
       case 1: case 2: case 3:  
         return packedAddress * 2;
@@ -146,8 +139,8 @@ public class CpuImpl implements Cpu, Interruptable {
       case 6:
       case 7:
         return packedAddress * 4 + 8 *
-          (isCall ? gamedata.getStoryFileHeader().getRoutineOffset() :
-                    gamedata.getStoryFileHeader().getStaticStringOffset());
+          (isCall ? machine.getFileHeader().getRoutineOffset() :
+                    machine.getFileHeader().getStaticStringOffset());
       case 8:
       default:
         return packedAddress * 8;
@@ -160,7 +153,7 @@ public class CpuImpl implements Cpu, Interruptable {
   public int computeBranchTarget(final short offset,
       final int instructionLength) {
         
-    return getProgramCounter() + instructionLength + offset - 2;
+    return getPC() + instructionLength + offset - 2;
   }
   
   // ********************************************************************
@@ -213,8 +206,7 @@ public class CpuImpl implements Cpu, Interruptable {
   /**
    * {@inheritDoc}
    */
-  public short getStackElement(final int index) {
-    
+  public short getStackElement(final int index) {    
     return stack.getValueAt(index);
   }
   
@@ -222,8 +214,7 @@ public class CpuImpl implements Cpu, Interruptable {
    * {@inheritDoc}
    */
   public short popUserStack(int userstackAddress) {
-
-    Memory memory = machine.getGameData().getMemory();
+    Memory memory = machine.getMemory();
     int numFreeSlots = memory.readUnsignedShort(userstackAddress);
     numFreeSlots++;
     memory.writeUnsignedShort(userstackAddress, numFreeSlots);
@@ -234,7 +225,7 @@ public class CpuImpl implements Cpu, Interruptable {
    * {@inheritDoc}
    */
   public boolean pushUserStack(int userstackAddress, short value) {
-    Memory memory = machine.getGameData().getMemory();
+    Memory memory = machine.getMemory();
     int numFreeSlots = memory.readUnsignedShort(userstackAddress);
     if (numFreeSlots > 0) {
       memory.writeShort(userstackAddress + (numFreeSlots * 2), value);
@@ -250,15 +241,11 @@ public class CpuImpl implements Cpu, Interruptable {
   public short getVariable(final int variableNumber) {
     final Cpu.VariableType varType = getVariableType(variableNumber);
     if (varType == Cpu.VariableType.STACK) {
-      
       if (stack.size() == getInvocationStackPointer()) {
-        
         //throw new IllegalStateException("stack underflow error");
         System.err.println("stack underflow error");
         return 0;
-        
-      } else {
-   
+      } else {   
         return stack.pop();
       }
       
@@ -270,7 +257,7 @@ public class CpuImpl implements Cpu, Interruptable {
       
     } else { // GLOBAL
       
-      return machine.getGameData().getMemory().readShort(globalsAddress
+      return machine.getMemory().readShort(globalsAddress
           + (getGlobalVariableNumber(variableNumber) * 2));
     }
   }
@@ -297,7 +284,7 @@ public class CpuImpl implements Cpu, Interruptable {
       checkLocalVariableAccess(localVarNumber);
       getCurrentRoutineContext().setLocalVariable(localVarNumber, value);
     } else {
-      machine.getGameData().getMemory().writeShort(globalsAddress
+      machine.getMemory().writeShort(globalsAddress
           + (getGlobalVariableNumber(variableNumber) * 2), value);
     }
   }
@@ -329,7 +316,7 @@ public class CpuImpl implements Cpu, Interruptable {
   /**
    * {@inheritDoc}
    */
-  public void popRoutineContext(final short returnValue) {
+  public void returnWith(final short returnValue) {
     if (routineContextStack.size() > 0) {
       final RoutineContext popped =
         routineContextStack.remove(routineContextStack.size() - 1);
@@ -337,7 +324,7 @@ public class CpuImpl implements Cpu, Interruptable {
     
       // Restore stack pointer and pc
       setStackPointer(popped.getInvocationStackPointer());
-      setProgramCounter(popped.getReturnAddress());
+      setPC(popped.getReturnAddress());
       final int returnVariable = popped.getReturnVariable();
       if (returnVariable != RoutineContext.DISCARD_RESULT) {
         
@@ -386,7 +373,7 @@ public class CpuImpl implements Cpu, Interruptable {
   }
   
   public RoutineContext call(final int packedRoutineAddress,
-      final int returnAddress, final short[] args, final short returnVariable) {
+      final int returnAddress, final short[] args, final int returnVariable) {
     
     final int routineAddress =
       translatePackedAddress(packedRoutineAddress, true);
@@ -427,7 +414,7 @@ public class CpuImpl implements Cpu, Interruptable {
     pushRoutineContext(routineContext);
     
     // Jump to the address
-    setProgramCounter(routineContext.getStartAddress());
+    setPC(routineContext.getStartAddress());
     return routineContext;
   }
 
@@ -442,13 +429,12 @@ public class CpuImpl implements Cpu, Interruptable {
    * @return a RoutineContext object
    */
   private RoutineContext decodeRoutine(final int routineAddress) {
-    final GameData gamedata = machine.getGameData();
-    final Memory memory = gamedata.getMemory();    
+    final Memory memory = machine.getMemory();    
     final int numLocals = memory.readUnsignedByte(routineAddress);
     final short[] locals = new short[numLocals];
     int currentAddress = routineAddress + 1;
     
-    if (gamedata.getStoryFileHeader().getVersion() <= 4) {
+    if (machine.getVersion() <= 4) {
       // Only story files <= 4 actually store default values here,
       // after V5 they are assumed as being 0 (standard document 1.0, S.5.2.1) 
       for (int i = 0; i < numLocals; i++) {
@@ -539,7 +525,7 @@ public class CpuImpl implements Cpu, Interruptable {
     executeInterrupt = true;
     final int originalRoutineStackSize = getRoutineContexts().size();
     final RoutineContext routineContext = call(routineAddress,
-        machine.getCpu().getProgramCounter(),
+        getPC(),
         new short[0], (short) RoutineContext.DISCARD_RESULT);
     
     for (;;) {

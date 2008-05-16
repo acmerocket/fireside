@@ -36,6 +36,7 @@ public class MemoryTest extends TestCase {
   private Memory memory;
   private byte[] data = { 0x03, 0x00, 0x37, 0x09, (byte) 0xff, (byte) 0xff };
   
+  @Override
   protected void setUp() throws Exception {
     memory = new DefaultMemory(data);
   }
@@ -85,10 +86,5 @@ public class MemoryTest extends TestCase {
     
     memory.writeUnsigned32(0x00, 0xf0f00f0fL);
     assertEquals(0x00000000f0f00f0fL, memory.readUnsigned32(0x00));
-  }
-  
-  public void testWriteUnsigned48() {
-    memory.writeUnsigned48(0, 12345678l);
-    assertEquals(12345678l, memory.readUnsigned48(0));
-  }
+  }  
 }

@@ -33,44 +33,31 @@ public class FontSelector {
   
   private Font fixedFont, stdFont;
   
-  public void setFixedFont(Font font) {
-    fixedFont = font;
-  }
+  public void setFixedFont(Font font) { fixedFont = font; }
   
-  public void setStandardFont(Font font) {
-    stdFont = font;
-  }
+  public void setStandardFont(Font font) { stdFont = font; }
   
   public Font getFont(TextAnnotation annotation) {
-    return getFont(annotation.getFont(), annotation.getStyle());
+    return getStyledFont(annotation.isFixed(), annotation.isBold(),
+                         annotation.isItalic());
   }
 
   public Font getFont(int fontnum, int style) {
-    if (fontnum == ScreenModel.FONT_FIXED ||
-        (style & ScreenModel.TEXTSTYLE_FIXED) == ScreenModel.TEXTSTYLE_FIXED) {
-      return getStyledFont(fixedFont, style);
-    } else if (fontnum == ScreenModel.FONT_NORMAL) {
-      return getStyledFont(stdFont, style);
-    }
-    return null;
+    return getFont(new TextAnnotation(fontnum, style));
   }
   
   public Font getFixedFont() {
-    return getStyledFont(fixedFont, ScreenModel.TEXTSTYLE_ROMAN);
+    return getStyledFont(true, false, false);
   }
   
-  private Font getStyledFont(Font romanFont, int style) {
-    Font font = romanFont;
-    if ((style & ScreenModel.TEXTSTYLE_FIXED) == ScreenModel.TEXTSTYLE_FIXED) {
-      font = fixedFont;
-    }
-    if ((style & ScreenModel.TEXTSTYLE_BOLD) == ScreenModel.TEXTSTYLE_BOLD) {
+  private Font getStyledFont(boolean fixed, boolean bold, boolean italic) {
+    Font font = fixed ? fixedFont : stdFont;
+    if (bold) {
       font = font.deriveFont(Font.BOLD);
     }
-    if ((style & ScreenModel.TEXTSTYLE_ITALIC) == ScreenModel.TEXTSTYLE_ITALIC) {
+    if (italic) {
       font = font.deriveFont(Font.ITALIC);
     }
-    
     return font;
   }
 }

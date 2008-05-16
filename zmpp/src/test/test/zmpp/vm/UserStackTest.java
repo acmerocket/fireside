@@ -26,7 +26,6 @@ import org.zmpp.base.DefaultMemory;
 import org.zmpp.base.Memory;
 import org.zmpp.vm.Cpu;
 import org.zmpp.vm.CpuImpl;
-import org.zmpp.vm.GameData;
 import org.zmpp.vm.InstructionDecoder;
 import org.zmpp.vm.Machine;
 import org.zmpp.vm.StoryFileHeader;
@@ -39,10 +38,9 @@ import org.zmpp.vm.StoryFileHeader;
  */
 public class UserStackTest extends MockObjectTestCase {
 
-  private Mock mockMachine, mockDecoder, mockGameData, mockFileHeader;
+  private Mock mockMachine, mockDecoder, mockFileHeader;
   private Machine machine;
   private InstructionDecoder decoder;
-  private GameData gamedata;
   private Cpu cpu;
   private StoryFileHeader fileheader;
   private Memory memory;
@@ -50,25 +48,23 @@ public class UserStackTest extends MockObjectTestCase {
   // A stack with three words, but only two slots
   private byte[] stackdata = {  0x00, 0x02, 0x00, 0x00, 0x00, 0x00 };
   
+  @Override
   public void setUp() throws Exception {
     mockMachine = mock(Machine.class);
     mockDecoder = mock(InstructionDecoder.class);
-    mockGameData = mock(GameData.class);
     mockFileHeader = mock(StoryFileHeader.class);
     
     machine = (Machine) mockMachine.proxy();
     decoder = (InstructionDecoder) mockDecoder.proxy();
-    gamedata = (GameData) mockGameData.proxy();
     fileheader = (StoryFileHeader) mockFileHeader.proxy();
     memory = new DefaultMemory(stackdata);
     
-    mockMachine.expects(atLeastOnce()).method("getGameData").will(returnValue(gamedata));
-    mockGameData.expects(atLeastOnce()).method("getStoryFileHeader").will(returnValue(fileheader));
+    mockMachine.expects(atLeastOnce()).method("getFileHeader").will(returnValue(fileheader));
     mockFileHeader.expects(once()).method("getProgramStart").will(returnValue(1000));
     mockFileHeader.expects(once()).method("getGlobalsAddress").will(returnValue(5000));
-    mockFileHeader.expects(once()).method("getVersion").will(returnValue(5));
-    mockGameData.expects(atLeastOnce()).method("getMemory").will(returnValue(memory));
-    mockDecoder.expects(once()).method("initialize").with(eq(machine), eq(memory));
+    mockMachine.expects(once()).method("getVersion").will(returnValue(5));
+    mockMachine.expects(atLeastOnce()).method("getMemory").will(returnValue(memory));
+    mockDecoder.expects(once()).method("initialize").with(eq(machine));
     cpu = new CpuImpl(machine, decoder);
     cpu.reset();
   }

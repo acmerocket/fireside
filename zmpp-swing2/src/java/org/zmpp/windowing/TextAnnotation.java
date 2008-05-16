@@ -65,7 +65,13 @@ public class TextAnnotation {
   }
   
   public TextAnnotation deriveStyle(int newStyle) {
-    return new TextAnnotation(this.font, newStyle, this.background,
+    int finalStyle = style;
+    if (style == TextAnnotation.TEXTSTYLE_ROMAN) {
+      finalStyle = style;
+    } else {
+      finalStyle |= style;
+    }
+    return new TextAnnotation(this.font, finalStyle, this.background,
                               this.foreground);
   }
   
@@ -80,11 +86,21 @@ public class TextAnnotation {
   }
   
   public int getFont() { return font; }
-  public int getStyle() { return style; }
-  public int getBackground() {
-    return background;
+
+  public boolean isFixed() {
+    return font == FONT_FIXED || (style & TEXTSTYLE_FIXED) == TEXTSTYLE_FIXED; 
   }
-  public int getForeground() {
-    return foreground;
+  public boolean isRoman() { return style == TEXTSTYLE_ROMAN; }
+  public boolean isBold() {
+    return (style & TEXTSTYLE_BOLD) == TEXTSTYLE_BOLD; 
   }
+  public boolean isItalic() {
+    return (style & TEXTSTYLE_ITALIC) == TEXTSTYLE_ITALIC;
+  }
+  public boolean isReverseVideo() {
+    return (style & TEXTSTYLE_REVERSE_VIDEO) == TEXTSTYLE_REVERSE_VIDEO;
+  }
+  
+  public int getBackground() { return background; }
+  public int getForeground() { return foreground; }
 }

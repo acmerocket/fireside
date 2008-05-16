@@ -28,6 +28,7 @@ import org.zmpp.vm.ScreenModel;
 import org.zmpp.vm.StatusLine;
 import org.zmpp.vm.TextCursor;
 import org.zmpp.windowing.AnnotatedCharacter;
+import org.zmpp.windowing.AnnotatedText;
 import org.zmpp.windowing.TextAnnotation;
 
 /**
@@ -90,9 +91,7 @@ public class BufferedScreenModel implements ScreenModel, StatusLine,
     statusLineListeners.add(l);
   }
   
-  public BufferedTextWindow getBottomWindow() { return bottomWindow; }
-  public void setNumCharsPerRow(int numCharsPerRow) {
-  }
+  //public BufferedTextWindow getBottomWindow() { return bottomWindow; }
 
   public void reset() {
     throw new UnsupportedOperationException("Not supported yet.");
@@ -128,11 +127,10 @@ public class BufferedScreenModel implements ScreenModel, StatusLine,
   }
 
   public void eraseWindow(int window) {
-    System.out.println("ERASE_WINDOW (TODO): " + window);
+    System.out.println("ERASE_WINDOW: " + window);
     for (ScreenModelListener l : screenModelListeners) {
       l.windowErased(window);
     }
-    //throw new UnsupportedOperationException("Not supported yet.");
   }
 
   public void setTextCursor(int line, int column, int window) {
@@ -167,11 +165,7 @@ public class BufferedScreenModel implements ScreenModel, StatusLine,
   public TextCursor getTextCursor() {
     throw new UnsupportedOperationException("Not supported yet.");
   }
-
-  public void setPaging(boolean flag) {
-    throw new UnsupportedOperationException("Not supported yet.");
-  }
-
+  
   public int setFont(int fontnumber) {
     if (current == WINDOW_TOP) {
       return topWindow.setFont(fontnumber);
@@ -256,5 +250,21 @@ public class BufferedScreenModel implements ScreenModel, StatusLine,
     for (StatusLineListener l : statusLineListeners) {
       l.statusLineUpdated(objectName, hours + ":" + minutes);
     }
+  }
+
+  // ***********************************************************************
+  // ***** Additional public interface
+  // ***************************************
+
+  public int getLowerBackground() {
+    return bottomWindow.getBackground();
+  }
+  
+  public int getLowerForeground() {
+    return bottomWindow.getForeground();
+  }
+  
+  public List<AnnotatedText> getLowerBuffer() {
+    return bottomWindow.getBuffer();
   }
 }

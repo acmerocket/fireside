@@ -97,7 +97,6 @@ implements ScreenModelListener {
   };
   private JViewport lowerViewport;
   private TextGridView upper = new TextGridView();
-  //private TextPaneGridView upper = new TextPaneGridView();
   private MainViewListener listener;
   private ScreenModelLayout layout = new ScreenModelLayout();
   private FontSelector fontSelector = new FontSelector();
@@ -127,17 +126,9 @@ implements ScreenModelListener {
 
   private void createUpperView() {
     upper.setFontSelector(fontSelector);
-    //if (upper.getClass().getName().contains("TextGridView")) {
-    if (true) {
-      Border upperBorder = BorderFactory.createEmptyBorder(5, 5, 5, 5);
-      upper.setBorder(upperBorder);
-      add(upper, JLayeredPane.PALETTE_LAYER);
-    } else {
-      JViewport viewport = new JViewport();
-      viewport.setView(upper);
-      viewport.setOpaque(false);
-      add(viewport, JLayeredPane.PALETTE_LAYER);
-    }
+    Border upperBorder = BorderFactory.createEmptyBorder(5, 5, 5, 5);
+    upper.setBorder(upperBorder);
+    add(upper, JLayeredPane.PALETTE_LAYER);
   }
   
   private void createLowerView() {
@@ -226,7 +217,6 @@ implements ScreenModelListener {
     int charHeight = getFixedFontHeight();
     int numCharsPerRow = componentWidth / charWidth;
     int numRows = componentHeight / charHeight;
-    screenModel.setNumCharsPerRow(numCharsPerRow);
     
     System.out.println("Char width: " + charWidth + " component width: " +
             componentWidth + " # chars/row: " + numCharsPerRow +
@@ -283,7 +273,7 @@ implements ScreenModelListener {
   // ****** ScreenModelListener
   // ***************************************
   public void screenModelUpdated(BufferedScreenModel screenModel) {
-    List<AnnotatedText> text = screenModel.getBottomWindow().getBuffer();
+    List<AnnotatedText> text = screenModel.getLowerBuffer();
     for (AnnotatedText segment : text) {
       appendToLower(segment);
     }
@@ -316,8 +306,13 @@ implements ScreenModelListener {
        DEFAULT_BACKGROUND);
      Color foreground = colorTranslator.translate(annotation.getForeground(),
        DEFAULT_FOREGROUND);
-     StyleConstants.setBackground(attributes, background);
-     StyleConstants.setForeground(attributes, foreground);
+     if (annotation.isReverseVideo()) {
+       StyleConstants.setBackground(attributes, foreground);
+       StyleConstants.setForeground(attributes, background);
+     } else {
+       StyleConstants.setBackground(attributes, background);
+       StyleConstants.setForeground(attributes, foreground);
+     }
      return attributes;
   }
   
@@ -349,8 +344,21 @@ implements ScreenModelListener {
   
   private void clearAll() {
     try {
-      lower.getDocument().remove(0, lower.getDocument().getLength());
-    } catch (BadLocationException ex) {
+      ColorTranslator translator = ColorTranslator.getInstance();
+      lower.setBackground(translator.translate(
+        screenModel.getLowerBackground(), DEFAULT_BACKGROUND));
+      lower.setForeground(translator.translate(
+        screenModel.getLowerForeground(), DEFAULT_FOREGROUND));
+      StringBuilder formFeed = new StringBuilder();
+      for (int i = 0; i < upper.getNumRows(); i++) {
+        formFeed.append("\n");
+      }
+      TextAnnotation annotation = new TextAnnotation(ScreenModel.FONT_NORMAL,
+        ScreenModel.TEXTSTYLE_ROMAN,
+        screenModel.getLowerBackground(),
+        screenModel.getLowerForeground());
+      appendToLower(new AnnotatedText(annotation, formFeed.toString()));
+    } catch (Exception ex) {
       ex.printStackTrace();
     }
     upper.clear();

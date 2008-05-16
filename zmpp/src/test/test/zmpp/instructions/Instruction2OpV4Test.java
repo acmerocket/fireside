@@ -72,11 +72,10 @@ public class Instruction2OpV4Test extends InstructionTestBase {
   }
 
   public void testCall2s() {
-    mockMachine.expects(atLeastOnce()).method("getCpu").will(returnValue(cpu));
-    mockCpu.expects(once()).method("getProgramCounter").will(returnValue(4611));
+    mockMachine.expects(once()).method("getPC").will(returnValue(4611));
     short[] args = { 2 };
-    short returnvalue = 0;
-    mockCpu.expects(once()).method("call").with(eq(1), eq(4616), eq(args), eq(returnvalue));
+    int returnvalue = 0;
+    mockMachine.expects(once()).method("call").with(eq(1), eq(4616), eq(args), eq(returnvalue));
     
     LongInstruction call2s = createInstructionMock(LongStaticInfo.OP_CALL_2S,
         Operand.TYPENUM_SMALL_CONSTANT, (short) 1 ,

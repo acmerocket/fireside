@@ -86,9 +86,7 @@ public class Instruction1OpV4Test extends InstructionTestBase {
   
   @Test
   public void testNot() {
-    mockMachine.expects(atLeastOnce()).method("getCpu")
-    	.will(returnValue(cpu));
-    mockCpu.expects(once()).method("setVariable")
+    mockMachine.expects(once()).method("setVariable")
     	.with(eq(0x12), eq((short) 0x5555));     
     
 	  // Create instruction	  
@@ -105,10 +103,9 @@ public class Instruction1OpV4Test extends InstructionTestBase {
   
   public void testCall1s() {
     short[] args = {};
-    mockMachine.expects(atLeastOnce()).method("getCpu").will(returnValue(cpu));
-    mockCpu.expects(once()).method("getProgramCounter").will(returnValue(4611));
-    mockCpu.expects(once()).method("call")
-    	.with(eq(4611), eq(4623), eq(args), eq((short) 0));
+    mockMachine.expects(once()).method("getPC").will(returnValue(4611));
+    mockMachine.expects(once()).method("call")
+    	.with(eq(4611), eq(4623), eq(args), eq(0));
     
     Short1Instruction call1s = createInstructionMock(
     		Short1StaticInfo.OP_CALL_1S,

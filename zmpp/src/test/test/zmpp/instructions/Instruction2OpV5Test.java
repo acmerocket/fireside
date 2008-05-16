@@ -55,8 +55,8 @@ public class Instruction2OpV5Test extends InstructionTestBase {
     
     List<RoutineContext> contexts = new ArrayList<RoutineContext>();
     contexts.add(new RoutineContext(1000, 1));
-    contexts.add(new RoutineContext(2000, 2));    mockMachine.expects(atLeastOnce()).method("getCpu").will(returnValue(cpu));
-    mockCpu.expects(once()).method("getRoutineContexts").will(returnValue(contexts));
+    contexts.add(new RoutineContext(2000, 2));
+    mockMachine.expects(once()).method("getRoutineContexts").will(returnValue(contexts));
     mockMachine.expects(once()).method("halt").with(eq("@throw from an invalid stack frame state"));
     
     Instruction2OpMock z_throw = createInstructionMock(
@@ -81,9 +81,8 @@ public class Instruction2OpV5Test extends InstructionTestBase {
     contexts.add(new RoutineContext(4000, 4));
     contexts.add(new RoutineContext(5000, 5));
     
-    mockMachine.expects(atLeastOnce()).method("getCpu").will(returnValue(cpu));
-    mockCpu.expects(once()).method("getRoutineContexts").will(returnValue(contexts));
-    mockCpu.expects(exactly(2)).method("popRoutineContext").withAnyArguments();
+    mockMachine.expects(once()).method("getRoutineContexts").will(returnValue(contexts));
+    mockMachine.expects(exactly(2)).method("returnWith").withAnyArguments();
     
     Instruction2OpMock z_throw = createInstructionMock(
         LongStaticInfo.OP_THROW,

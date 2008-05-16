@@ -70,9 +70,7 @@ public class InputImpl implements Input, Closeable {
    * {@inheritDoc}
    */
   public void selectInputStream(final int streamnumber) {
-    
     selectedInputStreamIndex = streamnumber;    
-    machine.getScreen().setPaging(streamnumber != Input.INPUTSTREAM_FILE);
   }
   
   /**

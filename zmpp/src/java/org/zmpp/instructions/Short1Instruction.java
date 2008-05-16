@@ -136,10 +136,9 @@ public class Short1Instruction extends AbstractInstruction {
    * inc instruction.
    */
   private void inc() {
-    
     final short varNum = getValue(0);
-    final short value = getCpu().getVariable(varNum);
-    getCpu().setVariable(varNum, (short) (value + 1));
+    final short value = getMachine().getVariable(varNum);
+    getMachine().setVariable(varNum, (short) (value + 1));
     nextInstruction();
   }
   
@@ -147,10 +146,9 @@ public class Short1Instruction extends AbstractInstruction {
    * dec instruction.
    */
   private void dec() {
-    
     final short varNum = getValue(0);
-    final short value = (short) getCpu().getVariable(varNum);
-    getCpu().setVariable(varNum, (short) (value - 1));
+    final short value = (short) getMachine().getVariable(varNum);
+    getMachine().setVariable(varNum, (short) (value - 1));
     nextInstruction();
   }
 
@@ -170,17 +168,16 @@ public class Short1Instruction extends AbstractInstruction {
   private void jump() {
     
     // Unconditional jump
-    getCpu().incrementProgramCounter(getValue(0) + 1);
+    getMachine().incrementPC(getValue(0) + 1);
   }
   
   /**
    * load instruction.
    */
   private void load() {
-    
     final int varnum = getValue(0);
-    final short value = varnum == 0 ? getCpu().getStackTopElement() :
-      getCpu().getVariable(varnum);
+    final short value = varnum == 0 ? getMachine().getStackTop() :
+      getMachine().getVariable(varnum);
     storeResult(value);
     nextInstruction();    
   }
@@ -239,7 +236,7 @@ public class Short1Instruction extends AbstractInstruction {
   
   private void print_paddr() {
     getMachine().printZString(
-        getMachine().getCpu().translatePackedAddress(getUnsignedValue(0), false));
+        getMachine().unpackStringAddress(getUnsignedValue(0)));
     nextInstruction();
   }
   

@@ -41,13 +41,7 @@ public class BufferedTextWindow {
     return previousFont;
   }
   public void setCurrentTextStyle(int style) {
-    int currentTextStyle = currentAnnotation.getStyle();
-    if (style == TextAnnotation.TEXTSTYLE_ROMAN) {
-      currentTextStyle = style;
-    } else {
-      currentTextStyle |= style;
-    }
-    startNewAnnotatedRun(currentAnnotation.deriveStyle(currentTextStyle));
+    startNewAnnotatedRun(currentAnnotation.deriveStyle(style));
   }
   
   public void setBackground(int background) {
@@ -57,6 +51,9 @@ public class BufferedTextWindow {
   public void setForeground(int foreground) {
     startNewAnnotatedRun(currentAnnotation.deriveForeground(foreground));
   }
+  
+  public int getBackground() { return currentAnnotation.getBackground(); }
+  public int getForeground() { return currentAnnotation.getForeground(); }
 
   private void startNewAnnotatedRun(TextAnnotation annotation) {
     textBuffer.add(new AnnotatedText(currentAnnotation, currentRun.toString()));

@@ -225,7 +225,7 @@ public class MachineFactory {
     
     machine.setInputStream(0, initStruct.keyboardInputStream);
     machine.setInputStream(1, new FileInputStream(initStruct.ioSystem,
-        machine.getGameData().getZsciiEncoding()));
+        machine.getZsciiEncoding()));
   }
 
   /**
@@ -237,7 +237,7 @@ public class MachineFactory {
     machine.setOutputStream(1, initStruct.screenModel.getOutputStream());
     machine.selectOutputStream(1, true);
     machine.setOutputStream(2, new TranscriptOutputStream(
-        initStruct.ioSystem, machine.getGameData().getZsciiEncoding()));
+        initStruct.ioSystem, machine.getZsciiEncoding()));
     machine.selectOutputStream(2, false);
     machine.setOutputStream(3, new MemoryOutputStream(machine));
     machine.selectOutputStream(3, false);

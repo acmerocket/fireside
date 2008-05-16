@@ -56,10 +56,9 @@ public class Instruction0OpV4Test extends InstructionTestBase {
 
   @Test
   public void testSaveSuccess() {    
-    mockMachine.expects(atLeastOnce()).method("getCpu").will(returnValue(cpu));
-    mockCpu.expects(once()).method("getProgramCounter").will(returnValue(1234));
+    mockMachine.expects(once()).method("getPC").will(returnValue(1234));
     mockMachine.expects(once()).method("save").will(returnValue(true));
-    mockCpu.expects(once()).method("setVariable").with(eq(0), eq((short) 1));
+    mockMachine.expects(once()).method("setVariable").with(eq(0), eq((short) 1));
 
     Instruction0OpMock save = createInstructionMock(Short0StaticInfo.OP_SAVE);
     save.execute();
@@ -70,13 +69,10 @@ public class Instruction0OpV4Test extends InstructionTestBase {
   public void testRestoreSuccessV4() {
     PortableGameState gamestate = new PortableGameState();
     mockMachine.expects(once()).method("restore").will(returnValue(gamestate));
-    mockMachine.expects(atLeastOnce()).method("getCpu").will(returnValue(cpu));
-    mockCpu.expects(once()).method("setVariable").with(eq(5), eq((short) 2));
+    mockMachine.expects(once()).method("setVariable").with(eq(5), eq((short) 2));
     
     // Store variable
-    mockMachine.expects(atLeastOnce()).method("getGameData")
-  		.will(returnValue(gamedata));
-    mockGameData.expects(once()).method("getMemory").will(returnValue(memory));
+    mockMachine.expects(once()).method("getMemory").will(returnValue(memory));
     mockMemory.expects(once()).method("readUnsignedByte").with(eq(0)).will(returnValue((short) 5));
     
     Instruction0OpMock restore = createInstructionMock(Short0StaticInfo.OP_RESTORE);
@@ -87,8 +83,7 @@ public class Instruction0OpV4Test extends InstructionTestBase {
   @Test
   public void testRestoreFailV4() {
     mockMachine.expects(once()).method("restore").will(returnValue(null));
-    mockMachine.expects(atLeastOnce()).method("getCpu").will(returnValue(cpu));
-    mockCpu.expects(once()).method("setVariable").with(eq(0), eq((short) 0));
+    mockMachine.expects(once()).method("setVariable").with(eq(0), eq((short) 0));
     
     Instruction0OpMock restore = createInstructionMock(Short0StaticInfo.OP_RESTORE);
     restore.execute();

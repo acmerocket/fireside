@@ -30,6 +30,7 @@ import test.zmpp.instructions.InstructionVarV3Test.VariableInstructionMock;
 
 public class InstructionVarV5Test extends InstructionTestBase {
 
+  @Override
   @Before
   protected void setUp() throws Exception {
     super.setUp();
@@ -57,8 +58,7 @@ public class InstructionVarV5Test extends InstructionTestBase {
   }  
 
   public void testNotInV5() {
-    mockMachine.expects(atLeastOnce()).method("getCpu").will(returnValue(cpu));
-    mockCpu.expects(once()).method("setVariable").with(eq(0x12), eq((short) 0x5555));     
+    mockMachine.expects(once()).method("setVariable").with(eq(0x12), eq((short) 0x5555));     
     
     VariableInstructionMock not =
       new VariableInstructionMock(machine, VariableStaticInfo.OP_NOT);

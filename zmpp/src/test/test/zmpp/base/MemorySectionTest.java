@@ -30,7 +30,8 @@ public class MemorySectionTest extends MockObjectTestCase {
   private Mock mockMemory;
   private Memory memory;
   private MemorySection section;
-  
+
+  @Override
   protected void setUp() throws Exception {
     mockMemory = mock(Memory.class);
     memory = (Memory) mockMemory.proxy();
@@ -39,16 +40,6 @@ public class MemorySectionTest extends MockObjectTestCase {
   
   public void testGetLength() {
     assertEquals(256, section.getLength());
-  }
-  
-  public void testReadUnsigned48() {
-    mockMemory.expects(once()).method("readUnsigned48").with(eq(12 + 36)).will(returnValue((long) 1234));
-    section.readUnsigned48(12);
-  }
-
-  public void testWriteUnsigned48() {
-    mockMemory.expects(once()).method("writeUnsigned48").with(eq(12 + 36), eq((long) 512));
-    section.writeUnsigned48(12, 512);
   }
   
   public void testWriteUnsignedShort() {

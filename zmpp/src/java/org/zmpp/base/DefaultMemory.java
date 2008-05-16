@@ -60,37 +60,7 @@ public class DefaultMemory implements Memory {
   /**
    * {@inheritDoc}
    */
-  public long readUnsigned48(final int address) {
-    long a0 = data[address + 0] & 0xff;
-    a0 <<= 40;
-    long a1 = data[address + 1] & 0xff;
-    a1 <<= 32;
-    return a0 | a1
-         | (data[address + 2] & 0xff) << 24
-         | (data[address + 3] & 0xff) << 16
-         | (data[address + 4] & 0xff) << 8
-         | (data[address + 5] & 0xff)
-         ;
-  }
-  
-  /**
-   * {@inheritDoc}
-   */
-  public void writeUnsigned48(final int address, final long value) {
-    
-    data[address + 0] = (byte) ((value & 0xff0000000000l) >> 40);
-    data[address + 1] = (byte) ((value & 0x00ff00000000l) >> 32);
-    data[address + 2] = (byte) ((value & 0x0000ff000000l) >> 24);
-    data[address + 3] = (byte) ((value & 0x000000ff0000l) >> 16);
-    data[address + 4] = (byte) ((value & 0x00000000ff00l) >> 8);
-    data[address + 5] = (byte)  (value & 0x0000000000ffl);
-  }
-  
-  /**
-   * {@inheritDoc}
-   */
-  public int readUnsignedShort(final int address) {
-    
+  public int readUnsignedShort(final int address) {    
     return (data[address] & 0xff) << 8 | (data[address + 1] & 0xff);
   }
   
@@ -98,7 +68,6 @@ public class DefaultMemory implements Memory {
    * {@inheritDoc}
    */
   public short readShort(final int address) {
-    
     return (short) (data[address] << 8 | (data[address + 1] & 0xff));
   }
   
@@ -106,7 +75,6 @@ public class DefaultMemory implements Memory {
    * {@inheritDoc}
    */
   public short readUnsignedByte(final int address) {
-    
     return (short) (data[address] & 0xff);
   }
   
@@ -114,7 +82,6 @@ public class DefaultMemory implements Memory {
    * {@inheritDoc}
    */
   public byte readByte(final int address) {
-    
     return data[address];
   }
   
@@ -160,7 +127,6 @@ public class DefaultMemory implements Memory {
    * @param value the value
    */
   public void writeByte(final int address, final byte value) {
-    
     data[address] = value;
   }
   
@@ -171,7 +137,6 @@ public class DefaultMemory implements Memory {
    * @param value the value to write
    */
   public void writeUnsigned32(final int address, final long value) {
-    
     data[address] = (byte) ((value & 0xff000000) >> 24);
     data[address + 1] = (byte) ((value & 0x00ff0000) >> 16);
     data[address + 2] = (byte) ((value & 0x0000ff00) >> 8);
