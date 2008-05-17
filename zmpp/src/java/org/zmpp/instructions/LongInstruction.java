@@ -447,8 +447,8 @@ public class LongInstruction extends AbstractInstruction {
       
       window = getValue(2);
     }
-    getMachine().getScreen().setForegroundColor(getValue(0), window);
-    getMachine().getScreen().setBackgroundColor(getValue(1), window);
+    getMachine().getScreen().setForeground(getValue(0), window);
+    getMachine().getScreen().setBackground(getValue(1), window);
     nextInstruction();
   }
   

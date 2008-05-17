@@ -31,6 +31,8 @@ import org.zmpp.io.OutputStream;
 public interface ScreenModel {
 
   static final int CURRENT_WINDOW = -3;
+  static final int WINDOW_BOTTOM = 0;
+  static final int WINDOW_TOP    = 1;
   
   /**
    * Font number for the standard font.
@@ -160,7 +162,7 @@ public interface ScreenModel {
    * @param colornumber the color number
    * @param window the window
    */
-  void setBackgroundColor(int colornumber, int window);
+  void setBackground(int colornumber, int window);
   
   /**
    * Sets the foreground color.
@@ -168,7 +170,7 @@ public interface ScreenModel {
    * @param colornumber a color number
    * @param window the window
    */
-  void setForegroundColor(int colornumber, int window);
+  void setForeground(int colornumber, int window);
   
   /**
    * Returns the output stream associated with the screen.

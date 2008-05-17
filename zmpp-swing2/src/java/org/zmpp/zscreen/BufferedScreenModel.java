@@ -62,8 +62,6 @@ public class BufferedScreenModel implements ScreenModel, StatusLine,
     }
   }
 
-  public static final int WINDOW_BOTTOM = 0;
-  public static final int WINDOW_TOP    = 1;
   private int current = WINDOW_BOTTOM;
   private BufferedTextWindow bottomWindow = new BufferedTextWindow();
   private TopWindow topWindow = new TopWindow();
@@ -109,7 +107,7 @@ public class BufferedScreenModel implements ScreenModel, StatusLine,
   }
 
   public void setTextStyle(int style) {
-    System.out.println("SET_TEXT_STYLE: " + style);
+    System.out.println("SET_TEXT_STYLE: " + style + " current: " + current);
     if (current == WINDOW_TOP) {
       topWindow.textStyle = style;
     } else {
@@ -174,7 +172,9 @@ public class BufferedScreenModel implements ScreenModel, StatusLine,
     }
   }
 
-  public void setBackgroundColor(int colornumber, int window) {
+  public void setBackground(int colornumber, int window) {
+    System.out.println("setBackground, color: " + colornumber + " window: " +
+            getTargetWindow(window));
     if (getTargetWindow(window) == WINDOW_TOP) {
       topWindow.background = colornumber;
     } else {
@@ -182,11 +182,13 @@ public class BufferedScreenModel implements ScreenModel, StatusLine,
     }
   }
 
-  public void setForegroundColor(int colornumber, int window) {
+  public void setForeground(int colornumber, int window) {
+    System.out.println("setForeground, color: " + colornumber + " window: " +
+            getTargetWindow(window));
     if (getTargetWindow(window) == WINDOW_TOP) {
-      topWindow.background = colornumber;
+      topWindow.foreground = colornumber;
     } else {
-      bottomWindow.setBackground(colornumber);
+      bottomWindow.setForeground(colornumber);
     }
   }
   
