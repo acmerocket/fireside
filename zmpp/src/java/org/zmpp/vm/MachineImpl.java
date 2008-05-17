@@ -92,30 +92,60 @@ public class MachineImpl implements Machine {
   /**
    * {@inheritDoc}
    */
-  public Memory getMemory() { return gamedata.getMemory(); }
-  
-  /**
-   * {@inheritDoc}
-   */
   public StoryFileHeader getFileHeader() {
     return gamedata.getStoryFileHeader();
   }
 
   // **********************************************************************
-  // ***** Execution state functionality
+  // ***** Memory interface functionality
+  // **********************************************************************
+  private Memory getMemory() { return gamedata.getMemory(); }
+  public long readUnsigned32(int address) {
+    return getMemory().readUnsigned32(address);
+  }
+  public int readUnsignedShort(int address) {
+    return getMemory().readUnsignedShort(address);
+  }
+  public short readShort(int address) {
+    return getMemory().readShort(address);
+  }
+  public short readUnsignedByte(int address) {
+    return getMemory().readUnsignedByte(address);
+  }
+  public byte readByte(int address) {
+    return getMemory().readByte(address);
+  }
+  public void writeUnsignedShort(int address, int value) {
+    getMemory().writeUnsignedShort(address, value);
+  }
+  public void writeShort(int address, short value) {
+    getMemory().writeShort(address, value);
+  }
+  public void writeUnsignedByte(int address, short value) {
+    getMemory().writeUnsignedByte(address, value);
+  }
+  public void writeByte(int address, byte value) {
+    getMemory().writeByte(address, value);
+  }
+  public void writeUnsigned32(int address, long value) {
+    getMemory().writeUnsigned32(address, value);
+  }
+  
+  // **********************************************************************
+  // ***** Cpu interface functionality
   // **********************************************************************
   private Cpu getCpu() { return cpu; }
-  public Instruction nextInstruction() { return getCpu().nextStep(); }
+  public Instruction nextInstruction() { return getCpu().nextInstruction(); }
   public short getVariable(int varnum) { return getCpu().getVariable(varnum); }
   public void setVariable(int varnum, short value) {
     getCpu().setVariable(varnum, value);
   }
-  public short getStackTop() { return getCpu().getStackTopElement(); }
+  public short getStackTop() { return getCpu().getStackTop(); }
   public short getStackElement(int index) {
     return getCpu().getStackElement(index);
   }
   public void setStackTop(short value) {
-    getCpu().setStackTopElement(value);
+    getCpu().setStackTop(value);
   }
   public void incrementPC(int length) {
     getCpu().incrementPC(length);
@@ -124,17 +154,12 @@ public class MachineImpl implements Machine {
     getCpu().setPC(address);
   }
   public int getPC() { return getCpu().getPC(); }
-  public int getSP() { return getCpu().getStackPointer(); }
-  public short popStack(int stack) {
-    return stack == 0 ? getVariable(0) : getCpu().popUserStack(stack);
+  public int getSP() { return getCpu().getSP(); }
+  public short popStack(int userstackAddress) {
+    return getCpu().popStack(userstackAddress);
   }
   public boolean pushStack(int stack, short value) {
-    if (stack == 0) {
-      setVariable(0, value);
-      return true;
-    } else {
-      return getCpu().pushUserStack(stack, value);
-    }    
+    return getCpu().pushStack(stack, value);
   }
   public List<RoutineContext> getRoutineContexts() {
     return getCpu().getRoutineContexts();
@@ -150,25 +175,26 @@ public class MachineImpl implements Machine {
   }
 
   public int unpackStringAddress(int packedAddress) {
-    return getCpu().translatePackedAddress(packedAddress, false);
+    return getCpu().unpackStringAddress(packedAddress);
   }
-  public void call(int packedAddress, int returnAddress, short[] args,
-                   int returnVar) {
-    getCpu().call(packedAddress, returnAddress, args, returnVar);
-  }
-  public int computeBranchTarget(short offset, int instructionLength) {
-    return getCpu().computeBranchTarget(offset, instructionLength);
+  public RoutineContext call(int packedAddress, int returnAddress, short[] args,
+                             int returnVar) {
+    return getCpu().call(packedAddress, returnAddress, args, returnVar);
   }
   
   public void doBranch(short branchOffset, int instructionLength) {
-    if (branchOffset >= 2 || branchOffset < 0) {
-      setPC(computeBranchTarget(branchOffset, instructionLength));
-    } else {
-      // FALSE is defined as 0, TRUE as 1, so simply return the offset
-      // since we do not have negative offsets
-      returnWith(branchOffset);
-    }
+    getCpu().doBranch(branchOffset, instructionLength);
   }
+  
+  /**
+   */
+  public short callInterrupt(int routineAddress) {
+    return cpu.callInterrupt(routineAddress);
+  }
+
+  public boolean interruptDidOutput() {
+    return cpu.interruptDidOutput();
+  } 
 
   // **********************************************************************
   // ***** Dictionary functionality
@@ -621,119 +647,118 @@ public class MachineImpl implements Machine {
    * {@inheritDoc}
    */
   public void insertObject(int parentNum, int objectNum) {
-	getObjectTree().insertObject(parentNum, objectNum);
+    getObjectTree().insertObject(parentNum, objectNum);
   }
 
   /**
    * {@inheritDoc}
    */
   public void removeObject(int objectNum) {
-	getObjectTree().removeObject(objectNum);
+    getObjectTree().removeObject(objectNum);
   }
 
   /**
    * {@inheritDoc}
    */
   public void clearAttribute(int objectNum, int attributeNum) {
-	getObjectTree().clearAttribute(objectNum, attributeNum);
+    getObjectTree().clearAttribute(objectNum, attributeNum);
   }
 
   /**
    * {@inheritDoc}
    */
   public boolean isAttributeSet(int objectNum, int attributeNum) {
-	return getObjectTree().isAttributeSet(objectNum, attributeNum);
+    return getObjectTree().isAttributeSet(objectNum, attributeNum);
   }
 
   /**
    * {@inheritDoc}
    */
   public void setAttribute(int objectNum, int attributeNum) {
-	getObjectTree().setAttribute(objectNum, attributeNum);
+    getObjectTree().setAttribute(objectNum, attributeNum);
   }
 
   /**
    * {@inheritDoc}
    */
   public int getParent(int objectNum) {
-	return getObjectTree().getParent(objectNum);
+    return getObjectTree().getParent(objectNum);
   }
 
   /**
    * {@inheritDoc}
    */
   public void setParent(int objectNum, int parent) {
-	getObjectTree().setParent(objectNum, parent);
+    getObjectTree().setParent(objectNum, parent);
   }
 
   /**
    * {@inheritDoc}
    */
   public int getChild(int objectNum) {
-	return getObjectTree().getChild(objectNum);
+    return getObjectTree().getChild(objectNum);
   }
 
   /**
    * {@inheritDoc}
    */
   public void setChild(int objectNum, int child) {
-	getObjectTree().setChild(objectNum, child);
+    getObjectTree().setChild(objectNum, child);
   }
 
   /**
    * {@inheritDoc}
    */
   public int getSibling(int objectNum) {
-	return getObjectTree().getSibling(objectNum);
+    return getObjectTree().getSibling(objectNum);
   }
 
   /**
    * {@inheritDoc}
    */
   public void setSibling(int objectNum, int sibling) {
-	getObjectTree().setSibling(objectNum, sibling);
+    getObjectTree().setSibling(objectNum, sibling);
   }  
 
   /**
    * {@inheritDoc}
    */
   public int getPropertiesDescriptionAddress(int objectNum) {
-	return getObjectTree().getPropertiesDescriptionAddress(objectNum);
+    return getObjectTree().getPropertiesDescriptionAddress(objectNum);
   }
   
   /**
    * {@inheritDoc}
    */
   public int getPropertyAddress(int objectNum, int property) {
-	return getObjectTree().getPropertyAddress(objectNum, property);
+    return getObjectTree().getPropertyAddress(objectNum, property);
   }
 
   /**
    * {@inheritDoc}
    */
   public int getPropertyLength(int propertyAddress) {
-	return getObjectTree().getPropertyLength(propertyAddress);
+    return getObjectTree().getPropertyLength(propertyAddress);
   }
 
   /**
    * {@inheritDoc}
    */
   public int getProperty(int objectNum, int property) {
-	return getObjectTree().getProperty(objectNum, property);
+    return getObjectTree().getProperty(objectNum, property);
   }
   
   /**
    * {@inheritDoc}
    */
   public void setProperty(int objectNum, int property, int value) {
-	getObjectTree().setProperty(objectNum, property, value);
+    getObjectTree().setProperty(objectNum, property, value);
   }
 
   /**
    * {@inheritDoc}
    */
   public int getNextProperty(int objectNum, int property) {
-	return getObjectTree().getNextProperty(objectNum, property);
+    return getObjectTree().getNextProperty(objectNum, property);
   }
-
 }

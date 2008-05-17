@@ -82,10 +82,8 @@ public class MachineTest extends MiniZorkSetup {
     datastore = (SaveGameDataStore) mockDataStore.proxy();
   }
   
-  public void testInitialState() {
-    
+  public void testInitialState() {    
     assertEquals(fileheader, machine.getFileHeader());
-    assertEquals(minizorkmap, machine.getMemory());
     assertTrue(machine.hasValidChecksum());
   }
   
@@ -195,7 +193,7 @@ public class MachineTest extends MiniZorkSetup {
     machine.setVariable(0x10, (short) 2);
     mockStatusLine.expects(once()).method("updateStatusTime");
     machine.setStatusLine(statusLine); // set the "time" flag
-    machine.getMemory().writeByte(1, (byte) 2);
+    machine.writeByte(1, (byte) 2);
     machine.updateStatusLine();
   }
   

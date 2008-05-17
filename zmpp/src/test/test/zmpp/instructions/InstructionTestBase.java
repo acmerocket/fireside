@@ -32,8 +32,6 @@ public abstract class InstructionTestBase extends MockObjectTestCase {
 	protected Machine machine;
 	protected Mock mockOutputStream;
 	protected OutputStream outputStream;
-	protected Mock mockMemory;
-	protected Memory memory;
 	protected Mock mockDictionary;
 	protected Dictionary dictionary;
 
@@ -47,8 +45,6 @@ public abstract class InstructionTestBase extends MockObjectTestCase {
 		machine = (Machine) mockMachine.proxy();
 		mockOutputStream = mock(OutputStream.class);
 		outputStream = (OutputStream) mockOutputStream.proxy();
-		mockMemory = mock(Memory.class);
-		memory = (Memory) mockMemory.proxy();
 		mockDictionary = mock(Dictionary.class);
 		dictionary = (Dictionary) mockDictionary.proxy();
 	}

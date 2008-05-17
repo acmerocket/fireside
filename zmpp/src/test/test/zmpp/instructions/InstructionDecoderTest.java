@@ -278,7 +278,24 @@ public class InstructionDecoderTest extends MiniZorkSetup {
     decoder4.initialize(machine4);
     
     mockMachine4.expects(atLeastOnce()).method("getVersion").will(returnValue(4));
-    mockMachine4.expects(atLeastOnce()).method("getMemory").will(returnValue(amfvmem));
+    mockMachine4.expects(atLeastOnce()).method("readUnsignedByte").with(eq(0)).
+            will(returnValue((short) amfvmem.readUnsignedByte(0)));
+    mockMachine4.expects(atLeastOnce()).method("readUnsignedByte").with(eq(1)).
+            will(returnValue((short) amfvmem.readUnsignedByte(1)));
+    mockMachine4.expects(atLeastOnce()).method("readUnsignedByte").with(eq(2)).
+            will(returnValue((short) amfvmem.readUnsignedByte(2)));
+    mockMachine4.expects(atLeastOnce()).method("readShort").with(eq(3)).
+            will(returnValue((short) amfvmem.readShort(3)));
+    mockMachine4.expects(atLeastOnce()).method("readUnsignedByte").with(eq(5)).
+            will(returnValue((short) amfvmem.readUnsignedByte(5)));
+    mockMachine4.expects(atLeastOnce()).method("readUnsignedByte").with(eq(6)).
+            will(returnValue((short) amfvmem.readUnsignedByte(6)));
+    mockMachine4.expects(atLeastOnce()).method("readUnsignedByte").with(eq(7)).
+            will(returnValue((short) amfvmem.readUnsignedByte(7)));
+    mockMachine4.expects(atLeastOnce()).method("readUnsignedByte").with(eq(8)).
+            will(returnValue((short) amfvmem.readUnsignedByte(8)));
+    mockMachine4.expects(atLeastOnce()).method("readUnsignedByte").with(eq(9)).
+            will(returnValue((short) amfvmem.readUnsignedByte(9)));
     
     // Expected:
     // ecf4:  CALL_VS2        efdc (G90,#10,#20,L00) -> -(SP)

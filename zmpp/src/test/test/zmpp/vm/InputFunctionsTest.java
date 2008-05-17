@@ -45,12 +45,11 @@ import org.zmpp.vm.StoryFileHeader;
  */
 public class InputFunctionsTest extends MockObjectTestCase {
 
-  private Mock mockFileHeader, mockMachine, mockMemory, mockInputStream,
+  private Mock mockFileHeader, mockMachine, mockInputStream,
                mockScreen;
   
   private Machine machine;
   private StoryFileHeader fileheader;
-  private Memory memory;
   private InputStream inputstream;
   private ScreenModel screen;
   private ZsciiEncoding encoding;
@@ -63,13 +62,11 @@ public class InputFunctionsTest extends MockObjectTestCase {
   protected void setUp() throws Exception {
     mockMachine = mock(Machine.class);
     mockFileHeader = mock(StoryFileHeader.class);
-    mockMemory = mock(Memory.class);
     mockInputStream = mock(InputStream.class);
     mockScreen = mock(ScreenModel.class);
 
     machine = (Machine) mockMachine.proxy();
     fileheader = (StoryFileHeader) mockFileHeader.proxy();
-    memory = (Memory) mockMemory.proxy();
     inputstream = (InputStream) mockInputStream.proxy();
     screen = (ScreenModel) mockScreen.proxy();
     
@@ -114,8 +111,7 @@ public class InputFunctionsTest extends MockObjectTestCase {
    */
   public void testCheckTerminationV4Null() {
     mockMachine.expects(atLeastOnce()).method("getVersion").will(returnValue(4));
-    mockMachine.expects(once()).method("getMemory").will(returnValue(memory));
-    mockMemory.expects(once()).method("writeByte").with(eq(textbuffer), eq((byte) 0));
+    mockMachine.expects(once()).method("writeByte").with(eq(textbuffer), eq((byte) 0));
     
     int textpointer = 6;
     inputFunctions.checkTermination(ZsciiEncoding.NULL, textbuffer, textpointer);
@@ -127,8 +123,7 @@ public class InputFunctionsTest extends MockObjectTestCase {
   public void testCheckTerminationV4Newline() {
     int textpointer = 6;
     mockMachine.expects(atLeastOnce()).method("getVersion").will(returnValue(4));
-    mockMachine.expects(once()).method("getMemory").will(returnValue(memory));
-    mockMemory.expects(once()).method("writeByte").with(eq(textbuffer + textpointer), eq((byte) 0));    
+    mockMachine.expects(once()).method("writeByte").with(eq(textbuffer + textpointer), eq((byte) 0));    
     inputFunctions.checkTermination(ZsciiEncoding.NEWLINE, textbuffer, textpointer);
   }
 
@@ -137,8 +132,7 @@ public class InputFunctionsTest extends MockObjectTestCase {
    */
   public void testCheckTerminationV5Null() {
     mockMachine.expects(atLeastOnce()).method("getVersion").will(returnValue(5));
-    mockMachine.expects(once()).method("getMemory").will(returnValue(memory));
-    mockMemory.expects(once()).method("writeUnsignedByte").with(eq(textbuffer + 1), eq((short) 0));
+    mockMachine.expects(once()).method("writeUnsignedByte").with(eq(textbuffer + 1), eq((short) 0));
     
     int textpointer = 6;
     inputFunctions.checkTermination(ZsciiEncoding.NULL, textbuffer, textpointer);
@@ -150,8 +144,7 @@ public class InputFunctionsTest extends MockObjectTestCase {
   public void testCheckTerminationV5Newline() {
     int textpointer = 6;
     mockMachine.expects(atLeastOnce()).method("getVersion").will(returnValue(5));
-    mockMachine.expects(once()).method("getMemory").will(returnValue(memory));
-    mockMemory.expects(once()).method("writeUnsignedByte").with(eq(textbuffer + 1),
+    mockMachine.expects(once()).method("writeUnsignedByte").with(eq(textbuffer + 1),
         eq((short) (textpointer - 2)));
     inputFunctions.checkTermination(ZsciiEncoding.NEWLINE, textbuffer, textpointer);
   }

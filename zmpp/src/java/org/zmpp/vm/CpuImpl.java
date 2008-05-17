@@ -117,15 +117,18 @@ public class CpuImpl implements Cpu, Interruptable {
   /**
    * {@inheritDoc}
    */
-  public Instruction nextStep() {
-    
+  public Instruction nextInstruction() {
     return decoder.decodeInstruction(getPC());
   }
     
   /**
    * {@inheritDoc}
    */
-  public int translatePackedAddress(final int packedAddress,
+  public int unpackStringAddress(int packedAddress) {
+    return unpackAddress(packedAddress, false);
+  }
+
+  public int unpackAddress(final int packedAddress,
       final boolean isCall) {
   
     // Version specific packed address translation    
@@ -150,9 +153,18 @@ public class CpuImpl implements Cpu, Interruptable {
   /**
    * {@inheritDoc} 
    */
-  public int computeBranchTarget(final short offset,
-      final int instructionLength) {
-        
+  public void doBranch(short branchOffset, int instructionLength) {
+    if (branchOffset >= 2 || branchOffset < 0) {
+      setPC(computeBranchTarget(branchOffset, instructionLength));
+    } else {
+      // FALSE is defined as 0, TRUE as 1, so simply return the offset
+      // since we do not have negative offsets
+      returnWith(branchOffset);
+    }
+  }
+
+  private int computeBranchTarget(final short offset,
+      final int instructionLength) {     
     return getPC() + instructionLength + offset - 2;
   }
   
@@ -162,7 +174,7 @@ public class CpuImpl implements Cpu, Interruptable {
   /**
    * {@inheritDoc}
    */
-  public int getStackPointer() {
+  public int getSP() {
     
     return stack.getStackPointer();
   }
@@ -173,7 +185,7 @@ public class CpuImpl implements Cpu, Interruptable {
    * 
    * @param stackpointer the new stack pointer value
    */
-  private void setStackPointer(final int stackpointer) {
+  private void setSP(final int stackpointer) {
 
     // remove the last diff elements
     final int diff = stack.getStackPointer() - stackpointer;
@@ -186,10 +198,8 @@ public class CpuImpl implements Cpu, Interruptable {
   /**
    * {@inheritDoc}
    */
-  public short getStackTopElement() {
-    
+  public short getStackTop() {
     if (stack.size() > 0) {
-      
       return stack.top();
     }
     return -1;
@@ -198,8 +208,7 @@ public class CpuImpl implements Cpu, Interruptable {
   /**
    * {@inheritDoc}
    */
-  public void setStackTopElement(final short value) {
-    
+  public void setStackTop(final short value) {
     stack.replaceTopElement(value);
   }
   
@@ -213,23 +222,35 @@ public class CpuImpl implements Cpu, Interruptable {
   /**
    * {@inheritDoc}
    */
-  public short popUserStack(int userstackAddress) {
-    Memory memory = machine.getMemory();
-    int numFreeSlots = memory.readUnsignedShort(userstackAddress);
+  public short popStack(int userstackAddress) {
+    return userstackAddress == 0 ? getVariable(0) :
+      popUserStack(userstackAddress);
+  }
+
+  private short popUserStack(int userstackAddress) {
+    int numFreeSlots = machine.readUnsignedShort(userstackAddress);
     numFreeSlots++;
-    memory.writeUnsignedShort(userstackAddress, numFreeSlots);
-    return memory.readShort(userstackAddress + (numFreeSlots * 2));
+    machine.writeUnsignedShort(userstackAddress, numFreeSlots);
+    return machine.readShort(userstackAddress + (numFreeSlots * 2));
   }
   
   /**
    * {@inheritDoc}
    */
-  public boolean pushUserStack(int userstackAddress, short value) {
-    Memory memory = machine.getMemory();
-    int numFreeSlots = memory.readUnsignedShort(userstackAddress);
+  public boolean pushStack(int userstackAddress, short value) {
+    if (userstackAddress == 0) {
+      setVariable(0, value);
+      return true;
+    } else {
+      return pushUserStack(userstackAddress, value);
+    }    
+  }
+  
+  private boolean pushUserStack(int userstackAddress, short value) {
+    int numFreeSlots = machine.readUnsignedShort(userstackAddress);
     if (numFreeSlots > 0) {
-      memory.writeShort(userstackAddress + (numFreeSlots * 2), value);
-      memory.writeUnsignedShort(userstackAddress, numFreeSlots - 1);
+      machine.writeShort(userstackAddress + (numFreeSlots * 2), value);
+      machine.writeUnsignedShort(userstackAddress, numFreeSlots - 1);
       return true;
     }
     return false;
@@ -248,16 +269,12 @@ public class CpuImpl implements Cpu, Interruptable {
       } else {   
         return stack.pop();
       }
-      
     } else if (varType == Cpu.VariableType.LOCAL) {
-      
       final int localVarNumber = getLocalVariableNumber(variableNumber);
       checkLocalVariableAccess(localVarNumber);
       return getCurrentRoutineContext().getLocalVariable(localVarNumber);
-      
     } else { // GLOBAL
-      
-      return machine.getMemory().readShort(globalsAddress
+      return machine.readShort(globalsAddress
           + (getGlobalVariableNumber(variableNumber) * 2));
     }
   }
@@ -284,7 +301,7 @@ public class CpuImpl implements Cpu, Interruptable {
       checkLocalVariableAccess(localVarNumber);
       getCurrentRoutineContext().setLocalVariable(localVarNumber, value);
     } else {
-      machine.getMemory().writeShort(globalsAddress
+      machine.writeShort(globalsAddress
           + (getGlobalVariableNumber(variableNumber) * 2), value);
     }
   }
@@ -309,7 +326,7 @@ public class CpuImpl implements Cpu, Interruptable {
    * {@inheritDoc}
    */
   public void pushRoutineContext(final RoutineContext routineContext) {
-    routineContext.setInvocationStackPointer(getStackPointer());
+    routineContext.setInvocationStackPointer(getSP());
     routineContextStack.add(routineContext);
   }
   
@@ -323,7 +340,7 @@ public class CpuImpl implements Cpu, Interruptable {
       popped.setReturnValue(returnValue);
     
       // Restore stack pointer and pc
-      setStackPointer(popped.getInvocationStackPointer());
+      setSP(popped.getInvocationStackPointer());
       setPC(popped.getReturnAddress());
       final int returnVariable = popped.getReturnVariable();
       if (returnVariable != RoutineContext.DISCARD_RESULT) {
@@ -376,7 +393,7 @@ public class CpuImpl implements Cpu, Interruptable {
       final int returnAddress, final short[] args, final int returnVariable) {
     
     final int routineAddress =
-      translatePackedAddress(packedRoutineAddress, true);
+      unpackAddress(packedRoutineAddress, true);
     final int numArgs = args == null ? 0 : args.length;    
     final RoutineContext routineContext = decodeRoutine(routineAddress);
     
@@ -408,7 +425,7 @@ public class CpuImpl implements Cpu, Interruptable {
     }
     
     // save invocation stack pointer
-    routineContext.setInvocationStackPointer(getStackPointer());
+    routineContext.setInvocationStackPointer(getSP());
     
     // Pushes the routine context onto the routine stack
     pushRoutineContext(routineContext);
@@ -429,8 +446,7 @@ public class CpuImpl implements Cpu, Interruptable {
    * @return a RoutineContext object
    */
   private RoutineContext decodeRoutine(final int routineAddress) {
-    final Memory memory = machine.getMemory();    
-    final int numLocals = memory.readUnsignedByte(routineAddress);
+    final int numLocals = machine.readUnsignedByte(routineAddress);
     final short[] locals = new short[numLocals];
     int currentAddress = routineAddress + 1;
     
@@ -438,7 +454,7 @@ public class CpuImpl implements Cpu, Interruptable {
       // Only story files <= 4 actually store default values here,
       // after V5 they are assumed as being 0 (standard document 1.0, S.5.2.1) 
       for (int i = 0; i < numLocals; i++) {
-        locals[i] = memory.readShort(currentAddress);
+        locals[i] = machine.readShort(currentAddress);
         currentAddress += 2;
       }
     }
@@ -529,8 +545,7 @@ public class CpuImpl implements Cpu, Interruptable {
         new short[0], (short) RoutineContext.DISCARD_RESULT);
     
     for (;;) {
-      
-      final Instruction instr = nextStep();
+      final Instruction instr = nextInstruction();
       instr.execute();
       // check if something was printed
       if (instr.isOutput()) {

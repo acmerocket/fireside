@@ -20,7 +20,6 @@
  */
 package org.zmpp.vm;
 
-import java.util.List;
 import org.zmpp.base.Memory;
 import org.zmpp.encoding.ZsciiEncoding;
 import org.zmpp.encoding.ZsciiString;
@@ -35,7 +34,7 @@ import org.zmpp.media.SoundSystem;
  * @author Wei-ju Wu
  * @version 1.0
  */
-public interface Machine extends ObjectTree, Input, Output {
+public interface Machine extends ObjectTree, Input, Output, Cpu, Memory {
 
   public enum MachineRunState { RUNNING, STOPPED, READ_LINE, READ_CHAR  }
 
@@ -59,39 +58,8 @@ public interface Machine extends ObjectTree, Input, Output {
   // **** Main machine objects
   // *******************************
   
-  /**
-   * Returns the memory object. TODO: Fold into the machine interface
-   * @return the memory object
-   */
-  Memory getMemory();
-
-  //
   StoryFileHeader getFileHeader();
   
-  // **********************************************************************
-  // **** CPU functions
-  // **********************************************************
-  Instruction nextInstruction();
-  short getVariable(int varnum);
-  void setVariable(int varnum, short value);
-  int getSP();
-  short getStackTop();
-  short getStackElement(int index);
-  void setStackTop(short value);
-  short popStack(int stack);
-  boolean pushStack(int stack, short value);
-  void incrementPC(int length);
-  int getPC();
-  void setPC(int address);
-  List<RoutineContext> getRoutineContexts();
-  void setRoutineContexts(List<RoutineContext> routineContexts);
-  void returnWith(short returnValue);
-  RoutineContext getCurrentRoutineContext();
-  int unpackStringAddress(int packedAddress);
-  void call(int packedAddress, int returnAddress, short[] args, int returnVar);
-  int computeBranchTarget(short offset, int instructionLength);
-  void doBranch(short branchOffset, int instructionLength);
-
   // **********************************************************************
   // **** Tokenizing functions
   // **** We could refine this by exposing the tokenizers

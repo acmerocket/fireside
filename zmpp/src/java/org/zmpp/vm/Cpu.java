@@ -39,24 +39,21 @@ public interface Cpu {
    * 
    * @return the next instruction
    */
-  Instruction nextStep();
+  Instruction nextInstruction();
   
   /**
-   * Translates a packed address into a byte address.
+   * Translates a packed string address into a byte address.
    * 
    * @param packedAddress the packed address
-   * @param isCall if true then this is a call address, if false, this is
-   * a string address
    * @return the translated byte address
    */
-  int translatePackedAddress(int packedAddress, boolean isCall);
+  int unpackStringAddress(int packedAddress);
   
   /**
    * Computes a branch target from an offset.
-   * 
    * @return the resulting branch target
    */
-  int computeBranchTarget(short offset, int instructionLength);
+  void doBranch(short offset, int instructionLength);
   
   /**
    * Returns the current program counter.
@@ -87,14 +84,14 @@ public interface Cpu {
    * 
    * @return the stack pointer
    */
-  int getStackPointer();
+  int getSP();
   
   /**
    * Returns the value at the top of the stack without removing it.
    * 
    * @return the stack top element
    */
-  short getStackTopElement();
+  short getStackTop();
   
   /**
    * Sets the value of the element at the top of the stack without
@@ -102,7 +99,7 @@ public interface Cpu {
    * 
    * @param value the value to set
    */
-  void setStackTopElement(short value);
+  void setStackTop(short value);
   
   /**
    * Returns the evaluation stack element at the specified index.
@@ -119,7 +116,7 @@ public interface Cpu {
    * @param value the value to push
    * @return true if operation was ok, false if overflow
    */
-  boolean pushUserStack(int userstackAddress, short value);
+  boolean pushStack(int userstackAddress, short value);
   
   /**
    * Pops the specified value from the user stack.
@@ -127,7 +124,7 @@ public interface Cpu {
    * @param userstackAddress the address of the user stack
    * @return the popped value
    */
-  short popUserStack(int userstackAddress);
+  short popStack(int userstackAddress);
   
   // ********************************************************************
   // ***** Variable access
@@ -163,7 +160,7 @@ public interface Cpu {
    * 
    * @param routineContext the routine context object
    */
-  void pushRoutineContext(RoutineContext routineContext);
+  //void pushRoutineContext(RoutineContext routineContext);
   
   /**
    * Pops the current routine context from the stack. It will also

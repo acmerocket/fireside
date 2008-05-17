@@ -22,32 +22,27 @@ package test.zmpp.vm;
 
 import org.jmock.Mock;
 import org.jmock.MockObjectTestCase;
-import org.zmpp.base.Memory;
 import org.zmpp.vm.Machine;
 import org.zmpp.vm.MemoryOutputStream;
 
 public class MemoryOutputStreamTest extends MockObjectTestCase {
 
-  private Mock mockMemory, mockMachine, mockCpu, mockFileheader;
+  private Mock mockMachine;
   private Machine machine;
-  private Memory memory;
   private MemoryOutputStream output;
 
   @Override
   protected void setUp() throws Exception {
     mockMachine = mock(Machine.class);
-    mockMemory = mock(Memory.class);
     machine = (Machine) mockMachine.proxy();
-    memory = (Memory) mockMemory.proxy();
     output = new MemoryOutputStream(machine);
   }
   
   public void testPrintVersion5() {
-    mockMachine.expects(atLeastOnce()).method("getMemory").will(returnValue(memory));
     mockMachine.expects(once()).method("getVersion").will(returnValue(5));
     
-    mockMemory.expects(once()).method("writeUnsignedByte").with(eq(4713), eq((short)65));
-    mockMemory.expects(once()).method("writeUnsignedShort").with(eq(4711), eq(1));
+    mockMachine.expects(once()).method("writeUnsignedByte").with(eq(4713), eq((short)65));
+    mockMachine.expects(once()).method("writeUnsignedShort").with(eq(4711), eq(1));
     
     // Selection has to be performed prior to printing - ALWAYS !!!
     output.select(4711, 0);    

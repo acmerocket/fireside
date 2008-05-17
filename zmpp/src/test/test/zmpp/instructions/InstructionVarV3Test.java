@@ -125,8 +125,7 @@ public class InstructionVarV3Test extends InstructionTestBase {
   
   @Test
   public void testStorew() {
-    mockMachine.expects(once()).method("getMemory").will(returnValue(memory));
-    mockMemory.expects(once()).method("writeShort").with(eq(2), eq((short) 0x1000)); 
+    mockMachine.expects(once()).method("writeShort").with(eq(2), eq((short) 0x1000)); 
     mockMachine.expects(once()).method("incrementPC").with(eq(5));
     
     VariableInstruction storew = new VariableInstruction(machine,
@@ -144,8 +143,7 @@ public class InstructionVarV3Test extends InstructionTestBase {
   
   @Test
   public void testStoreb() {
-    mockMachine.expects(once()).method("getMemory").will(returnValue(memory));
-    mockMemory.expects(once()).method("writeByte").with(eq(1), eq((byte) 0x15)); 
+    mockMachine.expects(once()).method("writeByte").with(eq(1), eq((byte) 0x15)); 
     mockMachine.expects(once()).method("incrementPC").with(eq(5));
     
     VariableInstruction storeb = new VariableInstruction(machine,

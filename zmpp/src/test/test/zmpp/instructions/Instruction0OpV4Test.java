@@ -30,6 +30,7 @@ import test.zmpp.instructions.Instruction0OpV3Test.Instruction0OpMock;
 
 public class Instruction0OpV4Test extends InstructionTestBase {
 
+  @Override
   @Before
   protected void setUp() throws Exception {
 	  super.setUp();
@@ -72,8 +73,7 @@ public class Instruction0OpV4Test extends InstructionTestBase {
     mockMachine.expects(once()).method("setVariable").with(eq(5), eq((short) 2));
     
     // Store variable
-    mockMachine.expects(once()).method("getMemory").will(returnValue(memory));
-    mockMemory.expects(once()).method("readUnsignedByte").with(eq(0)).will(returnValue((short) 5));
+    mockMachine.expects(once()).method("readUnsignedByte").with(eq(0)).will(returnValue((short) 5));
     
     Instruction0OpMock restore = createInstructionMock(Short0StaticInfo.OP_RESTORE);
     restore.execute();

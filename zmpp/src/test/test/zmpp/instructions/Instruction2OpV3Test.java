@@ -523,8 +523,7 @@ public class Instruction2OpV3Test extends InstructionTestBase {
         Operand.TYPENUM_SMALL_CONSTANT, (short) 1);
     loadw.setStoreVariable((short) 0x11);
   
-    mockMachine.expects(once()).method("getMemory").will(returnValue(memory));
-    mockMemory.expects(once()).method("readShort").with(eq(0x0010 + 2)).will(returnValue((short) 123));
+    mockMachine.expects(once()).method("readShort").with(eq(0x0010 + 2)).will(returnValue((short) 123));
     mockMachine.expects(once()).method("setVariable").with(eq(0x11), eq((short)123));
     loadw.execute();
     assertTrue(loadw.nextInstructionCalled);
@@ -541,8 +540,7 @@ public class Instruction2OpV3Test extends InstructionTestBase {
         Operand.TYPENUM_LARGE_CONSTANT, (short) 0x0010,
         Operand.TYPENUM_SMALL_CONSTANT, (byte) 1);
     loadb.setStoreVariable((short) 0x11);
-    mockMachine.expects(once()).method("getMemory").will(returnValue(memory));
-    mockMemory.expects(once()).method("readUnsignedByte").with(eq(0x0010 + 1)).will(returnValue((short) 42));
+    mockMachine.expects(once()).method("readUnsignedByte").with(eq(0x0010 + 1)).will(returnValue((short) 42));
     mockMachine.expects(once()).method("setVariable").with(eq(0x11), eq((short) 42));
     
     loadb.execute();

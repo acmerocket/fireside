@@ -124,9 +124,7 @@ public abstract class AbstractInstruction implements Instruction {
    * Returns the memory object.
    * @return the memory object
    */
-  protected Memory getMemory() {
-    return machine.getMemory();
-  }
+  protected Memory getMemory() { return machine; }
   
   /**
    * Returns the instruction's opcode.

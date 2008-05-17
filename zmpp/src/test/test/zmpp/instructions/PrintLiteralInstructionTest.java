@@ -45,7 +45,7 @@ public class PrintLiteralInstructionTest extends InstructionTestBase {
     mockMachine.expects(once()).method("halt").with(eq(
       "illegal instruction, type: SHORT operand count: C0OP opcode: 221"));
     PrintLiteralInstruction illegal = new PrintLiteralInstruction(
-        machine, 0xdd, memory, 0);
+        machine, 0xdd, machine, 0);
     illegal.execute();
   }
   
@@ -53,9 +53,9 @@ public class PrintLiteralInstructionTest extends InstructionTestBase {
   public void testPrint() {    
     mockMachine.expects(once()).method("incrementPC").with(eq(3));
     mockMachine.expects(once()).method("printZString").with(eq(4712));
-    mockMemory.expects(once()).method("readUnsignedShort").with(eq(4712)).will(returnValue(0x8000));
+    mockMachine.expects(once()).method("readUnsignedShort").with(eq(4712)).will(returnValue(0x8000));
     PrintLiteralInstruction print = new PrintLiteralInstruction(
-        machine, PrintLiteralStaticInfo.OP_PRINT, memory, 4711);
+        machine, PrintLiteralStaticInfo.OP_PRINT, machine, 4711);
     print.execute();
   }
   
@@ -66,7 +66,7 @@ public class PrintLiteralInstructionTest extends InstructionTestBase {
     mockMachine.expects(once()).method("returnWith").with(eq((short) 1));
     
     PrintLiteralInstruction print_ret = new PrintLiteralInstruction(
-        machine, PrintLiteralStaticInfo.OP_PRINT_RET, memory, 4711);
+        machine, PrintLiteralStaticInfo.OP_PRINT_RET, machine, 4711);
     print_ret.execute();
   }  
 }

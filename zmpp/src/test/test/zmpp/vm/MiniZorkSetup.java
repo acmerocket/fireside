@@ -59,6 +59,7 @@ public abstract class MiniZorkSetup extends MockObjectTestCase {
   protected Machine machineState;
   protected FileInputStream fileInput; 
   
+  @Override
   protected void setUp() throws Exception {
     
     File zork1 = new File("testfiles/minizork.z3");
@@ -79,6 +80,7 @@ public abstract class MiniZorkSetup extends MockObjectTestCase {
     machineState.initialize(config, new DefaultInstructionDecoder());
   }
   
+  @Override
   protected void tearDown() throws Exception {
     
     fileInput.close();

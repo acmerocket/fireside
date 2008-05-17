@@ -86,17 +86,14 @@ public class InputFunctions {
                                final int textpointer) {
     
     final int version = machine.getVersion();
-    final Memory memory = machine.getMemory();
     
-    if (version >= 5) {
-      
+    if (version >= 5) {      
       // Check if was cancelled
       final byte numCharsTyped = (terminateChar == ZsciiEncoding.NULL) ?
           0 : (byte) (textpointer - 2);
-          
+
       // Write the number of characters typed in byte 1
-      memory.writeUnsignedByte(textbuffer + 1, numCharsTyped);
-      
+      machine.writeUnsignedByte(textbuffer + 1, numCharsTyped);      
     } else {      
       // Terminate with 0 byte in versions < 5
       // Check if input was cancelled
@@ -104,16 +101,15 @@ public class InputFunctions {
       if (terminateChar == ZsciiEncoding.NULL) {
         terminatepos = 0;
       }
-      memory.writeByte(textbuffer + terminatepos, (byte) 0);
+      machine.writeByte(textbuffer + terminatepos, (byte) 0);
     }
   }
   
   private void processInput(final int textbuffer, String inputString) {
-    final Memory memory = machine.getMemory();
-    final int bufferlen = memory.readUnsignedByte(textbuffer);
+    final int bufferlen = machine.readUnsignedByte(textbuffer);
     int storeOffset = machine.getVersion() <= 4 ? 1 : 2;
     for (int i = 0; i < inputString.length(); i++) {
-      memory.writeByte(textbuffer + i + storeOffset,
+      machine.writeByte(textbuffer + i + storeOffset,
               (byte) inputString.charAt(i));
     }
     char terminateChar = inputString.charAt(inputString.length() - 1);
@@ -136,12 +132,10 @@ public class InputFunctions {
       }
     
       // Check the terminator table
-      final Memory memory = machine.getMemory();
       short terminator;
     
-      for (int i = 0; ; i++) {
-      
-        terminator = memory.readUnsignedByte(terminatorTable + i);
+      for (int i = 0; ; i++) {      
+        terminator = machine.readUnsignedByte(terminatorTable + i);
         if (terminator == 0) {
           break;
         }
@@ -193,12 +187,11 @@ public class InputFunctions {
    */
   public void tokenize(final int textbuffer, final int parsebuffer,
                        final int dictionaryAddress, final boolean flag) {
-    final Memory memory = machine.getMemory();
     final int version = machine.getVersion();
-    final int bufferlen = memory.readUnsignedByte(textbuffer);
+    final int bufferlen = machine.readUnsignedByte(textbuffer);
     final int textbufferstart = determineTextBufferStart(version);
     final int charsTyped = (version >= 5) ?
-                      memory.readUnsignedByte(textbuffer + 1) :
+                      machine.readUnsignedByte(textbuffer + 1) :
                       0;
     
     // from version 5, text starts at position 2
@@ -210,13 +203,13 @@ public class InputFunctions {
       new HashMap<ZsciiString, Integer>();
     
     // Write the number of tokens in byte 1 of the parse buffer
-    final int maxwords = memory.readUnsignedByte(parsebuffer);
+    final int maxwords = machine.readUnsignedByte(parsebuffer);
     
     // Do not go beyond the limit of maxwords
     final int numParsedTokens = Math.min(maxwords, tokens.size());
     
     // Write the number of parsed tokens into byte 1 of the parse buffer
-    memory.writeUnsignedByte(parsebuffer + 1, (short) numParsedTokens);
+    machine.writeUnsignedByte(parsebuffer + 1, (short) numParsedTokens);
     
     int parseaddr = parsebuffer + 2;
     
@@ -255,9 +248,9 @@ public class InputFunctions {
       if (!flag || flag && entryAddress > 0) {
         
         // This is one slot
-        memory.writeUnsignedShort(parseaddr, entryAddress);     
-        memory.writeUnsignedByte(parseaddr + 2, (short) token.length());
-        memory.writeUnsignedByte(parseaddr + 3, (short) tokenIndex);
+        machine.writeUnsignedShort(parseaddr, entryAddress);     
+        machine.writeUnsignedByte(parseaddr + 2, (short) token.length());
+        machine.writeUnsignedByte(parseaddr + 3, (short) tokenIndex);
       }
       parseaddr += 4;
     }
@@ -275,9 +268,7 @@ public class InputFunctions {
    * @return the string contained in the buffer
    */
   private ZsciiString bufferToZscii(final int address, final int bufferlen,
-      final int charsTyped) {
-    final Memory memory = machine.getMemory();
-    
+      final int charsTyped) {    
     // If charsTyped is set, use that value as the limit
     final int numChars = (charsTyped > 0) ? charsTyped : bufferlen;
     
@@ -285,7 +276,7 @@ public class InputFunctions {
     final ZsciiStringBuilder buffer = new ZsciiStringBuilder();
     for (int i = 0; i < numChars; i++) {
       
-      final char charByte = (char) memory.readUnsignedByte(address + i);
+      final char charByte = (char) machine.readUnsignedByte(address + i);
       if (charByte == 0) {
         break;
       }

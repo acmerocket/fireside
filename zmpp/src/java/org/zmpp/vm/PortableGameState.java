@@ -447,13 +447,11 @@ public class PortableGameState {
     
     // capture dynamic memory which ends at address(staticsMem) - 1
     // uncompressed
-    final Memory memory = machine.getMemory();
     final int staticMemStart = fileheader.getStaticsAddress();
     dynamicMem = new byte[staticMemStart];
     
-    for (int i = 0; i < staticMemStart; i++) {
-      
-      dynamicMem[i] = memory.readByte(i);
+    for (int i = 0; i < staticMemStart; i++) {      
+      dynamicMem[i] = machine.readByte(i);
     }
 
     captureStackFrames(machine);
@@ -645,13 +643,11 @@ public class PortableGameState {
     
     // local variables
     for (short local : stackFrame.locals) {
-      
       addShortToByteBuffer(byteBuffer, local);
     }
     
     // stack values
     for (short stackValue : stackFrame.evalStack) {
-      
       addShortToByteBuffer(byteBuffer, stackValue);
     }
   }
@@ -691,12 +687,9 @@ public class PortableGameState {
    * @param machine a Machine object
    */
   public void transferStateToMachine(final Machine machine) {
-    final Memory memory = machine.getMemory();
-    
     // Dynamic memory
     for (int i = 0; i < dynamicMem.length; i++) {
-      
-      memory.writeByte(i, dynamicMem[i]);
+      machine.writeByte(i, dynamicMem[i]);
     }
     
     // Stack frames
@@ -744,7 +737,7 @@ public class PortableGameState {
     if (machine.getVersion() <= 3) {
       // In version 3 this is a branch target that needs to be read
       // Execution is continued at the first instruction after the branch offset
-      resumePc += getBranchOffsetLength(machine.getMemory(), resumePc);
+      resumePc += getBranchOffsetLength(machine, resumePc);
     } else if (machine.getVersion() >= 4) {
       // in version 4 and later, this is always 1
       resumePc++;
@@ -759,10 +752,8 @@ public class PortableGameState {
    * @return the store variable
    */
   public int getStoreVariable(final Machine machine) {
-    
     final int storeVarAddress = getProgramCounter();
-    return machine.getMemory().readUnsignedByte(
-        storeVarAddress);
+    return machine.readUnsignedByte(storeVarAddress);
   }
 
   /**

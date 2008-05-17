@@ -53,11 +53,11 @@ public class PortableGameStateTest extends MockObjectTestCase {
 
   private PortableGameState gameState;
   private FormChunk formChunk;
-  private Mock mockMachine, mockFileheader, mockMemory, mockGamedata;
+  private Mock mockMachine, mockFileheader, mockGamedata, mockMemory;
   private Machine machine;
   private GameData gamedata;
-  private StoryFileHeader fileheader;
   private Memory memory;
+  private StoryFileHeader fileheader;
 
   @Override
   protected void setUp() throws Exception {
@@ -65,10 +65,10 @@ public class PortableGameStateTest extends MockObjectTestCase {
     machine = (Machine) mockMachine.proxy();
     mockFileheader = mock(StoryFileHeader.class);
     fileheader = (StoryFileHeader) mockFileheader.proxy();
-    mockMemory = mock(Memory.class);
-    memory = (Memory) mockMemory.proxy();
     mockGamedata = mock(GameData.class);
     gamedata = (GameData) mockGamedata.proxy();
+    mockMemory = mock(Memory.class);
+    memory = (Memory) mockMemory.proxy();
     
     File testSaveFile = new File("testfiles/leathersave.ifzs");
     RandomAccessFile saveFile = new RandomAccessFile(testSaveFile, "r");
@@ -130,7 +130,6 @@ public class PortableGameStateTest extends MockObjectTestCase {
     
     // Expectations
     mockMachine.expects(atLeastOnce()).method("getFileHeader").will(returnValue(fileheader));
-    mockMachine.expects(once()).method("getMemory").will(returnValue(memory));
     mockMachine.expects(once()).method("getRoutineContexts").will(returnValue(emptyContexts));
     mockMachine.expects(once()).method("getSP").will(returnValue(4));
     mockMachine.expects(atLeastOnce()).method("getStackElement").will(returnValue((short) 42));
@@ -139,7 +138,7 @@ public class PortableGameStateTest extends MockObjectTestCase {
     mockFileheader.expects(once()).method("getChecksum").will(returnValue(4712));
     mockFileheader.expects(once()).method("getSerialNumber").will(returnValue("850101"));
     mockFileheader.expects(once()).method("getStaticsAddress").will(returnValue(12345));
-    mockMemory.expects(atLeastOnce()).method("readByte").withAnyArguments().will(returnValue((byte) 0));
+    mockMachine.expects(atLeastOnce()).method("readByte").withAnyArguments().will(returnValue((byte) 0));
     
     gameState.captureMachineState(machine, 4711);
     assertEquals(4711, gameState.getProgramCounter());
@@ -306,8 +305,8 @@ public class PortableGameStateTest extends MockObjectTestCase {
     
     gamestate.setDynamicMem(dynMem);
    
-    mockGamedata.expects(atLeastOnce()).method("getMemory").will(returnValue(memory));
     mockGamedata.expects(atLeastOnce()).method("getStoryFileHeader").will(returnValue(fileheader));
+    mockGamedata.expects(atLeastOnce()).method("getMemory").will(returnValue(memory));
     mockGamedata.expects(atLeastOnce()).method("getResources").will(returnValue(null));
     mockFileheader.expects(once()).method("getProgramStart").will(returnValue(4711));
     mockFileheader.expects(once()).method("getGlobalsAddress").will(returnValue(5711));
@@ -323,45 +322,43 @@ public class PortableGameStateTest extends MockObjectTestCase {
     
     // Tests if the dynamic memory and the stack frames are
     // completely copied
-    Machine machine = new MachineImpl();
-    machine.initialize(gamedata, new DefaultInstructionDecoder());
-    gamestate.transferStateToMachine(machine);
+    Machine tmpMachine = new MachineImpl();
+    tmpMachine.initialize(gamedata, new DefaultInstructionDecoder());
+    gamestate.transferStateToMachine(tmpMachine);
   }
   
   public void testReadStackFrameFromChunkDiscardResult() {
     
     // PC
-    mockMemory.expects(once()).method("readByte").with(eq(0)).will(returnValue((byte) 0));
-    mockMemory.expects(once()).method("readByte").with(eq(1)).will(returnValue((byte) 0x12));
-    mockMemory.expects(once()).method("readByte").with(eq(2)).will(returnValue((byte) 0x20));
+    mockMachine.expects(once()).method("readByte").with(eq(0)).will(returnValue((byte) 0));
+    mockMachine.expects(once()).method("readByte").with(eq(1)).will(returnValue((byte) 0x12));
+    mockMachine.expects(once()).method("readByte").with(eq(2)).will(returnValue((byte) 0x20));
     
     // Return variable/locals flag: discard result/3 locals (0x13)
-    mockMemory.expects(once()).method("readByte").with(eq(3)).will(returnValue((byte) 0x13));
+    mockMachine.expects(once()).method("readByte").with(eq(3)).will(returnValue((byte) 0x13));
 
     // return variable is always 0 if discard result
-    mockMemory.expects(once()).method("readByte").with(eq(4)).will(returnValue((byte) 0));
+    mockMachine.expects(once()).method("readByte").with(eq(4)).will(returnValue((byte) 0));
     
     // supplied arguments, we define a and b
-    mockMemory.expects(once()).method("readByte").with(eq(5)).will(returnValue((byte) 3));
+    mockMachine.expects(once()).method("readByte").with(eq(5)).will(returnValue((byte) 3));
 
     // stack size, we define 2
-    mockMemory.expects(once()).method("readUnsignedShort").with(eq(6)).will(returnValue(2));
+    mockMachine.expects(once()).method("readUnsignedShort").with(eq(6)).will(returnValue(2));
     
     // local variables
     for (int i = 0; i < 3; i++) {
-      
-      mockMemory.expects(once()).method("readShort").with(eq(8 + i * 2)).will(returnValue((short) i));
+      mockMachine.expects(once()).method("readShort").with(eq(8 + i * 2)).will(returnValue((short) i));
     }
 
     // stack variables
-    for (int i = 0; i < 2; i++) {
-      
-      mockMemory.expects(once()).method("readShort").with(eq(8 + 6 + i * 2)).will(returnValue((short) i));
+    for (int i = 0; i < 2; i++) {  
+      mockMachine.expects(once()).method("readShort").with(eq(8 + 6 + i * 2)).will(returnValue((short) i));
     }
     
     StackFrame stackFrame = new StackFrame();
     PortableGameState gamestate = new PortableGameState();
-    gamestate.readStackFrame(stackFrame, memory, 0);
+    gamestate.readStackFrame(stackFrame, machine, 0);
     assertEquals(0x1220, stackFrame.getProgramCounter());
     assertEquals(PortableGameState.DISCARD_RESULT, stackFrame.getReturnVariable());
     assertEquals(3, stackFrame.getLocals().length);
@@ -372,37 +369,35 @@ public class PortableGameStateTest extends MockObjectTestCase {
   public void testReadStackFrameFromChunkWithReturnVar() {
     
     // PC
-    mockMemory.expects(once()).method("readByte").with(eq(0)).will(returnValue((byte) 0));
-    mockMemory.expects(once()).method("readByte").with(eq(1)).will(returnValue((byte) 0x12));
-    mockMemory.expects(once()).method("readByte").with(eq(2)).will(returnValue((byte) 0x21));
+    mockMachine.expects(once()).method("readByte").with(eq(0)).will(returnValue((byte) 0));
+    mockMachine.expects(once()).method("readByte").with(eq(1)).will(returnValue((byte) 0x12));
+    mockMachine.expects(once()).method("readByte").with(eq(2)).will(returnValue((byte) 0x21));
     
     // Return variable/locals flag: has return value/2 locals (0x13)
-    mockMemory.expects(once()).method("readByte").with(eq(3)).will(returnValue((byte) 0x02));
+    mockMachine.expects(once()).method("readByte").with(eq(3)).will(returnValue((byte) 0x02));
 
     // return variable is 5
-    mockMemory.expects(once()).method("readByte").with(eq(4)).will(returnValue((byte) 5));
+    mockMachine.expects(once()).method("readByte").with(eq(4)).will(returnValue((byte) 5));
     
     // supplied arguments, we define a, b and c
-    mockMemory.expects(once()).method("readByte").with(eq(5)).will(returnValue((byte) 7));
+    mockMachine.expects(once()).method("readByte").with(eq(5)).will(returnValue((byte) 7));
 
     // stack size, we define 3
-    mockMemory.expects(once()).method("readUnsignedShort").with(eq(6)).will(returnValue(3));
+    mockMachine.expects(once()).method("readUnsignedShort").with(eq(6)).will(returnValue(3));
     
     // local variables
     for (int i = 0; i < 2; i++) {
-      
-      mockMemory.expects(once()).method("readShort").with(eq(8 + i * 2)).will(returnValue((short) i));
+      mockMachine.expects(once()).method("readShort").with(eq(8 + i * 2)).will(returnValue((short) i));
     }
 
     // stack variables
     for (int i = 0; i < 3; i++) {
-      
-      mockMemory.expects(once()).method("readShort").with(eq(8 + 4 + i * 2)).will(returnValue((short) i));
+      mockMachine.expects(once()).method("readShort").with(eq(8 + 4 + i * 2)).will(returnValue((short) i));
     }
     
     StackFrame stackFrame = new StackFrame();
     PortableGameState gamestate = new PortableGameState();
-    gamestate.readStackFrame(stackFrame, memory, 0);
+    gamestate.readStackFrame(stackFrame, machine, 0);
     assertEquals(0x1221, stackFrame.getProgramCounter());
     assertEquals(5, stackFrame.getReturnVariable());
     assertEquals(2, stackFrame.getLocals().length);

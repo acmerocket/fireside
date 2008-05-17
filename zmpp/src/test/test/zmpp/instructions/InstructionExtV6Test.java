@@ -77,9 +77,8 @@ public class InstructionExtV6Test extends InstructionTestBase {
     mockMachine.expects(atLeastOnce()).method("getPictureManager").will(returnValue(picturemanager));
     mockPictureManager.expects(once()).method("getRelease").will(returnValue(2));
     mockPictureManager.expects(atLeastOnce()).method("getNumPictures").will(returnValue(32));
-    mockMachine.expects(once()).method("getMemory").will(returnValue(memory));
-    mockMemory.expects(once()).method("writeUnsignedShort").with(eq(1000), eq(32));
-    mockMemory.expects(once()).method("writeUnsignedShort").with(eq(1002), eq(2));
+    mockMachine.expects(once()).method("writeUnsignedShort").with(eq(1000), eq(32));
+    mockMachine.expects(once()).method("writeUnsignedShort").with(eq(1002), eq(2));
 
     // Branch
     mockMachine.expects(once()).method("doBranch").with(eq((short) 123), eq(3));
@@ -101,9 +100,8 @@ public class InstructionExtV6Test extends InstructionTestBase {
     
     mockMachine.expects(atLeastOnce()).method("getPictureManager").will(returnValue(picturemanager));
     mockPictureManager.expects(once()).method("getPictureSize").with(eq(1)).will(returnValue(new Resolution(320, 200)));
-    mockMachine.expects(once()).method("getMemory").will(returnValue(memory));
-    mockMemory.expects(once()).method("writeUnsignedShort").with(eq(1000), eq(200));
-    mockMemory.expects(once()).method("writeUnsignedShort").with(eq(1002), eq(320));
+    mockMachine.expects(once()).method("writeUnsignedShort").with(eq(1000), eq(200));
+    mockMachine.expects(once()).method("writeUnsignedShort").with(eq(1002), eq(320));
     
     // computes a branch
     mockMachine.expects(atLeastOnce()).method("doBranch").with(eq((short) 42), eq(3));

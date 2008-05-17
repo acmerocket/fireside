@@ -340,5 +340,5 @@ public class DefaultInstructionDecoder implements InstructionDecoder {
     return currentAddress;
   }
   
-  private Memory getMemory() { return machine.getMemory(); }
+  private Memory getMemory() { return machine; }
 }

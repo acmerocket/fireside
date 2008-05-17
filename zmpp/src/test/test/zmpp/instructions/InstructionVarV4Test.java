@@ -172,11 +172,10 @@ public class InstructionVarV4Test extends InstructionTestBase {
 
   public void testGetCursor() {
     mockMachine.expects(once()).method("getScreen").will(returnValue(screen));
-    mockMachine.expects(once()).method("getMemory").will(returnValue(memory));
     mockScreen.expects(once()).method("getTextCursor").will(returnValue(cursor));
     mockCursor.expects(once()).method("getLine").will(returnValue(1));
     mockCursor.expects(once()).method("getColumn").will(returnValue(1));
-    mockMemory.expects(atLeastOnce()).method("writeShort").withAnyArguments();
+    mockMachine.expects(atLeastOnce()).method("writeShort").withAnyArguments();
         
     VariableInstructionMock get_cursor =
       new VariableInstructionMock(machine, VariableStaticInfo.OP_GET_CURSOR);

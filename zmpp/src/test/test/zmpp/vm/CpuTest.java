@@ -38,7 +38,7 @@ public class CpuTest extends MockObjectTestCase {
   private Mock mockMachine, mockDecoder, mockFileHeader, mockMemory;
   private Machine machine;
   private InstructionDecoder decoder;
-  private Cpu cpu;
+  private CpuImpl cpu;
   private StoryFileHeader fileheader;
   private Memory memory;
   private RoutineContext routineInfo;
@@ -72,7 +72,7 @@ public class CpuTest extends MockObjectTestCase {
   
   public void testInitialState() {
     assertEquals(1000, cpu.getPC());
-    assertEquals(0, cpu.getStackPointer());
+    assertEquals(0, cpu.getSP());
     assertEquals(0, ((CpuImpl)cpu).getRoutineStackPointer());
   }
   
@@ -150,23 +150,23 @@ public class CpuTest extends MockObjectTestCase {
     
     // initialize stack
     cpu.setVariable(0, (short) 0);    
-    cpu.setStackTopElement((short) 42);
-    assertEquals(1, cpu.getStackPointer());
-    assertEquals(42, cpu.getStackTopElement());
-    assertEquals(1, cpu.getStackPointer());
+    cpu.setStackTop((short) 42);
+    assertEquals(1, cpu.getSP());
+    assertEquals(42, cpu.getStackTop());
+    assertEquals(1, cpu.getSP());
   }
   
   public void testGetStackTopElementStackEmpty() {
     
-    assertEquals(-1, cpu.getStackTopElement());
+    assertEquals(-1, cpu.getStackTop());
   }
   
   public void testGetVariableStackNonEmptyNoRoutineContext() {
     // Write something to the stack now
     cpu.setVariable(0, (short) 4711);
-    int oldStackPointer = cpu.getStackPointer();
+    int oldStackPointer = cpu.getSP();
     int value = cpu.getVariable(0);
-    assertEquals(oldStackPointer - 1, cpu.getStackPointer());
+    assertEquals(oldStackPointer - 1, cpu.getSP());
     assertEquals(value, 4711);
   }
 
@@ -181,17 +181,17 @@ public class CpuTest extends MockObjectTestCase {
     // Write a new value to the stack within the routine
     cpu.setVariable(0, (short) 4712);
     
-    int oldStackPointer = cpu.getStackPointer();
+    int oldStackPointer = cpu.getSP();
     int value = cpu.getVariable(0);
-    assertEquals(oldStackPointer - 1, cpu.getStackPointer());
+    assertEquals(oldStackPointer - 1, cpu.getSP());
     assertEquals(value, 4712);
   }
   
   public void testSetVariableStack() {
     
-    int oldStackPointer = cpu.getStackPointer();
+    int oldStackPointer = cpu.getSP();
     cpu.setVariable(0, (short) 213);
-    assertEquals(oldStackPointer + 1, cpu.getStackPointer());
+    assertEquals(oldStackPointer + 1, cpu.getSP());
   }
   
   public void testGetLocalVariableIllegal() {
@@ -258,10 +258,9 @@ public class CpuTest extends MockObjectTestCase {
 
   public void testCallAndReturn() {
     
-    mockMachine.expects(atLeastOnce()).method("getMemory").will(returnValue(memory));    
     // Setup the environment
     cpu.setVariable(0, (short) 10); // write something on the stack
-    int oldSp = cpu.getStackPointer();
+    int oldSp = cpu.getSP();
     cpu.setPC(0x747);
     int returnAddress = 0x749;
     
@@ -283,54 +282,54 @@ public class CpuTest extends MockObjectTestCase {
     cpu.setVariable(0, (short) 215);
 
     // Set the variable
-    mockMemory.expects(once()).method("writeShort").with(eq(5004), eq((short) 42));
+    mockMachine.expects(once()).method("writeShort").with(eq(5004), eq((short) 42));
     
-    assertNotSame(oldSp, cpu.getStackPointer());
+    assertNotSame(oldSp, cpu.getSP());
     cpu.returnWith((short) 42);
     assertEquals(returnAddress, cpu.getPC());
-    assertEquals(oldSp, cpu.getStackPointer());
+    assertEquals(oldSp, cpu.getSP());
   }  
 
-  public void testNextStep() {
+  public void testNextInstruction() {
     Instruction myinstr = new Instruction() {      
       public void execute() { }
       public boolean isOutput() { return false; }
     };
     mockDecoder.expects(once()).method("decodeInstruction").with(eq(1000)).will(returnValue(myinstr));
-    Instruction instr = cpu.nextStep();
+    Instruction instr = cpu.nextInstruction();
     assertEquals(myinstr, instr);
   }
   
   public void testTranslatePackedAddressV3() {
     mockMachine.expects(atLeastOnce()).method("getVersion").will(returnValue(3));
-    int byteAddress = cpu.translatePackedAddress(2312, true);
+    int byteAddress = cpu.unpackAddress(2312, true);
     assertEquals(2312 * 2, byteAddress);
   }  
 
   public void testTranslatePackedAddressV4() {
     mockMachine.expects(atLeastOnce()).method("getVersion").will(returnValue(4));
-    assertEquals(4711 * 4, cpu.translatePackedAddress(4711, true));
+    assertEquals(4711 * 4, cpu.unpackAddress(4711, true));
   }
 
   public void testTranslatePackedAddressV5() {
     mockMachine.expects(atLeastOnce()).method("getVersion").will(returnValue(5));
-    assertEquals(4711 * 4, cpu.translatePackedAddress(4711, true));
+    assertEquals(4711 * 4, cpu.unpackAddress(4711, true));
   }
 
   public void testTranslatePackedAddressV7Call() {
     mockFileHeader.expects(once()).method("getRoutineOffset").will(returnValue(5));
     mockMachine.expects(atLeastOnce()).method("getVersion").will(returnValue(7));
-    assertEquals(4711 * 4 + 8 * 5, cpu.translatePackedAddress(4711, true));
+    assertEquals(4711 * 4 + 8 * 5, cpu.unpackAddress(4711, true));
   }
 
   public void testTranslatePackedAddressV7String() {
     mockFileHeader.expects(once()).method("getStaticStringOffset").will(returnValue(6));
     mockMachine.expects(atLeastOnce()).method("getVersion").will(returnValue(7));
-    assertEquals(4711 * 4 + 8 * 6, cpu.translatePackedAddress(4711, false));
+    assertEquals(4711 * 4 + 8 * 6, cpu.unpackAddress(4711, false));
   }
   
   public void testTranslatePackedAddressV8() {
     mockMachine.expects(atLeastOnce()).method("getVersion").will(returnValue(8));
-    assertEquals(4711 * 8, cpu.translatePackedAddress(4711, true));
+    assertEquals(4711 * 8, cpu.unpackAddress(4711, true));
   }
 }
