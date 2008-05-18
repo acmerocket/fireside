@@ -31,11 +31,14 @@ import java.awt.event.MouseWheelEvent;
 import java.awt.event.MouseWheelListener;
 import java.io.File;
 import java.io.IOException;
+import java.io.InputStream;
 import javax.swing.BorderFactory;
 import javax.swing.JComponent;
 import javax.swing.JLabel;
 import javax.swing.JPanel;
 import javax.swing.JScrollBar;
+import org.zmpp.blorb.NativeImage;
+import org.zmpp.blorb.NativeImageFactory;
 import org.zmpp.swingui2.ScreenModelSplitView.MainViewListener;
 import org.zmpp.vm.ExecutionControl;
 import org.zmpp.vm.InvalidStoryException;
@@ -162,7 +165,20 @@ implements AdjustmentListener, MainViewListener, MouseWheelListener,
   public void startGame(File storyFile)
       throws IOException, InvalidStoryException {
     MachineInitStruct initStruct = new MachineInitStruct();
-    initStruct.storyFile = storyFile;
+    if (storyFile.getName().endsWith("zblorb")) {
+      initStruct.blorbFile = storyFile;
+    } else {
+      initStruct.storyFile = storyFile;
+    }
+    // just for debugging
+    initStruct.nativeImageFactory = new NativeImageFactory() {
+      public NativeImage createImage(InputStream inputStream) throws IOException {
+        return new NativeImage() {
+          public int getWidth() { return 0; }
+          public int getHeight() { return 0; }        
+        };
+      }
+    };
     initStruct.screenModel = screenModel;
     initStruct.statusLine = screenModel;
     

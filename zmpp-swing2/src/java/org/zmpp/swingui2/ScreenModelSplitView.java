@@ -61,8 +61,8 @@ public class ScreenModelSplitView extends JLayeredPane
 implements ScreenModelListener {
 
   //private static final Font STD_FONT = new Font("Baskerville", Font.PLAIN, 16);
-  private static final Font STD_FONT = new Font("American Typewriter", Font.PLAIN, 14);
-  private static final Font FIXED_FONT = new Font("Monaco", Font.PLAIN, 14);
+  private static final Font STD_FONT = new Font("American Typewriter", Font.PLAIN, 12);
+  private static final Font FIXED_FONT = new Font("Monaco", Font.PLAIN, 12);
   private static final int DEFAULT_FOREGROUND = ScreenModel.COLOR_WHITE;
   private static final int DEFAULT_BACKGROUND = ScreenModel.COLOR_BLUE;
   private int editStart;

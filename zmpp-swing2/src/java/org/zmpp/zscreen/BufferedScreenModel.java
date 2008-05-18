@@ -44,25 +44,23 @@ public class BufferedScreenModel implements ScreenModel, StatusLine,
         OutputStream {
   
   class TopWindow {
-    public int font = ScreenModel.FONT_FIXED;
-    public int textStyle = ScreenModel.TEXTSTYLE_ROMAN;
     public int cursorx = 1, cursory = 1;
-    public int background = ScreenModel.COLOR_BLACK;
-    public int foreground = ScreenModel.COLOR_WHITE;
+    TextAnnotation annotation = new TextAnnotation(ScreenModel.FONT_FIXED,
+            ScreenModel.TEXTSTYLE_ROMAN, ScreenModel.COLOR_BLACK,
+            ScreenModel.COLOR_WHITE);
     
     public int setFont(int font) {
-      int previousFont = this.font;
-      this.font = font;
+      int previousFont = this.annotation.getFont();
+      annotation = annotation.deriveFont(font);
       return previousFont;
     }
     public AnnotatedCharacter annotateCharacter(char zchar) {
-      TextAnnotation annot = new TextAnnotation(font, textStyle, background,
-          foreground);
-      return new AnnotatedCharacter(annot, zchar);
+      return new AnnotatedCharacter(annotation, zchar);
     }
   }
 
   private int current = WINDOW_BOTTOM;
+  private int numRowsUpper;
   private BufferedTextWindow bottomWindow = new BufferedTextWindow();
   private TopWindow topWindow = new TopWindow();
   private List<ScreenModelListener> screenModelListeners =
@@ -89,13 +87,13 @@ public class BufferedScreenModel implements ScreenModel, StatusLine,
     statusLineListeners.add(l);
   }
   
-  //public BufferedTextWindow getBottomWindow() { return bottomWindow; }
-
   public void reset() {
     throw new UnsupportedOperationException("Not supported yet.");
   }
 
   public void splitWindow(int linesUpperWindow) {
+    System.out.println("SPLIT_WINDOW: " + linesUpperWindow);
+    numRowsUpper = linesUpperWindow;
     for (ScreenModelListener l : screenModelListeners) {
       l.screenSplit(linesUpperWindow);
     }
@@ -109,7 +107,7 @@ public class BufferedScreenModel implements ScreenModel, StatusLine,
   public void setTextStyle(int style) {
     System.out.println("SET_TEXT_STYLE: " + style + " current: " + current);
     if (current == WINDOW_TOP) {
-      topWindow.textStyle = style;
+      topWindow.annotation = topWindow.annotation.deriveStyle(style);
     } else {
       bottomWindow.setCurrentTextStyle(style);
     }
@@ -176,7 +174,7 @@ public class BufferedScreenModel implements ScreenModel, StatusLine,
     System.out.println("setBackground, color: " + colornumber + " window: " +
             getTargetWindow(window));
     if (getTargetWindow(window) == WINDOW_TOP) {
-      topWindow.background = colornumber;
+      topWindow.annotation = topWindow.annotation.deriveBackground(colornumber);
     } else {
       bottomWindow.setBackground(colornumber);
     }
@@ -186,7 +184,7 @@ public class BufferedScreenModel implements ScreenModel, StatusLine,
     System.out.println("setForeground, color: " + colornumber + " window: " +
             getTargetWindow(window));
     if (getTargetWindow(window) == WINDOW_TOP) {
-      topWindow.foreground = colornumber;
+      topWindow.annotation = topWindow.annotation.deriveForeground(colornumber);
     } else {
       bottomWindow.setForeground(colornumber);
     }
@@ -257,6 +255,19 @@ public class BufferedScreenModel implements ScreenModel, StatusLine,
   // ***********************************************************************
   // ***** Additional public interface
   // ***************************************
+
+  public int getNumRowsUpper() {
+    return numRowsUpper;
+  }
+  public int getUpperBackground() {
+    return topWindow.annotation.getBackground();
+  }
+  public int getUpperForeground() {
+    return topWindow.annotation.getForeground();
+  }
+  public boolean upperIsReverseVideo() {
+    return topWindow.annotation.isReverseVideo();
+  }
 
   public int getLowerBackground() {
     return bottomWindow.getBackground();

@@ -66,10 +66,10 @@ public class TextAnnotation {
   
   public TextAnnotation deriveStyle(int newStyle) {
     int finalStyle = style;
-    if (style == TextAnnotation.TEXTSTYLE_ROMAN) {
-      finalStyle = style;
+    if (newStyle == TextAnnotation.TEXTSTYLE_ROMAN) {
+      finalStyle = newStyle;
     } else {
-      finalStyle |= style;
+      finalStyle |= newStyle;
     }
     return new TextAnnotation(this.font, finalStyle, this.background,
                               this.foreground);
@@ -103,4 +103,11 @@ public class TextAnnotation {
   
   public int getBackground() { return background; }
   public int getForeground() { return foreground; }
+  
+  @Override
+  public String toString() {
+    return "TextAnnotation, fixed: " + isFixed() + " bold: " + isBold() +
+            " italic: " + isItalic() + " bg: " + background + " fg: " +
+            foreground;
+  }
 }
