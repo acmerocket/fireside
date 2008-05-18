@@ -90,9 +90,19 @@ public class TextGridView extends JComponent {
       Color background = colTranslator.translate(
         annotation.getBackground(), ScreenModel.COLOR_WHITE);
       g.setColor(background);
+      if (annotation.isReverseVideo()) {
+        // swap colors
+        Color tmp = foreground;
+        foreground = background;
+        background = tmp;
+      }
+      System.out.println("Draw c: " + c.getCharacter() + " bg: " + background +
+              " fg: " + foreground + " posx: " + posx + " posy: " + posy);
       g.fillRect(posx, row * fontMetrics.getHeight(),
                  fontMetrics.charWidth('0'), fontMetrics.getHeight());
-      g.setColor(foreground);    
+      // This is the "Frotz" trick: set the foreground a little brighter,
+      // "Varicella" relies on it
+      g.setColor(foreground.brighter());
       g.drawString(String.valueOf(c.getCharacter()), posx, posy);
     }
   }
@@ -101,6 +111,10 @@ public class TextGridView extends JComponent {
     // Guarding writing out of bounds, some games do this
     if ((line - 1) >= grid.length) return;
     if ((column - 1) >= grid[line - 1].length) return;
+    //System.out.println("SET_CHAR, line: " + line + " col: " + column + " c: " +
+    //        c.getCharacter() + " BG: " + c.getAnnotation().getBackground() +
+    //        " FG: " + c.getAnnotation().getForeground() + " REVERSE: " +
+    //        c.getAnnotation().isReverseVideo());
     grid[line - 1][column - 1] = c;
   }
 

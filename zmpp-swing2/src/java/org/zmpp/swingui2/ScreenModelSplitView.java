@@ -308,10 +308,10 @@ implements ScreenModelListener {
        DEFAULT_FOREGROUND);
      if (annotation.isReverseVideo()) {
        StyleConstants.setBackground(attributes, foreground);
-       StyleConstants.setForeground(attributes, background);
+       StyleConstants.setForeground(attributes, background.brighter());
      } else {
        StyleConstants.setBackground(attributes, background);
-       StyleConstants.setForeground(attributes, foreground);
+       StyleConstants.setForeground(attributes, foreground.brighter());
      }
      return attributes;
   }
