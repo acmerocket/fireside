@@ -23,6 +23,7 @@ package test.zmpp.vm;
 import java.io.File;
 import java.io.FileInputStream;
 
+import java.io.IOException;
 import org.jmock.MockObjectTestCase;
 import org.zmpp.base.Memory;
 import org.zmpp.encoding.AlphabetTable;
@@ -35,8 +36,6 @@ import org.zmpp.encoding.ZCharTranslator;
 import org.zmpp.encoding.ZsciiEncoding;
 import org.zmpp.instructions.DefaultInstructionDecoder;
 import org.zmpp.vm.Abbreviations;
-import org.zmpp.vm.GameData;
-import org.zmpp.vm.Machine;
 import org.zmpp.vm.MachineImpl;
 import org.zmpp.vm.StoryFileHeader;
 import org.zmpp.vmutil.FileUtils;
@@ -51,37 +50,22 @@ import org.zmpp.vmutil.FileUtils;
 public abstract class MiniZorkSetup extends MockObjectTestCase {
 
   protected Memory minizorkmap;
-  protected GameData config;
   protected ZCharDecoder converter;
   protected StoryFileHeader fileheader;
   protected Abbreviations abbreviations;
-  protected Machine machineState;
-  protected FileInputStream fileInput; 
+  protected MachineImpl machine;
   
   @Override
   protected void setUp() throws Exception {
-    
-    File zork1 = new File("testfiles/minizork.z3");
-    fileInput = new FileInputStream(zork1);
-    byte[] data = FileUtils.readFileBytes(fileInput);
-    config = new GameData(data, null);
-    minizorkmap = config.getMemory();
-    fileheader = config.getStoryFileHeader();
+    machine = MachineTestUtil.createMachine("testfiles/minizork.z3");
+    minizorkmap = machine;
+    fileheader = machine.getFileHeader();
     
     abbreviations = new Abbreviations(minizorkmap,
         fileheader.getAbbreviationsAddress());
     ZsciiEncoding encoding = new ZsciiEncoding(new DefaultAccentTable());
     AlphabetTable alphabetTable = new DefaultAlphabetTable();
     ZCharTranslator translator = new DefaultZCharTranslator(alphabetTable);
-    converter = new DefaultZCharDecoder(encoding, translator, abbreviations);
-    
-    machineState = new MachineImpl();
-    machineState.initialize(config, new DefaultInstructionDecoder());
-  }
-  
-  @Override
-  protected void tearDown() throws Exception {
-    
-    fileInput.close();
+    converter = new DefaultZCharDecoder(encoding, translator, abbreviations); 
   }
 }

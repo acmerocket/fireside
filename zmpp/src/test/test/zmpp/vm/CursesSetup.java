@@ -35,7 +35,6 @@ import org.zmpp.encoding.ZCharTranslator;
 import org.zmpp.encoding.ZsciiEncoding;
 import org.zmpp.instructions.DefaultInstructionDecoder;
 import org.zmpp.vm.Abbreviations;
-import org.zmpp.vm.GameData;
 import org.zmpp.vm.Machine;
 import org.zmpp.vm.MachineImpl;
 import org.zmpp.vm.StoryFileHeader;
@@ -49,11 +48,10 @@ import org.zmpp.vmutil.FileUtils;
 public class CursesSetup {
 
   protected Memory curses;
-  protected GameData config;
   protected ZCharDecoder converter;
   protected StoryFileHeader fileheader;
   protected Abbreviations abbreviations;
-  protected Machine machineState;
+  protected Machine machine;
   private static byte[] originalData;
 
   @BeforeClass
@@ -67,9 +65,10 @@ public class CursesSetup {
   protected void setUp() throws Exception {
   	byte[] data = new byte[originalData.length];
   	System.arraycopy(originalData, 0, data, 0, originalData.length);
-  	config = new GameData(data, null);
-  	curses = config.getMemory();
-  	fileheader = config.getStoryFileHeader();
+  	machine = new MachineImpl();
+  	machine.initialize(data, null, new DefaultInstructionDecoder());
+  	curses = machine;
+  	fileheader = machine.getFileHeader();
 
   	abbreviations = new Abbreviations(curses,
   			fileheader.getAbbreviationsAddress());
@@ -78,7 +77,5 @@ public class CursesSetup {
   	ZCharTranslator translator = new DefaultZCharTranslator(alphabetTable);
   	converter = new DefaultZCharDecoder(encoding, translator, abbreviations);
 
-  	machineState = new MachineImpl();
-  	machineState.initialize(config, new DefaultInstructionDecoder());
   }
 }

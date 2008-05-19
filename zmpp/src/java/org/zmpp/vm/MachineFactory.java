@@ -78,14 +78,12 @@ public class MachineFactory {
    * @return the machine
    */
   public Machine buildMachine() throws IOException, InvalidStoryException {
-    final GameData gamedata =
-      new GameData(readStoryData(), readResources());
-    if (isInvalidStory(gamedata.getStoryFileHeader().getVersion())) {
-      throw new InvalidStoryException();
-    }
     final MachineImpl machine = new MachineImpl();
     final InstructionDecoder decoder = new DefaultInstructionDecoder();
-    machine.initialize(gamedata, decoder);
+    machine.initialize(readStoryData(), readResources(), decoder);
+    if (isInvalidStory(machine.getVersion())) {
+      throw new InvalidStoryException();
+    }
     initIOSystem(machine);
     return machine;
   }

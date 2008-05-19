@@ -22,11 +22,9 @@ package test.zmpp.vm;
 
 import org.jmock.Mock;
 import org.zmpp.encoding.ZsciiString;
-import org.zmpp.instructions.DefaultInstructionDecoder;
 import org.zmpp.io.InputStream;
 import org.zmpp.io.OutputStream;
 import org.zmpp.vm.Input;
-import org.zmpp.vm.MachineImpl;
 import org.zmpp.vm.MemoryOutputStream;
 import org.zmpp.vm.Output;
 import org.zmpp.vm.SaveGameDataStore;
@@ -35,9 +33,13 @@ import org.zmpp.vm.StatusLine;
 import org.zmpp.vm.StoryFileHeader.Attribute;
 import org.zmpp.vm.Machine.MachineRunState;
 
+/**
+ * Tests the external i/o of the machine.
+ * @author Wei-ju Wu
+ * @version 1.0
+ */
 public class MachineTest extends MiniZorkSetup {
 
-  private MachineImpl machine;
   private Mock mockStatusLine, mockScreen;
   private Mock mockOutputStream1, mockOutputStream2, mockOutputStream3;
   private Mock mockInputStream1, mockInputStream0;
@@ -51,8 +53,6 @@ public class MachineTest extends MiniZorkSetup {
   @Override
   protected void setUp() throws Exception {
     super.setUp();
-    machine = new MachineImpl();
-    machine.initialize(config, new DefaultInstructionDecoder());
     mockStatusLine = mock(StatusLine.class);
     statusLine = (StatusLine) mockStatusLine.proxy();
     mockScreen = mock(ScreenModel.class);

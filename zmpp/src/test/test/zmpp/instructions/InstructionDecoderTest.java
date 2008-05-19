@@ -59,7 +59,7 @@ public class InstructionDecoderTest extends MiniZorkSetup {
   protected void setUp() throws Exception {
     super.setUp();
     decoder = new DefaultInstructionDecoder();
-    decoder.initialize(machineState);
+    decoder.initialize(machine);
   }
 
   /**

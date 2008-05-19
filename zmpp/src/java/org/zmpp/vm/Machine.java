@@ -22,9 +22,9 @@ package org.zmpp.vm;
 
 import org.zmpp.base.Memory;
 import org.zmpp.encoding.IZsciiEncoding;
-import org.zmpp.encoding.ZsciiEncoding;
 import org.zmpp.encoding.ZsciiString;
 import org.zmpp.media.PictureManager;
+import org.zmpp.media.Resources;
 import org.zmpp.media.SoundSystem;
 
 /**
@@ -43,10 +43,11 @@ extends ObjectTree, Input, Output, Cpu, Memory, IZsciiEncoding {
   /**
    * Initialization function.
    * 
-   * @param machineConfig a configuration object
+   * @param data the story data
+   * @param resources Blorb resources
    * @param decoder the instruction decoder
    */
-  void initialize(GameData machineConfig, InstructionDecoder decoder);  
+  void initialize(byte[] data, Resources resources, InstructionDecoder decoder);  
 
   /**
    * Returns the story file version.

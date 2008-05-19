@@ -21,10 +21,22 @@
 package org.zmpp.vm;
 
 import java.util.List;
+import org.zmpp.base.DefaultMemory;
 import org.zmpp.base.Memory;
 import org.zmpp.blorb.BlorbImage;
+import org.zmpp.encoding.AccentTable;
+import org.zmpp.encoding.AlphabetTable;
+import org.zmpp.encoding.AlphabetTableV1;
+import org.zmpp.encoding.AlphabetTableV2;
+import org.zmpp.encoding.CustomAccentTable;
+import org.zmpp.encoding.CustomAlphabetTable;
+import org.zmpp.encoding.DefaultAccentTable;
+import org.zmpp.encoding.DefaultAlphabetTable;
+import org.zmpp.encoding.DefaultZCharDecoder;
+import org.zmpp.encoding.DefaultZCharTranslator;
 import org.zmpp.encoding.ZCharDecoder;
 import org.zmpp.encoding.ZCharEncoder;
+import org.zmpp.encoding.ZCharTranslator;
 import org.zmpp.encoding.ZsciiEncoding;
 import org.zmpp.encoding.ZsciiString;
 import org.zmpp.encoding.ZsciiStringBuilder;
@@ -35,6 +47,7 @@ import org.zmpp.io.OutputStream;
 import org.zmpp.media.MediaCollection;
 import org.zmpp.media.PictureManager;
 import org.zmpp.media.PictureManagerImpl;
+import org.zmpp.media.Resources;
 import org.zmpp.media.SoundEffect;
 import org.zmpp.media.SoundSystem;
 import org.zmpp.media.SoundSystemImpl;
@@ -57,7 +70,6 @@ public class MachineImpl implements Machine {
    */
   private static final int NUM_UNDO = 5;
   
-  private GameData gamedata;
   private MachineRunState runstate;
   private RandomGenerator random;
   private StatusLine statusLine;
@@ -71,6 +83,19 @@ public class MachineImpl implements Machine {
   private OutputImpl output;
   private InputImpl input;
   
+  // Formerly GameData
+  private StoryFileHeader fileheader;
+  private Memory memory;
+  private Dictionary dictionary;
+  private ObjectTree objectTree;
+  private ZsciiEncoding encoding;
+  private ZCharDecoder decoder;
+  private ZCharEncoder encoder;  
+  private AlphabetTable alphabetTable;  
+  private Resources resources;  
+  private byte[] storyfileData;
+  private int checksum;
+  
   /**
    * Constructor.
    */
@@ -78,28 +103,132 @@ public class MachineImpl implements Machine {
     this.inputFunctions = new InputFunctions(this);
   }
   
+  // **********************************************************************
+  // ***** Initialization
+  // **************************************
+  /**
+   * {@inheritDoc}
+   */
+  public void initialize(final byte[] data, Resources resources,
+      final InstructionDecoder decoder) {
+    this.storyfileData = data;
+    this.resources = resources;
+    this.random = new UnpredictableRandomGenerator();
+    this.undostates = new RingBuffer<PortableGameState>(NUM_UNDO);
+    
+    cpu = new CpuImpl(this, decoder);
+    output = new OutputImpl(this);
+    input = new InputImpl(this);
+    
+    MediaCollection<SoundEffect> sounds = null;
+    MediaCollection<BlorbImage> pictures = null;
+    int resourceRelease = 0;
+    
+    if (resources != null) {
+      sounds = resources.getSounds();
+      pictures = resources.getImages();
+      resourceRelease = resources.getRelease();
+    }
+    
+    soundSystem = new SoundSystemImpl(sounds);
+    pictureManager = new PictureManagerImpl(resourceRelease, this, pictures);
+    
+    resetState();
+  }
+
+  /**
+   * Resets the data.
+   */
+  public final void resetGameData() {
+    // Make a copy and initialize from the copy
+    final byte[] data = new byte[storyfileData.length];
+    System.arraycopy(storyfileData, 0, data, 0, storyfileData.length);
+    
+    memory = new DefaultMemory(data);
+    fileheader = new DefaultStoryFileHeader(memory);
+    checksum = calculateChecksum();
+    
+    // Install the whole character code system here
+    initEncodingSystem();
+    
+    // The object tree and dictionaries depend on the code system
+    if (fileheader.getVersion() <= 3) {
+      objectTree = new ClassicObjectTree(memory,
+          fileheader.getObjectTableAddress());
+    } else {
+      objectTree = new ModernObjectTree(memory,
+          fileheader.getObjectTableAddress());
+    }
+    final DictionarySizes sizes = (fileheader.getVersion() <= 3) ?
+        new DictionarySizesV1ToV3() : new DictionarySizesV4ToV8();
+    dictionary = new DefaultDictionary(memory,
+        fileheader.getDictionaryAddress(), decoder, sizes);
+  }
+  
+  private void initEncodingSystem() {
+    final AccentTable accentTable = (fileheader.getCustomAccentTable() == 0) ?
+        new DefaultAccentTable() :
+        new CustomAccentTable(memory, fileheader.getCustomAccentTable());
+    encoding = new ZsciiEncoding(accentTable);
+
+    // Configure the alphabet table
+    if (fileheader.getCustomAlphabetTable() == 0) {
+      if (fileheader.getVersion() == 1) {
+        alphabetTable = new AlphabetTableV1();
+      } else if (fileheader.getVersion() == 2) {
+        alphabetTable = new AlphabetTableV2();
+      } else {
+        alphabetTable = new DefaultAlphabetTable();
+      }
+    } else {
+      alphabetTable = new CustomAlphabetTable(memory,
+          fileheader.getCustomAlphabetTable());
+    }
+    
+    final ZCharTranslator translator =
+      new DefaultZCharTranslator(alphabetTable);
+        
+    final Abbreviations abbreviations = new Abbreviations(memory,
+        fileheader.getAbbreviationsAddress());
+    decoder = new DefaultZCharDecoder(encoding, translator, abbreviations);
+    encoder = new ZCharEncoder(translator);
+    ZsciiString.initialize(encoding);
+  }
+  
+  /**
+   * Calculates the checksum of the file.
+   * @param fileheader the file header
+   * @return the check sum
+   */
+  private int calculateChecksum() {
+    final int filelen = fileheader.getFileLength();
+    int sum = 0;
+    for (int i = 0x40; i < filelen; i++) {
+      sum += getMemory().readUnsignedByte(i);
+    }
+    return (sum & 0xffff);
+  }
+ 
   /**
    * {@inheritDoc}
    */
   public int getVersion() {
-    return gamedata.getStoryFileHeader().getVersion();
+    return getFileHeader().getVersion();
   }
   
   public boolean hasValidChecksum() {
-    return gamedata.hasValidChecksum();
+    return this.checksum == getFileHeader().getChecksum();
   }
   
   /**
    * {@inheritDoc}
    */
-  public StoryFileHeader getFileHeader() {
-    return gamedata.getStoryFileHeader();
-  }
+  public StoryFileHeader getFileHeader() { return fileheader; }
 
   // **********************************************************************
   // ***** Memory interface functionality
   // **********************************************************************
-  private Memory getMemory() { return gamedata.getMemory(); }
+  private Memory getMemory() { return memory; }
   public long readUnsigned32(int address) {
     return getMemory().readUnsigned32(address);
   }
@@ -202,7 +331,7 @@ public class MachineImpl implements Machine {
   private static final ZsciiString WHITESPACE =
     new ZsciiString(new char[] { ' ', '\n', '\t', '\r' });
   
-  private Dictionary getDictionary() { return gamedata.getDictionary(); }
+  private Dictionary getDictionary() { return dictionary; }
 
   public int lookupToken(int dictionaryAddress, ZsciiString token) {
     if (dictionaryAddress == 0) {
@@ -216,9 +345,8 @@ public class MachineImpl implements Machine {
     // Retrieve the defined separators
     final ZsciiStringBuilder separators = new ZsciiStringBuilder();
     separators.append(WHITESPACE);    
-    final ZCharDecoder decoder = getZCharDecoder();
     for (int i = 0, n = getDictionary().getNumberOfSeparators(); i < n; i++) {
-      separators.append(decoder.decodeZChar((char)
+      separators.append(getZCharDecoder().decodeZChar((char)
               getDictionary().getSeparator(i)));
     }
     // The tokenizer will also return the delimiters
@@ -228,10 +356,10 @@ public class MachineImpl implements Machine {
   // **********************************************************************
   // ***** Encoding functionality
   // **********************************************************************
-  private ZCharDecoder getZCharDecoder() { return gamedata.getZCharDecoder(); }
-  private ZCharEncoder getZCharEncoder() { return gamedata.getZCharEncoder(); }
+  private ZCharDecoder getZCharDecoder() { return decoder; }
+  private ZCharEncoder getZCharEncoder() { return encoder; }
   public char[] convertToZscii(String str) {
-    return gamedata.getZsciiEncoding().convertToZscii(str);
+    return encoding.convertToZscii(str);
   }
   
   public void encode(int source, int length, int destination) {
@@ -243,7 +371,7 @@ public class MachineImpl implements Machine {
   }
   
   public char getUnicodeChar(char zsciiChar) {
-    return gamedata.getZsciiEncoding().getUnicodeChar(zsciiChar);
+    return encoding.getUnicodeChar(zsciiChar);
   }
 
   // **********************************************************************
@@ -324,38 +452,6 @@ public class MachineImpl implements Machine {
     input.selectInputStream(streamNumber);
   }
   
-  // **********************************************************************
-  // ***** Initialization
-  // **************************************
-  /**
-   * {@inheritDoc}
-   */
-  public void initialize(final GameData gamedata,
-      final InstructionDecoder decoder) {
-    this.gamedata = gamedata;
-    this.random = new UnpredictableRandomGenerator();
-    this.undostates = new RingBuffer<PortableGameState>(NUM_UNDO);
-    
-    cpu = new CpuImpl(this, decoder);
-    output = new OutputImpl(this);
-    input = new InputImpl(this);
-    
-    MediaCollection<SoundEffect> sounds = null;
-    MediaCollection<BlorbImage> pictures = null;
-    int resourceRelease = 0;
-    
-    if (gamedata.getResources() != null) {
-      sounds = gamedata.getResources().getSounds();
-      pictures = gamedata.getResources().getImages();
-      resourceRelease = gamedata.getResources().getRelease();
-    }
-    
-    soundSystem = new SoundSystemImpl(sounds);
-    pictureManager = new PictureManagerImpl(resourceRelease, this, pictures);
-    
-    resetState();
-  }
-
   /**
    * {@inheritDoc}
    */
@@ -478,15 +574,13 @@ public class MachineImpl implements Machine {
    * {@inheritDoc}
    */
   public void updateStatusLine() {
-    if (gamedata.getStoryFileHeader().getVersion() <= 3 && statusLine != null) {
+    if (getFileHeader().getVersion() <= 3 && statusLine != null) {
       final int objNum = cpu.getVariable(0x10);    
-      final String objectName = gamedata.getZCharDecoder().decode2Zscii(
-          gamedata.getMemory(),
-          gamedata.getObjectTree().getPropertiesDescriptionAddress(objNum), 0)
-          	.toString();      
+      final String objectName = getZCharDecoder().decode2Zscii(getMemory(),
+        getObjectTree().getPropertiesDescriptionAddress(objNum), 0).toString();      
       final int global2 = cpu.getVariable(0x11);
       final int global3 = cpu.getVariable(0x12);
-      if (gamedata.getStoryFileHeader().isEnabled(Attribute.SCORE_GAME)) {
+      if (getFileHeader().isEnabled(Attribute.SCORE_GAME)) {
         statusLine.updateStatusScore(objectName, global2, global3);
       } else {
         statusLine.updateStatusTime(objectName, global2, global3);
@@ -590,14 +684,13 @@ public class MachineImpl implements Machine {
   
   private boolean verifySaveGame(final PortableGameState gamestate) {
     // Verify the game according to the standard
-    final StoryFileHeader fileHeader = gamedata.getStoryFileHeader();
-    int checksum = fileHeader.getChecksum();
-    if (checksum == 0) {
-      checksum = gamedata.getCalculatedChecksum();
+    int saveGameChecksum = getFileHeader().getChecksum();
+    if (saveGameChecksum == 0) {
+      saveGameChecksum = this.checksum;
     }
-    return gamestate.getRelease() == fileHeader.getRelease()
+    return gamestate.getRelease() == getFileHeader().getRelease()
       && gamestate.getChecksum() == checksum
-      && gamestate.getSerialNumber().equals(fileHeader.getSerialNumber());
+      && gamestate.getSerialNumber().equals(getFileHeader().getSerialNumber());
   }  
 
   /**
@@ -612,26 +705,26 @@ public class MachineImpl implements Machine {
    * Resets all state to initial values, using the configuration object.
    */
   private void resetState() {
+    resetGameData();
     output.reset();
     soundSystem.reset();
     cpu.reset();
     //gamedata.getStoryFileHeader().setStandardRevision(1, 0);
-    if (gamedata.getStoryFileHeader().getVersion() >= 4) {
-      gamedata.getStoryFileHeader().setEnabled(Attribute.SUPPORTS_TIMED_INPUT, true);
+    if (getFileHeader().getVersion() >= 4) {
+      getFileHeader().setEnabled(Attribute.SUPPORTS_TIMED_INPUT, true);
       //gamedata.getStoryFileHeader().setInterpreterNumber(4); // Amiga
-      gamedata.getStoryFileHeader().setInterpreterNumber(6); // IBM PC
-      gamedata.getStoryFileHeader().setInterpreterVersion(1);
+      getFileHeader().setInterpreterNumber(6); // IBM PC
+      getFileHeader().setInterpreterVersion(1);
     }
   }
   
   private void restart(final boolean resetScreenModel) {
     // Transcripting and fixed font bits survive the restart
-    final StoryFileHeader fileHeader = gamedata.getStoryFileHeader();
+    final StoryFileHeader fileHeader = getFileHeader();
     final boolean fixedFontForced =
       fileHeader.isEnabled(Attribute.FORCE_FIXED_FONT);
     final boolean transcripting = fileHeader.isEnabled(Attribute.TRANSCRIPTING);
     
-    gamedata.reset();
     resetState();
     
     if (resetScreenModel) {
@@ -645,7 +738,7 @@ public class MachineImpl implements Machine {
   // ***** Object accesss
   // ************************************
   
-  private ObjectTree getObjectTree() { return gamedata.getObjectTree(); }
+  private ObjectTree getObjectTree() { return objectTree; }
 
   /**
    * {@inheritDoc}
