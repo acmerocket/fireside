@@ -24,7 +24,7 @@ import java.io.BufferedWriter;
 import java.io.IOException;
 import java.io.Writer;
 
-import org.zmpp.encoding.ZsciiEncoding;
+import org.zmpp.encoding.IZsciiEncoding;
 
 /**
  * This class defines an output stream for transcript output (Stream 2).
@@ -39,7 +39,7 @@ public class TranscriptOutputStream implements OutputStream {
   private Writer transcriptWriter;
   private boolean enabled;
   private StringBuilder linebuffer;
-  private ZsciiEncoding encoding;
+  private IZsciiEncoding encoding;
   private boolean initialized;
 
   /**
@@ -48,7 +48,7 @@ public class TranscriptOutputStream implements OutputStream {
    * @param iosys the I/O system
    */
   public TranscriptOutputStream(final IOSystem iosys,
-      final ZsciiEncoding encoding) {
+      final IZsciiEncoding encoding) {
   
     super();
     this.iosys = iosys;
@@ -76,10 +76,10 @@ public class TranscriptOutputStream implements OutputStream {
     //System.out.println("TRANSCRIPT: PRINT: '" + zsciiChar + "'");
     initFile();
     if (output != null) {
-      if (zsciiChar == ZsciiEncoding.NEWLINE) { 
+      if (zsciiChar == IZsciiEncoding.NEWLINE) { 
         flush();
         
-      } else if (zsciiChar == ZsciiEncoding.DELETE) {
+      } else if (zsciiChar == IZsciiEncoding.DELETE) {
         linebuffer.deleteCharAt(linebuffer.length() - 1);
       } else {
         

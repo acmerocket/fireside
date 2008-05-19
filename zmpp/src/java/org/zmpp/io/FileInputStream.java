@@ -24,7 +24,7 @@ import java.io.BufferedReader;
 import java.io.IOException;
 import java.io.Reader;
 
-import org.zmpp.encoding.ZsciiEncoding;
+import org.zmpp.encoding.IZsciiEncoding;
 
 /**
  * This class implements a Z-machine input stream that takes its input from
@@ -36,7 +36,7 @@ import org.zmpp.encoding.ZsciiEncoding;
 public class FileInputStream implements InputStream {
 
   private IOSystem iosys;
-  private ZsciiEncoding encoding;
+  private IZsciiEncoding encoding;
   private Reader filereader;
   private BufferedReader input;
   
@@ -46,7 +46,7 @@ public class FileInputStream implements InputStream {
    * @param iosys an IOSystem object
    * @param encoding a ZSCII encoding object
    */
-  public FileInputStream(IOSystem iosys, ZsciiEncoding encoding) {
+  public FileInputStream(IOSystem iosys, IZsciiEncoding encoding) {
 
     this.iosys = iosys;
     this.encoding = encoding;

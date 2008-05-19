@@ -230,8 +230,8 @@ public class MachineImpl implements Machine {
   // **********************************************************************
   private ZCharDecoder getZCharDecoder() { return gamedata.getZCharDecoder(); }
   private ZCharEncoder getZCharEncoder() { return gamedata.getZCharEncoder(); }
-  public ZsciiEncoding getZsciiEncoding() {
-    return gamedata.getZsciiEncoding();
+  public char[] convertToZscii(String str) {
+    return gamedata.getZsciiEncoding().convertToZscii(str);
   }
   
   public void encode(int source, int length, int destination) {
@@ -240,6 +240,10 @@ public class MachineImpl implements Machine {
 
   public ZsciiString decode2Zscii(int address, int length) {
     return getZCharDecoder().decode2Zscii(getMemory(), address, length);
+  }
+  
+  public char getUnicodeChar(char zsciiChar) {
+    return gamedata.getZsciiEncoding().getUnicodeChar(zsciiChar);
   }
 
   // **********************************************************************

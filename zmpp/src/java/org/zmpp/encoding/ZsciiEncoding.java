@@ -34,33 +34,8 @@ package org.zmpp.encoding;
  * @author Wei-ju Wu
  * @version 1.0
  */
-public class ZsciiEncoding {
+public class ZsciiEncoding implements IZsciiEncoding {
 
-  public static final char NULL          = 0;
-  public static final char DELETE        = 8;
-  public static final char NEWLINE_10    = 10;
-  public static final char NEWLINE       = 13;
-  public static final char ESCAPE        = 27;
-  public static final char CURSOR_UP     = 129;
-  public static final char CURSOR_DOWN   = 130;
-  public static final char CURSOR_LEFT   = 131;
-  public static final char CURSOR_RIGHT  = 132;
-  public static final char ASCII_START   = 32;
-  public static final char ASCII_END     = 126;
-  
-  /**
-   * The start of the accent range. 
-   */
-  public static final char ACCENT_START = 155;
-  
-  /**
-   * End of the accent range.
-   */
-  public static final char ACCENT_END   = 251;
-  
-  
-  public static final char MOUSE_DOUBLE_CLICK = 253;
-  public static final char MOUSE_SINGLE_CLICK = 254;
   
   private AccentTable accentTable;
 

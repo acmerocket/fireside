@@ -21,6 +21,7 @@
 package org.zmpp.vm;
 
 import org.zmpp.base.Memory;
+import org.zmpp.encoding.IZsciiEncoding;
 import org.zmpp.encoding.ZsciiEncoding;
 import org.zmpp.encoding.ZsciiString;
 import org.zmpp.media.PictureManager;
@@ -34,7 +35,8 @@ import org.zmpp.media.SoundSystem;
  * @author Wei-ju Wu
  * @version 1.0
  */
-public interface Machine extends ObjectTree, Input, Output, Cpu, Memory {
+public interface Machine
+extends ObjectTree, Input, Output, Cpu, Memory, IZsciiEncoding {
 
   public enum MachineRunState { RUNNING, STOPPED, READ_LINE, READ_CHAR  }
 
@@ -73,7 +75,6 @@ public interface Machine extends ObjectTree, Input, Output, Cpu, Memory {
   // **** Encoding functions
   // **********************************************************
   
-  ZsciiEncoding getZsciiEncoding();
   void encode(int source, int length, int destination);
   ZsciiString decode2Zscii(int address, int length);
   
