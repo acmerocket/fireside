@@ -14,7 +14,9 @@
   <path id="junit.path">
     <fileset dir="lib">
       <include name="junit-4.0.jar"/>
-      <include name="jmock-SNAPSHOT.jar"/>
+      <include name="jmock-core-1.2.0.jar"/>
+      <include name="jmock-cglib-1.2.0.jar"/>
+      <include name="cglib-nodep-2.1_3.jar"/>
     </fileset>
   </path>
 
@@ -36,8 +38,8 @@
   </target>
 
   <target name="compile" depends="init">
-    <javac debug="on" srcdir="${src.prj}" destdir="${build.prj}" source="1.5" target="1.5" />
-    <javac debug="on" srcdir="${src.tests}" destdir="${build.tests}" source="1.5" target="1.5">
+    <javac debug="${build.debug}" srcdir="${src.prj}" destdir="${build.prj}" source="1.5" target="1.5" />
+    <javac debug="${build.debug}" srcdir="${src.tests}" destdir="${build.tests}" source="1.5" target="1.5">
       <classpath>
   	<pathelement location="${build.prj}"/>
       </classpath>

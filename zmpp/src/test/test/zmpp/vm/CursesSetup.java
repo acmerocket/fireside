@@ -36,7 +36,6 @@ import org.zmpp.encoding.ZsciiEncoding;
 import org.zmpp.instructions.DefaultInstructionDecoder;
 import org.zmpp.vm.Abbreviations;
 import org.zmpp.vm.GameData;
-import org.zmpp.vm.GameDataImpl;
 import org.zmpp.vm.Machine;
 import org.zmpp.vm.MachineImpl;
 import org.zmpp.vm.StoryFileHeader;
@@ -68,7 +67,7 @@ public class CursesSetup {
   protected void setUp() throws Exception {
   	byte[] data = new byte[originalData.length];
   	System.arraycopy(originalData, 0, data, 0, originalData.length);
-  	config = new GameDataImpl(data, null);
+  	config = new GameData(data, null);
   	curses = config.getMemory();
   	fileheader = config.getStoryFileHeader();
 

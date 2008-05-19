@@ -79,7 +79,7 @@ public class MachineFactory {
    */
   public Machine buildMachine() throws IOException, InvalidStoryException {
     final GameData gamedata =
-      new GameDataImpl(readStoryData(), readResources());
+      new GameData(readStoryData(), readResources());
     if (isInvalidStory(gamedata.getStoryFileHeader().getVersion())) {
       throw new InvalidStoryException();
     }

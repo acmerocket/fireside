@@ -26,7 +26,7 @@ import java.io.FileInputStream;
 import org.jmock.MockObjectTestCase;
 import org.zmpp.base.Memory;
 import org.zmpp.vm.Dictionary;
-import org.zmpp.vm.GameDataImpl;
+import org.zmpp.vm.GameData;
 import org.zmpp.vm.ObjectTree;
 import org.zmpp.vm.StoryFileHeader;
 import org.zmpp.vmutil.FileUtils;
@@ -36,21 +36,20 @@ public class DefaultMachineConfigTest extends MockObjectTestCase {
   private java.io.InputStream input;
   private byte[] data;
   
+  @Override
   protected void setUp() throws Exception {
-    
     File zork1 = new File("testfiles/minizork.z3");
     input = new FileInputStream(zork1);
     data = FileUtils.readFileBytes(input);
   }
   
+  @Override
   protected void tearDown() throws Exception {
-    
     input.close();
   }
   
   public void testCreate() throws Exception {
-    
-    GameDataImpl config = new GameDataImpl(data, null);
+    GameData config = new GameData(data, null);
     StoryFileHeader fileheader = config.getStoryFileHeader();
     Dictionary dictionary = config.getDictionary();
     Memory memory = config.getMemory();

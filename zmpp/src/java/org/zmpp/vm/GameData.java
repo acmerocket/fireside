@@ -20,88 +20,201 @@
  */
 package org.zmpp.vm;
 
+import org.zmpp.base.DefaultMemory;
 import org.zmpp.base.Memory;
+import org.zmpp.encoding.AccentTable;
 import org.zmpp.encoding.AlphabetTable;
+import org.zmpp.encoding.AlphabetTableV1;
+import org.zmpp.encoding.AlphabetTableV2;
+import org.zmpp.encoding.CustomAccentTable;
+import org.zmpp.encoding.CustomAlphabetTable;
+import org.zmpp.encoding.DefaultAccentTable;
+import org.zmpp.encoding.DefaultAlphabetTable;
+import org.zmpp.encoding.DefaultZCharDecoder;
+import org.zmpp.encoding.DefaultZCharTranslator;
 import org.zmpp.encoding.ZCharDecoder;
 import org.zmpp.encoding.ZCharEncoder;
+import org.zmpp.encoding.ZCharTranslator;
 import org.zmpp.encoding.ZsciiEncoding;
+import org.zmpp.encoding.ZsciiString;
 import org.zmpp.media.Resources;
 
 /**
- * Interface to access the game specific objects.
+ * A class that holds the main machine objects.
  * @author Wei-ju Wu
  * @version 1.0
  */
-public interface GameData {
+public class GameData {
 
+  private StoryFileHeader fileheader;
+  private Memory memory;
+  private Dictionary dictionary;
+  private ObjectTree objectTree;
+  private ZsciiEncoding encoding;
+  private ZCharDecoder decoder;
+  private ZCharEncoder encoder;  
+  private AlphabetTable alphabetTable;  
+  private Resources resources;  
+  private byte[] storyfileData;
+  private int checksum;  
+
+  /**
+   * Just for JMock.
+   */
+  public GameData() { }
+
+  /**
+   * Constructor.
+   * @param storyfile the story file as a byte array
+   * @param resources the media resources
+   */
+  public GameData(byte[] storyfile, Resources resources) {
+    storyfileData = storyfile;
+    this.resources = resources;
+    reset();
+  }
+  
   /**
    * Resets the data.
    */
-  void reset();
+  public final void reset() {
+    // Make a copy and initialize from the copy
+    final byte[] data = new byte[storyfileData.length];
+    System.arraycopy(storyfileData, 0, data, 0, storyfileData.length);
+    
+    memory = new DefaultMemory(data);
+    fileheader = new DefaultStoryFileHeader(memory);
+    checksum = calculateChecksum();
+    
+    // Install the whole character code system here
+    initEncodingSystem();
+    
+    // The object tree and dictionaries depend on the code system
+    if (fileheader.getVersion() <= 3) {
+      objectTree = new ClassicObjectTree(memory,
+          fileheader.getObjectTableAddress());
+    } else {
+      objectTree = new ModernObjectTree(memory,
+          fileheader.getObjectTableAddress());
+    }
+    final DictionarySizes sizes = (fileheader.getVersion() <= 3) ?
+        new DictionarySizesV1ToV3() : new DictionarySizesV4ToV8();
+    dictionary = new DefaultDictionary(memory,
+        fileheader.getDictionaryAddress(), decoder, sizes);
+  }
+  
+  private void initEncodingSystem() {
+    final AccentTable accentTable = (fileheader.getCustomAccentTable() == 0) ?
+        new DefaultAccentTable() :
+        new CustomAccentTable(memory, fileheader.getCustomAccentTable());
+    encoding = new ZsciiEncoding(accentTable);
+
+    // Configure the alphabet table
+    if (fileheader.getCustomAlphabetTable() == 0) {
+      if (fileheader.getVersion() == 1) {
+        alphabetTable = new AlphabetTableV1();
+      } else if (fileheader.getVersion() == 2) {
+        alphabetTable = new AlphabetTableV2();
+      } else {
+        alphabetTable = new DefaultAlphabetTable();
+      }
+    } else {
+      alphabetTable = new CustomAlphabetTable(memory,
+          fileheader.getCustomAlphabetTable());
+    }
+    
+    final ZCharTranslator translator =
+      new DefaultZCharTranslator(alphabetTable);
+        
+    final Abbreviations abbreviations = new Abbreviations(memory,
+        fileheader.getAbbreviationsAddress());
+    decoder = new DefaultZCharDecoder(encoding, translator, abbreviations);
+    encoder = new ZCharEncoder(translator);
+    ZsciiString.initialize(encoding);
+  }
+    
   
   /**
    * Returns the file data as a Memory object.
    * @return the file data
    */
-  Memory getMemory();
+  public Memory getMemory() { return memory; }
   
   /**
    * Returns the story file header.
    * @return the story file header
    */
-  StoryFileHeader getStoryFileHeader();
+  public StoryFileHeader getStoryFileHeader() { return fileheader; }
   
   /**
    * Returns the dictionary for this game.
    * @return the dictionary
    */
-  Dictionary getDictionary();
+  public Dictionary getDictionary() { return dictionary; }
   
   /**
    * Returns the object tree for this game.
    * @return the object tree
    */
-  ObjectTree getObjectTree();
+  public ObjectTree getObjectTree() { return objectTree; }
 
   /**
    * Returns the Z char decoder for this game.
    * @return the z char decoder
    */
-  ZCharDecoder getZCharDecoder();
+  public ZCharDecoder getZCharDecoder() { return decoder; }
   
   /**
    * Returns the Z char encoder for this game.
    * @return the z char encoder
    */
-  ZCharEncoder getZCharEncoder();
+  public ZCharEncoder getZCharEncoder() { return encoder; }
   
   /**
    * Returns the ZSCII encoding object.
    * @return the encoding object
    */
-  ZsciiEncoding getZsciiEncoding();
+  public ZsciiEncoding getZsciiEncoding() { return encoding; }
   
   /**
    * Returns this game's alphabet table.
    * @return the alphabet table
    */
-  AlphabetTable getAlphabetTable();
+  public AlphabetTable getAlphabetTable() { return alphabetTable; }
   
   /**
    * Returns the multimedia resources.
    * @return the multimedia resources
    */
-  Resources getResources();
+  public Resources getResources() { return resources; }
 
   /**
    * Returns the calculated check sum.
    * @return the calculated check sum
    */
-  int getCalculatedChecksum();
+  public int getCalculatedChecksum() {
+    return checksum;
+  }
 
+  /**
+   * Calculates the checksum of the file.
+   * @param fileheader the file header
+   * @return the check sum
+   */
+  private int calculateChecksum() {
+    final int filelen = fileheader.getFileLength();
+    int sum = 0;
+    for (int i = 0x40; i < filelen; i++) {
+      sum += getMemory().readUnsignedByte(i);
+    }
+    return (sum & 0xffff);
+  }
+  
   /**
    * Returns true, if the checksum validation was successful.
    * @return true if checksum is valid
    */
-  boolean hasValidChecksum();  
+  public boolean hasValidChecksum() {
+    return getStoryFileHeader().getChecksum() == checksum;
+  }
 }

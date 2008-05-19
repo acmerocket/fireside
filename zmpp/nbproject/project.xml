@@ -77,7 +77,7 @@
             <compilation-unit>
                 <package-root>src/test</package-root>
                 <unit-tests/>
-                <classpath mode="compile">target/classes:lib/junit-4.0.jar:lib/jmock-SNAPSHOT.jar</classpath>
+                <classpath mode="compile">target/classes:lib/junit-4.0.jar:lib/jmock-cglib-1.2.0.jar:lib/jmock-core-1.2.0.jar</classpath>
                 <source-level>1.5</source-level>
             </compilation-unit>
         </java-data>

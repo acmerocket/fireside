@@ -26,8 +26,8 @@ import java.util.ArrayList;
 import java.util.Arrays;
 import java.util.List;
 
+import org.jmock.cglib.MockObjectTestCase;
 import org.jmock.Mock;
-import org.jmock.MockObjectTestCase;
 import org.zmpp.base.DefaultMemory;
 import org.zmpp.base.Memory;
 import org.zmpp.iff.Chunk;
