@@ -28,24 +28,12 @@ public class InputImpl implements Input, Closeable {
   /**
    * This is the array of input streams.
    */
-  private InputStream[] inputStream;
+  private InputStream[] inputStream = new InputStream[2];
   
   /**
    * The selected input stream.
    */
-  private int selectedInputStreamIndex;
-  
-  /**
-   * The machine object.
-   */
-  private Machine machine;
-  
-  public InputImpl(Machine machine) {
-    
-    this.inputStream = new InputStream[2];    
-    this.selectedInputStreamIndex = 0;
-    this.machine = machine;
-  }
+  private int selectedInputStreamIndex = 0;
   
   public void close() {
     if (inputStream != null) {

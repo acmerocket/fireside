@@ -58,16 +58,10 @@ public class CpuImpl implements Cpu {
    */
   private int globalsAddress;
   
-  /**
-   * This flag indicates the run status.
-   */
-  private boolean running;  
-  
   public CpuImpl(final Machine machine) {
   
     super();
     this.machine = machine;
-    this.running = true;
   }
   
   public void reset() {

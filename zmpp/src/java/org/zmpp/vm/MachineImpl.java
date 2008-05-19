@@ -92,7 +92,6 @@ public class MachineImpl implements Machine {
   private ZCharDecoder decoder;
   private ZCharEncoder encoder;  
   private AlphabetTable alphabetTable;  
-  private Resources resources;  
   private byte[] storyfileData;
   private int checksum;
   
@@ -111,13 +110,12 @@ public class MachineImpl implements Machine {
    */
   public void initialize(final byte[] data, Resources resources) {
     this.storyfileData = data;
-    this.resources = resources;
     this.random = new UnpredictableRandomGenerator();
     this.undostates = new RingBuffer<PortableGameState>(NUM_UNDO);
     
     cpu = new CpuImpl(this);
     output = new OutputImpl(this);
-    input = new InputImpl(this);
+    input = new InputImpl();
     
     MediaCollection<SoundEffect> sounds = null;
     MediaCollection<BlorbImage> pictures = null;
