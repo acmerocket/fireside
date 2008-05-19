@@ -333,7 +333,7 @@ public class MachineImpl implements Machine {
     this.undostates = new RingBuffer<PortableGameState>(NUM_UNDO);
     
     cpu = new CpuImpl(this, decoder);
-    output = new OutputImpl(gamedata, this);
+    output = new OutputImpl(this);
     input = new InputImpl(this);
     
     MediaCollection<SoundEffect> sounds = null;

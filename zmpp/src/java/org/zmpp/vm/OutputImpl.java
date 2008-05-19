@@ -29,18 +29,15 @@ import org.zmpp.vm.StoryFileHeader.Attribute;
 public class OutputImpl implements Output, Closeable {
 
   private Machine machine;
-  private GameData gamedata;
   
   /**
    * This is the array of output streams.
    */
   private OutputStream[] outputStream;
   
-  public OutputImpl(final GameData gamedata, final Machine machine) {
-  
+  public OutputImpl(final Machine machine) {
     super();
     this.machine = machine;
-    this.gamedata = gamedata;
     outputStream = new OutputStream[3];
   }
   
@@ -59,9 +56,7 @@ public class OutputImpl implements Output, Closeable {
    * {@inheritDoc}
    */
   public void printZString(final int address) {
-    
-    print(gamedata.getZCharDecoder().decode2Zscii(gamedata.getMemory(),
-        address, 0));
+    print(machine.decode2Zscii(address, 0));
   }
   
   /**
@@ -173,11 +168,9 @@ public class OutputImpl implements Output, Closeable {
    * address. Enable the transcript depending on the status of that flag.
    */
   private void checkTranscriptFlag() {
-    
     if (outputStream[OUTPUTSTREAM_TRANSCRIPT - 1] != null) {
-        
       outputStream[OUTPUTSTREAM_TRANSCRIPT - 1].select(
-          gamedata.getStoryFileHeader().isEnabled(Attribute.TRANSCRIPTING));
+          machine.getFileHeader().isEnabled(Attribute.TRANSCRIPTING));
     }
   }
   
@@ -190,10 +183,8 @@ public class OutputImpl implements Output, Closeable {
     
     // Sets the tranxdQscript flag if the transcipt is specified
     if (streamnumber == OUTPUTSTREAM_TRANSCRIPT) {
-      
       //System.out.println("ENABLE_TRANSCRIPT_STREAM: " + flag);
-      gamedata.getStoryFileHeader().setEnabled(Attribute.TRANSCRIPTING, flag);
-      
+      machine.getFileHeader().setEnabled(Attribute.TRANSCRIPTING, flag);      
     } else if (streamnumber == OUTPUTSTREAM_MEMORY && flag) {
       
       machine.halt("invalid selection of memory stream");
