@@ -42,6 +42,8 @@ import org.zmpp.vm.StoryFileHeader.Attribute;
 public class ExecutionControl {
 
   private Machine machine;
+  private InstructionDecoder instructionDecoder =
+          new InstructionDecoder();
   private LineBufferInputStream inputStream = new LineBufferInputStream();
   private int step = 1;
   private static final boolean DEBUG = false;
@@ -57,6 +59,7 @@ public class ExecutionControl {
     MachineFactory factory = new MachineFactory(initStruct);
     machine = factory.buildMachine();
     machine.start();
+    instructionDecoder.initialize(machine);
     
     // ZMPP should support everything by default
     enableHeaderFlag(Attribute.SUPPORTS_SCREEN_SPLITTING);
@@ -99,7 +102,7 @@ public class ExecutionControl {
   public MachineRunState run() {
     while (machine.getRunState() != MachineRunState.STOPPED) {
       int pc = machine.getPC();
-      Instruction instr = machine.nextInstruction();
+      Instruction instr = instructionDecoder.decodeInstruction(pc);
       // if the print is executed after execute(), the result is different !!
       if (DEBUG && machine.getRunState() == MachineRunState.RUNNING)
         System.out.printf("%03d: $%04x %s\n", step, pc, instr.toString());
@@ -125,4 +128,72 @@ public class ExecutionControl {
   private String convertToZsciiInputLine(String input) {
     return input + "\r";
   }
+
+  // ************************************************************************
+  // ****** Interrupt functions
+  // ****** These are for timed input.
+  // *************************************
+  
+  /**
+   * The flag to indicate interrupt execution.
+   */
+  private boolean executeInterrupt;
+  
+  /**
+   * Indicates if the last interrupt routine performed any output.
+   * 
+   * @return true if the routine performed output, false otherwise
+   */
+  public boolean interruptDidOutput() {
+    
+    return interruptDidOutput;
+  }
+  
+  /**
+   * The flag to indicate interrupt output.
+   */
+  private boolean interruptDidOutput;
+  
+ /**
+   * Calls the specified interrupt routine.
+   * 
+   * @param routineAddress the routine address
+   * @return the return value
+   */
+  public short callInterrupt(final int routineAddress) {
+    
+    interruptDidOutput = false;
+    executeInterrupt = true;
+    final int originalRoutineStackSize = machine.getRoutineContexts().size();
+    final RoutineContext routineContext =  machine.call(routineAddress,
+        machine.getPC(),
+        new short[0], (short) RoutineContext.DISCARD_RESULT);
+    
+    for (;;) {
+      final Instruction instr =
+        instructionDecoder.decodeInstruction(machine.getPC());
+      instr.execute();
+      // check if something was printed
+      if (instr.isOutput()) {
+        interruptDidOutput = true;
+      }
+      if (machine.getRoutineContexts().size() == originalRoutineStackSize) {
+        break;
+      }
+    }
+    executeInterrupt = false;
+    return routineContext.getReturnValue();
+  }  
+
+  public void setInterruptRoutine(final int routineAddress) {
+    
+    // TODO
+  }
+  
+  /**
+   * Returns the interrupt status of the cpu object.
+   * 
+   * @return the interrup status
+   */
+  public boolean isExecutingInterrupt() { return executeInterrupt; }
 }

@@ -33,7 +33,6 @@ import org.zmpp.encoding.DefaultZCharTranslator;
 import org.zmpp.encoding.ZCharDecoder;
 import org.zmpp.encoding.ZCharTranslator;
 import org.zmpp.encoding.ZsciiEncoding;
-import org.zmpp.instructions.DefaultInstructionDecoder;
 import org.zmpp.vm.Abbreviations;
 import org.zmpp.vm.Machine;
 import org.zmpp.vm.MachineImpl;
@@ -66,7 +65,7 @@ public class CursesSetup {
   	byte[] data = new byte[originalData.length];
   	System.arraycopy(originalData, 0, data, 0, originalData.length);
   	machine = new MachineImpl();
-  	machine.initialize(data, null, new DefaultInstructionDecoder());
+  	machine.initialize(data, null);
   	curses = machine;
   	fileheader = machine.getFileHeader();
 

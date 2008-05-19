@@ -24,7 +24,6 @@ import org.jmock.Mock;
 import org.zmpp.base.DefaultMemory;
 import org.zmpp.base.Memory;
 import org.zmpp.instructions.AbstractInstruction;
-import org.zmpp.instructions.DefaultInstructionDecoder;
 import org.zmpp.instructions.LongStaticInfo;
 import org.zmpp.instructions.PrintLiteralInstruction;
 import org.zmpp.instructions.PrintLiteralStaticInfo;
@@ -58,7 +57,7 @@ public class InstructionDecoderTest extends MiniZorkSetup {
   @Override
   protected void setUp() throws Exception {
     super.setUp();
-    decoder = new DefaultInstructionDecoder();
+    decoder = new InstructionDecoder();
     decoder.initialize(machine);
   }
 
@@ -274,7 +273,7 @@ public class InstructionDecoderTest extends MiniZorkSetup {
     Mock mockMachine4 = mock(Machine.class);
     Machine machine4 = (Machine) mockMachine4.proxy();
     
-    InstructionDecoder decoder4 = new DefaultInstructionDecoder();
+    InstructionDecoder decoder4 = new InstructionDecoder();
     decoder4.initialize(machine4);
     
     mockMachine4.expects(atLeastOnce()).method("getVersion").will(returnValue(4));

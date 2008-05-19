@@ -24,50 +24,36 @@ import java.util.List;
 
 import org.jmock.Mock;
 import org.jmock.MockObjectTestCase;
-import org.zmpp.base.Memory;
 import org.zmpp.vm.Cpu;
 import org.zmpp.vm.CpuImpl;
-import org.zmpp.vm.Instruction;
-import org.zmpp.vm.InstructionDecoder;
 import org.zmpp.vm.Machine;
 import org.zmpp.vm.RoutineContext;
 import org.zmpp.vm.StoryFileHeader;
 
 public class CpuTest extends MockObjectTestCase {
 
-  private Mock mockMachine, mockDecoder, mockFileHeader, mockMemory;
+  private Mock mockMachine, mockDecoder, mockFileHeader;
   private Machine machine;
-  private InstructionDecoder decoder;
   private CpuImpl cpu;
   private StoryFileHeader fileheader;
-  private Memory memory;
   private RoutineContext routineInfo;
   
   @Override
   public void setUp() throws Exception {
     mockMachine = mock(Machine.class);
-    mockDecoder = mock(InstructionDecoder.class);
     mockFileHeader = mock(StoryFileHeader.class);
-    mockMemory = mock(Memory.class);
     
     machine = (Machine) mockMachine.proxy();
-    decoder = (InstructionDecoder) mockDecoder.proxy();
     fileheader = (StoryFileHeader) mockFileHeader.proxy();
-    memory = (Memory) mockMemory.proxy();
     routineInfo = new RoutineContext(0x4711, 3);
     
     mockMachine.expects(atLeastOnce()).method("getFileHeader").will(returnValue(fileheader));
     mockFileHeader.expects(once()).method("getProgramStart").will(returnValue(1000));
     mockFileHeader.expects(once()).method("getGlobalsAddress").will(returnValue(5000));
 
-    initializeMockDecoder();
-    cpu = new CpuImpl(machine, decoder);
-    cpu.reset();
-  }
-  
-  private void initializeMockDecoder() {
     mockMachine.expects(once()).method("getVersion").will(returnValue(5));
-    mockDecoder.expects(once()).method("initialize").with(eq(machine));
+    cpu = new CpuImpl(machine);
+    cpu.reset();
   }
   
   public void testInitialState() {
@@ -290,16 +276,6 @@ public class CpuTest extends MockObjectTestCase {
     assertEquals(oldSp, cpu.getSP());
   }  
 
-  public void testNextInstruction() {
-    Instruction myinstr = new Instruction() {      
-      public void execute() { }
-      public boolean isOutput() { return false; }
-    };
-    mockDecoder.expects(once()).method("decodeInstruction").with(eq(1000)).will(returnValue(myinstr));
-    Instruction instr = cpu.nextInstruction();
-    assertEquals(myinstr, instr);
-  }
-  
   public void testTranslatePackedAddressV3() {
     mockMachine.expects(atLeastOnce()).method("getVersion").will(returnValue(3));
     int byteAddress = cpu.unpackAddress(2312, true);

@@ -109,14 +109,13 @@ public class MachineImpl implements Machine {
   /**
    * {@inheritDoc}
    */
-  public void initialize(final byte[] data, Resources resources,
-      final InstructionDecoder decoder) {
+  public void initialize(final byte[] data, Resources resources) {
     this.storyfileData = data;
     this.resources = resources;
     this.random = new UnpredictableRandomGenerator();
     this.undostates = new RingBuffer<PortableGameState>(NUM_UNDO);
     
-    cpu = new CpuImpl(this, decoder);
+    cpu = new CpuImpl(this);
     output = new OutputImpl(this);
     input = new InputImpl(this);
     
@@ -264,7 +263,6 @@ public class MachineImpl implements Machine {
   // ***** Cpu interface functionality
   // **********************************************************************
   private Cpu getCpu() { return cpu; }
-  public Instruction nextInstruction() { return getCpu().nextInstruction(); }
   public short getVariable(int varnum) { return getCpu().getVariable(varnum); }
   public void setVariable(int varnum, short value) {
     getCpu().setVariable(varnum, value);
@@ -315,16 +313,6 @@ public class MachineImpl implements Machine {
     getCpu().doBranch(branchOffset, instructionLength);
   }
   
-  /**
-   */
-  public short callInterrupt(int routineAddress) {
-    return cpu.callInterrupt(routineAddress);
-  }
-
-  public boolean interruptDidOutput() {
-    return cpu.interruptDidOutput();
-  } 
-
   // **********************************************************************
   // ***** Dictionary functionality
   // **********************************************************************

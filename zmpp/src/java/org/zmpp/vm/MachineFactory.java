@@ -30,7 +30,6 @@ import org.zmpp.blorb.BlorbStory;
 import org.zmpp.blorb.NativeImageFactory;
 import org.zmpp.iff.DefaultFormChunk;
 import org.zmpp.iff.FormChunk;
-import org.zmpp.instructions.DefaultInstructionDecoder;
 import org.zmpp.io.FileInputStream;
 import org.zmpp.io.InputStream;
 import org.zmpp.io.IOSystem;
@@ -79,8 +78,7 @@ public class MachineFactory {
    */
   public Machine buildMachine() throws IOException, InvalidStoryException {
     final MachineImpl machine = new MachineImpl();
-    final InstructionDecoder decoder = new DefaultInstructionDecoder();
-    machine.initialize(readStoryData(), readResources(), decoder);
+    machine.initialize(readStoryData(), readResources());
     if (isInvalidStory(machine.getVersion())) {
       throw new InvalidStoryException();
     }

@@ -20,10 +20,7 @@
  */
 package test.zmpp.vm;
 
-import java.io.File;
-import java.io.FileInputStream;
 
-import java.io.IOException;
 import org.jmock.MockObjectTestCase;
 import org.zmpp.base.Memory;
 import org.zmpp.encoding.AlphabetTable;
@@ -34,11 +31,9 @@ import org.zmpp.encoding.DefaultZCharTranslator;
 import org.zmpp.encoding.ZCharDecoder;
 import org.zmpp.encoding.ZCharTranslator;
 import org.zmpp.encoding.ZsciiEncoding;
-import org.zmpp.instructions.DefaultInstructionDecoder;
 import org.zmpp.vm.Abbreviations;
 import org.zmpp.vm.MachineImpl;
 import org.zmpp.vm.StoryFileHeader;
-import org.zmpp.vmutil.FileUtils;
 
 /**
  * This class acts as a base test class and sets up some integrated

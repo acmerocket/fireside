@@ -45,9 +45,8 @@ extends ObjectTree, Input, Output, Cpu, Memory, IZsciiEncoding {
    * 
    * @param data the story data
    * @param resources Blorb resources
-   * @param decoder the instruction decoder
    */
-  void initialize(byte[] data, Resources resources, InstructionDecoder decoder);  
+  void initialize(byte[] data, Resources resources);  
 
   /**
    * Returns the story file version.

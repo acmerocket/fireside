@@ -35,13 +35,6 @@ public interface Cpu {
   void reset();
 
   /**
-   * Returns the next instruction.
-   * 
-   * @return the next instruction
-   */
-  Instruction nextInstruction();
-  
-  /**
    * Translates a packed string address into a byte address.
    * 
    * @param packedAddress the packed address
@@ -156,13 +149,6 @@ public interface Cpu {
   // ***** Routine stack frames
   // ***************************************
   /**
-   * Pushes a new routine context onto the routine context stack.
-   * 
-   * @param routineContext the routine context object
-   */
-  //void pushRoutineContext(RoutineContext routineContext);
-  
-  /**
    * Pops the current routine context from the stack. It will also
    * restore the state before the invocation of the routine, i.e. it
    * will restore the program counter and the stack pointers and set
@@ -208,24 +194,5 @@ public interface Cpu {
    * @return the routine context created
    */
   RoutineContext call(int routineAddress, int returnAddress, short[] args,
-                      int returnVariable);  
-
-  // ***********************************************************************
-  // **** Interrupt routines
-  // ********************************
-  
-  /**
-   * Indicates if the last interrupt routine performed any output.
-   * 
-   * @return true if the routine performed output, false otherwise
-   */
-  boolean interruptDidOutput();  
-  
-  /**
-   * Calls the specified interrupt routine.
-   * 
-   * @param routineAddress the routine address
-   * @return the return value
-   */
-  short callInterrupt(int routineAddress);
+                      int returnVariable);
 }

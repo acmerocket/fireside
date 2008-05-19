@@ -24,11 +24,9 @@ import java.util.ArrayList;
 import java.util.Collections;
 import java.util.List;
 
-import org.zmpp.base.Interruptable;
-import org.zmpp.base.Memory;
 import org.zmpp.vmutil.FastShortStack;
 
-public class CpuImpl implements Cpu, Interruptable {
+public class CpuImpl implements Cpu {
 
   /**
    * The stack size is now 64 K.
@@ -61,25 +59,18 @@ public class CpuImpl implements Cpu, Interruptable {
   private int globalsAddress;
   
   /**
-   * The instruction decoder.
-   */
-  private InstructionDecoder decoder;  
-  
-  /**
    * This flag indicates the run status.
    */
   private boolean running;  
   
-  public CpuImpl(final Machine machine, final InstructionDecoder decoder) {
+  public CpuImpl(final Machine machine) {
   
     super();
     this.machine = machine;
-    this.decoder = decoder;
     this.running = true;
   }
   
   public void reset() {
-    decoder.initialize(machine);
     stack = new FastShortStack(STACKSIZE);
     routineContextStack = new ArrayList<RoutineContext>();
     globalsAddress = machine.getFileHeader().getGlobalsAddress();
@@ -114,13 +105,6 @@ public class CpuImpl implements Cpu, Interruptable {
     programCounter += offset;
   }
 
-  /**
-   * {@inheritDoc}
-   */
-  public Instruction nextInstruction() {
-    return decoder.decodeInstruction(getPC());
-  }
-    
   /**
    * {@inheritDoc}
    */
@@ -508,67 +492,5 @@ public class CpuImpl implements Cpu, Interruptable {
       throw new IllegalStateException("access to non-existent local variable: "
                                       + localVariableNumber);
     }
-  }
-  
-  // ************************************************************************
-  // ****** Interrupt functions
-  // *************************************
-  
-  /**
-   * The flag to indicate interrupt output.
-   */
-  private boolean interruptDidOutput;
-  
-  /**
-   * The flag to indicate interrupt execution.
-   */
-  private boolean executeInterrupt;
-  
-  /**
-   * {@inheritDoc}
-   */
-  public boolean interruptDidOutput() {
-    
-    return interruptDidOutput;
-  }
-  
-  /**
-   * {@inheritDoc}
-   */
-  public short callInterrupt(final int routineAddress) {
-    
-    interruptDidOutput = false;
-    executeInterrupt = true;
-    final int originalRoutineStackSize = getRoutineContexts().size();
-    final RoutineContext routineContext = call(routineAddress,
-        getPC(),
-        new short[0], (short) RoutineContext.DISCARD_RESULT);
-    
-    for (;;) {
-      final Instruction instr = nextInstruction();
-      instr.execute();
-      // check if something was printed
-      if (instr.isOutput()) {
-        interruptDidOutput = true;
-      }
-      if (getRoutineContexts().size() == originalRoutineStackSize) {
-        
-        break;
-      }
-    }
-    executeInterrupt = false;
-    return routineContext.getReturnValue();
-  }
-  
-  public void setInterruptRoutine(final int routineAddress) {
-    
-    // TODO
-  }
-  
-  /**
-   * Returns the interrupt status of the cpu object.
-   * 
-   * @return the interrup status
-   */
-  public boolean isExecutingInterrupt() { return executeInterrupt; }
+  }  
 }

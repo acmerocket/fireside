@@ -8,7 +8,6 @@ package test.zmpp.vm;
 import java.io.FileInputStream;
 import java.io.IOException;
 import org.jmock.MockObjectTestCase;
-import org.zmpp.instructions.DefaultInstructionDecoder;
 import org.zmpp.vm.MachineImpl;
 import org.zmpp.vmutil.FileUtils;
 
@@ -21,8 +20,7 @@ public class MachineTestUtil extends MockObjectTestCase {
   protected static MachineImpl createMachine(String filePath)
     throws IOException {
     MachineImpl machine = new MachineImpl();
-    machine.initialize(readData(filePath), null,
-      new DefaultInstructionDecoder());
+    machine.initialize(readData(filePath), null);
     return machine;
   }
   
