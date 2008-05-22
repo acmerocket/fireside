@@ -112,11 +112,12 @@
     <mkdir dir="${pmdreport.dir}"/>
       <taskdef name="pmd" classname="net.sourceforge.pmd.ant.PMDTask"
                classpathref="pmd.classpath"/>
-      <pmd targetjdk="1.5" rulesetfiles="rulesets/zmpp_all.xml">
-      <formatter type="html" toFile="${pmdreport.dir}/pmd_report.html" />
-      <fileset dir="${src.prj}">
+      <pmd targetjdk="1.5">
+        <ruleset>rulesets/zmpp_all.xml</ruleset>
+        <formatter type="html" toFile="${pmdreport.dir}/pmd_report.html" />
+        <fileset dir="${src.prj}">
          <include name="**/*.java"/>
-      </fileset>
+        </fileset>
      </pmd>
   </target>
 
