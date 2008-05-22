@@ -20,16 +20,24 @@
     </fileset>
   </path>
 
-	<path id="pmd.classpath">
-    <fileset dir="lib">
-        <include name="*.jar"/>
+  <path id="pmd.classpath">
+    <fileset dir="${pmd.home}/lib">
+      <include name="*.jar"/>
     </fileset>
-	</path>
+  </path>
 
+  <path id="findbugs.classpath">
+    <fileset dir="${findbugs.home}/lib">
+      <include name="*.jar"/>
+    </fileset>
+  </path>
 
   <taskdef classpathref="cobertura.path" resource="tasks.properties"/>
+  <!--
   <taskdef resource="checkstyletask.properties" classpath="checkstyle.path"/>
-	<taskdef name="pmd" classname="net.sourceforge.pmd.ant.PMDTask" classpathref="pmd.classpath"/>
+  <taskdef name="pmd" classname="net.sourceforge.pmd.ant.PMDTask" classpathref="pmd.classpath"/>
+  -->
+  <taskdef name="findbugs" classname="edu.umd.cs.findbugs.anttask.FindBugsTask" classpathref="findbugs.classpath" />
   
   <target name="init">
     <!-- Create the build directory structure used by compile -->
@@ -41,37 +49,32 @@
     <javac debug="${build.debug}" srcdir="${src.prj}" destdir="${build.prj}" source="1.5" target="1.5" />
     <javac debug="${build.debug}" srcdir="${src.tests}" destdir="${build.tests}" source="1.5" target="1.5">
       <classpath>
-  	<pathelement location="${build.prj}"/>
+    <pathelement location="${build.prj}"/>
       </classpath>
       <classpath refid="junit.path" />
     </javac>
   </target>
   
   <target name="instrument" depends="compile">
-		<cobertura-instrument todir="${instrumented.dir}">		
-    	<fileset dir="${build.prj}">
+    <cobertura-instrument todir="${instrumented.dir}">    
+      <fileset dir="${build.prj}">
         <include name="**/*.class"/>
-    	</fileset>
-		</cobertura-instrument>
+      </fileset>
+    </cobertura-instrument>
   </target>
   
   <target name="test" depends="instrument">
-  
-    <mkdir dir="${reports.tests}"/>
-    
+    <mkdir dir="${reports.tests}"/> 
     <junit printsummary="yes" haltonfailure="yes" dir="${basedir}">
-    
-  		<sysproperty key="net.sourceforge.cobertura.datafile"
-  							 	 file="${basedir}/cobertura.ser" />
-
-  		<classpath refid="cobertura.path" />
-  		<classpath refid="junit.path" />
-  		<classpath>
-    		<pathelement location="${instrumented.dir}"/>
-    		<pathelement location="${build.prj}"/>
-    		<pathelement location="${build.tests}"/>
-  		</classpath>
-    
+      <sysproperty key="net.sourceforge.cobertura.datafile"
+                    file="${basedir}/cobertura.ser" />
+      <classpath refid="cobertura.path" />
+      <classpath refid="junit.path" />
+      <classpath>
+        <pathelement location="${instrumented.dir}"/>
+        <pathelement location="${build.prj}"/>
+        <pathelement location="${build.tests}"/>
+      </classpath>
       <formatter type="xml" />
       <batchtest fork="yes" todir="${reports.tests}">
         <fileset dir="${src.tests}">
@@ -83,15 +86,15 @@
 
   <target name="testreport" depends="test">
     <mkdir dir="${coveragereport.dir}"/>
-		<cobertura-report format="html" destdir="${coveragereport.dir}"
-											srcdir="${src.prj}"> 
-			<classpath refid="cobertura.path" />
-		</cobertura-report>
+    <cobertura-report format="html" destdir="${coveragereport.dir}"
+                      srcdir="${src.prj}"> 
+      <classpath refid="cobertura.path" />
+    </cobertura-report>
   </target>
 
-	<target name="jdepend">
+  <target name="jdepend">
     <mkdir dir="${jdepend.dir}"/>
-  	<jdepend outputfile="${jdepend.dir}/jdepend-report.txt">
+    <jdepend outputfile="${jdepend.dir}/jdepend-report.txt">
       <exclude name="java.*"/>
       <exclude name="javax.*"/>
       <exclude name="org.xml.*"/>
@@ -102,29 +105,42 @@
         <pathelement location="${build.prj}" />
         <pathelement location="lib/jdepend-2.9.jar" />
       </classpath>
-  	</jdepend>
-	</target>  
+    </jdepend>
+  </target>  
 
-	<target name="pmd">
+  <target name="pmd">
     <mkdir dir="${pmdreport.dir}"/>
- 		<taskdef name="pmd" classname="net.sourceforge.pmd.ant.PMDTask"/>
- 		<pmd targetjdk="1.5" rulesetfiles="rulesets/zmpp_all.xml">
-  		<formatter type="html" toFile="${pmdreport.dir}/pmd_report.html" />
-  		<fileset dir="${src.prj}">
-   			<include name="**/*.java"/>
-  		</fileset>
- 		</pmd>
-	</target>
+      <taskdef name="pmd" classname="net.sourceforge.pmd.ant.PMDTask"
+               classpathref="pmd.classpath"/>
+      <pmd targetjdk="1.5" rulesetfiles="rulesets/zmpp_all.xml">
+      <formatter type="html" toFile="${pmdreport.dir}/pmd_report.html" />
+      <fileset dir="${src.prj}">
+         <include name="**/*.java"/>
+      </fileset>
+     </pmd>
+  </target>
 
-  <target name="dist" depends="compile"
+  <target name="dist" depends="test"
         description="generate the distribution" >
     <mkdir dir="${dist}"/>
     <mkdir dir="${dist}/lib"/>
     <jar jarfile="${dist}/lib/zmpp-${app.version}.jar" basedir="${build.prj}"/>
   </target>
+  
+  <target name="findbugs" depends="dist">
+    <findbugs home="${findbugs.home}" output="xml" outputFile="target/zmpp-fb.xml">
+      <sourcePath path="${src.prj}" />
+      <class location="${dist}/lib/zmpp-${app.version}.jar" />
+    </findbugs>
+  </target>
+
+  <target name="build-all" depends="findbugs,testreport,pmd">
+  </target>
+  
 
   <target name="clean">
     <delete dir="target"/>
     <delete file="cobertura.ser"/>
   </target>
+
 </project>
