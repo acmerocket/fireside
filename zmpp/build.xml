@@ -113,8 +113,8 @@
       <taskdef name="pmd" classname="net.sourceforge.pmd.ant.PMDTask"
                classpathref="pmd.classpath"/>
       <pmd targetjdk="1.5">
-        <ruleset>rulesets/zmpp_all.xml</ruleset>
-        <formatter type="html" toFile="${pmdreport.dir}/pmd_report.html" />
+        <ruleset>basic</ruleset>
+        <formatter type="xml" toFile="${pmdreport.dir}/pmd_report.xml" />
         <fileset dir="${src.prj}">
          <include name="**/*.java"/>
         </fileset>
