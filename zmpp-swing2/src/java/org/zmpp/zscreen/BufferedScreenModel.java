@@ -49,6 +49,7 @@ public class BufferedScreenModel implements ScreenModel, StatusLine,
             ScreenModel.TEXTSTYLE_ROMAN, ScreenModel.COLOR_BLACK,
             ScreenModel.COLOR_WHITE);
     
+    public void resetCursor() { cursorx = cursory = 1; }
     public int setFont(int font) {
       int previousFont = this.annotation.getFont();
       annotation = annotation.deriveFont(font);
@@ -97,11 +98,15 @@ public class BufferedScreenModel implements ScreenModel, StatusLine,
     for (ScreenModelListener l : screenModelListeners) {
       l.screenSplit(linesUpperWindow);
     }
+    //this.eraseWindow(WINDOW_TOP);
   }
 
   public void setWindow(int window) {
     System.out.println("SET_WINDOW: " + window);
     current = window;
+    if (current == ScreenModel.WINDOW_TOP) {
+      topWindow.resetCursor();
+    }
   }
 
   public void setTextStyle(int style) {
@@ -126,6 +131,14 @@ public class BufferedScreenModel implements ScreenModel, StatusLine,
     System.out.println("ERASE_WINDOW: " + window);
     for (ScreenModelListener l : screenModelListeners) {
       l.windowErased(window);
+    }
+    if (window == -1) {
+      splitWindow(0);
+      setWindow(ScreenModel.WINDOW_BOTTOM);
+      topWindow.resetCursor();
+    }
+    if (window == ScreenModel.WINDOW_TOP) {
+      topWindow.resetCursor();
     }
   }
 
@@ -171,28 +184,20 @@ public class BufferedScreenModel implements ScreenModel, StatusLine,
   }
 
   public void setBackground(int colornumber, int window) {
-    System.out.println("setBackground, color: " + colornumber + " window: " +
-            getTargetWindow(window));
-    if (getTargetWindow(window) == WINDOW_TOP) {
-      topWindow.annotation = topWindow.annotation.deriveBackground(colornumber);
-    } else {
-      bottomWindow.setBackground(colornumber);
-    }
+    System.out.println("setBackground, color: " + colornumber);
+    topWindow.annotation = topWindow.annotation.deriveBackground(colornumber);
+    bottomWindow.setBackground(colornumber);
   }
 
   public void setForeground(int colornumber, int window) {
-    System.out.println("setForeground, color: " + colornumber + " window: " +
-            getTargetWindow(window));
-    if (getTargetWindow(window) == WINDOW_TOP) {
-      topWindow.annotation = topWindow.annotation.deriveForeground(colornumber);
-    } else {
-      bottomWindow.setForeground(colornumber);
-    }
+    System.out.println("setForeground, color: " + colornumber);
+    topWindow.annotation = topWindow.annotation.deriveForeground(colornumber);
+    bottomWindow.setForeground(colornumber);
   }
-  
+  /*
   private int getTargetWindow(int window) {
     return window == ScreenModel.CURRENT_WINDOW ? current : window;
-  }
+  }*/
 
   public OutputStream getOutputStream() {
     return this;
