@@ -110,12 +110,9 @@ public class BufferedScreenModel implements ScreenModel, StatusLine,
   }
 
   public void setTextStyle(int style) {
-    System.out.println("SET_TEXT_STYLE: " + style + " current: " + current);
-    if (current == WINDOW_TOP) {
-      topWindow.annotation = topWindow.annotation.deriveStyle(style);
-    } else {
-      bottomWindow.setCurrentTextStyle(style);
-    }
+    System.out.println("SET_TEXT_STYLE: " + style);
+    topWindow.annotation = topWindow.annotation.deriveStyle(style);
+    bottomWindow.setCurrentTextStyle(style);
   }
 
   public void setBufferMode(boolean flag) {
@@ -264,23 +261,9 @@ public class BufferedScreenModel implements ScreenModel, StatusLine,
   public int getNumRowsUpper() {
     return numRowsUpper;
   }
-  public int getUpperBackground() {
-    return topWindow.annotation.getBackground();
-  }
-  public int getUpperForeground() {
-    return topWindow.annotation.getForeground();
-  }
-  public boolean upperIsReverseVideo() {
-    return topWindow.annotation.isReverseVideo();
-  }
-
-  public int getLowerBackground() {
-    return bottomWindow.getBackground();
-  }
   
-  public int getLowerForeground() {
-    return bottomWindow.getForeground();
-  }
+  public int getBackground() { return bottomWindow.getBackground(); }
+  public int getForeground() { return bottomWindow.getForeground(); }
   
   public List<AnnotatedText> getLowerBuffer() {
     return bottomWindow.getBuffer();

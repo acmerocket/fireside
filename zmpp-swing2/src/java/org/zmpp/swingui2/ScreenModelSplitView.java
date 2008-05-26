@@ -346,17 +346,17 @@ implements ScreenModelListener {
     try {
       ColorTranslator translator = ColorTranslator.getInstance();
       lower.setBackground(translator.translate(
-        screenModel.getLowerBackground(), DEFAULT_BACKGROUND));
+        screenModel.getBackground(), DEFAULT_BACKGROUND));
       lower.setForeground(translator.translate(
-        screenModel.getLowerForeground(), DEFAULT_FOREGROUND));
+        screenModel.getForeground(), DEFAULT_FOREGROUND));
       StringBuilder formFeed = new StringBuilder();
       for (int i = 0; i < upper.getNumRows(); i++) {
         formFeed.append("\n");
       }
       TextAnnotation annotation = new TextAnnotation(ScreenModel.FONT_NORMAL,
         ScreenModel.TEXTSTYLE_ROMAN,
-        screenModel.getLowerBackground(),
-        screenModel.getLowerForeground());
+        screenModel.getBackground(),
+        screenModel.getForeground());
       appendToLower(new AnnotatedText(annotation, formFeed.toString()));
     } catch (Exception ex) {
       ex.printStackTrace();
