@@ -31,7 +31,7 @@ import org.zmpp.vm.SaveGameDataStore;
 import org.zmpp.vm.ScreenModel;
 import org.zmpp.vm.StatusLine;
 import org.zmpp.vm.StoryFileHeader.Attribute;
-import org.zmpp.vm.Machine.MachineRunState;
+import org.zmpp.vm.MachineRunState;
 
 /**
  * Tests the external i/o of the machine.

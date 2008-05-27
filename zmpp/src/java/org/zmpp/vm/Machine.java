@@ -38,8 +38,6 @@ import org.zmpp.media.SoundSystem;
 public interface Machine
 extends ObjectTree, Input, Output, Cpu, Memory, IZsciiEncoding {
 
-  public enum MachineRunState { RUNNING, STOPPED, READ_LINE, READ_CHAR  }
-
   /**
    * Initialization function.
    * 

@@ -40,7 +40,7 @@ import javax.swing.text.Document;
 import javax.swing.text.MutableAttributeSet;
 import javax.swing.text.StyleConstants;
 import org.zmpp.vm.ExecutionControl;
-import org.zmpp.vm.Machine.MachineRunState;
+import org.zmpp.vm.MachineRunState;
 import org.zmpp.vm.ScreenModel;
 import org.zmpp.windowing.AnnotatedCharacter;
 import org.zmpp.windowing.AnnotatedText;
@@ -205,8 +205,8 @@ implements ScreenModelListener {
   // *********************************
   
   public void switchModeOnRunState(MachineRunState runState) {
-    if (runState == MachineRunState.READ_CHAR) enterReadCharMode();
-    else if (runState == MachineRunState.READ_LINE) enterReadLineMode();
+    if (runState.isReadChar()) enterReadCharMode();
+    else if (runState.isReadLine()) enterReadLineMode();
   }
   
   public void initUI(BufferedScreenModel screenModel,

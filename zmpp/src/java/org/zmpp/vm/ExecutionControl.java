@@ -22,7 +22,6 @@ package org.zmpp.vm;
 
 import org.zmpp.io.LineBufferInputStream;
 import java.io.IOException;
-import org.zmpp.vm.Machine.MachineRunState;
 import org.zmpp.vm.MachineFactory.MachineInitStruct;
 import org.zmpp.vm.StoryFileHeader.Attribute;
 
@@ -31,10 +30,6 @@ import org.zmpp.vm.StoryFileHeader.Attribute;
  * suspending the VM on an input instruction, resuming after the input
  * buffer was filled and picking up from there.
  * This is the main public interface to the user interface.
- * 
- * TODO:
- * 
- * - initStruct initialization completely in here
  * 
  * @author Wei-ju Wu
  * @version 1.0
@@ -125,9 +120,7 @@ public class ExecutionControl {
       instr.execute();
         
       // handle input situations here
-      if (machine.getRunState() == MachineRunState.READ_LINE) {
-        break;
-      } else if (machine.getRunState() == MachineRunState.READ_CHAR) {
+      if (machine.getRunState().isWaitingForInput()) {
         break;
       } else {
         step++;
@@ -149,21 +142,13 @@ public class ExecutionControl {
   // ****** Interrupt functions
   // ****** These are for timed input.
   // *************************************
-  
-  /**
-   * The flag to indicate interrupt execution.
-   */
-  private boolean executeInterrupt;
-  
+
   /**
    * Indicates if the last interrupt routine performed any output.
    * 
    * @return true if the routine performed output, false otherwise
    */
-  public boolean interruptDidOutput() {
-    
-    return interruptDidOutput;
-  }
+  public boolean interruptDidOutput() { return interruptDidOutput; }
   
   /**
    * The flag to indicate interrupt output.
@@ -177,9 +162,7 @@ public class ExecutionControl {
    * @return the return value
    */
   public short callInterrupt(final int routineAddress) {
-    
     interruptDidOutput = false;
-    executeInterrupt = true;
     final int originalRoutineStackSize = machine.getRoutineContexts().size();
     final RoutineContext routineContext =  machine.call(routineAddress,
         machine.getPC(),
@@ -197,19 +180,6 @@ public class ExecutionControl {
         break;
       }
     }
-    executeInterrupt = false;
     return routineContext.getReturnValue();
-  }  
-
-  public void setInterruptRoutine(final int routineAddress) {
-    
-    // TODO
   }
-  
-  /**
-   * Returns the interrupt status of the cpu object.
-   * 
-   * @return the interrup status
-   */
-  public boolean isExecutingInterrupt() { return executeInterrupt; }
 }

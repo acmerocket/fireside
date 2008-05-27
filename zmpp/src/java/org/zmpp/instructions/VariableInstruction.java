@@ -21,10 +21,9 @@
 package org.zmpp.instructions;
 
 import org.zmpp.base.Memory;
-import org.zmpp.encoding.ZCharEncoder;
 import org.zmpp.media.SoundSystem;
 import org.zmpp.vm.Machine;
-import org.zmpp.vm.Machine.MachineRunState;
+import org.zmpp.vm.MachineRunState;
 import org.zmpp.vm.Output;
 import org.zmpp.vm.ScreenModel;
 import org.zmpp.vm.TextCursor;
@@ -316,20 +315,20 @@ public class VariableInstruction extends AbstractInstruction {
   }
   
   private void sreadStage1() {
-    getMachine().setRunState(MachineRunState.READ_LINE);
     final int version = getStoryFileVersion();
     int time = 0;
-    short packedAddress = 0;
+    short routine = 0;
     if (getNumOperands() >= 3) {
       time = getUnsignedValue(2);
     }
     if (getNumOperands() >= 4) {
-      packedAddress = getValue(3);
+      routine = getValue(3);
     }    
     
     if (version <= 3) {
       getMachine().updateStatusLine();
     }
+    getMachine().setRunState(MachineRunState.createReadLine(time, routine));
     getMachine().flushOutput();
   }
   
@@ -359,45 +358,6 @@ public class VariableInstruction extends AbstractInstruction {
     }
     nextInstruction();
   }
-  
-  /*
-  private void sread_old() {
-    final int version = getStoryFileVersion();
-    //System.out.println("@sread()");
-    final int textbuffer = getUnsignedValue(0);
-    int parsebuffer = 0;
-    int time = 0;
-    short packedAddress = 0;
-    
-    if (getNumOperands() >= 2) {
-      parsebuffer = getUnsignedValue(1);
-    }
-    if (getNumOperands() >= 3) {
-      time = getUnsignedValue(2);
-    }
-    if (getNumOperands() >= 4) {
-      packedAddress = getValue(3);
-    }
-    
-    // Here the Z-machine needs to be paused and the user interface
-    // handles the whole input
-    final char terminal =
-      getMachine().readLine(textbuffer, time, packedAddress);
-    
-    // This is the resume part
-    if (version < 5 || (version >= 5 && parsebuffer > 0)) {
-      // Do not tokenise if parsebuffer is 0 (See specification of read)
-      getMachine().tokenize(textbuffer, parsebuffer, 0, false);
-    }
-    
-    if (storesResult()) {
-      // The specification suggests that we store the terminating character
-      // here, this can be NULL or NEWLINE at the moment
-      storeResult((short) terminal);
-    }
-    nextInstruction();
-  }
-  */
   
   /**
    * Implements the sound_effect instruction.
@@ -584,19 +544,19 @@ public class VariableInstruction extends AbstractInstruction {
   }
   
   private void readCharStage1() {
-    getMachine().setRunState(MachineRunState.READ_CHAR);
     if (getMachine().getVersion() <= 3) {
       getMachine().updateStatusLine();
     }
     int time = 0;
-    int routineAddress = 0;
+    int routine = 0;
     if (getNumOperands() >= 2) {     
       time = getUnsignedValue(1);
     }
     if (getNumOperands() >= 3) {
-      routineAddress = getValue(2);
+      routine = getValue(2);
     }
     getMachine().flushOutput();
+    getMachine().setRunState(MachineRunState.createReadChar(time, routine));
   }
   
   private void readCharStage2() {
