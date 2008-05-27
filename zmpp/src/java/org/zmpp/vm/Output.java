@@ -21,7 +21,6 @@
 package org.zmpp.vm;
 
 import org.zmpp.encoding.ZsciiString;
-import org.zmpp.io.OutputStream;
 
 public interface Output {
 
@@ -83,9 +82,8 @@ public interface Output {
    * Prints the specified ZSCII character.
    * 
    * @param zchar the ZSCII character to print
-   * @param isInput true if this is echoing input
    */
-  void printZsciiChar(char zchar, boolean isInput);
+  void printZsciiChar(char zchar);
   
   /**
    * Deletes the specified ZSCII character. This implements a backspace.

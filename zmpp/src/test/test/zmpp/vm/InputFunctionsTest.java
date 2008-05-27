@@ -89,7 +89,7 @@ public class InputFunctionsTest extends MockObjectTestCase {
    * Simple case: Newline as terminator.
    */
   public void testHandleTerminateCharNewline() {
-    mockMachine.expects(once()).method("printZsciiChar").with(eq((char)ZsciiEncoding.NEWLINE), eq(false));
+    mockMachine.expects(once()).method("printZsciiChar").with(eq((char)ZsciiEncoding.NEWLINE));
     char result = inputFunctions.handleTerminateChar(ZsciiEncoding.NEWLINE);
     assertEquals(ZsciiEncoding.NEWLINE, result);
   }

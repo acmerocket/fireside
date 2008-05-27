@@ -228,7 +228,7 @@ public class VariableInstruction extends AbstractInstruction {
   
   private void print_char() {
     final char zchar = (char) getUnsignedValue(0);
-    getMachine().printZsciiChar(zchar, false);
+    getMachine().printZsciiChar(zchar);
     nextInstruction();
   }
   
@@ -709,7 +709,7 @@ public class VariableInstruction extends AbstractInstruction {
       for (int j = 0; j < width; j++) { 
         final int offset = (width * i) + j;
         zchar = (char) memory.readUnsignedByte(zsciiText + offset);
-        getMachine().printZsciiChar(zchar, false);
+        getMachine().printZsciiChar(zchar);
       }
       row += skip + 1;
       getMachine().getScreen().setTextCursor(row, column,

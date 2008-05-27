@@ -33,9 +33,8 @@ public interface OutputStream {
    * needed to implement edit buffers.
    * 
    * @param zchar the ZSCII character to print
-   * @param isInput is true if the character is an echo to the input
    */
-  void print(char zchar, boolean isInput);
+  void print(char zchar);
   
   /**
    * This function is only used by the input function in order to

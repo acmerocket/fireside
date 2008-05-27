@@ -216,7 +216,7 @@ public class ExtendedInstruction extends AbstractInstruction {
   
   private void print_unicode() {
     final char zchar = (char) getUnsignedValue(0);
-    getMachine().printZsciiChar(zchar, false);
+    getMachine().printZsciiChar(zchar);
     nextInstruction();
   }
   

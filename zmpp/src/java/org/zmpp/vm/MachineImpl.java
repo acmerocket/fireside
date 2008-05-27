@@ -392,8 +392,8 @@ public class MachineImpl implements Machine {
     output.newline();
   }
 
-  public void printZsciiChar(char zchar, boolean isInput) {
-    output.printZsciiChar(zchar, isInput);
+  public void printZsciiChar(char zchar) {
+    output.printZsciiChar(zchar);
   }
 
   public void deletePreviousZsciiChar(char zchar) {

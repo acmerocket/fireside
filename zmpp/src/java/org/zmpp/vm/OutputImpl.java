@@ -63,16 +63,15 @@ public class OutputImpl implements Output, Closeable {
    * {@inheritDoc}
    */
   public void print(final ZsciiString str) {
-
     //System.out.println("print: '" + str + "'");
-    printZsciiChars(str, false);
+    printZsciiChars(str);
   }
   
   /**
    * {@inheritDoc}
    */
   public void newline() {
-    printZsciiChar(ZsciiEncoding.NEWLINE, false);
+    printZsciiChar(ZsciiEncoding.NEWLINE);
   }
   
   private char[] zchars = new char[1];
@@ -80,11 +79,10 @@ public class OutputImpl implements Output, Closeable {
   /**
    * {@inheritDoc}
    */
-  public void printZsciiChar(final char zchar, final boolean isInput) {
-    
+  public void printZsciiChar(final char zchar) {
     //System.out.println("printZsciiChar: '" + (char) zchar + "'");
     zchars[0] = zchar;
-    printZsciiChars(new ZsciiString(zchars), isInput);
+    printZsciiChars(new ZsciiString(zchars));
   }
   
   /**
@@ -109,10 +107,8 @@ public class OutputImpl implements Output, Closeable {
    * that communicates with the output streams directly.
    * 
    * @param zsciiString the array of ZSCII characters.
-   * @param isInput true if in input mode, false otherwise
    */
-  private void printZsciiChars(final ZsciiString zsciiString,
-      final boolean isInput) {
+  private void printZsciiChars(final ZsciiString zsciiString) {
     
     checkTranscriptFlag();
     
@@ -120,7 +116,7 @@ public class OutputImpl implements Output, Closeable {
       
       for (int i = 0, n = zsciiString.length(); i < n; i++) {
         
-        outputStream[OUTPUTSTREAM_MEMORY - 1].print(zsciiString.charAt(i), isInput);
+        outputStream[OUTPUTSTREAM_MEMORY - 1].print(zsciiString.charAt(i));
       }
       
     } else {
@@ -131,7 +127,7 @@ public class OutputImpl implements Output, Closeable {
       
           for (int j = 0, n = zsciiString.length(); j < n; j++) {
           
-            outputStream[i].print(zsciiString.charAt(j), isInput);
+            outputStream[i].print(zsciiString.charAt(j));
           }
         }
       }

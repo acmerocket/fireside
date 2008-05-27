@@ -72,7 +72,7 @@ public class TranscriptOutputStream implements OutputStream {
   /**
    * {@inheritDoc}
    */
-  public void print(final char zsciiChar, final boolean isInput) {
+  public void print(final char zsciiChar) {
     //System.out.println("TRANSCRIPT: PRINT: '" + zsciiChar + "'");
     initFile();
     if (output != null) {

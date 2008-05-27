@@ -209,9 +209,9 @@ public class MachineTest extends MiniZorkSetup {
     mockOutputStream1.expects(atLeastOnce()).method("isSelected").will(returnValue(true));
     mockOutputStream2.expects(atLeastOnce()).method("isSelected").will(returnValue(false));
     mockOutputStream3.expects(atLeastOnce()).method("isSelected").will(returnValue(false));
-    mockOutputStream1.expects(atLeastOnce()).method("print").with(eq('e'), eq(false));
-    mockOutputStream1.expects(atLeastOnce()).method("print").with(eq('r'), eq(false));
-    mockOutputStream1.expects(atLeastOnce()).method("print").with(eq('o'), eq(false));
+    mockOutputStream1.expects(atLeastOnce()).method("print").with(eq('e'));
+    mockOutputStream1.expects(atLeastOnce()).method("print").with(eq('r'));
+    mockOutputStream1.expects(atLeastOnce()).method("print").with(eq('o'));
     
     machine.start();
     

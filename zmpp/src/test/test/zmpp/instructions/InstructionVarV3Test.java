@@ -173,7 +173,7 @@ public class InstructionVarV3Test extends InstructionTestBase {
   
   @Test
   public void testPrintChar() {
-    mockMachine.expects(once()).method("printZsciiChar").with(eq((char) 97), eq(false));
+    mockMachine.expects(once()).method("printZsciiChar").with(eq((char) 97));
     mockMachine.expects(once()).method("incrementPC").with(eq(5));
     
     VariableInstruction print_char = new VariableInstruction(machine,

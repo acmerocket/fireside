@@ -54,9 +54,9 @@ public class FileOutputStreamTest extends MockObjectTestCase {
 
     mockIo.expects(once()).method("getTranscriptWriter").will(returnValue(outputwriter));
    
-    outstream.print('a', false);
-    outstream.print(ZsciiEncoding.NEWLINE, false);
-    outstream.print('b', false);
-    outstream.print(ZsciiEncoding.NEWLINE, false);
+    outstream.print('a');
+    outstream.print(ZsciiEncoding.NEWLINE);
+    outstream.print('b');
+    outstream.print(ZsciiEncoding.NEWLINE);
   }
 }

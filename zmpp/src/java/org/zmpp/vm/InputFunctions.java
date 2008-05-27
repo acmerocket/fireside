@@ -166,7 +166,7 @@ public class InputFunctions {
       // Echo a newline into the streams
       // must be called with isInput == false since we are not
       // in input mode anymore when we receive NEWLINE
-      machine.printZsciiChar(ZsciiEncoding.NEWLINE, false);      
+      machine.printZsciiChar(ZsciiEncoding.NEWLINE);      
     }      
     return terminateChar;
   }
