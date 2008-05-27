@@ -396,10 +396,6 @@ public class MachineImpl implements Machine {
     output.printZsciiChar(zchar);
   }
 
-  public void deletePreviousZsciiChar(char zchar) {
-    output.deletePreviousZsciiChar(zchar);
-  }
-
   public void printNumber(short num) {
     output.printNumber(num);
   }

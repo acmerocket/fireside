@@ -86,13 +86,6 @@ public interface Output {
   void printZsciiChar(char zchar);
   
   /**
-   * Deletes the specified ZSCII character. This implements a backspace.
-   * 
-   * @param zchar the character to delete
-   */
-  void deletePreviousZsciiChar(char zchar);
-  
-  /**
    * Prints the specified signed number.
    * 
    * @param num the number to print?

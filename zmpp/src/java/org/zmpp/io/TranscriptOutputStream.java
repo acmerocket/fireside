@@ -136,12 +136,5 @@ public class TranscriptOutputStream implements OutputStream {
       }      
     }
     initialized = false;
-  }
-  
-  /**
-   * {@inheritDoc}
-   */
-  public void deletePrevious(final char zchar) {
-    // transcript does not support deleting
-  }
+  }  
 }

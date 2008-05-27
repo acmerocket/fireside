@@ -34,15 +34,15 @@ implements InputLine {
 
   private CommandHistory history;
   
+  @Override
   protected void setUp() throws Exception {
-    
     history = new CommandHistory(this);
   }
 
   // *********************************************************************
   // ***** Input line functions
   // **************************************
-  
+
   public int deletePreviousChar(List<Character> inputbuffer, int pointer) {
     inputbuffer.remove(inputbuffer.size() - 1);
     return pointer - 1;

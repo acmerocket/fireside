@@ -37,6 +37,7 @@ public class FileOutputStreamTest extends MockObjectTestCase {
   private TranscriptOutputStream outstream;
   private Writer outputwriter;
   
+  @Override
   protected void setUp() throws Exception {
     
     mockIo = mock(IOSystem.class);
@@ -45,6 +46,7 @@ public class FileOutputStreamTest extends MockObjectTestCase {
     outputwriter = new FileWriter("testfiles/streamoutput.txt");
   }
 
+  @Override
   protected void tearDown() throws Exception {
     
     outstream.close();

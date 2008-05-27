@@ -37,16 +37,6 @@ public interface OutputStream {
   void print(char zchar);
   
   /**
-   * This function is only used by the input function in order to
-   * echo a delete into the output. Output streams do not need to remember
-   * their previous output, but the virtual machine will, and provides
-   * that character as the argument.
-   * 
-   * @param zchar the character to delete
-   */
-  void deletePrevious(char zchar);
-  
-  /**
    * Close underlying resources.
    */
   void close();

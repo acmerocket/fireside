@@ -84,23 +84,6 @@ public class OutputImpl implements Output, Closeable {
     zchars[0] = zchar;
     printZsciiChars(new ZsciiString(zchars));
   }
-  
-  /**
-   * {@inheritDoc}
-   */
-  public void deletePreviousZsciiChar(final char zchar) {
-    
-    if (!outputStream[OUTPUTSTREAM_MEMORY - 1].isSelected()) {
-          
-      for (int i = 0; i < outputStream.length; i++) {
-      
-        if (outputStream[i] != null && outputStream[i].isSelected()) {
-      
-          outputStream[i].deletePrevious(zchar);
-        }
-      }
-    }
-  }
 
   /**
    * Prints the specified array of ZSCII characters. This is the only function

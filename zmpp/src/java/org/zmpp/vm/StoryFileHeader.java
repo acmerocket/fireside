@@ -193,25 +193,25 @@ public interface StoryFileHeader {
    * Returns the default background color.
    * @return the default background color
    */
-  int getDefaultBackgroundColor();
+  int getDefaultBackground();
   
   /**
    * Returns the default foreground color.
    * @return the default foreground color
    */
-  int getDefaultForegroundColor();
+  int getDefaultForeground();
   
   /**
    * Sets the default background color.
    * @param color the default background color.
    */
-  void setDefaultBackgroundColor(int color);
+  void setDefaultBackground(int color);
   
   /**
    * Sets the default foreground color.
    * @param color the default foreground color
    */
-  void setDefaultForegroundColor(int color);
+  void setDefaultForeground(int color);
   
   /**
    * Sets the standard revision number this machine supports to the

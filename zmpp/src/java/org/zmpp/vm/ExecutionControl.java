@@ -70,8 +70,8 @@ public class ExecutionControl {
     enableHeaderFlag(Attribute.SUPPORTS_ITALIC);
     enableHeaderFlag(Attribute.SUPPORTS_STATUSLINE);
     enableHeaderFlag(Attribute.SUPPORTS_TIMED_INPUT);
-    machine.getFileHeader().setDefaultBackgroundColor(ScreenModel.COLOR_WHITE);
-    machine.getFileHeader().setDefaultForegroundColor(ScreenModel.COLOR_BLACK);
+    System.out.println("DEFAULT FOREGROUND: " + getFileHeader().getDefaultForeground());
+    System.out.println("DEFAULT BACKGROUND: " + getFileHeader().getDefaultBackground());
   }
 
   private void enableHeaderFlag(Attribute attr) {
@@ -83,8 +83,16 @@ public class ExecutionControl {
   public int getVersion() { return machine.getVersion(); }
   
   public void setDefaultColors(int defaultBackground, int defaultForeground) {
-    getFileHeader().setDefaultBackgroundColor(defaultBackground);
-    getFileHeader().setDefaultForegroundColor(defaultForeground);
+    getFileHeader().setDefaultBackground(defaultBackground);
+    getFileHeader().setDefaultForeground(defaultForeground);
+  }
+  
+  public int getDefaultBackground() {
+    return getFileHeader().getDefaultBackground();
+  }
+  
+  public int getDefaultForeground() {
+    return getFileHeader().getDefaultForeground();
   }
 
   public void resizeScreen(int numRows, int numCharsPerRow) {
