@@ -119,7 +119,7 @@ public class BufferedScreenModel implements ScreenModel, StatusLine,
   }
 
   public void setBufferMode(boolean flag) {
-    System.out.println("SET_BUFFER_MODE (TODO): " + flag);
+    System.out.println("SET_BUFFER_MODE (ignored): " + flag);
     // Simply ignored, top window is always unbuffered, bottom window always
     // buffered
   }
@@ -152,8 +152,19 @@ public class BufferedScreenModel implements ScreenModel, StatusLine,
     System.out.printf("SET_TEXT_CURSOR, line: %d, column: %d, " +
             "window: %d\n", line, column, targetWindow);
     if (targetWindow == WINDOW_TOP) {
-      setTextCursorTopWindow(line, column);
+      if (outOfUpperBounds(line, column)) {
+        // set to left margin of current line
+        topWindow.cursorx = 1;
+      } else {
+        setTextCursorTopWindow(line, column);
+      }
     }
+  }
+  
+  private boolean outOfUpperBounds(int line, int column) {
+    if (line < 1 || line > numRowsUpper) return true;
+    if (column < 1 || column > numCharsPerRow) return true;
+    return false;
   }
   
   private int getTargetWindow(int window) {

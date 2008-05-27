@@ -125,8 +125,8 @@ public class TextGridView extends JComponent {
 
   public void setCharacter(int line, int column, AnnotatedCharacter c) {
     // Guarding writing out of bounds, some games do this
-    if (line < 1 || (line - 1) >= grid.length) return;
-    if (column < 1 || (column - 1) >= grid[line - 1].length) return;
+    //if (line < 1 || (line - 1) >= grid.length) return;
+    //if (column < 1 || (column - 1) >= grid[line - 1].length) return;
     System.out.println("SET_CHAR, line: " + line + " col: " + column + " c: " +
             c.getCharacter() + " BG: " + c.getAnnotation().getBackground() +
             " FG: " + c.getAnnotation().getForeground() + " REVERSE: " +

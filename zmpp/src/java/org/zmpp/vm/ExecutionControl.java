@@ -60,16 +60,23 @@ public class ExecutionControl {
     machine = factory.buildMachine();
     machine.start();
     instructionDecoder.initialize(machine);
-    
+    int version = machine.getVersion();
     // ZMPP should support everything by default
-    enableHeaderFlag(Attribute.SUPPORTS_SCREEN_SPLITTING);
-    enableHeaderFlag(Attribute.DEFAULT_FONT_IS_VARIABLE);
-    enableHeaderFlag(Attribute.SUPPORTS_BOLD);
-    enableHeaderFlag(Attribute.SUPPORTS_FIXED_FONT);
-    enableHeaderFlag(Attribute.SUPPORTS_COLOURS);
-    enableHeaderFlag(Attribute.SUPPORTS_ITALIC);
-    enableHeaderFlag(Attribute.SUPPORTS_STATUSLINE);
-    enableHeaderFlag(Attribute.SUPPORTS_TIMED_INPUT);
+    if (version <= 3) {
+      enableHeaderFlag(Attribute.DEFAULT_FONT_IS_VARIABLE);
+      enableHeaderFlag(Attribute.SUPPORTS_STATUSLINE);
+      enableHeaderFlag(Attribute.SUPPORTS_SCREEN_SPLITTING);
+    }
+    if (version >= 4) {
+      enableHeaderFlag(Attribute.SUPPORTS_BOLD);
+      enableHeaderFlag(Attribute.SUPPORTS_FIXED_FONT);
+      enableHeaderFlag(Attribute.SUPPORTS_ITALIC);
+      enableHeaderFlag(Attribute.SUPPORTS_TIMED_INPUT);
+    }
+    if (version >= 5) {
+      enableHeaderFlag(Attribute.SUPPORTS_COLOURS);
+      
+    }
     System.out.println("DEFAULT FOREGROUND: " + getFileHeader().getDefaultForeground());
     System.out.println("DEFAULT BACKGROUND: " + getFileHeader().getDefaultBackground());
   }
@@ -96,10 +103,11 @@ public class ExecutionControl {
   }
 
   public void resizeScreen(int numRows, int numCharsPerRow) {
-    if (getVersion() == 4) {
+    if (getVersion() >= 4) {
       getFileHeader().setScreenHeight(numRows);
       getFileHeader().setScreenWidth(numCharsPerRow);
-    } else if (getVersion() >= 5) {
+    }
+    if (getVersion() >= 5) {
       getFileHeader().setFontHeight(1);
       getFileHeader().setFontWidth(1);
       getFileHeader().setScreenHeightUnits(numRows);
