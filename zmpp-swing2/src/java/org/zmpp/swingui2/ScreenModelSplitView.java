@@ -138,8 +138,8 @@ implements ScreenModelListener {
             BorderFactory.createEmptyBorder(5, 5, 5, 5));
     lower.setEditable(true);
     lower.setEnabled(true);
-    lower.setBackground(getColor(DEFAULT_BACKGROUND));
-    lower.setForeground(getColor(DEFAULT_FOREGROUND));
+    lower.setBackground(getBackgroundColor(DEFAULT_BACKGROUND));
+    lower.setForeground(getForegroundColor(DEFAULT_FOREGROUND));
     lowerViewport = new JViewport();
     lowerViewport.setView(lower);
     lowerViewport.addChangeListener(new ChangeListener() {
@@ -176,8 +176,18 @@ implements ScreenModelListener {
     lower.getCaret().addChangeListener(inputHandler);
   }
   
-  private Color getColor(int screenModelColor) {
-    return ColorTranslator.getInstance().translate(screenModelColor);
+  private Color getBackgroundColor(int screenModelColor) {
+    return executionControl != null ?
+      ColorTranslator.getInstance().translate(screenModelColor,
+        executionControl.getDefaultBackground()) :
+      ColorTranslator.getInstance().translate(screenModelColor);
+  }
+  
+  private Color getForegroundColor(int screenModelColor) {
+    return executionControl != null ?
+      ColorTranslator.getInstance().translate(screenModelColor,
+        executionControl.getDefaultForeground()) :
+      ColorTranslator.getInstance().translate(screenModelColor);
   }
   
   // ***********************************************************************
@@ -205,6 +215,7 @@ implements ScreenModelListener {
     executionControl.setDefaultColors(DEFAULT_BACKGROUND,
                                       DEFAULT_FOREGROUND);
     this.screenModel = screenModel;
+    upper.setScreenModel(screenModel);
     screenModel.addScreenModelListener(this);
     setSizes();
     setLowerFontStyles();
@@ -217,7 +228,7 @@ implements ScreenModelListener {
     int charHeight = getFixedFontHeight();
     int numCharsPerRow = componentWidth / charWidth;
     int numRows = componentHeight / charHeight;
-    
+    screenModel.setNumCharsPerRow(numCharsPerRow);
     System.out.println("Char width: " + charWidth + " component width: " +
             componentWidth + " # chars/row: " + numCharsPerRow +
             " char height: " + charHeight + " # rows: " + numRows);
@@ -242,6 +253,11 @@ implements ScreenModelListener {
   
   private void split(int numRowsUpper) {
     layout.setNumRowsUpper(numRowsUpper);
+    if (upper != null && screenModel != null) {
+      upper.clear(screenModel.getBackground());
+    } else {
+      System.out.println("not set: " + upper + " screenModel: " + screenModel);
+    }
   }
 
   private void viewSizeChanged() {
@@ -361,7 +377,7 @@ implements ScreenModelListener {
     } catch (Exception ex) {
       ex.printStackTrace();
     }
-    upper.clear();
+    upper.clear(screenModel.getBackground());
   }
   
   // *************************************************************************

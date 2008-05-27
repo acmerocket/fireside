@@ -28,6 +28,7 @@ import javax.swing.JComponent;
 import org.zmpp.vm.ScreenModel;
 import org.zmpp.windowing.AnnotatedCharacter;
 import org.zmpp.windowing.TextAnnotation;
+import org.zmpp.zscreen.BufferedScreenModel;
 
 /**
  * A class representing a text grid in a Z-machine or Glk screen model.
@@ -42,6 +43,11 @@ public class TextGridView extends JComponent {
   private static final char REF_CHAR = '0';
   private FontSelector fontSelector;
   private AnnotatedCharacter[][] grid;
+  private BufferedScreenModel screenModel;
+
+  public void setScreenModel(BufferedScreenModel screenModel) {
+    this.screenModel = screenModel;
+  }
 
   public void setFontSelector(FontSelector selector) {
     this.fontSelector = selector;
@@ -56,8 +62,18 @@ public class TextGridView extends JComponent {
     return grid == null || grid.length == 0 ? 0 : grid[0].length;
   }
   
-  public void clear() {
-    for (int row = 0; row < grid.length; row++) {
+  public void clear(int color) {
+    // Fill the size with the background color
+    TextAnnotation annotation = new TextAnnotation(ScreenModel.FONT_FIXED,
+      ScreenModel.TEXTSTYLE_ROMAN, color, color);
+    AnnotatedCharacter annchar = new AnnotatedCharacter(annotation, ' ');
+    for (int row = 0; row < screenModel.getNumRowsUpper(); row++) {
+      for (int col = 0; col < grid[row].length; col++) {
+        grid[row][col] = annchar;
+      }
+    }
+    // The rest of the lines is transparent
+    for (int row = screenModel.getNumRowsUpper(); row < grid.length; row++) {
       for (int col = 0; col < grid[row].length; col++) {
         grid[row][col] = null;
       }
@@ -111,10 +127,10 @@ public class TextGridView extends JComponent {
     // Guarding writing out of bounds, some games do this
     if (line < 1 || (line - 1) >= grid.length) return;
     if (column < 1 || (column - 1) >= grid[line - 1].length) return;
-    //System.out.println("SET_CHAR, line: " + line + " col: " + column + " c: " +
-    //        c.getCharacter() + " BG: " + c.getAnnotation().getBackground() +
-    //        " FG: " + c.getAnnotation().getForeground() + " REVERSE: " +
-    //        c.getAnnotation().isReverseVideo());
+    System.out.println("SET_CHAR, line: " + line + " col: " + column + " c: " +
+            c.getCharacter() + " BG: " + c.getAnnotation().getBackground() +
+            " FG: " + c.getAnnotation().getForeground() + " REVERSE: " +
+             c.getAnnotation().isReverseVideo());
     grid[line - 1][column - 1] = c;
   }
 

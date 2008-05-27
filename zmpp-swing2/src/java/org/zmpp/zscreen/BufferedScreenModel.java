@@ -41,7 +41,7 @@ import org.zmpp.windowing.TextAnnotation;
  * @author Wei-ju Wu
  */
 public class BufferedScreenModel implements ScreenModel, StatusLine,
-        OutputStream {
+  OutputStream {
   
   class TopWindow {
     public int cursorx = 1, cursory = 1;
@@ -61,7 +61,7 @@ public class BufferedScreenModel implements ScreenModel, StatusLine,
   }
 
   private int current = WINDOW_BOTTOM;
-  private int numRowsUpper;
+  private int numRowsUpper, numCharsPerRow;
   private BufferedTextWindow bottomWindow = new BufferedTextWindow();
   private TopWindow topWindow = new TopWindow();
   private List<ScreenModelListener> screenModelListeners =
@@ -88,6 +88,10 @@ public class BufferedScreenModel implements ScreenModel, StatusLine,
     statusLineListeners.add(l);
   }
   
+  public void setNumCharsPerRow(int num) {
+    numCharsPerRow = num;
+  }
+  
   public void reset() {
     throw new UnsupportedOperationException("Not supported yet.");
   }
@@ -98,7 +102,6 @@ public class BufferedScreenModel implements ScreenModel, StatusLine,
     for (ScreenModelListener l : screenModelListeners) {
       l.screenSplit(linesUpperWindow);
     }
-    //this.eraseWindow(WINDOW_TOP);
   }
 
   public void setWindow(int window) {
@@ -117,10 +120,12 @@ public class BufferedScreenModel implements ScreenModel, StatusLine,
 
   public void setBufferMode(boolean flag) {
     System.out.println("SET_BUFFER_MODE (TODO): " + flag);
-    //throw new UnsupportedOperationException("Not supported yet.");
+    // Simply ignored, top window is always unbuffered, bottom window always
+    // buffered
   }
 
   public void eraseLine(int value) {
+    System.out.println("ERASE_LINE: " + value);
     throw new UnsupportedOperationException("Not supported yet.");
   }
 
@@ -135,34 +140,26 @@ public class BufferedScreenModel implements ScreenModel, StatusLine,
       topWindow.resetCursor();
     }
     if (window == ScreenModel.WINDOW_TOP) {
+      for (ScreenModelListener l : screenModelListeners) {
+        l.windowErased(ScreenModel.WINDOW_TOP);
+      }
       topWindow.resetCursor();
     }
   }
-
+  
   public void setTextCursor(int line, int column, int window) {
-    //System.out.printf("SET_TEXT_CURSOR (TODO), line: %d, column: %d, " +
-    //        "window: %d\n", line, column, window);
-    if (window == ScreenModel.CURRENT_WINDOW) {
-      setTextCursorCurrentWindow(line, column);
-    } else if (window == WINDOW_TOP) {
-      setTextCursorTopWindow(line, column);
-    } else {
-      setTextCursorBottomWindow(line, column);
-    }
-  }
-  
-  private void setTextCursorCurrentWindow(int line, int column) {
-    if (current == WINDOW_BOTTOM) {
-      setTextCursorBottomWindow(line, column);
-    } else {
+    int targetWindow = getTargetWindow(window);
+    System.out.printf("SET_TEXT_CURSOR, line: %d, column: %d, " +
+            "window: %d\n", line, column, targetWindow);
+    if (targetWindow == WINDOW_TOP) {
       setTextCursorTopWindow(line, column);
     }
   }
   
-  private void setTextCursorBottomWindow(int line, int column) {
-    throw new UnsupportedOperationException("Not supported yet.");      
+  private int getTargetWindow(int window) {
+    return window == ScreenModel.CURRENT_WINDOW ? current : window;
   }
-
+  
   private void setTextCursorTopWindow(int line, int column) {
     topWindow.cursory = line;
     topWindow.cursorx = column;
@@ -173,6 +170,7 @@ public class BufferedScreenModel implements ScreenModel, StatusLine,
   }
   
   public int setFont(int fontnumber) {
+    System.out.println("SET_FONT: " + fontnumber);
     if (current == WINDOW_TOP) {
       return topWindow.setFont(fontnumber);
     } else {
@@ -191,19 +189,13 @@ public class BufferedScreenModel implements ScreenModel, StatusLine,
     topWindow.annotation = topWindow.annotation.deriveForeground(colornumber);
     bottomWindow.setForeground(colornumber);
   }
-  /*
-  private int getTargetWindow(int window) {
-    return window == ScreenModel.CURRENT_WINDOW ? current : window;
-  }*/
 
-  public OutputStream getOutputStream() {
-    return this;
-  }
+  public OutputStream getOutputStream() { return this; }
 
   // OutputStream
   private boolean selected;
   
-  public void print(char zchar, boolean isInput) {
+  public void print(char zchar) {
     if (current == WINDOW_BOTTOM) {
       bottomWindow.printChar(zchar);
     } else if (current == WINDOW_TOP) {
@@ -216,10 +208,6 @@ public class BufferedScreenModel implements ScreenModel, StatusLine,
     }
   }
   
-  public void deletePrevious(char zchar) {
-    throw new UnsupportedOperationException("Not supported yet.");
-  }
-
   public void close() { }
 
   /**
