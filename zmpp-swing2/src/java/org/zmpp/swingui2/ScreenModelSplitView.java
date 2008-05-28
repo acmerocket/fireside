@@ -68,7 +68,7 @@ implements ScreenModelListener {
   private int editStart;
   private ExecutionControl executionControl;
   private BufferedScreenModel screenModel;
-  private boolean isReadLine, isReadChar;
+  private MachineRunState currentRunState;
 
   public interface MainViewListener {
     /**
@@ -196,17 +196,25 @@ implements ScreenModelListener {
 
   JTextPane getLower() { return lower; }
   int getEditStart() { return editStart; }
-  boolean isReadChar() { return isReadChar; }
-  boolean isReadLine() { return isReadLine; }
+  boolean isReadChar() {
+    return currentRunState == null ? false : currentRunState.isReadChar();
+  }
+  boolean isReadLine() {
+    return currentRunState == null ? false : currentRunState.isReadLine();
+  }
   ExecutionControl getExecutionControl() { return executionControl; }
   
   // ***********************************************************************
   // **** Public interface
   // *********************************
   
-  public void switchModeOnRunState(MachineRunState runState) {
-    if (runState.isReadChar()) enterReadCharMode();
-    else if (runState.isReadLine()) enterReadLineMode();
+  public void setCurrentRunState(MachineRunState runState) {
+    if (runState.isWaitingForInput()) {
+      System.out.println("time: " + runState.getTime() + " routine: " +
+              runState.getRoutine());
+    }
+    currentRunState = runState;
+    viewCursor(runState.isWaitingForInput());
   }
   
   public void initUI(BufferedScreenModel screenModel,
@@ -315,8 +323,8 @@ implements ScreenModelListener {
      Font font = fontSelector.getFont(annotation);
      StyleConstants.setFontFamily(attributes, font.getFamily());
      StyleConstants.setFontSize(attributes, font.getSize());
-     StyleConstants.setBold(attributes, font.isBold());
-     StyleConstants.setItalic(attributes, font.isItalic());
+     StyleConstants.setBold(attributes, annotation.isBold());
+     StyleConstants.setItalic(attributes, annotation.isItalic());
      ColorTranslator colorTranslator = ColorTranslator.getInstance();
      Color background = colorTranslator.translate(annotation.getBackground(),
        DEFAULT_BACKGROUND);
@@ -353,12 +361,16 @@ implements ScreenModelListener {
   public void windowErased(int window) {
     if (window == -1) {
       clearAll();
+    } else if (window == ScreenModel.WINDOW_BOTTOM) {
+      clearLower();
+    } else if (window == ScreenModel.WINDOW_TOP) {
+      clearUpper();
     } else {
-      throw new UnsupportedOperationException("Not supported yet.");
+      throw new UnsupportedOperationException("No support for erasing window: " + window);
     }
   }
   
-  private void clearAll() {
+  private void clearLower() {
     try {
       ColorTranslator translator = ColorTranslator.getInstance();
       lower.setBackground(translator.translate(
@@ -377,23 +389,20 @@ implements ScreenModelListener {
     } catch (Exception ex) {
       ex.printStackTrace();
     }
+  }
+  
+  private void clearUpper() {
     upper.clear(screenModel.getBackground());
+  }
+
+  private void clearAll() {
+    clearLower();
+    clearUpper();
   }
   
   // *************************************************************************
   // ****** Game control
   // ***************************************
-  private void enterReadCharMode() {
-    this.isReadLine = false;
-    this.isReadChar = true;
-    viewCursor(true);
-  }
-  
-  private void enterReadLineMode() {
-    this.isReadChar = false;
-    this.isReadLine = true;
-    viewCursor(true);
-  }
 
   private void viewCursor(final boolean flag) {
     runInUIThread(new Runnable() {

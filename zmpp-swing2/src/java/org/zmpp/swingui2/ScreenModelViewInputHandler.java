@@ -147,7 +147,7 @@ public class ScreenModelViewInputHandler
     return view.getExecutionControl();
   }
   private void resumeWithInput(String input) {
-    view.switchModeOnRunState(getExecutionControl().resumeWithInput(input));
+    view.setCurrentRunState(getExecutionControl().resumeWithInput(input));
   }
   private int getEditStart() { return view.getEditStart(); }
   private boolean isReadChar() { return view.isReadChar(); }

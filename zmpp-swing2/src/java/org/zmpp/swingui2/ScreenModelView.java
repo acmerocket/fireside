@@ -187,7 +187,7 @@ implements AdjustmentListener, MainViewListener, MouseWheelListener,
       initUI();
       MachineRunState runState = executionControl.run();
       System.out.println("PAUSING WITH STATE: " + runState);
-      mainView.switchModeOnRunState(runState);
+      mainView.setCurrentRunState(runState);
     }
   }
   

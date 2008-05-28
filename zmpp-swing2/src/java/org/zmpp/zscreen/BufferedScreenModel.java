@@ -216,6 +216,10 @@ public class BufferedScreenModel implements ScreenModel, StatusLine,
                            topWindow.annotateCharacter(zchar));
       }
       topWindow.cursorx++;
+      // Make sure the cursor does not overrun the margin
+      if (topWindow.cursorx >= numCharsPerRow) {
+        topWindow.cursorx = numCharsPerRow - 1;
+      }
     }
   }
   
