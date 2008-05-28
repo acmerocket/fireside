@@ -119,9 +119,10 @@ public class BufferedScreenModel implements ScreenModel, StatusLine,
   }
 
   public void setBufferMode(boolean flag) {
-    System.out.println("SET_BUFFER_MODE (ignored): " + flag);
-    // Simply ignored, top window is always unbuffered, bottom window always
-    // buffered
+    System.out.println("SET_BUFFER_MODE: " + flag);
+    if (current == ScreenModel.WINDOW_BOTTOM) {
+      bottomWindow.setBuffered(flag);
+    }
   }
 
   public void eraseLine(int value) {
@@ -208,9 +209,13 @@ public class BufferedScreenModel implements ScreenModel, StatusLine,
   
   public void print(char zchar) {
     if (current == WINDOW_BOTTOM) {
+      //System.out.println("BOTTOM PRINT: [" + zchar + "]");
       bottomWindow.printChar(zchar);
+      if (!bottomWindow.isBuffered()) {
+        flush();
+      }
     } else if (current == WINDOW_TOP) {
-      //System.out.println("PRINT: [" + zchar + "]");
+      //System.out.println("TOP PRINT: [" + zchar + "]");
       for (ScreenModelListener l : screenModelListeners) {
         l.topWindowUpdated(topWindow.cursorx, topWindow.cursory,
                            topWindow.annotateCharacter(zchar));
@@ -226,7 +231,7 @@ public class BufferedScreenModel implements ScreenModel, StatusLine,
   public void close() { }
 
   /**
-   * Notify listeners that.
+   * Notify listeners that the screen has changed.
    */
   public void flush() {
     for (ScreenModelListener l : screenModelListeners) {

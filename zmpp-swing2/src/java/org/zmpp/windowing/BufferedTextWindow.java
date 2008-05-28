@@ -34,7 +34,10 @@ public class BufferedTextWindow {
   private TextAnnotation currentAnnotation = new TextAnnotation(
           TextAnnotation.FONT_NORMAL, TextAnnotation.TEXTSTYLE_ROMAN);
   private StringBuilder currentRun = new StringBuilder();
+  private boolean isBuffered = true;
   
+  public boolean isBuffered() { return isBuffered; }
+  public void setBuffered(boolean flag) { isBuffered = flag; }
   public int setCurrentFont(int font) {
     int previousFont = currentAnnotation.getFont();
     startNewAnnotatedRun(currentAnnotation.deriveFont(font));
@@ -65,6 +68,7 @@ public class BufferedTextWindow {
   
   public void printChar(char zchar) {
     currentRun.append(zchar);
+    if (!isBuffered) flush();
   }
   
   public List<AnnotatedText> getBuffer() {

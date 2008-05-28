@@ -23,6 +23,8 @@ package org.zmpp.swingui2;
 import java.awt.Color;
 import java.awt.Dimension;
 import java.awt.Font;
+import java.awt.event.ActionEvent;
+import java.awt.event.ActionListener;
 import java.awt.event.ComponentAdapter;
 import java.awt.event.ComponentEvent;
 import java.awt.event.MouseWheelListener;
@@ -32,6 +34,7 @@ import javax.swing.JLayeredPane;
 import javax.swing.JTextPane;
 import javax.swing.JViewport;
 import javax.swing.SwingUtilities;
+import javax.swing.Timer;
 import javax.swing.border.Border;
 import javax.swing.event.ChangeEvent;
 import javax.swing.event.ChangeListener;
@@ -39,6 +42,7 @@ import javax.swing.text.BadLocationException;
 import javax.swing.text.Document;
 import javax.swing.text.MutableAttributeSet;
 import javax.swing.text.StyleConstants;
+import org.zmpp.instructions.AbstractInstruction;
 import org.zmpp.vm.ExecutionControl;
 import org.zmpp.vm.MachineRunState;
 import org.zmpp.vm.ScreenModel;
@@ -207,11 +211,31 @@ implements ScreenModelListener {
   // ***********************************************************************
   // **** Public interface
   // *********************************
+  private Timer currentTimer;
   
-  public void setCurrentRunState(MachineRunState runState) {
-    if (runState.isWaitingForInput()) {
-      System.out.println("time: " + runState.getTime() + " routine: " +
-              runState.getRoutine());
+  public void setCurrentRunState(final MachineRunState runState) {
+    if (currentTimer != null) {
+      currentTimer.stop();
+      currentTimer = null;
+    }
+    if (runState.getRoutine() > 0) {
+      System.out.println("readchar: " + runState.isReadChar() + " time: " +
+        runState.getTime() + " routine: " + runState.getRoutine());
+      currentTimer = new Timer(runState.getTime() * 100,
+        new ActionListener() {
+          public void actionPerformed(ActionEvent e) {
+            // output should be echoed in the interrupt, so set buffer mode to
+            //false
+            screenModel.setBufferMode(false);
+            short result =
+              executionControl.callInterrupt(runState.getRoutine());
+            if (result == AbstractInstruction.TRUE) {
+              // TODO
+            }
+            screenModel.setBufferMode(true);
+          }
+        });
+      currentTimer.start();
     }
     currentRunState = runState;
     viewCursor(runState.isWaitingForInput());
