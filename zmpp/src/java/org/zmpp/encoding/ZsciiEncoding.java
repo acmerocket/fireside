@@ -122,13 +122,12 @@ public class ZsciiEncoding implements IZsciiEncoding {
    * @param str the input string
    * @return the ZSCII representation
    */
-  public char[] convertToZscii(final String str) {    
-    final char[] result = new char[str.length()];
+  public String convertToZscii(final String str) {    
+    StringBuilder result = new StringBuilder();
     for (int i = 0; i < str.length(); i++) {
-      
-      result[i] = getZsciiChar(str.charAt(i));
+      result.append(getZsciiChar(str.charAt(i)));
     }
-    return result;
+    return result.toString();
   }
   
   /**

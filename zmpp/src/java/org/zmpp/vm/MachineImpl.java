@@ -344,7 +344,7 @@ public class MachineImpl implements Machine {
   // **********************************************************************
   private ZCharDecoder getZCharDecoder() { return decoder; }
   private ZCharEncoder getZCharEncoder() { return encoder; }
-  public char[] convertToZscii(String str) {
+  public String convertToZscii(String str) {
     return encoding.convertToZscii(str);
   }
   

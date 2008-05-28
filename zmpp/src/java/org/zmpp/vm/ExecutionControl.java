@@ -84,6 +84,10 @@ public class ExecutionControl {
   
   public int getVersion() { return machine.getVersion(); }
   
+  public boolean isForceFixedFont() {
+    return getFileHeader().isEnabled(Attribute.FORCE_FIXED_FONT);
+  }
+
   public void setDefaultColors(int defaultBackground, int defaultForeground) {
     getFileHeader().setDefaultBackground(defaultBackground);
     getFileHeader().setDefaultForeground(defaultForeground);
@@ -135,7 +139,7 @@ public class ExecutionControl {
   }
 
   private String convertToZsciiInputLine(String input) {
-    return input + "\r";
+    return machine.convertToZscii(input) + "\r";
   }
 
   // ************************************************************************

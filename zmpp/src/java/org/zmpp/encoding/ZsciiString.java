@@ -48,7 +48,6 @@ public class ZsciiString {
    * @param encoding the encoding
    */
   public static void initialize(final ZsciiEncoding encoding) {
- 
     ZsciiString.encoding = encoding;
   }
 
@@ -58,7 +57,6 @@ public class ZsciiString {
    * @param data the source array
    */
   public ZsciiString(final char[] data) {
-    
     super();
     this.data = data;
   }
@@ -69,9 +67,8 @@ public class ZsciiString {
    * @param str the string
    */
   public ZsciiString(final String str) {
-    
     super();
-    this.data = encoding.convertToZscii(str);
+    this.data = encoding.convertToZscii(str).toCharArray();
   }
 
   /**
@@ -80,20 +77,14 @@ public class ZsciiString {
    * @param pos the position
    * @return the character
    */
-  public char charAt(final int pos) {
-    
-    return data[pos];
-  }
+  public char charAt(final int pos) { return data[pos]; }
   
   /**
    * Returns the length of this string.
    * 
    * @return the length
    */
-  public int length() {
-    
-    return data.length;
-  }
+  public int length() { return data.length; }
   
   /**
    * Returns the index of the first occurrence of the specified sub string.
@@ -103,7 +94,6 @@ public class ZsciiString {
    * @return the first index
    */
   public int indexOf(final ZsciiString str, final int startIndex) {
-
     int current = startIndex;
     final int length = length(); 
     final int n = str.length();
@@ -140,11 +130,9 @@ public class ZsciiString {
    * @return the sub string
    */
   public ZsciiString substring(final int startindex, final int endindex) {
-
     final int n = endindex - startindex;
     final char[] dat = new char[n];
-    for (int i = 0; i < n; i++) {
-      
+    for (int i = 0; i < n; i++) {   
       dat[i] = charAt(startindex + i);
     }
     return new ZsciiString(dat);
@@ -154,11 +142,10 @@ public class ZsciiString {
   /**
    * {@inheritDoc}
    */
+  @Override
   public int hashCode() {
-    
     int hashvalue = 0;
     for (int i = 0; i < data.length; i++) {
-      
       hashvalue = 31 * hashvalue + data[i];
     }
     return hashvalue;
@@ -167,18 +154,15 @@ public class ZsciiString {
   /**
    * {@inheritDoc}
    */
-  public boolean equals(final Object o) {
-    
+  @Override
+  public boolean equals(final Object o) {    
     if (o == this) {
       return true;
     }
     if (o instanceof ZsciiString) {
-      
       final char[] data2 = ((ZsciiString) o).data;
       if (data.length == data2.length) {
-        
         for (int i = 0; i < data.length; i++) {
-        
           if (data[i] != data2[i]) {
             return false;
           }
@@ -192,11 +176,10 @@ public class ZsciiString {
   /**
    * {@inheritDoc}
    */
+  @Override
   public String toString() {
-   
     final StringBuilder builder = new StringBuilder();
     for (int i = 0; i < data.length; i++) {
-      
       builder.append(encoding.getUnicodeChar(data[i]));
     }
     return builder.toString();

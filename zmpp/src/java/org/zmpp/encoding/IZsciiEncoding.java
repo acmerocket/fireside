@@ -43,7 +43,7 @@ public interface IZsciiEncoding {
    * @param str the input string
    * @return the ZSCII representation
    */
-  char[] convertToZscii(String str);
+  String convertToZscii(String str);
 
   /**
    * Converts a ZSCII character to a unicode character. Will return
