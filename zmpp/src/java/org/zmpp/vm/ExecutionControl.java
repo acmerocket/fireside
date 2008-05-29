@@ -22,6 +22,7 @@ package org.zmpp.vm;
 
 import org.zmpp.io.LineBufferInputStream;
 import java.io.IOException;
+import org.zmpp.encoding.IZsciiEncoding;
 import org.zmpp.vm.MachineFactory.MachineInitStruct;
 import org.zmpp.vm.StoryFileHeader.Attribute;
 
@@ -141,6 +142,8 @@ public class ExecutionControl {
   private String convertToZsciiInputLine(String input) {
     return machine.convertToZscii(input) + "\r";
   }
+  
+  public IZsciiEncoding getZsciiEncoding() { return machine; }
 
   // ************************************************************************
   // ****** Interrupt functions

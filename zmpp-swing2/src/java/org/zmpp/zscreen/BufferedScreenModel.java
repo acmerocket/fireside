@@ -23,6 +23,7 @@ package org.zmpp.zscreen;
 import org.zmpp.windowing.BufferedTextWindow;
 import java.util.ArrayList;
 import java.util.List;
+import org.zmpp.encoding.IZsciiEncoding;
 import org.zmpp.io.OutputStream;
 import org.zmpp.vm.ScreenModel;
 import org.zmpp.vm.StatusLine;
@@ -68,6 +69,7 @@ public class BufferedScreenModel implements ScreenModel, StatusLine,
     new ArrayList<ScreenModelListener>();
   private List<StatusLineListener> statusLineListeners =
     new ArrayList<StatusLineListener>();
+  private IZsciiEncoding encoding;
   
   public interface ScreenModelListener {
     void screenModelUpdated(BufferedScreenModel screenModel);
@@ -88,6 +90,20 @@ public class BufferedScreenModel implements ScreenModel, StatusLine,
     statusLineListeners.add(l);
   }
   
+  /**
+   * Initialize the model, an Encoding object is needed to retrieve
+   * Unicode characters.
+   * @param encoding the ZsciiEncoding object
+   */
+  public void init(IZsciiEncoding encoding) {
+    this.encoding = encoding;
+  }
+  
+  /**
+   * Sets the number of charactes per row, should be called if the size of
+   * the output area or the size of the font changes.
+   * @param num the number of characters in a row
+   */
   public void setNumCharsPerRow(int num) {
     numCharsPerRow = num;
   }
@@ -207,10 +223,11 @@ public class BufferedScreenModel implements ScreenModel, StatusLine,
   // OutputStream
   private boolean selected;
   
-  public void print(char zchar) {
+  public void print(char zsciiChar) {
+    char unicodeChar = encoding.getUnicodeChar(zsciiChar);
     if (current == WINDOW_BOTTOM) {
       //System.out.println("BOTTOM PRINT: [" + zchar + "]");
-      bottomWindow.printChar(zchar);
+      bottomWindow.printChar(unicodeChar);
       if (!bottomWindow.isBuffered()) {
         flush();
       }
@@ -218,7 +235,7 @@ public class BufferedScreenModel implements ScreenModel, StatusLine,
       //System.out.println("TOP PRINT: [" + zchar + "]");
       for (ScreenModelListener l : screenModelListeners) {
         l.topWindowUpdated(topWindow.cursorx, topWindow.cursory,
-                           topWindow.annotateCharacter(zchar));
+                           topWindow.annotateCharacter(unicodeChar));
       }
       topWindow.cursorx++;
       // Make sure the cursor does not overrun the margin

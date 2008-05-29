@@ -184,14 +184,16 @@ implements AdjustmentListener, MainViewListener, MouseWheelListener,
     
     if (this.isVisible()) {
       executionControl = new ExecutionControl(initStruct);
-      initUI();
+      initUI(initStruct);
       MachineRunState runState = executionControl.run();
       System.out.println("PAUSING WITH STATE: " + runState);
       mainView.setCurrentRunState(runState);
     }
   }
   
-  private void initUI() {
+  private void initUI(MachineInitStruct initStruct) {
+    ((BufferedScreenModel) initStruct.screenModel).init(
+       executionControl.getZsciiEncoding());
     int version = executionControl.getVersion();
     //System.out.println("initUI, story file version: " + version);
     statusPanel.setVisible(version <= 3);
