@@ -139,8 +139,13 @@ public class ExecutionControl {
     return run();
   }
 
+  /**
+   * Downcase the input string and convert to ZSCII.
+   * @param input the input string
+   * @return the converted input string
+   */
   private String convertToZsciiInputLine(String input) {
-    return machine.convertToZscii(input) + "\r";
+    return machine.convertToZscii(input.toLowerCase()) + "\r";
   }
   
   public IZsciiEncoding getZsciiEncoding() { return machine; }
