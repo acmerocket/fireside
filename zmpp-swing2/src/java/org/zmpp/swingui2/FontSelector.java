@@ -21,7 +21,6 @@
 package org.zmpp.swingui2;
 
 import java.awt.Font;
-import org.zmpp.vm.ScreenModel;
 import org.zmpp.windowing.TextAnnotation;
 
 /**

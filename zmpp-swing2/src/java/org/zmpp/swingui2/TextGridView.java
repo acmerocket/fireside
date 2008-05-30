@@ -28,7 +28,7 @@ import javax.swing.JComponent;
 import org.zmpp.vm.ScreenModel;
 import org.zmpp.windowing.AnnotatedCharacter;
 import org.zmpp.windowing.TextAnnotation;
-import org.zmpp.zscreen.BufferedScreenModel;
+import org.zmpp.vm.BufferedScreenModel;
 
 /**
  * A class representing a text grid in a Z-machine or Glk screen model.

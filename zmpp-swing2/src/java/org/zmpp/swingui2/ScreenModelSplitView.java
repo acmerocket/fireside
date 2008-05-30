@@ -49,8 +49,8 @@ import org.zmpp.vm.ScreenModel;
 import org.zmpp.windowing.AnnotatedCharacter;
 import org.zmpp.windowing.AnnotatedText;
 import org.zmpp.windowing.TextAnnotation;
-import org.zmpp.zscreen.BufferedScreenModel;
-import org.zmpp.zscreen.BufferedScreenModel.ScreenModelListener;
+import org.zmpp.vm.BufferedScreenModel;
+import org.zmpp.vm.BufferedScreenModel.ScreenModelListener;
 
 /**
  * The MainView class is the main view component. It contains the upper and
@@ -286,8 +286,8 @@ implements ScreenModelListener {
   private void split(int numRowsUpper) {
     layout.setNumRowsUpper(numRowsUpper);
     // clear upper screen only in version 3
-    if (executionControl.getVersion() == 3 && upper != null &&
-        screenModel != null) {
+    if (executionControl != null && executionControl.getVersion() == 3 &&
+        upper != null && screenModel != null) {
       clearUpper();
     }
   }
