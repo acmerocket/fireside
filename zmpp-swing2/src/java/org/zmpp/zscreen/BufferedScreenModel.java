@@ -27,6 +27,7 @@ import org.zmpp.encoding.IZsciiEncoding;
 import org.zmpp.io.OutputStream;
 import org.zmpp.vm.ScreenModel;
 import org.zmpp.vm.StatusLine;
+import org.zmpp.vm.StoryFileHeader;
 import org.zmpp.vm.TextCursor;
 import org.zmpp.windowing.AnnotatedCharacter;
 import org.zmpp.windowing.AnnotatedText;
@@ -70,6 +71,7 @@ public class BufferedScreenModel implements ScreenModel, StatusLine,
   private List<StatusLineListener> statusLineListeners =
     new ArrayList<StatusLineListener>();
   private IZsciiEncoding encoding;
+  private StoryFileHeader fileheader;
   
   public interface ScreenModelListener {
     void screenModelUpdated(BufferedScreenModel screenModel);
@@ -93,9 +95,11 @@ public class BufferedScreenModel implements ScreenModel, StatusLine,
   /**
    * Initialize the model, an Encoding object is needed to retrieve
    * Unicode characters.
+   * @param fileheader the story file header
    * @param encoding the ZsciiEncoding object
    */
-  public void init(IZsciiEncoding encoding) {
+  public void init(StoryFileHeader fileheader, IZsciiEncoding encoding) {
+    this.fileheader = fileheader;
     this.encoding = encoding;
   }
   
@@ -198,7 +202,10 @@ public class BufferedScreenModel implements ScreenModel, StatusLine,
   }
   
   public int setFont(int fontnumber) {
-    System.out.println("SET_FONT: " + fontnumber);
+    if (fontnumber != ScreenModel.FONT_FIXED &&
+        fontnumber != ScreenModel.FONT_NORMAL) {
+      return 0;
+    }
     if (current == WINDOW_TOP) {
       return topWindow.setFont(fontnumber);
     } else {
@@ -287,8 +294,16 @@ public class BufferedScreenModel implements ScreenModel, StatusLine,
     return numRowsUpper;
   }
   
-  public int getBackground() { return bottomWindow.getBackground(); }
-  public int getForeground() { return bottomWindow.getForeground(); }
+  public int getBackground() {
+    int background = bottomWindow.getBackground();
+    return background == COLOR_DEFAULT ?
+      fileheader.getDefaultBackground() : background;
+  }
+  public int getForeground() {
+    int foreground = bottomWindow.getForeground();
+    return foreground == COLOR_DEFAULT ?
+      fileheader.getDefaultForeground() : foreground;
+  }
   
   public List<AnnotatedText> getLowerBuffer() {
     return bottomWindow.getBuffer();
