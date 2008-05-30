@@ -285,10 +285,10 @@ implements ScreenModelListener {
   
   private void split(int numRowsUpper) {
     layout.setNumRowsUpper(numRowsUpper);
-    if (upper != null && screenModel != null) {
-      upper.clear(screenModel.getBackground());
-    } else {
-      System.out.println("not set: " + upper + " screenModel: " + screenModel);
+    // clear upper screen only in version 3
+    if (executionControl.getVersion() == 3 && upper != null &&
+        screenModel != null) {
+      clearUpper();
     }
   }
 

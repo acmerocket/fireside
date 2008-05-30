@@ -193,6 +193,7 @@ implements AdjustmentListener, MainViewListener, MouseWheelListener,
   
   private void initUI(MachineInitStruct initStruct) {
     ((BufferedScreenModel) initStruct.screenModel).init(
+       executionControl.getFileHeader(),
        executionControl.getZsciiEncoding());
     int version = executionControl.getVersion();
     //System.out.println("initUI, story file version: " + version);
