@@ -81,14 +81,10 @@ public class ExecutionControl {
     getFileHeader().setEnabled(attr, true);
   }
   
-  private StoryFileHeader getFileHeader() { return machine.getFileHeader(); }
+  public StoryFileHeader getFileHeader() { return machine.getFileHeader(); }
   
   public int getVersion() { return machine.getVersion(); }
   
-  public boolean isForceFixedFont() {
-    return getFileHeader().isEnabled(Attribute.FORCE_FIXED_FONT);
-  }
-
   public void setDefaultColors(int defaultBackground, int defaultForeground) {
     getFileHeader().setDefaultBackground(defaultBackground);
     getFileHeader().setDefaultForeground(defaultForeground);
