@@ -691,7 +691,7 @@ public class MachineImpl implements Machine {
     output.reset();
     soundSystem.reset();
     cpu.reset();
-    //gamedata.getStoryFileHeader().setStandardRevision(1, 0);
+    getFileHeader().setStandardRevision(1, 0);
     if (getFileHeader().getVersion() >= 4) {
       getFileHeader().setEnabled(Attribute.SUPPORTS_TIMED_INPUT, true);
       //gamedata.getStoryFileHeader().setInterpreterNumber(4); // Amiga
