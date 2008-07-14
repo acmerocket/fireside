@@ -40,7 +40,7 @@ import org.zmpp.instructions.VariableStaticInfo;
  * The instruction decoder decodes an instruction at a specified address.
  * 
  * @author Wei-ju Wu
- * @version 1.0
+ * @version 1.5
  */
 public class InstructionDecoder {
     

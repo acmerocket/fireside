@@ -23,6 +23,11 @@ package org.zmpp.media;
 import org.zmpp.blorb.BlorbImage;
 import org.zmpp.blorb.BlorbImage.Resolution;
 
+/**
+ * Interface for managing pictures.
+ * @author Wei-ju Wu
+ * @version 1.5
+ */
 public interface PictureManager {
 
   /**

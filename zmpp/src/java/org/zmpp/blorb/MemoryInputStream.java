@@ -29,7 +29,7 @@ import org.zmpp.base.Memory;
  * This class encapsulates the a memory object within an input stream.
  * 
  * @author Wei-ju Wu
- * @version 1.0
+ * @version 1.5
  */
 public class MemoryInputStream extends InputStream {
 

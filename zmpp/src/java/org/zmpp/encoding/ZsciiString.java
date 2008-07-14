@@ -28,7 +28,7 @@ package org.zmpp.encoding;
  * ZSCII strings are represented as a sequence of 16-bit characters.
  * 
  * @author Wei-ju Wu
- * @version 1.0
+ * @version 1.5
  */
 public class ZsciiString {
 

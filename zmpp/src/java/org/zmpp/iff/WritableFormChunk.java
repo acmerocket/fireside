@@ -28,6 +28,11 @@ import java.util.List;
 import org.zmpp.base.DefaultMemory;
 import org.zmpp.base.Memory;
 
+/**
+ * A writable FormChunk class.
+ * @author Wei-ju Wu
+ * @version 1.5
+ */
 public class WritableFormChunk implements FormChunk {
 
   private byte[] subId;

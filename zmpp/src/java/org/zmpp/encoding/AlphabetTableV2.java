@@ -27,7 +27,7 @@ package org.zmpp.encoding;
  * and it supports shift-lock. 
  * 
  * @author Wei-ju Wu
- * @version 1.0
+ * @version 1.5
  */
 public class AlphabetTableV2 extends DefaultAlphabetTable {
   

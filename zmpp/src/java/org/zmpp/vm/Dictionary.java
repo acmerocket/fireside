@@ -26,7 +26,7 @@ import org.zmpp.encoding.ZsciiString;
  * This is the interface definition for a dictionary.
  *
  * @author Wei-ju Wu
- * @version 1.0
+ * @version 1.5
  */
 public interface Dictionary {
 

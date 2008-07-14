@@ -23,7 +23,6 @@ package org.zmpp.vm;
 import java.util.ArrayList;
 import java.util.List;
 
-import org.zmpp.base.Memory;
 import org.zmpp.io.OutputStream;
 
 /**
@@ -32,7 +31,7 @@ import org.zmpp.io.OutputStream;
  * support nested selections.
  * 
  * @author Wei-ju Wu
- * @version 1.0
+ * @version 1.5
  */
 public class MemoryOutputStream implements OutputStream {
 

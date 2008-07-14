@@ -31,7 +31,7 @@ import org.zmpp.media.SoundEffect;
  * and graphics media collections.
  * 
  * @author Wei-ju Wu
- * @version 1.0
+ * @version 1.5
  */
 public class BlorbResources implements Resources {
 

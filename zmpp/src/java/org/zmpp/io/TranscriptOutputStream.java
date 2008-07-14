@@ -30,7 +30,7 @@ import org.zmpp.encoding.IZsciiEncoding;
  * This class defines an output stream for transcript output (Stream 2).
  * 
  * @author Wei-ju Wu
- * @version 1.0
+ * @version 1.5
  */
 public class TranscriptOutputStream implements OutputStream {
 

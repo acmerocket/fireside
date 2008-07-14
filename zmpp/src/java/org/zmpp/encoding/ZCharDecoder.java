@@ -34,7 +34,7 @@ import org.zmpp.base.Memory;
  * standards document 1.0, section 3.
  * 
  * @author Wei-ju Wu
- * @version 1.0
+ * @version 1.5
  */
 public interface ZCharDecoder {
 

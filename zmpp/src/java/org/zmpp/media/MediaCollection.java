@@ -27,7 +27,7 @@ package org.zmpp.media;
  * Resources might be loaded lazily and cached in an internal cache.
  * 
  * @author Wei-ju Wu
- * @version 1.0
+ * @version 1.5
  *
  * @param <T> the media type this collection manages
  */

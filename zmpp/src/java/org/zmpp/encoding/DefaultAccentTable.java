@@ -20,6 +20,11 @@
  */
 package org.zmpp.encoding;
 
+/**
+ * Default implementation of AccentTable.
+ * @author Wei-ju Wu
+ * @version 1.5
+ */
 public class DefaultAccentTable implements AccentTable {
 
   public static final short[] STANDARD_TRANSLATION_TABLE = {

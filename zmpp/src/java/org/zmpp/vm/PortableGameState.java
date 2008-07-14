@@ -34,7 +34,7 @@ import org.zmpp.iff.WritableFormChunk;
  * so it can be exchanged using the Quetzal IFF format.
  * 
  * @author Wei-ju Wu
- * @version 1.0
+ * @version 1.5
  */
 public class PortableGameState {
 

@@ -31,7 +31,7 @@ import org.zmpp.encoding.ZsciiString;
  * ordered a binary search will be performed.
  * 
  * @author Wei-ju Wu
- * @version 1.0
+ * @version 1.5
  */
 public class UserDictionary extends AbstractDictionary {
 

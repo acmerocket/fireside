@@ -20,6 +20,11 @@
  */
 package org.zmpp.instructions;
 
+/**
+ * Class implementing LONG form information.
+ * @author Wei-ju Wu
+ * @version 1.5
+ */
 public class LongStaticInfo implements InstructionStaticInfo {
 
   private static final int[][] VALID_VERSIONS = {
@@ -54,11 +59,10 @@ public class LongStaticInfo implements InstructionStaticInfo {
     { 5, 6, 7, 8 }, // SET_COLOUR
     { 5, 6, 7, 8 }, // THROW
   };
-  
+
   private static final LongStaticInfo instance = new LongStaticInfo();
-  
+
   public static LongStaticInfo getInstance() {
-    
     return instance;
   }
 
@@ -151,6 +155,9 @@ public class LongStaticInfo implements InstructionStaticInfo {
     return false;
   }
   
+  /**
+   * {@inheritDoc}
+   */
   public String getOpName(final int opcode, final int version) {
     
     switch (opcode) {

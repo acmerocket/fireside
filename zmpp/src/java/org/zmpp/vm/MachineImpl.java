@@ -61,7 +61,7 @@ import org.zmpp.vmutil.UnpredictableRandomGenerator;
  * This class implements the state and some services of a Z-machine, version 3.
  * 
  * @author Wei-ju Wu
- * @version 1.0
+ * @version 1.5
  */
 public class MachineImpl implements Machine {
 

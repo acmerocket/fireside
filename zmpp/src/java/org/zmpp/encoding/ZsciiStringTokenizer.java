@@ -30,7 +30,7 @@ import java.util.List;
  * delimiters in the token stream.
  * 
  * @author Wei-ju Wu
- * @version 1.0
+ * @version 1.5
  */
 public class ZsciiStringTokenizer {
 

@@ -24,7 +24,7 @@ package org.zmpp.vm;
  * This class models a machine run state that also stores data for timed
  * input, so a client application can call an interrupt method on the machine.
  * @author Wei-ju Wu
- * @version 1.0
+ * @version 1.5
  */
 public class MachineRunState {
 

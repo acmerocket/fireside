@@ -22,6 +22,11 @@ package org.zmpp.vm;
 
 import org.zmpp.io.InputStream;
 
+/**
+ * Input interface.
+ * @author Wei-ju Wu
+ * @version 1.5
+ */
 public interface Input {
 
   /**
@@ -53,6 +58,5 @@ public interface Input {
    * 
    * @return the selected input stream
    */
-  InputStream getSelectedInputStream();
-  
+  InputStream getSelectedInputStream(); 
 }

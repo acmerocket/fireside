@@ -31,7 +31,7 @@ import org.zmpp.encoding.ZCharDecoder.AbbreviationsTable;
  * actual value has to multiplied by two to get the real address.
  *
  * @author Wei-ju Wu
- * @version 1.0
+ * @version 1.5
  */
 public class Abbreviations implements AbbreviationsTable {
 

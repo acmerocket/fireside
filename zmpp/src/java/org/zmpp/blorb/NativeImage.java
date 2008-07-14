@@ -25,7 +25,7 @@ package org.zmpp.blorb;
  * Android does not use the java.awt packages, so hide it behind a NativeImage
  * interface.
  * @author Wei-ju Wu
- * @version 1.0
+ * @version 1.5
  */
 public interface NativeImage {
   int getWidth();

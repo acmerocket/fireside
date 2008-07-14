@@ -32,7 +32,7 @@ package org.zmpp.encoding;
  * the whole application.
  * 
  * @author Wei-ju Wu
- * @version 1.0
+ * @version 1.5
  */
 public class ZsciiEncoding implements IZsciiEncoding {
 

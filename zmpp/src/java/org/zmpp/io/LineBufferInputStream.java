@@ -29,7 +29,7 @@ import java.util.Queue;
  * Normally this is only one, but it could be used for testing by simply
  * storing more lines and running the core on it.
  * @author Wei-ju Wu
- * @version 1.0
+ * @version 1.5
  */
 public class LineBufferInputStream implements InputStream {
 

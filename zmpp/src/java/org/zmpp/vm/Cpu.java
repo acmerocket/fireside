@@ -22,6 +22,11 @@ package org.zmpp.vm;
 
 import java.util.List;
 
+/**
+ * Cpu interface.
+ * @author Wei-ju Wu
+ * @version 1.5
+ */
 public interface Cpu {
 
   /**

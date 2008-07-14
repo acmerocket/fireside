@@ -24,7 +24,7 @@ package org.zmpp.vm;
  * This interface defines the Z machine's status line. 
  * 
  * @author Wei-ju Wu
- * @version 1.0
+ * @version 1.5
  */
 public interface StatusLine {
 

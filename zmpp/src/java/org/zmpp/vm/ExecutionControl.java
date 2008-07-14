@@ -33,7 +33,7 @@ import org.zmpp.vm.StoryFileHeader.Attribute;
  * This is the main public interface to the user interface.
  * 
  * @author Wei-ju Wu
- * @version 1.0
+ * @version 1.5
  */
 public class ExecutionControl {
 

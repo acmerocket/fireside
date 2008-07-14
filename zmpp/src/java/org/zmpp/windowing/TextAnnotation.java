@@ -25,7 +25,7 @@ import org.zmpp.vm.ScreenModel;
 /**
  * An annotation to indicate how a sequence of characters should be printed.
  * @author Wei-ju Wu
- * @version 1.0
+ * @version 1.5
  */
 public class TextAnnotation {
 

@@ -24,7 +24,7 @@ package org.zmpp.instructions;
  * The static aspects of a PrintLiteralInstruction are stored here.
  * 
  * @author Wei-ju Wu
- * @version 1.0
+ * @version 1.5
  */
 public class PrintLiteralStaticInfo implements InstructionStaticInfo {
 

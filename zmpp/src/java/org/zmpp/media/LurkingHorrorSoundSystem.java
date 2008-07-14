@@ -26,7 +26,7 @@ package org.zmpp.media;
  * than stopping previous ones.
  * 
  * @author Wei-ju Wu
- * @version 1.0
+ * @version 1.5
  */
 public class LurkingHorrorSoundSystem extends SoundSystemImpl {
 

@@ -28,6 +28,11 @@ import org.zmpp.vm.PortableGameState;
 import org.zmpp.vm.ScreenModel;
 
 
+/**
+ * Class implementing the EXT instruction form.
+ * @author Wei-ju Wu
+ * @version 1.5
+ */
 public class ExtendedInstruction extends AbstractInstruction {
 
   /**

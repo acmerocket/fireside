@@ -33,7 +33,7 @@ import org.zmpp.media.SoundSystem;
  * and read the VM's internal state.
  * 
  * @author Wei-ju Wu
- * @version 1.0
+ * @version 1.5
  */
 public interface Machine
 extends ObjectTree, Input, Output, Cpu, Memory, IZsciiEncoding {

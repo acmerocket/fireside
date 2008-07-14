@@ -33,7 +33,7 @@ import org.zmpp.base.Memory;
  * object.
  * 
  * @author Wei-ju Wu
- * @version 1.0
+ * @version 1.5
  */
 public final class DefaultZCharDecoder implements ZCharDecoder {
 

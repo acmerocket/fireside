@@ -24,7 +24,7 @@ package org.zmpp.io;
  * This interface defines an output stream in the Z-machine.
  * 
  * @author Wei-ju Wu
- * @version 1.0
+ * @version 1.5
  */
 public interface OutputStream {
 

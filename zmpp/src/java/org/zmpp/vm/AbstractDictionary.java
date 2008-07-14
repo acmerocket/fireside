@@ -24,6 +24,11 @@ import org.zmpp.base.Memory;
 import org.zmpp.encoding.ZCharDecoder;
 import org.zmpp.encoding.ZsciiString;
 
+/**
+ * Abstract super class of dictionaries.
+ * @author Wei-ju Wu
+ * @version 1.5
+ */
 public abstract class AbstractDictionary implements Dictionary {
 
   /**

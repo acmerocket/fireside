@@ -25,8 +25,6 @@ import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
 
-import org.zmpp.base.Memory;
-import org.zmpp.encoding.ZCharDecoder;
 import org.zmpp.encoding.ZsciiEncoding;
 import org.zmpp.encoding.ZsciiString;
 import org.zmpp.encoding.ZsciiStringBuilder;
@@ -34,12 +32,12 @@ import org.zmpp.encoding.ZsciiStringTokenizer;
 
 /**
  * This class contains functions that deal with user input.
- * Note: For version 2.0 a number of changes will be performed on this
+ * Note: For version 1.5 a number of changes will be performed on this
  * class. Timed input will be eliminated completely, as well as leftover.
  * Command history might be left out as well
  * 
  * @author Wei-ju Wu
- * @version 2.0
+ * @version 1.5
  */
 public class InputFunctions {
   private Machine machine;

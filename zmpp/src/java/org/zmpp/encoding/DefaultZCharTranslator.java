@@ -26,7 +26,7 @@ import org.zmpp.encoding.AlphabetTable.Alphabet;
  * The default implementation of ZCharTranslator. 
  * 
  * @author Wei-ju Wu
- * @version 1.0
+ * @version 1.5
  */
 public class DefaultZCharTranslator implements Cloneable, ZCharTranslator {
 

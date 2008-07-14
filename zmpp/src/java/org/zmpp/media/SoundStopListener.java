@@ -25,7 +25,7 @@ package org.zmpp.media;
  * This interface is used to determine when a sound has finished playing.
  * 
  * @author Wei-ju Wu
- * @version 1.0
+ * @version 1.5
  */
 public interface SoundStopListener {
 

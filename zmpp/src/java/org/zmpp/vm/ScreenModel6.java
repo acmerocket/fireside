@@ -20,6 +20,11 @@
  */
 package org.zmpp.vm;
 
+/**
+ * Screen model 6 interface.
+ * @author Wei-ju Wu
+ * @version 1.5
+ */
 public interface ScreenModel6 extends ScreenModel {
 
   /**

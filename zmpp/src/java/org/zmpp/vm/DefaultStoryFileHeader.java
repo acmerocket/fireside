@@ -26,7 +26,7 @@ import org.zmpp.base.Memory;
  * This is the default implementation of the StoryFileHeader interface.
  * 
  * @author Wei-ju Wu
- * @version 1.0
+ * @version 1.5
  */
 public class DefaultStoryFileHeader implements StoryFileHeader {
 

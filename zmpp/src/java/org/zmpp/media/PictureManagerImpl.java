@@ -24,6 +24,11 @@ import org.zmpp.blorb.BlorbImage;
 import org.zmpp.blorb.BlorbImage.Resolution;
 import org.zmpp.vm.Machine;
 
+/**
+ * PictureManager implementation.
+ * @author Wei-ju Wu
+ * @version 1.5
+ */
 public class PictureManagerImpl implements PictureManager {
 
   private int release;

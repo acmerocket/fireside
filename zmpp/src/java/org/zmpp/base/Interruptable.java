@@ -27,7 +27,7 @@ package org.zmpp.base;
  * returning to the former execution after finishing with that routine.
  * 
  * @author Wei-ju Wu
- * @version 1.0
+ * @version 1.5
  */
 public interface Interruptable {
 

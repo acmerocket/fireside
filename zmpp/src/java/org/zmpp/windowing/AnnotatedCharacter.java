@@ -24,7 +24,7 @@ package org.zmpp.windowing;
  * An annotated character for the text grid. This is supposed to save a little
  * memory as opposed to AnnotatedText.
  * @author Wei-ju Wu
- * @version 1.0
+ * @version 1.5
  */
 public class AnnotatedCharacter {
   private char character;

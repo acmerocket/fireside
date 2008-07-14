@@ -38,7 +38,7 @@ import org.zmpp.media.SoundEffect;
  * This class implements the Blorb sound collection.
  * 
  * @author Wei-ju Wu
- * @version 1.0
+ * @version 1.5
  */
 public class BlorbSounds extends BlorbMediaCollection<SoundEffect> {
 

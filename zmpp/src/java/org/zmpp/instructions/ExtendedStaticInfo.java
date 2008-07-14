@@ -20,6 +20,11 @@
  */
 package org.zmpp.instructions;
 
+/**
+ * Class implementing EXT information.
+ * @author Wei-ju Wu
+ * @version 1.5
+ */
 public class ExtendedStaticInfo implements InstructionStaticInfo {
 
   private static final int[][] VALID_VERSIONS = {

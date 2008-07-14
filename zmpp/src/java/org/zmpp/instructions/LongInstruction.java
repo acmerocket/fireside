@@ -28,7 +28,7 @@ import org.zmpp.vm.ScreenModel;
  * This class represents instructions of type LONG, 2OP.
  * 
  * @author Wei-ju Wu
- * @version 1.0
+ * @version 1.5
  */
 public class LongInstruction extends AbstractInstruction {
 

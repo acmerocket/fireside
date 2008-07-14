@@ -27,7 +27,7 @@ import java.io.InputStream;
  * User interface specific factory to generate NativeImage instance from
  * a block of data.
  * @author Wei-ju Wu
- * @version 1.0
+ * @version 1.5
  */
 public interface NativeImageFactory {
   /**

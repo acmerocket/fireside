@@ -32,7 +32,7 @@ import org.zmpp.encoding.ZsciiString;
  * Since it takes the implementations of getN
  *
  * @author Wei-ju Wu
- * @version 1.0
+ * @version 1.5
  */
 public class DefaultDictionary extends AbstractDictionary {
 

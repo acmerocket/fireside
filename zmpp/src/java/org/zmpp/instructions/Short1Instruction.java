@@ -22,12 +22,11 @@ package org.zmpp.instructions;
 
 import org.zmpp.vm.Machine;
 
-
 /**
  * This class represents instructions of type SHORT, 1OP.
  * 
  * @author Wei-ju Wu
- * @version 1.0
+ * @version 1.5
  */
 public class Short1Instruction extends AbstractInstruction {
 

@@ -27,7 +27,7 @@ import org.zmpp.base.Memory;
  * of this class are used to retrieve the alphabet characters.
  * 
  * @author Wei-ju Wu
- * @version 1.0
+ * @version 1.5
  */
 public class CustomAlphabetTable implements AlphabetTable {
 

@@ -27,7 +27,7 @@ package org.zmpp.blorb;
  * according to the specification made in the Blorb standard specification.
  * 
  * @author Wei-ju Wu
- * @version 1.0
+ * @version 1.5
  */
 public class BlorbImage {
 

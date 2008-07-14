@@ -27,7 +27,7 @@ package org.zmpp.encoding;
  * about shift and escape situations.
  * 
  * @author Wei-ju Wu
- * @version 1.0
+ * @version 1.5
  */
 public interface AlphabetTable {
 

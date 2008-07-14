@@ -26,6 +26,11 @@ import java.util.List;
 
 import org.zmpp.vmutil.FastShortStack;
 
+/**
+ * Cpu interface implementation.
+ * @author Wei-ju Wu
+ * @version 1.5
+ */
 public class CpuImpl implements Cpu {
 
   /**

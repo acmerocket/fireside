@@ -27,7 +27,7 @@ import org.zmpp.base.Memory;
  * This is the default implementation of the Chunk interface.
  * 
  * @author Wei-ju Wu
- * @version 1.0
+ * @version 1.5
  */
 public class DefaultChunk implements Chunk {
 

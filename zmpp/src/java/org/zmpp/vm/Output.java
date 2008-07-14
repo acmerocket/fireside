@@ -22,6 +22,11 @@ package org.zmpp.vm;
 
 import org.zmpp.encoding.ZsciiString;
 
+/**
+ * The Output interface.
+ * @author Wei-ju Wu
+ * @version 1.5
+ */
 public interface Output {
 
   /**

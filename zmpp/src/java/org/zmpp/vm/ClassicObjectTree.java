@@ -26,7 +26,7 @@ import org.zmpp.base.Memory;
  * This class implements the object tree for story file version <= 3.
  * 
  * @author Wei-ju Wu
- * @version 1.0
+ * @version 1.5
  */
 public class ClassicObjectTree extends AbstractObjectTree {
 

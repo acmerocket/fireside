@@ -25,10 +25,6 @@ import java.util.ArrayList;
 import java.util.List;
 import org.zmpp.encoding.IZsciiEncoding;
 import org.zmpp.io.OutputStream;
-import org.zmpp.vm.ScreenModel;
-import org.zmpp.vm.StatusLine;
-import org.zmpp.vm.StoryFileHeader;
-import org.zmpp.vm.TextCursor;
 import org.zmpp.windowing.AnnotatedCharacter;
 import org.zmpp.windowing.AnnotatedText;
 import org.zmpp.windowing.TextAnnotation;
@@ -41,6 +37,7 @@ import org.zmpp.windowing.TextAnnotation;
  * both Glk and Z-machine and to combine the abilities of both.
  * 
  * @author Wei-ju Wu
+ * @version 1.5
  */
 public class BufferedScreenModel implements ScreenModel, StatusLine,
   OutputStream {

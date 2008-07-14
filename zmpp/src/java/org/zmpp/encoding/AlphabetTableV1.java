@@ -28,7 +28,7 @@ package org.zmpp.encoding;
  * to the extension of the getAnChar() methods, handling index -5.
  * 
  * @author Wei-ju Wu
- * @version 1.0
+ * @version 1.5
  */
 public class AlphabetTableV1 extends AlphabetTableV2 {
 

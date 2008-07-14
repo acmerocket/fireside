@@ -29,7 +29,7 @@ import org.zmpp.iff.WritableFormChunk;
  * of implementation details.
  * 
  * @author Wei-ju Wu
- * @version 1.0
+ * @version 1.5
  */
 public interface SaveGameDataStore {
 

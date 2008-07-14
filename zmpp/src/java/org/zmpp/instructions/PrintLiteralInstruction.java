@@ -27,7 +27,7 @@ import org.zmpp.vm.Machine;
  * This class implements the print and print_ret instructions.
  * 
  * @author Wei-ju Wu
- * @version 1.0
+ * @version 1.5
  */
 public class PrintLiteralInstruction extends AbstractInstruction {
 

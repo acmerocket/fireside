@@ -33,7 +33,7 @@ import javax.sound.sampled.LineListener;
  * audio clip. By this means we provide more abstractness and flexibility.
  * 
  * @author Wei-ju Wu
- * @version 1.0
+ * @version 1.5
  */
 public class DefaultSoundEffect implements SoundEffect, LineListener {
 

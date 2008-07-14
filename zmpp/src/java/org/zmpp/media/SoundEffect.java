@@ -25,7 +25,7 @@ package org.zmpp.media;
  * This class defines the interface to play a Blorb sound.
  * 
  * @author Wei-ju Wu
- * @version 1.0
+ * @version 1.5
  */
 public interface SoundEffect {
 

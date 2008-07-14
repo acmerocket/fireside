@@ -22,6 +22,11 @@ package org.zmpp.media;
 
 import org.zmpp.base.Interruptable;
 
+/**
+ * Class to play sounds.
+ * @author Wei-ju Wu
+ * @version 1.5
+ */
 public class PlaySoundTask implements Runnable, SoundStopListener {
 
   private int resourceNum;
@@ -33,12 +38,29 @@ public class PlaySoundTask implements Runnable, SoundStopListener {
   private int routine;
   private boolean stopped;
   
+  /**
+   * Constructor.
+   * @param resourceNum resource number
+   * @param sound sound object
+   * @param volume volume
+   * @param repeats number of repeats
+   */
   public PlaySoundTask(int resourceNum, SoundEffect sound, int volume,
                        int repeats) {
   
     this(resourceNum, sound, volume, repeats, null, 0);
   }
   
+  /**
+   * Constructor.
+   * @param resourceNum resource number
+   * @param sound sound object
+   * @param volume playback volume
+   * @param repeats number of repeats
+   * @param interruptable interruptable object (should not be used anymore)
+   * @param routine the interrupt routine
+   * @deprecated interrupts should be implemented differently
+   */
   public PlaySoundTask(int resourceNum, SoundEffect sound, int volume,
       int repeats, Interruptable interruptable, int routine) {
     

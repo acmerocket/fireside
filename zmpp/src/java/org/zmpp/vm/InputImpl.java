@@ -23,6 +23,11 @@ package org.zmpp.vm;
 import java.io.Closeable;
 import org.zmpp.io.InputStream;
 
+/**
+ * Input interface implementation.
+ * @author Wei-ju Wu
+ * @version 1.5
+ */
 public class InputImpl implements Input, Closeable {
 
   /**

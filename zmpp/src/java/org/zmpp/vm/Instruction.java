@@ -24,7 +24,7 @@ package org.zmpp.vm;
  * This interface defines an instruction's public methods.
  * 
  * @author Wei-ju Wu
- * @version 1.0
+ * @version 1.5
  */
 public interface Instruction {
 

@@ -37,7 +37,7 @@ import org.zmpp.media.MediaCollection;
  * is left to the sub classes.
  * 
  * @author Wei-ju Wu
- * @version 1.0
+ * @version 1.5
  */
 public abstract class BlorbMediaCollection<T> implements MediaCollection<T> {
 

@@ -26,7 +26,7 @@ package org.zmpp.vmutil;
  * object creation.
  * 
  * @author Wei-ju Wu
- * @version 1.0
+ * @version 1.5
  */
 public final class FastShortStack {
 

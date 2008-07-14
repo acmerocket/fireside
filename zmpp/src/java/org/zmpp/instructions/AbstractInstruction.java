@@ -41,7 +41,7 @@ import org.zmpp.vm.Window6;
  * there are setter methods to add information.
  * 
  * @author Wei-ju Wu
- * @version 1.0
+ * @version 1.5
  */
 public abstract class AbstractInstruction implements Instruction {
 

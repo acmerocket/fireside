@@ -27,7 +27,7 @@ package org.zmpp.base;
  * within the global memory.
  * 
  * @author Wei-ju Wu
- * @version 1.0
+ * @version 1.5
  */
 public class MemorySection implements Memory {
 

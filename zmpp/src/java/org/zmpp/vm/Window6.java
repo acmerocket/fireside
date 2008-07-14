@@ -22,6 +22,11 @@ package org.zmpp.vm;
 
 import org.zmpp.blorb.BlorbImage;
 
+/**
+ * Window 6 interface.
+ * @author Wei-ju Wu
+ * @version 1.5
+ */
 public interface Window6 {
 
   static final int PROPERTY_Y_COORD           = 0;

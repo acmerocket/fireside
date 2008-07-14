@@ -25,7 +25,7 @@ package org.zmpp.encoding;
  * Z characters to unicode characters.
  * 
  * @author Wei-ju Wu
- * @version 1.0
+ * @version 1.5
  */
 public interface AccentTable {
 

@@ -32,7 +32,7 @@ import org.zmpp.base.Interruptable;
  * of a sound easily.
  * 
  * @author Wei-ju Wu
- * @version 1.0
+ * @version 1.5
  */
 public class SoundSystemImpl implements SoundSystem {
 

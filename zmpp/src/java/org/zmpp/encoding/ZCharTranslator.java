@@ -48,7 +48,7 @@ import org.zmpp.encoding.AlphabetTable.Alphabet;
  * from the client after an external translation has been performed.
  * 
  * @author Wei-ju Wu
- * @version 1.0
+ * @version 1.5
  */
 public interface ZCharTranslator extends Cloneable {
 

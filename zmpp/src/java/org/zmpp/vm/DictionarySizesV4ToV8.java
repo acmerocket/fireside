@@ -24,7 +24,7 @@ package org.zmpp.vm;
  * The dictionary size definitions for the story file versions 4-8.
  * 
  * @author Wei-ju Wu
- * @version 1.0
+ * @version 1.5
  */
 public class DictionarySizesV4ToV8 implements DictionarySizes {
 

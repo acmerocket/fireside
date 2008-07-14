@@ -21,8 +21,9 @@
 package org.zmpp.windowing;
 
 /**
- *
+ * An annotated text.
  * @author Wei-ju Wu
+ * @version 1.5
  */
 public class AnnotatedText {
 

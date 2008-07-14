@@ -20,6 +20,11 @@
  */
 package org.zmpp.instructions;
 
+/**
+ * Information class form VAR form.
+ * @author Wei-ju Wu
+ * @version 1.5
+ */
 public class VariableStaticInfo implements InstructionStaticInfo {
 
   private static final int[][] VALID_VERSIONS = {

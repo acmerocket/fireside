@@ -27,6 +27,7 @@ import java.util.List;
  * BufferedTextWindow is part of the BufferedScreenModel, it represents a
  * buffer for continuously flowing text.
  * @author Wei-ju Wu
+ * @version 1.5
  */
 public class BufferedTextWindow {
 

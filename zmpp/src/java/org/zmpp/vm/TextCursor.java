@@ -24,7 +24,7 @@ package org.zmpp.vm;
  * This defines the operations that can be performed on a text cursor.
  * 
  * @author Wei-ju Wu
- * @version 1.0
+ * @version 1.5
  */
 public interface TextCursor {
 

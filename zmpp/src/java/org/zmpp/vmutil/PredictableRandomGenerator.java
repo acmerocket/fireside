@@ -28,7 +28,7 @@ import java.util.Random;
  * same sequence of numbers for equal seeds.
  * 
  * @author Wei-ju Wu
- * @version 1.0
+ * @version 1.5
  */
 public class PredictableRandomGenerator implements RandomGenerator {
 

@@ -27,7 +27,7 @@ import org.zmpp.base.Memory;
  * that specifies that accent table.
  * 
  * @author Wei-ju Wu
- * @version 1.0
+ * @version 1.5
  */
 public class CustomAccentTable implements AccentTable {
 

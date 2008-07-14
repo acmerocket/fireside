@@ -20,6 +20,11 @@
  */
 package org.zmpp.instructions;
 
+/**
+ * Information class for the SHORT1 form.
+ * @author Wei-ju Wu
+ * @version 1.5
+ */
 public class Short1StaticInfo implements InstructionStaticInfo {
 
   private static final int[][] VALID_VERSIONS = {

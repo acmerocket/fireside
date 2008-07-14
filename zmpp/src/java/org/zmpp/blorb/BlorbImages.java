@@ -37,7 +37,7 @@ import org.zmpp.iff.FormChunk;
  * This class implements the Image collection.
  * 
  * @author Wei-ju Wu
- * @version 1.0
+ * @version 1.5
  */
 public class BlorbImages extends BlorbMediaCollection<BlorbImage> {
 

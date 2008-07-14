@@ -31,7 +31,7 @@ import org.zmpp.encoding.IZsciiEncoding;
  * a file. It queries a screen model to provide the input file.
  * 
  * @author Wei-ju Wu
- * @version 1.0
+ * @version 1.5
  */
 public class FileInputStream implements InputStream {
 

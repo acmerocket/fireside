@@ -26,7 +26,7 @@ import org.zmpp.io.OutputStream;
  * This interface defines the access to the screen model.
  * 
  * @author Wei-ju Wu
- * @version 1.0
+ * @version 1.5
  */
 public interface ScreenModel {
 

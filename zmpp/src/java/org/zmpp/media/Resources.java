@@ -22,12 +22,11 @@ package org.zmpp.media;
 
 import org.zmpp.blorb.BlorbImage;
 
-
 /**
  * This interface defines access to the Z-machine's media resources.
  * 
  * @author Wei-ju Wu
- * @version 1.0
+ * @version 1.5
  */
 public interface Resources {
 

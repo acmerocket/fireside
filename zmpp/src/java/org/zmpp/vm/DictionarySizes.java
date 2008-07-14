@@ -33,7 +33,7 @@ package org.zmpp.vm;
  * dependency. 
  *  
  * @author Wei-ju Wu
- * @version 1.0
+ * @version 1.5
  */
 public interface DictionarySizes {
 

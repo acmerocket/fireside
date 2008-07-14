@@ -26,7 +26,7 @@ import org.zmpp.vm.Machine;
  * This class represents instructions of type SHORT, 0OP.
  * 
  * @author Wei-ju Wu
- * @version 1.0
+ * @version 1.5
  */
 public class Short0Instruction extends AbstractInstruction {
 

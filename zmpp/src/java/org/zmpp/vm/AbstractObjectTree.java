@@ -26,7 +26,7 @@ import org.zmpp.base.Memory;
  * This class is the abstract super class of object trees.
  * 
  * @author Wei-ju Wu
- * @version 1.0
+ * @version 1.5
  */
 public abstract class AbstractObjectTree implements ObjectTree {
   

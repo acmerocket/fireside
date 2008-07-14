@@ -20,6 +20,11 @@
  */
 package org.zmpp.instructions;
 
+/**
+ * Interface definition for Instruction information classes.
+ * @author Wei-ju Wu
+ * @version 1.5
+ */
 public interface InstructionStaticInfo {
 
   int[] getValidVersions(int opcode);

@@ -25,7 +25,7 @@ package org.zmpp.io;
  * This interface defines a Z-machine input stream.
  * 
  * @author Wei-ju Wu
- * @version 1.0
+ * @version 1.5
  */
 public interface InputStream {
 

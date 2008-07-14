@@ -28,7 +28,7 @@ package org.zmpp.vm;
  * the header structure.
  * 
  * @author Wei-ju Wu
- * @version 1.0
+ * @version 1.5
  */
 public interface StoryFileHeader {
 

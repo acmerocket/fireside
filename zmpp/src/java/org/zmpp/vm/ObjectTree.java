@@ -23,7 +23,7 @@ package org.zmpp.vm;
 /**
  * This is the interface definition of the object tree.
  * @author Wei-ju Wu
- * @version 1.0
+ * @version 1.5
  */
 public interface ObjectTree {
 

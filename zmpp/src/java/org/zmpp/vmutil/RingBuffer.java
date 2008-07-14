@@ -27,7 +27,7 @@ package org.zmpp.vmutil;
  * This kind of container is particularly useful for undo and history buffers.
  * 
  * @author Wei-ju Wu
- * @version 1.0
+ * @version 1.5
  */
 public class RingBuffer<T> {
 

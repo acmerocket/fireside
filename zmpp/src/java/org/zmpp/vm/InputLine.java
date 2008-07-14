@@ -26,7 +26,7 @@ import java.util.List;
  * This interface is used from CommandHistory to manipulate the input line.
  * 
  * @author Wei-ju Wu
- * @version 1.0
+ * @version 1.5
  */
 public interface InputLine {
 

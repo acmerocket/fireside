@@ -24,7 +24,7 @@ package org.zmpp.base;
  * This class is the default implementation for MemoryAccess.
  * 
  * @author Wei-ju Wu
- * @version 1.0
+ * @version 1.5
  */
 public class DefaultMemory implements Memory {
 

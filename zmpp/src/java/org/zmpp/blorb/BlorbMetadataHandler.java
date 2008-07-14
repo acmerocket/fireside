@@ -36,7 +36,7 @@ import org.zmpp.media.StoryMetadata;
  * it into a Treaty of Babel metadata object. 
  * 
  * @author Wei-ju Wu
- * @version 1.0
+ * @version 1.5
  */
 public class BlorbMetadataHandler extends DefaultHandler {
 

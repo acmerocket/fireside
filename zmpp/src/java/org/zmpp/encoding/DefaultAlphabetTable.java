@@ -24,6 +24,7 @@ package org.zmpp.encoding;
  * The default alphabet table implementation.
  * 
  * @author Wei-ju Wu
+ * @version 1.5
  */
 public class DefaultAlphabetTable implements AlphabetTable {
 

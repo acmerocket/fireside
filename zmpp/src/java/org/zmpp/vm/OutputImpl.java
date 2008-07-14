@@ -26,6 +26,11 @@ import org.zmpp.encoding.ZsciiString;
 import org.zmpp.io.OutputStream;
 import org.zmpp.vm.StoryFileHeader.Attribute;
 
+/**
+ * Output implementation.
+ * @author Wei-ju Wu
+ * @version 1.5
+ */
 public class OutputImpl implements Output, Closeable {
 
   private Machine machine;
