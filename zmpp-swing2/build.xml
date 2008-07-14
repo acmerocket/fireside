@@ -28,6 +28,7 @@
       </manifest>
       <fileset dir="${build.prj}" />
       <fileset dir="${zmpp.core}" />
+      <fileset dir="${resources}" />
     </jar>
   </target>
 
@@ -40,6 +41,7 @@
       <classpath>
         <pathelement location="${build.prj}"/>
   	    <pathelement location="${zmpp.core}"/>
+        <pathelement location="${resources}" />
       </classpath>
     </java>    
   </target>

@@ -28,6 +28,11 @@
                     <target>run</target>
                 </action>
             </ide-actions>
+            <export>
+                <type>folder</type>
+                <location>resources</location>
+                <build-target>compile</build-target>
+            </export>
             <view>
                 <items>
                     <source-folder style="packages">
@@ -51,6 +56,7 @@
             <compilation-unit>
                 <package-root>src/java</package-root>
                 <classpath mode="compile">../zmpp/src/java</classpath>
+                <built-to>resources</built-to>
                 <source-level>1.5</source-level>
             </compilation-unit>
         </java-data>

@@ -21,38 +21,84 @@
 package org.zmpp.swingui2;
 
 import java.io.File;
+import java.util.PropertyResourceBundle;
+import javax.swing.JFileChooser;
 import javax.swing.JFrame;
 import javax.swing.SwingUtilities;
+import javax.swing.UIManager;
 
 public class Main {
 
-  //private static final String TESTFILE = "testfiles/curses.z5";
-  private static final String TESTFILE = "testfiles/photopia.z5";
-  //private static final String TESTFILE = "testfiles/minizork.z3";
-  public static void main(String[] args) {
+  private static PropertyResourceBundle MESSAGE_BUNDLE =
+		(PropertyResourceBundle) PropertyResourceBundle.getBundle("zmpp_messages");
+  public static final boolean DEBUG = true;
+  public static final String APP_NAME = getMessage("app.name");
 
+  /**
+   * Global function to return the message string.
+   * @param property the property name
+   * @return the message
+   */
+  public static String getMessage(String property) {
+    return MESSAGE_BUNDLE.getString(property);
+  }
+  
+  public static void main(String[] args) {
+    setMacOsXProperties();
+     try {
+      UIManager.setLookAndFeel(UIManager.getSystemLookAndFeelClassName());
+    } catch (Exception ex) {
+      ex.printStackTrace();
+    }
+
+   try {
+    	SwingUtilities.invokeAndWait(new Runnable() {
+    		public void run() {
+    			JFileChooser fileChooser =
+    					new JFileChooser(System.getProperty("user.dir"));
+    			fileChooser.setDialogTitle(getMessage("dialog.open.msg"));
+    			if (fileChooser.showOpenDialog(null) == JFileChooser.APPROVE_OPTION) {        
+    				final File storyfile = fileChooser.getSelectedFile();
+    		    SwingUtilities.invokeLater(new Runnable() {  
+    		    	public void run() {
+    		        runStoryFile(storyfile);
+    		    	}
+    		    });
+    			}
+    		}
+    	});
+    	} catch (Exception ignore) {}
+  }
+  
+  private static void runStoryFile(final File storyfile) {
+    JFrame frame = new JFrame(APP_NAME);
+    frame.setDefaultCloseOperation(JFrame.EXIT_ON_CLOSE);
+    ScreenModelView view = createView();
+    frame.getContentPane().add(view);
+    frame.pack();
+    frame.setVisible(true);
     try {
-      SwingUtilities.invokeAndWait(new Runnable() {
-        public void run() {
-          JFrame frame = new JFrame("Z-machine Preservation Project 1.5");
-          frame.setDefaultCloseOperation(JFrame.EXIT_ON_CLOSE);
-          ScreenModelView view = createView(frame);
-          frame.getContentPane().add(view);
-          frame.pack();
-          frame.setVisible(true);
-          try {
-            view.startGame(new File(TESTFILE));
-          } catch (Exception ex) {
-            ex.printStackTrace();
-          }
-        }
-      });
+      view.startGame(storyfile);
     } catch (Exception ex) {
       ex.printStackTrace();
     }
   }
   
-  private static ScreenModelView createView(JFrame frame) {
+  private static ScreenModelView createView() {
     return new ScreenModelView();
+  }
+
+  public static boolean isMacOsX() {
+  	return System.getProperty("mrj.version") != null;
+  }
+  
+  private static void setMacOsXProperties() {
+    if (isMacOsX()) {
+      System.setProperty("apple.laf.useScreenMenuBar", "true");
+      System.setProperty("com.apple.eawt.CocoaComponent.CompatibilityMode",
+          "false");
+      System.setProperty("com.apple.mrj.application.apple.menu.about.name",
+          "ZMPP");
+    }
   }
 }

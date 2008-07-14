@@ -27,6 +27,8 @@ import java.awt.event.ActionEvent;
 import java.awt.event.ActionListener;
 import java.awt.event.ComponentAdapter;
 import java.awt.event.ComponentEvent;
+import java.awt.event.KeyEvent;
+import java.awt.event.KeyListener;
 import java.awt.event.MouseWheelListener;
 import java.util.List;
 import javax.swing.BorderFactory;
@@ -213,29 +215,49 @@ implements ScreenModelListener {
   // *********************************
   private Timer currentTimer;
   
-  public void setCurrentRunState(final MachineRunState runState) {
+  private void stopCurrentTimer() {
     if (currentTimer != null) {
       currentTimer.stop();
       currentTimer = null;
     }
+  }
+  
+  private void startNewInterruptTimer(final MachineRunState runState) {
+    currentTimer = new Timer(runState.getTime() * 100,
+      new ActionListener() {
+        public void actionPerformed(ActionEvent e) {
+          // output should be echoed in the interrupt, so set buffer mode to
+          //false
+          screenModel.setBufferMode(false);
+          short result =
+            executionControl.callInterrupt(runState.getRoutine());
+          if (result == AbstractInstruction.TRUE) {
+            currentTimer.stop();
+            // TODO: Clear input and print
+            //executionControl.resumeWithInput("\u0000");
+            pressEnterKey();
+          } else if (result == AbstractInstruction.FALSE) {
+          }
+          screenModel.setBufferMode(true);
+        }
+      });
+    currentTimer.start();
+  }
+  
+  private void pressEnterKey() {
+    KeyEvent enterKeyEvent = new KeyEvent(lower, 1,
+    System.currentTimeMillis(), 0, KeyEvent.VK_ENTER, (char) 0);
+    for (KeyListener l : lower.getKeyListeners()) {
+      l.keyReleased(enterKeyEvent);
+    }
+  }
+  
+  public void setCurrentRunState(final MachineRunState runState) {
+    stopCurrentTimer();
     if (runState.getRoutine() > 0) {
       System.out.println("readchar: " + runState.isReadChar() + " time: " +
         runState.getTime() + " routine: " + runState.getRoutine());
-      currentTimer = new Timer(runState.getTime() * 100,
-        new ActionListener() {
-          public void actionPerformed(ActionEvent e) {
-            // output should be echoed in the interrupt, so set buffer mode to
-            //false
-            screenModel.setBufferMode(false);
-            short result =
-              executionControl.callInterrupt(runState.getRoutine());
-            if (result == AbstractInstruction.TRUE) {
-              // TODO
-            }
-            screenModel.setBufferMode(true);
-          }
-        });
-      currentTimer.start();
+      startNewInterruptTimer(runState);
     }
     currentRunState = runState;
     viewCursor(runState.isWaitingForInput());
