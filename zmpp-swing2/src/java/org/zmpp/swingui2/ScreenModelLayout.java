@@ -38,6 +38,7 @@ import org.zmpp.vm.ScreenModel;
  * insets.
  *
  * @author Wei-ju Wu
+ * @version 1.5
  */
 public class ScreenModelLayout implements LayoutManager2 {
 

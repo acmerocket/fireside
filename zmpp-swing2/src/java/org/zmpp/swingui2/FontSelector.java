@@ -26,7 +26,7 @@ import org.zmpp.windowing.TextAnnotation;
 /**
  * Helper class to select a font from a font number and a style number.
  * @author Wei-ju Wu
- * @version 1.0
+ * @version 1.5
  */
 public class FontSelector {
   

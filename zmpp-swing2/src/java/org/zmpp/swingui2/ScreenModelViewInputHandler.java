@@ -31,7 +31,7 @@ import org.zmpp.vm.ExecutionControl;
 /**
  * An input handler for the standard screen model.
  * @author Wei-ju Wu
- * @version 1.0
+ * @version 1.5
  */
 public class ScreenModelViewInputHandler
   implements KeyListener, ChangeListener {

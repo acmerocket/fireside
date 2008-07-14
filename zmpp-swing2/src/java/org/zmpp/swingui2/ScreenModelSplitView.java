@@ -62,6 +62,9 @@ import org.zmpp.vm.BufferedScreenModel.ScreenModelListener;
  * whole available space. The upper window in in fact an overlay over the
  * lower window, which is controlled by implementing the MainView as a
  * JLayeredPane.
+ * 
+ * @author Wei-ju Wu
+ * @version 1.5
  */
 public class ScreenModelSplitView extends JLayeredPane
 implements ScreenModelListener {

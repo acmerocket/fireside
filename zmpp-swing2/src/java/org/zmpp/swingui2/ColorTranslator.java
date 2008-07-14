@@ -29,7 +29,7 @@ import org.zmpp.vm.ScreenModel;
  * is shared between model 6 and non-model 6 screen models.
  * 
  * @author Wei-ju Wu
- * @version 1.0
+ * @version 1.5
  */
 public class ColorTranslator {
 

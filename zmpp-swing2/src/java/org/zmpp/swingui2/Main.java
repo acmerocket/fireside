@@ -23,15 +23,30 @@ package org.zmpp.swingui2;
 import java.io.File;
 import java.util.PropertyResourceBundle;
 import javax.swing.JFileChooser;
-import javax.swing.JFrame;
 import javax.swing.SwingUtilities;
 import javax.swing.UIManager;
 
+/**
+ * New application class using the Swing 2 model.
+ * @author Wei-ju Wu
+ * @version 1.5
+ */
 public class Main {
 
+  /**
+   * Localized message bundle.
+   */
   private static PropertyResourceBundle MESSAGE_BUNDLE =
 		(PropertyResourceBundle) PropertyResourceBundle.getBundle("zmpp_messages");
+  
+  /**
+   * Debug flag.
+   */
   public static final boolean DEBUG = true;
+  
+  /**
+   * Application name.
+   */
   public static final String APP_NAME = getMessage("app.name");
 
   /**
@@ -71,23 +86,15 @@ public class Main {
   }
   
   private static void runStoryFile(final File storyfile) {
-    JFrame frame = new JFrame(APP_NAME);
-    frame.setDefaultCloseOperation(JFrame.EXIT_ON_CLOSE);
-    ScreenModelView view = createView();
-    frame.getContentPane().add(view);
-    frame.pack();
+    ZmppFrame frame = new ZmppFrame();
     frame.setVisible(true);
     try {
-      view.startGame(storyfile);
+      frame.getScreenModelView().startGame(storyfile);
     } catch (Exception ex) {
       ex.printStackTrace();
     }
   }
   
-  private static ScreenModelView createView() {
-    return new ScreenModelView();
-  }
-
   public static boolean isMacOsX() {
   	return System.getProperty("mrj.version") != null;
   }

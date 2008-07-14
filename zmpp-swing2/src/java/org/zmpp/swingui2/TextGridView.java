@@ -36,7 +36,7 @@ import org.zmpp.vm.BufferedScreenModel;
  * conceptually it just a clipped area within a hosting component. 
  *
  * @author Wei-ju Wu
- * @version 1.0
+ * @version 1.5
  */
 public class TextGridView extends JComponent {
 

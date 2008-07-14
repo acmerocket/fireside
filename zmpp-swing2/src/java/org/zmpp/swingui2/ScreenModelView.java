@@ -55,7 +55,7 @@ import org.zmpp.vm.BufferedScreenModel.StatusLineListener;
  * line.
  * 
  * @author Wei-ju Wu
- * @version 1.0
+ * @version 1.5
  */
 public class ScreenModelView extends JComponent
 implements AdjustmentListener, MainViewListener, MouseWheelListener,
