@@ -20,6 +20,7 @@
  */
 package org.zmpp.blorb;
 
+import java.util.logging.Logger;
 import javax.xml.parsers.SAXParser;
 import javax.xml.parsers.SAXParserFactory;
 
@@ -40,6 +41,7 @@ import org.zmpp.media.StoryMetadata;
  */
 public class BlorbMetadataHandler extends DefaultHandler {
 
+  private static final Logger LOG = Logger.getLogger("BlorbMetadataHandler");
   private StoryMetadata story;
   private StringBuilder buffer;
   private boolean processAux;
@@ -76,6 +78,7 @@ public class BlorbMetadataHandler extends DefaultHandler {
   // **** Parsing meta data
   // *********************************
   
+  @Override
   public void startElement(final String uri, final String localName,
       final String qname, final Attributes attributes) {
     
@@ -111,6 +114,7 @@ public class BlorbMetadataHandler extends DefaultHandler {
     }
   }
 
+  @Override
   public void endElement(final String uri, final String localName,
       final String qname) {
     if ("title".equals(qname)) {
@@ -139,7 +143,7 @@ public class BlorbMetadataHandler extends DefaultHandler {
       try {
         story.setCoverPicture(Integer.parseInt(val));
       } catch (NumberFormatException ex) {
-        System.err.println("NumberFormatException in cover picture: " + val);
+        LOG.throwing("BlorbMetadataHandler", "endElement", ex);
       }
     }
     if ("auxiliary".equals(qname)) { 
@@ -151,6 +155,7 @@ public class BlorbMetadataHandler extends DefaultHandler {
     }
   }  
   
+  @Override
   public void characters(final char[] ch, final int start, final int length) {
     if (buffer != null) {
       
