@@ -62,11 +62,9 @@ public class MemoryOutputStream implements OutputStream {
   
   /**
    * Constructor.
-   * 
    * @param machine the machine object
    */
   public MemoryOutputStream(Machine machine) {
-  
     tableStack = new ArrayList<TablePosition>();
     this.machine = machine;
   }
@@ -75,8 +73,6 @@ public class MemoryOutputStream implements OutputStream {
    * {@inheritDoc}
    */
   public void print(final char zsciiChar) {
-
-    //System.out.println("memory.print: " + ((char) zsciiChar));
     final TablePosition tablePos = tableStack.get(tableStack.size() - 1);
     final int position = tablePos.tableAddress + 2 + tablePos.bytesWritten;
     machine.writeUnsignedByte(
@@ -88,7 +84,6 @@ public class MemoryOutputStream implements OutputStream {
    * {@inheritDoc}
    */
   public void flush() {
-    
     // intentionally left empty
   }
   
@@ -96,7 +91,6 @@ public class MemoryOutputStream implements OutputStream {
    * {@inheritDoc}
    */
   public void close() {
-
     // intentionally left empty
   }
 
@@ -104,27 +98,20 @@ public class MemoryOutputStream implements OutputStream {
    * {@inheritDoc}
    */
   public void select(final boolean flag) {
-    
     if (!flag && tableStack.size() > 0) {
-      
       // Write the total number of written bytes to the first word
       // of the table
       final TablePosition tablePos = tableStack.remove(tableStack.size() - 1);
-      //System.out.println("deselect stream 3, popping off: "
-      //                   + tablePos.tableAddress + " # bytes: "
-      //                   + tablePos.bytesWritten);
       machine.writeUnsignedShort(
           tablePos.tableAddress, tablePos.bytesWritten);
       
       if (machine.getVersion() == 6) {
-
         writeTextWidthInUnits(tablePos);
       }
     }
   }
   
   private void writeTextWidthInUnits(TablePosition tablepos) {
-
     int numwords = tablepos.bytesWritten;
     char[] data = new char[numwords];
     
@@ -141,15 +128,10 @@ public class MemoryOutputStream implements OutputStream {
    * @param tableWidth the table width
    */
   public void select(final int tableAddress, final int tableWidth) {
-
     //this.tableWidth = tableWidth;
-    
     if (tableStack.size() < MAX_NESTING_DEPTH) {
-      
       tableStack.add(new TablePosition(tableAddress));
-      
     } else {
-      
       machine.halt("maximum nesting depth (16) for stream 3 exceeded");
     }
   }
@@ -158,7 +140,6 @@ public class MemoryOutputStream implements OutputStream {
    * {@inheritDoc}
    */
   public boolean isSelected() {
-
     return !tableStack.isEmpty();
   }
 }

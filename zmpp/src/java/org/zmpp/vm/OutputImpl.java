@@ -53,7 +53,6 @@ public class OutputImpl implements Output, Closeable {
    */
   public void setOutputStream(final int streamnumber,
       final OutputStream stream) {
-    
     outputStream[streamnumber - 1] = stream;
   }
   
@@ -68,7 +67,6 @@ public class OutputImpl implements Output, Closeable {
    * {@inheritDoc}
    */
   public void print(final ZsciiString str) {
-    //System.out.println("print: '" + str + "'");
     printZsciiChars(str);
   }
   
@@ -85,7 +83,6 @@ public class OutputImpl implements Output, Closeable {
    * {@inheritDoc}
    */
   public void printZsciiChar(final char zchar) {
-    //System.out.println("printZsciiChar: '" + (char) zchar + "'");
     zchars[0] = zchar;
     printZsciiChars(new ZsciiString(zchars));
   }
@@ -97,24 +94,15 @@ public class OutputImpl implements Output, Closeable {
    * @param zsciiString the array of ZSCII characters.
    */
   private void printZsciiChars(final ZsciiString zsciiString) {
-    
     checkTranscriptFlag();
-    
     if (outputStream[OUTPUTSTREAM_MEMORY - 1].isSelected()) {
-      
-      for (int i = 0, n = zsciiString.length(); i < n; i++) {
-        
+      for (int i = 0, n = zsciiString.length(); i < n; i++) {        
         outputStream[OUTPUTSTREAM_MEMORY - 1].print(zsciiString.charAt(i));
       }
-      
     } else {
-    
       for (int i = 0; i < outputStream.length; i++) {
-      
         if (outputStream[i] != null && outputStream[i].isSelected()) {
-      
           for (int j = 0, n = zsciiString.length(); j < n; j++) {
-          
             outputStream[i].print(zsciiString.charAt(j));
           }
         }
@@ -126,20 +114,14 @@ public class OutputImpl implements Output, Closeable {
    * {@inheritDoc}
    */
   public void printNumber(final short number) {
-    
     print(new ZsciiString(String.valueOf(number)));
   }
   
   public void flushOutput() {
-    
     // At the moment flushing only makes sense for screen
     if (!outputStream[OUTPUTSTREAM_MEMORY - 1].isSelected()) {
-      
-      
       for (int i = 0; i < outputStream.length; i++) {
-      
         if (outputStream[i] != null && outputStream[i].isSelected()) {
-      
           outputStream[i].flush();
         }
       }
@@ -162,15 +144,12 @@ public class OutputImpl implements Output, Closeable {
    * {@inheritDoc}
    */
   public void selectOutputStream(final int streamnumber, final boolean flag) {
-    
     outputStream[streamnumber - 1].select(flag);
     
     // Sets the tranxdQscript flag if the transcipt is specified
     if (streamnumber == OUTPUTSTREAM_TRANSCRIPT) {
-      //System.out.println("ENABLE_TRANSCRIPT_STREAM: " + flag);
       machine.getFileHeader().setEnabled(Attribute.TRANSCRIPTING, flag);      
     } else if (streamnumber == OUTPUTSTREAM_MEMORY && flag) {
-      
       machine.halt("invalid selection of memory stream");
     }
   }
@@ -180,7 +159,6 @@ public class OutputImpl implements Output, Closeable {
    */
   public void selectOutputStream3(final int tableAddress,
       final int tableWidth) {
-
     ((MemoryOutputStream) outputStream[OUTPUTSTREAM_MEMORY - 1]).select(
         tableAddress, tableWidth);
   }

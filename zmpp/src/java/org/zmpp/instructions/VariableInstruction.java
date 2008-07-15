@@ -20,6 +20,7 @@
  */
 package org.zmpp.instructions;
 
+import java.util.logging.Logger;
 import org.zmpp.base.Memory;
 import org.zmpp.media.SoundSystem;
 import org.zmpp.vm.Machine;
@@ -37,9 +38,8 @@ import org.zmpp.vm.TextCursor;
  */
 public class VariableInstruction extends AbstractInstruction {
 
-  /**
-   * The operand count.
-   */
+  private static final Logger LOG = Logger.getLogger("VariableInstruction");
+  /** The operand count. */
   private OperandCount operandCount;
   
   /**
@@ -60,23 +60,18 @@ public class VariableInstruction extends AbstractInstruction {
    * {@inheritDoc}
    */
   public InstructionForm getInstructionForm() {
-    
     return InstructionForm.VARIABLE;
   }
   
   /**
    * {@inheritDoc}
    */
-  public OperandCount getOperandCount() {
-    
-    return operandCount;
-  }
+  public OperandCount getOperandCount() { return operandCount; }
   
   /**
    * {@inheritDoc}
    */
   protected InstructionStaticInfo getStaticInfo() {
-
     return VariableStaticInfo.getInstance();
   }
   
@@ -84,9 +79,7 @@ public class VariableInstruction extends AbstractInstruction {
    * {@inheritDoc}
    */
   protected void doInstruction() {
-    
     switch (getOpcode()) {
-      
       case VariableStaticInfo.OP_CALL:
         call();
         break;
@@ -284,9 +277,9 @@ public class VariableInstruction extends AbstractInstruction {
         int tablewidth = 0;
         if (getNumOperands() == 3) {
           tablewidth = getUnsignedValue(2);
-          System.out.printf("@output_stream 3 %x %d\n", tableAddress, tablewidth);
+          LOG.info(String.format("@output_stream 3 %x %d\n", tableAddress,
+                                 tablewidth));
         }
-        //System.out.printf("Select stream 3 on table: %x\n", tableAddress);
         getMachine().selectOutputStream3(tableAddress, tablewidth);
       } else {
         getMachine().selectOutputStream(streamnumber, true);
@@ -392,7 +385,9 @@ public class VariableInstruction extends AbstractInstruction {
     if (getNumOperands() == 4) {
       routine = getUnsignedValue(3);
     }
-    System.out.printf("@sound_effect n: %d, fx: %d, vol: %d, rep: %d, routine: $%04x\n", soundnum, effect, volume, repeats, routine);
+    LOG.info(String.format("@sound_effect n: %d, fx: %d, vol: %d, rep: %d, " +
+                           "routine: $%04x\n", soundnum, effect, volume,
+                           repeats, routine));
     // In version 3 repeats is always 1
     if (getStoryFileVersion() == 3) {
       repeats = 1;
@@ -404,7 +399,6 @@ public class VariableInstruction extends AbstractInstruction {
   }
   
   private void split_window() {
-    //System.out.printf("@split_window, window: %d\n", getUnsignedValue(0));
     final ScreenModel screenModel = getMachine().getScreen();
     if (screenModel != null) {
       screenModel.splitWindow(getUnsignedValue(0));
@@ -413,7 +407,6 @@ public class VariableInstruction extends AbstractInstruction {
   }
   
   private void set_window() {
-    //System.out.printf("@set_window, window: %d\n", getUnsignedValue(0));    
     final ScreenModel screenModel = getMachine().getScreen();
     if (screenModel != null) {
       screenModel.setWindow(getUnsignedValue(0));
@@ -431,7 +424,6 @@ public class VariableInstruction extends AbstractInstruction {
   }
   
   private void buffer_mode() {
-    
     final ScreenModel screenModel = getMachine().getScreen();
     if (screenModel != null) {
       
@@ -440,8 +432,7 @@ public class VariableInstruction extends AbstractInstruction {
     nextInstruction();
   }
   
-  private void erase_window() {
-    
+  private void erase_window() { 
     final ScreenModel screenModel = getMachine().getScreen();
     if (screenModel != null) {
       
@@ -451,7 +442,6 @@ public class VariableInstruction extends AbstractInstruction {
   }
   
   private void erase_line() {
-    
     final ScreenModel screenModel = getMachine().getScreen();
     if (screenModel != null) {
       
@@ -485,10 +475,8 @@ public class VariableInstruction extends AbstractInstruction {
   }
   
   private void get_cursor() {
-    
     final ScreenModel screenModel = getMachine().getScreen();
-    if (screenModel != null) {
-      
+    if (screenModel != null) {      
       final TextCursor cursor = screenModel.getTextCursor();
       final Memory memory = getMemory();
       final int arrayAddr = getUnsignedValue(0);
@@ -505,7 +493,6 @@ public class VariableInstruction extends AbstractInstruction {
     final int length = getUnsignedValue(2);
     int form  = 0x82; // default value
     if (getNumOperands() == 4) {
-      
       form = getUnsignedValue(3);
     }
     final int fieldlen = form & 0x7f;
@@ -525,12 +512,9 @@ public class VariableInstruction extends AbstractInstruction {
     }
     
     // not found
-    if (!found) {
-      
+    if (!found) {      
       storeResult((short) 0);
     }
-    //System.out.printf("@SCAN_TABLE, X: %d, TABLE: %d LEN: %d POINTER: %d\n",
-    //  x, table, length, pointer);
     branchOnTest(found);
   }
 
@@ -657,8 +641,6 @@ public class VariableInstruction extends AbstractInstruction {
       skip = getUnsignedValue(3);
     }
     
-    //System.out.printf("@print_table, zscii-text = %d, width = %d," +
-    //    " height = %d, skip = %d\n", zsciiText, width, height, skip);
     char zchar = 0;
     final Memory memory = getMemory();
     final TextCursor cursor = getMachine().getScreen().getTextCursor();

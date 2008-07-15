@@ -20,6 +20,7 @@
  */
 package org.zmpp.media;
 
+import java.util.logging.Logger;
 import org.zmpp.base.Interruptable;
 
 /**
@@ -29,6 +30,7 @@ import org.zmpp.base.Interruptable;
  */
 public class PlaySoundTask implements Runnable, SoundStopListener {
 
+  private static final Logger LOG = Logger.getLogger("PlaySoundTask");
   private int resourceNum;
   private SoundEffect sound;
   private int repeats;
@@ -86,23 +88,18 @@ public class PlaySoundTask implements Runnable, SoundStopListener {
    * {@inheritDoc}
    */
   public void run() {
-  
     sound.addSoundStopListener(this);
     sound.play(repeats, volume);
       
     synchronized (this) {
-      
       while (!wasPlayed()) {
-        
         try { wait(); } catch (Exception ex) {
-          
-          ex.printStackTrace(System.err);
+          LOG.throwing("PlaySoundTask", "run", ex);
         }
       }
     }
     sound.removeSoundStopListener(this);
     if (!wasStopped() && interruptable != null && routine > 0) {
-      
       interruptable.setInterruptRoutine(routine);
     }
   }
@@ -112,10 +109,7 @@ public class PlaySoundTask implements Runnable, SoundStopListener {
    * 
    * @return the played flag
    */
-  public synchronized boolean wasPlayed() {
-    
-    return played;
-  }
+  public synchronized boolean wasPlayed() { return played; }
   
   /**
    * Sets the status of the played flag and notifies waiting threads.
@@ -123,7 +117,6 @@ public class PlaySoundTask implements Runnable, SoundStopListener {
    * @param flag the played flag
    */
   private synchronized void setPlayed(final boolean flag) {
-  
     played = flag;
     notifyAll();
   }
@@ -134,7 +127,6 @@ public class PlaySoundTask implements Runnable, SoundStopListener {
    * @return the stopped flag
    */
   private synchronized boolean wasStopped() {
-    
     return stopped;
   }
   
@@ -144,7 +136,6 @@ public class PlaySoundTask implements Runnable, SoundStopListener {
    * @param flag
    */
   private synchronized void setStopped(final boolean flag) {
-    
     stopped = flag;
     notifyAll();
   }
@@ -153,9 +144,7 @@ public class PlaySoundTask implements Runnable, SoundStopListener {
    * Stops the sound.
    */
   public synchronized void stop() {
-    
     if (!wasPlayed()) {
-      
       setStopped(true);
       sound.stop();
     }
@@ -165,12 +154,9 @@ public class PlaySoundTask implements Runnable, SoundStopListener {
    * This method waits until the sound was completely played or stopped.
    */
   public synchronized void waitUntilDone() {
-    
     while (!wasPlayed()) {
-      
       try { wait(); } catch (Exception ex) {
-        
-        ex.printStackTrace(System.err);
+        LOG.throwing("PlaySoundTask", "waitUntilDone", ex);
       }
     }
   }
@@ -179,7 +165,6 @@ public class PlaySoundTask implements Runnable, SoundStopListener {
    * {@inheritDoc}
    */
   public void soundStopped(final SoundEffect sound) {
-
     setPlayed(true);
   }  
 }

@@ -23,6 +23,7 @@ package org.zmpp.vm;
 import org.zmpp.windowing.BufferedTextWindow;
 import java.util.ArrayList;
 import java.util.List;
+import java.util.logging.Logger;
 import org.zmpp.encoding.IZsciiEncoding;
 import org.zmpp.io.OutputStream;
 import org.zmpp.windowing.AnnotatedCharacter;
@@ -41,7 +42,8 @@ import org.zmpp.windowing.TextAnnotation;
  */
 public class BufferedScreenModel implements ScreenModel, StatusLine,
   OutputStream {
-  
+  private static final Logger LOG = Logger.getLogger("BufferedScreenModel");
+
   class TopWindow {
     public int cursorx = 1, cursory = 1;
     TextAnnotation annotation = new TextAnnotation(ScreenModel.FONT_FIXED,
@@ -114,7 +116,7 @@ public class BufferedScreenModel implements ScreenModel, StatusLine,
   }
 
   public void splitWindow(int linesUpperWindow) {
-    System.out.println("SPLIT_WINDOW: " + linesUpperWindow);
+    LOG.info("SPLIT_WINDOW: " + linesUpperWindow);
     numRowsUpper = linesUpperWindow;
     for (ScreenModelListener l : screenModelListeners) {
       l.screenSplit(linesUpperWindow);
@@ -122,7 +124,7 @@ public class BufferedScreenModel implements ScreenModel, StatusLine,
   }
 
   public void setWindow(int window) {
-    System.out.println("SET_WINDOW: " + window);
+    LOG.info("SET_WINDOW: " + window);
     current = window;
     if (current == ScreenModel.WINDOW_TOP) {
       topWindow.resetCursor();
@@ -130,25 +132,25 @@ public class BufferedScreenModel implements ScreenModel, StatusLine,
   }
 
   public void setTextStyle(int style) {
-    System.out.println("SET_TEXT_STYLE: " + style);
+    LOG.info("SET_TEXT_STYLE: " + style);
     topWindow.annotation = topWindow.annotation.deriveStyle(style);
     bottomWindow.setCurrentTextStyle(style);
   }
 
   public void setBufferMode(boolean flag) {
-    System.out.println("SET_BUFFER_MODE: " + flag);
+    LOG.info("SET_BUFFER_MODE: " + flag);
     if (current == ScreenModel.WINDOW_BOTTOM) {
       bottomWindow.setBuffered(flag);
     }
   }
 
   public void eraseLine(int value) {
-    System.out.println("ERASE_LINE: " + value);
+    LOG.info("ERASE_LINE: " + value);
     throw new UnsupportedOperationException("Not supported yet.");
   }
 
   public void eraseWindow(int window) {
-    System.out.println("ERASE_WINDOW: " + window);
+    LOG.info("ERASE_WINDOW: " + window);
     for (ScreenModelListener l : screenModelListeners) {
       l.windowErased(window);
     }
@@ -167,8 +169,8 @@ public class BufferedScreenModel implements ScreenModel, StatusLine,
   
   public void setTextCursor(int line, int column, int window) {
     int targetWindow = getTargetWindow(window);
-    System.out.printf("SET_TEXT_CURSOR, line: %d, column: %d, " +
-            "window: %d\n", line, column, targetWindow);
+    LOG.info(String.format("SET_TEXT_CURSOR, line: %d, column: %d, " +
+                           "window: %d\n", line, column, targetWindow));
     if (targetWindow == WINDOW_TOP) {
       if (outOfUpperBounds(line, column)) {
         // set to left margin of current line
@@ -211,13 +213,13 @@ public class BufferedScreenModel implements ScreenModel, StatusLine,
   }
 
   public void setBackground(int colornumber, int window) {
-    System.out.println("setBackground, color: " + colornumber);
+    LOG.info("setBackground, color: " + colornumber);
     topWindow.annotation = topWindow.annotation.deriveBackground(colornumber);
     bottomWindow.setBackground(colornumber);
   }
 
   public void setForeground(int colornumber, int window) {
-    System.out.println("setForeground, color: " + colornumber);
+    LOG.info("setForeground, color: " + colornumber);
     topWindow.annotation = topWindow.annotation.deriveForeground(colornumber);
     bottomWindow.setForeground(colornumber);
   }
@@ -230,13 +232,11 @@ public class BufferedScreenModel implements ScreenModel, StatusLine,
   public void print(char zsciiChar) {
     char unicodeChar = encoding.getUnicodeChar(zsciiChar);
     if (current == WINDOW_BOTTOM) {
-      //System.out.println("BOTTOM PRINT: [" + zchar + "]");
       bottomWindow.printChar(unicodeChar);
       if (!bottomWindow.isBuffered()) {
         flush();
       }
     } else if (current == WINDOW_TOP) {
-      //System.out.println("TOP PRINT: [" + zchar + "]");
       for (ScreenModelListener l : screenModelListeners) {
         l.topWindowUpdated(topWindow.cursorx, topWindow.cursory,
                            topWindow.annotateCharacter(unicodeChar));
@@ -260,13 +260,9 @@ public class BufferedScreenModel implements ScreenModel, StatusLine,
     }
   }
 
-  public void select(boolean flag) {
-    selected = flag;
-  }
+  public void select(boolean flag) { selected = flag; }
 
-  public boolean isSelected() {
-    return selected;
-  }
+  public boolean isSelected() { return selected; }
 
   // ***********************************************************************
   // ***** StatusLine implementation

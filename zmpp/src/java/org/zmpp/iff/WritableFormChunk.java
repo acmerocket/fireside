@@ -42,11 +42,9 @@ public class WritableFormChunk implements FormChunk {
   
   /**
    * Constructor.
-   * 
    * @param subId the sub id
    */
-  public WritableFormChunk(final byte[] subId) {
-  
+  public WritableFormChunk(final byte[] subId) {  
     super();
     this.subId = subId;
     this.subChunks = new ArrayList<Chunk>();
@@ -54,7 +52,6 @@ public class WritableFormChunk implements FormChunk {
   
   /**
    * Adds a sub chunk.
-   * 
    * @param chunk the sub chunk to add
    */
   public void addChunk(final Chunk chunk) {
@@ -65,8 +62,7 @@ public class WritableFormChunk implements FormChunk {
   /**
    * {@inheritDoc}
    */
-  public byte[] getSubId() {
-    
+  public byte[] getSubId() {   
     return subId;
   }
 
@@ -74,7 +70,6 @@ public class WritableFormChunk implements FormChunk {
    * {@inheritDoc}
    */
   public Iterator<Chunk> getSubChunks() {
-    
     return subChunks.iterator();
   }
 
@@ -82,11 +77,8 @@ public class WritableFormChunk implements FormChunk {
    * {@inheritDoc}
    */
   public Chunk getSubChunk(final byte[] id) {
-    
     for (Chunk chunk : subChunks) {
-    
       if (Arrays.equals(chunk.getId(), id)) {
-        
         return chunk;
       }
     }
@@ -97,7 +89,6 @@ public class WritableFormChunk implements FormChunk {
    * {@inheritDoc}
    */
   public Chunk getSubChunk(final int address) {
-    
     // We do not need to implement this
     return null;
   }
@@ -106,7 +97,6 @@ public class WritableFormChunk implements FormChunk {
    * {@inheritDoc}
    */
   public byte[] getId() {
-    
     return FORM_ID;
   }
 
@@ -114,11 +104,9 @@ public class WritableFormChunk implements FormChunk {
    * {@inheritDoc}
    */
   public int getSize() {
-    
     int size = subId.length;
     
     for (Chunk chunk : subChunks) {
-      
       int chunkSize = chunk.getSize();
       if ((chunkSize % 2) != 0) {
         chunkSize++; // pad if necessary
@@ -131,16 +119,12 @@ public class WritableFormChunk implements FormChunk {
   /**
    * {@inheritDoc}
    */
-  public boolean isValid() {
-    
-    return true;
-  }
+  public boolean isValid() { return true; }
 
   /**
    * {@inheritDoc}
    */
   public Memory getMemory() {
-    
     return new DefaultMemory(getBytes());
   }
 
@@ -150,7 +134,6 @@ public class WritableFormChunk implements FormChunk {
    * @return the chunk data
    */
   public byte[] getBytes() {
-    
     final int datasize = Chunk.CHUNK_HEADER_LENGTH + getSize();    
     final byte[] data = new byte[datasize];
     final Memory memory = new DefaultMemory(data);
@@ -164,20 +147,16 @@ public class WritableFormChunk implements FormChunk {
     
     // Write sub id
     for (int i = 0; i < subId.length; i++) {
-     
       memory.writeByte(offset++, subId[i]);
     }
     
     // Write sub chunk data
     for (Chunk chunk : subChunks) {
-     
-      //System.out.println("Chunk: " + (new String(chunk.getId())));
       final byte[] chunkId = chunk.getId();
       final int chunkSize = chunk.getSize();
       
       // Write id
       for (int i = 0; i < chunkId.length; i++) {
-        
         memory.writeByte(offset++, chunkId[i]);
       }
       
@@ -205,6 +184,5 @@ public class WritableFormChunk implements FormChunk {
   /**
    * {@inheritDoc}
    */
-  public int getAddress() { return 0; }
-  
+  public int getAddress() { return 0; }  
 }

@@ -22,6 +22,7 @@ package org.zmpp.vm;
 
 import org.zmpp.io.LineBufferInputStream;
 import java.io.IOException;
+import java.util.logging.Logger;
 import org.zmpp.encoding.IZsciiEncoding;
 import org.zmpp.vm.MachineFactory.MachineInitStruct;
 import org.zmpp.vm.StoryFileHeader.Attribute;
@@ -37,12 +38,13 @@ import org.zmpp.vm.StoryFileHeader.Attribute;
  */
 public class ExecutionControl {
 
+  private static final Logger LOG = Logger.getLogger("ExecutionControl");
   private Machine machine;
   private InstructionDecoder instructionDecoder =
           new InstructionDecoder();
   private LineBufferInputStream inputStream = new LineBufferInputStream();
   private int step = 1;
-  private static final boolean DEBUG = false;
+  public static boolean DEBUG = false;
   
   /**
    * Constructor.
@@ -73,8 +75,10 @@ public class ExecutionControl {
       enableHeaderFlag(Attribute.SUPPORTS_COLOURS);
       
     }
-    System.out.println("DEFAULT FOREGROUND: " + getFileHeader().getDefaultForeground());
-    System.out.println("DEFAULT BACKGROUND: " + getFileHeader().getDefaultBackground());
+    LOG.info("DEFAULT FOREGROUND: " +
+             getFileHeader().getDefaultForeground());
+    LOG.info("DEFAULT BACKGROUND: " +
+             getFileHeader().getDefaultBackground());
   }
 
   private void enableHeaderFlag(Attribute attr) {
@@ -117,7 +121,7 @@ public class ExecutionControl {
       Instruction instr = instructionDecoder.decodeInstruction(pc);
       // if the print is executed after execute(), the result is different !!
       if (DEBUG && machine.getRunState() == MachineRunState.RUNNING)
-        System.out.printf("%03d: $%04x %s\n", step, pc, instr.toString());
+        LOG.info(String.format("%03d: $%04x %s\n", step, pc, instr.toString()));
       instr.execute();
         
       // handle input situations here

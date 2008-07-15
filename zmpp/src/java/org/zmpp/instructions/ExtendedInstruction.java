@@ -42,7 +42,6 @@ public class ExtendedInstruction extends AbstractInstruction {
    * @param opcode the opcode
    */
   public ExtendedInstruction(Machine machine, int opcode) {
-    
     super(machine, opcode);
   }
   
@@ -50,17 +49,13 @@ public class ExtendedInstruction extends AbstractInstruction {
    * {@inheritDoc}
    */
   public InstructionForm getInstructionForm() {
-    
     return InstructionForm.VARIABLE;
   }
 
   /**
    * {@inheritDoc}
    */
-  public OperandCount getOperandCount() {
-    
-    return OperandCount.EXT;
-  }
+  public OperandCount getOperandCount() { return OperandCount.EXT; }
   
   /**
    * {@inheritDoc}
@@ -74,9 +69,7 @@ public class ExtendedInstruction extends AbstractInstruction {
    * {@inheritDoc}
    */
   public void doInstruction() {
-
-    switch (getOpcode()) {    
-
+    switch (getOpcode()) {
     case ExtendedStaticInfo.OP_SAVE:
       save();
       break;
@@ -156,7 +149,6 @@ public class ExtendedInstruction extends AbstractInstruction {
   }
   
   private void save_undo() {
-    
     // Target PC offset is two because of the extra opcode byte and 
     // operand type byte compared to the 0OP instruction
     final int pc = getMachine().getPC() + 3;
@@ -169,9 +161,7 @@ public class ExtendedInstruction extends AbstractInstruction {
     
     final PortableGameState gamestate = getMachine().restore_undo();
     if (gamestate == null) {
-
       storeResult((short) FALSE);
-      
     } else {
       
       final int storevar = gamestate.getStoreVariable(getMachine());      
@@ -180,7 +170,6 @@ public class ExtendedInstruction extends AbstractInstruction {
   }
   
   private void art_shift() {
-    
     short number = getValue(0);
     final short places = getValue(1);
     number = (short) ((places >= 0) ? number << places : number >> (-places));
@@ -189,7 +178,6 @@ public class ExtendedInstruction extends AbstractInstruction {
   }
   
   private void log_shift() {
-    
     short number = getValue(0);
     final short places = getValue(1);
     number = (short) ((places >= 0) ? number << places : number >>> (-places));
@@ -198,14 +186,12 @@ public class ExtendedInstruction extends AbstractInstruction {
   }
   
   private void set_font() {
-
     final int previousFont = getMachine().getScreen().setFont(getValue(0));
     storeResult((short) previousFont);
     nextInstruction();
   }
   
   private void save() {
-
     // Saving to tables is not supported yet, this is the standard save feature
     // Offset is 3 because there are two opcode bytes + 1 optype byte before
     // the actual store var byte
@@ -213,7 +199,6 @@ public class ExtendedInstruction extends AbstractInstruction {
   }
   
   private void restore() {
-
     // Reading from tables is not supported yet, this is the standard 
     // restore feature
     restoreFromStorage();
@@ -226,7 +211,6 @@ public class ExtendedInstruction extends AbstractInstruction {
   }
   
   private void check_unicode() {
-
     // always return true, set bit 0 for can print and bit 1 for
     // can read
     storeResult((short) 3);
@@ -234,30 +218,24 @@ public class ExtendedInstruction extends AbstractInstruction {
   }
   
   private void mouse_window() {
-    
     getMachine().getScreen6().setMouseWindow(getValue(0));
     nextInstruction();
   }
   
   private void picture_data() {
-    
     final int picnum = getUnsignedValue(0);
     final int array = getUnsignedValue(1);
     boolean result = false;
     
     if (picnum == 0) {
-
       writePictureFileInfo(array);
       // branch if any pictures are available: this information is only
       // available in the 1.1 spec
-      result = getMachine().getPictureManager().getNumPictures() > 0;
-      
+      result = getMachine().getPictureManager().getNumPictures() > 0;  
     } else {
-      
       final Resolution picdim =
         getMachine().getPictureManager().getPictureSize(picnum);
       if (picdim != null) {
-        
         final Memory memory = getMemory();
         memory.writeUnsignedShort(array, picdim.getHeight());
         memory.writeUnsignedShort(array + 2, picdim.getWidth());
@@ -317,7 +295,6 @@ public class ExtendedInstruction extends AbstractInstruction {
     final int window = getValue(0);
     final int height = getValue(1);
     final int width = getValue(2);
-    //System.out.printf("@window_size %d %d %d\n", window, height, width);
     getMachine().getScreen6().getWindow(window).setSize(height, width);
     nextInstruction();
   }

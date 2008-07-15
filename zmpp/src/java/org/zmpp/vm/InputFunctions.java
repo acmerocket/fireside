@@ -41,13 +41,12 @@ import org.zmpp.encoding.ZsciiStringTokenizer;
  */
 public class InputFunctions {
   private Machine machine;
+
   /**
    * Constructor.
-   * 
    * @param machine the machine object
    */
   public InputFunctions(Machine machine) {
-    
     this.machine = machine;
   }
 
@@ -82,9 +81,7 @@ public class InputFunctions {
    */
   public void checkTermination(final char terminateChar, final int textbuffer,
                                final int textpointer) {
-    
     final int version = machine.getVersion();
-    
     if (version >= 5) {      
       // Check if was cancelled
       final byte numCharsTyped = (terminateChar == ZsciiEncoding.NULL) ?
@@ -158,9 +155,7 @@ public class InputFunctions {
    * @return a terminating character that can be stored as a result
    */
   public char handleTerminateChar(final char terminateChar) {
-    
     if (terminateChar == ZsciiEncoding.NEWLINE) {
-      
       // Echo a newline into the streams
       // must be called with isInput == false since we are not
       // in input mode anymore when we receive NEWLINE
@@ -215,8 +210,6 @@ public class InputFunctions {
       
       final ZsciiString token = tokens.get(i);   
       final int entryAddress = machine.lookupToken(dictionaryAddress, token);
-      //System.out.println("token: '" + token + "' entryAddress: " + entryAddress);
-      
       int startIndex = 0;
       if (parsedTokens.containsKey(token)) {
           
@@ -318,7 +311,6 @@ public class InputFunctions {
    * @return 1 if version &lt; 4, 2, otherwise
    */
   private int determineTextBufferStart(final int version) {
-    
     return (version < 5) ? 1 : 2;
   }
 }

@@ -24,6 +24,7 @@ import java.io.BufferedWriter;
 import java.io.IOException;
 import java.io.Writer;
 
+import java.util.logging.Logger;
 import org.zmpp.encoding.IZsciiEncoding;
 
 /**
@@ -34,6 +35,7 @@ import org.zmpp.encoding.IZsciiEncoding;
  */
 public class TranscriptOutputStream implements OutputStream {
 
+  private static final Logger LOG = Logger.getLogger("TranscriptOutputStream");
   private IOSystem iosys;
   private BufferedWriter output;
   private Writer transcriptWriter;
@@ -73,16 +75,13 @@ public class TranscriptOutputStream implements OutputStream {
    * {@inheritDoc}
    */
   public void print(final char zsciiChar) {
-    //System.out.println("TRANSCRIPT: PRINT: '" + zsciiChar + "'");
     initFile();
     if (output != null) {
       if (zsciiChar == IZsciiEncoding.NEWLINE) { 
         flush();
-        
       } else if (zsciiChar == IZsciiEncoding.DELETE) {
         linebuffer.deleteCharAt(linebuffer.length() - 1);
       } else {
-        
         linebuffer.append(encoding.getUnicodeChar(zsciiChar));
       }
       flush();
@@ -110,7 +109,7 @@ public class TranscriptOutputStream implements OutputStream {
         linebuffer = new StringBuilder();
       }
     } catch (IOException ex) { 
-      ex.printStackTrace(System.err);
+        LOG.throwing("TranscriptOutputStream", "flush", ex);
     }
   }
   
@@ -123,7 +122,7 @@ public class TranscriptOutputStream implements OutputStream {
         output.close();
         output = null;
       } catch (Exception ex) {
-        ex.printStackTrace(System.err);
+        LOG.throwing("TranscriptOutputStream", "close", ex);
       }      
     }
     
@@ -132,7 +131,7 @@ public class TranscriptOutputStream implements OutputStream {
         transcriptWriter.close();
         transcriptWriter = null;
       } catch (Exception ex) {
-        ex.printStackTrace(System.err);
+        LOG.throwing("TranscriptOutputStream", "close", ex);
       }      
     }
     initialized = false;

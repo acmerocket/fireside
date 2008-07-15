@@ -57,8 +57,7 @@ public class LongInstruction extends AbstractInstruction {
    * @param opcode the opcode
    */
   public LongInstruction(Machine machineState,
-      OperandCount operandCount, int opcode) {
-    
+      OperandCount operandCount, int opcode) {    
     super(machineState, opcode);
     this.operandCount = operandCount;
   }
@@ -172,13 +171,11 @@ public class LongInstruction extends AbstractInstruction {
   /**
    * {@inheritDoc}
    */
-  protected InstructionStaticInfo getStaticInfo() {
-    
+  protected InstructionStaticInfo getStaticInfo() {    
     return LongStaticInfo.getInstance();
   }
   
-  private void je() {
-    
+  private void je() {    
     boolean equalsFollowing = false;
     final short op1 = getValue(0);
     if (getNumOperands() <= 1) {
@@ -186,13 +183,9 @@ public class LongInstruction extends AbstractInstruction {
       getMachine().halt("je expects at least two operands, only " +
                         "one provided");
     } else {
-      
       for (int i = 1; i < getNumOperands(); i++) {
         short value = getValue(i);
-        //System.out.printf("Compare %d to %d\n", op1, value);
-        
         if (op1 == value) {
-          
           equalsFollowing = true;
           break;
         }
@@ -202,14 +195,12 @@ public class LongInstruction extends AbstractInstruction {
   }
     
   private void jl() {
-    
     final short op1 = getValue(0);
     final short op2 = getValue(1);
     branchOnTest(op1 < op2);
   }
   
   private void jg() {
-    
     final short op1 = getValue(0);
     final short op2 = getValue(1);
     branchOnTest(op1 > op2);
@@ -229,34 +220,28 @@ public class LongInstruction extends AbstractInstruction {
   }
   
   private void dec_chk() {
-    
     final int varnum = getUnsignedValue(0);
     final short value = getValue(1);
     final short varValue = (short) (getMachine().getVariable(varnum) - 1);
-    
     getMachine().setVariable(varnum, varValue);
     branchOnTest(varValue < value);
   }
   
   private void inc_chk() {
-    
     final int varnum = getUnsignedValue(0);
     final short value = getValue(1);
     final short varValue = (short) (getMachine().getVariable(varnum) + 1);
-    
     getMachine().setVariable(varnum, varValue);
     branchOnTest(varValue > value);
   }
   
   private void test() {
-    
     final int op1 = getUnsignedValue(0);
     final int op2 = getUnsignedValue(1);
     branchOnTest((op1 & op2) == op2);
   }
   
   private void or() {
-    
     final int op1 = getUnsignedValue(0);
     final int op2 = getUnsignedValue(1);
     storeResult((short) ((op1 | op2) & 0xffff));
@@ -264,7 +249,6 @@ public class LongInstruction extends AbstractInstruction {
   }
   
   private void and() {
-    
     final int op1 = getUnsignedValue(0);
     final int op2 = getUnsignedValue(1);
     storeResult((short) ((op1 & op2) & 0xffff));
@@ -272,7 +256,6 @@ public class LongInstruction extends AbstractInstruction {
   }
   
   private void add() {
-    
     final short op1 = getValue(0);
     final short op2 = getValue(1);
     storeResult((short) (op1 + op2));
@@ -280,7 +263,6 @@ public class LongInstruction extends AbstractInstruction {
   }
   
   private void sub() {
-    
     final short op1 = getValue(0);
     final short op2 = getValue(1);
     storeResult((short) (op1 - op2));
@@ -297,13 +279,9 @@ public class LongInstruction extends AbstractInstruction {
   private void div() {
     final short op1 = getValue(0);
     final short op2 = getValue(1);
-    
     if (op2 == 0) {
-    
       getMachine().halt("@div division by zero");
-      
     } else {
-    
       storeResult((short) (op1 / op2));
       nextInstruction();
     }
@@ -312,12 +290,9 @@ public class LongInstruction extends AbstractInstruction {
   private void mod() {
     final short op1 = getValue(0);
     final short op2 = getValue(1);
-    
     if (op2 == 0) {
-      
       getMachine().halt("@mod division by zero");
     } else {
-    
       storeResult((short) (op1 % op2));
       nextInstruction();
     }
@@ -326,11 +301,9 @@ public class LongInstruction extends AbstractInstruction {
   private void test_attr() {
     final int obj = getUnsignedValue(0);
     final int attr = getUnsignedValue(1);
-    
     if (obj > 0 && isValidAttribute(attr)) {
       branchOnTest(getMachine().isAttributeSet(obj, attr));
     } else {
-      
       getMachine().warn("@test_attr illegal access to object " + obj);
       branchOnTest(false);
     }

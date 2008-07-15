@@ -61,8 +61,6 @@ public class BufferedTextWindow {
 
   private void startNewAnnotatedRun(TextAnnotation annotation) {
     textBuffer.add(new AnnotatedText(currentAnnotation, currentRun.toString()));
-    //System.out.println("Added: '" + currentRun + "' with annotation: " +
-    //        currentAnnotation + " new annotation: " + annotation);
     currentRun = new StringBuilder();
     currentAnnotation = annotation;    
   }

@@ -104,8 +104,6 @@ public class ZCharEncoder {
     // If we did not encode 3 shorts, fill the rest with 0x14a5's
     final int targetOffset = state.target - targetAddress;
     for (int i = targetOffset; i < NUM_TARGET_BYTES; i+= 2) {
-      
-      //System.out.println("write padword: " + i);
       state.memory.writeUnsignedShort(targetAddress + i, 0x14a5);
     }
     

@@ -30,6 +30,7 @@ import java.nio.channels.ReadableByteChannel;
 import java.util.ArrayList;
 import java.util.List;
 
+import java.util.logging.Logger;
 import org.zmpp.base.DefaultMemory;
 import org.zmpp.base.Memory;
 import org.zmpp.blorb.BlorbResources;
@@ -47,6 +48,8 @@ import org.zmpp.media.Resources;
  * @version 1.5
  */
 public class FileUtils {
+
+  private static final Logger LOG = Logger.getLogger("FileUtil");
 
   /**
    * This class only contains static methods.
@@ -74,7 +77,7 @@ public class FileUtils {
     } finally {
       if (raf != null) {
         try { raf.close(); } catch (Exception ex) {
-          ex.printStackTrace(System.err);
+          LOG.throwing("FileUtils", "createResources", ex);
         }
       }        
     }
@@ -112,9 +115,9 @@ public class FileUtils {
         }
       }
       bb.flip();
-
-    } catch (IOException e) {
-      throw new RuntimeException("Unable to read file bytes", e);
+    } catch (IOException ex) {
+      LOG.throwing("FileUtils", "readFileBytes", ex);
+      throw new RuntimeException("Unable to read file bytes", ex);
     }
 
     // merge the buffers so we can convert to a byte array.
@@ -157,7 +160,7 @@ public class FileUtils {
       } finally {
         if (raf != null) {
           try { raf.close(); } catch (Exception ex) {
-            ex.printStackTrace(System.err);
+            LOG.throwing("FileUtils", "readFileBytes", ex);
           } 
         } 
       }

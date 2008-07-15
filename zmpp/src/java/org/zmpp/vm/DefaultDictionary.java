@@ -65,13 +65,9 @@ public class DefaultDictionary extends AbstractDictionary {
    */
   public int lookup(final ZsciiString token) {
     final ZsciiString lookupToken = truncateToken(token);
-        
     if (lookupMap.containsKey(lookupToken)) {
-      
-      //System.out.println("Found, entry: " + lookupMap.get(entry));
       return lookupMap.get(lookupToken);
     }
-    //System.out.println("Not found, token: '" + token + "'");
     return 0;
   }
   

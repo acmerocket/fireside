@@ -21,6 +21,7 @@
 package org.zmpp.vm;
 
 import java.util.List;
+import java.util.logging.Logger;
 import org.zmpp.base.DefaultMemory;
 import org.zmpp.base.Memory;
 import org.zmpp.blorb.BlorbImage;
@@ -65,9 +66,9 @@ import org.zmpp.vmutil.UnpredictableRandomGenerator;
  */
 public class MachineImpl implements Machine {
 
-  /**
-   * Number of undo steps.
-   */
+  private static final Logger LOG = Logger.getLogger("MachineImpl");
+
+  /** Number of undo steps. */
   private static final int NUM_UNDO = 5;
   
   private MachineRunState runstate;
@@ -478,15 +479,13 @@ public class MachineImpl implements Machine {
    * {@inheritDoc}
    */
   public void warn(final String msg) {
-    System.err.println("WARNING: " + msg);
+    LOG.warning("WARNING: " + msg);
   }
   
   /**
    * {@inheritDoc} 
    */
-  public void restart() {
-    restart(true);
-  }
+  public void restart() { restart(true); }
   
   /**
    * {@inheritDoc} 
@@ -534,16 +533,12 @@ public class MachineImpl implements Machine {
   /**
    * {@inheritDoc}
    */
-  public SoundSystem getSoundSystem() {
-    return soundSystem;
-  }
+  public SoundSystem getSoundSystem() { return soundSystem; }
 
   /**
    * {@inheritDoc}
    */
-  public PictureManager getPictureManager() {
-    return pictureManager;
-  }
+  public PictureManager getPictureManager() { return pictureManager; }
   
   /**
    * {@inheritDoc}
@@ -587,9 +582,7 @@ public class MachineImpl implements Machine {
   /**
    * {@inheritDoc}
    */
-  public ScreenModel getScreen() {
-    return screenModel;
-  }
+  public ScreenModel getScreen() { return screenModel; }
   
   /**
    * {@inheritDoc}
@@ -636,7 +629,6 @@ public class MachineImpl implements Machine {
         // current window state
         restart(false);
         gamestate.transferStateToMachine(this);
-        //System.out.printf("restore(), pc is: %4x running: %b\n", getProgramCounter(), isRunning());
         return gamestate;
       }
     }
@@ -654,7 +646,7 @@ public class MachineImpl implements Machine {
         undostates.remove(undostates.size() - 1);      
       restart(false);
       undoGameState.transferStateToMachine(this);
-      System.out.printf("restore(), pc is: %4x\n", cpu.getPC());
+      LOG.info(String.format("restore(), pc is: %4x\n", cpu.getPC()));
       return undoGameState;
     }
     return null;
@@ -694,7 +686,6 @@ public class MachineImpl implements Machine {
     getFileHeader().setStandardRevision(1, 0);
     if (getFileHeader().getVersion() >= 4) {
       getFileHeader().setEnabled(Attribute.SUPPORTS_TIMED_INPUT, true);
-      //gamedata.getStoryFileHeader().setInterpreterNumber(4); // Amiga
       getFileHeader().setInterpreterNumber(6); // IBM PC
       getFileHeader().setInterpreterVersion(1);
     }

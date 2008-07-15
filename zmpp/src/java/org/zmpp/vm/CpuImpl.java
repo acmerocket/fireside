@@ -24,6 +24,7 @@ import java.util.ArrayList;
 import java.util.Collections;
 import java.util.List;
 
+import java.util.logging.Logger;
 import org.zmpp.vmutil.FastShortStack;
 
 /**
@@ -32,6 +33,8 @@ import org.zmpp.vmutil.FastShortStack;
  * @version 1.5
  */
 public class CpuImpl implements Cpu {
+
+  private static final Logger LOG = Logger.getLogger("CpuImpl");
 
   /**
    * The stack size is now 64 K.
@@ -64,7 +67,6 @@ public class CpuImpl implements Cpu {
   private int globalsAddress;
   
   public CpuImpl(final Machine machine) {
-  
     super();
     this.machine = machine;
   }
@@ -86,23 +88,14 @@ public class CpuImpl implements Cpu {
   /**
    * {@inheritDoc}
    */
-  public int getPC() {
-    
-    return programCounter;
-  }
+  public int getPC() { return programCounter; }
 
   /**
    * {@inheritDoc}
    */
-  public void setPC(final int address) {
-
-    programCounter = address;
-  }
+  public void setPC(final int address) { programCounter = address; }
   
-  public void incrementPC(final int offset) {
-    
-    programCounter += offset;
-  }
+  public void incrementPC(final int offset) { programCounter += offset; }
 
   /**
    * {@inheritDoc}
@@ -113,7 +106,6 @@ public class CpuImpl implements Cpu {
 
   public int unpackAddress(final int packedAddress,
       final boolean isCall) {
-  
     // Version specific packed address translation    
     switch (machine.getVersion()) {
     
@@ -247,7 +239,7 @@ public class CpuImpl implements Cpu {
     if (varType == Cpu.VariableType.STACK) {
       if (stack.size() == getInvocationStackPointer()) {
         //throw new IllegalStateException("stack underflow error");
-        System.err.println("stack underflow error");
+        LOG.severe("stack underflow error");
         return 0;
       } else {   
         return stack.pop();
@@ -457,7 +449,6 @@ public class CpuImpl implements Cpu {
    * @return the local variable number
    */
   private int getLocalVariableNumber(final int variableNumber) {
-    
     return variableNumber - 1;
   }
   
@@ -468,7 +459,6 @@ public class CpuImpl implements Cpu {
    * @return the global variable number
    */
   private int getGlobalVariableNumber(final int variableNumber) {
-    
     return variableNumber - 0x10;
   }
   
@@ -480,14 +470,11 @@ public class CpuImpl implements Cpu {
    * @param localVariableNumber the local variable number
    */
   private void checkLocalVariableAccess(final int localVariableNumber) {
-    
     if (routineContextStack.size() == 0) {
-      
       throw new IllegalStateException("no routine context set");
     }
     
     if (localVariableNumber >= getCurrentRoutineContext().getNumLocalVariables()) {
-      
       throw new IllegalStateException("access to non-existent local variable: "
                                       + localVariableNumber);
     }

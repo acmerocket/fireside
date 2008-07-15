@@ -24,6 +24,7 @@ import java.io.BufferedReader;
 import java.io.IOException;
 import java.io.Reader;
 
+import java.util.logging.Logger;
 import org.zmpp.encoding.IZsciiEncoding;
 
 /**
@@ -34,7 +35,7 @@ import org.zmpp.encoding.IZsciiEncoding;
  * @version 1.5
  */
 public class FileInputStream implements InputStream {
-
+  private static final Logger LOG = Logger.getLogger("FileInputStream");
   private IOSystem iosys;
   private IZsciiEncoding encoding;
   private Reader filereader;
@@ -47,7 +48,6 @@ public class FileInputStream implements InputStream {
    * @param encoding a ZSCII encoding object
    */
   public FileInputStream(IOSystem iosys, IZsciiEncoding encoding) {
-
     this.iosys = iosys;
     this.encoding = encoding;
   }
@@ -56,7 +56,6 @@ public class FileInputStream implements InputStream {
    * {@inheritDoc}
    */
   public String readLine() {
-    
     checkForReader();
     if (input != null) {
       // Read from file
@@ -70,8 +69,7 @@ public class FileInputStream implements InputStream {
           return new String(encoding.convertToZscii(line));
         }
       } catch (IOException ex) {
-        
-        ex.printStackTrace();
+        LOG.throwing("FileInputStream", "readLine", ex);
       }
     }
     return null;
@@ -81,38 +79,27 @@ public class FileInputStream implements InputStream {
    * {@inheritDoc}
    */
   public void close() {
-
     if (input != null) {
-      
       try {
-        
         input.close();
         input = null;
-        
       } catch (IOException ex) {
-        
-        ex.printStackTrace(System.err);
+        LOG.throwing("FileInputStream", "close", ex);
       }
     }
     
     if (filereader != null) {
-      
       try {
-        
         filereader.close();
         filereader = null;
-        
       } catch (IOException ex) {
-        
-        ex.printStackTrace(System.err);
+        LOG.throwing("FileInputStream", "readLine", ex);
       }
     }      
   }
   
   private void checkForReader() {
-    
     if (filereader == null) {
-      
       filereader = iosys.getInputStreamReader();
       input = new BufferedReader(filereader);
     }
