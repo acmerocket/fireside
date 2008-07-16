@@ -417,7 +417,6 @@ public class LongInstruction extends AbstractInstruction {
   private void set_colour() {
     int window = ScreenModel.CURRENT_WINDOW;
     if (getNumOperands() == 3) {
-      
       window = getValue(2);
     }
     getMachine().getScreen().setForeground(getValue(0), window);
