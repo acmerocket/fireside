@@ -28,7 +28,7 @@ import org.zmpp.encoding.IZsciiEncoding;
 import org.zmpp.io.OutputStream;
 import org.zmpp.windowing.AnnotatedCharacter;
 import org.zmpp.windowing.AnnotatedText;
-import org.zmpp.windowing.TextAnnotation;
+import org.zmpp.windowing.TopWindow;
 
 /**
  * BufferedScreenModel is the attempt to provide a reusable screen model
@@ -44,25 +44,7 @@ public class BufferedScreenModel implements ScreenModel, StatusLine,
   OutputStream {
   private static final Logger LOG = Logger.getLogger("BufferedScreenModel");
 
-  class TopWindow {
-    public int cursorx = 1, cursory = 1;
-    TextAnnotation annotation = new TextAnnotation(ScreenModel.FONT_FIXED,
-            ScreenModel.TEXTSTYLE_ROMAN, ScreenModel.COLOR_BLACK,
-            ScreenModel.COLOR_WHITE);
-    
-    public void resetCursor() { cursorx = cursory = 1; }
-    public int setFont(int font) {
-      int previousFont = this.annotation.getFont();
-      annotation = annotation.deriveFont(font);
-      return previousFont;
-    }
-    public AnnotatedCharacter annotateCharacter(char zchar) {
-      return new AnnotatedCharacter(annotation, zchar);
-    }
-  }
-
   private int current = WINDOW_BOTTOM;
-  private int numRowsUpper, numCharsPerRow;
   private BufferedTextWindow bottomWindow = new BufferedTextWindow();
   private TopWindow topWindow = new TopWindow();
   private List<ScreenModelListener> screenModelListeners =
@@ -108,7 +90,7 @@ public class BufferedScreenModel implements ScreenModel, StatusLine,
    * @param num the number of characters in a row
    */
   public void setNumCharsPerRow(int num) {
-    numCharsPerRow = num;
+    topWindow.setNumCharsPerRow(num);
   }
   
   public void reset() {
@@ -117,7 +99,7 @@ public class BufferedScreenModel implements ScreenModel, StatusLine,
 
   public void splitWindow(int linesUpperWindow) {
     LOG.info("SPLIT_WINDOW: " + linesUpperWindow);
-    numRowsUpper = linesUpperWindow;
+    topWindow.setNumRows(linesUpperWindow);
     for (ScreenModelListener l : screenModelListeners) {
       l.screenSplit(linesUpperWindow);
     }
@@ -133,7 +115,7 @@ public class BufferedScreenModel implements ScreenModel, StatusLine,
 
   public void setTextStyle(int style) {
     LOG.info("SET_TEXT_STYLE: " + style);
-    topWindow.annotation = topWindow.annotation.deriveStyle(style);
+    topWindow.setCurrentTextStyle(style);
     bottomWindow.setCurrentTextStyle(style);
   }
 
@@ -169,33 +151,17 @@ public class BufferedScreenModel implements ScreenModel, StatusLine,
   
   public void setTextCursor(int line, int column, int window) {
     int targetWindow = getTargetWindow(window);
-    LOG.info(String.format("SET_TEXT_CURSOR, line: %d, column: %d, " +
-                           "window: %d\n", line, column, targetWindow));
+    //LOG.info(String.format("SET_TEXT_CURSOR, line: %d, column: %d, " +
+    //                       "window: %d\n", line, column, targetWindow));
     if (targetWindow == WINDOW_TOP) {
-      if (outOfUpperBounds(line, column)) {
-        // set to left margin of current line
-        topWindow.cursorx = 1;
-      } else {
-        setTextCursorTopWindow(line, column);
-      }
+      topWindow.setTextCursor(line, column);
     }
-  }
-  
-  private boolean outOfUpperBounds(int line, int column) {
-    if (line < 1 || line > numRowsUpper) return true;
-    if (column < 1 || column > numCharsPerRow) return true;
-    return false;
   }
   
   private int getTargetWindow(int window) {
     return window == ScreenModel.CURRENT_WINDOW ? current : window;
   }
   
-  private void setTextCursorTopWindow(int line, int column) {
-    topWindow.cursory = line;
-    topWindow.cursorx = column;
-  }
-
   public TextCursor getTextCursor() {
     throw new UnsupportedOperationException("Not supported yet.");
   }
@@ -214,13 +180,13 @@ public class BufferedScreenModel implements ScreenModel, StatusLine,
 
   public void setBackground(int colornumber, int window) {
     LOG.info("setBackground, color: " + colornumber);
-    topWindow.annotation = topWindow.annotation.deriveBackground(colornumber);
+    topWindow.setBackground(colornumber);
     bottomWindow.setBackground(colornumber);
   }
 
   public void setForeground(int colornumber, int window) {
     LOG.info("setForeground, color: " + colornumber);
-    topWindow.annotation = topWindow.annotation.deriveForeground(colornumber);
+    topWindow.setForeground(colornumber);
     bottomWindow.setForeground(colornumber);
   }
 
@@ -238,13 +204,8 @@ public class BufferedScreenModel implements ScreenModel, StatusLine,
       }
     } else if (current == WINDOW_TOP) {
       for (ScreenModelListener l : screenModelListeners) {
-        l.topWindowUpdated(topWindow.cursorx, topWindow.cursory,
-                           topWindow.annotateCharacter(unicodeChar));
-      }
-      topWindow.cursorx++;
-      // Make sure the cursor does not overrun the margin
-      if (topWindow.cursorx >= numCharsPerRow) {
-        topWindow.cursorx = numCharsPerRow - 1;
+        topWindow.notifyChange(l, unicodeChar);
+        topWindow.incrementCursorXPos();
       }
     }
   }
@@ -283,9 +244,7 @@ public class BufferedScreenModel implements ScreenModel, StatusLine,
   // ***** Additional public interface
   // ***************************************
 
-  public int getNumRowsUpper() {
-    return numRowsUpper;
-  }
+  public int getNumRowsUpper() { return topWindow.getNumRows(); }
   
   public int getBackground() {
     int background = bottomWindow.getBackground();

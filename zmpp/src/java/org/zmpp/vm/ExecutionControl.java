@@ -75,10 +75,12 @@ public class ExecutionControl {
       enableHeaderFlag(Attribute.SUPPORTS_COLOURS);
       
     }
-    LOG.info("DEFAULT FOREGROUND: " +
-             getFileHeader().getDefaultForeground());
-    LOG.info("DEFAULT BACKGROUND: " +
-             getFileHeader().getDefaultBackground());
+    int defaultForeground = getFileHeader().getDefaultForeground();
+    int defaultBackground = getFileHeader().getDefaultBackground();
+    LOG.info("GAME DEFAULT FOREGROUND: " + defaultForeground);
+    LOG.info("GAME DEFAULT BACKGROUND: " + defaultBackground);
+    machine.getScreen().setBackground(defaultBackground, -1);
+    machine.getScreen().setForeground(defaultForeground, -1);
   }
 
   private void enableHeaderFlag(Attribute attr) {
@@ -92,6 +94,10 @@ public class ExecutionControl {
   public void setDefaultColors(int defaultBackground, int defaultForeground) {
     getFileHeader().setDefaultBackground(defaultBackground);
     getFileHeader().setDefaultForeground(defaultForeground);
+    
+    // Also set the default colors in the screen model !!
+    machine.getScreen().setBackground(defaultBackground, -1);
+    machine.getScreen().setForeground(defaultForeground, -1);
   }
   
   public int getDefaultBackground() {
