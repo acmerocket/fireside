@@ -32,6 +32,7 @@ import java.awt.event.MouseWheelListener;
 import java.io.File;
 import java.io.IOException;
 import java.io.InputStream;
+import java.util.logging.Logger;
 import javax.swing.BorderFactory;
 import javax.swing.JComponent;
 import javax.swing.JLabel;
@@ -61,6 +62,7 @@ public class ScreenModelView extends JComponent
 implements AdjustmentListener, MainViewListener, MouseWheelListener,
            StatusLineListener {
 
+  private static final Logger LOG = Logger.getLogger("ScreenModelView");
   private ScreenModelSplitView mainView = new ScreenModelSplitView();
   private BufferedScreenModel screenModel = new BufferedScreenModel();
   private JScrollBar scrollbar;
@@ -186,7 +188,7 @@ implements AdjustmentListener, MainViewListener, MouseWheelListener,
       executionControl = new ExecutionControl(initStruct);
       initUI(initStruct);
       MachineRunState runState = executionControl.run();
-      System.out.println("PAUSING WITH STATE: " + runState);
+      LOG.info("PAUSING WITH STATE: " + runState);
       mainView.setCurrentRunState(runState);
     }
   }
@@ -196,7 +198,6 @@ implements AdjustmentListener, MainViewListener, MouseWheelListener,
        executionControl.getFileHeader(),
        executionControl.getZsciiEncoding());
     int version = executionControl.getVersion();
-    //System.out.println("initUI, story file version: " + version);
     statusPanel.setVisible(version <= 3);
     mainView.initUI(screenModel, executionControl);
   }

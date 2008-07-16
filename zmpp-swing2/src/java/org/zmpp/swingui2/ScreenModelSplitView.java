@@ -31,6 +31,7 @@ import java.awt.event.KeyEvent;
 import java.awt.event.KeyListener;
 import java.awt.event.MouseWheelListener;
 import java.util.List;
+import java.util.logging.Logger;
 import javax.swing.BorderFactory;
 import javax.swing.JLayeredPane;
 import javax.swing.JTextPane;
@@ -69,6 +70,7 @@ import org.zmpp.vm.BufferedScreenModel.ScreenModelListener;
 public class ScreenModelSplitView extends JLayeredPane
 implements ScreenModelListener {
 
+  private static final Logger LOG = Logger.getLogger("ScreenModelSplitView");
   //private static final Font STD_FONT = new Font("Baskerville", Font.PLAIN, 16);
   private static final Font STD_FONT = new Font("American Typewriter", Font.PLAIN, 12);
   private static final Font FIXED_FONT = new Font("Monaco", Font.PLAIN, 12);
@@ -258,8 +260,8 @@ implements ScreenModelListener {
   public void setCurrentRunState(final MachineRunState runState) {
     stopCurrentTimer();
     if (runState.getRoutine() > 0) {
-      System.out.println("readchar: " + runState.isReadChar() + " time: " +
-        runState.getTime() + " routine: " + runState.getRoutine());
+      LOG.info("readchar: " + runState.isReadChar() + " time: " +
+               runState.getTime() + " routine: " + runState.getRoutine());
       startNewInterruptTimer(runState);
     }
     currentRunState = runState;
@@ -286,9 +288,9 @@ implements ScreenModelListener {
     int numCharsPerRow = componentWidth / charWidth;
     int numRows = componentHeight / charHeight;
     screenModel.setNumCharsPerRow(numCharsPerRow);
-    System.out.println("Char width: " + charWidth + " component width: " +
-            componentWidth + " # chars/row: " + numCharsPerRow +
-            " char height: " + charHeight + " # rows: " + numRows);
+    LOG.info("Char width: " + charWidth + " component width: " +
+             componentWidth + " # chars/row: " + numCharsPerRow +
+             " char height: " + charHeight + " # rows: " + numRows);
     upper.setGridSize(numRows, numCharsPerRow);
     executionControl.resizeScreen(numRows, numCharsPerRow);
   }

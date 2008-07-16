@@ -22,6 +22,7 @@ package org.zmpp.swingui2;
 
 import java.awt.event.KeyEvent;
 import java.awt.event.KeyListener;
+import java.util.logging.Logger;
 import javax.swing.event.ChangeEvent;
 import javax.swing.event.ChangeListener;
 import javax.swing.text.BadLocationException;
@@ -36,6 +37,8 @@ import org.zmpp.vm.ExecutionControl;
 public class ScreenModelViewInputHandler
   implements KeyListener, ChangeListener {
 
+  private static final Logger LOG =
+    Logger.getLogger("ScreenModelViewInputHandler");
   private ScreenModelSplitView view;
   private long lastConsumed;
   /**
@@ -53,18 +56,14 @@ public class ScreenModelViewInputHandler
   // **** Keyboard input handling
   // *************************************************
   public void keyTyped(KeyEvent e) {
-    //System.out.println("keyTyped(): " + e.getKeyChar() + " code: " + e.getKeyCode());
     preventKeyActionIfNeeded(e);
   }
 
   public void keyPressed(KeyEvent e) {
-    //System.out.println("-------------------------");
-    //System.out.println("keyPressed(): " + e.getKeyChar() + " code: " + e.getKeyCode());
     preventKeyActionIfNeeded(e);
   }
 
   public void keyReleased(KeyEvent e) {
-    //System.out.println("keyReleased(): " + e.getKeyChar() + " code: " + e.getKeyCode());
     preventKeyActionIfNeeded(e);
   }
 
@@ -120,7 +119,7 @@ public class ScreenModelViewInputHandler
       try {
         int editStart = getEditStart();
         String input = doc.getText(editStart, doc.getLength() - editStart);
-        System.out.println("ENTER PRESSED, input: [" + input + "]");
+        LOG.info("ENTER PRESSED, input: [" + input + "]");
         doc.insertString(doc.getLength(), "\n", null);
         resumeWithInput(input);
       } catch (BadLocationException ex) {
