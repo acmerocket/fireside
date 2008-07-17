@@ -45,7 +45,30 @@
                         </arity>
                     </context>
                 </action>
+                <action name="run.single">
+                    <script>nbproject/ide-file-targets.xml</script>
+                    <target>run-selected-file-in-test</target>
+                    <context>
+                        <property>run.class</property>
+                        <folder>src/test</folder>
+                        <pattern>\.java$</pattern>
+                        <format>java-name</format>
+                        <arity>
+                            <one-file-only/>
+                        </arity>
+                    </context>
+                </action>
             </ide-actions>
+            <export>
+                <type>folder</type>
+                <location>target/classes</location>
+                <build-target>compile</build-target>
+            </export>
+            <export>
+                <type>folder</type>
+                <location>target/testclasses</location>
+                <build-target>compile</build-target>
+            </export>
             <view>
                 <items>
                     <source-folder style="packages">
@@ -72,12 +95,14 @@
         <java-data xmlns="http://www.netbeans.org/ns/freeform-project-java/2">
             <compilation-unit>
                 <package-root>src/java</package-root>
+                <built-to>target/classes</built-to>
                 <source-level>1.5</source-level>
             </compilation-unit>
             <compilation-unit>
                 <package-root>src/test</package-root>
                 <unit-tests/>
                 <classpath mode="compile">target/classes:lib/junit-4.0.jar:lib/jmock-cglib-1.2.0.jar:lib/jmock-core-1.2.0.jar</classpath>
+                <built-to>target/testclasses</built-to>
                 <source-level>1.5</source-level>
             </compilation-unit>
         </java-data>

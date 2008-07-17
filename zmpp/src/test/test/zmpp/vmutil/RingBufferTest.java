@@ -20,26 +20,28 @@
  */
 package test.zmpp.vmutil;
 
-import junit.framework.TestCase;
+import static org.junit.Assert.*;
+import org.junit.Before;
 
+import org.junit.Test;
 import org.zmpp.vmutil.RingBuffer;
 
-public class RingBufferTest extends TestCase {
+public class RingBufferTest {
 
   private RingBuffer<Integer> ringbuffer;
   
-  protected void setUp() throws Exception {
-    
+  @Before
+  public void setUp() throws Exception {
     ringbuffer = new RingBuffer<Integer>(3);
   }
 
+  @Test
   public void testInitial() {
-    
     assertEquals(0, ringbuffer.size());
   }
   
+  @Test
   public void testAddElementNormal() {
-    
     ringbuffer.add(1);
     assertEquals(1, ringbuffer.size());
     assertEquals(new Integer(1), ringbuffer.get(0));
@@ -57,8 +59,8 @@ public class RingBufferTest extends TestCase {
     assertEquals(new Integer(5), ringbuffer.get(1));
   }
 
+  @Test
   public void testAddElementOverflow() {
-
     // fill it up to the limit
     ringbuffer.add(1);
     ringbuffer.add(2);
@@ -73,8 +75,8 @@ public class RingBufferTest extends TestCase {
     assertEquals(new Integer(7), ringbuffer.get(0));
   }
   
+  @Test
   public void testRemoveNormal() {
-    
     ringbuffer.add(1);
     ringbuffer.add(2);
     Integer elem = ringbuffer.remove(1);
@@ -86,8 +88,8 @@ public class RingBufferTest extends TestCase {
     assertEquals(new Integer(3), ringbuffer.get(1));
   }
   
-  public void testRemoveOverflow() {
-    
+  @Test
+  public void testRemoveOverflow() {  
     // fill it over the limit
     ringbuffer.add(1);
     ringbuffer.add(2);
@@ -101,5 +103,12 @@ public class RingBufferTest extends TestCase {
     assertEquals(2, ringbuffer.size());
     assertEquals(new Integer(2), ringbuffer.get(0));
     assertEquals(new Integer(4), ringbuffer.get(1));
+  }
+  
+  @Test
+  public void testToString() {
+    ringbuffer.add(1);
+    ringbuffer.add(2);
+    assertEquals("{ 1, 2 }", ringbuffer.toString());
   }
 }

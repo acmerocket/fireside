@@ -28,7 +28,7 @@ import org.zmpp.instructions.VariableInstruction;
 import org.zmpp.instructions.VariableStaticInfo;
 import org.zmpp.instructions.AbstractInstruction.OperandCount;
 import org.zmpp.vm.ScreenModel;
-import org.zmpp.vm.TextCursor;
+import org.zmpp.windowing.TextCursor;
 
 import test.zmpp.instructions.InstructionVarV3Test.VariableInstructionMock;
 

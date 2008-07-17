@@ -20,6 +20,7 @@
  */
 package org.zmpp.vm;
 
+import org.zmpp.windowing.TextCursor;
 import org.zmpp.io.OutputStream;
 
 /**

@@ -20,6 +20,7 @@
  */
 package org.zmpp.vm;
 
+import org.zmpp.windowing.TextCursor;
 import org.zmpp.windowing.BufferedTextWindow;
 import java.util.ArrayList;
 import java.util.List;
@@ -163,7 +164,10 @@ public class BufferedScreenModel implements ScreenModel, StatusLine,
   }
   
   public TextCursor getTextCursor() {
-    throw new UnsupportedOperationException("Not supported yet.");
+    if (this.current != ScreenModel.WINDOW_TOP) {
+      throw new UnsupportedOperationException("Not supported yet.");
+    }
+    return topWindow;
   }
   
   public int setFont(int fontnumber) {

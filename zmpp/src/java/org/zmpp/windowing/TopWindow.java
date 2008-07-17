@@ -28,7 +28,7 @@ import org.zmpp.vm.ScreenModel;
  * @author Wei-ju Wu
  * @version 1.5
  */
-public class TopWindow {
+public class TopWindow implements TextCursor {
 
   private int cursorx = 1,  cursory = 1;
   private int numCharsPerRow, numRows;
@@ -98,5 +98,32 @@ public class TopWindow {
     if (column < 1 || column > numCharsPerRow) return true;
     return false;
   }
-  
+
+  /**
+   * {@inheritDoc}
+   */
+  public int getLine() { return cursory; }
+
+  /**
+   * {@inheritDoc}
+   */
+  public int getColumn() { return cursorx; }
+
+  /**
+   * {@inheritDoc}
+   */
+  public void setLine(int line) { cursory = line; }
+
+  /**
+   * {@inheritDoc}
+   */
+  public void setColumn(int column) { cursorx = column; }
+
+  /**
+   * {@inheritDoc}
+   */
+  public void setPosition(int line, int column) {
+    cursorx = column;
+    cursory = line;
+  }
 }

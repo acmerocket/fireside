@@ -1,5 +1,6 @@
 <?xml version="1.0" encoding="UTF-8"?>
 <project basedir=".." name="zmpp-core-IDE">
+    <property file="build.properties" />
     <!-- TODO: edit the following target according to your needs -->
     <!-- (more info: http://www.netbeans.org/kb/41/freeform-config.html#compilesingle) -->
     <target name="compile-selected-files-in-test">
@@ -7,5 +8,17 @@
         <!-- TODO decide on and define some value for ${build.classes.dir} -->
         <mkdir dir="${build.classes.dir}"/>
         <javac destdir="${build.classes.dir}" includes="${files}" source="1.5" srcdir="src/test"/>
+    </target>
+    <!-- (more info: http://www.netbeans.org/kb/41/freeform-config.html#runsingle) -->
+    <target name="run-selected-file-in-test">
+        <fail unless="run.class">Must set property 'run.class'</fail>
+        <junit showoutput="true" printsummary="true">
+            <classpath>
+                <pathelement path="${build.prj}:lib/junit-4.0.jar:lib/jmock-cglib-1.2.0.jar:lib/jmock-core-1.2.0.jar"/>
+                <pathelement location="${build.tests}"/>
+            </classpath>
+            <formatter type="brief" usefile="false" />
+            <test name="${run.class}" />
+        </junit>
     </target>
 </project>

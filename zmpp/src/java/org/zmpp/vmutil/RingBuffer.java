@@ -114,6 +114,7 @@ public class RingBuffer<T> {
   /**
    * {@inheritDoc}
    */
+  @Override
   public String toString() {
     final StringBuilder buffer =  new StringBuilder("{ ");
     for (int i = 0; i < size(); i++) {
