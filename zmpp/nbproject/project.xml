@@ -49,7 +49,7 @@
                     <script>nbproject/ide-file-targets.xml</script>
                     <target>run-selected-file-in-test</target>
                     <context>
-                        <property>run.class</property>
+                        <property>test.class</property>
                         <folder>src/test</folder>
                         <pattern>\.java$</pattern>
                         <format>java-name</format>
