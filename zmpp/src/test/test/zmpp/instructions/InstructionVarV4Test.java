@@ -20,9 +20,10 @@
  */
 package test.zmpp.instructions;
 
-import org.jmock.Mock;
+import org.jmock.Expectations;
 import org.junit.Before;
 import org.junit.Test;
+import static org.junit.Assert.*;
 import org.zmpp.instructions.Operand;
 import org.zmpp.instructions.VariableInstruction;
 import org.zmpp.instructions.VariableStaticInfo;
@@ -32,21 +33,22 @@ import org.zmpp.windowing.TextCursor;
 
 import test.zmpp.instructions.InstructionVarV3Test.VariableInstructionMock;
 
+/**
+ * Test class for VAR instructions on V4.
+ * @author Wei-ju Wu
+ * @version 1.5
+ */
 public class InstructionVarV4Test extends InstructionTestBase {
-
-  private Mock mockScreen;
   private ScreenModel screen;
-  private Mock mockCursor;
   private TextCursor cursor;
 
+  @Override
   @Before
-  protected void setUp() throws Exception {
+  public void setUp() throws Exception {
     super.setUp();
-    mockScreen = mock(ScreenModel.class);
-    screen = (ScreenModel) mockScreen.proxy();
-    mockCursor = mock(TextCursor.class);
-    cursor = (TextCursor) mockCursor.proxy();
-    mockMachine.expects(atLeastOnce()).method("getVersion").will(returnValue(4));
+    screen = context.mock(ScreenModel.class);
+    cursor = context.mock(TextCursor.class);
+    expectStoryVersion(4);
   }
 
   @Test
@@ -72,9 +74,9 @@ public class InstructionVarV4Test extends InstructionTestBase {
 
   @Test
   public void testCallVNIllegalForVersion4() {
-    mockMachine.expects(once()).method("halt").with(eq(
-      "illegal instruction, type: VARIABLE operand count: VAR opcode: 25"));
-    
+    context.checking(new Expectations() {{
+      one (machine).halt("illegal instruction, type: VARIABLE operand count: VAR opcode: 25");
+    }});
     VariableInstruction call = new VariableInstruction(machine,
         OperandCount.VAR, VariableStaticInfo.OP_CALL_VN);
     call.addOperand(new Operand(Operand.TYPENUM_LARGE_CONSTANT, (short) 0x0000));
@@ -85,9 +87,9 @@ public class InstructionVarV4Test extends InstructionTestBase {
   
   @Test
   public void testCallVN2IllegalForVersion4() {
-    mockMachine.expects(once()).method("halt").with(eq(
-      "illegal instruction, type: VARIABLE operand count: VAR opcode: 26"));
-    
+    context.checking(new Expectations() {{
+      one (machine).halt("illegal instruction, type: VARIABLE operand count: VAR opcode: 26");
+    }});
     VariableInstruction call = new VariableInstruction(machine,
         OperandCount.VAR, VariableStaticInfo.OP_CALL_VN2);
     call.addOperand(new Operand(Operand.TYPENUM_LARGE_CONSTANT, (short) 0x0000));
@@ -98,8 +100,10 @@ public class InstructionVarV4Test extends InstructionTestBase {
 
   @Test
   public void testSetTextStyle() {
-    mockMachine.expects(once()).method("getScreen").will(returnValue(screen));
-    mockScreen.expects(once()).method("setTextStyle").with(eq(2));
+    context.checking(new Expectations() {{
+      one (machine).getScreen(); will(returnValue(screen));
+      one (screen).setTextStyle(2);
+    }});
     VariableInstructionMock set_text_style =
       new VariableInstructionMock(machine, VariableStaticInfo.OP_SET_TEXT_STYLE);
     set_text_style.addOperand(new Operand(Operand.TYPENUM_SMALL_CONSTANT, (short) 2));
@@ -109,11 +113,12 @@ public class InstructionVarV4Test extends InstructionTestBase {
 
   @Test
   public void testBufferModeTrue() {    
-    mockMachine.expects(once()).method("getScreen").will(returnValue(screen));
-    mockScreen.expects(once()).method("setBufferMode").with(eq(true));
+    context.checking(new Expectations() {{
+      one (machine).getScreen(); will(returnValue(screen));
+      one (screen).setBufferMode(true);
+    }});
     VariableInstructionMock buffer_mode =
-      new VariableInstructionMock(machine, VariableStaticInfo.OP_BUFFER_MODE);
-    
+      new VariableInstructionMock(machine, VariableStaticInfo.OP_BUFFER_MODE);    
     buffer_mode.addOperand(new Operand(Operand.TYPENUM_SMALL_CONSTANT, (short) 1));
     buffer_mode.execute();
     assertTrue(buffer_mode.nextInstructionCalled);
@@ -121,8 +126,10 @@ public class InstructionVarV4Test extends InstructionTestBase {
   
   @Test
   public void testBufferModeFalse() {
-    mockMachine.expects(once()).method("getScreen").will(returnValue(screen));
-    mockScreen.expects(once()).method("setBufferMode").with(eq(false));
+    context.checking(new Expectations() {{
+      one (machine).getScreen(); will(returnValue(screen));
+      one (screen).setBufferMode(false);
+    }});
     VariableInstructionMock buffer_mode =
       new VariableInstructionMock(machine, VariableStaticInfo.OP_BUFFER_MODE);
     
@@ -133,12 +140,12 @@ public class InstructionVarV4Test extends InstructionTestBase {
 
   @Test
   public void testEraseWindow() {
-    mockMachine.expects(once()).method("getScreen").will(returnValue(screen));
-    mockScreen.expects(once()).method("eraseWindow").with(eq(1));
-        
+    context.checking(new Expectations() {{
+      one (machine).getScreen(); will(returnValue(screen));
+      one (screen).eraseWindow(1);
+    }});
     VariableInstructionMock erase_window =
-      new VariableInstructionMock(machine, VariableStaticInfo.OP_ERASE_WINDOW);
-    
+      new VariableInstructionMock(machine, VariableStaticInfo.OP_ERASE_WINDOW);    
     erase_window.addOperand(new Operand(Operand.TYPENUM_SMALL_CONSTANT, (short) 1));
     erase_window.execute();
     assertTrue(erase_window.nextInstructionCalled);
@@ -146,8 +153,10 @@ public class InstructionVarV4Test extends InstructionTestBase {
 
   @Test
   public void testEraseLine() {
-    mockMachine.expects(once()).method("getScreen").will(returnValue(screen));
-    mockScreen.expects(once()).method("eraseLine").with(eq(1));
+    context.checking(new Expectations() {{
+      one (machine).getScreen(); will(returnValue(screen));
+      one (screen).eraseLine(1);
+    }});
     VariableInstructionMock erase_line =
       new VariableInstructionMock(machine, VariableStaticInfo.OP_ERASE_LINE);
     
@@ -158,9 +167,10 @@ public class InstructionVarV4Test extends InstructionTestBase {
 
   @Test
   public void testSetCursor() {
-    mockMachine.expects(once()).method("getScreen").will(returnValue(screen));
-    mockScreen.expects(once()).method("setTextCursor").with(eq(1), eq(2), eq(-3));
-        
+    context.checking(new Expectations() {{
+      one (machine).getScreen(); will(returnValue(screen));
+      one (screen).setTextCursor(1, 2, -3);
+    }});
     VariableInstructionMock set_cursor =
       new VariableInstructionMock(machine, VariableStaticInfo.OP_SET_CURSOR);
     
@@ -170,13 +180,16 @@ public class InstructionVarV4Test extends InstructionTestBase {
     assertTrue(set_cursor.nextInstructionCalled);
   }  
 
+  @Test
   public void testGetCursor() {
-    mockMachine.expects(once()).method("getScreen").will(returnValue(screen));
-    mockScreen.expects(once()).method("getTextCursor").will(returnValue(cursor));
-    mockCursor.expects(once()).method("getLine").will(returnValue(1));
-    mockCursor.expects(once()).method("getColumn").will(returnValue(1));
-    mockMachine.expects(atLeastOnce()).method("writeShort").withAnyArguments();
-        
+    context.checking(new Expectations() {{
+      one (machine).getScreen(); will(returnValue(screen));
+      one (screen).getTextCursor(); will(returnValue(cursor));
+      one (cursor).getLine(); will(returnValue(1));
+      one (cursor).getColumn(); will(returnValue(1));
+      one (machine).writeShort(4711, (short) 1);
+      one (machine).writeShort(4713, (short) 1);
+    }});
     VariableInstructionMock get_cursor =
       new VariableInstructionMock(machine, VariableStaticInfo.OP_GET_CURSOR);
     
@@ -185,19 +198,21 @@ public class InstructionVarV4Test extends InstructionTestBase {
     assertTrue(get_cursor.nextInstructionCalled);
   }  
 
+  @Test
   public void testNotIsIllegalPriorV5() {
-    mockMachine.expects(once()).method("halt").with(eq(
-        "illegal instruction, type: VARIABLE operand count: VAR opcode: 24"));    
-    
+    context.checking(new Expectations() {{
+      one (machine).halt("illegal instruction, type: VARIABLE operand count: VAR opcode: 24");
+    }});
     VariableInstructionMock not =
       new VariableInstructionMock(machine, VariableStaticInfo.OP_NOT);    
     not.execute();
   }
 
+  @Test
   public void testTokeniseIllegalPriorV5() {
-    mockMachine.expects(once()).method("halt").with(eq(
-        "illegal instruction, type: VARIABLE operand count: VAR opcode: 27"));    
-    
+    context.checking(new Expectations() {{
+      one (machine).halt("illegal instruction, type: VARIABLE operand count: VAR opcode: 27");
+    }});
     VariableInstructionMock tokenise =
       new VariableInstructionMock(machine, VariableStaticInfo.OP_TOKENISE);    
     tokenise.execute();

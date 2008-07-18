@@ -20,50 +20,65 @@
  */
 package test.zmpp.vm;
 
-import org.jmock.Mock;
-import org.jmock.MockObjectTestCase;
+import org.jmock.Expectations;
+import org.jmock.Mockery;
+import org.jmock.integration.junit4.JMock;
+import org.jmock.integration.junit4.JUnit4Mockery;
+import org.junit.Before;
+import org.junit.Test;
+import org.junit.runner.RunWith;
+import static org.junit.Assert.*;
 import org.zmpp.vm.Machine;
 import org.zmpp.vm.MemoryOutputStream;
 
-public class MemoryOutputStreamTest extends MockObjectTestCase {
-
-  private Mock mockMachine;
+/**
+ * Test class for MemoryOutputStream.
+ * @author Wei-ju Wu
+ * @version 1.5
+ */
+@RunWith(JMock.class)
+public class MemoryOutputStreamTest {
+  Mockery context = new JUnit4Mockery();
   private Machine machine;
   private MemoryOutputStream output;
 
-  @Override
-  protected void setUp() throws Exception {
-    mockMachine = mock(Machine.class);
-    machine = (Machine) mockMachine.proxy();
+  @Before
+  public void setUp() throws Exception {
+    machine = context.mock(Machine.class);
     output = new MemoryOutputStream(machine);
   }
   
+  @Test
   public void testPrintVersion5() {
-    mockMachine.expects(once()).method("getVersion").will(returnValue(5));
-    
-    mockMachine.expects(once()).method("writeUnsignedByte").with(eq(4713), eq((short)65));
-    mockMachine.expects(once()).method("writeUnsignedShort").with(eq(4711), eq(1));
-    
+    context.checking(new Expectations() {{
+      one (machine).getVersion(); will(returnValue(5));
+      one (machine).writeUnsignedByte(4713, (short) 65);
+      one (machine).writeUnsignedShort(4711, 1);
+    }});
     // Selection has to be performed prior to printing - ALWAYS !!!
     output.select(4711, 0);    
     output.print((char) 65);
     output.select(false);
   }
   
+  @Test
   public void testIsSelected() {
     output.select(4711, 0);
     assertTrue(output.isSelected());
   }
   
+  @Test
   public void testUnusedMethods() {
     output.flush();
     output.close();
   }
   
+  @Test
   public void testSelectMaxNesting() {
-    mockMachine.expects(once()).method("halt").with(eq("maximum nesting depth (16) for stream 3 exceeded"));
+    context.checking(new Expectations() {{
+      one (machine).halt("maximum nesting depth (16) for stream 3 exceeded");
+    }});
     for (int i = 0; i < 17; i++) {
-      
       output.select(4710 + 10 * i, 0);
     }
   }  

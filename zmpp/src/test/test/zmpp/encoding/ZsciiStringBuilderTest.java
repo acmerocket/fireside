@@ -20,15 +20,22 @@
  */
 package test.zmpp.encoding;
 
-import junit.framework.TestCase;
+import org.junit.Test;
+import static org.junit.Assert.*;
 
 import org.zmpp.encoding.DefaultAccentTable;
 import org.zmpp.encoding.ZsciiEncoding;
 import org.zmpp.encoding.ZsciiString;
 import org.zmpp.encoding.ZsciiStringBuilder;
 
-public class ZsciiStringBuilderTest extends TestCase {
+/**
+ * Test class for ZsciiStringBuilder.
+ * @author Wei-ju Wu
+ * @version 1.5
+ */
+public class ZsciiStringBuilderTest {
 
+  @Test
   public void testEmpty() {
     ZsciiString.initialize(new ZsciiEncoding(new DefaultAccentTable()));
     ZsciiStringBuilder builder = new ZsciiStringBuilder();
@@ -36,6 +43,7 @@ public class ZsciiStringBuilderTest extends TestCase {
     assertEquals(0, builder.toString().length());
   }
   
+  @Test
   public void testAppend() {
     ZsciiStringBuilder builder = new ZsciiStringBuilder();
     builder.append('a');
@@ -44,6 +52,7 @@ public class ZsciiStringBuilderTest extends TestCase {
     assertEquals("a", builder.toString());
   }
 
+  @Test
   public void testAppendString() { 
     ZsciiStringBuilder builder = new ZsciiStringBuilder();
     char[] zchars = { 'H', 'i' };

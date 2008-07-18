@@ -20,7 +20,14 @@
  */
 package test.zmpp.instructions;
 
-import org.jmock.Mock;
+import org.jmock.Expectations;
+import org.jmock.Mockery;
+import org.jmock.integration.junit4.JMock;
+import org.jmock.integration.junit4.JUnit4Mockery;
+import org.junit.Before;
+import org.junit.Test;
+import org.junit.runner.RunWith;
+import static org.junit.Assert.*;
 import org.zmpp.base.DefaultMemory;
 import org.zmpp.base.Memory;
 import org.zmpp.instructions.AbstractInstruction;
@@ -42,12 +49,12 @@ import test.zmpp.vm.MiniZorkSetup;
  * This class contains tests for the InstructionDecoder class.
  *
  * @author Wei-ju Wu
- * @version 1.0
+ * @version 1.5
  */
+@RunWith(JMock.class)
 public class InstructionDecoderTest extends MiniZorkSetup {
-
+  private Mockery context = new JUnit4Mockery();
   private InstructionDecoder decoder;
-  
   private Memory amfvmem;
   private byte[] call_vs2 = {
       (byte) 0xec, 0x25, (byte) 0xbf, 0x3b, (byte) 0xf7, (byte) 0xa0,
@@ -55,7 +62,8 @@ public class InstructionDecoderTest extends MiniZorkSetup {
   };
   
   @Override
-  protected void setUp() throws Exception {
+  @Before
+  public void setUp() throws Exception {
     super.setUp();
     decoder = new InstructionDecoder();
     decoder.initialize(machine);
@@ -65,8 +73,8 @@ public class InstructionDecoderTest extends MiniZorkSetup {
    * Tests for minizork's instructions. This is more of an integration test,
    * leave it here anyways.
    */
+  @Test
   public void testMinizorkVariable() {
-    
     // VARIABLE: Instruction at 0x37d9 is call 0x3b36, #3e88, #ffff
     AbstractInstruction info = (AbstractInstruction) decoder.decodeInstruction(0x37d9);
     assertEquals(InstructionForm.VARIABLE, info.getInstructionForm());
@@ -100,9 +108,9 @@ public class InstructionDecoderTest extends MiniZorkSetup {
     assertEquals(0x01, info2.getOperand(2).getValue());
     assertEquals(0x37e7, 0x37e2 + info2.getLength());
   }
-  
-  public void testMinizorkBranch() {
-    
+
+  @Test
+  public void testMinizorkBranch() {    
     // SHORT 1OP: Instruction at 0x3773 is jz g17 [true] 0x377f
     AbstractInstruction jz = (AbstractInstruction) decoder.decodeInstruction(0x3773);
     assertEquals(InstructionForm.SHORT, jz.getInstructionForm());
@@ -115,9 +123,9 @@ public class InstructionDecoderTest extends MiniZorkSetup {
     assertTrue(jz.branchIfTrue());
     assertEquals(0x377f, 0x3773 + jz.getLength() + jz.getBranchOffset() - 2);
   }
-  
-  public void testMinizorkRet() {
-    
+
+  @Test
+  public void testMinizorkRet() {  
     // SHORT 1OP: Instruction at 0x37d5 is ret L04
     AbstractInstruction retL04 = (AbstractInstruction) decoder.decodeInstruction(0x37d5);
     assertEquals(InstructionForm.SHORT, retL04.getInstructionForm());
@@ -128,8 +136,8 @@ public class InstructionDecoderTest extends MiniZorkSetup {
     assertEquals(5, retL04.getOperand(0).getValue());    
   }
   
-  public void testMinizorkShort1OP() {
-            
+  @Test
+  public void testMinizorkShort1OP() {          
     // SHORT 1OP: Instruction at 0x379f is dec L01
     AbstractInstruction decL01 = (AbstractInstruction) decoder.decodeInstruction(0x379f);
     assertEquals(InstructionForm.SHORT, decL01.getInstructionForm());
@@ -159,10 +167,9 @@ public class InstructionDecoderTest extends MiniZorkSetup {
     assertEquals(OperandType.SMALL_CONSTANT, incL02.getOperand(0).getType());    
     assertEquals(3, incL02.getOperand(0).getValue());    
   }
-  
-  public void testMinizorkShort() {
-  
 
+  @Test
+  public void testMinizorkShort() {
     // SHORT 0OP: Instruction at 0x3788 is rfalse
     AbstractInstruction rfalse = (AbstractInstruction) decoder.decodeInstruction(0x3788);
     assertEquals(InstructionForm.SHORT, rfalse.getInstructionForm());
@@ -171,9 +178,9 @@ public class InstructionDecoderTest extends MiniZorkSetup {
     assertEquals(Short0StaticInfo.OP_RFALSE, rfalse.getOpcode());    
     assertEquals(0x3789, 0x3788 + rfalse.getLength());
   }
-  
+
+  @Test
   public void testMinizorkLong() {
-   
     // LONG: Instruction at 0x37c9 is je L02, L01
     AbstractInstruction je = (AbstractInstruction) decoder.decodeInstruction(0x37c9);
     
@@ -186,9 +193,9 @@ public class InstructionDecoderTest extends MiniZorkSetup {
     assertEquals(OperandType.VARIABLE, je.getOperand(1).getType());
     assertEquals(2, je.getOperand(1).getValue());
   }
-  
+
+  @Test
   public void testMinizorkPrint() {
-    
     AbstractInstruction print = (AbstractInstruction) decoder.decodeInstruction(0x393f);
     assertEquals(InstructionForm.SHORT, print.getInstructionForm());
     assertEquals(OperandCount.C0OP, print.getOperandCount());
@@ -206,9 +213,9 @@ public class InstructionDecoderTest extends MiniZorkSetup {
     assertEquals(5, print_ret.getLength());
     
   }
-  
-  public void testMinizorkAnd() {
-    
+
+  @Test
+  public void testMinizorkAnd() {    
     // AH !!! This is really a long instruction, but encoded as a
     // variable instruction, this is odd !!!!
     // This needs to be handled !!!
@@ -222,14 +229,13 @@ public class InstructionDecoderTest extends MiniZorkSetup {
     assertEquals(OperandType.LARGE_CONSTANT, and.getOperand(1).getType());
     assertEquals(0x07ff, and.getOperand(1).getValue());
     
-    // Here is a store variable to come, because the operation defines it
-    
+    // Here is a store variable to come, because the operation defines it    
     assertEquals(0, and.getStoreVariable());
     assertEquals(6, and.getLength());
   }
-  
-  public void testMinizorkJump() {
-    
+
+  @Test
+  public void testMinizorkJump() {  
     AbstractInstruction jump = (AbstractInstruction) decoder.decodeInstruction(0x58f7);
     assertEquals(OperandCount.C1OP, jump.getOperandCount());
     assertEquals(InstructionForm.SHORT, jump.getInstructionForm());
@@ -238,9 +244,8 @@ public class InstructionDecoderTest extends MiniZorkSetup {
     assertEquals(-12, (short) jump.getOperand(0).getValue());
   }
 
-  
+  @Test
   public void testMinizorkGetSibling() {
-    //System.out.println("get_sibling");
     AbstractInstruction get_sibling = (AbstractInstruction) decoder.decodeInstruction(0x6dbd);
     assertEquals(OperandCount.C1OP, get_sibling.getOperandCount());
     assertEquals(InstructionForm.SHORT, get_sibling.getInstructionForm());
@@ -250,9 +255,9 @@ public class InstructionDecoderTest extends MiniZorkSetup {
     assertEquals(4, (short) get_sibling.getStoreVariable());
     assertEquals(-85, (short) get_sibling.getBranchOffset());
   }
-  
-  public void testJe3Operands() {
-    
+
+  @Test
+  public void testJe3Operands() {    
     AbstractInstruction je3 = (AbstractInstruction) decoder.decodeInstruction(0x6dc5);
     assertEquals(InstructionForm.LONG, je3.getInstructionForm());    
     assertEquals(OperandCount.VAR, je3.getOperandCount());
@@ -264,54 +269,40 @@ public class InstructionDecoderTest extends MiniZorkSetup {
     assertEquals(OperandType.SMALL_CONSTANT, je3.getOperand(2).getType());
     assertEquals(0x1e, je3.getOperand(2).getValue());
   }
-  
-  
-  public void testDecodeCallVs2() {
 
+  @Test
+  public void testDecodeCallVs2() {
     // Setup for machine 4
     amfvmem = new DefaultMemory(call_vs2);
-    Mock mockMachine4 = mock(Machine.class);
-    Machine machine4 = (Machine) mockMachine4.proxy();
-    
+    final Machine machine4 = context.mock(Machine.class);
     InstructionDecoder decoder4 = new InstructionDecoder();
     decoder4.initialize(machine4);
-    
-    mockMachine4.expects(atLeastOnce()).method("getVersion").will(returnValue(4));
-    mockMachine4.expects(atLeastOnce()).method("readUnsignedByte").with(eq(0)).
-            will(returnValue((short) amfvmem.readUnsignedByte(0)));
-    mockMachine4.expects(atLeastOnce()).method("readUnsignedByte").with(eq(1)).
-            will(returnValue((short) amfvmem.readUnsignedByte(1)));
-    mockMachine4.expects(atLeastOnce()).method("readUnsignedByte").with(eq(2)).
-            will(returnValue((short) amfvmem.readUnsignedByte(2)));
-    mockMachine4.expects(atLeastOnce()).method("readShort").with(eq(3)).
-            will(returnValue((short) amfvmem.readShort(3)));
-    mockMachine4.expects(atLeastOnce()).method("readUnsignedByte").with(eq(5)).
-            will(returnValue((short) amfvmem.readUnsignedByte(5)));
-    mockMachine4.expects(atLeastOnce()).method("readUnsignedByte").with(eq(6)).
-            will(returnValue((short) amfvmem.readUnsignedByte(6)));
-    mockMachine4.expects(atLeastOnce()).method("readUnsignedByte").with(eq(7)).
-            will(returnValue((short) amfvmem.readUnsignedByte(7)));
-    mockMachine4.expects(atLeastOnce()).method("readUnsignedByte").with(eq(8)).
-            will(returnValue((short) amfvmem.readUnsignedByte(8)));
-    mockMachine4.expects(atLeastOnce()).method("readUnsignedByte").with(eq(9)).
-            will(returnValue((short) amfvmem.readUnsignedByte(9)));
-    
+    context.checking(new Expectations() {{
+      atLeast(1).of (machine4).getVersion(); will(returnValue(4));
+      for (int i = 0; i <= 2; i++) {
+        atLeast(1).of (machine4).readUnsignedByte(i); will(returnValue(amfvmem.readUnsignedByte(i)));
+      }
+      atLeast(1).of (machine4).readShort(3); will(returnValue(amfvmem.readShort(3)));
+      for (int i = 5; i <= 9; i++) {
+        atLeast(1).of (machine4).readUnsignedByte(i); will(returnValue(amfvmem.readUnsignedByte(i)));
+      }
+    }});    
     // Expected:
     // ecf4:  CALL_VS2        efdc (G90,#10,#20,L00) -> -(SP)
-    AbstractInstruction call_vs2 = (AbstractInstruction) decoder4.decodeInstruction(0);
-    assertEquals(InstructionForm.VARIABLE, call_vs2.getInstructionForm());
-    assertTrue(call_vs2.storesResult());
-    assertEquals(5, call_vs2.getNumOperands());
-    assertEquals(OperandType.LARGE_CONSTANT, call_vs2.getOperand(0).getType());
-    assertEquals(OperandType.VARIABLE, call_vs2.getOperand(1).getType());
-    assertEquals(OperandType.SMALL_CONSTANT, call_vs2.getOperand(2).getType());
-    assertEquals(OperandType.SMALL_CONSTANT, call_vs2.getOperand(3).getType());
-    assertEquals(OperandType.VARIABLE, call_vs2.getOperand(4).getType());
-    assertEquals(15351, call_vs2.getOperand(0).getValue());
-    assertEquals(0xa0, call_vs2.getOperand(1).getValue());
-    assertEquals(0x10, call_vs2.getOperand(2).getValue());
-    assertEquals(0x20, call_vs2.getOperand(3).getValue());
-    assertEquals(1, call_vs2.getOperand(4).getValue());
-    assertEquals(0, call_vs2.getStoreVariable());
+    AbstractInstruction callvs2 = (AbstractInstruction) decoder4.decodeInstruction(0);
+    assertEquals(InstructionForm.VARIABLE, callvs2.getInstructionForm());
+    assertTrue(callvs2.storesResult());
+    assertEquals(5, callvs2.getNumOperands());
+    assertEquals(OperandType.LARGE_CONSTANT, callvs2.getOperand(0).getType());
+    assertEquals(OperandType.VARIABLE, callvs2.getOperand(1).getType());
+    assertEquals(OperandType.SMALL_CONSTANT, callvs2.getOperand(2).getType());
+    assertEquals(OperandType.SMALL_CONSTANT, callvs2.getOperand(3).getType());
+    assertEquals(OperandType.VARIABLE, callvs2.getOperand(4).getType());
+    assertEquals(15351, callvs2.getOperand(0).getValue());
+    assertEquals(0xa0, callvs2.getOperand(1).getValue());
+    assertEquals(0x10, callvs2.getOperand(2).getValue());
+    assertEquals(0x20, callvs2.getOperand(3).getValue());
+    assertEquals(1, callvs2.getOperand(4).getValue());
+    assertEquals(0, callvs2.getStoreVariable());
   }
 }

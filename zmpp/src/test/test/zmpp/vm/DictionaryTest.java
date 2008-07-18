@@ -20,8 +20,15 @@
  */
 package test.zmpp.vm;
 
-import org.jmock.Mock;
-import org.jmock.MockObjectTestCase;
+import org.jmock.Expectations;
+import org.jmock.Mockery;
+import org.jmock.integration.junit4.JMock;
+import org.jmock.integration.junit4.JUnit4Mockery;
+import org.junit.Before;
+import org.junit.Test;
+import org.junit.runner.RunWith;
+import static org.junit.Assert.*;
+
 import org.zmpp.base.Memory;
 import org.zmpp.encoding.DefaultAccentTable;
 import org.zmpp.encoding.ZCharDecoder;
@@ -35,111 +42,90 @@ import org.zmpp.vm.DictionarySizesV1ToV3;
  * This class tests the dictionary view.
  *
  * @author Wei-ju Wu
- * @version 1.0
+ * @version 1.5
  */
-public class DictionaryTest extends MockObjectTestCase {//extends MemoryMapSetup {
-
-  private Mock mockMemory;
+@RunWith(JMock.class)
+public class DictionaryTest {
+  Mockery context = new JUnit4Mockery();
   private Memory memory;
   private Dictionary dictionary;
-  private Mock mockDecoder;
   private ZCharDecoder decoder;
-  
-  /**
-   * {@inheritDoc}
-   */
-  protected void setUp() throws Exception {
-    
-    super.setUp();
 
-    mockMemory = mock(Memory.class);
-    memory = (Memory) mockMemory.proxy();
-    mockDecoder = mock(ZCharDecoder.class);
-    decoder = (ZCharDecoder) mockDecoder.proxy();
+  @Before
+  public void setUp() throws Exception {
+    memory = context.mock(Memory.class);
+    decoder = context.mock(ZCharDecoder.class);
     ZsciiEncoding encoding = new ZsciiEncoding(new DefaultAccentTable());
     ZsciiString.initialize(encoding);
-    ZsciiString get = new ZsciiString(new char[] { 'g', 'e', 't'});
-    ZsciiString look = new ZsciiString(new char[] { 'l', 'o', 'o', 'k' });
+    final ZsciiString get = new ZsciiString(new char[] { 'g', 'e', 't'});
+    final ZsciiString look = new ZsciiString(new char[] { 'l', 'o', 'o', 'k' });
 
     // num separators
-    mockMemory.expects(exactly(5)).method("readUnsignedByte")
-      .with(eq(1000)).will(returnValue((short) 3));
-    
-    // num entries
-    mockMemory.expects(once()).method("readShort")
-      .with(eq(1005))
-      .will(returnValue((short) 2));
-    
-    // entry size
-    mockMemory.expects(exactly(2)).method("readUnsignedByte")
-      .with(eq(1004))
-      .will(returnValue((short) 4));
-    
-    mockDecoder.expects(once()).method("decode2Zscii")
-      .with(eq(memory), eq(1007), eq(4))
-      .will(returnValue(get));
-    mockDecoder.expects(once()).method("decode2Zscii")
-      .with(eq(memory), eq(1011), eq(4))
-      .will(returnValue(look));
-    
+    context.checking(new Expectations() {{
+      // num separators
+      exactly(5).of (memory).readUnsignedByte(1000); will(returnValue((short) 3));
+      // num entries
+      one (memory).readShort(1005); will(returnValue((short) 2));
+      // entry size
+      exactly(2).of (memory).readUnsignedByte(1004); will(returnValue((short) 4));
+
+      // "get"
+      one (decoder).decode2Zscii(memory, 1007, 4); will(returnValue(get));
+      // "look"
+      one (decoder).decode2Zscii(memory, 1011, 4); will(returnValue(look));
+    }});    
     dictionary = new DefaultDictionary(memory, 1000, decoder,
           new DictionarySizesV1ToV3());
   }
   
+  @Test
   public void testGetNumSeparators() {
-    
-    mockMemory.expects(once()).method("readUnsignedByte")
-      .with(eq(1000))
-      .will(returnValue((short) 3));
+    context.checking(new Expectations() {{
+      one (memory).readUnsignedByte(1000); will(returnValue((short) 3));
+    }});
     assertEquals(3, dictionary.getNumberOfSeparators());
   }
-  
+
+  @Test
   public void testGetNumEntries() {
-    
-    mockMemory.expects(once()).method("readUnsignedByte")
-      .with(eq(1000))
-      .will(returnValue((short) 3));
-    mockMemory.expects(once()).method("readShort")
-      .with(eq(1005))
-      .will(returnValue((short) 536));
+    context.checking(new Expectations() {{
+      one (memory).readUnsignedByte(1000); will(returnValue((short) 3));
+      one (memory).readShort(1005); will(returnValue((short) 536));
+    }});
     assertEquals(536, dictionary.getNumberOfEntries());
   }
   
+  @Test
   public void testGetEntryLength() {
-    mockMemory.expects(once()).method("readUnsignedByte")
-      .with(eq(1000))
-      .will(returnValue((short) 3));
-    mockMemory.expects(once()).method("readUnsignedByte")
-      .with(eq(1004))
-      .will(returnValue((short) 7));
+    context.checking(new Expectations() {{
+      one (memory).readUnsignedByte(1000); will(returnValue((short) 3));
+      one (memory).readUnsignedByte(1004); will(returnValue((short) 7));
+    }});
     assertEquals(7, dictionary.getEntryLength());
   }
-  
-  public void testGetEntryAddress() {
 
-    mockMemory.expects(exactly(2)).method("readUnsignedByte")
-      .with(eq(1000))
-      .will(returnValue((short) 3));
-    mockMemory.expects(once()).method("readUnsignedByte")
-      .with(eq(1004))
-      .will(returnValue((short) 7));
-    
+  @Test
+  public void testGetEntryAddress() {
+    context.checking(new Expectations() {{
+      exactly(2).of (memory).readUnsignedByte(1000); will(returnValue((short) 3));
+      one (memory).readUnsignedByte(1004); will(returnValue((short) 7));
+    }});
     assertEquals(1014, dictionary.getEntryAddress(1));
   }
   
+  @Test
   public void testGetSeparator() {
-    
-    mockMemory.expects(once()).method("readUnsignedByte")
-      .with(eq(1001))
-      .will(returnValue((short) '.'));
+    context.checking(new Expectations() {{
+      one (memory).readUnsignedByte(1001); will(returnValue((short) '.'));
+    }});
     assertEquals('.', dictionary.getSeparator(0));
   }
 
+  @Test
   public void testLookup() {
-    
     char[] get = { 'g', 'e', 't' };
     char[] nonsense = { 'n', 'o', 'n', 's', 'e', 'n', 's', 'e' };
     assertEquals(1007, dictionary.lookup(new ZsciiString(get)));
     assertEquals(0, dictionary.lookup(new ZsciiString(nonsense)));
-  }  
+  }
 }

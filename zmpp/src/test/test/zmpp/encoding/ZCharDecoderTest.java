@@ -23,8 +23,15 @@ package test.zmpp.encoding;
 import java.io.File;
 import java.io.RandomAccessFile;
 
-import org.jmock.Mock;
-import org.jmock.MockObjectTestCase;
+import org.jmock.Expectations;
+import org.jmock.Mockery;
+import org.jmock.integration.junit4.JMock;
+import org.jmock.integration.junit4.JUnit4Mockery;
+import org.junit.Before;
+import org.junit.Test;
+import org.junit.runner.RunWith;
+import static org.junit.Assert.*;
+
 import org.zmpp.base.DefaultMemory;
 import org.zmpp.base.Memory;
 import org.zmpp.encoding.AlphabetTable;
@@ -41,6 +48,7 @@ import org.zmpp.encoding.ZCharDecoder.AbbreviationsTable;
 import org.zmpp.vm.Abbreviations;
 import org.zmpp.vm.DefaultStoryFileHeader;
 import org.zmpp.vm.StoryFileHeader;
+import static test.zmpp.testutil.ZmppTestUtil.*;
 
 /**
  * This class tests the DefaultZCharDecoder class.
@@ -48,11 +56,10 @@ import org.zmpp.vm.StoryFileHeader;
  * @author Wei-ju Wu
  * @version 1.0
  */
-public class ZCharDecoderTest extends MockObjectTestCase {
-
-  private Mock mockMemory;
+@RunWith(JMock.class)
+public class ZCharDecoderTest {
+  Mockery context = new JUnit4Mockery();
   private Memory memory;
-  private Mock mockAbbrev;
   private AbbreviationsTable abbrev;
   private ZCharDecoder decoder;
   byte shift2 = 2;
@@ -60,12 +67,10 @@ public class ZCharDecoderTest extends MockObjectTestCase {
   byte shift4 = 4;
   byte shift5 = 5;
 
+  @Before
   public void setUp() {
-   
-    mockAbbrev = mock(AbbreviationsTable.class);
-    abbrev = (AbbreviationsTable) mockAbbrev.proxy();
-    mockMemory = mock(Memory.class);
-    memory = (Memory) mockMemory.proxy();
+    abbrev = context.mock(AbbreviationsTable.class);
+    memory = context.mock(Memory.class);
     
     ZsciiEncoding encoding = new ZsciiEncoding(new DefaultAccentTable());
     ZsciiString.initialize(encoding);
@@ -74,13 +79,13 @@ public class ZCharDecoderTest extends MockObjectTestCase {
     decoder = new DefaultZCharDecoder(encoding, translator, abbrev);
   }
   
+  @Test
   public void testDecodeByte() {
-  
     assertEquals('a', decoder.decodeZChar((char) 6));
   }
   
+  @Test
   public void testDecode2Unicode2Params() {
-  
     byte[] hello = { 0x35, 0x51, (byte) 0xc6, (byte) 0x85 };
     byte[] Hello = { 0x11, (byte) 0xaa, (byte) 0xc6, (byte) 0x34 };
     Memory memory1 = new DefaultMemory(hello);     
@@ -93,26 +98,26 @@ public class ZCharDecoderTest extends MockObjectTestCase {
   // **** Real-world tests
   // ****************************************
   
+  @Test
   public void testMinizork() throws Exception {
-    
-    File zork1 = new File("testfiles/minizork.z3");
+    File zork1 = createLocalFile("testfiles/minizork.z3");
     RandomAccessFile file = new RandomAccessFile(zork1, "r");
     int fileSize = (int) file.length();
     byte[] zork1data = new byte[fileSize];    
     file.read(zork1data);
     file.close();
     
-    Memory memory = new DefaultMemory(zork1data);
-    StoryFileHeader fileheader = new DefaultStoryFileHeader(memory);
-    AbbreviationsTable abbr = new Abbreviations(memory, fileheader.getAbbreviationsAddress());
+    Memory mem = new DefaultMemory(zork1data);
+    StoryFileHeader fileheader = new DefaultStoryFileHeader(mem);
+    AbbreviationsTable abbr = new Abbreviations(mem, fileheader.getAbbreviationsAddress());
 
     ZsciiEncoding encoding = new ZsciiEncoding(new DefaultAccentTable());
     AlphabetTable alphabetTable = new DefaultAlphabetTable(); 
     ZCharTranslator translator = new DefaultZCharTranslator(alphabetTable);
     
-    ZCharDecoder decoder = new DefaultZCharDecoder(encoding, translator, abbr);
-    assertEquals("The Great Underground Empire", decoder.decode2Zscii(memory, 0xc120, 0).toString());
-    assertEquals("[I don't understand that sentence.]", decoder.decode2Zscii(memory, 0x3e6d, 0).toString());
+    ZCharDecoder dec = new DefaultZCharDecoder(encoding, translator, abbr);
+    assertEquals("The Great Underground Empire", dec.decode2Zscii(mem, 0xc120, 0).toString());
+    assertEquals("[I don't understand that sentence.]", dec.decode2Zscii(mem, 0x3e6d, 0).toString());
   }
 
   /**
@@ -120,8 +125,8 @@ public class ZCharDecoderTest extends MockObjectTestCase {
    * clarified that the current shift lock alphabet needs to be restored
    * after a regular shift occured.
    */
+  @Test
   public void testZork1V1() {
-    
     String originalString = "ZORK: The Great Underground Empire - Part I\n"
       + "Copyright (c) 1980 by Infocom, Inc. All rights reserved.\n"
       + "ZORK is a trademark of Infocom, Inc.\n"
@@ -130,7 +135,6 @@ public class ZCharDecoderTest extends MockObjectTestCase {
     // This String was extracted from release 5 of Zork I and contains
     // the same message as in originalString.
     byte[] data = {
-        
         (byte) 0x13, (byte) 0xf4, (byte) 0x5e, (byte) 0x02, 
         (byte) 0x74, (byte) 0x19, (byte) 0x15, (byte) 0xaa, 
         (byte) 0x00, (byte) 0x4c, (byte) 0x5d, (byte) 0x46, 
@@ -161,15 +165,14 @@ public class ZCharDecoderTest extends MockObjectTestCase {
         (byte) 0x44, (byte) 0x22, (byte) 0x5d, (byte) 0x51, 
         (byte) 0x28, (byte) 0xd8, (byte) 0xa8, (byte) 0x05, 
     };
-    
-    Memory memory = new DefaultMemory(data);
-        
+
+    Memory mem = new DefaultMemory(data);
     ZsciiEncoding encoding = new ZsciiEncoding(new DefaultAccentTable());
     AlphabetTable alphabetTable = new AlphabetTableV1(); 
     ZCharTranslator translator = new DefaultZCharTranslator(alphabetTable);
     
-    ZCharDecoder decoder = new DefaultZCharDecoder(encoding, translator, null);
-    String decoded = decoder.decode2Zscii(memory, 0, 0).toString();
+    ZCharDecoder dec = new DefaultZCharDecoder(encoding, translator, null);
+    String decoded = dec.decode2Zscii(mem, 0, 0).toString();
     assertEquals(originalString, decoded);
   }
   
@@ -177,30 +180,33 @@ public class ZCharDecoderTest extends MockObjectTestCase {
   // **** Tests based on mock objects
   // ****************************************
   
+  @Test
   public void testConvertWithAbbreviation() {
-
+    context.checking(new Expectations() {{
+      one (abbrev).getWordAddress(2); will(returnValue(10));
+    }});
     byte[] helloAbbrev = {
         0x35, 0x51, (byte) 0x46, (byte) 0x81, (byte) 0x88, (byte) 0xa5, // hello{abbrev_2}
         0x35, 0x51, (byte) 0xc6, (byte) 0x85, // hello
         0x11, (byte) 0xaa, (byte) 0xc6, (byte) 0x34 // Hello
     };
-    mockAbbrev.expects(once()).method("getWordAddress").with(eq(2)).will(returnValue(10));
-    Memory memory = new DefaultMemory(helloAbbrev);
-    assertEquals("helloHello", decoder.decode2Zscii(memory, 0, 0).toString());    
+    Memory mem = new DefaultMemory(helloAbbrev);
+    assertEquals("helloHello", decoder.decode2Zscii(mem, 0, 0).toString());    
   }
   
-  
+  @Test
   public void testEndCharacter() {
-    
     short notEndWord = 0x7123;
     assertFalse(DefaultZCharDecoder.isEndWord(notEndWord));
     short endWord = (short) 0x8123;
     assertTrue(DefaultZCharDecoder.isEndWord(endWord));
   }
 
+  @Test
   public void testExtractZBytesOneWordOnly() {
-    
-    mockMemory.expects(once()).method("readShort").will(returnValue((short) 0x9865));
+    context.checking(new Expectations() {{
+      one (memory).readShort(0); will(returnValue((short) 0x9865));
+    }});    
     char[] data = DefaultZCharDecoder.extractZbytes(memory, 0, 0);
     assertEquals(3, data.length);
     assertEquals(6, data[0]);
@@ -208,15 +214,19 @@ public class ZCharDecoderTest extends MockObjectTestCase {
     assertEquals(5, data[2]);
   }
 
+  @Test
   public void testExtractZBytesThreeWords() {
-    
-    mockMemory.expects(atLeastOnce()).method("readShort").will(
-        onConsecutiveCalls(returnValue((short) 0x5432),
-                           returnValue((short) 0x1234),
-                           returnValue((short) 0x9865)));
+    context.checking(new Expectations() {{
+      one (memory).readShort(0);
+      will(returnValue((short) 0x5432));
+      one (memory).readShort(2);
+      will(returnValue((short) 0x1234));
+      one (memory).readShort(4);
+      will(returnValue((short) 0x9865));
+    }});
     char[] data = DefaultZCharDecoder.extractZbytes(memory, 0, 0);
     assertEquals(9, data.length);
-  }  
+  }
 
   // *********************************************************************
   // **** Tests for string truncation
@@ -227,52 +237,49 @@ public class ZCharDecoderTest extends MockObjectTestCase {
   // **** do not need to test abbreviations
   // ****************************************
   
+  @Test
   public void testTruncateAllSmall() {
-    
     byte[] data = { (byte) 0x35, (byte) 0x51, (byte) 0x46, (byte) 0x86,
                     (byte) 0xc6, (byte) 0x85 };
-    Memory memory = new DefaultMemory(data);
+    Memory mem = new DefaultMemory(data);
     int length = 4;
     
     // With length = 0
-    assertEquals("helloalo", decoder.decode2Zscii(memory, 0, 0).toString());
+    assertEquals("helloalo", decoder.decode2Zscii(mem, 0, 0).toString());
     
     // With length = 4
-    assertEquals("helloa", decoder.decode2Zscii(memory, 0, length).toString());    
+    assertEquals("helloa", decoder.decode2Zscii(mem, 0, length).toString());    
   }
 
+  @Test
   public void testTruncateShiftAtEnd() {
-    
     byte[] data = { (byte) 0x34, (byte) 0x8a, (byte) 0x45, (byte) 0xc4 };
-    Memory memory = new DefaultMemory(data);
+    Memory mem = new DefaultMemory(data);
     int length = 4;
-    
-    assertEquals("hEli", decoder.decode2Zscii(memory, 0, length).toString());    
+    assertEquals("hEli", decoder.decode2Zscii(mem, 0, length).toString());    
   }
   
   /**
    * Escape A6 starts at position 0 of the last word.
    */
+  @Test
   public void testTruncateEscapeA2AtEndStartsAtWord2_0() {
-    
     byte[] data = { (byte) 0x34, (byte) 0xd1, (byte) 0x14, (byte) 0xc1,
                     (byte) 0x80, (byte) 0xa5 };
-    Memory memory = new DefaultMemory(data);
+    Memory mem = new DefaultMemory(data);
     int length = 4;
-    
-    assertEquals("hal", decoder.decode2Zscii(memory, 0, length).toString());    
+    assertEquals("hal", decoder.decode2Zscii(mem, 0, length).toString());    
   }
 
   /**
    * Escape A6 starts at position 1 of the last word.
    */
-  public void testTruncateEscapeA2AtEndStartsAtWord2_1() {
-    
+  @Test
+  public void testTruncateEscapeA2AtEndStartsAtWord2_1() {    
     byte[] data = { (byte) 0x34, (byte) 0xd1, (byte) 0x44, (byte) 0xa6,
                     (byte) 0x84, (byte) 0x05 };
-    Memory memory = new DefaultMemory(data);
+    Memory mem = new DefaultMemory(data);
     int length = 4;
-    
-    assertEquals("hall", decoder.decode2Zscii(memory, 0, length).toString());    
+    assertEquals("hall", decoder.decode2Zscii(mem, 0, length).toString());    
   }
 }

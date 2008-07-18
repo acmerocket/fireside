@@ -20,8 +20,12 @@
  */
 package test.zmpp.instructions;
 
+import org.jmock.Expectations;
+import org.jmock.integration.junit4.JMock;
 import org.junit.Before;
 import org.junit.Test;
+import static org.junit.Assert.*;
+import org.junit.runner.RunWith;
 import org.zmpp.instructions.Operand;
 import org.zmpp.instructions.Short1Instruction;
 import org.zmpp.instructions.Short1StaticInfo;
@@ -31,15 +35,16 @@ import test.zmpp.instructions.Instruction1OpV3Test.Instruction1OpMock;
 /**
  * Test class for V4-specific 1OP instruction behavior.
  * @author Wei-ju Wu
- * @version 1.0
+ * @version 1.5
  */
+@RunWith(JMock.class)
 public class Instruction1OpV4Test extends InstructionTestBase {
 
+  @Override
 	@Before
-  protected void setUp() throws Exception {
+  public void setUp() throws Exception {
 	  super.setUp();
-    mockMachine.expects(atLeastOnce()).method("getVersion")
-    	.will(returnValue(4));
+    expectStoryVersion(4);
   }
 	
 	@Test
@@ -59,7 +64,6 @@ public class Instruction1OpV4Test extends InstructionTestBase {
 		assertTrue(info.storesResult());
 		info.setOpcode(Short1StaticInfo.OP_CALL_1S);
 		assertTrue(info.storesResult());
-
 		// no store
 		info.setOpcode(Short1StaticInfo.OP_DEC);
 		assertFalse(info.storesResult());    
@@ -73,8 +77,7 @@ public class Instruction1OpV4Test extends InstructionTestBase {
     info.setOpcode(Short1StaticInfo.OP_GET_SIBLING);
     assertTrue(info.isBranch());
     info.setOpcode(Short1StaticInfo.OP_GET_CHILD);
-    assertTrue(info.isBranch());
-    
+    assertTrue(info.isBranch());    
     // no branch
     info.setOpcode(Short1StaticInfo.OP_GET_PARENT);
     assertFalse(info.isBranch());    
@@ -86,9 +89,9 @@ public class Instruction1OpV4Test extends InstructionTestBase {
   
   @Test
   public void testNot() {
-    mockMachine.expects(once()).method("setVariable")
-    	.with(eq(0x12), eq((short) 0x5555));     
-    
+    context.checking(new Expectations() {{
+      one (machine).setVariable(0x12, (short) 0x5555);
+    }});
 	  // Create instruction	  
 	  Instruction1OpMock not = createInstructionMock(Short1StaticInfo.OP_NOT,
         Operand.TYPENUM_LARGE_CONSTANT, (short) 0xaaaa);      
@@ -100,13 +103,14 @@ public class Instruction1OpV4Test extends InstructionTestBase {
   // ***********************************************************************
   // ********* CALL_1S
   // ******************************************
-  
+
+  @Test
   public void testCall1s() {
-    short[] args = {};
-    mockMachine.expects(once()).method("getPC").will(returnValue(4611));
-    mockMachine.expects(once()).method("call")
-    	.with(eq(4611), eq(4623), eq(args), eq(0));
-    
+    final short[] args = {};
+    context.checking(new Expectations() {{
+      one (machine).getPC(); will(returnValue(4611));
+      one (machine).call(4611, 4623, args, 0);
+    }});
     Short1Instruction call1s = createInstructionMock(
     		Short1StaticInfo.OP_CALL_1S,
         Operand.TYPENUM_LARGE_CONSTANT, (short) 4611);

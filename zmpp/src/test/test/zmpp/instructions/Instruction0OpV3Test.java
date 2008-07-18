@@ -20,8 +20,12 @@
  */
 package test.zmpp.instructions;
 
+import org.jmock.Expectations;
+import org.jmock.integration.junit4.JMock;
 import org.junit.Before;
 import org.junit.Test;
+import org.junit.runner.RunWith;
+import static org.junit.Assert.*;
 import org.zmpp.instructions.AbstractInstruction;
 import org.zmpp.instructions.Short0Instruction;
 import org.zmpp.instructions.Short0StaticInfo;
@@ -32,46 +36,50 @@ import org.zmpp.vm.PortableGameState;
  * This class tests the dynamic and static aspects of C0OP instructions.
  * 
  * @author Wei-ju Wu
- * @version 1.0
+ * @version 1.5
  */
+@RunWith(JMock.class)
 public class Instruction0OpV3Test extends InstructionTestBase {
 
   @Override
   @Before
-  protected void setUp() throws Exception {
+  public void setUp() throws Exception {
 	  super.setUp();
-    mockMachine.expects(atLeastOnce()).method("getVersion").will(returnValue(3));
+    expectStoryVersion(3);
+  }
+  
+  private Short0Instruction createInstruction(int opcode) {
+    return new Short0Instruction(machine, opcode);
   }
 
   @Test
   public void testIsBranch() {    
-    Short0Instruction info;   
-    info = new Short0Instruction(machine, Short0StaticInfo.OP_SAVE);    
-    assertTrue(info.isBranch());
-    info.setOpcode(Short0StaticInfo.OP_RESTORE);
-    assertTrue(info.isBranch());
-    info.setOpcode(Short0StaticInfo.OP_VERIFY);
-    assertTrue(info.isBranch());
+    Short0Instruction instr = createInstruction(Short0StaticInfo.OP_SAVE);    
+    assertTrue(instr.isBranch());
+    instr.setOpcode(Short0StaticInfo.OP_RESTORE);
+    assertTrue(instr.isBranch());
+    instr.setOpcode(Short0StaticInfo.OP_VERIFY);
+    assertTrue(instr.isBranch());
 
     // no branch
-    info.setOpcode(Short0StaticInfo.OP_NEW_LINE);
-    assertFalse(info.isBranch());
+    instr.setOpcode(Short0StaticInfo.OP_NEW_LINE);
+    assertFalse(instr.isBranch());
   }
 
   @Test
   public void testIllegalOpcode() {
     Instruction0OpMock illegal = createInstructionMock(0xee);
-    mockMachine.expects(once()).method("halt").with(eq(
-        "illegal instruction, type: SHORT operand count: C0OP opcode: 238"));
+    context.checking(new Expectations() {{
+      one (machine).halt("illegal instruction, type: SHORT operand count: C0OP opcode: 238");
+    }});
     illegal.execute();
   }
   
   @Test
   public void testNotStoresResult() {
-    Short0Instruction info;   
-    info = new Short0Instruction(machine, Short0StaticInfo.OP_SAVE);
+    Short0Instruction info = createInstruction(Short0StaticInfo.OP_SAVE);
     assertFalse(info.storesResult());
-    info = new Short0Instruction(machine, Short0StaticInfo.OP_RESTORE);
+    info = createInstruction(Short0StaticInfo.OP_RESTORE);
     assertFalse(info.storesResult());    
   }
   
@@ -116,8 +124,10 @@ public class Instruction0OpV3Test extends InstructionTestBase {
   
   @Test
   public void testSaveSuccess() {
-    mockMachine.expects(once()).method("getPC").will(returnValue(1234));
-    mockMachine.expects(once()).method("save").will(returnValue(true));    
+    context.checking(new Expectations() {{
+      one (machine).getPC(); will(returnValue(1234));
+      one (machine).save(with(any(int.class))); will(returnValue(true));
+    }});
     Instruction0OpMock save = createInstructionMock(Short0StaticInfo.OP_SAVE);
     save.execute();
     assertTrue(save.branchOnTestCalled);
@@ -126,24 +136,22 @@ public class Instruction0OpV3Test extends InstructionTestBase {
   
   @Test
   public void testSaveFail() {
-    mockMachine.expects(once()).method("getPC").will(returnValue(1234));
-    mockMachine.expects(once()).method("save").will(returnValue(false));
-    
+    context.checking(new Expectations() {{
+      one (machine).getPC(); will(returnValue(1234));
+      one (machine).save(with(any(int.class))); will(returnValue(false));
+    }});
     Instruction0OpMock save = createInstructionMock(Short0StaticInfo.OP_SAVE);
     save.execute();
     assertTrue(save.branchOnTestCalled);
     assertFalse(save.branchOnTestCondition);
   }
 
-  // ***********************************************************************
-  // ********* RESTORE
-  // ******************************************
-  
   @Test
   public void testRestoreSuccess() {    
-    PortableGameState gamestate = new PortableGameState();
-    mockMachine.expects(once()).method("restore").will(returnValue(gamestate));
-    
+    final PortableGameState gamestate = new PortableGameState();
+    context.checking(new Expectations() {{
+      one (machine).restore(); will(returnValue(gamestate));
+    }});
     Instruction0OpMock restore = createInstructionMock(Short0StaticInfo.OP_RESTORE);
     restore.execute();
     assertFalse(restore.nextInstructionCalled);
@@ -151,79 +159,73 @@ public class Instruction0OpV3Test extends InstructionTestBase {
 
   @Test
   public void testRestoreFail() {    
-    mockMachine.expects(once()).method("restore").will(returnValue(null));    
+    context.checking(new Expectations() {{
+      one (machine).restore(); will(returnValue(null));
+    }});
     Instruction0OpMock restore = createInstructionMock(Short0StaticInfo.OP_RESTORE);
     restore.execute();
     assertTrue(restore.nextInstructionCalled);
   }
 
-  // ***********************************************************************
-  // ********* RESTART
-  // ******************************************
-  
   @Test
   public void testRestart() {
+    context.checking(new Expectations() {{
+      one (machine).restart();
+    }});
     Instruction0OpMock restart = createInstructionMock(Short0StaticInfo.OP_RESTART);
-    mockMachine.expects(once()).method("restart");
     restart.execute();
   }
   
-  // ***********************************************************************
-  // ********* QUIT
-  // ******************************************
-  
   @Test
   public void testQuit() {
+    context.checking(new Expectations() {{
+      one (machine).quit();
+    }});
     Instruction0OpMock quit = createInstructionMock(Short0StaticInfo.OP_QUIT);  
-    mockMachine.expects(once()).method("quit");
     quit.execute();
   }
   
-  // ***********************************************************************
-  // ********* NEW_LINE
-  // ******************************************
-  
   @Test
   public void testNewLine() {
+    context.checking(new Expectations() {{
+      one (machine).newline();
+    }});
     Instruction0OpMock newline = createInstructionMock(Short0StaticInfo.OP_NEW_LINE);
-    mockMachine.expects(once()).method("newline");
     newline.execute();
     assertTrue(newline.nextInstructionCalled);
   }
   
-  // ***********************************************************************
-  // ********* RET_POPPED
-  // ******************************************
-  
   @Test
-  public void testRetPopped() {    
+  public void testRetPopped() {
+    context.checking(new Expectations() {{
+      one (machine).getVariable(0); will(returnValue((short) 15));
+    }});
     Instruction0OpMock ret_popped = createInstructionMock(Short0StaticInfo.OP_RET_POPPED);
-    mockMachine.expects(once()).method("getVariable").with(eq(0)).will(returnValue((short)15));
     ret_popped.execute();    
     assertTrue(ret_popped.returned);
     assertEquals(15, ret_popped.returnValue);
   }
   
-  // ***********************************************************************
-  // ********* POP
-  // ******************************************
-  
   @Test
   public void testPop() {
+    context.checking(new Expectations() {{
+      one (machine).getVariable(0); will(returnValue((short) 42));
+    }});
     Instruction0OpMock pop = createInstructionMock(Short0StaticInfo.OP_POP);
-    mockMachine.expects(once()).method("getVariable").with(eq(0)).will(returnValue((short)42));
     pop.execute();
     assertTrue(pop.nextInstructionCalled);
   }
-  
+
   // ***********************************************************************
   // ********* VERIFY
   // ******************************************
   
   @Test
   public void testVerifyTrue() {
+    context.checking(new Expectations() {{
+      one (machine).hasValidChecksum(); will(returnValue(true));
+    }});
     Instruction0OpMock verify = createInstructionMock(Short0StaticInfo.OP_VERIFY);
-    mockMachine.expects(once()).method("hasValidChecksum").will(returnValue(true));    
     verify.execute();
     assertTrue(verify.branchOnTestCalled);
     assertTrue(verify.branchOnTestCondition);
@@ -231,16 +233,20 @@ public class Instruction0OpV3Test extends InstructionTestBase {
   
   @Test
   public void testVerifyFalse() {
+    context.checking(new Expectations() {{
+      one (machine).hasValidChecksum(); will(returnValue(false));
+    }});
     Instruction0OpMock verify = createInstructionMock(Short0StaticInfo.OP_VERIFY);
-    mockMachine.expects(once()).method("hasValidChecksum").will(returnValue(false));    
     verify.execute();
     assertTrue(verify.branchOnTestCalled);
     assertFalse(verify.branchOnTestCondition);
   }
   
   @Test
-  public void testShowStatus() {    
-    mockMachine.expects(once()).method("updateStatusLine");
+  public void testShowStatus() {
+    context.checking(new Expectations() {{
+      one (machine).updateStatusLine();
+    }});
     Instruction0OpMock showstatus = createInstructionMock(Short0StaticInfo.OP_SHOW_STATUS);    
     showstatus.execute();
     assertTrue(showstatus.nextInstructionCalled);

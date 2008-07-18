@@ -20,27 +20,33 @@
  */
 package test.zmpp.vmutil;
 
-import junit.framework.TestCase;
-
+import org.junit.Before;
+import org.junit.Test;
+import static org.junit.Assert.*;
 import org.zmpp.vmutil.FastShortStack;
 
-public class FastShortStackTest extends TestCase {
+/**
+ * Test class for FastShortStack.
+ * @author Wei-ju Wu
+ * @version 1.5
+ */
+public class FastShortStackTest {
 
   private FastShortStack stack;
   
-  protected void setUp() throws Exception {
-
+  @Before
+  public void setUp() throws Exception {
     this.stack = new FastShortStack(123);
   }
 
+  @Test
   public void testInitial() {
-    
     assertEquals(0, stack.getStackPointer());
     assertEquals(0, stack.size());
   }
   
+  @Test
   public void testSize() {
-    
     stack.push((short) 1);
     assertEquals(1, stack.size());
     stack.push((short) 3);
@@ -49,35 +55,34 @@ public class FastShortStackTest extends TestCase {
     assertEquals(1, stack.size());
   }
   
+  @Test
   public void testPushTop() {
-    
     stack.push((short) 3);
     assertEquals("stack pointer should have been increased", 1, stack.getStackPointer());
     assertEquals("the value 3 should be on top of the stack", 3, stack.top());
     assertEquals("stack pointer should not have been modified", 1, stack.getStackPointer());    
   }
-  
+
+  @Test
   public void testPushPop() {
-    
     stack.push((short) 3);
     assertEquals("the value 3 should be on top of the stack", 3, stack.pop());
     assertEquals("stack pointer should have been decreased", 0, stack.getStackPointer());
   }
-    
+
+  @Test
   public void testGetValueAt() {
-    
     stack.push((short) 3);
     stack.push((short) 5);
     stack.push((short) 7);
-    
     assertEquals(3, stack.getValueAt(0));
     assertEquals(5, stack.getValueAt(1));
     assertEquals(7, stack.getValueAt(2));
     assertEquals("stack pointer should not have been modified", 3, stack.getStackPointer());
   }
   
-  public void testReplaceTopElement() {
-    
+  @Test
+  public void testReplaceTopElement() { 
     stack.push((short) 3);
     stack.push((short) 5);
     stack.push((short) 7);
@@ -85,5 +90,4 @@ public class FastShortStackTest extends TestCase {
     assertEquals("top element should be 11 now", 11, stack.top());
     assertEquals("number of elements should be 3", 3, stack.size());
   }
-  
 }

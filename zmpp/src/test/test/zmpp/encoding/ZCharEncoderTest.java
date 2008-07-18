@@ -20,7 +20,10 @@
  */
 package test.zmpp.encoding;
 
-import org.jmock.MockObjectTestCase;
+import org.junit.Before;
+import org.junit.Test;
+import static org.junit.Assert.*;
+
 import org.zmpp.base.DefaultMemory;
 import org.zmpp.base.Memory;
 import org.zmpp.encoding.AlphabetTable;
@@ -39,7 +42,7 @@ import org.zmpp.encoding.ZCharTranslator;
  * @author Wei-ju Wu
  * @version 1.0
  */
-public class ZCharEncoderTest extends MockObjectTestCase {
+public class ZCharEncoderTest {
 
   private ZCharEncoder encoder;
   private int sourceAddress = 100;
@@ -47,8 +50,8 @@ public class ZCharEncoderTest extends MockObjectTestCase {
   private byte[] data = new byte[206];
   private Memory realmem;
   
-  protected void setUp() throws Exception {
-
+  @Before
+  public void setUp() throws Exception {
     AlphabetTable alphabetTable = new DefaultAlphabetTable();
     ZCharTranslator translator = new DefaultZCharTranslator(alphabetTable);
     encoder = new ZCharEncoder(translator);
@@ -59,8 +62,8 @@ public class ZCharEncoderTest extends MockObjectTestCase {
    * A single character to be encoded. We need to make sure it is in lower
    * case and the string is padded out with shift characters.
    */
+  @Test
   public void testEncodeSingleCharacter() {
-    
     int length = 1;
     
     // we expect to have an end word, padded out with shift 5's
@@ -75,6 +78,7 @@ public class ZCharEncoderTest extends MockObjectTestCase {
     assertEquals(0x94a5, realmem.readUnsignedShort(targetAddress + 4));
   }
   
+  @Test
   public void testEncodeTwoCharacters() {
     
     int length = 2;    
@@ -91,6 +95,7 @@ public class ZCharEncoderTest extends MockObjectTestCase {
     assertEquals(0x94a5, realmem.readUnsignedShort(targetAddress + 4));
   }
   
+  @Test
   public void testEncode4Characters() {
     
     int length = 4;
@@ -112,6 +117,7 @@ public class ZCharEncoderTest extends MockObjectTestCase {
   }
   
   // Test with a different alphabet
+  @Test
   public void testEncodeAlphabet1() {
     
     int length = 1;
@@ -127,6 +133,7 @@ public class ZCharEncoderTest extends MockObjectTestCase {
     assertEquals(0x94a5, realmem.readUnsignedShort(targetAddress + 4));
   }
   
+  @Test
   public void testEncodeAlphabet1SpanWordBound() {
     
     int length = 3;
@@ -146,6 +153,7 @@ public class ZCharEncoderTest extends MockObjectTestCase {
     assertEquals(0x94a5, realmem.readUnsignedShort(targetAddress + 4));
   }
 
+  @Test
   public void testEncodeAlphabet2SpanWordBound() {
     
     int length = 3;
@@ -171,6 +179,7 @@ public class ZCharEncoderTest extends MockObjectTestCase {
   //
   // How are characters handled that are larger than a byte ?
   // See how Frotz handles this
+  @Test
   public void testEncodeEscapeA2() {
     
     int length = 1;
@@ -190,6 +199,7 @@ public class ZCharEncoderTest extends MockObjectTestCase {
   }
 
   // For triangulation, we use another character (126)
+  @Test
   public void testEncodeEscapeA2Tilde() {
     
     int length = 1;
@@ -208,6 +218,7 @@ public class ZCharEncoderTest extends MockObjectTestCase {
     assertEquals(0x94a5, realmem.readUnsignedShort(targetAddress + 4));
   }  
 
+  @Test
   public void testEncodeEscapeA2TildeSpansWord() {
     
     int length = 2;
@@ -232,6 +243,7 @@ public class ZCharEncoderTest extends MockObjectTestCase {
   // in the source buffer that need to be escaped, since they take the
   // space of 4 lower case characters, which means that one special character
   // can be combined with 5 lower case characters
+  @Test
   public void testEncodeCharExceedsTargetBuffer() {
     
     // Situation 1: there are lower case letters at the end, we need
@@ -258,6 +270,7 @@ public class ZCharEncoderTest extends MockObjectTestCase {
     assertEquals(0xa12a, realmem.readUnsignedShort(targetAddress + 4));    
   }
   
+  @Test
   public void testEncodeCharExceedsTargetBufferEscapeAtEnd() {
     
     // Situation 2: in this case the escaped character is at the end,

@@ -20,36 +20,36 @@
  */
 package test.zmpp.instructions;
 
-import org.jmock.Mock;
+import org.jmock.Expectations;
+import org.jmock.integration.junit4.JMock;
 import org.junit.Before;
 import org.junit.Test;
+import static org.junit.Assert.*;
+import org.junit.runner.RunWith;
 import org.zmpp.instructions.Operand;
 import org.zmpp.instructions.VariableInstruction;
 import org.zmpp.instructions.VariableStaticInfo;
 import org.zmpp.instructions.AbstractInstruction.OperandCount;
-import org.zmpp.vm.Input;
 import org.zmpp.vm.Machine;
-import org.zmpp.vm.RoutineContext;
 import org.zmpp.vm.ScreenModel;
 
 /**
  * This class tests the VariableInstruction class.
  * 
  * @author Wei-ju Wu
- * @version 1.0
+ * @version 1.5
  */
+@RunWith(JMock.class)
 public class InstructionVarV3Test extends InstructionTestBase {
 
-  private Mock mockScreen;
   private ScreenModel screen;
 
   @Override
   @Before
-  protected void setUp() throws Exception {
+  public void setUp() throws Exception {
     super.setUp();
-    mockScreen = mock(ScreenModel.class);
-    screen = (ScreenModel) mockScreen.proxy();
-    mockMachine.expects(atLeastOnce()).method("getVersion").will(returnValue(3));
+    screen = context.mock(ScreenModel.class);
+    expectStoryVersion(3);
   }
 
   @Test
@@ -59,11 +59,12 @@ public class InstructionVarV3Test extends InstructionTestBase {
         VariableStaticInfo.OP_SCAN_TABLE);    
     assertTrue(info.isBranch());
   }
-  
+
   @Test
   public void testIllegalOpcode() {
-    mockMachine.expects(once()).method("halt").with(eq(
-      "illegal instruction, type: VARIABLE operand count: VAR opcode: 238"));
+    context.checking(new Expectations() {{
+      one (machine).halt("illegal instruction, type: VARIABLE operand count: VAR opcode: 238");
+    }});
     VariableInstruction illegal = new VariableInstruction(machine,
         OperandCount.VAR, 0xee);
     illegal.execute();
@@ -71,9 +72,10 @@ public class InstructionVarV3Test extends InstructionTestBase {
   
   @Test
   public void testCall() {
-    mockMachine.expects(once()).method("setVariable").with(eq(0), eq((short) 0));
-    mockMachine.expects(once()).method("incrementPC").with(eq(5));
-
+    context.checking(new Expectations() {{
+      one (machine).setVariable(0, (short) 0);
+      one (machine).incrementPC(5);
+    }});
     VariableInstruction call_0 = new VariableInstruction(machine,
         OperandCount.VAR, VariableStaticInfo.OP_CALL);
     call_0.addOperand(new Operand(Operand.TYPENUM_LARGE_CONSTANT, (short) 0x0000));
@@ -84,13 +86,12 @@ public class InstructionVarV3Test extends InstructionTestBase {
   
   @Test
   public void testCallReal() {
-    mockMachine.expects(once()).method("getPC").will(returnValue(4711));
-    
-    short[] args = { 1, 2 };
-    int retval = 17;
-    mockMachine.expects(once()).method("call")
-    	.with(eq(7109), eq(4716), eq(args), eq(retval));
-    
+    final short[] args = { 1, 2 };
+    final int retval = 17;
+    context.checking(new Expectations() {{
+      one (machine).getPC(); will(returnValue(4711));
+      one (machine).call(7109, 4716, args, retval);
+    }});
     // Real call
     VariableInstruction call = new VariableInstruction(machine,
         OperandCount.VAR, VariableStaticInfo.OP_CALL);
@@ -108,9 +109,9 @@ public class InstructionVarV3Test extends InstructionTestBase {
   
   @Test
   public void testCallVs2InvalidForVersion3() {
-    mockMachine.expects(once()).method("halt").with(eq(
-      "illegal instruction, type: VARIABLE operand count: VAR opcode: 12"));
-    
+    context.checking(new Expectations() {{
+      one (machine).halt("illegal instruction, type: VARIABLE operand count: VAR opcode: 12");
+    }});
     VariableInstruction call = new VariableInstruction(machine,
         OperandCount.VAR, VariableStaticInfo.OP_CALL_VS2);
     call.addOperand(new Operand(Operand.TYPENUM_LARGE_CONSTANT, (short) 0x0000));
@@ -125,9 +126,10 @@ public class InstructionVarV3Test extends InstructionTestBase {
   
   @Test
   public void testStorew() {
-    mockMachine.expects(once()).method("writeShort").with(eq(2), eq((short) 0x1000)); 
-    mockMachine.expects(once()).method("incrementPC").with(eq(5));
-    
+    context.checking(new Expectations() {{
+      one (machine).writeShort(2, (short) 0x1000);
+      one (machine).incrementPC(5);
+    }});
     VariableInstruction storew = new VariableInstruction(machine,
         OperandCount.VAR, VariableStaticInfo.OP_STOREW);    
     storew.addOperand(new Operand(Operand.TYPENUM_LARGE_CONSTANT, (short) 0x0000));
@@ -143,12 +145,12 @@ public class InstructionVarV3Test extends InstructionTestBase {
   
   @Test
   public void testStoreb() {
-    mockMachine.expects(once()).method("writeByte").with(eq(1), eq((byte) 0x15)); 
-    mockMachine.expects(once()).method("incrementPC").with(eq(5));
-    
+    context.checking(new Expectations() {{
+      one (machine).writeByte(1, (byte) 0x15);
+      one (machine).incrementPC(5);
+    }});
     VariableInstruction storeb = new VariableInstruction(machine,
-        OperandCount.VAR, VariableStaticInfo.OP_STOREB);
-    
+        OperandCount.VAR, VariableStaticInfo.OP_STOREB);    
     storeb.addOperand(new Operand(Operand.TYPENUM_LARGE_CONSTANT, (short) 0x0000));
     storeb.addOperand(new Operand(Operand.TYPENUM_SMALL_CONSTANT, (short) 1));
     storeb.addOperand(new Operand(Operand.TYPENUM_SMALL_CONSTANT, (short) 0x15));
@@ -158,10 +160,10 @@ public class InstructionVarV3Test extends InstructionTestBase {
   
   @Test
   public void testPutProp() {
-    mockMachine.expects(once()).method("incrementPC").with(eq(5));
-    mockMachine.expects(once()).method("setProperty")
-    	.with(eq(2), eq(24), eq(-1));
-    
+    context.checking(new Expectations() {{
+      one (machine).setProperty(2, 24, -1);
+      one (machine).incrementPC(5);
+    }});
     VariableInstruction put_prop1 = new VariableInstruction(machine,
         OperandCount.VAR, VariableStaticInfo.OP_PUT_PROP);    
     put_prop1.addOperand(new Operand(Operand.TYPENUM_SMALL_CONSTANT, (short) 2));
@@ -173,9 +175,10 @@ public class InstructionVarV3Test extends InstructionTestBase {
   
   @Test
   public void testPrintChar() {
-    mockMachine.expects(once()).method("printZsciiChar").with(eq((char) 97));
-    mockMachine.expects(once()).method("incrementPC").with(eq(5));
-    
+    context.checking(new Expectations() {{
+      one (machine).printZsciiChar((char) 97);
+      one (machine).incrementPC(5);
+    }});
     VariableInstruction print_char = new VariableInstruction(machine,
         OperandCount.VAR, VariableStaticInfo.OP_PRINT_CHAR);
     print_char.addOperand(new Operand(Operand.TYPENUM_SMALL_CONSTANT, (short) 0x61));
@@ -189,9 +192,10 @@ public class InstructionVarV3Test extends InstructionTestBase {
   
   @Test
   public void testPrintNum() {
-    mockMachine.expects(once()).method("printNumber").with(eq((short) -12));
-    mockMachine.expects(once()).method("incrementPC").with(eq(5));
-    
+    context.checking(new Expectations() {{
+      one (machine).printNumber((short) -12);
+      one (machine).incrementPC(5);
+    }});
     VariableInstruction print_num = new VariableInstruction(machine,
         OperandCount.VAR, VariableStaticInfo.OP_PRINT_NUM);
     print_num.addOperand(new Operand(Operand.TYPENUM_LARGE_CONSTANT, (short) -12));
@@ -205,9 +209,10 @@ public class InstructionVarV3Test extends InstructionTestBase {
   
   @Test
   public void testPush() {
-    mockMachine.expects(once()).method("setVariable").with(eq(0x00), eq((short) 0x13));
-    mockMachine.expects(once()).method("incrementPC").with(eq(5));
-
+    context.checking(new Expectations() {{
+      one (machine).setVariable(0x00, (short) 0x13);
+      one (machine).incrementPC(5);
+    }});
     VariableInstruction push = new VariableInstruction(machine,
         OperandCount.VAR, VariableStaticInfo.OP_PUSH);
     push.addOperand(new Operand(Operand.TYPENUM_LARGE_CONSTANT, (short) 0x13));
@@ -221,10 +226,11 @@ public class InstructionVarV3Test extends InstructionTestBase {
   
   @Test
   public void testPull() {
-    mockMachine.expects(once()).method("getVariable").with(eq(0x00)).will(returnValue((short) 0x14));
-    mockMachine.expects(once()).method("setVariable").with(eq(0x13), eq((short) 0x14));
-    mockMachine.expects(once()).method("incrementPC").with(eq(5));
-
+    context.checking(new Expectations() {{
+      one (machine).getVariable(0x00); will(returnValue((short) 0x14));
+      one (machine).setVariable(0x13, (short) 0x14);
+      one (machine).incrementPC(5);
+    }});
     VariableInstruction pull = new VariableInstruction(machine,
         OperandCount.VAR, VariableStaticInfo.OP_PULL);
     pull.addOperand(new Operand(Operand.TYPENUM_LARGE_CONSTANT, (short) 0x13));
@@ -236,10 +242,11 @@ public class InstructionVarV3Test extends InstructionTestBase {
   // stack will not modify the stack pointer
   @Test
   public void testPullToStack() {
-    mockMachine.expects(once()).method("getVariable").with(eq(0)).will(returnValue((short) 0));
-    mockMachine.expects(once()).method("setStackTop").with(eq((short) 0));
-    mockMachine.expects(once()).method("incrementPC").with(eq(5));
-    
+    context.checking(new Expectations() {{
+      one (machine).getVariable(0x00); will(returnValue((short) 0x00));
+      one (machine).setStackTop((short) 0x00);
+      one (machine).incrementPC(5);
+    }});
     VariableInstruction pull = new VariableInstruction(machine,
         OperandCount.VAR, VariableStaticInfo.OP_PULL);
     pull.addOperand(new Operand(Operand.TYPENUM_LARGE_CONSTANT, (short) 0x00));
@@ -253,9 +260,10 @@ public class InstructionVarV3Test extends InstructionTestBase {
   
   @Test
   public void testInputStream() {
-    mockMachine.expects(once()).method("selectInputStream").with(eq(1));
-    mockMachine.expects(once()).method("incrementPC").with(eq(5));
-    
+    context.checking(new Expectations() {{
+      one (machine).selectInputStream(1);
+      one (machine).incrementPC(5);
+    }});
     VariableInstruction inputstream = new VariableInstruction(machine,
         OperandCount.VAR, VariableStaticInfo.OP_INPUTSTREAM);
     inputstream.addOperand(new Operand(Operand.TYPENUM_SMALL_CONSTANT, (short) 1));
@@ -269,9 +277,10 @@ public class InstructionVarV3Test extends InstructionTestBase {
   
   @Test
   public void testOutputStreamDisable2() {
-    mockMachine.expects(once()).method("selectOutputStream").with(eq(2), eq(false));
-    mockMachine.expects(once()).method("incrementPC").with(eq(5));
-    
+    context.checking(new Expectations() {{
+      one (machine).selectOutputStream(2, false);
+      one (machine).incrementPC(5);
+    }});
     // disable
     VariableInstruction outputstream_disable = new VariableInstruction(machine,
         OperandCount.VAR, VariableStaticInfo.OP_OUTPUTSTREAM);
@@ -282,8 +291,9 @@ public class InstructionVarV3Test extends InstructionTestBase {
   
   @Test
   public void testOutputStreamNoAction() {
-    mockMachine.expects(once()).method("incrementPC").with(eq(5));
-    
+    context.checking(new Expectations() {{
+      one (machine).incrementPC(5);
+    }});
     // do nothing
     VariableInstruction outputstream_nothing = new VariableInstruction(machine,
         OperandCount.VAR, VariableStaticInfo.OP_OUTPUTSTREAM);
@@ -294,9 +304,10 @@ public class InstructionVarV3Test extends InstructionTestBase {
   
   @Test
   public void testOutputStreamEnable2() {
-    mockMachine.expects(once()).method("selectOutputStream").with(eq(2), eq(true));
-    mockMachine.expects(once()).method("incrementPC").with(eq(5));
-    
+    context.checking(new Expectations() {{
+      one (machine).selectOutputStream(2, true);
+      one (machine).incrementPC(5);
+    }});
     // enable
     VariableInstruction outputstream_enable = new VariableInstruction(machine,
         OperandCount.VAR, VariableStaticInfo.OP_OUTPUTSTREAM);
@@ -304,17 +315,18 @@ public class InstructionVarV3Test extends InstructionTestBase {
     outputstream_enable.setLength(5);
     outputstream_enable.execute();
   } 
-  
+
   // *******************************************************************
   // ********* RANDOM
   // *************************
   
   @Test
   public void testRandom() {
-    mockMachine.expects(once()).method("random").with(eq((short) 1234)).will(returnValue((short) 3));
-    mockMachine.expects(once()).method("setVariable").with(eq(0x13), eq((short) 3));
-    mockMachine.expects(once()).method("incrementPC").with(eq(5));
-
+    context.checking(new Expectations() {{
+      one (machine).random((short) 1234); will(returnValue((short) 3));
+      one (machine).setVariable(0x13, (short) 3);
+      one (machine).incrementPC(5);
+    }});
     VariableInstruction random = new VariableInstruction(machine,
         OperandCount.VAR, VariableStaticInfo.OP_RANDOM);
     random.addOperand(new Operand(Operand.TYPENUM_LARGE_CONSTANT, (short) 1234));
@@ -329,9 +341,10 @@ public class InstructionVarV3Test extends InstructionTestBase {
   
   @Test
   public void testSplitWindow() {
-    mockMachine.expects(once()).method("getScreen").will(returnValue(screen));
-    mockScreen.expects(once()).method("splitWindow").with(eq(12));
-    
+    context.checking(new Expectations() {{
+      one (machine).getScreen(); will(returnValue(screen));
+      one (screen).splitWindow(12);
+    }});
     VariableInstructionMock split_window =
       new VariableInstructionMock(machine, VariableStaticInfo.OP_SPLIT_WINDOW);
     split_window.addOperand(new Operand(Operand.TYPENUM_SMALL_CONSTANT, (short) 12));
@@ -345,9 +358,10 @@ public class InstructionVarV3Test extends InstructionTestBase {
   
   @Test
   public void testSetWindow() {
-    mockMachine.expects(once()).method("getScreen").will(returnValue(screen));
-    mockScreen.expects(once()).method("setWindow").with(eq(2));
-    
+    context.checking(new Expectations() {{
+      one (machine).getScreen(); will(returnValue(screen));
+      one (screen).setWindow(2);
+    }});
     VariableInstructionMock set_window =
       new VariableInstructionMock(machine, VariableStaticInfo.OP_SET_WINDOW);
     set_window.addOperand(new Operand(Operand.TYPENUM_SMALL_CONSTANT, (short) 2));
@@ -361,9 +375,9 @@ public class InstructionVarV3Test extends InstructionTestBase {
 
   @Test
   public void testSetTextStyleInvalidInVersion3() {
-    mockMachine.expects(once()).method("halt").with(eq(
-        "illegal instruction, type: VARIABLE operand count: VAR opcode: 17"));
-    
+    context.checking(new Expectations() {{
+      one (machine).halt("illegal instruction, type: VARIABLE operand count: VAR opcode: 17");
+    }});
     VariableInstructionMock set_text_style =
       new VariableInstructionMock(machine, VariableStaticInfo.OP_SET_TEXT_STYLE);
     
@@ -373,8 +387,9 @@ public class InstructionVarV3Test extends InstructionTestBase {
   
   @Test
   public void testBufferModeInvalidInVersion3() {
-    mockMachine.expects(once()).method("halt").with(eq(
-        "illegal instruction, type: VARIABLE operand count: VAR opcode: 18"));
+    context.checking(new Expectations() {{
+      one (machine).halt("illegal instruction, type: VARIABLE operand count: VAR opcode: 18");
+    }});
     VariableInstructionMock buffer_mode =
       new VariableInstructionMock(machine, VariableStaticInfo.OP_BUFFER_MODE);
     
@@ -388,8 +403,9 @@ public class InstructionVarV3Test extends InstructionTestBase {
 
   @Test
   public void testEraseWindowInvalidInVersion3() {
-    mockMachine.expects(once()).method("halt").with(eq(
-        "illegal instruction, type: VARIABLE operand count: VAR opcode: 13"));
+    context.checking(new Expectations() {{
+      one (machine).halt("illegal instruction, type: VARIABLE operand count: VAR opcode: 13");
+    }});
     VariableInstructionMock erase_window =
       new VariableInstructionMock(machine, VariableStaticInfo.OP_ERASE_WINDOW);
     
@@ -397,10 +413,11 @@ public class InstructionVarV3Test extends InstructionTestBase {
     erase_window.execute();
   }
 
-  
+  @Test
   public void testEraseLineInvalidInVersion3() {
-    mockMachine.expects(once()).method("halt").with(eq(
-        "illegal instruction, type: VARIABLE operand count: VAR opcode: 14"));
+    context.checking(new Expectations() {{
+      one (machine).halt("illegal instruction, type: VARIABLE operand count: VAR opcode: 14");
+    }});
     VariableInstructionMock erase_line =
       new VariableInstructionMock(machine, VariableStaticInfo.OP_ERASE_LINE);
     
@@ -412,11 +429,11 @@ public class InstructionVarV3Test extends InstructionTestBase {
   // ********* SET_CURSOR
   // *************************
 
-  
+  @Test
   public void testSetCursorInvalidInVersion3() {
-    mockMachine.expects(once()).method("halt").with(eq(
-        "illegal instruction, type: VARIABLE operand count: VAR opcode: 15"));    
-    
+    context.checking(new Expectations() {{
+      one (machine).halt("illegal instruction, type: VARIABLE operand count: VAR opcode: 15");
+    }});
     VariableInstructionMock set_cursor =
       new VariableInstructionMock(machine, VariableStaticInfo.OP_SET_CURSOR);
     
@@ -424,10 +441,11 @@ public class InstructionVarV3Test extends InstructionTestBase {
     set_cursor.execute();
   }
 
+  @Test
   public void testGetCursorInvalidInVersion3() {
-    mockMachine.expects(once()).method("halt").with(eq(
-        "illegal instruction, type: VARIABLE operand count: VAR opcode: 16"));    
-    
+    context.checking(new Expectations() {{
+      one (machine).halt("illegal instruction, type: VARIABLE operand count: VAR opcode: 16");
+    }});
     VariableInstructionMock get_cursor =
       new VariableInstructionMock(machine, VariableStaticInfo.OP_GET_CURSOR);
     
@@ -435,19 +453,21 @@ public class InstructionVarV3Test extends InstructionTestBase {
     get_cursor.execute();
   }
 
+  @Test
   public void testScanTableInvalidInVersion3() {
-    mockMachine.expects(once()).method("halt").with(eq(
-        "illegal instruction, type: VARIABLE operand count: VAR opcode: 23"));    
-    
+    context.checking(new Expectations() {{
+      one (machine).halt("illegal instruction, type: VARIABLE operand count: VAR opcode: 23");
+    }});
     VariableInstructionMock scan_table =
       new VariableInstructionMock(machine, VariableStaticInfo.OP_SCAN_TABLE);    
     scan_table.execute();
   }
 
+  @Test
   public void testReadCharInvalidInVersion3() {
-    mockMachine.expects(once()).method("halt").with(eq(
-        "illegal instruction, type: VARIABLE operand count: VAR opcode: 22"));    
-    
+    context.checking(new Expectations() {{
+      one (machine).halt("illegal instruction, type: VARIABLE operand count: VAR opcode: 22");
+    }});
     VariableInstructionMock read_char =
       new VariableInstructionMock(machine, VariableStaticInfo.OP_READ_CHAR);    
     read_char.execute();

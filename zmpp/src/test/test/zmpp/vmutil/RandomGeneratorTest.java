@@ -20,8 +20,9 @@
  */
 package test.zmpp.vmutil;
 
-import junit.framework.TestCase;
-
+import org.junit.Before;
+import org.junit.Test;
+import static org.junit.Assert.*;
 import org.zmpp.vmutil.PredictableRandomGenerator;
 import org.zmpp.vmutil.RandomGenerator;
 import org.zmpp.vmutil.UnpredictableRandomGenerator;
@@ -30,14 +31,14 @@ import org.zmpp.vmutil.UnpredictableRandomGenerator;
  * This class is a test for the RandomGenerator classes.
  * 
  * @author Wei-ju Wu
- * @version 1.0
+ * @version 1.5
  */
-public class RandomGeneratorTest extends TestCase {
+public class RandomGeneratorTest {
 
   RandomGenerator predictable1, predictable2, random1, random2;
 
-  protected void setUp() throws Exception {
-    
+  @Before
+  public void setUp() throws Exception {
     long seed = 4711;
     predictable1 = new PredictableRandomGenerator(seed);
     predictable2 = new PredictableRandomGenerator(seed);
@@ -45,16 +46,16 @@ public class RandomGeneratorTest extends TestCase {
     random2 = new UnpredictableRandomGenerator();
   }
 
+  @Test
   public void testUnpredictableRandomSequence() {
- 
     int rnd1 = random1.next();
     int rnd2 = random1.next();
     assertNotSame(rnd1, rnd2);
     assertTrue(1 <= rnd1 && rnd1 <= RandomGenerator.MAX_VALUE);
   }
   
+  @Test
   public void testUnpredictableRandomDifferentSequences() {
-   
     int rnd11 = random1.next();
     int rnd12 = random1.next();
     int rnd21 = random2.next();
@@ -64,16 +65,16 @@ public class RandomGeneratorTest extends TestCase {
     assertNotSame(rnd21, rnd22);
   }
   
+  @Test
   public void testPredictableRandomSequence() {
-    
     int rnd1 = predictable1.next();
     int rnd2 = predictable1.next();
     assertNotSame(rnd1, rnd2);
     assertTrue(1 <= rnd1 && rnd1 <= RandomGenerator.MAX_VALUE);
   }
   
+  @Test
   public void testPredictableSameSequences() {
-    
     int rnd11 = predictable1.next();
     int rnd12 = predictable1.next();
     int rnd21 = predictable2.next();

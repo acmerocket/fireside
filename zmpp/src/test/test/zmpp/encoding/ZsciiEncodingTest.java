@@ -20,22 +20,29 @@
  */
 package test.zmpp.encoding;
 
-import junit.framework.TestCase;
+import org.junit.Before;
+import org.junit.Test;
+import static org.junit.Assert.*;
 
 import org.zmpp.encoding.DefaultAccentTable;
 import org.zmpp.encoding.ZsciiEncoding;
 
-public class ZsciiEncodingTest extends TestCase {
+/**
+ * Test class for ZsciiEncoding.
+ * @author Wei-ju Wu
+ * @version 1.5
+ */
+public class ZsciiEncodingTest {
 
   private ZsciiEncoding encoding;
   
-  protected void setUp() throws Exception {
-   
+  @Before
+  public void setUp() throws Exception {
     encoding = new ZsciiEncoding(new DefaultAccentTable());
   }
 
+  @Test
   public void testIsZsciiCharacterAscii() {
-    
     assertTrue(encoding.isZsciiCharacter('A'));
     assertTrue(encoding.isZsciiCharacter('M'));
     assertTrue(encoding.isZsciiCharacter('Z'));
@@ -44,8 +51,8 @@ public class ZsciiEncodingTest extends TestCase {
     assertTrue(encoding.isZsciiCharacter('z'));
   }
   
+  @Test
   public void testIsZsciiCharacterExtra() {
-    
     assertEquals(10, (int) '\n');
     assertTrue(encoding.isZsciiCharacter(ZsciiEncoding.NULL));
     assertTrue(encoding.isZsciiCharacter(ZsciiEncoding.NEWLINE));
@@ -53,8 +60,8 @@ public class ZsciiEncodingTest extends TestCase {
     assertTrue(encoding.isZsciiCharacter(ZsciiEncoding.DELETE));
   }
   
+  @Test
   public void testIsConvertableToZscii() {
-    
     assertTrue(encoding.isConvertableToZscii('A'));
     assertTrue(encoding.isConvertableToZscii('M'));
     assertTrue(encoding.isConvertableToZscii('Z'));
@@ -66,8 +73,8 @@ public class ZsciiEncodingTest extends TestCase {
     assertFalse(encoding.isConvertableToZscii('\07'));
   }
   
+  @Test
   public void testGetUnicode() {
-    
     assertEquals('A', encoding.getUnicodeChar('A'));
     assertEquals('M', encoding.getUnicodeChar('M'));
     assertEquals('Z', encoding.getUnicodeChar('Z'));
@@ -79,6 +86,7 @@ public class ZsciiEncodingTest extends TestCase {
     assertEquals('?', encoding.getUnicodeChar(ZsciiEncoding.DELETE));
   }
   
+  @Test
   public void testGetZChar() {
     assertEquals('A', encoding.getZsciiChar('A'));
     assertEquals('M', encoding.getZsciiChar('M'));
@@ -90,6 +98,7 @@ public class ZsciiEncodingTest extends TestCase {
     assertEquals(0, encoding.getZsciiChar('\07'));    
   }
   
+  @Test
   public void testIsCursorKey() {
     assertTrue(ZsciiEncoding.isCursorKey(ZsciiEncoding.CURSOR_UP));
     assertTrue(ZsciiEncoding.isCursorKey(ZsciiEncoding.CURSOR_DOWN));
@@ -98,10 +107,12 @@ public class ZsciiEncodingTest extends TestCase {
     assertFalse(ZsciiEncoding.isCursorKey(ZsciiEncoding.NEWLINE));
   }
   
+  @Test
   public void testStandardTable() {
     assertEquals(69, DefaultAccentTable.STANDARD_TRANSLATION_TABLE.length);
   }
   
+  @Test
   public void testToLowerCase() { 
     assertEquals('a', encoding.toLower('A'));
     assertEquals(155, encoding.toLower((char) 158));

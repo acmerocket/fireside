@@ -23,19 +23,24 @@ package test.zmpp.vm;
 import java.util.ArrayList;
 import java.util.List;
 
-import junit.framework.TestCase;
-
+import org.junit.Before;
+import org.junit.Test;
+import static org.junit.Assert.*;
 import org.zmpp.encoding.ZsciiEncoding;
 import org.zmpp.vm.CommandHistory;
 import org.zmpp.vm.InputLine;
 
-public class CommandHistoryTest extends TestCase 
-implements InputLine {
+/**
+ * Test class for CommandHistory.
+ * @author Wei-ju Wu
+ * @version 1.5
+ */
+public class CommandHistoryTest implements InputLine {
 
   private CommandHistory history;
   
-  @Override
-  protected void setUp() throws Exception {
+  @Before
+  public void setUp() throws Exception {
     history = new CommandHistory(this);
   }
 
@@ -57,19 +62,18 @@ implements InputLine {
   /**
    * Test if the reset will set the index to size(), which is 0.
    */
+  @Test
   public void testResetInitial() {
-    
     history.reset();
     assertEquals(0, history.getCurrentIndex());
-    
     List<Character> inputline = new ArrayList<Character>();
     history.addInputLine(inputline);
     history.reset();
     assertEquals(1, history.getCurrentIndex());
   }
   
+  @Test
   public void testIsHistoryChar() {
-    
     assertTrue(history.isHistoryChar(ZsciiEncoding.CURSOR_UP));
     assertTrue(history.isHistoryChar(ZsciiEncoding.CURSOR_DOWN));
     assertFalse(history.isHistoryChar(ZsciiEncoding.CURSOR_LEFT));

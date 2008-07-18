@@ -26,6 +26,11 @@ import static org.junit.Assert.*;
 import org.zmpp.vm.ModernObjectTree;
 import org.zmpp.vm.ObjectTree;
 
+/**
+ * Testing the tree for Curses.
+ * @author Wei-ju Wu
+ * @version 1.5
+ */
 public class CursesObjectTreeTest extends CursesSetup {
 
 	private static final int ADDR_7_20 	= 7734;
@@ -34,6 +39,7 @@ public class CursesObjectTreeTest extends CursesSetup {
   private ObjectTree objectTree;
 
   @Before
+  @Override
   public void setUp() throws Exception {
 	  super.setUp();
 	  objectTree = new ModernObjectTree(curses,

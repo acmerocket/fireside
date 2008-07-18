@@ -1,7 +1,7 @@
 /*
  * $Id$
- * 
- * Created on 2005/12/06
+ *
+ * Created on 2008/7/17
  * Copyright 2005-2008 by Wei-ju Wu
  * This file is part of The Z-machine Preservation Project (ZMPP).
  *
@@ -18,32 +18,25 @@
  * You should have received a copy of the GNU General Public License
  * along with ZMPP.  If not, see <http://www.gnu.org/licenses/>.
  */
-package test.zmpp.iff;
+package test.zmpp.testutil;
 
-import static org.junit.Assert.*;
-import org.junit.Before;
-import org.junit.Test;
-
-import org.zmpp.iff.WritableFormChunk;
+import java.io.File;
 
 /**
- * Test class for WritableFormChunk.
+ * Usefule utility methods for testing ZMPP.
  * @author Wei-ju Wu
  * @version 1.5
  */
-public class WritableFormChunkTest {
+public class ZmppTestUtil {
 
-  private WritableFormChunk formChunk;
-  
-  @Before
-  public void setUp() throws Exception {
-    formChunk = new WritableFormChunk("IFhd".getBytes());
-  }
-
-  @Test
-  public void testIsValid() { 
-    assertTrue(formChunk.isValid());
-    assertNotNull(formChunk.getMemory());
-    assertNotNull(formChunk.getSubChunks());
+  /**
+   * Helper function to create a file local to the project given the
+   * local path.
+   * @param localPath the local path
+   * @return the File
+   */
+  public static File createLocalFile(String localPath) {
+    return new File(System.getProperty("user.dir") + File.separatorChar +
+                    localPath);
   }
 }

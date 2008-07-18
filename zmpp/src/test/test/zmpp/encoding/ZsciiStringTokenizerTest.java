@@ -20,22 +20,29 @@
  */
 package test.zmpp.encoding;
 
-import junit.framework.TestCase;
+import static org.junit.Assert.*;
+import org.junit.Test;
+import org.junit.Before;
 
 import org.zmpp.encoding.DefaultAccentTable;
 import org.zmpp.encoding.ZsciiEncoding;
 import org.zmpp.encoding.ZsciiString;
 import org.zmpp.encoding.ZsciiStringTokenizer;
 
-public class ZsciiStringTokenizerTest extends TestCase {
+/**
+ * Test clas for ZsciiStringTokenizer.
+ * @author Wei-ju Wu
+ * @version 1.5
+ */
+public class ZsciiStringTokenizerTest {
 
-  protected void setUp() {
-  
+  @Before
+  public void setUp() {
     ZsciiString.initialize(new ZsciiEncoding(new DefaultAccentTable()));
   }
   
+  @Test
   public void testTokenizeWithSpace() {
-    
     ZsciiString input = new ZsciiString(new char[] { 'H', 'i', ' ', 'y', 'o', 'u' });
     ZsciiString delim = new ZsciiString(new char[] { ' ' });
       
@@ -45,8 +52,8 @@ public class ZsciiStringTokenizerTest extends TestCase {
     assertEquals("you", tok.nextToken().toString());
   }  
 
+  @Test
   public void testTokenizeWithCommaAndSpace() {
-    
     ZsciiString input = new ZsciiString(new char[] { 'H', 'i', ',', ' ', 'y', 'o', 'u' });
     ZsciiString delim = new ZsciiString(new char[] { ' ', ','});
       

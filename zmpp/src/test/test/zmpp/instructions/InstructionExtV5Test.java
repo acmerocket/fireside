@@ -20,6 +20,12 @@
  */
 package test.zmpp.instructions;
 
+import org.jmock.Expectations;
+import org.jmock.integration.junit4.JMock;
+import org.junit.Before;
+import org.junit.Test;
+import static org.junit.Assert.*;
+import org.junit.runner.RunWith;
 import org.zmpp.instructions.ExtendedInstruction;
 import org.zmpp.instructions.ExtendedStaticInfo;
 import org.zmpp.instructions.Operand;
@@ -29,17 +35,20 @@ import org.zmpp.instructions.Operand;
  * instructions.
  * 
  * @author Wei-ju Wu
- * @version 1.0
+ * @version 1.5
  */
+@RunWith(JMock.class)
 public class InstructionExtV5Test extends InstructionTestBase {
 
-  protected void setUp() throws Exception {
+  @Override
+  @Before
+  public void setUp() throws Exception {
     super.setUp();
-    mockMachine.expects(atLeastOnce()).method("getVersion").will(returnValue(5));
+    expectStoryVersion(5);
   }
-  
-  public void testStoresResult() {
-    
+
+  @Test
+  public void testStoresResult() {    
     ExtendedInstruction instr = new ExtendedInstruction(machine, ExtendedStaticInfo.OP_SAVE_UNDO);
     assertTrue(instr.storesResult());
     instr = new ExtendedInstruction(machine, ExtendedStaticInfo.OP_RESTORE_UNDO);
@@ -52,24 +61,27 @@ public class InstructionExtV5Test extends InstructionTestBase {
     assertTrue(instr.storesResult());
   }
   
+  @Test
   public void testSaveUndoSuccess() {
-    
-    mockMachine.expects(once()).method("getPC").will(returnValue(1234));
-    mockMachine.expects(once()).method("incrementPC").with(eq(3));
-    mockMachine.expects(atLeastOnce()).method("save_undo").will(returnValue(true));
-    mockMachine.expects(atLeastOnce()).method("setVariable").with(eq(0), eq((short) 1));
-    
+    context.checking(new Expectations() {{
+      one (machine).getPC(); will(returnValue(1234));
+      one (machine).incrementPC(3);
+      one (machine).save_undo(with(any(int.class))); will(returnValue(true));
+      atLeast(1).of (machine).setVariable(0, (short) 1);
+    }});
     ExtendedInstruction save_undo = new ExtendedInstruction(machine, ExtendedStaticInfo.OP_SAVE_UNDO);
     save_undo.setLength(3);
     save_undo.execute();
   }
 
+  @Test
   public void testSaveUndoFail() {
-    mockMachine.expects(once()).method("getPC").will(returnValue(1234));
-    mockMachine.expects(once()).method("incrementPC").with(eq(3));
-    mockMachine.expects(atLeastOnce()).method("save_undo").will(returnValue(false));
-    mockMachine.expects(atLeastOnce()).method("setVariable").with(eq(0), eq((short) 0));
-    
+    context.checking(new Expectations() {{
+      one (machine).getPC(); will(returnValue(1234));
+      one (machine).incrementPC(3);
+      one (machine).save_undo(with(any(int.class))); will(returnValue(false));
+      atLeast(1).of (machine).setVariable(0, (short) 0);
+    }});
     ExtendedInstruction save_undo = new ExtendedInstruction(machine, ExtendedStaticInfo.OP_SAVE_UNDO);
     save_undo.setLength(3);
     save_undo.execute();
@@ -78,11 +90,13 @@ public class InstructionExtV5Test extends InstructionTestBase {
   // **************************************************************************
   // ******** ART_SHIFT
   // **********************************
-  
+
+  @Test
   public void testArtShift0() {
-    mockMachine.expects(atLeastOnce()).method("incrementPC").with(eq(3));
-    mockMachine.expects(once()).method("setVariable").with(eq(1), eq((short) 12));
-    
+    context.checking(new Expectations() {{
+      one (machine).incrementPC(3);
+      atLeast(1).of (machine).setVariable(1, (short) 12);
+    }});
     ExtendedInstruction art_shift = new ExtendedInstruction(machine, ExtendedStaticInfo.OP_ART_SHIFT);
     art_shift.setLength(3);
     art_shift.addOperand(new Operand(Operand.TYPENUM_SMALL_CONSTANT, (short) 12));
@@ -90,11 +104,13 @@ public class InstructionExtV5Test extends InstructionTestBase {
     art_shift.setStoreVariable((short) 0x01);
     art_shift.execute();
   }
-    
+
+  @Test
   public void testArtShiftPositivePositiveShift() {
-    mockMachine.expects(atLeastOnce()).method("incrementPC").with(eq(3));
-    mockMachine.expects(once()).method("setVariable").with(eq(1), eq((short) 24));
-    
+    context.checking(new Expectations() {{
+      one (machine).incrementPC(3);
+      atLeast(1).of (machine).setVariable(1, (short) 24);
+    }});
     ExtendedInstruction art_shift = new ExtendedInstruction(machine, ExtendedStaticInfo.OP_ART_SHIFT);
     art_shift.setLength(3);
     art_shift.addOperand(new Operand(Operand.TYPENUM_SMALL_CONSTANT, (short) 12));
@@ -104,10 +120,12 @@ public class InstructionExtV5Test extends InstructionTestBase {
     
   }    
 
+  @Test
   public void testArtShiftNegativePositiveShift() {
-    mockMachine.expects(atLeastOnce()).method("incrementPC").with(eq(3));
-    mockMachine.expects(once()).method("setVariable").with(eq(1), eq((short) -24));
-    
+    context.checking(new Expectations() {{
+      one (machine).incrementPC(3);
+      atLeast(1).of (machine).setVariable(1, (short) -24);
+    }});
     ExtendedInstruction art_shift = new ExtendedInstruction(machine, ExtendedStaticInfo.OP_ART_SHIFT);
     art_shift.setLength(3);
     art_shift.addOperand(new Operand(Operand.TYPENUM_SMALL_CONSTANT, (short) -12));
@@ -116,10 +134,12 @@ public class InstructionExtV5Test extends InstructionTestBase {
     art_shift.execute();        
   }    
 
+  @Test
   public void testArtShiftPositiveNegativeShift() {
-    mockMachine.expects(atLeastOnce()).method("incrementPC").with(eq(3));
-    mockMachine.expects(once()).method("setVariable").with(eq(1), eq((short) 6));
-    
+    context.checking(new Expectations() {{
+      one (machine).incrementPC(3);
+      atLeast(1).of (machine).setVariable(1, (short) 6);
+    }});
     ExtendedInstruction art_shift = new ExtendedInstruction(machine, ExtendedStaticInfo.OP_ART_SHIFT);
     art_shift.setLength(3);
     art_shift.addOperand(new Operand(Operand.TYPENUM_SMALL_CONSTANT, (short) 12));
@@ -128,10 +148,12 @@ public class InstructionExtV5Test extends InstructionTestBase {
     art_shift.execute();        
   }    
 
+  @Test
   public void testArtShiftNegativeNegativeShift() {
-    mockMachine.expects(atLeastOnce()).method("incrementPC").with(eq(3));
-    mockMachine.expects(once()).method("setVariable").with(eq(1), eq((short) -6));
-    
+    context.checking(new Expectations() {{
+      one (machine).incrementPC(3);
+      atLeast(1).of (machine).setVariable(1, (short) -6);
+    }});
     ExtendedInstruction art_shift = new ExtendedInstruction(machine, ExtendedStaticInfo.OP_ART_SHIFT);
     art_shift.setLength(3);
     art_shift.addOperand(new Operand(Operand.TYPENUM_SMALL_CONSTANT, (short) -12));

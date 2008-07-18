@@ -20,7 +20,12 @@
  */
 package test.zmpp.instructions;
 
+import org.jmock.Expectations;
+import org.jmock.integration.junit4.JMock;
 import org.junit.Before;
+import org.junit.Test;
+import static org.junit.Assert.*;
+import org.junit.runner.RunWith;
 import org.zmpp.instructions.Operand;
 import org.zmpp.instructions.VariableInstruction;
 import org.zmpp.instructions.VariableStaticInfo;
@@ -28,21 +33,29 @@ import org.zmpp.instructions.AbstractInstruction.OperandCount;
 
 import test.zmpp.instructions.InstructionVarV3Test.VariableInstructionMock;
 
+/**
+ * Test class for VAR instructions on V5.
+ * @author Wei-ju Wu
+ * @version 1.5
+ */
+@RunWith(JMock.class)
 public class InstructionVarV5Test extends InstructionTestBase {
 
   @Override
   @Before
-  protected void setUp() throws Exception {
+  public void setUp() throws Exception {
     super.setUp();
-    mockMachine.expects(atLeastOnce()).method("getVersion").will(returnValue(5));
+    expectStoryVersion(5);
   }
 
+  @Test
   public void testAreadStoresValueInV5() {
     VariableInstruction aread = new VariableInstruction(machine,
         OperandCount.VAR, VariableStaticInfo.OP_AREAD);    
     assertTrue(aread.storesResult());
   }
   
+  @Test
   public void testNotStoresValueInV5() {
     VariableInstruction not5 = new VariableInstruction(machine,
         OperandCount.VAR, VariableStaticInfo.OP_NOT);    
@@ -57,15 +70,16 @@ public class InstructionVarV5Test extends InstructionTestBase {
     assertFalse(callvn2_5.storesResult());
   }  
 
+  @Test
   public void testNotInV5() {
-    mockMachine.expects(once()).method("setVariable").with(eq(0x12), eq((short) 0x5555));     
-    
+    context.checking(new Expectations() {{
+      one (machine).setVariable(0x12, (short) 0x5555);
+    }});
     VariableInstructionMock not =
       new VariableInstructionMock(machine, VariableStaticInfo.OP_NOT);
     not.addOperand(new Operand(Operand.TYPENUM_LARGE_CONSTANT, (short) 0xaaaa));
     not.setStoreVariable((short) 0x12);    
-    not.execute();
-    
+    not.execute();    
     assertTrue(not.nextInstructionCalled);
   }
 }

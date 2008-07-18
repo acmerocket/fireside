@@ -5,29 +5,30 @@
 
 package test.zmpp.vm;
 
+import java.io.File;
 import java.io.FileInputStream;
 import java.io.IOException;
-import org.jmock.MockObjectTestCase;
 import org.zmpp.vm.MachineImpl;
 import org.zmpp.vmutil.FileUtils;
 
 /**
- *
- * @author weiju
+ * Test utility class for virtual machine package.
+ * @author Wei-ju Wu
+ * @version 1.5
  */
-public class MachineTestUtil extends MockObjectTestCase {
+public class MachineTestUtil {
 
-  protected static MachineImpl createMachine(String filePath)
+  protected static MachineImpl createMachine(File file)
     throws IOException {
     MachineImpl machine = new MachineImpl();
-    machine.initialize(readData(filePath), null);
+    machine.initialize(readData(file), null);
     return machine;
   }
-  
-  protected static byte[] readData(String filePath) throws IOException {
+
+  protected static byte[] readData(File file) throws IOException {
     FileInputStream fileInput = null;
     try {
-      fileInput = new FileInputStream(filePath);
+      fileInput = new FileInputStream(file);
       return FileUtils.readFileBytes(fileInput);
     } finally {
       fileInput.close();

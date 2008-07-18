@@ -20,21 +20,27 @@
  */
 package test.zmpp.instructions;
 
+import org.jmock.integration.junit4.JMock;
+import org.junit.Before;
 import org.junit.Test;
+import org.junit.runner.RunWith;
+import static org.junit.Assert.*;
 import org.zmpp.instructions.Short1Instruction;
 import org.zmpp.instructions.Short1StaticInfo;
 
 /**
  * Test class for V5-specific 1OP instruction behavior.
  * @author Wei-ju Wu
- * @version 1.0
+ * @version 1.5
  */
+@RunWith(JMock.class)
 public class Instruction1OpV5Test extends InstructionTestBase {
 
-  protected void setUp() throws Exception {
+  @Override
+  @Before
+  public void setUp() throws Exception {
 	  super.setUp();
-    mockMachine.expects(atLeastOnce()).method("getVersion")
-    	.will(returnValue(5));
+    expectStoryVersion(5);
   }
 
   @Test

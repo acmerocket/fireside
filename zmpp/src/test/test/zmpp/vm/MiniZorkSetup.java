@@ -21,7 +21,6 @@
 package test.zmpp.vm;
 
 
-import org.jmock.MockObjectTestCase;
 import org.zmpp.base.Memory;
 import org.zmpp.encoding.AlphabetTable;
 import org.zmpp.encoding.DefaultAccentTable;
@@ -34,25 +33,25 @@ import org.zmpp.encoding.ZsciiEncoding;
 import org.zmpp.vm.Abbreviations;
 import org.zmpp.vm.MachineImpl;
 import org.zmpp.vm.StoryFileHeader;
+import static test.zmpp.testutil.ZmppTestUtil.*;
 
 /**
  * This class acts as a base test class and sets up some integrated
  * testing objects for the minizork game.
  *
  * @author Wei-ju Wu
- * @version 1.0
+ * @version 1.5
  */
-public abstract class MiniZorkSetup extends MockObjectTestCase {
+public abstract class MiniZorkSetup {
 
   protected Memory minizorkmap;
   protected ZCharDecoder converter;
   protected StoryFileHeader fileheader;
   protected Abbreviations abbreviations;
   protected MachineImpl machine;
-  
-  @Override
+
   protected void setUp() throws Exception {
-    machine = MachineTestUtil.createMachine("testfiles/minizork.z3");
+    machine = MachineTestUtil.createMachine(createLocalFile("testfiles/minizork.z3"));
     minizorkmap = machine;
     fileheader = machine.getFileHeader();
     

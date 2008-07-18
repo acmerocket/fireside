@@ -20,15 +20,21 @@
  */
 package test.zmpp.instructions;
 
-import junit.framework.TestCase;
 
+import org.junit.Test;
+import static org.junit.Assert.*;
 import org.zmpp.instructions.Operand;
 import org.zmpp.instructions.Operand.OperandType;
 
-public class OperandTest extends TestCase {
+/**
+ * Test class for Operand.
+ * @author Wei-ju Wu
+ * @version 1.5
+ */
+public class OperandTest {
 
+  @Test
   public void testCreateOperand() {
-    
     Operand operand1 = new Operand(Operand.TYPENUM_SMALL_CONSTANT, (byte) 5);
     Operand operand2 = new Operand(Operand.TYPENUM_LARGE_CONSTANT, (short) 6);
     Operand operand3 = new Operand(Operand.TYPENUM_VARIABLE, (short) 11);

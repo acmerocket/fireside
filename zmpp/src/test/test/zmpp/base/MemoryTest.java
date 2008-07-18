@@ -20,50 +20,57 @@
  */
 package test.zmpp.base;
 
-import junit.framework.TestCase;
-
+import org.junit.Before;
+import org.junit.Test;
 import org.zmpp.base.DefaultMemory;
 import org.zmpp.base.Memory;
+import static org.junit.Assert.*;
 
 /**
  * This class is a test for the Memory class.
  * 
  * @author Wei-ju Wu
- * @version 1.0
+ * @version 1.5
  */
-public class MemoryTest extends TestCase {
+public class MemoryTest {
 
   private Memory memory;
   private byte[] data = { 0x03, 0x00, 0x37, 0x09, (byte) 0xff, (byte) 0xff };
   
-  @Override
-  protected void setUp() throws Exception {
+  @Before
+  public void setUp() throws Exception {
     memory = new DefaultMemory(data);
   }
-    
+  
+  @Test
   public void testReadUnsignedByte() {
     assertEquals(3, memory.readUnsignedByte(0x00));
   }
   
+  @Test
   public void testReadUnsignedWord() {
     assertEquals(0x3709, memory.readUnsignedShort(0x02));
   }
   
+  @Test
   public void testGetUnsignedShortGeneral() {
     assertEquals(0xffff, memory.readUnsignedShort(0x04));
     assertNotSame(-1, memory.readUnsignedShort(0x04));
   }
   
+  @Test
   public void testGetShortGeneral() {
     assertEquals(-1, memory.readShort(0x04));
   }
   
+  @Test
   public void testReadUnsigned32(){
     byte[] data32 = { (byte) 0xd7, (byte) 0x4b, (byte) 0xd7, (byte) 0x53 };
     Memory memaccess = new DefaultMemory(data32);
     assertEquals(0xd74bd753L, memaccess.readUnsigned32(0x00));
   }
   
+  @Test
   public void testWriteUnsignedByte() {
     memory.writeUnsignedByte(0x02, (short) 0xff);
     assertEquals(0xff, memory.readUnsignedByte(0x02));
@@ -72,6 +79,7 @@ public class MemoryTest extends TestCase {
     assertEquals(0x32, memory.readUnsignedByte(0x03));
   }
   
+  @Test
   public void testWriteUnsignedShort() {
     memory.writeUnsignedShort(0x02, 0xffff);
     assertEquals(0xffff, memory.readUnsignedShort(0x02));
@@ -80,6 +88,7 @@ public class MemoryTest extends TestCase {
     assertEquals(0x00ff, memory.readUnsignedShort(0x04));
   }
   
+  @Test
   public void testWriteUnsigned32() {
     memory.writeUnsigned32(0x00, 0xffffffffL);
     assertEquals(0x00000000ffffffffL, memory.readUnsigned32(0x00));

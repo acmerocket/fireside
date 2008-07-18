@@ -26,6 +26,11 @@ import org.junit.Before;
 import org.junit.Test;
 import org.zmpp.vmutil.RingBuffer;
 
+/**
+ * Test class for RingBuffer.
+ * @author Wei-ju Wu
+ * @version 1.5
+ */
 public class RingBufferTest {
 
   private RingBuffer<Integer> ringbuffer;

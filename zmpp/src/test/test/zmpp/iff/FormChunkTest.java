@@ -25,21 +25,29 @@ import java.util.ArrayList;
 import java.util.Iterator;
 import java.util.List;
 
-import org.jmock.MockObjectTestCase;
+import static org.junit.Assert.*;
+import org.junit.Before;
+import org.junit.Test;
 import org.zmpp.base.DefaultMemory;
 import org.zmpp.base.Memory;
 import org.zmpp.iff.Chunk;
 import org.zmpp.iff.DefaultFormChunk;
 import org.zmpp.iff.FormChunk;
+import static test.zmpp.testutil.ZmppTestUtil.*;
 
-public class FormChunkTest extends MockObjectTestCase {
+/**
+ * Test class for FormChunk.
+ * @author Wei-ju Wu
+ * @version 1.5
+ */
+public class FormChunkTest {
 
   private Memory formChunkData;
   private FormChunk formChunk; 
   
-  protected void setUp() throws Exception {
-    
-    File testSaveFile = new File("testfiles/leathersave.ifzs");
+  @Before
+  public void setUp() throws Exception {
+    File testSaveFile = createLocalFile("testfiles/leathersave.ifzs");
     RandomAccessFile saveFile = new RandomAccessFile(testSaveFile, "r");
     byte[] data = new byte[(int) saveFile.length()];
     saveFile.readFully(data);
@@ -48,21 +56,20 @@ public class FormChunkTest extends MockObjectTestCase {
     saveFile.close();
   }
   
+  @Test
   public void testCreation() {
-    
     assertTrue(formChunk.isValid());
     assertEquals("FORM", new String(formChunk.getId()));
     assertEquals(512, formChunk.getSize());
     assertEquals("IFZS", new String(formChunk.getSubId()));
   }
   
+  @Test
   public void testSubchunks() {
-    
     Iterator<Chunk> iter = formChunk.getSubChunks();
     List<Chunk> result = new ArrayList<Chunk>();
     
     while (iter.hasNext()) {
-      
       Chunk chunk = iter.next();
       assertTrue(chunk.isValid());
       result.add(chunk);
@@ -80,8 +87,8 @@ public class FormChunkTest extends MockObjectTestCase {
     assertEquals(3, result.size());
   }
   
+  @Test
   public void testGetSubChunk() {
-    
     assertNotNull(formChunk.getSubChunk("IFhd".getBytes()));
     assertNotNull(formChunk.getSubChunk("CMem".getBytes()));
     assertNotNull(formChunk.getSubChunk("Stks".getBytes()));

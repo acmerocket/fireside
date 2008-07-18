@@ -20,17 +20,19 @@
  */
 package test.zmpp.vm;
 
-import junit.framework.TestCase;
+import org.junit.Test;
+import static org.junit.Assert.*;
 
 /**
  * This class tests the access method to the user stack.
  * Note: There is no usable user stack implementation anymore, we have to think
  * about a well-working alternative
  * @author Wei-ju Wu
- * @version 1.0
+ * @version 1.5
  */
-public class UserStackTest extends TestCase {
+public class UserStackTest {
 
+  @Test
   public void testDummy() {
     assertTrue(true);
   }

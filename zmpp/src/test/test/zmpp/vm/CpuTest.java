@@ -22,51 +22,73 @@ package test.zmpp.vm;
 import java.util.ArrayList;
 import java.util.List;
 
-import org.jmock.Mock;
-import org.jmock.MockObjectTestCase;
+import org.jmock.Expectations;
+import org.jmock.Mockery;
+import org.jmock.integration.junit4.JMock;
+import org.jmock.integration.junit4.JUnit4Mockery;
+import org.junit.Before;
+import org.junit.Test;
+import org.junit.runner.RunWith;
+import static org.junit.Assert.*;
 import org.zmpp.vm.Cpu;
 import org.zmpp.vm.CpuImpl;
 import org.zmpp.vm.Machine;
 import org.zmpp.vm.RoutineContext;
 import org.zmpp.vm.StoryFileHeader;
+import test.zmpp.testutil.DummyStoryFileHeader;
 
-public class CpuTest extends MockObjectTestCase {
-
-  private Mock mockMachine, mockDecoder, mockFileHeader;
+/**
+ * Test class for the Cpu interface of the Machine object.
+ * @author Wei-ju Wu
+ * @version 1.5
+ */
+@RunWith(JMock.class)
+public class CpuTest {
+  Mockery context = new JUnit4Mockery();
   private Machine machine;
   private CpuImpl cpu;
-  private StoryFileHeader fileheader;
+  
+  /**
+   * Faked out file header.
+   */
+  private StoryFileHeader fileheader = new DummyStoryFileHeader() {
+    @Override
+    public int getProgramStart() { return 1000; }
+    @Override
+    public int getGlobalsAddress() { return 5000; }
+    @Override
+    public int getRoutineOffset() { return 5; }
+    @Override
+    public int getStaticStringOffset() { return 6; }
+  };
   private RoutineContext routineInfo;
   
-  @Override
+  @Before
   public void setUp() throws Exception {
-    mockMachine = mock(Machine.class);
-    mockFileHeader = mock(StoryFileHeader.class);
-    
-    machine = (Machine) mockMachine.proxy();
-    fileheader = (StoryFileHeader) mockFileHeader.proxy();
+    machine = context.mock(Machine.class);
     routineInfo = new RoutineContext(0x4711, 3);
-    
-    mockMachine.expects(atLeastOnce()).method("getFileHeader").will(returnValue(fileheader));
-    mockFileHeader.expects(once()).method("getProgramStart").will(returnValue(1000));
-    mockFileHeader.expects(once()).method("getGlobalsAddress").will(returnValue(5000));
-
-    mockMachine.expects(once()).method("getVersion").will(returnValue(5));
+    context.checking(new Expectations() {{
+      atLeast(1).of(machine).getFileHeader(); will(returnValue(fileheader));
+      one (machine).getVersion(); will(returnValue(5));
+    }});
     cpu = new CpuImpl(machine);
     cpu.reset();
   }
   
+  @Test
   public void testInitialState() {
     assertEquals(1000, cpu.getPC());
     assertEquals(0, cpu.getSP());
     assertEquals(0, ((CpuImpl)cpu).getRoutineStackPointer());
   }
   
+  @Test
   public void testSetProgramCounter() {
     cpu.setPC(1234);
     assertEquals(1234, cpu.getPC());
   }  
   
+  @Test
   public void testIncrementProgramCounter() {
     cpu.setPC(1000);
     cpu.incrementPC(0);
@@ -81,8 +103,8 @@ public class CpuTest extends MockObjectTestCase {
     assertEquals(968, cpu.getPC());
   }
 
+  @Test
   public void testGetVariableType() {
-    
     assertEquals(Cpu.VariableType.STACK, CpuImpl.getVariableType(0));
     assertEquals(Cpu.VariableType.LOCAL, CpuImpl.getVariableType(0x01));
     assertEquals(Cpu.VariableType.LOCAL, CpuImpl.getVariableType(0x0f));
@@ -90,50 +112,50 @@ public class CpuTest extends MockObjectTestCase {
     assertEquals(Cpu.VariableType.GLOBAL, CpuImpl.getVariableType(0xff));
   }
   
+  @Test
   public void testVariableTypes() {
-    
     assertTrue(Cpu.VariableType.STACK != Cpu.VariableType.LOCAL);
     assertTrue(Cpu.VariableType.LOCAL != Cpu.VariableType.GLOBAL);
     assertTrue(Cpu.VariableType.STACK != Cpu.VariableType.GLOBAL);
   }
   
+  @Test
   public void testGetStackElement() {
-    
     cpu.setVariable(0, (short) 1);
     cpu.setVariable(0, (short) 2);
     cpu.setVariable(0, (short) 3);
     assertEquals(2, cpu.getStackElement(1));
   }
   
+  @Test
   public void testSetRoutineContexts() {
-    
     List<RoutineContext> contexts = new ArrayList<RoutineContext>();
-    RoutineContext context = new RoutineContext(4711, 2);
-    contexts.add(context);
+    RoutineContext routineContext = new RoutineContext(4711, 2);
+    contexts.add(routineContext);
     cpu.setRoutineContexts(contexts);
     
     List<RoutineContext> currentContexts = cpu.getRoutineContexts();
     assertEquals(1, currentContexts.size());
     assertNotSame(contexts, currentContexts);
-    assertEquals(context, cpu.getCurrentRoutineContext());
+    assertEquals(routineContext, cpu.getCurrentRoutineContext());
   }
   
+  @Test
   public void testGetCurrentRoutineContext() {
-    
     // Initialize the routine context
-    RoutineContext context = new RoutineContext(0x0815, 0);
+    RoutineContext routineContext = new RoutineContext(0x0815, 0);
     
     // simulate a call
-    cpu.pushRoutineContext(context);
+    cpu.pushRoutineContext(routineContext);
     
     // We can call this three times and it will stay the same
-    assertEquals(context, cpu.getCurrentRoutineContext());
-    assertEquals(context, cpu.getCurrentRoutineContext());
-    assertEquals(context, cpu.getCurrentRoutineContext());        
+    assertEquals(routineContext, cpu.getCurrentRoutineContext());
+    assertEquals(routineContext, cpu.getCurrentRoutineContext());
+    assertEquals(routineContext, cpu.getCurrentRoutineContext());        
   }
   
+  @Test
   public void testGetSetStackTopElement() {
-    
     // initialize stack
     cpu.setVariable(0, (short) 0);    
     cpu.setStackTop((short) 42);
@@ -142,11 +164,12 @@ public class CpuTest extends MockObjectTestCase {
     assertEquals(1, cpu.getSP());
   }
   
-  public void testGetStackTopElementStackEmpty() {
-    
+  @Test
+  public void testGetStackTopElementStackEmpty() {  
     assertEquals(-1, cpu.getStackTop());
   }
   
+  @Test
   public void testGetVariableStackNonEmptyNoRoutineContext() {
     // Write something to the stack now
     cpu.setVariable(0, (short) 4711);
@@ -156,8 +179,8 @@ public class CpuTest extends MockObjectTestCase {
     assertEquals(value, 4711);
   }
 
+  @Test
   public void testGetVariableStackNonEmptyWithRoutineContext() {
-    
     // Write something to the stack now
     cpu.setVariable(0, (short) 4711);
     
@@ -173,49 +196,40 @@ public class CpuTest extends MockObjectTestCase {
     assertEquals(value, 4712);
   }
   
-  public void testSetVariableStack() {
-    
+  @Test
+  public void testSetVariableStack() {  
     int oldStackPointer = cpu.getSP();
     cpu.setVariable(0, (short) 213);
     assertEquals(oldStackPointer + 1, cpu.getSP());
   }
   
+  @Test
   public void testGetLocalVariableIllegal() {
-    
     try {
-      
       cpu.getVariable(1);
       fail("accessing a local variable without a context should yield an exception");
-      
     } catch (IllegalStateException expected) {
-
       assertEquals("no routine context set", expected.getMessage());
     }
-      
+
     cpu.pushRoutineContext(routineInfo);
-    try {
-      
+    try {      
       cpu.getVariable(5); // accessing a non-existent variable
       fail("accessing a non-existent local variable should yield an exception");
     } catch (IllegalStateException expected) {
-      
       assertEquals("access to non-existent local variable: 4",
           expected.getMessage());
     }
   }
   
+  @Test
   public void testSetLocalVariable() {
-    
     try {
-      
       cpu.setVariable(1, (short) 4711);
       fail("accessing a local variable without a context should yield an exception");
-      
     } catch (IllegalStateException expected) {
-
       assertEquals("no routine context set", expected.getMessage());
     }
-    
     cpu.pushRoutineContext(routineInfo);
     cpu.setVariable(1, (short) 4711); // Local variable 0
     assertEquals(4711, cpu.getVariable(1));
@@ -224,15 +238,14 @@ public class CpuTest extends MockObjectTestCase {
     try {
       cpu.setVariable(6, (short) 2312);
       fail("accessing a non-existent local variable should yield an exception");
-    } catch (IllegalStateException expected) {
-      
+    } catch (IllegalStateException expected) { 
       assertEquals("access to non-existent local variable: 5",
           expected.getMessage());
-    }    
+    }
   }
 
+  @Test
   public void testPopRoutineContextIllegal() {
-    
     try {
       cpu.returnWith((short) 42);
       fail();
@@ -242,8 +255,8 @@ public class CpuTest extends MockObjectTestCase {
     }
   }
 
+  @Test
   public void testCallAndReturn() {
-    
     // Setup the environment
     cpu.setVariable(0, (short) 10); // write something on the stack
     int oldSp = cpu.getSP();
@@ -251,16 +264,16 @@ public class CpuTest extends MockObjectTestCase {
     int returnAddress = 0x749;
     
     // Initialize the routine context
-    RoutineContext context = new RoutineContext(0x0815, 0);
-    context.setReturnVariable(0x12);
+    RoutineContext routineContext = new RoutineContext(0x0815, 0);
+    routineContext.setReturnVariable(0x12);
     
     // simulate a call
-    context.setReturnAddress(returnAddress); // save the return address in the context
-    cpu.pushRoutineContext(context);
+    routineContext.setReturnAddress(returnAddress); // save the return address in the context
+    cpu.pushRoutineContext(routineContext);
     cpu.setPC(0x0815);
     
     // assert that the context has saved the old stack pointer
-    assertEquals(oldSp, context.getInvocationStackPointer());
+    assertEquals(oldSp, routineContext.getInvocationStackPointer());
     
     // simulate some stack pushes
     cpu.setVariable(0, (short) 213);
@@ -268,7 +281,9 @@ public class CpuTest extends MockObjectTestCase {
     cpu.setVariable(0, (short) 215);
 
     // Set the variable
-    mockMachine.expects(once()).method("writeShort").with(eq(5004), eq((short) 42));
+    context.checking(new Expectations() {{
+      one (machine).writeShort(5004, (short) 42);
+    }});
     
     assertNotSame(oldSp, cpu.getSP());
     cpu.returnWith((short) 42);
@@ -276,36 +291,52 @@ public class CpuTest extends MockObjectTestCase {
     assertEquals(oldSp, cpu.getSP());
   }  
 
+  @Test
   public void testTranslatePackedAddressV3() {
-    mockMachine.expects(atLeastOnce()).method("getVersion").will(returnValue(3));
+    context.checking(new Expectations() {{
+      one (machine).getVersion(); will(returnValue(3));
+    }});
     int byteAddress = cpu.unpackAddress(2312, true);
     assertEquals(2312 * 2, byteAddress);
   }  
 
+  @Test
   public void testTranslatePackedAddressV4() {
-    mockMachine.expects(atLeastOnce()).method("getVersion").will(returnValue(4));
+    context.checking(new Expectations() {{
+      one (machine).getVersion(); will(returnValue(4));
+    }});
     assertEquals(4711 * 4, cpu.unpackAddress(4711, true));
   }
 
+  @Test
   public void testTranslatePackedAddressV5() {
-    mockMachine.expects(atLeastOnce()).method("getVersion").will(returnValue(5));
+    context.checking(new Expectations() {{
+      one (machine).getVersion(); will(returnValue(5));
+    }});
     assertEquals(4711 * 4, cpu.unpackAddress(4711, true));
   }
 
+  @Test
   public void testTranslatePackedAddressV7Call() {
-    mockFileHeader.expects(once()).method("getRoutineOffset").will(returnValue(5));
-    mockMachine.expects(atLeastOnce()).method("getVersion").will(returnValue(7));
+    context.checking(new Expectations() {{
+      one (machine).getVersion(); will(returnValue(7));
+    }});
     assertEquals(4711 * 4 + 8 * 5, cpu.unpackAddress(4711, true));
   }
 
+  @Test
   public void testTranslatePackedAddressV7String() {
-    mockFileHeader.expects(once()).method("getStaticStringOffset").will(returnValue(6));
-    mockMachine.expects(atLeastOnce()).method("getVersion").will(returnValue(7));
+    context.checking(new Expectations() {{
+      one (machine).getVersion(); will(returnValue(7));
+    }});
     assertEquals(4711 * 4 + 8 * 6, cpu.unpackAddress(4711, false));
   }
   
+  @Test
   public void testTranslatePackedAddressV8() {
-    mockMachine.expects(atLeastOnce()).method("getVersion").will(returnValue(8));
+    context.checking(new Expectations() {{
+      one (machine).getVersion(); will(returnValue(8));
+    }});
     assertEquals(4711 * 8, cpu.unpackAddress(4711, true));
   }
 }

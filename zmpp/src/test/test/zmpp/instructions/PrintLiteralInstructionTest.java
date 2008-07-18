@@ -20,8 +20,11 @@
  */
 package test.zmpp.instructions;
 
+import org.jmock.Expectations;
+import org.jmock.integration.junit4.JMock;
 import org.junit.Before;
 import org.junit.Test;
+import org.junit.runner.RunWith;
 import org.zmpp.instructions.PrintLiteralInstruction;
 import org.zmpp.instructions.PrintLiteralStaticInfo;
 
@@ -30,20 +33,23 @@ import org.zmpp.instructions.PrintLiteralStaticInfo;
  * PrintLiteralInstruction.
  * 
  * @author Wei-ju Wu
- * @version 1.0
+ * @version 1.5
  */
+@RunWith(JMock.class)
 public class PrintLiteralInstructionTest extends InstructionTestBase {
 
+  @Override
   @Before
-  protected void setUp() throws Exception {
-	super.setUp();
-    mockMachine.expects(atLeastOnce()).method("getVersion").will(returnValue(3));
+  public void setUp() throws Exception {
+    super.setUp();
+    expectStoryVersion(5);
   }
 
   @Test
   public void testIllegalOpcode() {
-    mockMachine.expects(once()).method("halt").with(eq(
-      "illegal instruction, type: SHORT operand count: C0OP opcode: 221"));
+    context.checking(new Expectations() {{
+      one (machine).halt("illegal instruction, type: SHORT operand count: C0OP opcode: 221");
+    }});
     PrintLiteralInstruction illegal = new PrintLiteralInstruction(
         machine, 0xdd, machine, 0);
     illegal.execute();
@@ -51,9 +57,11 @@ public class PrintLiteralInstructionTest extends InstructionTestBase {
   
   @Test
   public void testPrint() {    
-    mockMachine.expects(once()).method("incrementPC").with(eq(3));
-    mockMachine.expects(once()).method("printZString").with(eq(4712));
-    mockMachine.expects(once()).method("readUnsignedShort").with(eq(4712)).will(returnValue(0x8000));
+    context.checking(new Expectations() {{
+      one (machine).incrementPC(3);
+      one (machine).printZString(4712);
+      one (machine).readUnsignedShort(4712); will(returnValue(0x8000));
+    }});
     PrintLiteralInstruction print = new PrintLiteralInstruction(
         machine, PrintLiteralStaticInfo.OP_PRINT, machine, 4711);
     print.execute();
@@ -61,10 +69,11 @@ public class PrintLiteralInstructionTest extends InstructionTestBase {
   
   @Test
   public void testPrintRet() {
-    mockMachine.expects(once()).method("printZString").with(eq(4712));
-    mockMachine.expects(once()).method("newline");
-    mockMachine.expects(once()).method("returnWith").with(eq((short) 1));
-    
+    context.checking(new Expectations() {{
+      one (machine).printZString(4712);
+      one (machine).newline();
+      one (machine).returnWith((short) 1);
+    }});
     PrintLiteralInstruction print_ret = new PrintLiteralInstruction(
         machine, PrintLiteralStaticInfo.OP_PRINT_RET, machine, 4711);
     print_ret.execute();

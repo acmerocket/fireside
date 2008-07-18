@@ -23,39 +23,51 @@ package test.zmpp.io;
 import java.io.FileWriter;
 import java.io.Writer;
 
-import org.jmock.Mock;
-import org.jmock.MockObjectTestCase;
+import org.jmock.Expectations;
+import org.jmock.Mockery;
+import org.jmock.integration.junit4.JMock;
+import org.jmock.integration.junit4.JUnit4Mockery;
+import org.junit.After;
+import org.junit.Before;
+import org.junit.Test;
+import org.junit.runner.RunWith;
+
 import org.zmpp.encoding.DefaultAccentTable;
 import org.zmpp.encoding.ZsciiEncoding;
 import org.zmpp.io.IOSystem;
 import org.zmpp.io.TranscriptOutputStream;
+import static test.zmpp.testutil.ZmppTestUtil.*;
 
-public class FileOutputStreamTest extends MockObjectTestCase {
-
-  private Mock mockIo;
+/**
+ * Test class for FileOutputStream.
+ * @author Wei-ju Wu
+ * @version 1.5
+ */
+@RunWith(JMock.class)
+public class FileOutputStreamTest {
+  Mockery context = new JUnit4Mockery();
   private IOSystem iosys;
   private TranscriptOutputStream outstream;
   private Writer outputwriter;
   
-  @Override
-  protected void setUp() throws Exception {
-    
-    mockIo = mock(IOSystem.class);
-    iosys = (IOSystem) mockIo.proxy();
+  @Before
+  public void setUp() throws Exception {
+    iosys = context.mock(IOSystem.class);
     outstream = new TranscriptOutputStream(iosys, new ZsciiEncoding(new DefaultAccentTable()));
-    outputwriter = new FileWriter("testfiles/streamoutput.txt");
+    outputwriter = new FileWriter(createLocalFile("testfiles/streamoutput.txt"));
   }
 
-  @Override
-  protected void tearDown() throws Exception {
-    
+  @After
+  public void tearDown() throws Exception {
     outstream.close();
   }
 
+  @Test
   public void testPrintFirstTime() {
-
-    mockIo.expects(once()).method("getTranscriptWriter").will(returnValue(outputwriter));
-   
+    context.checking(new Expectations() {{
+      one (iosys).getTranscriptWriter(); will(returnValue(outputwriter));
+    }});
+    //mockIo.expects(once()).method("getTranscriptWriter").will(returnValue(outputwriter));
     outstream.print('a');
     outstream.print(ZsciiEncoding.NEWLINE);
     outstream.print('b');

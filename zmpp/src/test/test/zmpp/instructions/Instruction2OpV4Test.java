@@ -20,20 +20,31 @@
  */
 package test.zmpp.instructions;
 
+import org.jmock.Expectations;
+import org.jmock.integration.junit4.JMock;
 import org.junit.Before;
 import org.junit.Test;
+import org.junit.runner.RunWith;
+import static org.junit.Assert.*;
 import org.zmpp.instructions.LongInstruction;
 import org.zmpp.instructions.LongStaticInfo;
 import org.zmpp.instructions.Operand;
 
 import test.zmpp.instructions.Instruction2OpV3Test.Instruction2OpMock;
 
+/**
+ * Test class for OP2 instructions on V4.
+ * @author Wei-ju Wu
+ * @version 1.5
+ */
+@RunWith(JMock.class)
 public class Instruction2OpV4Test extends InstructionTestBase {
 
+  @Override
 	@Before
   public void setUp() throws Exception {
     super.setUp();
-    mockMachine.expects(atLeastOnce()).method("getVersion").will(returnValue(4));
+    expectStoryVersion(4);
   }
 	
   @Test	
@@ -71,12 +82,14 @@ public class Instruction2OpV4Test extends InstructionTestBase {
     assertFalse(info.storesResult());
   }
 
+  @Test
   public void testCall2s() {
-    mockMachine.expects(once()).method("getPC").will(returnValue(4611));
-    short[] args = { 2 };
-    int returnvalue = 0;
-    mockMachine.expects(once()).method("call").with(eq(1), eq(4616), eq(args), eq(returnvalue));
-    
+    final short[] args = { 2 };
+    final int returnvalue = 0;
+    context.checking(new Expectations() {{
+      one (machine).getPC(); will(returnValue(4611));
+      one (machine).call(1, 4616, args, returnvalue);
+    }});
     LongInstruction call2s = createInstructionMock(LongStaticInfo.OP_CALL_2S,
         Operand.TYPENUM_SMALL_CONSTANT, (short) 1 ,
         Operand.TYPENUM_SMALL_CONSTANT, (short) 2);
@@ -87,10 +100,11 @@ public class Instruction2OpV4Test extends InstructionTestBase {
   // ********* CALL_2N
   // ******************************************
   
+  @Test
   public void testCall2nIllegalInVersion4() {
-    mockMachine.expects(once()).method("halt").with(eq(
-        "illegal instruction, type: LONG operand count: C2OP opcode: 26"        
-        ));
+    context.checking(new Expectations() {{
+      one (machine).halt("illegal instruction, type: LONG operand count: C2OP opcode: 26");
+    }});
     LongInstruction call2n = createInstructionMock(LongStaticInfo.OP_CALL_2N,
         Operand.TYPENUM_SMALL_CONSTANT, (short) 1 ,
         Operand.TYPENUM_SMALL_CONSTANT, (short) 2);

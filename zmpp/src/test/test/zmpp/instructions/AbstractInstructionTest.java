@@ -20,8 +20,14 @@
  */
 package test.zmpp.instructions;
 
-import org.jmock.Mock;
-import org.jmock.MockObjectTestCase;
+import org.jmock.Expectations;
+import org.jmock.Mockery;
+import org.jmock.integration.junit4.JMock;
+import org.jmock.integration.junit4.JUnit4Mockery;
+import org.junit.Before;
+import org.junit.Test;
+import static org.junit.Assert.*;
+import org.junit.runner.RunWith;
 import org.zmpp.base.Memory;
 import org.zmpp.instructions.AbstractInstruction;
 import org.zmpp.instructions.InstructionStaticInfo;
@@ -34,44 +40,37 @@ import org.zmpp.vm.Dictionary;
 import org.zmpp.vm.Machine;
 
 /**
- * This class tests the InstructionInfo class.
+ * This class tests the AbstractInstruction class.
  *
  * @author Wei-ju Wu
- * @version 1.0
+ * @version 1.5
  */
-public class AbstractInstructionTest extends MockObjectTestCase {
-
-  protected Mock mockMachine;
+@RunWith(JMock.class)
+public class AbstractInstructionTest {
+  private Mockery context = new JUnit4Mockery();
   protected Machine machine;
-  protected Mock mockServices;
-  protected Mock mockOutputStream;
   protected OutputStream outputStream;
-  protected Mock mockMemory;
   protected Memory memory;
-  protected Mock mockDictionary;
   protected Dictionary dictionary;
-  
   private AbstractInstruction info;
   
-  @Override
+  @Before
   public void setUp() throws Exception {
-    mockMachine = mock(Machine.class);
-    machine = (Machine) mockMachine.proxy();
-    mockOutputStream = mock(OutputStream.class);
-    outputStream = (OutputStream) mockOutputStream.proxy();    
-    mockMemory = mock(Memory.class);
-    memory = (Memory) mockMemory.proxy();
-    mockDictionary = mock(Dictionary.class);
-    dictionary = (Dictionary) mockDictionary.proxy();
+    machine = context.mock(Machine.class);
+    outputStream = context.mock(OutputStream.class);
+    memory = context.mock(Memory.class);
+    dictionary = context.mock(Dictionary.class);
     info = new VariableInstruction(machine, OperandCount.VAR, 0xe0);
   }
   
+  @Test
   public void testCreateInstructionInfo() {
     assertEquals(InstructionForm.VARIABLE, info.getInstructionForm());
     assertEquals(OperandCount.VAR, info.getOperandCount());
     assertEquals(0xe0, info.getOpcode());
   }
   
+  @Test
   public void testSetters() {
     info.setOpcode(0xe1);
     assertEquals(0xe1, info.getOpcode());
@@ -86,7 +85,8 @@ public class AbstractInstructionTest extends MockObjectTestCase {
     info.setBranchIfTrue(true);
     assertTrue(info.branchIfTrue());
   }
-  
+
+  @Test
   public void testAddOperand() {
     assertEquals(0, info.getNumOperands());
     Operand operand = new Operand(Operand.TYPENUM_SMALL_CONSTANT, (short) 2);
@@ -94,9 +94,12 @@ public class AbstractInstructionTest extends MockObjectTestCase {
     assertEquals(1, info.getNumOperands());
     assertEquals(operand, info.getOperand(0));
   }
-  
-  public void testGetValue() {    
-    mockMachine.expects(once()).method("getVariable").with(eq(17)).will(returnValue((short) 1234));
+
+  @Test
+  public void testGetValue() {
+    context.checking(new Expectations() {{
+      one (machine).getVariable(17); will(returnValue((short) 1234));
+    }});
     Operand varOperand = new Operand(Operand.TYPENUM_VARIABLE, (short) 0x11);
     Operand constOperand = new Operand(Operand.TYPENUM_SMALL_CONSTANT, (byte) 0x11);
     info.addOperand(varOperand);
@@ -105,8 +108,11 @@ public class AbstractInstructionTest extends MockObjectTestCase {
     assertEquals(0x11, info.getValue(1));
   }
   
+  @Test
   public void testGetUnsignedValueNegative() {
-    mockMachine.expects(once()).method("getVariable").with(eq(17)).will(returnValue((short) -2));
+    context.checking(new Expectations() {{
+      one (machine).getVariable(17); will(returnValue((short) -2));
+    }});
     Operand varOperand = new Operand(Operand.TYPENUM_VARIABLE, (short) 0x11);
     Operand largeOperand = new Operand(Operand.TYPENUM_SMALL_CONSTANT, (short) -4);
     Operand smallOperand = new Operand(Operand.TYPENUM_SMALL_CONSTANT, (byte) -3);
@@ -119,8 +125,11 @@ public class AbstractInstructionTest extends MockObjectTestCase {
     assertEquals(0xfffd, info.getUnsignedValue(2));
   }
   
+  @Test
   public void testGetUnsignedValueMaxPositive() {    
-    mockMachine.expects(once()).method("getVariable").with(eq(17)).will(returnValue((short) 32767));
+    context.checking(new Expectations() {{
+      one (machine).getVariable(17); will(returnValue((short) 32767));
+    }});
     Operand varOperand = new Operand(Operand.TYPENUM_VARIABLE, (short) 0x11);
     Operand largeOperand = new Operand(Operand.TYPENUM_SMALL_CONSTANT, (short) 32767);
     Operand smallOperand = new Operand(Operand.TYPENUM_SMALL_CONSTANT, (byte) 127);
@@ -133,8 +142,11 @@ public class AbstractInstructionTest extends MockObjectTestCase {
     assertEquals(0x7f, info.getUnsignedValue(2));
   }
   
+  @Test
   public void testGetUnsignedValueMinNegative() {    
-    mockMachine.expects(once()).method("getVariable").with(eq(17)).will(returnValue((short) -32768));
+    context.checking(new Expectations() {{
+      one (machine).getVariable(17); will(returnValue((short) -32768));
+    }});
     Operand varOperand = new Operand(Operand.TYPENUM_VARIABLE, (short) 0x11);
     Operand largeOperand = new Operand(Operand.TYPENUM_SMALL_CONSTANT, (short) -32768);
     Operand smallOperand = new Operand(Operand.TYPENUM_SMALL_CONSTANT, (byte) -128);
@@ -147,8 +159,11 @@ public class AbstractInstructionTest extends MockObjectTestCase {
     assertEquals(0xff80, info.getUnsignedValue(2));
   }
   
+  @Test
   public void testConvertToSigned16() {   
-    mockMachine.expects(once()).method("getVariable").with(eq(17)).will(returnValue((short) -7));
+    context.checking(new Expectations() {{
+      one (machine).getVariable(17); will(returnValue((short) -7));
+    }});
     Operand operandLargeConstant = new Operand(Operand.TYPENUM_LARGE_CONSTANT, (short) 0xfffd);
     Operand operandVariable = new Operand(Operand.TYPENUM_VARIABLE, (short) 0x11);
     Operand operandByte = new Operand(Operand.TYPENUM_SMALL_CONSTANT, (byte) 0xfb);
@@ -168,52 +183,24 @@ public class AbstractInstructionTest extends MockObjectTestCase {
   
   class BranchInstructionInfo implements InstructionStaticInfo {
     int[] versions = { 1, 2, 3, 4, 5, 6, 7, 8 };
-    
-    public int[] getValidVersions(int opcode) {
-      return versions;
-    }
-    
-    public boolean isBranch(int opcode, int version) {      
-      return true;
-    }
-    
-    public boolean storesResult(int opcode, int version) {      
-      return true;
-    }
-
-    /**
-     * {@inheritDoc}
-     */
-    public boolean isOutput(int opcode, int version) {      
-      return false;
-    }
-
-    public String getOpName(int opcode, int version) {      
-      return "OP";
-    }
+    public int[] getValidVersions(int opcode) { return versions; }
+    public boolean isBranch(int opcode, int version) { return true; }
+    public boolean storesResult(int opcode, int version) { return true; }
+    public boolean isOutput(int opcode, int version) { return false; }
+    public String getOpName(int opcode, int version) { return "OP"; }
   }
   
   class BranchInstruction extends AbstractInstruction {
-    
-    public BranchInstruction(Machine machine) {
+    private boolean branchTest;
+    public BranchInstruction(Machine machine, boolean branchTest) {
       super(machine, 0);
+      this.branchTest = branchTest;
     }
-    
-    public OperandCount getOperandCount() {
-      return OperandCount.C2OP;
-    }
-    
-    public InstructionForm getInstructionForm() {      
-      return InstructionForm.LONG;
-    }
-    
+    public OperandCount getOperandCount() { return OperandCount.C2OP; }    
+    public InstructionForm getInstructionForm() { return InstructionForm.LONG; }
     protected void doInstruction() { }
-    
     @Override
-    public void execute() {
-      super.branchOnTest(true);
-    }
-    
+    public void execute() { super.branchOnTest(branchTest); }
     protected InstructionStaticInfo getStaticInfo() {      
       return new BranchInstructionInfo();
     }
@@ -222,11 +209,12 @@ public class AbstractInstructionTest extends MockObjectTestCase {
   /**
    * Test positive offset branch.
    */
+  @Test
   public void testBranchConditionTrue() {
-    mockMachine.expects(once()).method("doBranch")
-    	.with(eq((short) 42), eq(12));
-
-    AbstractInstruction branchInstr = new BranchInstruction(machine);
+    context.checking(new Expectations() {{
+      one (machine).doBranch((short) 42, 12);
+    }});
+    AbstractInstruction branchInstr = new BranchInstruction(machine, true);
     branchInstr.setLength(12);
     branchInstr.setBranchOffset((short) 42);
     branchInstr.setBranchIfTrue(true);
@@ -235,18 +223,13 @@ public class AbstractInstructionTest extends MockObjectTestCase {
   
   /**
    * Branch on true, but branch condition is false.
-   *
    */
+  @Test
   public void testBranchIfTrueBranchConditionIsFalse() {    
-    mockMachine.expects(once()).method("incrementPC").with(eq(12));
- 
-    AbstractInstruction branchInstr = new BranchInstruction(machine) {
-      @Override
-      public void execute() { 
-        super.branchOnTest(false);
-      }
-    };
-    
+    context.checking(new Expectations() {{
+      one (machine).incrementPC(12);
+    }});
+    AbstractInstruction branchInstr = new BranchInstruction(machine, false);
     branchInstr.setLength(12);
     branchInstr.setBranchOffset((short) 42);
     branchInstr.setBranchIfTrue(true);
@@ -255,17 +238,13 @@ public class AbstractInstructionTest extends MockObjectTestCase {
 
   /**
    * Branch on false, branch condition is true.
-   *
    */
+  @Test
   public void testBranchIfFalseBranchConditionIsTrue() {
-    mockMachine.expects(once()).method("incrementPC").with(eq(12));
-    
-    AbstractInstruction branchInstr = new BranchInstruction(machine) {
-      @Override
-      public void execute() {        
-        super.branchOnTest(true);
-      }
-    };
+    context.checking(new Expectations() {{
+      one (machine).incrementPC(12);
+    }});
+    AbstractInstruction branchInstr = new BranchInstruction(machine, true);
     branchInstr.setLength(12);
     branchInstr.setBranchOffset((short) 42);
     branchInstr.setBranchIfTrue(false);
@@ -274,33 +253,25 @@ public class AbstractInstructionTest extends MockObjectTestCase {
   
   /**
    * Branch on false, branch condition is false.
-   *
    */
+  @Test
   public void testBranchIfFalseBranchConditionIsFalse() {    
-    mockMachine.expects(once()).method("doBranch").
-            with(eq((short) 42), eq(12));
-
-    AbstractInstruction branchInstr = new BranchInstruction(machine) {
-      @Override
-      public void execute() {        
-        super.branchOnTest(false);
-      }
-    };
+    context.checking(new Expectations() {{
+      one (machine).doBranch((short) 42, 12);
+    }});
+    AbstractInstruction branchInstr = new BranchInstruction(machine, false);
     branchInstr.setLength(12);
     branchInstr.setBranchOffset((short) 42);
     branchInstr.setBranchIfTrue(false);
     branchInstr.execute();
   }
   
+  @Test
   public void testToString() {    
-    mockMachine.expects(atLeastOnce()).method("getVersion").will(returnValue(3));
-    
-    AbstractInstruction branchInstr = new BranchInstruction(machine) {
-      @Override
-      public void execute() {        
-        super.branchOnTest(false);
-      }
-    };
+    context.checking(new Expectations() {{
+      atLeast(1).of (machine).getVersion(); will(returnValue(3));
+    }});
+    AbstractInstruction branchInstr = new BranchInstruction(machine, false);
     assertNotNull(branchInstr.toString());
   }
 }

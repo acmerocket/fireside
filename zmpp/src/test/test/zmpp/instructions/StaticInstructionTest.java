@@ -19,42 +19,45 @@
  */
 package test.zmpp.instructions;
 
+import org.junit.Test;
+import static org.junit.Assert.*;
 import org.zmpp.instructions.LongStaticInfo;
 import org.zmpp.instructions.PrintLiteralStaticInfo;
 import org.zmpp.instructions.Short0StaticInfo;
 import org.zmpp.instructions.Short1StaticInfo;
 import org.zmpp.instructions.VariableStaticInfo;
 
-import junit.framework.TestCase;
-
-public class StaticInstructionTest extends TestCase {
+/**
+ * Test class for Instruction information.
+ * @author Wei-ju Wu
+ * @version 1.5
+ */
+public class StaticInstructionTest {
 
   // *******************************************************************
   // ********* GET_OP_NAME
   // *************************
   
+  @Test
   public void testGetLongOpName() {
-
     LongStaticInfo info = LongStaticInfo.getInstance();
     for (int i = LongStaticInfo.OP_JE; i <= LongStaticInfo.OP_CALL_2S; i++) {
-      
       assertNotNull(info.getOpName(i, 3));      
     }    
     assertNotNull(info.getOpName(1234, 3));      
   }
   
+  @Test
   public void testGetOpNamePrintInstruction() {
-
     PrintLiteralStaticInfo info = PrintLiteralStaticInfo.getInstance();
     for (int i = PrintLiteralStaticInfo.OP_PRINT; i <= PrintLiteralStaticInfo.OP_PRINT_RET; i++) {
-      
       assertNotNull(info.getOpName(i, 3));
     }
     assertNotNull(info.getOpName(1234, 3));
   }
-  
+
+  @Test
   public void testStaticInformationPrintLiteral() {
-    
     PrintLiteralStaticInfo info = PrintLiteralStaticInfo.getInstance();
     assertFalse(info.storesResult(PrintLiteralStaticInfo.OP_PRINT, 3));
     assertFalse(info.storesResult(PrintLiteralStaticInfo.OP_PRINT_RET, 3));
@@ -70,51 +73,43 @@ public class StaticInstructionTest extends TestCase {
     assertEquals(8, validVersions1.length);
     assertEquals(8, validVersions2.length);
   }  
-  
-  public void testGetOpNameShort0() {
 
+  @Test
+  public void testGetOpNameShort0() {
     Short0StaticInfo info = Short0StaticInfo.getInstance();
-    
     for (int i = Short0StaticInfo.OP_RTRUE; i <= Short0StaticInfo.OP_VERIFY; i++) {
-      
       assertNotNull(info.getOpName(i, 3));
     }
     assertNotNull(info.getOpName(1234, 3));
   }
-  
-  public void testGetOpNameShort1() {
 
+  @Test
+  public void testGetOpNameShort1() {
     Short1StaticInfo info = Short1StaticInfo.getInstance();
-    
     for (int i = Short1StaticInfo.OP_JZ; i <= Short1StaticInfo.OP_NOT; i++) {
-      
       assertNotNull(info.getOpName(i, 3));
     }
     assertNotNull(info.getOpName(12345, 3));
   }
   
+  @Test
   public void testGetOpNameShort1V5() {
-
     Short1StaticInfo info = Short1StaticInfo.getInstance();
     assertEquals("CALL_1N", info.getOpName(Short1StaticInfo.OP_CALL_1N, 5));
   }
 
+  @Test
   public void testGetOpNameVariable() {
-
     VariableStaticInfo info = VariableStaticInfo.getInstance();
-    
     for (int i = VariableStaticInfo.OP_CALL; i <= VariableStaticInfo.OP_TOKENISE; i++) {
-      
       assertNotNull(info.getOpName(i, 3));
     }    
     assertNotNull(info.getOpName(1234, 3));
   }
-  
-  public void testGetOpNameVariableV5() {
 
+  @Test
+  public void testGetOpNameVariableV5() {
     VariableStaticInfo info = VariableStaticInfo.getInstance();
     assertEquals("AREAD", info.getOpName(VariableStaticInfo.OP_AREAD, 5));
-  }
-  
-  
+  } 
 }

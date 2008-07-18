@@ -20,7 +20,9 @@
  */
 package test.zmpp.encoding;
 
-import junit.framework.TestCase;
+import org.junit.Before;
+import org.junit.Test;
+import static org.junit.Assert.*;
 
 import org.zmpp.encoding.DefaultAccentTable;
 import org.zmpp.encoding.ZsciiEncoding;
@@ -32,14 +34,15 @@ import org.zmpp.encoding.ZsciiString;
  * @author Wei-ju Wu
  * @version 1.0
  */
-public class ZsciiStringTest extends TestCase {
+public class ZsciiStringTest {
 
-  protected void setUp() throws Exception {
-    
+  @Before
+  public void setUp() throws Exception {
     ZsciiEncoding encoding = new ZsciiEncoding(new DefaultAccentTable());
     ZsciiString.initialize(encoding);
   }
 
+  @Test
   public void testCreateString() { 
     char[] chars = { (short) 'H', (short) 'i' };
     char[] charsAccented = { (short) 'H', (short) 155 };
@@ -50,12 +53,14 @@ public class ZsciiStringTest extends TestCase {
     assertEquals("H\u00e4", strHae.toString());
   }
   
+  @Test
   public void testStringLength() {
     char[] chars = { 'H', 'i' };
     ZsciiString strHi = new ZsciiString(chars);
     assertEquals(2, strHi.length());
   }
   
+  @Test
   public void testNotEquals() {
     char[] chars = { 'H', 'i' };
     char[] charsAccented = { 'H', 155 };
@@ -67,6 +72,7 @@ public class ZsciiStringTest extends TestCase {
     assertFalse(strHi.equals(""));
   }
   
+  @Test
   public void testEquals() {
     char[] chars1 = { 'H', 'i' };
     char[] chars2 = { 'H', 'i' };
@@ -79,6 +85,7 @@ public class ZsciiStringTest extends TestCase {
     assertEquals(strHi1, strHi3);
   }
   
+  @Test
   public void testHashCode() {
     
     char[] chars1 = { 'H', 'i' };
@@ -95,6 +102,7 @@ public class ZsciiStringTest extends TestCase {
     assertNotSame(strHi1.hashCode(), strAccented.hashCode());
   }
   
+  @Test
   public void testCharAt() {
     char[] chars1 = { 'H', 'i' };
     ZsciiString strHi1 = new ZsciiString(chars1);
@@ -102,6 +110,7 @@ public class ZsciiStringTest extends TestCase {
     assertEquals((short) 'i', strHi1.charAt(1));
   }
   
+  @Test
   public void testIndexOf() {
     char[] chars = { 'H', 'e', 'l', 'l', 'o', ' ', 'W', 'o', 'r', 'l', 'd' };
     char[] sub1 = { 'H' };
@@ -122,6 +131,7 @@ public class ZsciiStringTest extends TestCase {
     assertEquals(-1, hello.indexOf(substr1, 5));
   }
   
+  @Test
   public void testSubstring() {
     char[] chars = { 'H', 'e', 'l', 'l', 'o', ' ', 'W', 'o', 'r', 'l', 'd' };
     ZsciiString hello = new ZsciiString(chars);

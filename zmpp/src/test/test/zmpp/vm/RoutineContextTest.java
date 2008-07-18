@@ -20,27 +20,33 @@
  */
 package test.zmpp.vm;
 
-import junit.framework.TestCase;
-
+import org.junit.Before;
+import org.junit.Test;
+import static org.junit.Assert.*;
 import org.zmpp.vm.RoutineContext;
 
-public class RoutineContextTest extends TestCase {
+/**
+ * Test class for RoutineContext.
+ * @author Wei-ju Wu
+ * @version 1.5
+ */
+public class RoutineContextTest {
 
   private RoutineContext context;
   
+  @Before
   public void setUp() {
-    
     context = new RoutineContext(0x4711, 2);
   }
   
+  @Test
   public void testCreate() {
-    
     assertEquals(0x4711, context.getStartAddress());
     assertEquals(2, context.getNumLocalVariables());
   }
   
+  @Test
   public void testSetters() {
-    
     context.setLocalVariable(0, (short) 72);
     assertEquals(72, context.getLocalVariable(0));
     context.setLocalVariable(1, (short) 76);
@@ -49,7 +55,6 @@ public class RoutineContextTest extends TestCase {
       context.setLocalVariable(2, (short) 815);
       fail();
     } catch (IndexOutOfBoundsException expected) {
-
       // this is good
     }
     context.setReturnAddress(0x4711);

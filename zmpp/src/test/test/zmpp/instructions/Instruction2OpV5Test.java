@@ -23,8 +23,12 @@ package test.zmpp.instructions;
 import java.util.ArrayList;
 import java.util.List;
 
+import org.jmock.Expectations;
+import org.jmock.integration.junit4.JMock;
 import org.junit.Before;
 import org.junit.Test;
+import static org.junit.Assert.*;
+import org.junit.runner.RunWith;
 import org.zmpp.instructions.LongInstruction;
 import org.zmpp.instructions.LongStaticInfo;
 import org.zmpp.instructions.Operand;
@@ -32,12 +36,19 @@ import org.zmpp.vm.RoutineContext;
 
 import test.zmpp.instructions.Instruction2OpV3Test.Instruction2OpMock;
 
+/**
+ * Test class for OP2 instructions on V5.
+ * @author Wei-ju Wu
+ * @version 1.5
+ */
+@RunWith(JMock.class)
 public class Instruction2OpV5Test extends InstructionTestBase {
 
+  @Override
 	@Before
   public void setUp() throws Exception {
     super.setUp();
-    mockMachine.expects(atLeastOnce()).method("getVersion").will(returnValue(5));
+    expectStoryVersion(5);
   }
 
 	@Test
@@ -51,14 +62,15 @@ public class Instruction2OpV5Test extends InstructionTestBase {
    * it could be handled by throw, we should halt the machine, since it
    * is not specified how the machine should behave in this case.
    */
+  @Test
   public void testThrowInvalid() {
-    
-    List<RoutineContext> contexts = new ArrayList<RoutineContext>();
+    final List<RoutineContext> contexts = new ArrayList<RoutineContext>();
     contexts.add(new RoutineContext(1000, 1));
     contexts.add(new RoutineContext(2000, 2));
-    mockMachine.expects(once()).method("getRoutineContexts").will(returnValue(contexts));
-    mockMachine.expects(once()).method("halt").with(eq("@throw from an invalid stack frame state"));
-    
+    context.checking(new Expectations() {{
+      one (machine).getRoutineContexts(); will(returnValue(contexts));
+      one (machine).halt("@throw from an invalid stack frame state");
+    }});
     Instruction2OpMock z_throw = createInstructionMock(
         LongStaticInfo.OP_THROW,
         Operand.TYPENUM_SMALL_CONSTANT, (short) 42,
@@ -72,18 +84,18 @@ public class Instruction2OpV5Test extends InstructionTestBase {
    * stack frame number is reached and than the function returns with
    * the specified return value.
    */
+  @Test
   public void testThrowUnwind() {
-    
-    List<RoutineContext> contexts = new ArrayList<RoutineContext>();
+    final List<RoutineContext> contexts = new ArrayList<RoutineContext>();
     contexts.add(new RoutineContext(1000, 1));
     contexts.add(new RoutineContext(2000, 2));
     contexts.add(new RoutineContext(3000, 3));
     contexts.add(new RoutineContext(4000, 4));
     contexts.add(new RoutineContext(5000, 5));
-    
-    mockMachine.expects(once()).method("getRoutineContexts").will(returnValue(contexts));
-    mockMachine.expects(exactly(2)).method("returnWith").withAnyArguments();
-    
+    context.checking(new Expectations() {{
+      one (machine).getRoutineContexts(); will(returnValue(contexts));
+      exactly(2).of (machine).returnWith(with(any(short.class)));
+    }});
     Instruction2OpMock z_throw = createInstructionMock(
         LongStaticInfo.OP_THROW,
         Operand.TYPENUM_SMALL_CONSTANT, (short) 42,

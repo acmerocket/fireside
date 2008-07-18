@@ -38,11 +38,12 @@ import org.zmpp.vm.Machine;
 import org.zmpp.vm.MachineImpl;
 import org.zmpp.vm.StoryFileHeader;
 import org.zmpp.vmutil.FileUtils;
+import static test.zmpp.testutil.ZmppTestUtil.*;
 
 /**
  * Set up the test with a Curses game.
  * @author Wei-ju Wu
- * @version 1.0
+ * @version 1.5
  */
 public class CursesSetup {
 
@@ -55,7 +56,7 @@ public class CursesSetup {
 
   @BeforeClass
   public static void setupClass() throws Exception {
-  	File cursesFile = new File("testfiles/curses.z5");
+  	File cursesFile = createLocalFile("testfiles/curses.z5");
   	FileInputStream fileInput = new FileInputStream(cursesFile);
   	originalData = FileUtils.readFileBytes(fileInput);
   	fileInput.close();

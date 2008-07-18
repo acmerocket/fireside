@@ -19,33 +19,33 @@
  */
 package test.zmpp.instructions;
 
-import org.jmock.Mock;
-import org.jmock.MockObjectTestCase;
-import org.zmpp.base.Memory;
+import org.jmock.Expectations;
+import org.jmock.Mockery;
+import org.jmock.integration.junit4.JUnit4Mockery;
 import org.zmpp.io.OutputStream;
 import org.zmpp.vm.Dictionary;
 import org.zmpp.vm.Machine;
 
-public abstract class InstructionTestBase extends MockObjectTestCase {
-
-	protected Mock mockMachine;
+/**
+ * Super class for Instruction tests.
+ * @author Wei-ju Wu
+ * @version 1.5
+ */
+public abstract class InstructionTestBase {
+  protected Mockery context = new JUnit4Mockery();
 	protected Machine machine;
-	protected Mock mockOutputStream;
 	protected OutputStream outputStream;
-	protected Mock mockDictionary;
 	protected Dictionary dictionary;
 
-	/**
-	 * {@inheritDoc}
-	 */
-  @Override
 	protected void setUp() throws Exception { 
-		super.setUp();
-		mockMachine = mock(Machine.class);
-		machine = (Machine) mockMachine.proxy();
-		mockOutputStream = mock(OutputStream.class);
-		outputStream = (OutputStream) mockOutputStream.proxy();
-		mockDictionary = mock(Dictionary.class);
-		dictionary = (Dictionary) mockDictionary.proxy();
+		machine = context.mock(Machine.class);
+		outputStream = context.mock(OutputStream.class);
+		dictionary = context.mock(Dictionary.class);
 	}
+
+  protected void expectStoryVersion(final int version) {
+    context.checking(new Expectations() {{
+      atLeast(1).of (machine).getVersion(); will(returnValue(version));
+    }});    
+  }
 }

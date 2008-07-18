@@ -20,19 +20,30 @@
  */
 package test.zmpp.instructions;
 
+import org.jmock.Expectations;
+import org.jmock.integration.junit4.JMock;
 import org.junit.Before;
 import org.junit.Test;
+import static org.junit.Assert.*;
+import org.junit.runner.RunWith;
 import org.zmpp.instructions.Operand;
 import org.zmpp.instructions.VariableInstruction;
 import org.zmpp.instructions.VariableStaticInfo;
 import org.zmpp.instructions.AbstractInstruction.OperandCount;
 
+/**
+ * Test class for VAR instruction on V6.
+ * @author Wei-ju Wu
+ * @version 1.5
+ */
+@RunWith(JMock.class)
 public class InstructionVarV6Test extends InstructionTestBase {
 
+  @Override
   @Before
-  protected void setUp() throws Exception {
+  public void setUp() throws Exception {
     super.setUp();
-    mockMachine.expects(atLeastOnce()).method("getVersion").will(returnValue(6));
+    expectStoryVersion(6);
   }
 
   @Test
@@ -44,10 +55,11 @@ public class InstructionVarV6Test extends InstructionTestBase {
   
   @Test
   public void testPullV6NoUserStack() {
-    mockMachine.expects(once()).method("popStack").with(eq(0x00)).will(returnValue((short) 0x14));    
-    mockMachine.expects(once()).method("setVariable").with(eq(0x15), eq((short) 0x14));
-    mockMachine.expects(once()).method("incrementPC").with(eq(5));
-
+    context.checking(new Expectations() {{
+      one (machine).popStack(0x00); will(returnValue((short) 0x14));
+      one (machine).setVariable(0x15, (short) 0x14);
+      one (machine).incrementPC(5);
+    }});
     VariableInstruction pull = new VariableInstruction(machine,
         OperandCount.VAR, VariableStaticInfo.OP_PULL);
     pull.setStoreVariable((short) 0x15);
@@ -55,11 +67,13 @@ public class InstructionVarV6Test extends InstructionTestBase {
     pull.execute();
   }  
 
+  @Test
   public void testPullV6UserStack() {
-    mockMachine.expects(once()).method("popStack").with(eq(0x1234)).will(returnValue((short) 0x15));    
-    mockMachine.expects(once()).method("setVariable").with(eq(0x15), eq((short) 0x15));
-    mockMachine.expects(once()).method("incrementPC").with(eq(5));
-
+    context.checking(new Expectations() {{
+      one (machine).popStack(0x1234); will(returnValue((short) 0x15));
+      one (machine).setVariable(0x15, (short) 0x15);
+      one (machine).incrementPC(5);
+    }});
     VariableInstruction pull = new VariableInstruction(machine,
         OperandCount.VAR, VariableStaticInfo.OP_PULL);
     pull.addOperand(new Operand(Operand.TYPENUM_LARGE_CONSTANT, (short) 0x1234));

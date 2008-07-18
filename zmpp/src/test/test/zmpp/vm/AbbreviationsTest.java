@@ -20,11 +20,15 @@
  */
 package test.zmpp.vm;
 
+import org.junit.Before;
+import org.junit.Test;
+import static org.junit.Assert.*;
+
 /**
  * This class tests the Abbreviations class.
  *
  * @author Wei-ju Wu
- * @version 1.0
+ * @version 1.5
  */
 public class AbbreviationsTest extends MiniZorkSetup {
 
@@ -45,12 +49,14 @@ public class AbbreviationsTest extends MiniZorkSetup {
     "staircase ", "northeast ", "one ", "now "
   };
   
-  protected void setUp() throws Exception {
+  @Before
+  @Override
+  public void setUp() throws Exception {
     super.setUp();
   }
   
+  @Test
   public void testGetWordAddress() {
-    
     // Test of the abbreviations in the minizorkmap
     for (int i = 0; i < testdata.length; i++) {
       
@@ -59,3 +65,4 @@ public class AbbreviationsTest extends MiniZorkSetup {
     }
   }  
 }
+

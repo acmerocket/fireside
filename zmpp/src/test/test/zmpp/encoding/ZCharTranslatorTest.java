@@ -19,7 +19,9 @@
  */
 package test.zmpp.encoding;
 
-import junit.framework.TestCase;
+import org.junit.Before;
+import org.junit.Test;
+import static org.junit.Assert.*;
 
 import org.zmpp.encoding.AlphabetElement;
 import org.zmpp.encoding.AlphabetTable;
@@ -29,7 +31,12 @@ import org.zmpp.encoding.DefaultZCharTranslator;
 import org.zmpp.encoding.ZCharTranslator;
 import org.zmpp.encoding.AlphabetTable.Alphabet;
 
-public class ZCharTranslatorTest extends TestCase {
+/**
+ * Test class for ZCharTranslator class.
+ * @author Wei-ju Wu
+ * @version 1.5
+ */
+public class ZCharTranslatorTest {
 
   private AlphabetTable alphabetTable;
   private ZCharTranslator translator;
@@ -37,14 +44,15 @@ public class ZCharTranslatorTest extends TestCase {
   private AlphabetTable alphabetTableV2;
   private ZCharTranslator translatorV2;
   
-  protected void setUp() {
-    
+  @Before
+  public void setUp() {
     alphabetTable = new DefaultAlphabetTable();
     translator = new DefaultZCharTranslator(alphabetTable);
     alphabetTableV2 = new AlphabetTableV2();
     translatorV2 = new DefaultZCharTranslator(alphabetTableV2);
   }
   
+  @Test
   public void testTranslate() {
     
     // Unknown
@@ -66,6 +74,7 @@ public class ZCharTranslatorTest extends TestCase {
     assertEquals('\n', translator.translate((char) 7));
   }
   
+  @Test
   public void test0IsSpace() {
     
     assertEquals(' ', translator.translate((char) 0));
@@ -85,6 +94,7 @@ public class ZCharTranslatorTest extends TestCase {
   // ***** Shift
   // ******************************************
   
+  @Test
   public void testShiftFromA0() {
     
     char c = translator.translate((char) AlphabetTable.SHIFT_4);
@@ -99,6 +109,7 @@ public class ZCharTranslatorTest extends TestCase {
     assertEquals(Alphabet.A2, translator.getCurrentAlphabet());    
   }
   
+  @Test
   public void testShiftFromA1() {
 
     // Switch to A1
@@ -117,6 +128,7 @@ public class ZCharTranslatorTest extends TestCase {
     assertEquals(Alphabet.A0, translator.getCurrentAlphabet());
   }
   
+  @Test
   public void testShiftFromA2() {
 
     // Switch to A2
@@ -139,6 +151,7 @@ public class ZCharTranslatorTest extends TestCase {
    * The default alphabet table should reset to A0 after retrieving a
    * code. 
    */
+  @Test
   public void testImplicitReset() {
     
     translator.translate((char) AlphabetTable.SHIFT_4);
@@ -150,6 +163,7 @@ public class ZCharTranslatorTest extends TestCase {
     assertEquals(Alphabet.A0, translator.getCurrentAlphabet());
   }  
 
+  @Test
   public void testGetAlphabetElement() {
 
     // Alphabet A0
@@ -190,6 +204,7 @@ public class ZCharTranslatorTest extends TestCase {
   // ***** Shifting in V2
   // ******************************************
   
+  @Test
   public void testShiftV2FromA0() {
     
     assertEquals(0, translatorV2.translate((char) AlphabetTable.SHIFT_2));
@@ -208,6 +223,7 @@ public class ZCharTranslatorTest extends TestCase {
     assertEquals(Alphabet.A2, translatorV2.getCurrentAlphabet());
   }
   
+  @Test
   public void testShiftV2FromA1() {
     
     translatorV2.translate((char) AlphabetTable.SHIFT_2);
@@ -231,6 +247,7 @@ public class ZCharTranslatorTest extends TestCase {
     assertEquals(Alphabet.A0, translatorV2.getCurrentAlphabet());
   }
 
+  @Test
   public void testShiftV2FromA2() {
     
     translatorV2.translate((char) AlphabetTable.SHIFT_3);
@@ -254,6 +271,7 @@ public class ZCharTranslatorTest extends TestCase {
     assertEquals(Alphabet.A1, translatorV2.getCurrentAlphabet());
   }
 
+  @Test
   public void testShiftNotLocked() {
 
     translatorV2.translate((char) AlphabetTable.SHIFT_2);
@@ -265,6 +283,7 @@ public class ZCharTranslatorTest extends TestCase {
     assertEquals(Alphabet.A0, translatorV2.getCurrentAlphabet());
   }
   
+  @Test
   public void testShiftNotLockedChar0() {
         
     translatorV2.translate((char) AlphabetTable.SHIFT_2);
@@ -276,6 +295,7 @@ public class ZCharTranslatorTest extends TestCase {
     assertEquals(Alphabet.A0, translatorV2.getCurrentAlphabet());
   }
 
+  @Test
   public void testShiftLocked() {
     
     translatorV2.translate((char) AlphabetTable.SHIFT_4);
@@ -293,6 +313,7 @@ public class ZCharTranslatorTest extends TestCase {
    * Test if the shift lock is reset after the a non-locking shift was
    * met.
    */
+  @Test
   public void testShiftLockSequenceLock1() {
     
     translatorV2.translate((char) AlphabetTable.SHIFT_4);
@@ -301,6 +322,7 @@ public class ZCharTranslatorTest extends TestCase {
     assertEquals(Alphabet.A1, translatorV2.getCurrentAlphabet());
   }
   
+  @Test
   public void testShiftLockSequenceLock2() {
     
     translatorV2.translate((char) AlphabetTable.SHIFT_5);

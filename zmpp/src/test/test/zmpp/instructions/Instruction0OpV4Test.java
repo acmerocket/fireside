@@ -20,21 +20,28 @@
  */
 package test.zmpp.instructions;
 
+import org.jmock.Expectations;
 import org.junit.Before;
 import org.junit.Test;
+import static org.junit.Assert.*;
 import org.zmpp.instructions.Short0Instruction;
 import org.zmpp.instructions.Short0StaticInfo;
 import org.zmpp.vm.PortableGameState;
 
 import test.zmpp.instructions.Instruction0OpV3Test.Instruction0OpMock;
 
+/**
+ * Test class for OP0 instructions under V4.
+ * @author Wei-ju Wu
+ * @version 1.5
+ */
 public class Instruction0OpV4Test extends InstructionTestBase {
 
   @Override
   @Before
-  protected void setUp() throws Exception {
+  public void setUp() throws Exception {
 	  super.setUp();
-    mockMachine.expects(atLeastOnce()).method("getVersion").will(returnValue(4));
+    expectStoryVersion(4);
   }
 
   @Test
@@ -56,11 +63,12 @@ public class Instruction0OpV4Test extends InstructionTestBase {
   }
 
   @Test
-  public void testSaveSuccess() {    
-    mockMachine.expects(once()).method("getPC").will(returnValue(1234));
-    mockMachine.expects(once()).method("save").will(returnValue(true));
-    mockMachine.expects(once()).method("setVariable").with(eq(0), eq((short) 1));
-
+  public void testSaveSuccess() {
+    context.checking(new Expectations() {{
+      one (machine).getPC(); will(returnValue(1234));
+      one (machine).save(with(any(int.class))); will(returnValue(true));
+      one (machine).setVariable(0, (short) 1);
+    }});
     Instruction0OpMock save = createInstructionMock(Short0StaticInfo.OP_SAVE);
     save.execute();
     assertTrue(save.nextInstructionCalled);
@@ -68,13 +76,13 @@ public class Instruction0OpV4Test extends InstructionTestBase {
 
   @Test
   public void testRestoreSuccessV4() {
-    PortableGameState gamestate = new PortableGameState();
-    mockMachine.expects(once()).method("restore").will(returnValue(gamestate));
-    mockMachine.expects(once()).method("setVariable").with(eq(5), eq((short) 2));
-    
-    // Store variable
-    mockMachine.expects(once()).method("readUnsignedByte").with(eq(0)).will(returnValue((short) 5));
-    
+    final PortableGameState gamestate = new PortableGameState();
+    context.checking(new Expectations() {{
+      one (machine).restore(); will(returnValue(gamestate));
+      // Store variable
+      one (machine).setVariable(5, (short) 2);
+      one (machine).readUnsignedByte(0); will(returnValue((short) 5));
+    }});
     Instruction0OpMock restore = createInstructionMock(Short0StaticInfo.OP_RESTORE);
     restore.execute();
     assertFalse(restore.nextInstructionCalled);
@@ -82,9 +90,10 @@ public class Instruction0OpV4Test extends InstructionTestBase {
 
   @Test
   public void testRestoreFailV4() {
-    mockMachine.expects(once()).method("restore").will(returnValue(null));
-    mockMachine.expects(once()).method("setVariable").with(eq(0), eq((short) 0));
-    
+    context.checking(new Expectations() {{
+      one (machine).restore(); will(returnValue(null));
+      one (machine).setVariable(0, (short) 0);
+    }});
     Instruction0OpMock restore = createInstructionMock(Short0StaticInfo.OP_RESTORE);
     restore.execute();
     assertTrue(restore.nextInstructionCalled);
@@ -92,9 +101,9 @@ public class Instruction0OpV4Test extends InstructionTestBase {
 
   @Test
   public void testShowStatusVersion4IsIllegal() {    
-    mockMachine.expects(once()).method("halt").with(eq(
-      "illegal instruction, type: SHORT operand count: C0OP opcode: 12"));
-    
+    context.checking(new Expectations() {{
+      one (machine).halt("illegal instruction, type: SHORT operand count: C0OP opcode: 12");
+    }});
     Instruction0OpMock showstatus = createInstructionMock(Short0StaticInfo.OP_SHOW_STATUS);
     showstatus.execute();
   }  

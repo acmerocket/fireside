@@ -20,50 +20,76 @@
  */
 package test.zmpp.base;
 
-import org.jmock.Mock;
-import org.jmock.MockObjectTestCase;
+import org.jmock.Expectations;
+import org.jmock.Mockery;
+import org.jmock.integration.junit4.JMock;
+import org.jmock.integration.junit4.JUnit4Mockery;
+import org.junit.Before;
+import org.junit.Test;
+import org.junit.runner.RunWith;
 import org.zmpp.base.Memory;
 import org.zmpp.base.MemorySection;
+import static org.junit.Assert.*;
 
-public class MemorySectionTest extends MockObjectTestCase {
-
-  private Mock mockMemory;
+/**
+ * Test of MemorySection class.
+ * @author Wei-ju Wu
+ * @version 1.5
+ */
+@RunWith(JMock.class)
+public class MemorySectionTest {
+  Mockery context = new JUnit4Mockery();  
   private Memory memory;
   private MemorySection section;
 
-  @Override
-  protected void setUp() throws Exception {
-    mockMemory = mock(Memory.class);
-    memory = (Memory) mockMemory.proxy();
+  @Before
+  public void setUp() throws Exception {
+    memory = context.mock(Memory.class);
     section = new MemorySection(memory, 36, 256);
   }
-  
+
+  @Test
   public void testGetLength() {
     assertEquals(256, section.getLength());
   }
-  
+
+  @Test
   public void testWriteUnsignedShort() {
-    mockMemory.expects(once()).method("writeUnsignedShort").with(eq(12 + 36), eq(512));
+    context.checking(new Expectations() {{
+      one (memory).writeUnsignedShort(12 + 36, 512);
+    }});
     section.writeUnsignedShort(12, 512);
   }
 
+  @Test
   public void testWriteShort() {
-    mockMemory.expects(once()).method("writeShort").with(eq(12 + 36), eq((short) 512));
+    context.checking(new Expectations() {{
+      one (memory).writeShort(12 + 36, (short) 512);
+    }});
     section.writeShort(12, (short) 512);
   }
 
+  @Test
   public void testWriteUnsignedByte() {
-    mockMemory.expects(once()).method("writeUnsignedByte").with(eq(12 + 36), eq((short) 120));
+    context.checking(new Expectations() {{
+      one (memory).writeUnsignedByte(12 + 36, (short) 120);
+    }});
     section.writeUnsignedByte(12, (short) 120);
   }
   
+  @Test
   public void testWriteByte() {
-    mockMemory.expects(once()).method("writeByte").with(eq(12 + 36), eq((byte) -120));
+    context.checking(new Expectations() {{
+      one (memory).writeByte(12 + 36, (byte) -120);
+    }});
     section.writeByte(12, (byte) -120);
   }
-  
+
+  @Test
   public void testWriteUnsigned32() {
-    mockMemory.expects(once()).method("writeUnsigned32").with(eq(16 + 36), eq((long) 1120));
+   context.checking(new Expectations() {{
+      one (memory).writeUnsigned32(16 + 36, (long) 1120);
+    }});
     section.writeUnsigned32(16, (long) 1120);
   }
 }

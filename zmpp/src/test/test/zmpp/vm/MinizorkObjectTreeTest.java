@@ -22,13 +22,14 @@ package test.zmpp.vm;
 
 import org.junit.Before;
 import org.junit.Test;
+import static org.junit.Assert.*;
 import org.zmpp.vm.ClassicObjectTree;
 import org.zmpp.vm.ObjectTree;
 
 /**
  * Testing tree access with concrete data of Version 3 - Minizork.
  * @author Wei-ju Wu
- * @version 1.0
+ * @version 1.5
  */
 public class MinizorkObjectTreeTest extends MiniZorkSetup {
 
@@ -36,7 +37,8 @@ public class MinizorkObjectTreeTest extends MiniZorkSetup {
   private static final int OBJECT1 = 1; 
   private static final int OBJECT2 = 2; 
   
-  @Before  
+  @Override
+  @Before
   public void setUp() throws Exception {
     super.setUp();
     this.objectTree = new ClassicObjectTree(minizorkmap,

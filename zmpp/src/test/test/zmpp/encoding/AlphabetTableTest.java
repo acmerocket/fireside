@@ -19,19 +19,26 @@
  */
 package test.zmpp.encoding;
 
-import junit.framework.TestCase;
-
+import org.junit.Test;
 import org.zmpp.encoding.AlphabetTable;
 import org.zmpp.encoding.AlphabetTableV1;
 import org.zmpp.encoding.AlphabetTableV2;
 import org.zmpp.encoding.DefaultAlphabetTable;
 
-public class AlphabetTableTest extends TestCase {
+import static org.junit.Assert.*;
+
+/**
+ * Test for alphabet table behaviour
+ * @author Wei-ju Wu
+ * @version 1.5
+ */
+public class AlphabetTableTest {
 
   private AlphabetTable v1Table = new AlphabetTableV1();
   private AlphabetTable v2Table = new AlphabetTableV2();
   private AlphabetTable defaultTable = new DefaultAlphabetTable();
   
+  @Test
   public void testChar0IsSpace() {
     
     assertEquals(' ', v1Table.getA0Char((byte) 0));
@@ -47,6 +54,7 @@ public class AlphabetTableTest extends TestCase {
     assertEquals(' ', defaultTable.getA2Char((byte) 0));
   }
 
+  @Test
   public void testChar1IsNewLineInV1() {
     
     assertEquals('\n', v1Table.getA0Char((byte) 1));
@@ -54,6 +62,7 @@ public class AlphabetTableTest extends TestCase {
     assertEquals('\n', v1Table.getA2Char((byte) 1));
   }
   
+  @Test
   public void testIsAbbreviation() {
     assertFalse(v1Table.isAbbreviation((char) 1));
     assertFalse(v1Table.isAbbreviation((char) 2));
@@ -64,6 +73,7 @@ public class AlphabetTableTest extends TestCase {
     assertFalse(v2Table.isAbbreviation((char) 3));
   }
 
+  @Test
   public void testShiftChars() {
     
     assertTrue(v1Table.isShift((char) AlphabetTable.SHIFT_2));
