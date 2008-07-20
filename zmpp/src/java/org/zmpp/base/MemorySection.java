@@ -58,7 +58,7 @@ public class MemorySection implements Memory {
   /**
    * {@inheritDoc}
    */
-  public void writeUnsigned16(final int address, final int value) {
+  public void writeUnsigned16(final int address, final char value) {
     memory.writeUnsigned16(address + start, value);
   }
 
@@ -100,7 +100,7 @@ public class MemorySection implements Memory {
   /**
    * {@inheritDoc}
    */
-  public int readUnsigned16(final int address) {
+  public char readUnsigned16(final int address) {
     return memory.readUnsigned16(address + start);
   }
 

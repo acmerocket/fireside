@@ -29,6 +29,7 @@ import org.zmpp.encoding.ZsciiEncoding;
 import org.zmpp.encoding.ZsciiString;
 import org.zmpp.encoding.ZsciiStringBuilder;
 import org.zmpp.encoding.ZsciiStringTokenizer;
+import static org.zmpp.base.MemoryUtil.toUnsigned16;
 
 /**
  * This class contains functions that deal with user input.
@@ -239,7 +240,7 @@ public class InputFunctions {
       if (!flag || flag && entryAddress > 0) {
         
         // This is one slot
-        machine.writeUnsigned16(parseaddr, entryAddress);     
+        machine.writeUnsigned16(parseaddr, toUnsigned16(entryAddress));     
         machine.writeUnsigned8(parseaddr + 2, (short) token.length());
         machine.writeUnsigned8(parseaddr + 3, (short) tokenIndex);
       }

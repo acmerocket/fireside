@@ -24,6 +24,7 @@ import java.util.ArrayList;
 import java.util.List;
 
 import org.zmpp.io.OutputStream;
+import static org.zmpp.base.MemoryUtil.toUnsigned16;
 
 /**
  * This class implements output stream 3. This stream writes to dynamic
@@ -102,8 +103,8 @@ public class MemoryOutputStream implements OutputStream {
       // Write the total number of written bytes to the first word
       // of the table
       final TablePosition tablePos = tableStack.remove(tableStack.size() - 1);
-      machine.writeUnsigned16(
-          tablePos.tableAddress, tablePos.bytesWritten);
+      machine.writeUnsigned16(tablePos.tableAddress,
+                              toUnsigned16(tablePos.bytesWritten));
       
       if (machine.getVersion() == 6) {
         writeTextWidthInUnits(tablePos);

@@ -26,6 +26,7 @@ import java.util.List;
 
 import java.util.logging.Logger;
 import org.zmpp.vmutil.FastShortStack;
+import static org.zmpp.base.MemoryUtil.toUnsigned16;
 
 /**
  * Cpu interface implementation.
@@ -205,7 +206,7 @@ public class CpuImpl implements Cpu {
   private short popUserStack(int userstackAddress) {
     int numFreeSlots = machine.readUnsigned16(userstackAddress);
     numFreeSlots++;
-    machine.writeUnsigned16(userstackAddress, numFreeSlots);
+    machine.writeUnsigned16(userstackAddress, toUnsigned16(numFreeSlots));
     return machine.readSigned16(userstackAddress + (numFreeSlots * 2));
   }
   
@@ -225,7 +226,7 @@ public class CpuImpl implements Cpu {
     int numFreeSlots = machine.readUnsigned16(userstackAddress);
     if (numFreeSlots > 0) {
       machine.writeSigned16(userstackAddress + (numFreeSlots * 2), value);
-      machine.writeUnsigned16(userstackAddress, numFreeSlots - 1);
+      machine.writeUnsigned16(userstackAddress, toUnsigned16(numFreeSlots - 1));
       return true;
     }
     return false;

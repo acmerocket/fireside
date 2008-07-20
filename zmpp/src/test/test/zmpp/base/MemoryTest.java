@@ -81,10 +81,10 @@ public class MemoryTest {
   
   @Test
   public void testWriteUnsignedShort() {
-    memory.writeUnsigned16(0x02, 0xffff);
+    memory.writeUnsigned16(0x02, (char) 0xffff);
     assertEquals(0xffff, memory.readUnsigned16(0x02));
     
-    memory.writeUnsigned16(0x04, 0x00ff);
+    memory.writeUnsigned16(0x04, (char) 0x00ff);
     assertEquals(0x00ff, memory.readUnsigned16(0x04));
   }
   

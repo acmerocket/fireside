@@ -48,7 +48,7 @@ public interface Memory {
    * @param address the address
    * @return the 16 bit unsigned value as int
    */
-  int readUnsigned16(int address);
+  char readUnsigned16(int address);
   
   /**
    * Returns the signed 16 bit word at the specified address.
@@ -85,7 +85,7 @@ public interface Memory {
    * @param address the address to write to
    * @param value the value to write
    */
-  void writeUnsigned16(int address, int value);
+  void writeUnsigned16(int address, char value);
   
   /**
    * Writes a short value to the memory.

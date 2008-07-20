@@ -335,7 +335,7 @@ public class PortableGameStateTest {
       // supplied arguments, we define a and b
       one (machine).readSigned8(5); will(returnValue((byte) 0x03));
       // stack size, we define 2
-      one (machine).readUnsigned16(6); will(returnValue(2));
+      one (machine).readUnsigned16(6); will(returnValue((char) 2));
       // local variables
       for (int i = 0; i < 3; i++) {
         one (machine).readSigned16(8 + i * 2); will(returnValue((short) i));
@@ -369,7 +369,7 @@ public class PortableGameStateTest {
       // supplied arguments, we define a, b and c
       one (machine).readSigned8(5); will(returnValue((byte) 0x07));
       // stack size, we define 3
-      one (machine).readUnsigned16(6); will(returnValue(3));
+      one (machine).readUnsigned16(6); will(returnValue((char) 3));
       // local variables
       for (int i = 0; i < 2; i++) {
         one (machine).readSigned16(8 + i * 2); will(returnValue((short) i));

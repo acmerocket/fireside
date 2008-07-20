@@ -83,8 +83,8 @@ public class InstructionExtV6Test extends InstructionTestBase {
       atLeast(1).of (machine).getPictureManager(); will(returnValue(picturemanager));
       one (picturemanager).getRelease(); will(returnValue(2));
       atLeast(1).of (picturemanager).getNumPictures(); will(returnValue(32));
-      one (machine).writeUnsigned16(1000, 32);
-      one (machine).writeUnsigned16(1002, 2);
+      one (machine).writeUnsigned16(1000, (char) 32);
+      one (machine).writeUnsigned16(1002, (char) 2);
       one (machine).doBranch((short) 123, 3);
     }});
     ExtendedInstruction picture_data = new ExtendedInstruction(machine, ExtendedStaticInfo.OP_PICTURE_DATA);
@@ -105,8 +105,8 @@ public class InstructionExtV6Test extends InstructionTestBase {
     context.checking(new Expectations() {{
       atLeast(1).of (machine).getPictureManager(); will(returnValue(picturemanager));
       one (picturemanager).getPictureSize(1); will(returnValue(new Resolution(320, 200)));
-      one (machine).writeUnsigned16(1000, 200);
-      one (machine).writeUnsigned16(1002, 320);
+      one (machine).writeUnsigned16(1000, (char) 200);
+      one (machine).writeUnsigned16(1002, (char) 320);
       one (machine).doBranch((short) 42, 3);
     }});
     ExtendedInstruction picture_data = new ExtendedInstruction(machine, ExtendedStaticInfo.OP_PICTURE_DATA);

@@ -56,9 +56,9 @@ public class MemorySectionTest {
   @Test
   public void testWriteUnsignedShort() {
     context.checking(new Expectations() {{
-      one (memory).writeUnsigned16(12 + 36, 512);
+      one (memory).writeUnsigned16(12 + 36, (char) 512);
     }});
-    section.writeUnsigned16(12, 512);
+    section.writeUnsigned16(12, (char) 512);
   }
 
   @Test

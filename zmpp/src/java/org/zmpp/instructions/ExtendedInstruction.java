@@ -22,6 +22,7 @@ package org.zmpp.instructions;
 
 
 import org.zmpp.base.Memory;
+import static org.zmpp.base.MemoryUtil.toUnsigned16;
 import org.zmpp.blorb.BlorbImage.Resolution;
 import org.zmpp.vm.Machine;
 import org.zmpp.vm.PortableGameState;
@@ -237,8 +238,8 @@ public class ExtendedInstruction extends AbstractInstruction {
         getMachine().getPictureManager().getPictureSize(picnum);
       if (picdim != null) {
         final Memory memory = getMemory();
-        memory.writeUnsigned16(array, picdim.getHeight());
-        memory.writeUnsigned16(array + 2, picdim.getWidth());
+        memory.writeUnsigned16(array, toUnsigned16(picdim.getHeight()));
+        memory.writeUnsigned16(array + 2, toUnsigned16(picdim.getWidth()));
         result = true;
       }
     }
@@ -248,9 +249,9 @@ public class ExtendedInstruction extends AbstractInstruction {
   private void writePictureFileInfo(final int array) {
     final Memory memory = getMemory();
     memory.writeUnsigned16(array,
-        getMachine().getPictureManager().getNumPictures());
+        toUnsigned16(getMachine().getPictureManager().getNumPictures()));
     memory.writeUnsigned16(array + 2,
-        getMachine().getPictureManager().getRelease());
+        toUnsigned16(getMachine().getPictureManager().getRelease()));
   }
   
   private void draw_picture() {

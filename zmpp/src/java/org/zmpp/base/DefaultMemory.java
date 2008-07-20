@@ -60,8 +60,9 @@ public class DefaultMemory implements Memory {
   /**
    * {@inheritDoc}
    */
-  public int readUnsigned16(final int address) {    
-    return (data[address] & 0xff) << 8 | (data[address + 1] & 0xff);
+  public char readUnsigned16(final int address) {    
+    return (char)
+      (((data[address] & 0xff) << 8 | (data[address + 1] & 0xff)) & 0xffff);
   }
   
   /**
@@ -91,8 +92,7 @@ public class DefaultMemory implements Memory {
    * @param address the address to write to
    * @param value the value to write
    */
-  public void writeUnsigned16(final int address, final int value) {
-    
+  public void writeUnsigned16(final int address, final char value) {
     data[address] = (byte) ((value & 0xff00) >> 8);
     data[address + 1] = (byte) (value & 0xff);
   }

@@ -21,6 +21,7 @@
 package org.zmpp.vm;
 
 import org.zmpp.base.Memory;
+import static org.zmpp.base.MemoryUtil.toUnsigned16;
 
 /**
  * This is the default implementation of the StoryFileHeader interface.
@@ -163,7 +164,7 @@ public class DefaultStoryFileHeader implements StoryFileHeader {
    * {@inheritDoc}
    */
   public void setScreenWidthUnits(final int units) {
-    memory.writeUnsigned16(0x22, units);
+    memory.writeUnsigned16(0x22, toUnsigned16(units));
   }
   
   /**
@@ -205,7 +206,7 @@ public class DefaultStoryFileHeader implements StoryFileHeader {
    * {@inheritDoc}
    */
   public void setScreenHeightUnits(final int units) {
-    memory.writeUnsigned16(0x24, units);
+    memory.writeUnsigned16(0x24, toUnsigned16(units));
   }
   
   /**
@@ -321,11 +322,11 @@ public class DefaultStoryFileHeader implements StoryFileHeader {
       final int numwords = memory.readUnsigned16(extTable);
       if (numwords >= 1) {
         
-        memory.writeUnsigned16(extTable + 2, x);
+        memory.writeUnsigned16(extTable + 2, toUnsigned16(x));
       }
       if (numwords >= 2) {
         
-        memory.writeUnsigned16(extTable + 4, y);
+        memory.writeUnsigned16(extTable + 4, toUnsigned16(y));
       }
     }
   }
@@ -418,7 +419,7 @@ public class DefaultStoryFileHeader implements StoryFileHeader {
    * {@inheritDoc}
    */
   public void setOutputStream3TextWidth(int units) {
-    memory.writeUnsigned16(0x30, units);
+    memory.writeUnsigned16(0x30, toUnsigned16(units));
   }
   
   /**

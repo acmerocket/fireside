@@ -21,6 +21,7 @@
 package org.zmpp.vm;
 
 import org.zmpp.base.Memory;
+import static org.zmpp.base.MemoryUtil.*;
 
 /**
  * This class implements the object tree for story file version >= 4.
@@ -82,7 +83,7 @@ public class ModernObjectTree extends AbstractObjectTree {
    */
   public void setParent(final int objectNum, final int parent) {
     getMemory().writeUnsigned16(getObjectAddress(objectNum) + OFFSET_PARENT,
-    							   parent);
+                                toUnsigned16(parent));
   }
   
   /**
@@ -98,7 +99,7 @@ public class ModernObjectTree extends AbstractObjectTree {
    */
   public void setSibling(final int objectNum, final int sibling) {
     getMemory().writeUnsigned16(getObjectAddress(objectNum) + OFFSET_SIBLING,
-                                   sibling);
+                                toUnsigned16(sibling));
   }
   
   /**
@@ -114,7 +115,7 @@ public class ModernObjectTree extends AbstractObjectTree {
    */
   public void setChild(final int objectNum, final int child) {
     getMemory().writeUnsigned16(getObjectAddress(objectNum) + OFFSET_CHILD,
-                                   child);
+                                toUnsigned16(child));
   }
   
   // ************************************************************************

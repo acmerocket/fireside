@@ -24,6 +24,7 @@ import java.util.ArrayList;
 import java.util.List;
 
 import org.zmpp.base.Memory;
+import static org.zmpp.base.MemoryUtil.toUnsigned16;
 import org.zmpp.iff.Chunk;
 import org.zmpp.iff.DefaultChunk;
 import org.zmpp.iff.FormChunk;
@@ -561,21 +562,18 @@ public class PortableGameState {
   }
   
   private Chunk createIfhdChunk() {
-
     final byte[] id = "IFhd".getBytes();
     final byte[] data = new byte[13];
     final Chunk chunk = new DefaultChunk(id, data);    
     final Memory chunkmem = chunk.getMemory();
     
     // Write release number
-    chunkmem.writeUnsigned16(8, (short) release);
+    chunkmem.writeUnsigned16(8, toUnsigned16(release));
     
     for (int i = 0; i < serialBytes.length; i++) {
-      
       chunkmem.writeSigned8(10 + i, serialBytes[i]);
     }
-    chunkmem.writeUnsigned16(16, checksum);
-
+    chunkmem.writeUnsigned16(16, toUnsigned16(checksum));
     chunkmem.writeSigned8(18, (byte) ((pc >>> 16) & 0xff));
     chunkmem.writeSigned8(19, (byte) ((pc >>> 8) & 0xff));
     chunkmem.writeSigned8(20, (byte) (pc & 0xff));
@@ -589,16 +587,13 @@ public class PortableGameState {
     return new DefaultChunk(id, dynamicMem);
   }
   
-  private Chunk createStksChunk() {
-    
+  private Chunk createStksChunk() {    
     final byte[] id = "Stks".getBytes();
     final List<Byte> byteBuffer = new ArrayList<Byte>();
     
     for (StackFrame stackFrame : stackFrames) {
-     
       writeStackFrameToByteBuffer(byteBuffer, stackFrame);
     }
-    
     final byte[] data = new byte[byteBuffer.size()];
     for (int i = 0; i < data.length; i++) {
       
@@ -614,8 +609,7 @@ public class PortableGameState {
    * @param stackFrame the stack frame
    */
   public void writeStackFrameToByteBuffer(final List<Byte> byteBuffer,
-                                          final StackFrame stackFrame) {
-    
+                                          final StackFrame stackFrame) {    
     // returnpc
     final int pc = stackFrame.pc;
     byteBuffer.add((byte) ((pc >>> 16) & 0xff));

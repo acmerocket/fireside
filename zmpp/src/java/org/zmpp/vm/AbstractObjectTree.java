@@ -21,6 +21,7 @@
 package org.zmpp.vm;
 
 import org.zmpp.base.Memory;
+import static org.zmpp.base.MemoryUtil.toUnsigned16;
 
 /**
  * This class is the abstract super class of object trees.
@@ -259,7 +260,7 @@ public abstract class AbstractObjectTree implements ObjectTree {
   		if (propsize == 1) {
   			memory.writeUnsigned8(propertyDataAddress, (short) (value & 0xff));
   		} else {
-  			memory.writeUnsigned16(propertyDataAddress,  value & 0xffff);
+  			memory.writeUnsigned16(propertyDataAddress,  toUnsigned16(value));
   		}
   	}
   }

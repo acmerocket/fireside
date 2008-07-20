@@ -230,7 +230,7 @@ public class MachineImpl implements Machine {
   public long readUnsigned32(int address) {
     return getMemory().readUnsigned32(address);
   }
-  public int readUnsigned16(int address) {
+  public char readUnsigned16(int address) {
     return getMemory().readUnsigned16(address);
   }
   public short readSigned16(int address) {
@@ -242,7 +242,7 @@ public class MachineImpl implements Machine {
   public byte readSigned8(int address) {
     return getMemory().readSigned8(address);
   }
-  public void writeUnsigned16(int address, int value) {
+  public void writeUnsigned16(int address, char value) {
     getMemory().writeUnsigned16(address, value);
   }
   public void writeSigned16(int address, short value) {

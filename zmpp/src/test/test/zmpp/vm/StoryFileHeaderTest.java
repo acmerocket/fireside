@@ -62,7 +62,7 @@ public class StoryFileHeaderTest {
   @Test
   public void testGetRelease() {
     context.checking(new Expectations() {{
-      atLeast(1).of (memory).readUnsigned16(0x02); will(returnValue(35));
+      atLeast(1).of (memory).readUnsigned16(0x02); will(returnValue((char) 35));
     }});
     assertEquals(35, fileHeader.getRelease());
   }
@@ -70,7 +70,7 @@ public class StoryFileHeaderTest {
   @Test
   public void testGetHighMemAddress() {
     context.checking(new Expectations() {{
-      atLeast(1).of (memory).readUnsigned16(0x04); will(returnValue(4711));
+      atLeast(1).of (memory).readUnsigned16(0x04); will(returnValue((char) 4711));
     }});
     assertEquals(4711, fileHeader.getHighMemAddress());
   }
@@ -78,7 +78,7 @@ public class StoryFileHeaderTest {
   @Test
   public void testGetInitialPC() {
     context.checking(new Expectations() {{
-      atLeast(1).of (memory).readUnsigned16(0x06); will(returnValue(4712));
+      atLeast(1).of (memory).readUnsigned16(0x06); will(returnValue((char) 4712));
     }});
     assertEquals(4712, fileHeader.getProgramStart());
   }
@@ -86,7 +86,7 @@ public class StoryFileHeaderTest {
   @Test
   public void testGetDictionaryAddress() {
     context.checking(new Expectations() {{
-      atLeast(1).of (memory).readUnsigned16(0x08); will(returnValue(4713));
+      atLeast(1).of (memory).readUnsigned16(0x08); will(returnValue((char) 4713));
     }});
     assertEquals(4713, fileHeader.getDictionaryAddress());
   }
@@ -94,7 +94,7 @@ public class StoryFileHeaderTest {
   @Test
   public void testGetObjectTableAddress() {
     context.checking(new Expectations() {{
-      atLeast(1).of (memory).readUnsigned16(0x0a); will(returnValue(4714));
+      atLeast(1).of (memory).readUnsigned16(0x0a); will(returnValue((char) 4714));
     }});
     assertEquals(4714, fileHeader.getObjectTableAddress());
   }
@@ -102,7 +102,7 @@ public class StoryFileHeaderTest {
   @Test
   public void testGetGlobalsAddress() {
     context.checking(new Expectations() {{
-      atLeast(1).of (memory).readUnsigned16(0x0c); will(returnValue(4715));
+      atLeast(1).of (memory).readUnsigned16(0x0c); will(returnValue((char) 4715));
     }});
     assertEquals(4715, fileHeader.getGlobalsAddress());
   }
@@ -110,7 +110,7 @@ public class StoryFileHeaderTest {
   @Test
   public void testGetStaticMemAddress() {
     context.checking(new Expectations() {{
-      one (memory).readUnsigned16(0x0e); will(returnValue(4716));
+      one (memory).readUnsigned16(0x0e); will(returnValue((char) 4716));
     }});
     assertEquals(4716, fileHeader.getStaticsAddress());
   }
@@ -131,7 +131,7 @@ public class StoryFileHeaderTest {
   @Test
   public void testGetAbbreviationsAddress() {
     context.checking(new Expectations() {{
-      one (memory).readUnsigned16(0x18); will(returnValue(4717));
+      one (memory).readUnsigned16(0x18); will(returnValue((char) 4717));
     }});
     assertEquals(4717, fileHeader.getAbbreviationsAddress());
   }
@@ -140,7 +140,7 @@ public class StoryFileHeaderTest {
   public void testGetFileLengthV3() {
     context.checking(new Expectations() {{
       one (memory).readUnsigned8(0x00); will(returnValue((short) 3));
-      one (memory).readUnsigned16(0x1a); will(returnValue(4718));
+      one (memory).readUnsigned16(0x1a); will(returnValue((char) 4718));
     }});
     assertEquals(4718 * 2, fileHeader.getFileLength());
   }
@@ -149,7 +149,7 @@ public class StoryFileHeaderTest {
   public void testGetFileLengthV4() {
     context.checking(new Expectations() {{
       atLeast(1).of (memory).readUnsigned8(0x00); will(returnValue((short) 4));
-      one (memory).readUnsigned16(0x1a); will(returnValue(4718));
+      one (memory).readUnsigned16(0x1a); will(returnValue((char) 4718));
     }});
     assertEquals(4718 * 4, fileHeader.getFileLength());
   }
@@ -158,7 +158,7 @@ public class StoryFileHeaderTest {
   public void testGetFileLengthV8() {
     context.checking(new Expectations() {{
       atLeast(1).of (memory).readUnsigned8(0x00); will(returnValue((short) 8));
-      one (memory).readUnsigned16(0x1a); will(returnValue(4718));
+      one (memory).readUnsigned16(0x1a); will(returnValue((char) 4718));
     }});
     assertEquals(4718 * 8, fileHeader.getFileLength());
   }
@@ -166,7 +166,7 @@ public class StoryFileHeaderTest {
   @Test
   public void testGetChecksum() {    
     context.checking(new Expectations() {{
-      one (memory).readUnsigned16(0x1c); will(returnValue(4719));
+      one (memory).readUnsigned16(0x1c); will(returnValue((char) 4719));
     }});
     assertEquals(4719, fileHeader.getChecksum());
   }
@@ -182,7 +182,7 @@ public class StoryFileHeaderTest {
   @Test
   public void testSetScreenHeightUnits() {
     context.checking(new Expectations() {{
-      one (memory).writeUnsigned16(0x24, (short) 40);
+      one (memory).writeUnsigned16(0x24, (char) 40);
     }});
     fileHeader.setScreenHeightUnits(40);
   }
@@ -206,7 +206,7 @@ public class StoryFileHeaderTest {
   @Test
   public void testSetScreenWidthUnits() {
     context.checking(new Expectations() {{
-      one (memory).writeUnsigned16(0x22, 82);
+      one (memory).writeUnsigned16(0x22, (char) 82);
     }});
     fileHeader.setScreenWidthUnits(82);
   }  
@@ -410,7 +410,7 @@ public class StoryFileHeaderTest {
   @Test
   public void testGetTerminatorsAddress() {
     context.checking(new Expectations() {{
-      one (memory).readUnsigned16(0x2e); will(returnValue(1234));
+      one (memory).readUnsigned16(0x2e); will(returnValue((char) 1234));
     }});
     assertEquals(1234, fileHeader.getTerminatorsAddress());
   }
@@ -480,7 +480,7 @@ public class StoryFileHeaderTest {
   @Test
   public void testGetCustomAlphabetTable() {
     context.checking(new Expectations() {{
-      one (memory).readUnsigned16(0x34); will(returnValue(63));
+      one (memory).readUnsigned16(0x34); will(returnValue((char) 63));
     }});    
     fileHeader.getCustomAlphabetTable();
   }
@@ -489,7 +489,7 @@ public class StoryFileHeaderTest {
   @Test
   public void testSetMouseCoordinatesNoExtensionTable() {
     context.checking(new Expectations() {{
-      one (memory).readUnsigned16(0x36); will(returnValue(0));
+      one (memory).readUnsigned16(0x36); will(returnValue((char) 0));
     }});
     fileHeader.setMouseCoordinates(1, 2);
   }
@@ -497,10 +497,10 @@ public class StoryFileHeaderTest {
   @Test
   public void testSetMouseCoordinatesHasExtensionTable() {
     context.checking(new Expectations() {{
-      one (memory).readUnsigned16(0x36); will(returnValue(100));
-      one (memory).readUnsigned16(100); will(returnValue(2));
-      one (memory).writeUnsigned16(102, 1);
-      one (memory).writeUnsigned16(104, 2);
+      one (memory).readUnsigned16(0x36); will(returnValue((char) 100));
+      one (memory).readUnsigned16(100); will(returnValue((char) 2));
+      one (memory).writeUnsigned16(102, (char) 1);
+      one (memory).writeUnsigned16(104, (char) 2);
     }});
     fileHeader.setMouseCoordinates(1, 2);
   }
@@ -508,7 +508,7 @@ public class StoryFileHeaderTest {
   @Test
   public void testGetUnicodeTranslationTableNoExtensionTable() {
     context.checking(new Expectations() {{
-      one (memory).readUnsigned16(0x36); will(returnValue(0));
+      one (memory).readUnsigned16(0x36); will(returnValue((char) 0));
     }});
     assertEquals(0, fileHeader.getCustomAccentTable());
   }
@@ -516,8 +516,8 @@ public class StoryFileHeaderTest {
   @Test
   public void testGetCustomUnicodeTranslationTableNoTableInExtTable() {
     context.checking(new Expectations() {{
-      one (memory).readUnsigned16(0x36); will(returnValue(100));
-      one (memory).readUnsigned16(100); will(returnValue(2));
+      one (memory).readUnsigned16(0x36); will(returnValue((char) 100));
+      one (memory).readUnsigned16(100); will(returnValue((char) 2));
     }});
     assertEquals(0, fileHeader.getCustomAccentTable());
   }
@@ -525,9 +525,9 @@ public class StoryFileHeaderTest {
   @Test
   public void testGetCustomUnicodeTranslationTableHasExtAddress() { 
     context.checking(new Expectations() {{
-      one (memory).readUnsigned16(0x36); will(returnValue(100));
-      one (memory).readUnsigned16(100); will(returnValue(3));
-      one (memory).readUnsigned16(106); will(returnValue(1234));
+      one (memory).readUnsigned16(0x36); will(returnValue((char) 100));
+      one (memory).readUnsigned16(100); will(returnValue((char) 3));
+      one (memory).readUnsigned16(106); will(returnValue((char) 1234));
     }});
     assertEquals(1234, fileHeader.getCustomAccentTable());
   }
