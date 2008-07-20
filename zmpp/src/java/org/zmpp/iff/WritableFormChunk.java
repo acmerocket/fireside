@@ -137,17 +137,17 @@ public class WritableFormChunk implements FormChunk {
     final int datasize = Chunk.CHUNK_HEADER_LENGTH + getSize();    
     final byte[] data = new byte[datasize];
     final Memory memory = new DefaultMemory(data);
-    memory.writeByte(0, (byte) 'F');
-    memory.writeByte(1, (byte) 'O');
-    memory.writeByte(2, (byte) 'R');
-    memory.writeByte(3, (byte) 'M');
+    memory.writeSigned8(0, (byte) 'F');
+    memory.writeSigned8(1, (byte) 'O');
+    memory.writeSigned8(2, (byte) 'R');
+    memory.writeSigned8(3, (byte) 'M');
     memory.writeUnsigned32(4, getSize());
     
     int offset = Chunk.CHUNK_HEADER_LENGTH;
     
     // Write sub id
     for (int i = 0; i < subId.length; i++) {
-      memory.writeByte(offset++, subId[i]);
+      memory.writeSigned8(offset++, subId[i]);
     }
     
     // Write sub chunk data
@@ -157,7 +157,7 @@ public class WritableFormChunk implements FormChunk {
       
       // Write id
       for (int i = 0; i < chunkId.length; i++) {
-        memory.writeByte(offset++, chunkId[i]);
+        memory.writeSigned8(offset++, chunkId[i]);
       }
       
       // Write chunk size
@@ -168,13 +168,13 @@ public class WritableFormChunk implements FormChunk {
       final Memory chunkMem = chunk.getMemory();      
       for (int i = 0; i < chunkSize; i++) {
         
-        memory.writeByte(offset++,
-            chunkMem.readByte(Chunk.CHUNK_HEADER_LENGTH + i));
+        memory.writeSigned8(offset++,
+            chunkMem.readSigned8(Chunk.CHUNK_HEADER_LENGTH + i));
       }
       
       // Pad if necessary
       if ((chunkSize % 2) != 0) {
-        memory.writeByte(offset++, (byte) 0);
+        memory.writeSigned8(offset++, (byte) 0);
       }
     }
     

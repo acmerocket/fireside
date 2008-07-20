@@ -189,7 +189,7 @@ public class VariableInstruction extends AbstractInstruction {
     final int wordIndex = getUnsignedValue(1);
     final short value = getValue(2);
     
-    memory.writeShort(array + wordIndex * 2, value);
+    memory.writeSigned16(array + wordIndex * 2, value);
     nextInstruction();
   }
   
@@ -199,7 +199,7 @@ public class VariableInstruction extends AbstractInstruction {
     final int byteIndex = getUnsignedValue(1);
     final byte value = (byte) getValue(2);
     
-    memory.writeByte(array + byteIndex, value);
+    memory.writeSigned8(array + byteIndex, value);
     nextInstruction();
   }
   
@@ -480,8 +480,8 @@ public class VariableInstruction extends AbstractInstruction {
       final TextCursor cursor = screenModel.getTextCursor();
       final Memory memory = getMemory();
       final int arrayAddr = getUnsignedValue(0);
-      memory.writeShort(arrayAddr, (short) cursor.getLine());
-      memory.writeShort(arrayAddr + 2, (short) cursor.getColumn());
+      memory.writeSigned16(arrayAddr, (short) cursor.getLine());
+      memory.writeSigned16(arrayAddr + 2, (short) cursor.getColumn());
     }
     nextInstruction();
   }
@@ -501,8 +501,8 @@ public class VariableInstruction extends AbstractInstruction {
     boolean found = false;
     
     for (int i = 0; i < length; i++) {
-      final short current = isWordTable ? memory.readShort(pointer) :
-                                          memory.readByte(pointer);
+      final short current = isWordTable ? memory.readSigned16(pointer) :
+                                          memory.readSigned8(pointer);
       if (current == x) {
         storeResult((short) pointer);
         found = true;
@@ -593,7 +593,7 @@ public class VariableInstruction extends AbstractInstruction {
       size = Math.abs(size);
       for (int i = 0; i < size; i++) {
         
-        memory.writeByte(first + i, (byte) 0);
+        memory.writeSigned8(first + i, (byte) 0);
       }
       
     } else {
@@ -604,7 +604,7 @@ public class VariableInstruction extends AbstractInstruction {
         size = Math.abs(size);
         for (int i = 0; i < size; i++) {
                     
-          memory.writeByte(second + i, memory.readByte(first + i));
+          memory.writeSigned8(second + i, memory.readSigned8(first + i));
         }
         
       } else {
@@ -613,7 +613,7 @@ public class VariableInstruction extends AbstractInstruction {
         size = Math.abs(size);
         for (int i = size - 1; i >= 0; i--) {
           
-          memory.writeByte(second + i, memory.readByte(first + i));
+          memory.writeSigned8(second + i, memory.readSigned8(first + i));
         }
       }
     }
@@ -650,7 +650,7 @@ public class VariableInstruction extends AbstractInstruction {
     for (int i = 0; i < height; i++) {
       for (int j = 0; j < width; j++) { 
         final int offset = (width * i) + j;
-        zchar = (char) memory.readUnsignedByte(zsciiText + offset);
+        zchar = (char) memory.readUnsigned8(zsciiText + offset);
         getMachine().printZsciiChar(zchar);
       }
       row += skip + 1;

@@ -52,7 +52,7 @@ public class CustomAlphabetTable implements AlphabetTable {
     if (zchar == 0) {
       return ' ';
     }
-    return (char) memory.readUnsignedByte(tableAddress
+    return (char) memory.readUnsigned8(tableAddress
                                       + (zchar - ALPHABET_START));
   }
   
@@ -63,7 +63,7 @@ public class CustomAlphabetTable implements AlphabetTable {
     if (zchar == 0) {
       return ' ';
     }
-    return (char) memory.readUnsignedByte(tableAddress
+    return (char) memory.readUnsigned8(tableAddress
                                       + ALPHABET_SIZE
                                       + (zchar - ALPHABET_START));
   }
@@ -79,7 +79,7 @@ public class CustomAlphabetTable implements AlphabetTable {
     if (zchar == 7) {
       return (short) '\n';
     }
-    return (char) memory.readUnsignedByte(tableAddress + 2 * ALPHABET_SIZE
+    return (char) memory.readUnsigned8(tableAddress + 2 * ALPHABET_SIZE
                                       + (zchar - ALPHABET_START));
   }
   

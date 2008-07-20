@@ -106,12 +106,12 @@ public class InstructionDecoder {
       final int instructionAddress) {
     OperandCount operandCount;
     int opcode;
-    final short firstByte = getMemory().readUnsignedByte(instructionAddress);
+    final short firstByte = getMemory().readUnsigned8(instructionAddress);
     
     // Determine form and operand count type
     if (firstByte == 0xbe) {
             
-      opcode = getMemory().readUnsignedByte(instructionAddress + 1);
+      opcode = getMemory().readUnsigned8(instructionAddress + 1);
       return new ExtendedInstruction(machine, opcode);
       
     } else if (0x00 <= firstByte && firstByte <= 0x7f) {
@@ -165,7 +165,7 @@ public class InstructionDecoder {
     if (info.getInstructionForm() == InstructionForm.SHORT) {
       
       if (info.getOperandCount() == OperandCount.C1OP) {
-        final short firstByte = getMemory().readUnsignedByte(currentAddress);
+        final short firstByte = getMemory().readUnsigned8(currentAddress);
         final byte optype = (byte) ((firstByte & 0x30) >> 4);
         
         currentAddress = extractOperand(info, optype, currentAddress + 1);
@@ -177,7 +177,7 @@ public class InstructionDecoder {
       
     } else if (info.getInstructionForm() == InstructionForm.LONG) {
 
-      final short firstByte = getMemory().readUnsignedByte(instructionAddress);      
+      final short firstByte = getMemory().readUnsigned8(instructionAddress);      
       final byte optype1 = ((firstByte & 0x40) > 0) ? Operand.TYPENUM_VARIABLE :
                                                 Operand.TYPENUM_SMALL_CONSTANT;
       final byte optype2 = ((firstByte & 0x20) > 0) ? Operand.TYPENUM_VARIABLE :
@@ -190,7 +190,7 @@ public class InstructionDecoder {
       // The operand types start after the second opcode byte in EXT form,
       // and after the first otherwise
       currentAddress += (info.getOperandCount() == OperandCount.EXT) ? 2 : 1;      
-      final short optypeByte1 = getMemory().readUnsignedByte(currentAddress++);
+      final short optypeByte1 = getMemory().readUnsigned8(currentAddress++);
       short optypeByte2 = 0;
                 
       // Extract more operands if necessary, if the opcode
@@ -206,7 +206,7 @@ public class InstructionDecoder {
         
         // There is a second op type byte
         isVcall = true;
-        optypeByte2 = getMemory().readUnsignedByte(currentAddress++);
+        optypeByte2 = getMemory().readUnsigned8(currentAddress++);
       }
       
       // Extract first operand half
@@ -268,14 +268,14 @@ public class InstructionDecoder {
     if (optype == Operand.TYPENUM_LARGE_CONSTANT) {
       
       info.addOperand(new Operand(optype,
-          getMemory().readShort(nextAddress)));
+          getMemory().readSigned16(nextAddress)));
       nextAddress += 2;
       
     } else if (optype == Operand.TYPENUM_VARIABLE
         || optype == Operand.TYPENUM_SMALL_CONSTANT) {
       
       info.addOperand(new Operand(optype,
-          getMemory().readUnsignedByte(nextAddress)));
+          getMemory().readUnsigned8(nextAddress)));
       
       nextAddress += 1; 
     }
@@ -293,7 +293,7 @@ public class InstructionDecoder {
       final int currentAddress) {
     if (info.storesResult()) {
       
-      info.setStoreVariable(getMemory().readUnsignedByte(currentAddress));
+      info.setStoreVariable(getMemory().readUnsigned8(currentAddress));
       return currentAddress + 1;
     }
     return currentAddress;
@@ -311,7 +311,7 @@ public class InstructionDecoder {
     
     if (info.isBranch()) {
       
-      final short offsetByte1 = getMemory().readUnsignedByte(currentAddress);
+      final short offsetByte1 = getMemory().readUnsigned8(currentAddress);
       info.setBranchIfTrue((offsetByte1 & 0x80) > 0);
       
       // Bit 6 set -> only one byte needs to be read
@@ -323,7 +323,7 @@ public class InstructionDecoder {
       } else {
      
         final short offsetByte2 =
-          getMemory().readUnsignedByte(currentAddress + 1);
+          getMemory().readUnsigned8(currentAddress + 1);
         short offset;
         
         if ((offsetByte1 & 0x20) == 0x20) { // Bit 14 set = negative

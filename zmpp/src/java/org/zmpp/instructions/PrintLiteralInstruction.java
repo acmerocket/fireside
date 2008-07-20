@@ -141,7 +141,7 @@ public class PrintLiteralInstruction extends AbstractInstruction {
     
     do {
       
-      zword = memory.readUnsignedShort(currentAddress);
+      zword = memory.readUnsigned16(currentAddress);
       currentAddress += 2;
       
     } while ((zword & 0x8000) == 0);

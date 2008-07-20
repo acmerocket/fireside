@@ -82,7 +82,7 @@ public class ClassicObjectTree extends AbstractObjectTree {
    * {@inheritDoc}
    */
   public int getChild(final int objectNum) {
-	return getMemory().readUnsignedByte(getObjectAddress(objectNum) +
+	return getMemory().readUnsigned8(getObjectAddress(objectNum) +
 				                        OFFSET_CHILD);
   }
 
@@ -90,7 +90,7 @@ public class ClassicObjectTree extends AbstractObjectTree {
    * {@inheritDoc}
    */
   public void setChild(final int objectNum, final int child) {
-	getMemory().writeUnsignedByte(getObjectAddress(objectNum) + OFFSET_CHILD,
+	getMemory().writeUnsigned8(getObjectAddress(objectNum) + OFFSET_CHILD,
       (short) (child & 0xff));
   }
 
@@ -98,7 +98,7 @@ public class ClassicObjectTree extends AbstractObjectTree {
    * {@inheritDoc}
    */
   public int getParent(final int objectNum) {
-	return getMemory().readUnsignedByte(getObjectAddress(objectNum) +
+	return getMemory().readUnsigned8(getObjectAddress(objectNum) +
 			                            OFFSET_PARENT);
   }
 
@@ -106,7 +106,7 @@ public class ClassicObjectTree extends AbstractObjectTree {
    * {@inheritDoc}
    */
   public void setParent(final int objectNum, final int parent) {
-	getMemory().writeUnsignedByte(getObjectAddress(objectNum) + OFFSET_PARENT,
+	getMemory().writeUnsigned8(getObjectAddress(objectNum) + OFFSET_PARENT,
       (short) (parent & 0xff));
   }
 
@@ -114,7 +114,7 @@ public class ClassicObjectTree extends AbstractObjectTree {
    * {@inheritDoc}
    */
   public int getSibling(final int objectNum) {
-	return getMemory().readUnsignedByte(getObjectAddress(objectNum) +
+	return getMemory().readUnsigned8(getObjectAddress(objectNum) +
 										OFFSET_SIBLING);
   }
 
@@ -122,7 +122,7 @@ public class ClassicObjectTree extends AbstractObjectTree {
    * {@inheritDoc}
    */
   public void setSibling(final int objectNum, final int sibling) {
-	getMemory().writeUnsignedByte(getObjectAddress(objectNum) + OFFSET_SIBLING,
+	getMemory().writeUnsigned8(getObjectAddress(objectNum) + OFFSET_SIBLING,
       (short) (sibling & 0xff));
   }
 
@@ -130,7 +130,7 @@ public class ClassicObjectTree extends AbstractObjectTree {
    * {@inheritDoc}
    */
   protected int getPropertyTableAddress(final int objectNum) {
-    return getMemory().readUnsignedShort(getObjectAddress(objectNum) +
+    return getMemory().readUnsigned16(getObjectAddress(objectNum) +
     		                             OFFSET_PROPERTYTABLE);
   }
 
@@ -151,7 +151,7 @@ public class ClassicObjectTree extends AbstractObjectTree {
    * {@inheritDoc}
    */
   protected int getPropertyNum(final int propertyAddress) {    
-    final int sizeByte = getMemory().readUnsignedByte(propertyAddress);
+    final int sizeByte = getMemory().readUnsigned8(propertyAddress);
     return sizeByte - 32 * (getPropertyLength(propertyAddress + 1) - 1);
   }
   
@@ -172,7 +172,7 @@ public class ClassicObjectTree extends AbstractObjectTree {
     // The size byte is always the byte before the property data in any
     // version, so this is consistent
     final short sizebyte =
-      memaccess.readUnsignedByte(addressOfPropertyData - 1);
+      memaccess.readUnsigned8(addressOfPropertyData - 1);
     
     return sizebyte / 32 + 1;
   }

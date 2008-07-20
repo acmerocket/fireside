@@ -69,7 +69,7 @@ public class DefaultFormChunk extends DefaultChunk implements FormChunk {
     final int offset = CHUNK_HEADER_LENGTH;
 
     for (int i = 0; i < 4; i++) {
-      subId[i] = memory.readByte(i + offset);
+      subId[i] = memory.readSigned8(i + offset);
     }
   }
   

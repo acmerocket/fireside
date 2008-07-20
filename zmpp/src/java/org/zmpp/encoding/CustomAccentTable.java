@@ -57,7 +57,7 @@ public class CustomAccentTable implements AccentTable {
   public int getLength() {
     int result = 0;
     if (tableAddress > 0) {
-      result = memory.readUnsignedByte(tableAddress);
+      result = memory.readUnsigned8(tableAddress);
     }
     return result;
   }
@@ -68,7 +68,7 @@ public class CustomAccentTable implements AccentTable {
   public short getAccent(final int index) {
     short result = '?';
     if (tableAddress > 0) {
-      result = memory.readShort(tableAddress + (index * 2) + 1);
+      result = memory.readSigned16(tableAddress + (index * 2) + 1);
     }
     return result;
   }

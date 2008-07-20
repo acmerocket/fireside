@@ -208,7 +208,7 @@ public final class DefaultZCharDecoder implements ZCharDecoder {
     final List<short[]> byteList = new ArrayList<short[]>();
     
     do {
-      zword = memory.readShort(currentAddr);
+      zword = memory.readSigned16(currentAddr);
       byteList.add(extractBytes(zword));
       currentAddr += 2; // increment pointer
       

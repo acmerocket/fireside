@@ -81,7 +81,7 @@ public class Instruction0OpV4Test extends InstructionTestBase {
       one (machine).restore(); will(returnValue(gamestate));
       // Store variable
       one (machine).setVariable(5, (short) 2);
-      one (machine).readUnsignedByte(0); will(returnValue((short) 5));
+      one (machine).readUnsigned8(0); will(returnValue((short) 5));
     }});
     Instruction0OpMock restore = createInstructionMock(Short0StaticInfo.OP_RESTORE);
     restore.execute();

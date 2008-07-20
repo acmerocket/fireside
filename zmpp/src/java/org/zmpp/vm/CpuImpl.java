@@ -203,10 +203,10 @@ public class CpuImpl implements Cpu {
   }
 
   private short popUserStack(int userstackAddress) {
-    int numFreeSlots = machine.readUnsignedShort(userstackAddress);
+    int numFreeSlots = machine.readUnsigned16(userstackAddress);
     numFreeSlots++;
-    machine.writeUnsignedShort(userstackAddress, numFreeSlots);
-    return machine.readShort(userstackAddress + (numFreeSlots * 2));
+    machine.writeUnsigned16(userstackAddress, numFreeSlots);
+    return machine.readSigned16(userstackAddress + (numFreeSlots * 2));
   }
   
   /**
@@ -222,10 +222,10 @@ public class CpuImpl implements Cpu {
   }
   
   private boolean pushUserStack(int userstackAddress, short value) {
-    int numFreeSlots = machine.readUnsignedShort(userstackAddress);
+    int numFreeSlots = machine.readUnsigned16(userstackAddress);
     if (numFreeSlots > 0) {
-      machine.writeShort(userstackAddress + (numFreeSlots * 2), value);
-      machine.writeUnsignedShort(userstackAddress, numFreeSlots - 1);
+      machine.writeSigned16(userstackAddress + (numFreeSlots * 2), value);
+      machine.writeUnsigned16(userstackAddress, numFreeSlots - 1);
       return true;
     }
     return false;
@@ -249,7 +249,7 @@ public class CpuImpl implements Cpu {
       checkLocalVariableAccess(localVarNumber);
       return getCurrentRoutineContext().getLocalVariable(localVarNumber);
     } else { // GLOBAL
-      return machine.readShort(globalsAddress
+      return machine.readSigned16(globalsAddress
           + (getGlobalVariableNumber(variableNumber) * 2));
     }
   }
@@ -276,7 +276,7 @@ public class CpuImpl implements Cpu {
       checkLocalVariableAccess(localVarNumber);
       getCurrentRoutineContext().setLocalVariable(localVarNumber, value);
     } else {
-      machine.writeShort(globalsAddress
+      machine.writeSigned16(globalsAddress
           + (getGlobalVariableNumber(variableNumber) * 2), value);
     }
   }
@@ -421,7 +421,7 @@ public class CpuImpl implements Cpu {
    * @return a RoutineContext object
    */
   private RoutineContext decodeRoutine(final int routineAddress) {
-    final int numLocals = machine.readUnsignedByte(routineAddress);
+    final int numLocals = machine.readUnsigned8(routineAddress);
     final short[] locals = new short[numLocals];
     int currentAddress = routineAddress + 1;
     
@@ -429,7 +429,7 @@ public class CpuImpl implements Cpu {
       // Only story files <= 4 actually store default values here,
       // after V5 they are assumed as being 0 (standard document 1.0, S.5.2.1) 
       for (int i = 0; i < numLocals; i++) {
-        locals[i] = machine.readShort(currentAddress);
+        locals[i] = machine.readSigned16(currentAddress);
         currentAddress += 2;
       }
     }

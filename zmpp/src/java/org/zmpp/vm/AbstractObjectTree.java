@@ -140,7 +140,7 @@ public abstract class AbstractObjectTree implements ObjectTree {
    * {@inheritDoc}
    */
   public boolean isAttributeSet(int objectNum, int attributeNum) {
-    final short value = memory.readUnsignedByte(
+    final short value = memory.readUnsigned8(
     	getAttributeByteAddress(objectNum, attributeNum));
     return (value & (0x80 >> (attributeNum & 7))) > 0;
   }  
@@ -151,9 +151,9 @@ public abstract class AbstractObjectTree implements ObjectTree {
   public void setAttribute(int objectNum, int attributeNum) {
     final int attributeByteAddress = getAttributeByteAddress(objectNum,
     	attributeNum);
-    short value = memory.readUnsignedByte(attributeByteAddress);
+    short value = memory.readUnsigned8(attributeByteAddress);
     value |= (0x80 >> (attributeNum & 7));
-    memory.writeUnsignedByte(attributeByteAddress, value);
+    memory.writeUnsigned8(attributeByteAddress, value);
   }
 
   /**
@@ -162,9 +162,9 @@ public abstract class AbstractObjectTree implements ObjectTree {
   public void clearAttribute(int objectNum, int attributeNum) {
   	final int attributeByteAddress = getAttributeByteAddress(objectNum,
   			attributeNum);
-  	short value = memory.readUnsignedByte(attributeByteAddress);
+  	short value = memory.readUnsigned8(attributeByteAddress);
   	value &= (~(0x80 >> (attributeNum & 7)));
-  	memory.writeUnsignedByte(attributeByteAddress, value);
+  	memory.writeUnsigned8(attributeByteAddress, value);
   }
   
   /**
@@ -237,10 +237,10 @@ public abstract class AbstractObjectTree implements ObjectTree {
     final int numBytes = getPropertyLength(propertyDataAddress);
   	int value;
   	if (numBytes == 1) {
-  		value = memory.readUnsignedByte(propertyDataAddress) & 0xff;
+  		value = memory.readUnsigned8(propertyDataAddress) & 0xff;
   	} else {
-  		final int byte1 = memory.readUnsignedByte(propertyDataAddress);
-  		final int byte2 = memory.readUnsignedByte(propertyDataAddress + 1);
+  		final int byte1 = memory.readUnsigned8(propertyDataAddress);
+  		final int byte2 = memory.readUnsigned8(propertyDataAddress + 1);
   		value = (byte1 << 8 | (byte2 & 0xff));
   	}
   	return value & 0xffff;
@@ -257,9 +257,9 @@ public abstract class AbstractObjectTree implements ObjectTree {
   	} else {
   		int propsize = getPropertyLength(propertyDataAddress);
   		if (propsize == 1) {
-  			memory.writeUnsignedByte(propertyDataAddress, (short) (value & 0xff));
+  			memory.writeUnsigned8(propertyDataAddress, (short) (value & 0xff));
   		} else {
-  			memory.writeUnsignedShort(propertyDataAddress,  value & 0xffff);
+  			memory.writeUnsigned16(propertyDataAddress,  value & 0xffff);
   		}
   	}
   }
@@ -312,7 +312,7 @@ public abstract class AbstractObjectTree implements ObjectTree {
    */
   private int getDescriptionHeaderSize(int objectNum) {
     final int startAddr = getPropertyTableAddress(objectNum);
-    return memory.readUnsignedByte(startAddr) * 2 + 1;
+    return memory.readUnsigned8(startAddr) * 2 + 1;
   }
 
   /**
@@ -323,6 +323,6 @@ public abstract class AbstractObjectTree implements ObjectTree {
    */
   private short getPropertyDefault(final int propertyNum) {
     final int index = propertyNum - 1;
-    return memory.readShort(address + index * 2);
+    return memory.readSigned16(address + index * 2);
   } 
 }

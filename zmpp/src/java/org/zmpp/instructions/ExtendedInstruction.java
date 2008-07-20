@@ -237,8 +237,8 @@ public class ExtendedInstruction extends AbstractInstruction {
         getMachine().getPictureManager().getPictureSize(picnum);
       if (picdim != null) {
         final Memory memory = getMemory();
-        memory.writeUnsignedShort(array, picdim.getHeight());
-        memory.writeUnsignedShort(array + 2, picdim.getWidth());
+        memory.writeUnsigned16(array, picdim.getHeight());
+        memory.writeUnsigned16(array + 2, picdim.getWidth());
         result = true;
       }
     }
@@ -247,9 +247,9 @@ public class ExtendedInstruction extends AbstractInstruction {
   
   private void writePictureFileInfo(final int array) {
     final Memory memory = getMemory();
-    memory.writeUnsignedShort(array,
+    memory.writeUnsigned16(array,
         getMachine().getPictureManager().getNumPictures());
-    memory.writeUnsignedShort(array + 2,
+    memory.writeUnsigned16(array + 2,
         getMachine().getPictureManager().getRelease());
   }
   

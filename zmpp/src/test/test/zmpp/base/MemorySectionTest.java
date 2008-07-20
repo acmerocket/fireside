@@ -56,33 +56,33 @@ public class MemorySectionTest {
   @Test
   public void testWriteUnsignedShort() {
     context.checking(new Expectations() {{
-      one (memory).writeUnsignedShort(12 + 36, 512);
+      one (memory).writeUnsigned16(12 + 36, 512);
     }});
-    section.writeUnsignedShort(12, 512);
+    section.writeUnsigned16(12, 512);
   }
 
   @Test
   public void testWriteShort() {
     context.checking(new Expectations() {{
-      one (memory).writeShort(12 + 36, (short) 512);
+      one (memory).writeSigned16(12 + 36, (short) 512);
     }});
-    section.writeShort(12, (short) 512);
+    section.writeSigned16(12, (short) 512);
   }
 
   @Test
   public void testWriteUnsignedByte() {
     context.checking(new Expectations() {{
-      one (memory).writeUnsignedByte(12 + 36, (short) 120);
+      one (memory).writeUnsigned8(12 + 36, (short) 120);
     }});
-    section.writeUnsignedByte(12, (short) 120);
+    section.writeUnsigned8(12, (short) 120);
   }
   
   @Test
   public void testWriteByte() {
     context.checking(new Expectations() {{
-      one (memory).writeByte(12 + 36, (byte) -120);
+      one (memory).writeSigned8(12 + 36, (byte) -120);
     }});
-    section.writeByte(12, (byte) -120);
+    section.writeSigned8(12, (byte) -120);
   }
 
   @Test

@@ -60,7 +60,7 @@ public class PrintLiteralInstructionTest extends InstructionTestBase {
     context.checking(new Expectations() {{
       one (machine).incrementPC(3);
       one (machine).printZString(4712);
-      one (machine).readUnsignedShort(4712); will(returnValue(0x8000));
+      one (machine).readUnsigned16(4712); will(returnValue(0x8000));
     }});
     PrintLiteralInstruction print = new PrintLiteralInstruction(
         machine, PrintLiteralStaticInfo.OP_PRINT, machine, 4711);

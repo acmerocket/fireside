@@ -550,7 +550,7 @@ public class Instruction2OpV3Test extends InstructionTestBase {
 	@Test
   public void testLoadw() {
     context.checking(new Expectations() {{
-      one (machine).readShort(0x0010 + 2); will(returnValue((short) 123));
+      one (machine).readSigned16(0x0010 + 2); will(returnValue((short) 123));
       one (machine).setVariable(0x11, (short) 123);
     }});
     Instruction2OpMock loadw = createInstructionMock(LongStaticInfo.OP_LOADW,
@@ -569,7 +569,7 @@ public class Instruction2OpV3Test extends InstructionTestBase {
 	@Test
   public void testLoadb() {
     context.checking(new Expectations() {{
-      one (machine).readUnsignedByte(0x0010 + 1); will(returnValue((short) 42));
+      one (machine).readUnsigned8(0x0010 + 1); will(returnValue((short) 42));
       one (machine).setVariable(0x11, (short) 42);
     }});
     Instruction2OpMock loadb = createInstructionMock(LongStaticInfo.OP_LOADB,

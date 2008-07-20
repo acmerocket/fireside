@@ -187,8 +187,8 @@ public class InstructionVarV4Test extends InstructionTestBase {
       one (screen).getTextCursor(); will(returnValue(cursor));
       one (cursor).getLine(); will(returnValue(1));
       one (cursor).getColumn(); will(returnValue(1));
-      one (machine).writeShort(4711, (short) 1);
-      one (machine).writeShort(4713, (short) 1);
+      one (machine).writeSigned16(4711, (short) 1);
+      one (machine).writeSigned16(4713, (short) 1);
     }});
     VariableInstructionMock get_cursor =
       new VariableInstructionMock(machine, VariableStaticInfo.OP_GET_CURSOR);

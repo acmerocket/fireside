@@ -44,23 +44,23 @@ public class MemoryTest {
   
   @Test
   public void testReadUnsignedByte() {
-    assertEquals(3, memory.readUnsignedByte(0x00));
+    assertEquals(3, memory.readUnsigned8(0x00));
   }
   
   @Test
   public void testReadUnsignedWord() {
-    assertEquals(0x3709, memory.readUnsignedShort(0x02));
+    assertEquals(0x3709, memory.readUnsigned16(0x02));
   }
   
   @Test
   public void testGetUnsignedShortGeneral() {
-    assertEquals(0xffff, memory.readUnsignedShort(0x04));
-    assertNotSame(-1, memory.readUnsignedShort(0x04));
+    assertEquals(0xffff, memory.readUnsigned16(0x04));
+    assertNotSame(-1, memory.readUnsigned16(0x04));
   }
   
   @Test
   public void testGetShortGeneral() {
-    assertEquals(-1, memory.readShort(0x04));
+    assertEquals(-1, memory.readSigned16(0x04));
   }
   
   @Test
@@ -72,20 +72,20 @@ public class MemoryTest {
   
   @Test
   public void testWriteUnsignedByte() {
-    memory.writeUnsignedByte(0x02, (short) 0xff);
-    assertEquals(0xff, memory.readUnsignedByte(0x02));
+    memory.writeUnsigned8(0x02, (short) 0xff);
+    assertEquals(0xff, memory.readUnsigned8(0x02));
     
-    memory.writeUnsignedByte(0x03, (short) 0x32);
-    assertEquals(0x32, memory.readUnsignedByte(0x03));
+    memory.writeUnsigned8(0x03, (short) 0x32);
+    assertEquals(0x32, memory.readUnsigned8(0x03));
   }
   
   @Test
   public void testWriteUnsignedShort() {
-    memory.writeUnsignedShort(0x02, 0xffff);
-    assertEquals(0xffff, memory.readUnsignedShort(0x02));
+    memory.writeUnsigned16(0x02, 0xffff);
+    assertEquals(0xffff, memory.readUnsigned16(0x02));
     
-    memory.writeUnsignedShort(0x04, 0x00ff);
-    assertEquals(0x00ff, memory.readUnsignedShort(0x04));
+    memory.writeUnsigned16(0x04, 0x00ff);
+    assertEquals(0x00ff, memory.readUnsigned16(0x04));
   }
   
   @Test

@@ -65,6 +65,6 @@ public class Abbreviations implements AbbreviationsTable {
    * @return the word address
    */
   public int getWordAddress(final int entryNum) {
-    return memory.readUnsignedShort(address + entryNum * 2) * 2;
+    return memory.readUnsigned16(address + entryNum * 2) * 2;
   }  
 }

@@ -205,7 +205,7 @@ public class ZCharDecoderTest {
   @Test
   public void testExtractZBytesOneWordOnly() {
     context.checking(new Expectations() {{
-      one (memory).readShort(0); will(returnValue((short) 0x9865));
+      one (memory).readSigned16(0); will(returnValue((short) 0x9865));
     }});    
     char[] data = DefaultZCharDecoder.extractZbytes(memory, 0, 0);
     assertEquals(3, data.length);
@@ -217,11 +217,11 @@ public class ZCharDecoderTest {
   @Test
   public void testExtractZBytesThreeWords() {
     context.checking(new Expectations() {{
-      one (memory).readShort(0);
+      one (memory).readSigned16(0);
       will(returnValue((short) 0x5432));
-      one (memory).readShort(2);
+      one (memory).readSigned16(2);
       will(returnValue((short) 0x1234));
-      one (memory).readShort(4);
+      one (memory).readSigned16(4);
       will(returnValue((short) 0x9865));
     }});
     char[] data = DefaultZCharDecoder.extractZbytes(memory, 0, 0);

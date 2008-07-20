@@ -58,29 +58,29 @@ public class MemorySection implements Memory {
   /**
    * {@inheritDoc}
    */
-  public void writeUnsignedShort(final int address, final int value) {
-    memory.writeUnsignedShort(address + start, value);
+  public void writeUnsigned16(final int address, final int value) {
+    memory.writeUnsigned16(address + start, value);
   }
 
   /**
    * {@inheritDoc}
    */
-  public void writeShort(final int address, final short value) {
-    memory.writeShort(address + start, value);
+  public void writeSigned16(final int address, final short value) {
+    memory.writeSigned16(address + start, value);
   }
 
   /**
    * {@inheritDoc}
    */
-  public void writeUnsignedByte(final int address, final short value) {
-    memory.writeUnsignedByte(address + start, value);
+  public void writeUnsigned8(final int address, final short value) {
+    memory.writeUnsigned8(address + start, value);
   }
 
   /**
    * {@inheritDoc}
    */
-  public void writeByte(final int address, final byte value) {
-    memory.writeByte(address + start, value);
+  public void writeSigned8(final int address, final byte value) {
+    memory.writeSigned8(address + start, value);
   }
 
   /**
@@ -100,29 +100,29 @@ public class MemorySection implements Memory {
   /**
    * {@inheritDoc}
    */
-  public int readUnsignedShort(final int address) {
-    return memory.readUnsignedShort(address + start);
+  public int readUnsigned16(final int address) {
+    return memory.readUnsigned16(address + start);
   }
 
   /**
    * {@inheritDoc}
    */
-  public short readShort(final int address) {
-    return memory.readShort(address + start);
+  public short readSigned16(final int address) {
+    return memory.readSigned16(address + start);
   }
 
   /**
    * {@inheritDoc}
    */
-  public short readUnsignedByte(final int address) {
-    return memory.readUnsignedByte(address + start);
+  public short readUnsigned8(final int address) {
+    return memory.readUnsigned8(address + start);
   }
 
   /**
    * {@inheritDoc}
    */
-  public byte readByte(final int address) {
+  public byte readSigned8(final int address) {
     assert address < length : "Accessing an address beyond section length: address: " + address + ", length: " + length + ", start: "  + start;
-    return memory.readByte(address + start);
+    return memory.readSigned8(address + start);
   }
 }

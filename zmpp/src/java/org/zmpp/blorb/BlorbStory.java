@@ -48,7 +48,7 @@ public class BlorbStory {
     final byte[] data = new byte[size];
     for (int i = 0; i < size; i++) {
       
-      data[i] = chunk.getMemory().readByte(i + Chunk.CHUNK_HEADER_LENGTH);
+      data[i] = chunk.getMemory().readSigned8(i + Chunk.CHUNK_HEADER_LENGTH);
     }
     return data;
   }

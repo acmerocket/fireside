@@ -127,7 +127,7 @@ public class InstructionVarV3Test extends InstructionTestBase {
   @Test
   public void testStorew() {
     context.checking(new Expectations() {{
-      one (machine).writeShort(2, (short) 0x1000);
+      one (machine).writeSigned16(2, (short) 0x1000);
       one (machine).incrementPC(5);
     }});
     VariableInstruction storew = new VariableInstruction(machine,
@@ -146,7 +146,7 @@ public class InstructionVarV3Test extends InstructionTestBase {
   @Test
   public void testStoreb() {
     context.checking(new Expectations() {{
-      one (machine).writeByte(1, (byte) 0x15);
+      one (machine).writeSigned8(1, (byte) 0x15);
       one (machine).incrementPC(5);
     }});
     VariableInstruction storeb = new VariableInstruction(machine,

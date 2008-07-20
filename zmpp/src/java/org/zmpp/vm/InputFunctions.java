@@ -88,7 +88,7 @@ public class InputFunctions {
           0 : (byte) (textpointer - 2);
 
       // Write the number of characters typed in byte 1
-      machine.writeUnsignedByte(textbuffer + 1, numCharsTyped);      
+      machine.writeUnsigned8(textbuffer + 1, numCharsTyped);      
     } else {      
       // Terminate with 0 byte in versions < 5
       // Check if input was cancelled
@@ -96,15 +96,15 @@ public class InputFunctions {
       if (terminateChar == ZsciiEncoding.NULL) {
         terminatepos = 0;
       }
-      machine.writeByte(textbuffer + terminatepos, (byte) 0);
+      machine.writeSigned8(textbuffer + terminatepos, (byte) 0);
     }
   }
   
   private void processInput(final int textbuffer, String inputString) {
-    final int bufferlen = machine.readUnsignedByte(textbuffer);
+    final int bufferlen = machine.readUnsigned8(textbuffer);
     int storeOffset = machine.getVersion() <= 4 ? 1 : 2;
     for (int i = 0; i < inputString.length(); i++) {
-      machine.writeByte(textbuffer + i + storeOffset,
+      machine.writeSigned8(textbuffer + i + storeOffset,
               (byte) inputString.charAt(i));
     }
     char terminateChar = inputString.charAt(inputString.length() - 1);
@@ -130,7 +130,7 @@ public class InputFunctions {
       short terminator;
     
       for (int i = 0; ; i++) {      
-        terminator = machine.readUnsignedByte(terminatorTable + i);
+        terminator = machine.readUnsigned8(terminatorTable + i);
         if (terminator == 0) {
           break;
         }
@@ -181,10 +181,10 @@ public class InputFunctions {
   public void tokenize(final int textbuffer, final int parsebuffer,
                        final int dictionaryAddress, final boolean flag) {
     final int version = machine.getVersion();
-    final int bufferlen = machine.readUnsignedByte(textbuffer);
+    final int bufferlen = machine.readUnsigned8(textbuffer);
     final int textbufferstart = determineTextBufferStart(version);
     final int charsTyped = (version >= 5) ?
-                      machine.readUnsignedByte(textbuffer + 1) :
+                      machine.readUnsigned8(textbuffer + 1) :
                       0;
     
     // from version 5, text starts at position 2
@@ -196,13 +196,13 @@ public class InputFunctions {
       new HashMap<ZsciiString, Integer>();
     
     // Write the number of tokens in byte 1 of the parse buffer
-    final int maxwords = machine.readUnsignedByte(parsebuffer);
+    final int maxwords = machine.readUnsigned8(parsebuffer);
     
     // Do not go beyond the limit of maxwords
     final int numParsedTokens = Math.min(maxwords, tokens.size());
     
     // Write the number of parsed tokens into byte 1 of the parse buffer
-    machine.writeUnsignedByte(parsebuffer + 1, (short) numParsedTokens);
+    machine.writeUnsigned8(parsebuffer + 1, (short) numParsedTokens);
     
     int parseaddr = parsebuffer + 2;
     
@@ -239,9 +239,9 @@ public class InputFunctions {
       if (!flag || flag && entryAddress > 0) {
         
         // This is one slot
-        machine.writeUnsignedShort(parseaddr, entryAddress);     
-        machine.writeUnsignedByte(parseaddr + 2, (short) token.length());
-        machine.writeUnsignedByte(parseaddr + 3, (short) tokenIndex);
+        machine.writeUnsigned16(parseaddr, entryAddress);     
+        machine.writeUnsigned8(parseaddr + 2, (short) token.length());
+        machine.writeUnsigned8(parseaddr + 3, (short) tokenIndex);
       }
       parseaddr += 4;
     }
@@ -267,7 +267,7 @@ public class InputFunctions {
     final ZsciiStringBuilder buffer = new ZsciiStringBuilder();
     for (int i = 0; i < numChars; i++) {
       
-      final char charByte = (char) machine.readUnsignedByte(address + i);
+      final char charByte = (char) machine.readUnsigned8(address + i);
       if (charByte == 0) {
         break;
       }

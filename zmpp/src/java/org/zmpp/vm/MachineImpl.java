@@ -202,7 +202,7 @@ public class MachineImpl implements Machine {
     final int filelen = fileheader.getFileLength();
     int sum = 0;
     for (int i = 0x40; i < filelen; i++) {
-      sum += getMemory().readUnsignedByte(i);
+      sum += getMemory().readUnsigned8(i);
     }
     return (sum & 0xffff);
   }
@@ -230,29 +230,29 @@ public class MachineImpl implements Machine {
   public long readUnsigned32(int address) {
     return getMemory().readUnsigned32(address);
   }
-  public int readUnsignedShort(int address) {
-    return getMemory().readUnsignedShort(address);
+  public int readUnsigned16(int address) {
+    return getMemory().readUnsigned16(address);
   }
-  public short readShort(int address) {
-    return getMemory().readShort(address);
+  public short readSigned16(int address) {
+    return getMemory().readSigned16(address);
   }
-  public short readUnsignedByte(int address) {
-    return getMemory().readUnsignedByte(address);
+  public short readUnsigned8(int address) {
+    return getMemory().readUnsigned8(address);
   }
-  public byte readByte(int address) {
-    return getMemory().readByte(address);
+  public byte readSigned8(int address) {
+    return getMemory().readSigned8(address);
   }
-  public void writeUnsignedShort(int address, int value) {
-    getMemory().writeUnsignedShort(address, value);
+  public void writeUnsigned16(int address, int value) {
+    getMemory().writeUnsigned16(address, value);
   }
-  public void writeShort(int address, short value) {
-    getMemory().writeShort(address, value);
+  public void writeSigned16(int address, short value) {
+    getMemory().writeSigned16(address, value);
   }
-  public void writeUnsignedByte(int address, short value) {
-    getMemory().writeUnsignedByte(address, value);
+  public void writeUnsigned8(int address, short value) {
+    getMemory().writeUnsigned8(address, value);
   }
-  public void writeByte(int address, byte value) {
-    getMemory().writeByte(address, value);
+  public void writeSigned8(int address, byte value) {
+    getMemory().writeSigned8(address, value);
   }
   public void writeUnsigned32(int address, long value) {
     getMemory().writeUnsigned32(address, value);

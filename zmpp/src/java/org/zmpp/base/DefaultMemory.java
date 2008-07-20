@@ -60,28 +60,28 @@ public class DefaultMemory implements Memory {
   /**
    * {@inheritDoc}
    */
-  public int readUnsignedShort(final int address) {    
+  public int readUnsigned16(final int address) {    
     return (data[address] & 0xff) << 8 | (data[address + 1] & 0xff);
   }
   
   /**
    * {@inheritDoc}
    */
-  public short readShort(final int address) {
+  public short readSigned16(final int address) {
     return (short) (data[address] << 8 | (data[address + 1] & 0xff));
   }
   
   /**
    * {@inheritDoc}
    */
-  public short readUnsignedByte(final int address) {
+  public short readUnsigned8(final int address) {
     return (short) (data[address] & 0xff);
   }
   
   /**
    * {@inheritDoc}
    */
-  public byte readByte(final int address) {
+  public byte readSigned8(final int address) {
     return data[address];
   }
   
@@ -91,7 +91,7 @@ public class DefaultMemory implements Memory {
    * @param address the address to write to
    * @param value the value to write
    */
-  public void writeUnsignedShort(final int address, final int value) {
+  public void writeUnsigned16(final int address, final int value) {
     
     data[address] = (byte) ((value & 0xff00) >> 8);
     data[address + 1] = (byte) (value & 0xff);
@@ -103,7 +103,7 @@ public class DefaultMemory implements Memory {
    * @param address the address
    * @param value the value
    */
-  public void writeShort(final int address, final short value) {
+  public void writeSigned16(final int address, final short value) {
     
     data[address] = (byte) ((value & 0xff00) >>> 8);
     data[address + 1] = (byte) (value & 0xff);
@@ -115,7 +115,7 @@ public class DefaultMemory implements Memory {
    * @param address the address to write to
    * @param value the value to write
    */
-  public void writeUnsignedByte(final int address, final short value) {
+  public void writeUnsigned8(final int address, final short value) {
     
     data[address] = (byte) (value & 0xff);
   }
@@ -126,7 +126,7 @@ public class DefaultMemory implements Memory {
    * @param address the address
    * @param value the value
    */
-  public void writeByte(final int address, final byte value) {
+  public void writeSigned8(final int address, final byte value) {
     data[address] = value;
   }
   

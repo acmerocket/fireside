@@ -282,7 +282,7 @@ public class CpuTest {
 
     // Set the variable
     context.checking(new Expectations() {{
-      one (machine).writeShort(5004, (short) 42);
+      one (machine).writeSigned16(5004, (short) 42);
     }});
     
     assertNotSame(oldSp, cpu.getSP());

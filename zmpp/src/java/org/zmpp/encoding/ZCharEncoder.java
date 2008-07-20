@@ -97,27 +97,27 @@ public class ZCharEncoder {
     
         resultword = writeByteToWord(resultword, (short) 5, i);
       }
-      state.memory.writeUnsignedShort(state.target, resultword);
+      state.memory.writeUnsigned16(state.target, resultword);
       state.target += 2;
     }
     
     // If we did not encode 3 shorts, fill the rest with 0x14a5's
     final int targetOffset = state.target - targetAddress;
     for (int i = targetOffset; i < NUM_TARGET_BYTES; i+= 2) {
-      state.memory.writeUnsignedShort(targetAddress + i, 0x14a5);
+      state.memory.writeUnsigned16(targetAddress + i, 0x14a5);
     }
     
     // Always mark the last word as such, the last word is always
     // starting at the fifth byte
     final int lastword =
-      memory.readUnsignedShort(targetAddress + TARGET_LAST_WORD);
-    memory.writeUnsignedShort(targetAddress + TARGET_LAST_WORD,
+      memory.readUnsigned16(targetAddress + TARGET_LAST_WORD);
+    memory.writeUnsigned16(targetAddress + TARGET_LAST_WORD,
                                  lastword | 0x8000);
   }
   
   private void processChar(final EncodingState state) {
     
-    final char zsciiChar = (char) state.memory.readUnsignedByte(state.source++);
+    final char zsciiChar = (char) state.memory.readUnsigned8(state.source++);
     final AlphabetElement element = translator.getAlphabetElementFor(zsciiChar);
     if (element.getAlphabet() == null) {
      
@@ -180,7 +180,7 @@ public class ZCharEncoder {
     if (state.wordPosition > 2 && state.target <= (state.targetStart + 4)) {
       
       // Write the result and increment the target position
-      state.memory.writeUnsignedShort(state.target, state.currentWord);
+      state.memory.writeUnsigned16(state.target, state.currentWord);
       state.target += 2;
       state.currentWord = 0;
       state.wordPosition = 0;

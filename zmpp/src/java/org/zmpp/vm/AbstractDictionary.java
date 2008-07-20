@@ -74,21 +74,21 @@ public abstract class AbstractDictionary implements Dictionary {
    * {@inheritDoc}
    */
   public int getNumberOfSeparators() {
-    return memory.readUnsignedByte(address);
+    return memory.readUnsigned8(address);
   }
   
   /**
    * {@inheritDoc}
    */
   public byte getSeparator(final int i) {
-    return (byte) memory.readUnsignedByte(address + i + 1);
+    return (byte) memory.readUnsigned8(address + i + 1);
   }
   
   /**
    * {@inheritDoc}
    */
   public int getEntryLength() {
-    return memory.readUnsignedByte(address + getNumberOfSeparators() + 1);
+    return memory.readUnsigned8(address + getNumberOfSeparators() + 1);
   }
   
   /**
@@ -97,7 +97,7 @@ public abstract class AbstractDictionary implements Dictionary {
   public int getNumberOfEntries() {
     // The number of entries is a signed value so that we can recognize
     // a negative number
-    return memory.readShort(address + getNumberOfSeparators() + 2);
+    return memory.readSigned16(address + getNumberOfSeparators() + 2);
   }
   
   /**

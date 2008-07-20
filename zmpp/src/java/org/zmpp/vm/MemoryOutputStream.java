@@ -75,7 +75,7 @@ public class MemoryOutputStream implements OutputStream {
   public void print(final char zsciiChar) {
     final TablePosition tablePos = tableStack.get(tableStack.size() - 1);
     final int position = tablePos.tableAddress + 2 + tablePos.bytesWritten;
-    machine.writeUnsignedByte(
+    machine.writeUnsigned8(
         position, (short) zsciiChar);
     tablePos.bytesWritten++;
   }
@@ -102,7 +102,7 @@ public class MemoryOutputStream implements OutputStream {
       // Write the total number of written bytes to the first word
       // of the table
       final TablePosition tablePos = tableStack.remove(tableStack.size() - 1);
-      machine.writeUnsignedShort(
+      machine.writeUnsigned16(
           tablePos.tableAddress, tablePos.bytesWritten);
       
       if (machine.getVersion() == 6) {
@@ -116,7 +116,7 @@ public class MemoryOutputStream implements OutputStream {
     char[] data = new char[numwords];
     
     for (int i = 0; i < numwords; i++) {
-      data[i] = (char) machine.readUnsignedByte(tablepos.tableAddress + i + 2); 
+      data[i] = (char) machine.readUnsigned8(tablepos.tableAddress + i + 2); 
     }
     machine.getScreen6().setTextWidthInUnits(data);
   }

@@ -108,7 +108,7 @@ public class InputFunctionsTest {
   public void testCheckTerminationV4Null() {
     context.checking(new Expectations() {{
       one (machine).getVersion(); will(returnValue(4));
-      one (machine).writeByte(textbuffer, (byte) 0);
+      one (machine).writeSigned8(textbuffer, (byte) 0);
     }});
     int textpointer = 6;
     inputFunctions.checkTermination(ZsciiEncoding.NULL, textbuffer, textpointer);

@@ -362,7 +362,7 @@ public class LongInstruction extends AbstractInstruction {
     final int arrayAddress = getUnsignedValue(0);
     final int index = getUnsignedValue(1);
     final Memory memory = getMemory();
-    storeResult((short) memory.readUnsignedByte(arrayAddress + index));
+    storeResult((short) memory.readUnsigned8(arrayAddress + index));
     nextInstruction();
   }
 
@@ -370,7 +370,7 @@ public class LongInstruction extends AbstractInstruction {
     final int arrayAddress = getUnsignedValue(0);
     final int index = getUnsignedValue(1);
     final Memory memory = getMemory();
-    storeResult(memory.readShort(arrayAddress + 2 * index));
+    storeResult(memory.readSigned16(arrayAddress + 2 * index));
     nextInstruction();
   }
 

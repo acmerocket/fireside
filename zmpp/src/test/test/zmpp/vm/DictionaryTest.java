@@ -63,11 +63,11 @@ public class DictionaryTest {
     // num separators
     context.checking(new Expectations() {{
       // num separators
-      exactly(5).of (memory).readUnsignedByte(1000); will(returnValue((short) 3));
+      exactly(5).of (memory).readUnsigned8(1000); will(returnValue((short) 3));
       // num entries
-      one (memory).readShort(1005); will(returnValue((short) 2));
+      one (memory).readSigned16(1005); will(returnValue((short) 2));
       // entry size
-      exactly(2).of (memory).readUnsignedByte(1004); will(returnValue((short) 4));
+      exactly(2).of (memory).readUnsigned8(1004); will(returnValue((short) 4));
 
       // "get"
       one (decoder).decode2Zscii(memory, 1007, 4); will(returnValue(get));
@@ -81,7 +81,7 @@ public class DictionaryTest {
   @Test
   public void testGetNumSeparators() {
     context.checking(new Expectations() {{
-      one (memory).readUnsignedByte(1000); will(returnValue((short) 3));
+      one (memory).readUnsigned8(1000); will(returnValue((short) 3));
     }});
     assertEquals(3, dictionary.getNumberOfSeparators());
   }
@@ -89,8 +89,8 @@ public class DictionaryTest {
   @Test
   public void testGetNumEntries() {
     context.checking(new Expectations() {{
-      one (memory).readUnsignedByte(1000); will(returnValue((short) 3));
-      one (memory).readShort(1005); will(returnValue((short) 536));
+      one (memory).readUnsigned8(1000); will(returnValue((short) 3));
+      one (memory).readSigned16(1005); will(returnValue((short) 536));
     }});
     assertEquals(536, dictionary.getNumberOfEntries());
   }
@@ -98,8 +98,8 @@ public class DictionaryTest {
   @Test
   public void testGetEntryLength() {
     context.checking(new Expectations() {{
-      one (memory).readUnsignedByte(1000); will(returnValue((short) 3));
-      one (memory).readUnsignedByte(1004); will(returnValue((short) 7));
+      one (memory).readUnsigned8(1000); will(returnValue((short) 3));
+      one (memory).readUnsigned8(1004); will(returnValue((short) 7));
     }});
     assertEquals(7, dictionary.getEntryLength());
   }
@@ -107,8 +107,8 @@ public class DictionaryTest {
   @Test
   public void testGetEntryAddress() {
     context.checking(new Expectations() {{
-      exactly(2).of (memory).readUnsignedByte(1000); will(returnValue((short) 3));
-      one (memory).readUnsignedByte(1004); will(returnValue((short) 7));
+      exactly(2).of (memory).readUnsigned8(1000); will(returnValue((short) 3));
+      one (memory).readUnsigned8(1004); will(returnValue((short) 7));
     }});
     assertEquals(1014, dictionary.getEntryAddress(1));
   }
@@ -116,7 +116,7 @@ public class DictionaryTest {
   @Test
   public void testGetSeparator() {
     context.checking(new Expectations() {{
-      one (memory).readUnsignedByte(1001); will(returnValue((short) '.'));
+      one (memory).readUnsigned8(1001); will(returnValue((short) '.'));
     }});
     assertEquals('.', dictionary.getSeparator(0));
   }

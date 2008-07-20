@@ -71,11 +71,11 @@ public class ZCharEncoderTest {
     encoder.encode(realmem, sourceAddress, length, targetAddress);
     
     // 'a' + 2 pad
-    assertEquals(0x18a5, realmem.readUnsignedShort(targetAddress));
+    assertEquals(0x18a5, realmem.readUnsigned16(targetAddress));
     
     // Test that the rest is padded and marked with the end bit
-    assertEquals(0x14a5, realmem.readUnsignedShort(targetAddress + 2));
-    assertEquals(0x94a5, realmem.readUnsignedShort(targetAddress + 4));
+    assertEquals(0x14a5, realmem.readUnsigned16(targetAddress + 2));
+    assertEquals(0x94a5, realmem.readUnsigned16(targetAddress + 4));
   }
   
   @Test
@@ -88,11 +88,11 @@ public class ZCharEncoderTest {
     encoder.encode(realmem, sourceAddress, length, targetAddress);
     
     // 'ab' + pad
-    assertEquals(0x18e5, realmem.readUnsignedShort(targetAddress));
+    assertEquals(0x18e5, realmem.readUnsigned16(targetAddress));
 
     // Test that the rest is padded and marked with the end bit
-    assertEquals(0x14a5, realmem.readUnsignedShort(targetAddress + 2));
-    assertEquals(0x94a5, realmem.readUnsignedShort(targetAddress + 4));
+    assertEquals(0x14a5, realmem.readUnsigned16(targetAddress + 2));
+    assertEquals(0x94a5, realmem.readUnsigned16(targetAddress + 4));
   }
   
   @Test
@@ -107,13 +107,13 @@ public class ZCharEncoderTest {
     encoder.encode(realmem, sourceAddress, length, targetAddress);
     
     // 'abc'
-    assertEquals(0x18e8, realmem.readUnsignedShort(targetAddress));
+    assertEquals(0x18e8, realmem.readUnsigned16(targetAddress));
     
     // 'd' + 2 pads
-    assertEquals(0x24a5, realmem.readUnsignedShort(targetAddress + 2));
+    assertEquals(0x24a5, realmem.readUnsigned16(targetAddress + 2));
 
     // Test that the rest is padded and marked with the end bit
-    assertEquals(0x94a5, realmem.readUnsignedShort(targetAddress + 4));    
+    assertEquals(0x94a5, realmem.readUnsigned16(targetAddress + 4));    
   }
   
   // Test with a different alphabet
@@ -126,11 +126,11 @@ public class ZCharEncoderTest {
     encoder.encode(realmem, sourceAddress, length, targetAddress);
     
     // Shift-4 + 'a' + Pad
-    assertEquals(0x10c5, realmem.readUnsignedShort(targetAddress));
+    assertEquals(0x10c5, realmem.readUnsigned16(targetAddress));
 
     // Test that the rest is padded and marked with the end bit
-    assertEquals(0x14a5, realmem.readUnsignedShort(targetAddress + 2));
-    assertEquals(0x94a5, realmem.readUnsignedShort(targetAddress + 4));
+    assertEquals(0x14a5, realmem.readUnsigned16(targetAddress + 2));
+    assertEquals(0x94a5, realmem.readUnsigned16(targetAddress + 4));
   }
   
   @Test
@@ -144,13 +144,13 @@ public class ZCharEncoderTest {
     encoder.encode(realmem, sourceAddress, length, targetAddress);
     
     // 'ab' + Shift 4
-    assertEquals(0x18e4, realmem.readUnsignedShort(targetAddress));
+    assertEquals(0x18e4, realmem.readUnsigned16(targetAddress));
     
     // 'c'
-    assertEquals(0x20a5, realmem.readUnsignedShort(targetAddress + 2));
+    assertEquals(0x20a5, realmem.readUnsigned16(targetAddress + 2));
 
     // Test that the rest is padded and marked with the end bit
-    assertEquals(0x94a5, realmem.readUnsignedShort(targetAddress + 4));
+    assertEquals(0x94a5, realmem.readUnsigned16(targetAddress + 4));
   }
 
   @Test
@@ -164,13 +164,13 @@ public class ZCharEncoderTest {
     encoder.encode(realmem, sourceAddress, length, targetAddress);
     
     // 'ab' + Shift 5
-    assertEquals(0x18e5, realmem.readUnsignedShort(targetAddress));
+    assertEquals(0x18e5, realmem.readUnsigned16(targetAddress));
     
     // '3'
-    assertEquals(0x2ca5, realmem.readUnsignedShort(targetAddress + 2));
+    assertEquals(0x2ca5, realmem.readUnsigned16(targetAddress + 2));
 
     // Test that the rest is padded and marked with the end bit
-    assertEquals(0x94a5, realmem.readUnsignedShort(targetAddress + 4));
+    assertEquals(0x94a5, realmem.readUnsigned16(targetAddress + 4));
   }
   
   // Encoding of special characters in the unicode has to work.
@@ -189,13 +189,13 @@ public class ZCharEncoderTest {
     
     // Tricky, tricky (and memory-inefficient)
     // Shift-5 + 6 + '@' (64), encoded in 10 bit, the upper half contains 2
-    assertEquals(0x14c2, realmem.readUnsignedShort(targetAddress));
+    assertEquals(0x14c2, realmem.readUnsigned16(targetAddress));
     
     // the lower half contains 0 + 2 pads
-    assertEquals(0x00a5, realmem.readUnsignedShort(targetAddress + 2));    
+    assertEquals(0x00a5, realmem.readUnsigned16(targetAddress + 2));    
 
     // Test that the rest is padded and marked with the end bit
-    assertEquals(0x94a5, realmem.readUnsignedShort(targetAddress + 4));
+    assertEquals(0x94a5, realmem.readUnsigned16(targetAddress + 4));
   }
 
   // For triangulation, we use another character (126)
@@ -209,13 +209,13 @@ public class ZCharEncoderTest {
     
     // Tricky, tricky (and memory-inefficient)
     // Shift-5 + 6 + '~' (126), encoded in 10 bit, the upper half contains 3
-    assertEquals(0x14c3, realmem.readUnsignedShort(targetAddress));
+    assertEquals(0x14c3, realmem.readUnsigned16(targetAddress));
     
     // the lower half contains 30 + 2 pads
-    assertEquals(0x78a5, realmem.readUnsignedShort(targetAddress + 2));    
+    assertEquals(0x78a5, realmem.readUnsigned16(targetAddress + 2));    
 
     // Test that the rest is padded and marked with the end bit
-    assertEquals(0x94a5, realmem.readUnsignedShort(targetAddress + 4));
+    assertEquals(0x94a5, realmem.readUnsigned16(targetAddress + 4));
   }  
 
   @Test
@@ -229,13 +229,13 @@ public class ZCharEncoderTest {
     
     // Tricky, tricky (and memory-inefficient)
     // 'a' + Shift-5 + 6
-    assertEquals(0x18a6, realmem.readUnsignedShort(targetAddress));
+    assertEquals(0x18a6, realmem.readUnsigned16(targetAddress));
     
     // both halfs of '~' + 1 pad
-    assertEquals(0x0fc5, realmem.readUnsignedShort(targetAddress + 2));    
+    assertEquals(0x0fc5, realmem.readUnsigned16(targetAddress + 2));    
 
     // Test that the rest is padded and marked with the end bit
-    assertEquals(0x94a5, realmem.readUnsignedShort(targetAddress + 4));
+    assertEquals(0x94a5, realmem.readUnsigned16(targetAddress + 4));
   }
   
   // We test a situation where the 6 bytes are exceeded by the 9 source
@@ -261,13 +261,13 @@ public class ZCharEncoderTest {
     encoder.encode(realmem, sourceAddress, length, targetAddress);
     
     // Shift-5 + 6 + '@' (64), encoded in 10 bit, the upper half contains 2
-    assertEquals(0x14c2, realmem.readUnsignedShort(targetAddress));
+    assertEquals(0x14c2, realmem.readUnsigned16(targetAddress));
     
     // the lower half contains 0, 'ab'
-    assertEquals(0x00c7, realmem.readUnsignedShort(targetAddress + 2));
+    assertEquals(0x00c7, realmem.readUnsigned16(targetAddress + 2));
     
     // 'cde' + end bit
-    assertEquals(0xa12a, realmem.readUnsignedShort(targetAddress + 4));    
+    assertEquals(0xa12a, realmem.readUnsigned16(targetAddress + 4));    
   }
   
   @Test
@@ -288,12 +288,12 @@ public class ZCharEncoderTest {
     encoder.encode(realmem, sourceAddress, length, targetAddress);
     
     // 'abc'
-    assertEquals(0x18e8, realmem.readUnsignedShort(targetAddress));
+    assertEquals(0x18e8, realmem.readUnsigned16(targetAddress));
     
     // 'def'
-    assertEquals(0x254b, realmem.readUnsignedShort(targetAddress + 2));
+    assertEquals(0x254b, realmem.readUnsigned16(targetAddress + 2));
     
     // not long enough, pad it out
-    assertEquals(0x94a5, realmem.readUnsignedShort(targetAddress + 4));
+    assertEquals(0x94a5, realmem.readUnsigned16(targetAddress + 4));
   }  
 }

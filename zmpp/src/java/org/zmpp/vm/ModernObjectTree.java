@@ -73,7 +73,7 @@ public class ModernObjectTree extends AbstractObjectTree {
    * {@inheritDoc}
    */
   public int getParent(final int objectNum) {
-    return getMemory().readUnsignedShort(getObjectAddress(objectNum) +
+    return getMemory().readUnsigned16(getObjectAddress(objectNum) +
     		                             OFFSET_PARENT);
   }
   
@@ -81,7 +81,7 @@ public class ModernObjectTree extends AbstractObjectTree {
    * {@inheritDoc}
    */
   public void setParent(final int objectNum, final int parent) {
-    getMemory().writeUnsignedShort(getObjectAddress(objectNum) + OFFSET_PARENT,
+    getMemory().writeUnsigned16(getObjectAddress(objectNum) + OFFSET_PARENT,
     							   parent);
   }
   
@@ -89,7 +89,7 @@ public class ModernObjectTree extends AbstractObjectTree {
    * {@inheritDoc}
    */
   public int getSibling(final int objectNum) {
-    return getMemory().readUnsignedShort(getObjectAddress(objectNum) +
+    return getMemory().readUnsigned16(getObjectAddress(objectNum) +
     									 OFFSET_SIBLING);
   }
   
@@ -97,7 +97,7 @@ public class ModernObjectTree extends AbstractObjectTree {
    * {@inheritDoc}
    */
   public void setSibling(final int objectNum, final int sibling) {
-    getMemory().writeUnsignedShort(getObjectAddress(objectNum) + OFFSET_SIBLING,
+    getMemory().writeUnsigned16(getObjectAddress(objectNum) + OFFSET_SIBLING,
                                    sibling);
   }
   
@@ -105,7 +105,7 @@ public class ModernObjectTree extends AbstractObjectTree {
    * {@inheritDoc}
    */
   public int getChild(final int objectNum) {
-    return getMemory().readUnsignedShort(getObjectAddress(objectNum) +
+    return getMemory().readUnsigned16(getObjectAddress(objectNum) +
     									 OFFSET_CHILD);
   }
   
@@ -113,7 +113,7 @@ public class ModernObjectTree extends AbstractObjectTree {
    * {@inheritDoc}
    */
   public void setChild(final int objectNum, final int child) {
-    getMemory().writeUnsignedShort(getObjectAddress(objectNum) + OFFSET_CHILD,
+    getMemory().writeUnsigned16(getObjectAddress(objectNum) + OFFSET_CHILD,
                                    child);
   }
   
@@ -132,7 +132,7 @@ public class ModernObjectTree extends AbstractObjectTree {
    * {@inheritDoc}
    */
   protected int getPropertyTableAddress(int objectNum) {
-    return getMemory().readUnsignedShort(getObjectAddress(objectNum) +
+    return getMemory().readUnsigned16(getObjectAddress(objectNum) +
     									 OFFSET_PROPERTYTABLE);
   }
 
@@ -141,7 +141,7 @@ public class ModernObjectTree extends AbstractObjectTree {
    */
   protected int getNumPropertySizeBytes(final int propertyAddress) {
     // if bit 7 is set, there are two size bytes, one otherwise
-    final short first = getMemory().readUnsignedByte(propertyAddress);
+    final short first = getMemory().readUnsigned8(propertyAddress);
     return ((first & 0x80) > 0) ? 2 : 1;
   }
 
@@ -157,7 +157,7 @@ public class ModernObjectTree extends AbstractObjectTree {
    */
   protected int getPropertyNum(final int propertyAddress) {
     // Version >= 4 - take the lower 5 bit of the first size byte
-    return getMemory().readUnsignedByte(propertyAddress) & 0x3f;
+    return getMemory().readUnsigned8(propertyAddress) & 0x3f;
   }
   
   /**
@@ -177,7 +177,7 @@ public class ModernObjectTree extends AbstractObjectTree {
     // The size byte is always the byte before the property data in any
     // version, so this is consistent
     final short sizebyte =
-      memory.readUnsignedByte(addressOfPropertyData - 1);
+      memory.readUnsigned8(addressOfPropertyData - 1);
       
     // Bit 7 set => this is the second size byte
     if ((sizebyte & 0x80) > 0) {

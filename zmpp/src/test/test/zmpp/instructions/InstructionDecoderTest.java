@@ -280,11 +280,11 @@ public class InstructionDecoderTest extends MiniZorkSetup {
     context.checking(new Expectations() {{
       atLeast(1).of (machine4).getVersion(); will(returnValue(4));
       for (int i = 0; i <= 2; i++) {
-        atLeast(1).of (machine4).readUnsignedByte(i); will(returnValue(amfvmem.readUnsignedByte(i)));
+        atLeast(1).of (machine4).readUnsigned8(i); will(returnValue(amfvmem.readUnsigned8(i)));
       }
-      atLeast(1).of (machine4).readShort(3); will(returnValue(amfvmem.readShort(3)));
+      atLeast(1).of (machine4).readSigned16(3); will(returnValue(amfvmem.readSigned16(3)));
       for (int i = 5; i <= 9; i++) {
-        atLeast(1).of (machine4).readUnsignedByte(i); will(returnValue(amfvmem.readUnsignedByte(i)));
+        atLeast(1).of (machine4).readUnsigned8(i); will(returnValue(amfvmem.readUnsigned8(i)));
       }
     }});    
     // Expected:

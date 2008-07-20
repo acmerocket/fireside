@@ -87,14 +87,14 @@ public class DefaultChunk implements Chunk {
     // Copy the data
     for (int i = 0; i < id.length; i++) {
       
-      memory.writeByte(offset++, id[i]);
+      memory.writeSigned8(offset++, id[i]);
     }
     memory.writeUnsigned32(offset, chunkSize);
     offset += 4;
     
     for (int i = 0; i < chunkdata.length; i++) {
       
-      memory.writeByte(offset++, chunkdata[i]);
+      memory.writeSigned8(offset++, chunkdata[i]);
     }
   }
   
@@ -107,7 +107,7 @@ public class DefaultChunk implements Chunk {
     id = new byte[CHUNK_ID_LENGTH];
     for (int i = 0; i < CHUNK_ID_LENGTH; i++) {
       
-      id[i] = memory.readByte(i);
+      id[i] = memory.readSigned8(i);
     }
     
     // Determine the chunk size 

@@ -48,7 +48,7 @@ public interface Memory {
    * @param address the address
    * @return the 16 bit unsigned value as int
    */
-  int readUnsignedShort(int address);
+  int readUnsigned16(int address);
   
   /**
    * Returns the signed 16 bit word at the specified address.
@@ -56,7 +56,7 @@ public interface Memory {
    * @param address the address
    * @return the 16 bit signed value
    */
-  short readShort(int address);
+  short readSigned16(int address);
   
   /**
    * Returns the unsigned 8 bit value at the specified address.
@@ -64,7 +64,7 @@ public interface Memory {
    * @param address the address
    * @return the 8 bit unsigned value
    */
-  short readUnsignedByte(int address); 
+  short readUnsigned8(int address); 
   
   /**
    * Returns the signed 8 bit value at specified address.
@@ -72,7 +72,7 @@ public interface Memory {
    * @param address the byte address
    * @return the 8 bit signed value
    */
-  byte readByte(int address);
+  byte readSigned8(int address);
 
   // ************************************************************************
   // ****
@@ -85,7 +85,7 @@ public interface Memory {
    * @param address the address to write to
    * @param value the value to write
    */
-  void writeUnsignedShort(int address, int value);
+  void writeUnsigned16(int address, int value);
   
   /**
    * Writes a short value to the memory.
@@ -93,7 +93,7 @@ public interface Memory {
    * @param address the address
    * @param value the value
    */
-  void writeShort(int address, short value);
+  void writeSigned16(int address, short value);
 
   /**
    * Writes an unsigned byte value to the specified address.
@@ -101,7 +101,7 @@ public interface Memory {
    * @param address the address to write to
    * @param value the value to write
    */
-  void writeUnsignedByte(int address, short value);
+  void writeUnsigned8(int address, short value);
   
   /**
    * Writes a byte value to the specified address.
@@ -109,7 +109,7 @@ public interface Memory {
    * @param address the address
    * @param value the value
    */
-  void writeByte(int address, byte value);
+  void writeSigned8(int address, byte value);
   
   /**
    * Writes an unsigned 32 bit value to the specified address.

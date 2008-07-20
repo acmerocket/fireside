@@ -75,7 +75,7 @@ public class MemoryInputStream extends InputStream {
     if (position >= size) {
       return -1;
     }
-    return memory.readUnsignedByte(position++);
+    return memory.readUnsigned8(position++);
   }
 
   /**
