@@ -24,6 +24,7 @@ import java.util.ArrayList;
 import java.util.List;
 
 import org.zmpp.base.Memory;
+import static org.zmpp.base.MemoryUtil.readUnsigned32;
 import org.zmpp.iff.Chunk;
 import org.zmpp.iff.FormChunk;
 import org.zmpp.media.MediaCollection;
@@ -68,7 +69,7 @@ public abstract class BlorbMediaCollection<T> implements MediaCollection<T> {
     // Ridx chunk
     Chunk ridxChunk = formchunk.getSubChunk("RIdx".getBytes());
     Memory chunkmem = ridxChunk.getMemory();
-    int numresources = (int) chunkmem.readUnsigned32(8);
+    int numresources = (int) readUnsigned32(chunkmem, 8);
     int offset = 12;
     byte[] usage = new byte[4];
     
@@ -81,8 +82,8 @@ public abstract class BlorbMediaCollection<T> implements MediaCollection<T> {
       
       if (isHandledResource(usage)) {
 
-        int resnum = (int) chunkmem.readUnsigned32(offset + 4);        
-        int address = (int) chunkmem.readUnsigned32(offset + 8);
+        int resnum = (int) readUnsigned32(chunkmem, offset + 4);        
+        int address = (int) readUnsigned32(chunkmem, offset + 8);
         Chunk chunk = formchunk.getSubChunk(address);
         
         if (putToDatabase(chunk, resnum)) {

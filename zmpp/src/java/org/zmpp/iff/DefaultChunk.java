@@ -22,6 +22,8 @@ package org.zmpp.iff;
 
 import org.zmpp.base.DefaultMemory;
 import org.zmpp.base.Memory;
+import static org.zmpp.base.MemoryUtil.readUnsigned32;
+import static org.zmpp.base.MemoryUtil.writeUnsigned32;
 
 /**
  * This is the default implementation of the Chunk interface.
@@ -89,7 +91,7 @@ public class DefaultChunk implements Chunk {
       
       memory.writeSigned8(offset++, id[i]);
     }
-    memory.writeUnsigned32(offset, chunkSize);
+    writeUnsigned32(memory, offset, chunkSize);
     offset += 4;
     
     for (int i = 0; i < chunkdata.length; i++) {
@@ -111,7 +113,7 @@ public class DefaultChunk implements Chunk {
     }
     
     // Determine the chunk size 
-    chunkSize = (int) memory.readUnsigned32(CHUNK_ID_LENGTH);    
+    chunkSize = (int) readUnsigned32(memory, CHUNK_ID_LENGTH);    
   }
   
   /**

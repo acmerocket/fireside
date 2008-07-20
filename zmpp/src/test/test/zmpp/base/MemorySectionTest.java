@@ -84,12 +84,4 @@ public class MemorySectionTest {
     }});
     section.writeSigned8(12, (byte) -120);
   }
-
-  @Test
-  public void testWriteUnsigned32() {
-   context.checking(new Expectations() {{
-      one (memory).writeUnsigned32(16 + 36, (long) 1120);
-    }});
-    section.writeUnsigned32(16, (long) 1120);
-  }
 }

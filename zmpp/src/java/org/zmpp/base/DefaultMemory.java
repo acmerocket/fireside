@@ -35,26 +35,11 @@ public class DefaultMemory implements Memory {
   
   /**
    * Constructor.
-   * 
    * @param data the story file data
    */
-  public DefaultMemory(final byte[] data) {
-    
+  public DefaultMemory(final byte[] data) {    
     super();
     this.data = data;    
-  }
-  
-  /**
-   * {@inheritDoc}
-   */
-  public long readUnsigned32(final int address) {
-
-      final long a24 = (data[address] & 0xffL) << 24;
-      final long a16 = (data[address + 1] & 0xffL) << 16;
-      final long a8  = (data[address + 2] & 0xffL) << 8;
-      final long a0  = (data[address + 3] & 0xffL);
-
-      return a24 | a16 | a8 | a0;
   }
   
   /**
@@ -128,18 +113,5 @@ public class DefaultMemory implements Memory {
    */
   public void writeSigned8(final int address, final byte value) {
     data[address] = value;
-  }
-  
-  /**
-   * Writes an unsigned 32 bit value to the specified address.
-   * 
-   * @param address the address to write to
-   * @param value the value to write
-   */
-  public void writeUnsigned32(final int address, final long value) {
-    data[address] = (byte) ((value & 0xff000000) >> 24);
-    data[address + 1] = (byte) ((value & 0x00ff0000) >> 16);
-    data[address + 2] = (byte) ((value & 0x0000ff00) >> 8);
-    data[address + 3] = (byte) (value & 0x000000ff);
-  }
+  }  
 }

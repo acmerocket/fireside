@@ -35,14 +35,6 @@ public interface Memory {
   // ****
   // *****************************
   /**
-   * Reads the unsigned 32 bit word at the specified address.
-   * 
-   * @param address the address
-   * @return the 32 bit unsigned value as long
-   */
-  long readUnsigned32(int address);
-  
-  /**
    * Reads the unsigned 16 bit word at the specified address.
    * 
    * @param address the address
@@ -109,13 +101,5 @@ public interface Memory {
    * @param address the address
    * @param value the value
    */
-  void writeSigned8(int address, byte value);
-  
-  /**
-   * Writes an unsigned 32 bit value to the specified address.
-   * 
-   * @param address the address to write to
-   * @param value the value to write
-   */
-  void writeUnsigned32(int address, long value);
+  void writeSigned8(int address, byte value);  
 }

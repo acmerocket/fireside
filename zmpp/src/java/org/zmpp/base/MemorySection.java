@@ -86,20 +86,6 @@ public class MemorySection implements Memory {
   /**
    * {@inheritDoc}
    */
-  public void writeUnsigned32(final int address, final long value) {
-    memory.writeUnsigned32(address + start, value);
-  }
-
-  /**
-   * {@inheritDoc}
-   */
-  public long readUnsigned32(final int address) {
-    return memory.readUnsigned32(address + start);
-  }
-
-  /**
-   * {@inheritDoc}
-   */
   public char readUnsigned16(final int address) {
     return memory.readUnsigned16(address + start);
   }

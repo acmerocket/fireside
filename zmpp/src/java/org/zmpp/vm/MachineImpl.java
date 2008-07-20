@@ -227,9 +227,6 @@ public class MachineImpl implements Machine {
   // ***** Memory interface functionality
   // **********************************************************************
   private Memory getMemory() { return memory; }
-  public long readUnsigned32(int address) {
-    return getMemory().readUnsigned32(address);
-  }
   public char readUnsigned16(int address) {
     return getMemory().readUnsigned16(address);
   }
@@ -253,9 +250,6 @@ public class MachineImpl implements Machine {
   }
   public void writeSigned8(int address, byte value) {
     getMemory().writeSigned8(address, value);
-  }
-  public void writeUnsigned32(int address, long value) {
-    getMemory().writeUnsigned32(address, value);
   }
   
   // **********************************************************************

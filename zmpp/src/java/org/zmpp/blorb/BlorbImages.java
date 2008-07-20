@@ -26,6 +26,7 @@ import java.util.HashMap;
 import java.util.Map;
 
 import org.zmpp.base.Memory;
+import static org.zmpp.base.MemoryUtil.readUnsigned32;
 import org.zmpp.blorb.BlorbImage.Ratio;
 import org.zmpp.blorb.BlorbImage.Resolution;
 import org.zmpp.blorb.BlorbImage.ResolutionInfo;
@@ -103,8 +104,8 @@ public class BlorbImages extends BlorbMediaCollection<BlorbImage> {
       
       // Place holder
       Memory memory = chunk.getMemory();
-      int width = (int) memory.readUnsigned32(Chunk.CHUNK_HEADER_LENGTH);
-      int height = (int) memory.readUnsigned32(Chunk.CHUNK_HEADER_LENGTH + 4);      
+      int width = (int) readUnsigned32(memory, Chunk.CHUNK_HEADER_LENGTH);
+      int height = (int) readUnsigned32(memory, Chunk.CHUNK_HEADER_LENGTH + 4);      
       images.put(resnum, new BlorbImage(width, height));
       
       return true;
@@ -138,19 +139,19 @@ public class BlorbImages extends BlorbMediaCollection<BlorbImage> {
   private void adjustResolution(Chunk resochunk) {
     Memory memory = resochunk.getMemory();
     int offset = Chunk.CHUNK_ID_LENGTH;
-    int size = (int) memory.readUnsigned32(offset);
+    int size = (int) readUnsigned32(memory, offset);
     offset += Chunk.CHUNK_SIZEWORD_LENGTH;
-    int px = (int) memory.readUnsigned32(offset);
+    int px = (int) readUnsigned32(memory, offset);
     offset += 4;
-    int py = (int) memory.readUnsigned32(offset);
+    int py = (int) readUnsigned32(memory, offset);
     offset += 4;
-    int minx = (int) memory.readUnsigned32(offset);
+    int minx = (int) readUnsigned32(memory, offset);
     offset += 4;
-    int miny = (int) memory.readUnsigned32(offset);
+    int miny = (int) readUnsigned32(memory, offset);
     offset += 4;
-    int maxx = (int) memory.readUnsigned32(offset);
+    int maxx = (int) readUnsigned32(memory, offset);
     offset += 4;
-    int maxy = (int) memory.readUnsigned32(offset);
+    int maxy = (int) readUnsigned32(memory, offset);
     offset += 4;
     
     ResolutionInfo resinfo = new ResolutionInfo(new Resolution(px, py),
@@ -158,19 +159,19 @@ public class BlorbImages extends BlorbMediaCollection<BlorbImage> {
     
     for (int i = 0; i < getNumResources(); i++) {      
       if (offset >= size) break;
-      int imgnum = (int) memory.readUnsigned32(offset);
+      int imgnum = (int) readUnsigned32(memory, offset);
       offset += 4;
-      int ratnum = (int) memory.readUnsigned32(offset);
+      int ratnum = (int) readUnsigned32(memory, offset);
       offset += 4;
-      int ratden = (int) memory.readUnsigned32(offset);
+      int ratden = (int) readUnsigned32(memory, offset);
       offset += 4;
-      int minnum = (int) memory.readUnsigned32(offset);
+      int minnum = (int) readUnsigned32(memory, offset);
       offset += 4;
-      int minden = (int) memory.readUnsigned32(offset);
+      int minden = (int) readUnsigned32(memory, offset);
       offset += 4;
-      int maxnum = (int) memory.readUnsigned32(offset);
+      int maxnum = (int) readUnsigned32(memory, offset);
       offset += 4;
-      int maxden = (int) memory.readUnsigned32(offset);
+      int maxden = (int) readUnsigned32(memory, offset);
       offset += 4;
       ScaleInfo scaleinfo = new ScaleInfo(resinfo, new Ratio(ratnum, ratden),
           new Ratio(minnum, minden), new Ratio(maxnum, maxden));

@@ -22,6 +22,7 @@ package org.zmpp.blorb;
 
 import org.zmpp.iff.Chunk;
 import org.zmpp.iff.FormChunk;
+import static org.zmpp.base.MemoryUtil.readUnsigned32;
 
 /**
  * This class extracts the Frontispiece chunk.
@@ -45,8 +46,8 @@ public class BlorbCoverArt {
   private void readFrontispiece(final FormChunk formchunk) {
     final Chunk fspcchunk = formchunk.getSubChunk("Fspc".getBytes());
     if (fspcchunk != null) {
-      coverartnum = (int)
-        fspcchunk.getMemory().readUnsigned32(Chunk.CHUNK_HEADER_LENGTH);
+      coverartnum = (int)  readUnsigned32(fspcchunk.getMemory(),
+                                          Chunk.CHUNK_HEADER_LENGTH);
     }
   }
   

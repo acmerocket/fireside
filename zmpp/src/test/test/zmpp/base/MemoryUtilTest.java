@@ -1,7 +1,7 @@
 /*
- * $Id: MemoryAccessTest.java 520 2007-11-13 19:14:51Z weiju $
+ * $Id$
  * 
- * Created on 2005/09/23
+ * Created on 2008/07/19
  * Copyright 2005-2008 by Wei-ju Wu
  * This file is part of The Z-machine Preservation Project (ZMPP).
  *
@@ -24,15 +24,15 @@ import org.junit.Before;
 import org.junit.Test;
 import org.zmpp.base.DefaultMemory;
 import org.zmpp.base.Memory;
+import org.zmpp.base.MemoryUtil;
 import static org.junit.Assert.*;
 
 /**
- * This class is a test for the Memory class.
- * 
+ * Test class for MemoryUtil.
  * @author Wei-ju Wu
  * @version 1.5
  */
-public class MemoryTest {
+public class MemoryUtilTest {
 
   private Memory memory;
   private byte[] data = { 0x03, 0x00, 0x37, 0x09, (byte) 0xff, (byte) 0xff };
@@ -40,44 +40,26 @@ public class MemoryTest {
   @Before
   public void setUp() throws Exception {
     memory = new DefaultMemory(data);
+  }  
+  
+  @Test
+  public void testToUnsigned16() {
+    assertEquals(1234, MemoryUtil.toUnsigned16(1234));
+  }
+
+  @Test
+  public void testReadUnsigned32(){
+    byte[] data32 = { (byte) 0xd7, (byte) 0x4b, (byte) 0xd7, (byte) 0x53 };
+    Memory memaccess = new DefaultMemory(data32);
+    assertEquals(0xd74bd753L, MemoryUtil.readUnsigned32(memaccess, 0x00));
   }
   
   @Test
-  public void testReadUnsignedByte() {
-    assertEquals(3, memory.readUnsigned8(0x00));
-  }
-  
-  @Test
-  public void testReadUnsignedWord() {
-    assertEquals(0x3709, memory.readUnsigned16(0x02));
-  }
-  
-  @Test
-  public void testGetUnsignedShortGeneral() {
-    assertEquals(0xffff, memory.readUnsigned16(0x04));
-    assertNotSame(-1, memory.readUnsigned16(0x04));
-  }
-  
-  @Test
-  public void testGetShortGeneral() {
-    assertEquals(-1, memory.readSigned16(0x04));
-  }
-  
-  @Test
-  public void testWriteUnsignedByte() {
-    memory.writeUnsigned8(0x02, (short) 0xff);
-    assertEquals(0xff, memory.readUnsigned8(0x02));
+  public void testWriteUnsigned32() {
+    MemoryUtil.writeUnsigned32(memory, 0x00, 0xffffffffL);
+    assertEquals(0x00000000ffffffffL, MemoryUtil.readUnsigned32(memory, 0x00));
     
-    memory.writeUnsigned8(0x03, (short) 0x32);
-    assertEquals(0x32, memory.readUnsigned8(0x03));
-  }
-  
-  @Test
-  public void testWriteUnsignedShort() {
-    memory.writeUnsigned16(0x02, (char) 0xffff);
-    assertEquals(0xffff, memory.readUnsigned16(0x02));
-    
-    memory.writeUnsigned16(0x04, (char) 0x00ff);
-    assertEquals(0x00ff, memory.readUnsigned16(0x04));
+    MemoryUtil.writeUnsigned32(memory, 0x00, 0xf0f00f0fL);
+    assertEquals(0x00000000f0f00f0fL, MemoryUtil.readUnsigned32(memory, 0x00));
   }  
 }

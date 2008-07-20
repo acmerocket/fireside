@@ -26,7 +26,40 @@ package org.zmpp.base;
  * @version 1.5
  */
 public class MemoryUtil {
+  /**
+   * Convert an integer value to a char, which is an unsigned 16 bit value.
+   * @param value the value to convert
+   * @return the converted value
+   */
   public static char toUnsigned16(int value) {
     return (char) (value & 0xffff);
+  }
+
+  /**
+   * Reads the unsigned 32 bit word at the specified address.
+   * @param memory the Memory object
+   * @param address the address
+   * @return the 32 bit unsigned value as long
+   */
+  public static long readUnsigned32(Memory memory, int address) {
+      final long a24 = (memory.readUnsigned8(address) & 0xffL) << 24;
+      final long a16 = (memory.readUnsigned8(address + 1) & 0xffL) << 16;
+      final long a8  = (memory.readUnsigned8(address + 2) & 0xffL) << 8;
+      final long a0  = (memory.readUnsigned8(address + 3) & 0xffL);
+      return a24 | a16 | a8 | a0;
+  }
+
+  /**
+   * Writes an unsigned 32 bit value to the specified address.
+   * @param memory the Memory object
+   * @param address the address to write to
+   * @param value the value to write
+   */
+  public static void writeUnsigned32(Memory memory, final int address,
+                                     final long value) {
+    memory.writeUnsigned8(address, (short) ((value & 0xff000000) >> 24));
+    memory.writeUnsigned8(address + 1, (short) ((value & 0x00ff0000) >> 16));
+    memory.writeUnsigned8(address + 2, (short) ((value & 0x0000ff00) >> 8));
+    memory.writeUnsigned8(address + 3, (short) (value & 0x000000ff));
   }
 }

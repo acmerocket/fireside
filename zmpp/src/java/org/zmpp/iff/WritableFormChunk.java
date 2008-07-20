@@ -27,6 +27,7 @@ import java.util.List;
 
 import org.zmpp.base.DefaultMemory;
 import org.zmpp.base.Memory;
+import static org.zmpp.base.MemoryUtil.writeUnsigned32;
 
 /**
  * A writable FormChunk class.
@@ -141,7 +142,7 @@ public class WritableFormChunk implements FormChunk {
     memory.writeSigned8(1, (byte) 'O');
     memory.writeSigned8(2, (byte) 'R');
     memory.writeSigned8(3, (byte) 'M');
-    memory.writeUnsigned32(4, getSize());
+    writeUnsigned32(memory, 4, getSize());
     
     int offset = Chunk.CHUNK_HEADER_LENGTH;
     
@@ -161,7 +162,7 @@ public class WritableFormChunk implements FormChunk {
       }
       
       // Write chunk size
-      memory.writeUnsigned32(offset, chunkSize);
+      writeUnsigned32(memory, offset, chunkSize);
       offset += 4; // add the size word length
       
       // Write chunk data
