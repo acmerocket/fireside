@@ -208,7 +208,7 @@ public class MachineTest extends MiniZorkSetup {
     }});
     machine.setVariable(0x10, (short) 2);
     machine.setStatusLine(statusLine); // set the "time" flag
-    machine.writeSigned8(1, (byte) 2);
+    machine.writeUnsigned8(1, (short) 2);
     machine.updateStatusLine();
   }
   

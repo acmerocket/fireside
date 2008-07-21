@@ -42,76 +42,63 @@ public class DefaultMemory implements Memory {
     this.data = data;    
   }
   
-  /**
-   * {@inheritDoc}
-   */
+  /** {@inheritDoc} */
   public char readUnsigned16(final int address) {    
     return (char)
       (((data[address] & 0xff) << 8 | (data[address + 1] & 0xff)) & 0xffff);
   }
   
-  /**
-   * {@inheritDoc}
-   */
+  /** {@inheritDoc} */
   public short readSigned16(final int address) {
     return (short) (data[address] << 8 | (data[address + 1] & 0xff));
   }
   
-  /**
-   * {@inheritDoc}
-   */
+  /** {@inheritDoc} */
   public short readUnsigned8(final int address) {
     return (short) (data[address] & 0xff);
   }
   
-  /**
-   * {@inheritDoc}
-   */
-  public byte readSigned8(final int address) {
-    return data[address];
-  }
-  
-  /**
-   * Writes an unsigned 16 bit value to the specified address.
-   * 
-   * @param address the address to write to
-   * @param value the value to write
-   */
+  /** {@inheritDoc} */
   public void writeUnsigned16(final int address, final char value) {
     data[address] = (byte) ((value & 0xff00) >> 8);
     data[address + 1] = (byte) (value & 0xff);
   }
   
-  /**
-   * Writes a short value to the memory.
-   * 
-   * @param address the address
-   * @param value the value
-   */
+  /** {@inheritDoc} */
   public void writeSigned16(final int address, final short value) {
-    
     data[address] = (byte) ((value & 0xff00) >>> 8);
     data[address + 1] = (byte) (value & 0xff);
   }
   
-  /**
-   * Writes an unsigned byte value to the specified address.
-   * 
-   * @param address the address to write to
-   * @param value the value to write
-   */
-  public void writeUnsigned8(final int address, final short value) {
-    
+  /** {@inheritDoc} */
+  public void writeUnsigned8(final int address, final short value) { 
     data[address] = (byte) (value & 0xff);
   }
-  
-  /**
-   * Writes a byte value to the specified address.
-   * 
-   * @param address the address
-   * @param value the value
-   */
-  public void writeSigned8(final int address, final byte value) {
-    data[address] = value;
-  }  
+
+  /** {@inheritDoc} */
+  public void copyBytesToArray(byte[] dstData, int dstOffset,
+                               int srcOffset, int numBytes) {
+    System.arraycopy(data, srcOffset, dstData, dstOffset, numBytes);
+  }
+
+  /** {@inheritDoc} */
+  public void copyBytesFromArray(byte[] srcData, int srcOffset,
+                                 int dstOffset, int numBytes) {
+    System.arraycopy(srcData, srcOffset, data, dstOffset, numBytes);
+  }
+
+  /** {@inheritDoc} */
+  public void copyBytesFromMemory(Memory srcMem, int srcOffset, int dstOffset,
+                                  int numBytes) {
+    // This copy method might not be as efficient, because the source
+    // memory object could be based on something else than a byte array
+    for (int i = 0; i < numBytes; i++) {
+      data[dstOffset + i] = (byte) (srcMem.readUnsigned8(srcOffset + i) & 0xff);
+    }
+  }
+
+  /** {@inheritDoc} */
+  public void copyArea(int src, int dst, int numBytes) {
+    System.arraycopy(data, src, data, dst, numBytes);
+  }
 }

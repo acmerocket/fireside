@@ -60,6 +60,7 @@ public class PortableGameStateTest {
   private FormChunk formChunk;
   private Machine machine;
   private StoryFileHeader fileheader;
+  private byte[] savedata;
 
   @Before
   public void setUp() throws Exception {
@@ -69,9 +70,9 @@ public class PortableGameStateTest {
     File testSaveFile = createLocalFile("testfiles/leathersave.ifzs");
     RandomAccessFile saveFile = new RandomAccessFile(testSaveFile, "r");
     int length = (int) saveFile.length();
-    byte[] data = new byte[length];
-    saveFile.readFully(data);
-    Memory memaccess = new DefaultMemory(data);
+    savedata = new byte[length];
+    saveFile.readFully(savedata);
+    Memory memaccess = new DefaultMemory(savedata);
     formChunk = new DefaultFormChunk(memaccess);
     gameState = new PortableGameState();
     
@@ -133,7 +134,8 @@ public class PortableGameStateTest {
       one (fileheader).getChecksum(); will(returnValue(4712));
       one (fileheader).getSerialNumber(); will(returnValue("850101"));
       one (fileheader).getStaticsAddress(); will(returnValue(12345));
-      allowing (machine).readSigned8(with(any(int.class))); will(returnValue((byte) 0));
+      allowing (machine).copyBytesToArray(with(any(savedata.getClass())), with(0), with(0), with(12345));
+      allowing (machine).readUnsigned8(with(any(int.class))); will(returnValue((short) 0));
     }});    
     gameState.captureMachineState(machine, 4711);
     assertEquals(4711, gameState.getProgramCounter());
@@ -184,19 +186,20 @@ public class PortableGameStateTest {
     assertEquals(13, ifhdChunk.getSize());
     assertEquals(gameState.getRelease(), memaccess.readUnsigned16(8));
     byte[] serial = new byte[6];
-    for (int i = 0; i < 6; i++) serial[i] = memaccess.readSigned8(10 + i);
+    memaccess.copyBytesToArray(serial, 0, 10, 6);
     assertTrue(Arrays.equals(gameState.getSerialNumber().getBytes(), serial));
     assertEquals(gameState.getChecksum(), memaccess.readUnsigned16(16));
     assertEquals(gameState.getProgramCounter(),
-        decodePcBytes(memaccess.readSigned8(18), memaccess.readSigned8(19), memaccess.readSigned8(20)));
+                 decodePcBytes(memaccess.readUnsigned8(18),
+                               memaccess.readUnsigned8(19),
+                               memaccess.readUnsigned8(20)));
     
     // Read the UMem information
     Chunk umemChunk = exportFormChunk.getSubChunk("UMem".getBytes());
     memaccess = umemChunk.getMemory();
     assertEquals(dynamicMem.length, umemChunk.getSize());
     for (int i = 0; i < dynamicMem.length; i++) {
-      
-      assertEquals(dynamicMem[i], memaccess.readSigned8(8 + i));
+      assertEquals(dynamicMem[i], memaccess.readUnsigned8(8 + i));
     }
     
     // Read the Stks information
@@ -205,11 +208,13 @@ public class PortableGameStateTest {
     
     // There is only one frame at the moment
     assertEquals(14, stksChunk.getSize());
-    int retpc0 = decodePcBytes(memaccess.readSigned8(8), memaccess.readSigned8(9), memaccess.readSigned8(10));
+    int retpc0 = decodePcBytes(memaccess.readUnsigned8(8),
+                               memaccess.readUnsigned8(9),
+                               memaccess.readUnsigned8(10));
     assertEquals(0, retpc0);
-    assertEquals(0, memaccess.readSigned8(11)); // pv flags
-    assertEquals(0, memaccess.readSigned8(12)); // retvar
-    assertEquals(0, memaccess.readSigned8(13)); // argspec
+    assertEquals(0, memaccess.readUnsigned8(11)); // pv flags
+    assertEquals(0, memaccess.readUnsigned8(12)); // retvar
+    assertEquals(0, memaccess.readUnsigned8(13)); // argspec
     assertEquals(3, memaccess.readUnsigned16(14)); // stack size
     assertEquals(1, memaccess.readSigned16(16)); // stack val 0
     assertEquals(2, memaccess.readSigned16(18)); // stack val 1
@@ -246,8 +251,7 @@ public class PortableGameStateTest {
     Memory ifhd1mem = exportFormChunk.getSubChunk("IFhd".getBytes()).getMemory();
     Memory ifhd2mem = ifhd2.getMemory();
     for (int i = 0; i < 21; i++) {
-      
-      assertEquals(ifhd2mem.readSigned8(i), ifhd1mem.readSigned8(i));
+      assertEquals(ifhd2mem.readUnsigned8(i), ifhd1mem.readUnsigned8(i));
     }
 
     // UMem chunk
@@ -255,9 +259,8 @@ public class PortableGameStateTest {
     assertEquals(dynamicMem.length, umem2.getSize());
     Memory umem1mem = exportFormChunk.getSubChunk("UMem".getBytes()).getMemory();
     Memory umem2mem = umem2.getMemory();
-    for (int i = 0; i < umem2.getSize() + Chunk.CHUNK_HEADER_LENGTH; i++) {
-      
-      assertEquals(umem2mem.readSigned8(i), umem1mem.readSigned8(i));
+    for (int i = 0; i < umem2.getSize() + Chunk.CHUNK_HEADER_LENGTH; i++) {      
+      assertEquals(umem2mem.readUnsigned8(i), umem1mem.readUnsigned8(i));
     }
     
     // Stks chunk
@@ -265,13 +268,12 @@ public class PortableGameStateTest {
     assertEquals(14, stks2.getSize());
     Memory stks1mem = exportFormChunk.getSubChunk("Stks".getBytes()).getMemory();
     Memory stks2mem = stks2.getMemory();
-    for (int i = 0; i < stks2.getSize() + Chunk.CHUNK_HEADER_LENGTH; i++) {
-      
-      assertEquals(stks2mem.readSigned8(i), stks1mem.readSigned8(i));
+    for (int i = 0; i < stks2.getSize() + Chunk.CHUNK_HEADER_LENGTH; i++) {      
+      assertEquals(stks2mem.readUnsigned8(i), stks1mem.readUnsigned8(i));
     }    
   }
   
-  private int decodePcBytes(byte b0, byte b1, byte b2) {
+  private int decodePcBytes(short b0, short b1, short b2) {
     return ((b0 & 0xff) << 16) | ((b1 & 0xff) << 8) | (b2 & 0xff);
   }
   
@@ -325,15 +327,15 @@ public class PortableGameStateTest {
   public void testReadStackFrameFromChunkDiscardResult() {
     context.checking(new Expectations() {{
       // PC
-      one (machine).readSigned8(0); will(returnValue((byte) 0x00));
-      one (machine).readSigned8(1); will(returnValue((byte) 0x12));
-      one (machine).readSigned8(2); will(returnValue((byte) 0x20));
+      one (machine).readUnsigned8(0); will(returnValue((short) 0x00));
+      one (machine).readUnsigned8(1); will(returnValue((short) 0x12));
+      one (machine).readUnsigned8(2); will(returnValue((short) 0x20));
       // Return variable/locals flag: discard result/3 locals (0x13)
-      one (machine).readSigned8(3); will(returnValue((byte) 0x13));
+      one (machine).readUnsigned8(3); will(returnValue((short) 0x13));
       // return variable is always 0 if discard result
-      one (machine).readSigned8(4); will(returnValue((byte) 0x00));
+      one (machine).readUnsigned8(4); will(returnValue((short) 0x00));
       // supplied arguments, we define a and b
-      one (machine).readSigned8(5); will(returnValue((byte) 0x03));
+      one (machine).readUnsigned8(5); will(returnValue((short) 0x03));
       // stack size, we define 2
       one (machine).readUnsigned16(6); will(returnValue((char) 2));
       // local variables
@@ -359,15 +361,15 @@ public class PortableGameStateTest {
   public void testReadStackFrameFromChunkWithReturnVar() {
     context.checking(new Expectations() {{
       // PC
-      one (machine).readSigned8(0); will(returnValue((byte) 0x00));
-      one (machine).readSigned8(1); will(returnValue((byte) 0x12));
-      one (machine).readSigned8(2); will(returnValue((byte) 0x21));
+      one (machine).readUnsigned8(0); will(returnValue((short) 0x00));
+      one (machine).readUnsigned8(1); will(returnValue((short) 0x12));
+      one (machine).readUnsigned8(2); will(returnValue((short) 0x21));
       // Return variable/locals flag: has return value/2 locals (0x02)
-      one (machine).readSigned8(3); will(returnValue((byte) 0x02));
+      one (machine).readUnsigned8(3); will(returnValue((short) 0x02));
       // return variable is 5
-      one (machine).readSigned8(4); will(returnValue((byte) 0x05));
+      one (machine).readUnsigned8(4); will(returnValue((short) 0x05));
       // supplied arguments, we define a, b and c
-      one (machine).readSigned8(5); will(returnValue((byte) 0x07));
+      one (machine).readUnsigned8(5); will(returnValue((short) 0x07));
       // stack size, we define 3
       one (machine).readUnsigned16(6); will(returnValue((char) 3));
       // local variables

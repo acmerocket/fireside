@@ -33,29 +33,20 @@ import static org.zmpp.base.MemoryUtil.writeUnsigned32;
  */
 public class DefaultChunk implements Chunk {
 
-  /**
-   * The memory access object.
-   */
+  /** The memory access object. */
   protected Memory memory;
   
-  /**
-   * The chunk id.
-   */
+  /** The chunk id. */
   private byte[] id;
   
-  /**
-   * The chunk size.
-   */
+  /** The chunk size. */
   private int chunkSize;
   
-  /**
-   * The start address within the form chunk.
-   */
+  /** The start address within the form chunk. */
   private int address;
   
   /**
    * Constructor. Used for reading files.
-   * 
    * @param memory a Memory object to the chunk data
    * @param address the address within the form chunk
    */
@@ -63,96 +54,43 @@ public class DefaultChunk implements Chunk {
     super();
     this.memory = memory;
     this.address = address;
-    initBaseInfo();
+    id = new byte[CHUNK_ID_LENGTH];
+    memory.copyBytesToArray(id, 0, 0, CHUNK_ID_LENGTH);
+    chunkSize = (int) readUnsigned32(memory, CHUNK_ID_LENGTH);    
   }
-  
+
   /**
    * Constructor. Initialize from byte data. This constructor is used
    * when writing a file, in that case chunks really are separate
    * memory areas.
-   * 
    * @param id the id
    * @param chunkdata the data without header information, number of bytes
    * needs to be even
    */
   public DefaultChunk(final byte[] id, final byte[] chunkdata) {
-    
-    super();
     this.id = id;
-    this.chunkSize = chunkdata.length;
-    
+    this.chunkSize = chunkdata.length;    
     final byte[] chunkDataWithHeader =
       new byte[chunkSize + Chunk.CHUNK_HEADER_LENGTH];
     this.memory = new DefaultMemory(chunkDataWithHeader);
-    int offset = 0;
-    
-    // Copy the data
-    for (int i = 0; i < id.length; i++) {
-      
-      memory.writeSigned8(offset++, id[i]);
-    }
-    writeUnsigned32(memory, offset, chunkSize);
-    offset += 4;
-    
-    for (int i = 0; i < chunkdata.length; i++) {
-      
-      memory.writeSigned8(offset++, chunkdata[i]);
-    }
+    memory.copyBytesFromArray(id, 0, 0, id.length);
+    writeUnsigned32(memory, id.length, chunkSize);    
+    memory.copyBytesFromArray(chunkdata, 0, id.length + 4,
+                              chunkdata.length);
   }
   
-  /**
-   * Initialize the base information for this chunk. 
-   */
-  private void initBaseInfo() {
-    
-    // Determine the chunk id
-    id = new byte[CHUNK_ID_LENGTH];
-    for (int i = 0; i < CHUNK_ID_LENGTH; i++) {
-      
-      id[i] = memory.readSigned8(i);
-    }
-    
-    // Determine the chunk size 
-    chunkSize = (int) readUnsigned32(memory, CHUNK_ID_LENGTH);    
-  }
-  
-  /**
-   * {@inheritDoc}
-   */
-  public boolean isValid() {
-    
-    return true;
-  }
+  /** {@inheritDoc} */
+  public boolean isValid() { return true; }
 
-  /**
-   * {@inheritDoc}
-   */
-  public byte[] getId() {
-    
-    return id;
-  }
+  /** {@inheritDoc} */
+  public byte[] getId() { return id; }
 
-  /**
-   * {@inheritDoc}
-   */
-  public int getSize() {
-    
-    return chunkSize;
-  }
+  /** {@inheritDoc} */
+  public int getSize() { return chunkSize; }
   
-  /**
-   * {@inheritDoc}
-   */
-  public Memory getMemory() {
-    
-    return memory;
-  }
+  /** {@inheritDoc} */
+  public Memory getMemory() { return memory; }
   
-  /**
-   * {@inheritDoc}
-   */
-  public int getAddress() {
-    
-    return address;
-  }
+  /** {@inheritDoc} */
+  public int getAddress() { return address; }
 }

@@ -50,65 +50,61 @@ public class MemorySection implements Memory {
   
   /**
    * Returns the length of this object in bytes.
-   * 
    * @return the length in bytes
    */
   public int getLength() { return length; }
-    
-  /**
-   * {@inheritDoc}
-   */
+
+  /** {@inheritDoc} */
   public void writeUnsigned16(final int address, final char value) {
     memory.writeUnsigned16(address + start, value);
   }
 
-  /**
-   * {@inheritDoc}
-   */
+  /** {@inheritDoc} */
   public void writeSigned16(final int address, final short value) {
     memory.writeSigned16(address + start, value);
   }
 
-  /**
-   * {@inheritDoc}
-   */
+  /** {@inheritDoc} */
   public void writeUnsigned8(final int address, final short value) {
     memory.writeUnsigned8(address + start, value);
   }
 
-  /**
-   * {@inheritDoc}
-   */
-  public void writeSigned8(final int address, final byte value) {
-    memory.writeSigned8(address + start, value);
-  }
-
-  /**
-   * {@inheritDoc}
-   */
+  /** {@inheritDoc} */
   public char readUnsigned16(final int address) {
     return memory.readUnsigned16(address + start);
   }
 
-  /**
-   * {@inheritDoc}
-   */
+  /** {@inheritDoc} */
   public short readSigned16(final int address) {
     return memory.readSigned16(address + start);
   }
 
-  /**
-   * {@inheritDoc}
-   */
+  /** {@inheritDoc} */
   public short readUnsigned8(final int address) {
     return memory.readUnsigned8(address + start);
   }
 
-  /**
-   * {@inheritDoc}
-   */
-  public byte readSigned8(final int address) {
-    assert address < length : "Accessing an address beyond section length: address: " + address + ", length: " + length + ", start: "  + start;
-    return memory.readSigned8(address + start);
+  /** {@inheritDoc} */
+  public void copyBytesToArray(byte[] dstData, int dstOffset,
+                               int srcOffset, int numBytes) {
+    memory.copyBytesToArray(dstData, dstOffset, srcOffset + start,
+                            numBytes);
+  }
+
+  /** {@inheritDoc} */
+  public void copyBytesFromArray(byte[] srcData, int srcOffset, int dstOffset,
+                                 int numBytes) {
+    memory.copyBytesFromArray(srcData, srcOffset, dstOffset + start, numBytes);
+  }
+
+  /** {@inheritDoc} */
+  public void copyBytesFromMemory(Memory srcMem, int srcOffset, int dstOffset,
+                                  int numBytes) {
+    memory.copyBytesFromMemory(srcMem, srcOffset, dstOffset + start, numBytes);
+  }
+
+  /** {@inheritDoc} */
+  public void copyArea(int src, int dst, int numBytes) {
+    memory.copyArea(src + start, dst + start, numBytes);
   }
 }

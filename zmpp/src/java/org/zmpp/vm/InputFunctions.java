@@ -97,16 +97,16 @@ public class InputFunctions {
       if (terminateChar == ZsciiEncoding.NULL) {
         terminatepos = 0;
       }
-      machine.writeSigned8(textbuffer + terminatepos, (byte) 0);
+      machine.writeUnsigned8(textbuffer + terminatepos, (short) 0);
     }
   }
   
   private void processInput(final int textbuffer, String inputString) {
-    final int bufferlen = machine.readUnsigned8(textbuffer);
+    //final int bufferlen = machine.readUnsigned8(textbuffer);
     int storeOffset = machine.getVersion() <= 4 ? 1 : 2;
     for (int i = 0; i < inputString.length(); i++) {
-      machine.writeSigned8(textbuffer + i + storeOffset,
-              (byte) inputString.charAt(i));
+      machine.writeUnsigned8(textbuffer + i + storeOffset,
+              (short) (inputString.charAt(i) & 0xff));
     }
     char terminateChar = inputString.charAt(inputString.length() - 1);
     checkTermination(terminateChar, textbuffer, inputString.length() + 1);

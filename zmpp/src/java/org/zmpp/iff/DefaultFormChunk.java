@@ -37,14 +37,10 @@ import org.zmpp.base.MemorySection;
  */
 public class DefaultFormChunk extends DefaultChunk implements FormChunk {
 
-  /**
-   * The sub type id.
-   */
+  /** The sub type id. */
   private byte[] subId;
   
-  /**
-   * The list of sub chunks.
-   */
+  /** The list of sub chunks. */
   private List<Chunk> subChunks;
   
   /**
@@ -66,11 +62,8 @@ public class DefaultFormChunk extends DefaultChunk implements FormChunk {
     }
     // Determine the sub id
     subId = new byte[CHUNK_ID_LENGTH];
-    final int offset = CHUNK_HEADER_LENGTH;
-
-    for (int i = 0; i < 4; i++) {
-      subId[i] = memory.readSigned8(i + offset);
-    }
+    memory.copyBytesToArray(subId, 0, CHUNK_HEADER_LENGTH,
+                            Chunk.CHUNK_ID_LENGTH);
   }
   
   /**
@@ -98,47 +91,34 @@ public class DefaultFormChunk extends DefaultChunk implements FormChunk {
     }    
   }
   
-  /**
-   * {@inheritDoc}
-   */
+  /** {@inheritDoc} */
+  @Override
   public boolean isValid() {
     return (new String(getId())).equals("FORM");
   }
   
-  /**
-   * {@inheritDoc}
-   */
+  /** {@inheritDoc} */
   public byte[] getSubId() { return subId; }
 
-  /**
-   * {@inheritDoc}
-   */
+  /** {@inheritDoc} */
   public Iterator<Chunk> getSubChunks() {
     return subChunks.iterator();
   }
-  
-  /**
-   * {@inheritDoc}
-   */
+
+  /** {@inheritDoc} */
   public Chunk getSubChunk(final byte[] id) {
     for (Chunk chunk : subChunks) {
-      
       if (Arrays.equals(id, chunk.getId())) {
-        
         return chunk;
       }
     }
     return null;
   }
 
-  /**
-   * {@inheritDoc}
-   */
+  /** {@inheritDoc} */
   public Chunk getSubChunk(final int address) {
     for (Chunk chunk : subChunks) {
-      
       if (chunk.getAddress() == address) {
-        
         return chunk;
       }
     }

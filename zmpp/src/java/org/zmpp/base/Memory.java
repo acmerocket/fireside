@@ -58,14 +58,6 @@ public interface Memory {
    */
   short readUnsigned8(int address); 
   
-  /**
-   * Returns the signed 8 bit value at specified address.
-   * 
-   * @param address the byte address
-   * @return the 8 bit signed value
-   */
-  byte readSigned8(int address);
-
   // ************************************************************************
   // ****
   // **** Write access
@@ -96,10 +88,44 @@ public interface Memory {
   void writeUnsigned8(int address, short value);
   
   /**
-   * Writes a byte value to the specified address.
-   * 
-   * @param address the address
-   * @param value the value
+   * A rather common operation: copy the specified number of bytes from
+   * the offset to a taret array.
+   * @param dstData the destination array
+   * @param dstOffset the offset in the destinations array
+   * @param srcOffset the offset in the source
+   * @param numBytes the number of bytes to copy
    */
-  void writeSigned8(int address, byte value);  
+  void copyBytesToArray(byte[] dstData, int dstOffset,
+                        int srcOffset, int numBytes);
+  
+  /**
+   * Copy the specified number of bytes from the source array to this
+   * Memory object
+   * @param srcData the source array
+   * @param srcOffset the source offset
+   * @param dstOffset the destination offset
+   * @param numBytes the number of bytes to copy
+   */
+  void copyBytesFromArray(byte[] srcData, int srcOffset,
+                          int dstOffset, int numBytes);
+
+  /**
+   * Copy the specified number of bytes from the specified source Memory object.
+   * @param srcMem the source Memory object
+   * @param srcOffset the source offset
+   * @param dstOffset the destination offset
+   * @param numBytes the number of bytes to copy
+   */
+  void copyBytesFromMemory(Memory srcMem, int srcOffset, int dstOffset,
+                           int numBytes);
+  
+  /**
+   * Copy an area of bytes efficiently. Since the System.arraycopy() is used,
+   * we do not have to worry about overlapping areas and can take advantage
+   * of the performance gain.
+   * @param src the source address
+   * @param dst the destination address
+   * @param numBytes the number of bytes
+   */
+  void copyArea(int src, int dst, int numBytes);
 }

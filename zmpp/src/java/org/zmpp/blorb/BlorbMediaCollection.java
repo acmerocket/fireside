@@ -74,20 +74,13 @@ public abstract class BlorbMediaCollection<T> implements MediaCollection<T> {
     byte[] usage = new byte[4];
     
     for (int i = 0; i < numresources; i++) {
-
-      for (int j = 0; j < 4; j++) {
-        
-        usage[j] = chunkmem.readSigned8(offset + j);
-      }
-      
+      chunkmem.copyBytesToArray(usage, 0, offset, 4);
       if (isHandledResource(usage)) {
-
         int resnum = (int) readUnsigned32(chunkmem, offset + 4);        
         int address = (int) readUnsigned32(chunkmem, offset + 8);
         Chunk chunk = formchunk.getSubChunk(address);
         
         if (putToDatabase(chunk, resnum)) {
-
           resourceNumbers.add(resnum);
         }
       }

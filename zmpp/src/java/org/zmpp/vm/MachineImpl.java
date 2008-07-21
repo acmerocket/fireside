@@ -106,9 +106,7 @@ public class MachineImpl implements Machine {
   // **********************************************************************
   // ***** Initialization
   // **************************************
-  /**
-   * {@inheritDoc}
-   */
+  /** {@inheritDoc} */
   public void initialize(final byte[] data, Resources resources) {
     this.storyfileData = data;
     this.random = new UnpredictableRandomGenerator();
@@ -207,101 +205,127 @@ public class MachineImpl implements Machine {
     return (sum & 0xffff);
   }
  
-  /**
-   * {@inheritDoc}
-   */
+  /** {@inheritDoc} */
   public int getVersion() {
     return getFileHeader().getVersion();
   }
   
+  /** {@inheritDoc} */
   public boolean hasValidChecksum() {
     return this.checksum == getFileHeader().getChecksum();
   }
   
-  /**
-   * {@inheritDoc}
-   */
+  /** {@inheritDoc} */
   public StoryFileHeader getFileHeader() { return fileheader; }
 
   // **********************************************************************
   // ***** Memory interface functionality
   // **********************************************************************
   private Memory getMemory() { return memory; }
+  /** {@inheritDoc} */
   public char readUnsigned16(int address) {
     return getMemory().readUnsigned16(address);
   }
+  /** {@inheritDoc} */
   public short readSigned16(int address) {
     return getMemory().readSigned16(address);
   }
+  /** {@inheritDoc} */
   public short readUnsigned8(int address) {
     return getMemory().readUnsigned8(address);
   }
-  public byte readSigned8(int address) {
-    return getMemory().readSigned8(address);
-  }
+  /** {@inheritDoc} */
   public void writeUnsigned16(int address, char value) {
     getMemory().writeUnsigned16(address, value);
   }
+  /** {@inheritDoc} */
   public void writeSigned16(int address, short value) {
     getMemory().writeSigned16(address, value);
   }
+  /** {@inheritDoc} */
   public void writeUnsigned8(int address, short value) {
     getMemory().writeUnsigned8(address, value);
   }
-  public void writeSigned8(int address, byte value) {
-    getMemory().writeSigned8(address, value);
+  /** {@inheritDoc} */
+  public void copyBytesToArray(byte[] dstData, int dstOffset,
+                               int srcOffset, int numBytes) {
+    getMemory().copyBytesToArray(dstData, dstOffset, srcOffset,
+                                 numBytes);
   }
-  
+  /** {@inheritDoc} */
+  public void copyBytesFromArray(byte[] srcData, int srcOffset, int dstOffset,
+                                 int numBytes) {
+    getMemory().copyBytesFromArray(srcData, srcOffset, dstOffset, numBytes);
+  }
+  /** {@inheritDoc} */
+  public void copyBytesFromMemory(Memory srcMem, int srcOffset, int dstOffset,
+                                  int numBytes) {
+    getMemory().copyBytesFromMemory(srcMem, srcOffset, dstOffset, numBytes);
+  }
+  /** {@inheritDoc} */
+  public void copyArea(int src, int dst, int numBytes) {
+    getMemory().copyArea(src, dst, numBytes);
+  }
   // **********************************************************************
   // ***** Cpu interface functionality
   // **********************************************************************
   private Cpu getCpu() { return cpu; }
+  /** {@inheritDoc} */
   public short getVariable(int varnum) { return getCpu().getVariable(varnum); }
+  /** {@inheritDoc} */
   public void setVariable(int varnum, short value) {
     getCpu().setVariable(varnum, value);
   }
+  /** {@inheritDoc} */
   public short getStackTop() { return getCpu().getStackTop(); }
+  /** {@inheritDoc} */
   public short getStackElement(int index) {
     return getCpu().getStackElement(index);
   }
-  public void setStackTop(short value) {
-    getCpu().setStackTop(value);
-  }
-  public void incrementPC(int length) {
-    getCpu().incrementPC(length);
-  }
-  public void setPC(int address) {
-    getCpu().setPC(address);
-  }
+  /** {@inheritDoc} */
+  public void setStackTop(short value) { getCpu().setStackTop(value); }
+  /** {@inheritDoc} */
+  public void incrementPC(int length) { getCpu().incrementPC(length); }
+  /** {@inheritDoc} */
+  public void setPC(int address) { getCpu().setPC(address); }
+  /** {@inheritDoc} */
   public int getPC() { return getCpu().getPC(); }
+  /** {@inheritDoc} */
   public int getSP() { return getCpu().getSP(); }
+  /** {@inheritDoc} */
   public short popStack(int userstackAddress) {
     return getCpu().popStack(userstackAddress);
   }
+  /** {@inheritDoc} */
   public boolean pushStack(int stack, short value) {
     return getCpu().pushStack(stack, value);
   }
+  /** {@inheritDoc} */
   public List<RoutineContext> getRoutineContexts() {
     return getCpu().getRoutineContexts();
   }
+  /** {@inheritDoc} */
   public void setRoutineContexts(List<RoutineContext> routineContexts) {
     getCpu().setRoutineContexts(routineContexts);
   }
+  /** {@inheritDoc} */
   public void returnWith(short returnValue) {
     getCpu().returnWith(returnValue);
   }
+  /** {@inheritDoc} */
   public RoutineContext getCurrentRoutineContext() {
     return getCpu().getCurrentRoutineContext();
   }
-
+  /** {@inheritDoc} */
   public int unpackStringAddress(int packedAddress) {
     return getCpu().unpackStringAddress(packedAddress);
   }
+  /** {@inheritDoc} */
   public RoutineContext call(int packedAddress, int returnAddress, short[] args,
                              int returnVar) {
     return getCpu().call(packedAddress, returnAddress, args, returnVar);
   }
-  
+  /** {@inheritDoc} */
   public void doBranch(short branchOffset, int instructionLength) {
     getCpu().doBranch(branchOffset, instructionLength);
   }
@@ -313,7 +337,7 @@ public class MachineImpl implements Machine {
     new ZsciiString(new char[] { ' ', '\n', '\t', '\r' });
   
   private Dictionary getDictionary() { return dictionary; }
-
+  /** {@inheritDoc} */
   public int lookupToken(int dictionaryAddress, ZsciiString token) {
     if (dictionaryAddress == 0) {
       return getDictionary().lookup(token);
@@ -321,7 +345,7 @@ public class MachineImpl implements Machine {
     return new UserDictionary(getMemory(), dictionaryAddress,
                               getZCharDecoder()).lookup(token);
   }
-  
+  /** {@inheritDoc} */
   public ZsciiString getDictionaryDelimiters() {
     // Retrieve the defined separators
     final ZsciiStringBuilder separators = new ZsciiStringBuilder();
@@ -339,18 +363,19 @@ public class MachineImpl implements Machine {
   // **********************************************************************
   private ZCharDecoder getZCharDecoder() { return decoder; }
   private ZCharEncoder getZCharEncoder() { return encoder; }
+  /** {@inheritDoc} */
   public String convertToZscii(String str) {
     return encoding.convertToZscii(str);
   }
-  
+  /** {@inheritDoc} */
   public void encode(int source, int length, int destination) {
     getZCharEncoder().encode(getMemory(), source, length, destination);
   }
-
+  /** {@inheritDoc} */
   public ZsciiString decode2Zscii(int address, int length) {
     return getZCharDecoder().decode2Zscii(getMemory(), address, length);
   }
-  
+  /** {@inheritDoc} */
   public char getUnicodeChar(char zsciiChar) {
     return encoding.getUnicodeChar(zsciiChar);
   }
@@ -414,24 +439,15 @@ public class MachineImpl implements Machine {
   public void setInputStream(int streamNumber, InputStream stream) {
     input.setInputStream(streamNumber, stream);
   }
-  
-  /**
-   * {@inheritDoc}
-   */
+  /** {@inheritDoc} */
   public InputStream getSelectedInputStream() {
     return input.getSelectedInputStream();
   }
-  
-  /**
-   * {@inheritDoc}
-   */
+  /** {@inheritDoc} */
   public void selectInputStream(int streamNumber) {
     input.selectInputStream(streamNumber);
   }
-  
-  /**
-   * {@inheritDoc}
-   */
+  /** {@inheritDoc} */
   public short random(final short range) {
     if (range < 0) {
       random = new PredictableRandomGenerator(-range);
@@ -446,104 +462,59 @@ public class MachineImpl implements Machine {
   // ************************************************************************
   // ****** Control functions
   // ************************************************
-
-  /**
-   * {@inheritDoc}
-   */
-  public MachineRunState getRunState() {
-    return runstate;
-  }
+  /** {@inheritDoc} */
+  public MachineRunState getRunState() { return runstate; }
   
-  /**
-   * {@inheritDoc}
-   */
+  /** {@inheritDoc} */
   public void setRunState(MachineRunState runstate) {
     this.runstate = runstate;
   }
 
-  /**
-   * {@inheritDoc}
-   */
+  /** {@inheritDoc} */
   public void halt(final String errormsg) {
     print(new ZsciiString(errormsg));
     runstate = MachineRunState.STOPPED;
-  }  
-
-  /**
-   * {@inheritDoc}
-   */
+  }
+  /** {@inheritDoc} */
   public void warn(final String msg) {
     LOG.warning("WARNING: " + msg);
-  }
-  
-  /**
-   * {@inheritDoc} 
-   */
+  }  
+  /** {@inheritDoc} */
   public void restart() { restart(true); }
-  
-  /**
-   * {@inheritDoc} 
-   */
+  /** {@inheritDoc} */
   public void quit() {
     runstate = MachineRunState.STOPPED;    
     // On quit, close the streams
     output.print(new ZsciiString("*Game ended*"));
     closeStreams();
   }
-  
-  /**
-   * {@inheritDoc}
-   */
-  public void start() {
-    runstate = MachineRunState.RUNNING;
-  }
+  /** {@inheritDoc} */
+  public void start() { runstate = MachineRunState.RUNNING; }
   
   // ************************************************************************
   // ****** Machine services
   // ************************************************
 
-  /**
-   * {@inheritDoc}
-   */
+  /** {@inheritDoc} */
   public void tokenize(final int textbuffer, final int parsebuffer,
       final int dictionaryAddress, final boolean flag) {
     inputFunctions.tokenize(textbuffer, parsebuffer, dictionaryAddress, flag);
   }
-  
-  /**
-   * {@inheritDoc}
-   */
+  /** {@inheritDoc} */
   public char readLine(final int textbuffer) {
     return inputFunctions.readLine(textbuffer);
   }
-  
-  /**
-   * {@inheritDoc}
-   */
-  public char readChar() {
-    return inputFunctions.readChar();
-  }
-  
-  /**
-   * {@inheritDoc}
-   */
+  /** {@inheritDoc} */
+  public char readChar() { return inputFunctions.readChar(); }  
+  /** {@inheritDoc} */
   public SoundSystem getSoundSystem() { return soundSystem; }
-
-  /**
-   * {@inheritDoc}
-   */
+  /** {@inheritDoc} */
   public PictureManager getPictureManager() { return pictureManager; }
-  
-  /**
-   * {@inheritDoc}
-   */
+  /** {@inheritDoc} */
   public void setSaveGameDataStore(final SaveGameDataStore datastore) {
     this.datastore = datastore;
   }
-
-  /**
-   * {@inheritDoc}
-   */
+  /** {@inheritDoc} */
   public void updateStatusLine() {
     if (getFileHeader().getVersion() <= 3 && statusLine != null) {
       final int objNum = cpu.getVariable(0x10);    
@@ -558,36 +529,19 @@ public class MachineImpl implements Machine {
       }
     }
   }
-  
-  /**
-   * {@inheritDoc}
-   */
+  /** {@inheritDoc} */
   public void setStatusLine(final StatusLine statusLine) {
     this.statusLine = statusLine;
   }
-  
-  /**
-   * {@inheritDoc}
-   */
+  /** {@inheritDoc} */
   public void setScreen(final ScreenModel screen) {
     this.screenModel = screen;
   }
-  
-  /**
-   * {@inheritDoc}
-   */
+  /** {@inheritDoc} */
   public ScreenModel getScreen() { return screenModel; }
-  
-  /**
-   * {@inheritDoc}
-   */
-  public ScreenModel6 getScreen6() {
-    return (ScreenModel6) screenModel;
-  }
-  
-  /**
-   * {@inheritDoc} 
-   */
+  /** {@inheritDoc} */
+  public ScreenModel6 getScreen6() { return (ScreenModel6) screenModel; }  
+  /** {@inheritDoc} */
   public boolean save(final int savepc) {
     if (datastore != null) {
       final PortableGameState gamestate = new PortableGameState();
@@ -597,20 +551,14 @@ public class MachineImpl implements Machine {
     }
     return false;
   }
-  
-  /**
-   * {@inheritDoc}
-   */
+  /** {@inheritDoc} */
   public boolean save_undo(final int savepc) {
     final PortableGameState undoGameState = new PortableGameState();
     undoGameState.captureMachineState(this, savepc);
     undostates.add(undoGameState);
     return true;
   }
-
-  /**
-   * {@inheritDoc} 
-   */
+  /** {@inheritDoc} */
   public PortableGameState restore() {
     if (datastore != null) {
       final PortableGameState gamestate = new PortableGameState();
@@ -628,10 +576,7 @@ public class MachineImpl implements Machine {
     }
     return null;
   }
-
-  /**
-   * {@inheritDoc}
-   */
+  /** {@inheritDoc} */
   public PortableGameState restore_undo() {
     // do not reset screen model, since e.g. AMFV simply picks up the
     // current window state
@@ -706,122 +651,71 @@ public class MachineImpl implements Machine {
   // ************************************
   
   private ObjectTree getObjectTree() { return objectTree; }
-
-  /**
-   * {@inheritDoc}
-   */
+  /** {@inheritDoc} */
   public void insertObject(int parentNum, int objectNum) {
     getObjectTree().insertObject(parentNum, objectNum);
   }
-
-  /**
-   * {@inheritDoc}
-   */
+  /** {@inheritDoc} */
   public void removeObject(int objectNum) {
     getObjectTree().removeObject(objectNum);
   }
-
-  /**
-   * {@inheritDoc}
-   */
+  /** {@inheritDoc} */
   public void clearAttribute(int objectNum, int attributeNum) {
     getObjectTree().clearAttribute(objectNum, attributeNum);
   }
-
-  /**
-   * {@inheritDoc}
-   */
+  /** {@inheritDoc} */
   public boolean isAttributeSet(int objectNum, int attributeNum) {
     return getObjectTree().isAttributeSet(objectNum, attributeNum);
   }
-
-  /**
-   * {@inheritDoc}
-   */
+  /** {@inheritDoc} */
   public void setAttribute(int objectNum, int attributeNum) {
     getObjectTree().setAttribute(objectNum, attributeNum);
   }
-
-  /**
-   * {@inheritDoc}
-   */
+  /** {@inheritDoc} */
   public int getParent(int objectNum) {
     return getObjectTree().getParent(objectNum);
   }
-
-  /**
-   * {@inheritDoc}
-   */
+  /** {@inheritDoc} */
   public void setParent(int objectNum, int parent) {
     getObjectTree().setParent(objectNum, parent);
   }
-
-  /**
-   * {@inheritDoc}
-   */
+  /** {@inheritDoc} */
   public int getChild(int objectNum) {
     return getObjectTree().getChild(objectNum);
   }
-
-  /**
-   * {@inheritDoc}
-   */
+  /** {@inheritDoc} */
   public void setChild(int objectNum, int child) {
     getObjectTree().setChild(objectNum, child);
   }
-
-  /**
-   * {@inheritDoc}
-   */
+  /** {@inheritDoc} */
   public int getSibling(int objectNum) {
     return getObjectTree().getSibling(objectNum);
   }
-
-  /**
-   * {@inheritDoc}
-   */
+  /** {@inheritDoc} */
   public void setSibling(int objectNum, int sibling) {
     getObjectTree().setSibling(objectNum, sibling);
   }  
-
-  /**
-   * {@inheritDoc}
-   */
+  /** {@inheritDoc} */
   public int getPropertiesDescriptionAddress(int objectNum) {
     return getObjectTree().getPropertiesDescriptionAddress(objectNum);
   }
-  
-  /**
-   * {@inheritDoc}
-   */
+  /** {@inheritDoc} */
   public int getPropertyAddress(int objectNum, int property) {
     return getObjectTree().getPropertyAddress(objectNum, property);
   }
-
-  /**
-   * {@inheritDoc}
-   */
+  /** {@inheritDoc} */
   public int getPropertyLength(int propertyAddress) {
     return getObjectTree().getPropertyLength(propertyAddress);
   }
-
-  /**
-   * {@inheritDoc}
-   */
+  /** {@inheritDoc} */
   public int getProperty(int objectNum, int property) {
     return getObjectTree().getProperty(objectNum, property);
   }
-  
-  /**
-   * {@inheritDoc}
-   */
+  /** {@inheritDoc} */
   public void setProperty(int objectNum, int property, int value) {
     getObjectTree().setProperty(objectNum, property, value);
   }
-
-  /**
-   * {@inheritDoc}
-   */
+  /** {@inheritDoc} */
   public int getNextProperty(int objectNum, int property) {
     return getObjectTree().getNextProperty(objectNum, property);
   }

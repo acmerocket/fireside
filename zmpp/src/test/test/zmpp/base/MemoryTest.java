@@ -75,9 +75,57 @@ public class MemoryTest {
   @Test
   public void testWriteUnsignedShort() {
     memory.writeUnsigned16(0x02, (char) 0xffff);
-    assertEquals(0xffff, memory.readUnsigned16(0x02));
-    
+    assertEquals(0xffff, memory.readUnsigned16(0x02));    
     memory.writeUnsigned16(0x04, (char) 0x00ff);
     assertEquals(0x00ff, memory.readUnsigned16(0x04));
-  }  
+  }
+  
+  @Test
+  public void testCopyBytesToArray() {
+    byte[] dstData = new byte[4];
+    int dstOffset = 1;
+    int srcOffset = 2;
+    int numBytes = 3;
+    memory.copyBytesToArray(dstData, dstOffset, srcOffset, numBytes);
+    assertEquals(0x37, dstData[1]);
+    assertEquals(0x09, dstData[2]);
+    assertEquals((byte) 0xff, dstData[3]);
+  }
+
+  @Test
+  public void testCopyBytesFromArray() {
+    byte[] srcData = { (byte) 0x00, (byte) 0xef, (byte )0x10, (byte) 0xfe };
+    int srcOffset = 1;
+    int dstOffset = 0;
+    int numBytes = 3;
+    memory.copyBytesFromArray(srcData, srcOffset, dstOffset, numBytes);
+    assertEquals(0xef, memory.readUnsigned8(0));
+    assertEquals(0x10, memory.readUnsigned8(1));
+    assertEquals(0xfe, memory.readUnsigned8(2));
+  }
+
+  @Test
+  public void testCopyBytesFromMemory() {
+    byte[] dstData = { (byte) 0x00, (byte) 0x00, (byte )0x00, (byte) 0x00 };
+    byte[] srcData = { (byte) 0x00, (byte) 0xef, (byte )0x10, (byte) 0xfe };
+    Memory srcMem = new DefaultMemory(srcData);
+    Memory dstMem = new DefaultMemory(dstData);
+    int srcOffset = 1;
+    int dstOffset = 0;
+    int numBytes = 3;
+    dstMem.copyBytesFromMemory(srcMem, srcOffset, dstOffset, numBytes);
+    assertEquals(0xef, dstMem.readUnsigned8(0));
+    assertEquals(0x10, dstMem.readUnsigned8(1));
+    assertEquals(0xfe, dstMem.readUnsigned8(2));
+  }
+  
+  @Test
+  public void testCopyArea() {
+    memory.copyArea(0, 2, 3);
+    assertEquals(0x03, memory.readUnsigned8(0));
+    assertEquals(0x00, memory.readUnsigned8(1));
+    assertEquals(0x03, memory.readUnsigned8(2));
+    assertEquals(0x00, memory.readUnsigned8(3));
+    assertEquals(0x37, memory.readUnsigned8(4));
+  }
 }

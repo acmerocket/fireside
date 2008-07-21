@@ -47,12 +47,21 @@
   </target>
 
   <target name="compile" depends="init">
-    <javac debug="${build.debug}" srcdir="${src.prj}" destdir="${build.prj}" source="1.5" target="1.5" />
+    <javac debug="${build.debug}" srcdir="${src.prj}" destdir="${build.prj}" source="1.5" target="1.5">
+    <!--
+      <include name="**/base/*.java" />
+      <include name="**/iff/*.java" />
+  -->
+    </javac>
     <javac debug="${build.debug}" srcdir="${src.tests}" destdir="${build.tests}" source="1.5" target="1.5">
       <classpath>
         <pathelement location="${build.prj}"/>
       </classpath>
       <classpath refid="junit.path" />
+       <!--
+      <include name="**/base/*.java" />
+      <include name="**/iff/*.java" />
+      -->
     </javac>
   </target>
   

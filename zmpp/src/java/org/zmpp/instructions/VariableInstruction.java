@@ -197,9 +197,8 @@ public class VariableInstruction extends AbstractInstruction {
     final Memory memory = getMemory();
     final int array = getUnsignedValue(0);
     final int byteIndex = getUnsignedValue(1);
-    final byte value = (byte) getValue(2);
-    
-    memory.writeSigned8(array + byteIndex, value);
+    final int value = getUnsignedValue(2);    
+    memory.writeUnsigned8(array + byteIndex, (short) (value & 0xff));
     nextInstruction();
   }
   
@@ -488,7 +487,7 @@ public class VariableInstruction extends AbstractInstruction {
   
   private void scan_table() {    
     final Memory memory = getMemory();
-    final short x = getValue(0);
+    int x = getUnsignedValue(0);
     final int table = getUnsignedValue(1);
     final int length = getUnsignedValue(2);
     int form  = 0x82; // default value
@@ -501,8 +500,14 @@ public class VariableInstruction extends AbstractInstruction {
     boolean found = false;
     
     for (int i = 0; i < length; i++) {
-      final short current = isWordTable ? memory.readSigned16(pointer) :
-                                          memory.readSigned8(pointer);
+      int current;
+      if (isWordTable) {
+        current = memory.readUnsigned16(pointer);
+        x &= 0xffff;
+      } else {
+        current = memory.readUnsigned8(pointer);
+        x &= 0xff;
+      }
       if (current == x) {
         storeResult((short) pointer);
         found = true;
@@ -584,38 +589,16 @@ public class VariableInstruction extends AbstractInstruction {
   private void copy_table() {
     final int first = getUnsignedValue(0);
     final int second = getUnsignedValue(1);
-    int size = getValue(2);
+    int size = Math.abs(getValue(2));
     final Memory memory = getMemory();
 
     if (second == 0) {
-      
       // Clear size bytes of first
-      size = Math.abs(size);
-      for (int i = 0; i < size; i++) {
-        
-        memory.writeSigned8(first + i, (byte) 0);
+      for (int i = 0; i < size; i++) {        
+        memory.writeUnsigned8(first + i, (short) 0);
       }
-      
     } else {
-      
-      if (size < 0 || first > second) {
-        
-        // copy forward
-        size = Math.abs(size);
-        for (int i = 0; i < size; i++) {
-                    
-          memory.writeSigned8(second + i, memory.readSigned8(first + i));
-        }
-        
-      } else {
-          
-        // backwards
-        size = Math.abs(size);
-        for (int i = size - 1; i >= 0; i--) {
-          
-          memory.writeSigned8(second + i, memory.readSigned8(first + i));
-        }
-      }
+      memory.copyArea(first, second, size);
     }
     nextInstruction();
   }
@@ -629,7 +612,6 @@ public class VariableInstruction extends AbstractInstruction {
    * accessed one by one in ZSCII format.
    */
   private void print_table() {
-    
     final int zsciiText = getUnsignedValue(0);
     final int width = getUnsignedValue(1);
     int height = 1;

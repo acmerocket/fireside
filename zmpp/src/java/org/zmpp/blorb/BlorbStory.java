@@ -46,10 +46,8 @@ public class BlorbStory {
     final Chunk chunk = formchunk.getSubChunk("ZCOD".getBytes());
     final int size = chunk.getSize();
     final byte[] data = new byte[size];
-    for (int i = 0; i < size; i++) {
-      
-      data[i] = chunk.getMemory().readSigned8(i + Chunk.CHUNK_HEADER_LENGTH);
-    }
+    chunk.getMemory().copyBytesToArray(data, 0, Chunk.CHUNK_HEADER_LENGTH,
+                                       size);
     return data;
   }
 }

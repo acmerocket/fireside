@@ -74,16 +74,12 @@ public class FormChunkTest {
       assertTrue(chunk.isValid());
       result.add(chunk);
     }
-    
     assertEquals("IFhd", new String(result.get(0).getId()));
     assertEquals(13, result.get(0).getSize());
-    
     assertEquals("CMem", new String(result.get(1).getId()));
     assertEquals(351, result.get(1).getSize());
-    
     assertEquals("Stks", new String(result.get(2).getId()));
     assertEquals(118, result.get(2).getSize());
-    
     assertEquals(3, result.size());
   }
   
