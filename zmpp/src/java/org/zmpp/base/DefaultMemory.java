@@ -47,15 +47,10 @@ public class DefaultMemory implements Memory {
     return (char)
       (((data[address] & 0xff) << 8 | (data[address + 1] & 0xff)) & 0xffff);
   }
-  
+
   /** {@inheritDoc} */
-  public short readSigned16(final int address) {
-    return (short) (data[address] << 8 | (data[address + 1] & 0xff));
-  }
-  
-  /** {@inheritDoc} */
-  public short readUnsigned8(final int address) {
-    return (short) (data[address] & 0xff);
+  public char readUnsigned8(final int address) {
+    return (char) (data[address] & 0xff);
   }
   
   /** {@inheritDoc} */
@@ -65,13 +60,7 @@ public class DefaultMemory implements Memory {
   }
   
   /** {@inheritDoc} */
-  public void writeSigned16(final int address, final short value) {
-    data[address] = (byte) ((value & 0xff00) >>> 8);
-    data[address + 1] = (byte) (value & 0xff);
-  }
-  
-  /** {@inheritDoc} */
-  public void writeUnsigned8(final int address, final short value) { 
+  public void writeUnsigned8(final int address, final char value) { 
     data[address] = (byte) (value & 0xff);
   }
 

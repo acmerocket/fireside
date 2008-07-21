@@ -31,9 +31,9 @@ public class TextAnnotation {
 
   // Font flags have the same bit layout as in the ScreenModel interface so
   // so the flags are compatible
-  public static final int FONT_NORMAL  = 1;
-  public static final int FONT_CHARACTER_GRAPHICS  = 3;
-  public static final int FONT_FIXED   = 4;
+  public static final char FONT_NORMAL  = 1;
+  public static final char FONT_CHARACTER_GRAPHICS  = 3;
+  public static final char FONT_FIXED   = 4;
 
   // Text styles have the same bit layout as in the ScreenModel interface
   // so the flags are compatible
@@ -43,23 +43,23 @@ public class TextAnnotation {
   public static final int TEXTSTYLE_ITALIC         = 4;
   public static final int TEXTSTYLE_FIXED          = 8;
 
-  private int font;
+  private char font;
   private int style;
   private int background;
   private int foreground;
   
-  public TextAnnotation(int font, int style, int background, int foreground) {
+  public TextAnnotation(char font, int style, int background, int foreground) {
     this.font = font;
     this.style = style;
     this.background = background;
     this.foreground = foreground;
   }
 
-  public TextAnnotation(int font, int style) {
+  public TextAnnotation(char font, int style) {
     this(font, style, ScreenModel.COLOR_DEFAULT, ScreenModel.COLOR_DEFAULT);
   }
   
-  public TextAnnotation deriveFont(int newFont) {
+  public TextAnnotation deriveFont(char newFont) {
     return new TextAnnotation(newFont, this.style, this.background,
                               this.foreground);
   }
@@ -85,7 +85,7 @@ public class TextAnnotation {
                               newForeground);
   }
   
-  public int getFont() { return font; }
+  public char getFont() { return font; }
 
   public boolean isFixed() {
     return font == FONT_FIXED || (style & TEXTSTYLE_FIXED) == TEXTSTYLE_FIXED; 

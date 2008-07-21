@@ -147,7 +147,7 @@ public interface ObjectTree {
    * @param property the property number
    * @return the value of the specified property
    */
-  int getProperty(int objectNum, int property);
+  char getProperty(int objectNum, int property);
   
   /**
    * Sets the specified property byte to the given value.
@@ -155,5 +155,5 @@ public interface ObjectTree {
    * @param property the property
    * @param value the value
    */
-  void setProperty(int objectNum, int property, int value);
+  void setProperty(int objectNum, int property, char value);
 }

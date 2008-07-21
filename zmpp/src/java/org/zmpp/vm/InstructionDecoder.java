@@ -106,7 +106,7 @@ public class InstructionDecoder {
       final int instructionAddress) {
     OperandCount operandCount;
     int opcode;
-    final short firstByte = getMemory().readUnsigned8(instructionAddress);
+    final char firstByte = getMemory().readUnsigned8(instructionAddress);
     
     // Determine form and operand count type
     if (firstByte == 0xbe) {
@@ -165,7 +165,7 @@ public class InstructionDecoder {
     if (info.getInstructionForm() == InstructionForm.SHORT) {
       
       if (info.getOperandCount() == OperandCount.C1OP) {
-        final short firstByte = getMemory().readUnsigned8(currentAddress);
+        final char firstByte = getMemory().readUnsigned8(currentAddress);
         final byte optype = (byte) ((firstByte & 0x30) >> 4);
         
         currentAddress = extractOperand(info, optype, currentAddress + 1);
@@ -177,7 +177,7 @@ public class InstructionDecoder {
       
     } else if (info.getInstructionForm() == InstructionForm.LONG) {
 
-      final short firstByte = getMemory().readUnsigned8(instructionAddress);      
+      final char firstByte = getMemory().readUnsigned8(instructionAddress);      
       final byte optype1 = ((firstByte & 0x40) > 0) ? Operand.TYPENUM_VARIABLE :
                                                 Operand.TYPENUM_SMALL_CONSTANT;
       final byte optype2 = ((firstByte & 0x20) > 0) ? Operand.TYPENUM_VARIABLE :
@@ -190,8 +190,8 @@ public class InstructionDecoder {
       // The operand types start after the second opcode byte in EXT form,
       // and after the first otherwise
       currentAddress += (info.getOperandCount() == OperandCount.EXT) ? 2 : 1;      
-      final short optypeByte1 = getMemory().readUnsigned8(currentAddress++);
-      short optypeByte2 = 0;
+      final char optypeByte1 = getMemory().readUnsigned8(currentAddress++);
+      char optypeByte2 = 0;
                 
       // Extract more operands if necessary, if the opcode
       // is call_vs2 or call_vn2 and there are four operands already,
@@ -268,14 +268,14 @@ public class InstructionDecoder {
     if (optype == Operand.TYPENUM_LARGE_CONSTANT) {
       
       info.addOperand(new Operand(optype,
-          getMemory().readSigned16(nextAddress)));
+          getMemory().readUnsigned16(nextAddress)));
       nextAddress += 2;
       
     } else if (optype == Operand.TYPENUM_VARIABLE
         || optype == Operand.TYPENUM_SMALL_CONSTANT) {
       
       info.addOperand(new Operand(optype,
-          getMemory().readUnsigned8(nextAddress)));
+          (char) getMemory().readUnsigned8(nextAddress)));
       
       nextAddress += 1; 
     }
@@ -292,7 +292,6 @@ public class InstructionDecoder {
   private int extractStoreVariable(final AbstractInstruction info,
       final int currentAddress) {
     if (info.storesResult()) {
-      
       info.setStoreVariable(getMemory().readUnsigned8(currentAddress));
       return currentAddress + 1;
     }
@@ -310,8 +309,7 @@ public class InstructionDecoder {
       final int currentAddress) {
     
     if (info.isBranch()) {
-      
-      final short offsetByte1 = getMemory().readUnsigned8(currentAddress);
+      final char offsetByte1 = getMemory().readUnsigned8(currentAddress);
       info.setBranchIfTrue((offsetByte1 & 0x80) > 0);
       
       // Bit 6 set -> only one byte needs to be read
@@ -321,18 +319,14 @@ public class InstructionDecoder {
         return currentAddress + 1;
         
       } else {
-     
-        final short offsetByte2 =
+        final char offsetByte2 =
           getMemory().readUnsigned8(currentAddress + 1);
         short offset;
         
         if ((offsetByte1 & 0x20) == 0x20) { // Bit 14 set = negative
-          
           offset = (short)
             ((0xC000 | ((offsetByte1 << 8) | (offsetByte2 & 0xff))));
-          
         } else {
-          
           offset = (short)
             (((offsetByte1 & 0x3f) << 8) | (offsetByte2 & 0xff));
         }

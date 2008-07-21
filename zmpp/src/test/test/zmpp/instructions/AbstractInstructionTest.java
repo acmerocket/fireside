@@ -38,6 +38,7 @@ import org.zmpp.instructions.AbstractInstruction.OperandCount;
 import org.zmpp.io.OutputStream;
 import org.zmpp.vm.Dictionary;
 import org.zmpp.vm.Machine;
+import static org.zmpp.base.MemoryUtil.signedToUnsigned16;
 
 /**
  * This class tests the AbstractInstruction class.
@@ -76,7 +77,7 @@ public class AbstractInstructionTest {
     assertEquals(0xe1, info.getOpcode());
     info.setLength(9);
     assertEquals(9, info.getLength());
-    info.setStoreVariable((short) 0x10);
+    info.setStoreVariable((char) 0x10);
     assertEquals(0x10, info.getStoreVariable());
     info.setBranchOffset((short) 4711);
     assertEquals(4711, info.getBranchOffset());
@@ -89,7 +90,7 @@ public class AbstractInstructionTest {
   @Test
   public void testAddOperand() {
     assertEquals(0, info.getNumOperands());
-    Operand operand = new Operand(Operand.TYPENUM_SMALL_CONSTANT, (short) 2);
+    Operand operand = new Operand(Operand.TYPENUM_SMALL_CONSTANT, (char) 2);
     info.addOperand(operand);
     assertEquals(1, info.getNumOperands());
     assertEquals(operand, info.getOperand(0));
@@ -98,24 +99,24 @@ public class AbstractInstructionTest {
   @Test
   public void testGetValue() {
     context.checking(new Expectations() {{
-      one (machine).getVariable(17); will(returnValue((short) 1234));
+      one (machine).getVariable((char) 17); will(returnValue((char) 1234));
     }});
-    Operand varOperand = new Operand(Operand.TYPENUM_VARIABLE, (short) 0x11);
-    Operand constOperand = new Operand(Operand.TYPENUM_SMALL_CONSTANT, (byte) 0x11);
+    Operand varOperand = new Operand(Operand.TYPENUM_VARIABLE, (char) 0x11);
+    Operand constOperand = new Operand(Operand.TYPENUM_SMALL_CONSTANT, (char) 0x11);
     info.addOperand(varOperand);
     info.addOperand(constOperand);
-    assertEquals(1234, info.getValue(0));
-    assertEquals(0x11, info.getValue(1));
+    assertEquals(1234, info.getUnsignedValue(0));
+    assertEquals(0x11, info.getUnsignedValue(1));
   }
   
   @Test
   public void testGetUnsignedValueNegative() {
     context.checking(new Expectations() {{
-      one (machine).getVariable(17); will(returnValue((short) -2));
+      one (machine).getVariable((char) 17); will(returnValue((char) -2));
     }});
-    Operand varOperand = new Operand(Operand.TYPENUM_VARIABLE, (short) 0x11);
-    Operand largeOperand = new Operand(Operand.TYPENUM_SMALL_CONSTANT, (short) -4);
-    Operand smallOperand = new Operand(Operand.TYPENUM_SMALL_CONSTANT, (byte) -3);
+    Operand varOperand = new Operand(Operand.TYPENUM_VARIABLE, (char) 0x11);
+    Operand largeOperand = new Operand(Operand.TYPENUM_SMALL_CONSTANT, signedToUnsigned16((short) -4));
+    Operand smallOperand = new Operand(Operand.TYPENUM_SMALL_CONSTANT, signedToUnsigned16((short) -3));
     
     info.addOperand(varOperand);
     info.addOperand(largeOperand);
@@ -128,11 +129,11 @@ public class AbstractInstructionTest {
   @Test
   public void testGetUnsignedValueMaxPositive() {    
     context.checking(new Expectations() {{
-      one (machine).getVariable(17); will(returnValue((short) 32767));
+      one (machine).getVariable((char) 17); will(returnValue((char) 32767));
     }});
-    Operand varOperand = new Operand(Operand.TYPENUM_VARIABLE, (short) 0x11);
-    Operand largeOperand = new Operand(Operand.TYPENUM_SMALL_CONSTANT, (short) 32767);
-    Operand smallOperand = new Operand(Operand.TYPENUM_SMALL_CONSTANT, (byte) 127);
+    Operand varOperand = new Operand(Operand.TYPENUM_VARIABLE, (char) 0x11);
+    Operand largeOperand = new Operand(Operand.TYPENUM_SMALL_CONSTANT, (char) 32767);
+    Operand smallOperand = new Operand(Operand.TYPENUM_SMALL_CONSTANT, (char) 127);
     
     info.addOperand(varOperand);
     info.addOperand(largeOperand);
@@ -145,11 +146,11 @@ public class AbstractInstructionTest {
   @Test
   public void testGetUnsignedValueMinNegative() {    
     context.checking(new Expectations() {{
-      one (machine).getVariable(17); will(returnValue((short) -32768));
+      one (machine).getVariable((char) 17); will(returnValue(signedToUnsigned16((short) -32768)));
     }});
-    Operand varOperand = new Operand(Operand.TYPENUM_VARIABLE, (short) 0x11);
-    Operand largeOperand = new Operand(Operand.TYPENUM_SMALL_CONSTANT, (short) -32768);
-    Operand smallOperand = new Operand(Operand.TYPENUM_SMALL_CONSTANT, (byte) -128);
+    Operand varOperand = new Operand(Operand.TYPENUM_VARIABLE, (char) 0x11);
+    Operand largeOperand = new Operand(Operand.TYPENUM_SMALL_CONSTANT, signedToUnsigned16((short) -32768));
+    Operand smallOperand = new Operand(Operand.TYPENUM_SMALL_CONSTANT, signedToUnsigned16((short) -128));
     
     info.addOperand(varOperand);
     info.addOperand(largeOperand);
@@ -162,19 +163,19 @@ public class AbstractInstructionTest {
   @Test
   public void testConvertToSigned16() {   
     context.checking(new Expectations() {{
-      one (machine).getVariable(17); will(returnValue((short) -7));
+      one (machine).getVariable((char) 17); will(returnValue(signedToUnsigned16((short) -7)));
     }});
-    Operand operandLargeConstant = new Operand(Operand.TYPENUM_LARGE_CONSTANT, (short) 0xfffd);
-    Operand operandVariable = new Operand(Operand.TYPENUM_VARIABLE, (short) 0x11);
-    Operand operandByte = new Operand(Operand.TYPENUM_SMALL_CONSTANT, (byte) 0xfb);
+    Operand operandLargeConstant = new Operand(Operand.TYPENUM_LARGE_CONSTANT, (char) 0xfffd);
+    Operand operandVariable = new Operand(Operand.TYPENUM_VARIABLE, (char) 0x11);
+    Operand operandByte = new Operand(Operand.TYPENUM_SMALL_CONSTANT, (char) 0xfffb);
     
     info.addOperand(operandLargeConstant);
     info.addOperand(operandVariable);
     info.addOperand(operandByte);
     
-    assertEquals(-3, info.getValue(0));
-    assertEquals(-7, info.getValue(1));
-    assertEquals(-5, info.getValue(2)); // bytes values must be unsigned !!!
+    assertEquals(-3, info.getSignedValue(0));
+    assertEquals(-7, info.getSignedValue(1));
+    assertEquals(-5, info.getSignedValue(2)); // bytes values must be unsigned !!!
   }
 
   // *********************************************************************

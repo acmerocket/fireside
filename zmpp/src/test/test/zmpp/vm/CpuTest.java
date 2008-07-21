@@ -121,9 +121,9 @@ public class CpuTest {
   
   @Test
   public void testGetStackElement() {
-    cpu.setVariable(0, (short) 1);
-    cpu.setVariable(0, (short) 2);
-    cpu.setVariable(0, (short) 3);
+    cpu.setVariable(0, (char) 1);
+    cpu.setVariable(0, (char) 2);
+    cpu.setVariable(0, (char) 3);
     assertEquals(2, cpu.getStackElement(1));
   }
   
@@ -157,24 +157,29 @@ public class CpuTest {
   @Test
   public void testGetSetStackTopElement() {
     // initialize stack
-    cpu.setVariable(0, (short) 0);    
-    cpu.setStackTop((short) 42);
+    cpu.setVariable(0, (char) 0);    
+    cpu.setStackTop((char) 42);
     assertEquals(1, cpu.getSP());
     assertEquals(42, cpu.getStackTop());
     assertEquals(1, cpu.getSP());
   }
   
   @Test
-  public void testGetStackTopElementStackEmpty() {  
-    assertEquals(-1, cpu.getStackTop());
+  public void testGetStackTopElementStackEmpty() {
+    try {
+      cpu.getStackTop();
+      fail("overflow error not thrown");
+    } catch (ArrayIndexOutOfBoundsException overflow) {
+      assertTrue(overflow.getMessage().length() > 0);
+    }
   }
   
   @Test
   public void testGetVariableStackNonEmptyNoRoutineContext() {
     // Write something to the stack now
-    cpu.setVariable(0, (short) 4711);
+    cpu.setVariable(0, (char) 4711);
     int oldStackPointer = cpu.getSP();
-    int value = cpu.getVariable(0);
+    int value = cpu.getVariable((char) 0);
     assertEquals(oldStackPointer - 1, cpu.getSP());
     assertEquals(value, 4711);
   }
@@ -182,16 +187,16 @@ public class CpuTest {
   @Test
   public void testGetVariableStackNonEmptyWithRoutineContext() {
     // Write something to the stack now
-    cpu.setVariable(0, (short) 4711);
+    cpu.setVariable(0, (char) 4711);
     
     RoutineContext routineContext = new RoutineContext(12345, 3);
     cpu.pushRoutineContext(routineContext);
     
     // Write a new value to the stack within the routine
-    cpu.setVariable(0, (short) 4712);
+    cpu.setVariable(0, (char) 4712);
     
     int oldStackPointer = cpu.getSP();
-    int value = cpu.getVariable(0);
+    int value = cpu.getVariable((char) 0);
     assertEquals(oldStackPointer - 1, cpu.getSP());
     assertEquals(value, 4712);
   }
@@ -199,14 +204,14 @@ public class CpuTest {
   @Test
   public void testSetVariableStack() {  
     int oldStackPointer = cpu.getSP();
-    cpu.setVariable(0, (short) 213);
+    cpu.setVariable(0, (char) 213);
     assertEquals(oldStackPointer + 1, cpu.getSP());
   }
   
   @Test
   public void testGetLocalVariableIllegal() {
     try {
-      cpu.getVariable(1);
+      cpu.getVariable((char) 1);
       fail("accessing a local variable without a context should yield an exception");
     } catch (IllegalStateException expected) {
       assertEquals("no routine context set", expected.getMessage());
@@ -214,7 +219,7 @@ public class CpuTest {
 
     cpu.pushRoutineContext(routineInfo);
     try {      
-      cpu.getVariable(5); // accessing a non-existent variable
+      cpu.getVariable((char) 5); // accessing a non-existent variable
       fail("accessing a non-existent local variable should yield an exception");
     } catch (IllegalStateException expected) {
       assertEquals("access to non-existent local variable: 4",
@@ -225,18 +230,18 @@ public class CpuTest {
   @Test
   public void testSetLocalVariable() {
     try {
-      cpu.setVariable(1, (short) 4711);
+      cpu.setVariable(1, (char) 4711);
       fail("accessing a local variable without a context should yield an exception");
     } catch (IllegalStateException expected) {
       assertEquals("no routine context set", expected.getMessage());
     }
     cpu.pushRoutineContext(routineInfo);
-    cpu.setVariable(1, (short) 4711); // Local variable 0
-    assertEquals(4711, cpu.getVariable(1));
+    cpu.setVariable(1, (char) 4711); // Local variable 0
+    assertEquals(4711, cpu.getVariable((char) 1));
     
     // access a non-existent variable
     try {
-      cpu.setVariable(6, (short) 2312);
+      cpu.setVariable(6, (char) 2312);
       fail("accessing a non-existent local variable should yield an exception");
     } catch (IllegalStateException expected) { 
       assertEquals("access to non-existent local variable: 5",
@@ -247,7 +252,7 @@ public class CpuTest {
   @Test
   public void testPopRoutineContextIllegal() {
     try {
-      cpu.returnWith((short) 42);
+      cpu.returnWith((char) 42);
       fail();
     } catch (IllegalStateException expected) {
      
@@ -258,7 +263,7 @@ public class CpuTest {
   @Test
   public void testCallAndReturn() {
     // Setup the environment
-    cpu.setVariable(0, (short) 10); // write something on the stack
+    cpu.setVariable(0, (char) 10); // write something on the stack
     int oldSp = cpu.getSP();
     cpu.setPC(0x747);
     int returnAddress = 0x749;
@@ -276,17 +281,17 @@ public class CpuTest {
     assertEquals(oldSp, routineContext.getInvocationStackPointer());
     
     // simulate some stack pushes
-    cpu.setVariable(0, (short) 213);
-    cpu.setVariable(0, (short) 214);
-    cpu.setVariable(0, (short) 215);
+    cpu.setVariable(0, (char) 213);
+    cpu.setVariable(0, (char) 214);
+    cpu.setVariable(0, (char) 215);
 
     // Set the variable
     context.checking(new Expectations() {{
-      one (machine).writeSigned16(5004, (short) 42);
+      one (machine).writeUnsigned16(5004, (char) 42);
     }});
     
     assertNotSame(oldSp, cpu.getSP());
-    cpu.returnWith((short) 42);
+    cpu.returnWith((char) 42);
     assertEquals(returnAddress, cpu.getPC());
     assertEquals(oldSp, cpu.getSP());
   }  

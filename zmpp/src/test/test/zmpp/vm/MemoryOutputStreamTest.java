@@ -52,7 +52,7 @@ public class MemoryOutputStreamTest {
   public void testPrintVersion5() {
     context.checking(new Expectations() {{
       one (machine).getVersion(); will(returnValue(5));
-      one (machine).writeUnsigned8(4713, (short) 65);
+      one (machine).writeUnsigned8(4713, (char) 65);
       one (machine).writeUnsigned16(4711, (char) 1);
     }});
     // Selection has to be performed prior to printing - ALWAYS !!!

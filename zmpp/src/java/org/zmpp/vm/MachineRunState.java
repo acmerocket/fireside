@@ -32,7 +32,8 @@ public class MachineRunState {
    * Reading modes.
    */
   private enum ReadMode { NONE, READ_CHAR, READ_LINE };
-  private int time, routine;
+  private int time;
+  private char routine;
   private ReadMode readMode = ReadMode.NONE;
   
   /**
@@ -46,7 +47,7 @@ public class MachineRunState {
    * @param time the interrupt routine time interval
    * @param routine the packed interrupt routine address
    */
-  private MachineRunState(ReadMode readMode, int time, int routine) {
+  private MachineRunState(ReadMode readMode, int time, char routine) {
     this.readMode = readMode;
     this.time = time;
     this.routine = routine;
@@ -62,7 +63,7 @@ public class MachineRunState {
    * Returns the packed address of the interrupt address.
    * @return packed interrupt routine address
    */
-  public int getRoutine() { return routine; }
+  public char getRoutine() { return routine; }
   
   /**
    * Returns true if machine is waiting for input.
@@ -98,7 +99,7 @@ public class MachineRunState {
    * @param routine interrupt routine
    * @return machine run state object
    */
-  public static MachineRunState createReadLine(int time, int routine) {
+  public static MachineRunState createReadLine(int time, char routine) {
     return new MachineRunState(ReadMode.READ_LINE, time, routine);
   }
   
@@ -108,7 +109,7 @@ public class MachineRunState {
    * @param routine interrupt routine
    * @return machine state
    */
-  public static MachineRunState createReadChar(int time, int routine) {
+  public static MachineRunState createReadChar(int time, char routine) {
     return new MachineRunState(ReadMode.READ_CHAR, time, routine);
   }
 }

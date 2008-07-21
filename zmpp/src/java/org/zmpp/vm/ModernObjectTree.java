@@ -142,7 +142,7 @@ public class ModernObjectTree extends AbstractObjectTree {
    */
   protected int getNumPropertySizeBytes(final int propertyAddress) {
     // if bit 7 is set, there are two size bytes, one otherwise
-    final short first = getMemory().readUnsigned8(propertyAddress);
+    final char first = getMemory().readUnsigned8(propertyAddress);
     return ((first & 0x80) > 0) ? 2 : 1;
   }
 
@@ -177,7 +177,7 @@ public class ModernObjectTree extends AbstractObjectTree {
     }
     // The size byte is always the byte before the property data in any
     // version, so this is consistent
-    final short sizebyte =
+    final char sizebyte =
       memory.readUnsigned8(addressOfPropertyData - 1);
       
     // Bit 7 set => this is the second size byte

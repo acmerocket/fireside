@@ -63,19 +63,11 @@ public class MemorySectionTest {
   }
 
   @Test
-  public void testWriteShort() {
-    context.checking(new Expectations() {{
-      one (memory).writeSigned16(12 + 36, (short) 512);
-    }});
-    section.writeSigned16(12, (short) 512);
-  }
-
-  @Test
   public void testWriteUnsignedByte() {
     context.checking(new Expectations() {{
-      one (memory).writeUnsigned8(12 + 36, (short) 120);
+      one (memory).writeUnsigned8(12 + 36, (char) 120);
     }});
-    section.writeUnsigned8(12, (short) 120);
+    section.writeUnsigned8(12, (char) 120);
   }
   
   @Test

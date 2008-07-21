@@ -179,12 +179,12 @@ public class ExecutionControl {
    * @param routineAddress the routine address
    * @return the return value
    */
-  public short callInterrupt(final int routineAddress) {
+  public char callInterrupt(final char routineAddress) {
     interruptDidOutput = false;
     final int originalRoutineStackSize = machine.getRoutineContexts().size();
     final RoutineContext routineContext =  machine.call(routineAddress,
         machine.getPC(),
-        new short[0], (short) RoutineContext.DISCARD_RESULT);
+        new char[0], (short) RoutineContext.DISCARD_RESULT);
     
     for (;;) {
       final Instruction instr =

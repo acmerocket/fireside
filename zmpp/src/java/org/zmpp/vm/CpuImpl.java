@@ -79,7 +79,7 @@ public class CpuImpl implements Cpu {
     
     if (machine.getVersion() == 6) {
       // Call main function in version 6
-      call(machine.getFileHeader().getProgramStart(), 0, new short[0],
+      call(machine.getFileHeader().getProgramStart(), 0, new char[0],
            (short) 0);     
     } else {
       programCounter = machine.getFileHeader().getProgramStart();
@@ -135,7 +135,7 @@ public class CpuImpl implements Cpu {
     } else {
       // FALSE is defined as 0, TRUE as 1, so simply return the offset
       // since we do not have negative offsets
-      returnWith(branchOffset);
+      returnWith((char) branchOffset);
     }
   }
 
@@ -174,46 +174,44 @@ public class CpuImpl implements Cpu {
   /**
    * {@inheritDoc}
    */
-  public short getStackTop() {
-    if (stack.size() > 0) {
-      return stack.top();
-    }
-    return -1;
+  public char getStackTop() {
+    if (stack.size() > 0) { return stack.top(); }
+    throw new java.lang.ArrayIndexOutOfBoundsException("Stack underflow error");
   }
   
   /**
    * {@inheritDoc}
    */
-  public void setStackTop(final short value) {
+  public void setStackTop(final char value) {
     stack.replaceTopElement(value);
   }
   
   /**
    * {@inheritDoc}
    */
-  public short getStackElement(final int index) {    
+  public char getStackElement(final int index) {    
     return stack.getValueAt(index);
   }
   
   /**
    * {@inheritDoc}
    */
-  public short popStack(int userstackAddress) {
-    return userstackAddress == 0 ? getVariable(0) :
+  public char popStack(int userstackAddress) {
+    return userstackAddress == 0 ? getVariable((char) 0) :
       popUserStack(userstackAddress);
   }
 
-  private short popUserStack(int userstackAddress) {
+  private char popUserStack(int userstackAddress) {
     int numFreeSlots = machine.readUnsigned16(userstackAddress);
     numFreeSlots++;
     machine.writeUnsigned16(userstackAddress, toUnsigned16(numFreeSlots));
-    return machine.readSigned16(userstackAddress + (numFreeSlots * 2));
+    return machine.readUnsigned16(userstackAddress + (numFreeSlots * 2));
   }
   
   /**
    * {@inheritDoc}
    */
-  public boolean pushStack(int userstackAddress, short value) {
+  public boolean pushStack(int userstackAddress, char value) {
     if (userstackAddress == 0) {
       setVariable(0, value);
       return true;
@@ -222,10 +220,10 @@ public class CpuImpl implements Cpu {
     }    
   }
   
-  private boolean pushUserStack(int userstackAddress, short value) {
+  private boolean pushUserStack(int userstackAddress, char value) {
     int numFreeSlots = machine.readUnsigned16(userstackAddress);
     if (numFreeSlots > 0) {
-      machine.writeSigned16(userstackAddress + (numFreeSlots * 2), value);
+      machine.writeUnsigned16(userstackAddress + (numFreeSlots * 2), value);
       machine.writeUnsigned16(userstackAddress, toUnsigned16(numFreeSlots - 1));
       return true;
     }
@@ -235,7 +233,7 @@ public class CpuImpl implements Cpu {
   /**
    * {@inheritDoc}
    */
-  public short getVariable(final int variableNumber) {
+  public char getVariable(final char variableNumber) {
     final Cpu.VariableType varType = getVariableType(variableNumber);
     if (varType == Cpu.VariableType.STACK) {
       if (stack.size() == getInvocationStackPointer()) {
@@ -250,7 +248,7 @@ public class CpuImpl implements Cpu {
       checkLocalVariableAccess(localVarNumber);
       return getCurrentRoutineContext().getLocalVariable(localVarNumber);
     } else { // GLOBAL
-      return machine.readSigned16(globalsAddress
+      return machine.readUnsigned16(globalsAddress
           + (getGlobalVariableNumber(variableNumber) * 2));
     }
   }
@@ -268,7 +266,7 @@ public class CpuImpl implements Cpu {
   /**
    * {@inheritDoc}
    */
-  public void setVariable(final int variableNumber, final short value) {
+  public void setVariable(final int variableNumber, final char value) {
     final Cpu.VariableType varType = getVariableType(variableNumber);
     if (varType == Cpu.VariableType.STACK) {
       stack.push(value);
@@ -277,7 +275,7 @@ public class CpuImpl implements Cpu {
       checkLocalVariableAccess(localVarNumber);
       getCurrentRoutineContext().setLocalVariable(localVarNumber, value);
     } else {
-      machine.writeSigned16(globalsAddress
+      machine.writeUnsigned16(globalsAddress
           + (getGlobalVariableNumber(variableNumber) * 2), value);
     }
   }
@@ -309,7 +307,7 @@ public class CpuImpl implements Cpu {
   /**
    * {@inheritDoc}
    */
-  public void returnWith(final short returnValue) {
+  public void returnWith(final char returnValue) {
     if (routineContextStack.size() > 0) {
       final RoutineContext popped =
         routineContextStack.remove(routineContextStack.size() - 1);
@@ -319,8 +317,7 @@ public class CpuImpl implements Cpu {
       setSP(popped.getInvocationStackPointer());
       setPC(popped.getReturnAddress());
       final int returnVariable = popped.getReturnVariable();
-      if (returnVariable != RoutineContext.DISCARD_RESULT) {
-        
+      if (returnVariable != RoutineContext.DISCARD_RESULT) {        
         setVariable(returnVariable, returnValue);
       }
     } else {
@@ -351,7 +348,6 @@ public class CpuImpl implements Cpu {
   public void setRoutineContexts(final List<RoutineContext> contexts) {
     routineContextStack.clear();
     for (RoutineContext context : contexts) {
-      
       routineContextStack.add(context);
     }
   }
@@ -366,7 +362,7 @@ public class CpuImpl implements Cpu {
   }
   
   public RoutineContext call(final int packedRoutineAddress,
-      final int returnAddress, final short[] args, final int returnVariable) {
+      final int returnAddress, final char[] args, final int returnVariable) {
     
     final int routineAddress =
       unpackAddress(packedRoutineAddress, true);
@@ -381,11 +377,8 @@ public class CpuImpl implements Cpu {
     
     // Only if this instruction stores a result
     if (returnVariable == RoutineContext.DISCARD_RESULT) {
-      
       routineContext.setReturnVariable(RoutineContext.DISCARD_RESULT);
-      
     } else {
-      
       routineContext.setReturnVariable(returnVariable);
     }      
     
@@ -396,7 +389,6 @@ public class CpuImpl implements Cpu {
                                    numArgs);
     
     for (int i = 0; i < numToCopy; i++) {
-      
       routineContext.setLocalVariable(i, args[i]);
     }
     
@@ -423,21 +415,20 @@ public class CpuImpl implements Cpu {
    */
   private RoutineContext decodeRoutine(final int routineAddress) {
     final int numLocals = machine.readUnsigned8(routineAddress);
-    final short[] locals = new short[numLocals];
+    final char[] locals = new char[numLocals];
     int currentAddress = routineAddress + 1;
     
     if (machine.getVersion() <= 4) {
       // Only story files <= 4 actually store default values here,
       // after V5 they are assumed as being 0 (standard document 1.0, S.5.2.1) 
       for (int i = 0; i < numLocals; i++) {
-        locals[i] = machine.readSigned16(currentAddress);
+        locals[i] = machine.readUnsigned16(currentAddress);
         currentAddress += 2;
       }
     }
     final RoutineContext info = new RoutineContext(currentAddress, numLocals);
     
     for (int i = 0; i < numLocals; i++) {
-      
       info.setLocalVariable(i, locals[i]);
     }
     return info;

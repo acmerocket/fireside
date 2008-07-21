@@ -59,16 +59,11 @@ public class MemoryTest {
   }
   
   @Test
-  public void testGetShortGeneral() {
-    assertEquals(-1, memory.readSigned16(0x04));
-  }
-  
-  @Test
   public void testWriteUnsignedByte() {
-    memory.writeUnsigned8(0x02, (short) 0xff);
+    memory.writeUnsigned8(0x02, (char) 0xff);
     assertEquals(0xff, memory.readUnsigned8(0x02));
     
-    memory.writeUnsigned8(0x03, (short) 0x32);
+    memory.writeUnsigned8(0x03, (char) 0x32);
     assertEquals(0x32, memory.readUnsigned8(0x03));
   }
   

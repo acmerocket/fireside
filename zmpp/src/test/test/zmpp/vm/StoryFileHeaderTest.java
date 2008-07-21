@@ -54,7 +54,7 @@ public class StoryFileHeaderTest {
   @Test
   public void testGetVersion() {
     context.checking(new Expectations() {{
-      atLeast(1).of (memory).readUnsigned8(0x00); will(returnValue((short) 3));
+      atLeast(1).of (memory).readUnsigned8(0x00); will(returnValue((char) 3));
     }});
     assertEquals(3, fileHeader.getVersion());
   }
@@ -118,12 +118,12 @@ public class StoryFileHeaderTest {
   @Test
   public void testGetSerialNumber() {
     context.checking(new Expectations() {{
-      one (memory).readUnsigned8(0x012); will(returnValue((short) '0'));
-      one (memory).readUnsigned8(0x013); will(returnValue((short) '5'));
-      one (memory).readUnsigned8(0x014); will(returnValue((short) '1'));
-      one (memory).readUnsigned8(0x015); will(returnValue((short) '2'));
-      one (memory).readUnsigned8(0x016); will(returnValue((short) '0'));
-      one (memory).readUnsigned8(0x017); will(returnValue((short) '9'));
+      one (memory).readUnsigned8(0x012); will(returnValue('0'));
+      one (memory).readUnsigned8(0x013); will(returnValue('5'));
+      one (memory).readUnsigned8(0x014); will(returnValue('1'));
+      one (memory).readUnsigned8(0x015); will(returnValue('2'));
+      one (memory).readUnsigned8(0x016); will(returnValue('0'));
+      one (memory).readUnsigned8(0x017); will(returnValue('9'));
     }});
     assertEquals("051209", fileHeader.getSerialNumber());
   }
@@ -139,7 +139,7 @@ public class StoryFileHeaderTest {
   @Test
   public void testGetFileLengthV3() {
     context.checking(new Expectations() {{
-      one (memory).readUnsigned8(0x00); will(returnValue((short) 3));
+      one (memory).readUnsigned8(0x00); will(returnValue((char) 3));
       one (memory).readUnsigned16(0x1a); will(returnValue((char) 4718));
     }});
     assertEquals(4718 * 2, fileHeader.getFileLength());
@@ -148,7 +148,7 @@ public class StoryFileHeaderTest {
   @Test
   public void testGetFileLengthV4() {
     context.checking(new Expectations() {{
-      atLeast(1).of (memory).readUnsigned8(0x00); will(returnValue((short) 4));
+      atLeast(1).of (memory).readUnsigned8(0x00); will(returnValue((char) 4));
       one (memory).readUnsigned16(0x1a); will(returnValue((char) 4718));
     }});
     assertEquals(4718 * 4, fileHeader.getFileLength());
@@ -157,7 +157,7 @@ public class StoryFileHeaderTest {
   @Test
   public void testGetFileLengthV8() {
     context.checking(new Expectations() {{
-      atLeast(1).of (memory).readUnsigned8(0x00); will(returnValue((short) 8));
+      atLeast(1).of (memory).readUnsigned8(0x00); will(returnValue((char) 8));
       one (memory).readUnsigned16(0x1a); will(returnValue((char) 4718));
     }});
     assertEquals(4718 * 8, fileHeader.getFileLength());
@@ -174,7 +174,7 @@ public class StoryFileHeaderTest {
   @Test
   public void testSetScreenHeight() {
     context.checking(new Expectations() {{
-      one (memory).writeUnsigned8(0x20, (short) 255);
+      one (memory).writeUnsigned8(0x20, (char) 255);
     }});
     fileHeader.setScreenHeight(255);
   }
@@ -190,7 +190,7 @@ public class StoryFileHeaderTest {
   @Test
   public void testGetScreenWidth() {
     context.checking(new Expectations() {{
-      one (memory).readUnsigned8(0x21); will(returnValue((short) 82));
+      one (memory).readUnsigned8(0x21); will(returnValue((char) 82));
     }});
     assertEquals(82, fileHeader.getScreenWidth());
   }
@@ -198,7 +198,7 @@ public class StoryFileHeaderTest {
   @Test
   public void testSetScreenWidth() {
     context.checking(new Expectations() {{
-      one (memory).writeUnsigned8(0x21, (short) 82);
+      one (memory).writeUnsigned8(0x21, (char) 82);
     }});
     fileHeader.setScreenWidth(82);
   }  
@@ -215,8 +215,8 @@ public class StoryFileHeaderTest {
   public void testSetInterpreterVersionV5() {
     // Story file version 4 or 5: version number as string
     context.checking(new Expectations() {{
-      atLeast(1).of (memory).readUnsigned8(0x00); will(returnValue((short) 5));
-      one (memory).writeUnsigned8(0x1f, (short) '4');
+      atLeast(1).of (memory).readUnsigned8(0x00); will(returnValue((char) 5));
+      one (memory).writeUnsigned8(0x1f, '4');
     }});
     fileHeader.setInterpreterVersion(4);
   }
@@ -225,8 +225,8 @@ public class StoryFileHeaderTest {
   public void testSetInterpreterVersionV8() {
     // Story file version > 5: version number as value
     context.checking(new Expectations() {{
-      atLeast(1).of (memory).readUnsigned8(0x00); will(returnValue((short) 8));
-      one (memory).writeUnsigned8(0x1f, (short) 4);
+      atLeast(1).of (memory).readUnsigned8(0x00); will(returnValue((char) 8));
+      one (memory).writeUnsigned8(0x1f, (char) 4);
     }});
     fileHeader.setInterpreterVersion(4);
   }
@@ -234,7 +234,7 @@ public class StoryFileHeaderTest {
   @Test
   public void testSetInterpreterNumber() {
     context.checking(new Expectations() {{
-      one (memory).writeUnsigned8(0x1e, (short) 3);
+      one (memory).writeUnsigned8(0x1e, (char) 3);
     }});
     fileHeader.setInterpreterNumber(3);
   }
@@ -252,9 +252,9 @@ public class StoryFileHeaderTest {
   @Test
   public void testSetTranscripting() {
     context.checking(new Expectations() {{
-      atLeast(1).of (memory).readUnsigned8(0x10); will(returnValue((short) 0));
-      one (memory).writeUnsigned8(0x10, (short) 1);
-      one (memory).writeUnsigned8(0x10, (short) 0);
+      atLeast(1).of (memory).readUnsigned8(0x10); will(returnValue((char) 0));
+      one (memory).writeUnsigned8(0x10, (char) 1);
+      one (memory).writeUnsigned8(0x10, (char) 0);
     }});
     fileHeader.setEnabled(Attribute.TRANSCRIPTING, true);
     fileHeader.setEnabled(Attribute.TRANSCRIPTING, false);
@@ -264,7 +264,7 @@ public class StoryFileHeaderTest {
   public void testIsTranscriptingEnabled() {
     context.checking(new Expectations() {{
       atLeast(1).of (memory).readUnsigned8(0x10);
-        will(onConsecutiveCalls(returnValue((short) 1), returnValue((short) 0)));
+        will(onConsecutiveCalls(returnValue((char) 1), returnValue((char) 0)));
     }});
     assertTrue(fileHeader.isEnabled(Attribute.TRANSCRIPTING));
     assertFalse(fileHeader.isEnabled(Attribute.TRANSCRIPTING));
@@ -273,9 +273,9 @@ public class StoryFileHeaderTest {
   @Test
   public void testSetForceFixedFont() {
     context.checking(new Expectations() {{
-      atLeast(1).of (memory).readUnsigned8(0x10); will(returnValue((short) 1));
-      one (memory).writeUnsigned8(0x10, (short) 3);
-      one (memory).writeUnsigned8(0x10, (short) 1);
+      atLeast(1).of (memory).readUnsigned8(0x10); will(returnValue((char) 1));
+      one (memory).writeUnsigned8(0x10, (char) 3);
+      one (memory).writeUnsigned8(0x10, (char) 1);
     }});
     fileHeader.setEnabled(Attribute.FORCE_FIXED_FONT, true);
     fileHeader.setEnabled(Attribute.FORCE_FIXED_FONT, false);
@@ -285,7 +285,7 @@ public class StoryFileHeaderTest {
   public void testIsForceFixedFont() {
     context.checking(new Expectations() {{
       atLeast(1).of (memory).readUnsigned8(0x10);
-        will(onConsecutiveCalls(returnValue((short) 6), returnValue((short) 5)));
+        will(onConsecutiveCalls(returnValue((char) 6), returnValue((char) 5)));
     }});
     assertTrue(fileHeader.isEnabled(Attribute.FORCE_FIXED_FONT));
     assertFalse(fileHeader.isEnabled(Attribute.FORCE_FIXED_FONT));
@@ -295,9 +295,9 @@ public class StoryFileHeaderTest {
   public void testSetSupportsTimedInput() {
     context.checking(new Expectations() {{
       atLeast(1).of (memory).readUnsigned8(0x01);
-        will(onConsecutiveCalls(returnValue((short) 3), returnValue((short) 131)));
-      one (memory).writeUnsigned8(0x01, (short) 131);
-      one (memory).writeUnsigned8(0x01, (short) 3);
+        will(onConsecutiveCalls(returnValue((char) 3), returnValue((char) 131)));
+      one (memory).writeUnsigned8(0x01, (char) 131);
+      one (memory).writeUnsigned8(0x01, (char) 3);
     }});
     fileHeader.setEnabled(Attribute.SUPPORTS_TIMED_INPUT, true);
     fileHeader.setEnabled(Attribute.SUPPORTS_TIMED_INPUT, false);
@@ -307,7 +307,7 @@ public class StoryFileHeaderTest {
   public void testIsScoreGame() {
     context.checking(new Expectations() {{
       atLeast(1).of (memory).readUnsigned8(0x01);
-        will(onConsecutiveCalls(returnValue((short) 5), returnValue((short) 7)));
+        will(onConsecutiveCalls(returnValue((char) 5), returnValue((char) 7)));
     }});
     assertTrue(fileHeader.isEnabled(Attribute.SCORE_GAME));
     assertFalse(fileHeader.isEnabled(Attribute.SCORE_GAME));
@@ -317,9 +317,9 @@ public class StoryFileHeaderTest {
   public void testSetSupportsFixed() {
     context.checking(new Expectations() {{
       atLeast(1).of (memory).readUnsigned8(0x01);
-        will(onConsecutiveCalls(returnValue((short) 1), returnValue((short) 17)));
-      one (memory).writeUnsigned8(0x01, (short) 17);
-      one (memory).writeUnsigned8(0x01, (short) 1);
+        will(onConsecutiveCalls(returnValue((char) 1), returnValue((char) 17)));
+      one (memory).writeUnsigned8(0x01, (char) 17);
+      one (memory).writeUnsigned8(0x01, (char) 1);
     }});
     fileHeader.setEnabled(Attribute.SUPPORTS_FIXED_FONT, true);
     fileHeader.setEnabled(Attribute.SUPPORTS_FIXED_FONT, false);
@@ -329,9 +329,9 @@ public class StoryFileHeaderTest {
   public void testSetSupportsBold() {
     context.checking(new Expectations() {{
       atLeast(1).of (memory).readUnsigned8(0x01);
-        will(onConsecutiveCalls(returnValue((short) 1), returnValue((short) 5)));
-      one (memory).writeUnsigned8(0x01, (short) 5);
-      one (memory).writeUnsigned8(0x01, (short) 1);
+        will(onConsecutiveCalls(returnValue((char) 1), returnValue((char) 5)));
+      one (memory).writeUnsigned8(0x01, (char) 5);
+      one (memory).writeUnsigned8(0x01, (char) 1);
     }});
     fileHeader.setEnabled(Attribute.SUPPORTS_BOLD, true);
     fileHeader.setEnabled(Attribute.SUPPORTS_BOLD, false);
@@ -341,9 +341,9 @@ public class StoryFileHeaderTest {
   public void testSetSupportsItalic() {    
     context.checking(new Expectations() {{
       atLeast(1).of (memory).readUnsigned8(0x01);
-        will(onConsecutiveCalls(returnValue((short) 1), returnValue((short) 9)));
-      one (memory).writeUnsigned8(0x01, (short) 9);
-      one (memory).writeUnsigned8(0x01, (short) 1);
+        will(onConsecutiveCalls(returnValue((char) 1), returnValue((char) 9)));
+      one (memory).writeUnsigned8(0x01, (char) 9);
+      one (memory).writeUnsigned8(0x01, (char) 1);
     }});
     fileHeader.setEnabled(Attribute.SUPPORTS_ITALIC, true);
     fileHeader.setEnabled(Attribute.SUPPORTS_ITALIC, false);
@@ -353,9 +353,9 @@ public class StoryFileHeaderTest {
   public void testSetSupportsScreenSplitting() {
     context.checking(new Expectations() {{
       atLeast(1).of (memory).readUnsigned8(0x01);
-        will(onConsecutiveCalls(returnValue((short) 1), returnValue((short) 33)));
-      one (memory).writeUnsigned8(0x01, (short) 33);
-      one (memory).writeUnsigned8(0x01, (short) 1);
+        will(onConsecutiveCalls(returnValue((char) 1), returnValue((char) 33)));
+      one (memory).writeUnsigned8(0x01, (char) 33);
+      one (memory).writeUnsigned8(0x01, (char) 1);
     }});
     fileHeader.setEnabled(Attribute.SUPPORTS_SCREEN_SPLITTING, true);
     fileHeader.setEnabled(Attribute.SUPPORTS_SCREEN_SPLITTING, false);
@@ -365,9 +365,9 @@ public class StoryFileHeaderTest {
   public void testSetSupportsStatusLine() {
     context.checking(new Expectations() {{
       atLeast(1).of (memory).readUnsigned8(0x01);
-        will(onConsecutiveCalls(returnValue((short) 17), returnValue((short) 1)));
-      one (memory).writeUnsigned8(0x01, (short) 1);
-      one (memory).writeUnsigned8(0x01, (short) 17);
+        will(onConsecutiveCalls(returnValue((char) 17), returnValue((char) 1)));
+      one (memory).writeUnsigned8(0x01, (char) 1);
+      one (memory).writeUnsigned8(0x01, (char) 17);
     }});
     fileHeader.setEnabled(Attribute.SUPPORTS_STATUSLINE, true);
     fileHeader.setEnabled(Attribute.SUPPORTS_STATUSLINE, false);
@@ -377,9 +377,9 @@ public class StoryFileHeaderTest {
   public void testSetDefaultFontIsVariable() {
     context.checking(new Expectations() {{
       atLeast(1).of (memory).readUnsigned8(0x01);
-        will(onConsecutiveCalls(returnValue((short) 1), returnValue((short) 65)));
-      one (memory).writeUnsigned8(0x01, (short) 65);
-      one (memory).writeUnsigned8(0x01, (short) 1);
+        will(onConsecutiveCalls(returnValue((char) 1), returnValue((char) 65)));
+      one (memory).writeUnsigned8(0x01, (char) 65);
+      one (memory).writeUnsigned8(0x01, (char) 1);
     }});
     fileHeader.setEnabled(Attribute.DEFAULT_FONT_IS_VARIABLE, true);
     fileHeader.setEnabled(Attribute.DEFAULT_FONT_IS_VARIABLE, false);
@@ -389,7 +389,7 @@ public class StoryFileHeaderTest {
   public void testIsDefaultFontVariable() {
     context.checking(new Expectations() {{
       atLeast(1).of (memory).readUnsigned8(0x01);
-        will(onConsecutiveCalls(returnValue((short) 69), returnValue((short) 7)));
+        will(onConsecutiveCalls(returnValue((char) 69), returnValue((char) 7)));
     }});
     assertTrue(fileHeader.isEnabled(Attribute.DEFAULT_FONT_IS_VARIABLE));
     assertFalse(fileHeader.isEnabled(Attribute.DEFAULT_FONT_IS_VARIABLE));
@@ -399,9 +399,9 @@ public class StoryFileHeaderTest {
   public void testSetSupportsColors() {
     context.checking(new Expectations() {{
       atLeast(1).of (memory).readUnsigned8(0x01);
-        will(onConsecutiveCalls(returnValue((short) 4), returnValue((short) 5)));
-      one (memory).writeUnsigned8(0x01, (short) 5);
-      one (memory).writeUnsigned8(0x01, (short) 4);
+        will(onConsecutiveCalls(returnValue((char) 4), returnValue((char) 5)));
+      one (memory).writeUnsigned8(0x01, (char) 5);
+      one (memory).writeUnsigned8(0x01, (char) 4);
     }});
     fileHeader.setEnabled(Attribute.SUPPORTS_COLOURS, true);
     fileHeader.setEnabled(Attribute.SUPPORTS_COLOURS, false);
@@ -418,8 +418,8 @@ public class StoryFileHeaderTest {
   @Test
   public void testSetStandardRevision() {  
     context.checking(new Expectations() {{
-      one (memory).writeUnsigned8(0x32, (short) 1);
-      one (memory).writeUnsigned8(0x33, (short) 2);
+      one (memory).writeUnsigned8(0x32, (char) 1);
+      one (memory).writeUnsigned8(0x33, (char) 2);
     }});
     fileHeader.setStandardRevision(1, 2);
   }
@@ -427,8 +427,8 @@ public class StoryFileHeaderTest {
   @Test
   public void testSetFontWidthV5() { 
     context.checking(new Expectations() {{
-      one (memory).readUnsigned8(0x00); will(returnValue((short) 5));
-      one (memory).writeUnsigned8(0x26, (short) 1);
+      one (memory).readUnsigned8(0x00); will(returnValue((char) 5));
+      one (memory).writeUnsigned8(0x26, (char) 1);
     }});
     fileHeader.setFontWidth(1);
   }
@@ -436,8 +436,8 @@ public class StoryFileHeaderTest {
   @Test
   public void testSetFontWidthV6() {
     context.checking(new Expectations() {{
-      one (memory).readUnsigned8(0x00); will(returnValue((short) 6));
-      one (memory).writeUnsigned8(0x27, (short) 1);
+      one (memory).readUnsigned8(0x00); will(returnValue((char) 6));
+      one (memory).writeUnsigned8(0x27, (char) 1);
     }});
     fileHeader.setFontWidth(1);
   }
@@ -446,8 +446,8 @@ public class StoryFileHeaderTest {
   @Test
   public void testSetFontHeightV5() {
     context.checking(new Expectations() {{
-      one (memory).readUnsigned8(0x00); will(returnValue((short) 5));
-      one (memory).writeUnsigned8(0x27, (short) 2);
+      one (memory).readUnsigned8(0x00); will(returnValue((char) 5));
+      one (memory).writeUnsigned8(0x27, (char) 2);
     }});
     fileHeader.setFontHeight(2);
   }
@@ -455,8 +455,8 @@ public class StoryFileHeaderTest {
   @Test
   public void testSetFontHeightV6() {
     context.checking(new Expectations() {{
-      one (memory).readUnsigned8(0x00); will(returnValue((short) 6));
-      one (memory).writeUnsigned8(0x26, (short) 2);
+      one (memory).readUnsigned8(0x00); will(returnValue((char) 6));
+      one (memory).writeUnsigned8(0x26, (char) 2);
     }});
     fileHeader.setFontHeight(2);
   }
@@ -464,7 +464,7 @@ public class StoryFileHeaderTest {
   @Test
   public void testUseMouseFalse() {
     context.checking(new Expectations() {{
-      one (memory).readUnsigned8(0x10); will(returnValue((short) 2));
+      one (memory).readUnsigned8(0x10); will(returnValue((char) 2));
     }});
     assertFalse(fileHeader.isEnabled(Attribute.USE_MOUSE));    
   }
@@ -472,7 +472,7 @@ public class StoryFileHeaderTest {
   @Test
   public void testUseMouseTrue() {
     context.checking(new Expectations() {{
-      one (memory).readUnsigned8(0x10); will(returnValue((short) 63));
+      one (memory).readUnsigned8(0x10); will(returnValue((char) 63));
     }});
     assertTrue(fileHeader.isEnabled(Attribute.USE_MOUSE));    
   }

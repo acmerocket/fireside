@@ -188,7 +188,7 @@ public final class DefaultZCharDecoder implements ZCharDecoder {
    * @param zword the zword
    * @return true if zword is the last word, false, otherwise
    */
-  public static boolean isEndWord(final short zword) {
+  public static boolean isEndWord(final char zword) {
     return (zword & 0x8000) > 0;
   }
   
@@ -203,12 +203,12 @@ public final class DefaultZCharDecoder implements ZCharDecoder {
    */
   public static char[] extractZbytes(final Memory memory,
                                       final int address, final int length) {
-    short zword = 0;
+    char zword = 0;
     int currentAddr = address;
-    final List<short[]> byteList = new ArrayList<short[]>();
+    final List<char[]> byteList = new ArrayList<char[]>();
     
     do {
-      zword = memory.readSigned16(currentAddr);
+      zword = memory.readUnsigned16(currentAddr);
       byteList.add(extractBytes(zword));
       currentAddr += 2; // increment pointer
       
@@ -221,8 +221,8 @@ public final class DefaultZCharDecoder implements ZCharDecoder {
     
     final char[] result = new char[byteList.size() * 3];
     int i = 0;
-    for (short[] triplet : byteList) {
-      for (short b : triplet) {
+    for (char[] triplet : byteList) {
+      for (char b : triplet) {
         result[i++] = (char) b;
       }
     }
@@ -236,12 +236,12 @@ public final class DefaultZCharDecoder implements ZCharDecoder {
    * @return an array of three bytes containing the three 5-bit ZSCII characters
    * encoded in the word
    */
-  private static short[] extractBytes(final short zword) {
+  private static char[] extractBytes(final char zword) {
     
-    final short[] result = new short[3];
-    result[2] = (short) (zword & 0x1f);
-    result[1] = (short) ((zword >> 5) & 0x1f);
-    result[0] = (short) ((zword >> 10) & 0x1f);
+    final char[] result = new char[3];
+    result[2] = (char) (zword & 0x1f);
+    result[1] = (char) ((zword >> 5) & 0x1f);
+    result[0] = (char) ((zword >> 10) & 0x1f);
     return result;
   }
   

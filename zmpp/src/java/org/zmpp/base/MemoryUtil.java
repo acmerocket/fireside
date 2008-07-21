@@ -57,10 +57,10 @@ public class MemoryUtil {
    */
   public static void writeUnsigned32(Memory memory, final int address,
                                      final long value) {
-    memory.writeUnsigned8(address, (short) ((value & 0xff000000) >> 24));
-    memory.writeUnsigned8(address + 1, (short) ((value & 0x00ff0000) >> 16));
-    memory.writeUnsigned8(address + 2, (short) ((value & 0x0000ff00) >> 8));
-    memory.writeUnsigned8(address + 3, (short) (value & 0x000000ff));
+    memory.writeUnsigned8(address, (char) ((value & 0xff000000) >> 24));
+    memory.writeUnsigned8(address + 1, (char) ((value & 0x00ff0000) >> 16));
+    memory.writeUnsigned8(address + 2, (char) ((value & 0x0000ff00) >> 8));
+    memory.writeUnsigned8(address + 3, (char) (value & 0x000000ff));
   }
   
   /**

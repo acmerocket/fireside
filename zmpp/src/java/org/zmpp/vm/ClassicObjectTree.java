@@ -91,7 +91,7 @@ public class ClassicObjectTree extends AbstractObjectTree {
    */
   public void setChild(final int objectNum, final int child) {
 	getMemory().writeUnsigned8(getObjectAddress(objectNum) + OFFSET_CHILD,
-      (short) (child & 0xff));
+      (char) (child & 0xff));
   }
 
   /**
@@ -107,7 +107,7 @@ public class ClassicObjectTree extends AbstractObjectTree {
    */
   public void setParent(final int objectNum, final int parent) {
 	getMemory().writeUnsigned8(getObjectAddress(objectNum) + OFFSET_PARENT,
-      (short) (parent & 0xff));
+      (char) (parent & 0xff));
   }
 
   /**
@@ -123,7 +123,7 @@ public class ClassicObjectTree extends AbstractObjectTree {
    */
   public void setSibling(final int objectNum, final int sibling) {
 	getMemory().writeUnsigned8(getObjectAddress(objectNum) + OFFSET_SIBLING,
-      (short) (sibling & 0xff));
+      (char) (sibling & 0xff));
   }
 
   /**
@@ -171,7 +171,7 @@ public class ClassicObjectTree extends AbstractObjectTree {
 
     // The size byte is always the byte before the property data in any
     // version, so this is consistent
-    final short sizebyte =
+    final char sizebyte =
       memaccess.readUnsigned8(addressOfPropertyData - 1);
     
     return sizebyte / 32 + 1;

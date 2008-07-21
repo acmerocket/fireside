@@ -89,7 +89,7 @@ public interface Cpu {
    * 
    * @return the stack top element
    */
-  short getStackTop();
+  char getStackTop();
   
   /**
    * Sets the value of the element at the top of the stack without
@@ -97,7 +97,7 @@ public interface Cpu {
    * 
    * @param value the value to set
    */
-  void setStackTop(short value);
+  void setStackTop(char value);
   
   /**
    * Returns the evaluation stack element at the specified index.
@@ -105,7 +105,7 @@ public interface Cpu {
    * @param index an index
    * @return the stack value at the specified index
    */
-  short getStackElement(int index);
+  char getStackElement(int index);
   
   /**
    * Pushes the specified value on the user stack.
@@ -114,7 +114,7 @@ public interface Cpu {
    * @param value the value to push
    * @return true if operation was ok, false if overflow
    */
-  boolean pushStack(int userstackAddress, short value);
+  boolean pushStack(int userstackAddress, char value);
   
   /**
    * Pops the specified value from the user stack.
@@ -122,7 +122,7 @@ public interface Cpu {
    * @param userstackAddress the address of the user stack
    * @return the popped value
    */
-  short popStack(int userstackAddress);
+  char popStack(int userstackAddress);
   
   // ********************************************************************
   // ***** Variable access
@@ -137,7 +137,7 @@ public interface Cpu {
    * @throws IllegalStateException if a local variable is accessed without
    * a subroutine context or if a non-existent local variable is accessed
    */
-  short getVariable(int variableNumber);
+  char getVariable(char variableNumber);
   
   /**
    * Sets the value of the specified variable. If the stack pointer is written
@@ -148,7 +148,7 @@ public interface Cpu {
    * @throws IllegalStateException if a local variable is accessed without
    * a subroutine context or if a non-existent local variable is accessed
    */
-  void setVariable(int variableNumber, short value);
+  void setVariable(int variableNumber, char value);
 
   // ********************************************************************
   // ***** Routine stack frames
@@ -162,7 +162,7 @@ public interface Cpu {
    * @param returnValue the return value
    * @throws IllegalStateException if no RoutineContext exists
    */
-  void returnWith(short returnValue);
+  void returnWith(char returnValue);
   
   /**
    * Returns the state of the current routine context stack as a non-
@@ -198,6 +198,6 @@ public interface Cpu {
    * @param returnVariable the return variable or DISCARD_RESULT
    * @return the routine context created
    */
-  RoutineContext call(int routineAddress, int returnAddress, short[] args,
+  RoutineContext call(int routineAddress, int returnAddress, char[] args,
                       int returnVariable);
 }

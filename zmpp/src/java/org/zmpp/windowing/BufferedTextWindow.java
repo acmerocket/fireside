@@ -39,8 +39,8 @@ public class BufferedTextWindow {
   
   public boolean isBuffered() { return isBuffered; }
   public void setBuffered(boolean flag) { isBuffered = flag; }
-  public int setCurrentFont(int font) {
-    int previousFont = currentAnnotation.getFont();
+  public char setCurrentFont(char font) {
+    char previousFont = currentAnnotation.getFont();
     startNewAnnotatedRun(currentAnnotation.deriveFont(font));
     return previousFont;
   }

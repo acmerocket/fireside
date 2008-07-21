@@ -30,7 +30,7 @@ package org.zmpp.vmutil;
  */
 public final class FastShortStack {
 
-  private short[] values;
+  private char[] values;
   private int stackpointer;
   
   /**
@@ -38,7 +38,7 @@ public final class FastShortStack {
    * @param size the stack size
    */
   public FastShortStack(final int size) {
-    values = new short[size];
+    values = new char[size];
     stackpointer = 0;
   }
   
@@ -52,7 +52,7 @@ public final class FastShortStack {
    * Pushes a value on the stack and increases the stack pointer.
    * @param value the value
    */
-  public void push(final short value) {
+  public void push(final char value) {
     values[stackpointer++] = value;
   }
   
@@ -60,13 +60,13 @@ public final class FastShortStack {
    * Returns the top value of the stack without modifying the stack pointer.
    * @return the top value
    */
-  public short top() { return values[stackpointer - 1]; }
+  public char top() { return values[stackpointer - 1]; }
   
   /**
    * Replaces the top element with the specified value.
    * @param value the value to replace
    */
-  public void replaceTopElement(final short value) {
+  public void replaceTopElement(final char value) {
     values[stackpointer - 1] = value;
   }
   
@@ -81,7 +81,7 @@ public final class FastShortStack {
    * Returns the top value of the stack and decreases the stack pointer.
    * @return the top value
    */
-  public short pop() {
+  public char pop() {
     return values[--stackpointer];
   }
   
@@ -90,5 +90,5 @@ public final class FastShortStack {
    * @param index the index
    * @return the value at the index
    */
-  public short getValueAt(int index) { return values[index]; }
+  public char getValueAt(int index) { return values[index]; }
 }

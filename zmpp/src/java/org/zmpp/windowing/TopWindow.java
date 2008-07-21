@@ -49,8 +49,8 @@ public class TopWindow implements TextCursor {
     numCharsPerRow = numChars;
   }
 
-  public int setFont(int font) {
-    int previousFont = this.annotation.getFont();
+  public char setFont(char font) {
+    char previousFont = this.annotation.getFont();
     annotation = annotation.deriveFont(font);
     return previousFont;
   }

@@ -42,7 +42,7 @@ public interface AccentTable {
    * @param index the index
    * @return the accent
    */
-  short getAccent(int index);
+  char getAccent(int index);
   
   /**
    * Converts the accent at the specified index to lower case and returns

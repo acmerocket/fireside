@@ -92,10 +92,10 @@ public class Instruction0OpV5Test extends InstructionTestBase {
     routineContexts.add(new RoutineContext(3456, 2));
     context.checking(new Expectations() {{
       one (machine).getRoutineContexts(); will(returnValue(routineContexts));
-      one (machine).setVariable(0x12, (short) 2);
+      one (machine).setVariable(0x12, (char) 2);
     }});
     Instruction0OpMock zcatch = createInstructionMock(Short0StaticInfo.OP_POP);
-    zcatch.setStoreVariable((short) 0x12);
+    zcatch.setStoreVariable((char) 0x12);
     
     zcatch.execute();
     assertTrue(zcatch.nextInstructionCalled);

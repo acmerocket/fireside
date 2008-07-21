@@ -141,7 +141,7 @@ public abstract class AbstractObjectTree implements ObjectTree {
    * {@inheritDoc}
    */
   public boolean isAttributeSet(int objectNum, int attributeNum) {
-    final short value = memory.readUnsigned8(
+    final char value = memory.readUnsigned8(
     	getAttributeByteAddress(objectNum, attributeNum));
     return (value & (0x80 >> (attributeNum & 7))) > 0;
   }  
@@ -152,7 +152,7 @@ public abstract class AbstractObjectTree implements ObjectTree {
   public void setAttribute(int objectNum, int attributeNum) {
     final int attributeByteAddress = getAttributeByteAddress(objectNum,
     	attributeNum);
-    short value = memory.readUnsigned8(attributeByteAddress);
+    char value = memory.readUnsigned8(attributeByteAddress);
     value |= (0x80 >> (attributeNum & 7));
     memory.writeUnsigned8(attributeByteAddress, value);
   }
@@ -163,7 +163,7 @@ public abstract class AbstractObjectTree implements ObjectTree {
   public void clearAttribute(int objectNum, int attributeNum) {
   	final int attributeByteAddress = getAttributeByteAddress(objectNum,
   			attributeNum);
-  	short value = memory.readUnsigned8(attributeByteAddress);
+  	char value = memory.readUnsigned8(attributeByteAddress);
   	value &= (~(0x80 >> (attributeNum & 7)));
   	memory.writeUnsigned8(attributeByteAddress, value);
   }
@@ -227,10 +227,8 @@ public abstract class AbstractObjectTree implements ObjectTree {
               " of object " + objectNum + " is not available.");
   }
   
-  /**
-   * {@inheritDoc}
-   */
-  public int getProperty(int objectNum, int property) {
+  /** {@inheritDoc} */
+  public char getProperty(int objectNum, int property) {
   	int propertyDataAddress = getPropertyAddress(objectNum, property);
   	if (propertyDataAddress == 0) {
   		return getPropertyDefault(property);
@@ -244,13 +242,13 @@ public abstract class AbstractObjectTree implements ObjectTree {
   		final int byte2 = memory.readUnsigned8(propertyDataAddress + 1);
   		value = (byte1 << 8 | (byte2 & 0xff));
   	}
-  	return value & 0xffff;
+  	return (char) (value & 0xffff);
   }
   
   /**
    * {@inheritDoc}
    */
-  public void setProperty(int objectNum, int property, int value) {
+  public void setProperty(int objectNum, int property, char value) {
   	
   	int propertyDataAddress = getPropertyAddress(objectNum, property);
   	if (propertyDataAddress == 0) {
@@ -258,7 +256,7 @@ public abstract class AbstractObjectTree implements ObjectTree {
   	} else {
   		int propsize = getPropertyLength(propertyDataAddress);
   		if (propsize == 1) {
-  			memory.writeUnsigned8(propertyDataAddress, (short) (value & 0xff));
+  			memory.writeUnsigned8(propertyDataAddress, (char) (value & 0xff));
   		} else {
   			memory.writeUnsigned16(propertyDataAddress,  toUnsigned16(value));
   		}
@@ -322,8 +320,8 @@ public abstract class AbstractObjectTree implements ObjectTree {
    * @param propertyNum the default entry's property number
    * @return the property default value
    */
-  private short getPropertyDefault(final int propertyNum) {
+  private char getPropertyDefault(final int propertyNum) {
     final int index = propertyNum - 1;
-    return memory.readSigned16(address + index * 2);
+    return memory.readUnsigned16(address + index * 2);
   } 
 }

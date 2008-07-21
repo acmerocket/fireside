@@ -54,10 +54,9 @@ public interface Dictionary {
   
   /**
    * Returns the number of dictionary entries.
-   * 
    * @return the number of entries
    */
-  int getNumberOfEntries();
+  short getNumberOfEntries();
   
   /**
    * Returns the entry address at the specified position.

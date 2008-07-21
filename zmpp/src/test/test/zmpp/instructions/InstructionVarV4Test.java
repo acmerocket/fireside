@@ -79,8 +79,8 @@ public class InstructionVarV4Test extends InstructionTestBase {
     }});
     VariableInstruction call = new VariableInstruction(machine,
         OperandCount.VAR, VariableStaticInfo.OP_CALL_VN);
-    call.addOperand(new Operand(Operand.TYPENUM_LARGE_CONSTANT, (short) 0x0000));
-    call.addOperand(new Operand(Operand.TYPENUM_SMALL_CONSTANT, (short) 0x01));
+    call.addOperand(new Operand(Operand.TYPENUM_LARGE_CONSTANT, (char) 0x0000));
+    call.addOperand(new Operand(Operand.TYPENUM_SMALL_CONSTANT, (char) 0x01));
     call.setLength(5);
     call.execute();
   }
@@ -92,8 +92,8 @@ public class InstructionVarV4Test extends InstructionTestBase {
     }});
     VariableInstruction call = new VariableInstruction(machine,
         OperandCount.VAR, VariableStaticInfo.OP_CALL_VN2);
-    call.addOperand(new Operand(Operand.TYPENUM_LARGE_CONSTANT, (short) 0x0000));
-    call.addOperand(new Operand(Operand.TYPENUM_SMALL_CONSTANT, (short) 0x01));
+    call.addOperand(new Operand(Operand.TYPENUM_LARGE_CONSTANT, (char) 0x0000));
+    call.addOperand(new Operand(Operand.TYPENUM_SMALL_CONSTANT, (char) 0x01));
     call.setLength(5);
     call.execute();
   }
@@ -106,7 +106,7 @@ public class InstructionVarV4Test extends InstructionTestBase {
     }});
     VariableInstructionMock set_text_style =
       new VariableInstructionMock(machine, VariableStaticInfo.OP_SET_TEXT_STYLE);
-    set_text_style.addOperand(new Operand(Operand.TYPENUM_SMALL_CONSTANT, (short) 2));
+    set_text_style.addOperand(new Operand(Operand.TYPENUM_SMALL_CONSTANT, (char) 2));
     set_text_style.execute();
     assertTrue(set_text_style.nextInstructionCalled);
   }  
@@ -119,7 +119,7 @@ public class InstructionVarV4Test extends InstructionTestBase {
     }});
     VariableInstructionMock buffer_mode =
       new VariableInstructionMock(machine, VariableStaticInfo.OP_BUFFER_MODE);    
-    buffer_mode.addOperand(new Operand(Operand.TYPENUM_SMALL_CONSTANT, (short) 1));
+    buffer_mode.addOperand(new Operand(Operand.TYPENUM_SMALL_CONSTANT, (char) 1));
     buffer_mode.execute();
     assertTrue(buffer_mode.nextInstructionCalled);
   }
@@ -133,7 +133,7 @@ public class InstructionVarV4Test extends InstructionTestBase {
     VariableInstructionMock buffer_mode =
       new VariableInstructionMock(machine, VariableStaticInfo.OP_BUFFER_MODE);
     
-    buffer_mode.addOperand(new Operand(Operand.TYPENUM_SMALL_CONSTANT, (short) 0));
+    buffer_mode.addOperand(new Operand(Operand.TYPENUM_SMALL_CONSTANT, (char) 0));
     buffer_mode.execute();
     assertTrue(buffer_mode.nextInstructionCalled);
   }
@@ -146,7 +146,7 @@ public class InstructionVarV4Test extends InstructionTestBase {
     }});
     VariableInstructionMock erase_window =
       new VariableInstructionMock(machine, VariableStaticInfo.OP_ERASE_WINDOW);    
-    erase_window.addOperand(new Operand(Operand.TYPENUM_SMALL_CONSTANT, (short) 1));
+    erase_window.addOperand(new Operand(Operand.TYPENUM_SMALL_CONSTANT, (char) 1));
     erase_window.execute();
     assertTrue(erase_window.nextInstructionCalled);
   }
@@ -160,7 +160,7 @@ public class InstructionVarV4Test extends InstructionTestBase {
     VariableInstructionMock erase_line =
       new VariableInstructionMock(machine, VariableStaticInfo.OP_ERASE_LINE);
     
-    erase_line.addOperand(new Operand(Operand.TYPENUM_SMALL_CONSTANT, (short) 1));
+    erase_line.addOperand(new Operand(Operand.TYPENUM_SMALL_CONSTANT, (char) 1));
     erase_line.execute();
     assertTrue(erase_line.nextInstructionCalled);
   }
@@ -174,8 +174,8 @@ public class InstructionVarV4Test extends InstructionTestBase {
     VariableInstructionMock set_cursor =
       new VariableInstructionMock(machine, VariableStaticInfo.OP_SET_CURSOR);
     
-    set_cursor.addOperand(new Operand(Operand.TYPENUM_SMALL_CONSTANT, (short) 1));
-    set_cursor.addOperand(new Operand(Operand.TYPENUM_SMALL_CONSTANT, (short) 2));
+    set_cursor.addOperand(new Operand(Operand.TYPENUM_SMALL_CONSTANT, (char) 1));
+    set_cursor.addOperand(new Operand(Operand.TYPENUM_SMALL_CONSTANT, (char) 2));
     set_cursor.execute();
     assertTrue(set_cursor.nextInstructionCalled);
   }  
@@ -187,13 +187,13 @@ public class InstructionVarV4Test extends InstructionTestBase {
       one (screen).getTextCursor(); will(returnValue(cursor));
       one (cursor).getLine(); will(returnValue(1));
       one (cursor).getColumn(); will(returnValue(1));
-      one (machine).writeSigned16(4711, (short) 1);
-      one (machine).writeSigned16(4713, (short) 1);
+      one (machine).writeUnsigned16(4711, (char) 1);
+      one (machine).writeUnsigned16(4713, (char) 1);
     }});
     VariableInstructionMock get_cursor =
       new VariableInstructionMock(machine, VariableStaticInfo.OP_GET_CURSOR);
     
-    get_cursor.addOperand(new Operand(Operand.TYPENUM_LARGE_CONSTANT, (short) 4711));
+    get_cursor.addOperand(new Operand(Operand.TYPENUM_LARGE_CONSTANT, (char) 4711));
     get_cursor.execute();
     assertTrue(get_cursor.nextInstructionCalled);
   }  

@@ -170,7 +170,7 @@ extends ObjectTree, Input, Output, Cpu, Memory, IZsciiEncoding {
    * @param range the range
    * @return a random number
    */
-  short random(short range);  
+  char random(short range);  
 
   /**
    * Updates the status line.

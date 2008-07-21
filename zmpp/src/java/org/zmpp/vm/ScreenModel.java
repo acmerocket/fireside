@@ -38,17 +38,17 @@ public interface ScreenModel {
   /**
    * Font number for the standard font.
    */
-  static final int FONT_NORMAL  = 1;
+  static final char FONT_NORMAL  = 1;
   
   /**
    * Font number for the character graphics font.
    */
-  static final int FONT_CHARACTER_GRAPHICS  = 3;
+  static final char FONT_CHARACTER_GRAPHICS  = 3;
   
   /**
    * Font number for the fixed pitch font.
    */
-  static final int FONT_FIXED   = 4;
+  static final char FONT_FIXED   = 4;
   
   static final int TEXTSTYLE_ROMAN          = 0;
   static final int TEXTSTYLE_REVERSE_VIDEO  = 1;
@@ -155,7 +155,7 @@ public interface ScreenModel {
    * @param fontnumber the font number
    * @boolean the previous font number
    */
-  int setFont(int fontnumber);
+  char setFont(char fontnumber);
   
   /**
    * Sets the background color.

@@ -73,12 +73,12 @@ public class InstructionVarV5Test extends InstructionTestBase {
   @Test
   public void testNotInV5() {
     context.checking(new Expectations() {{
-      one (machine).setVariable(0x12, (short) 0x5555);
+      one (machine).setVariable(0x12, (char) 0x5555);
     }});
     VariableInstructionMock not =
       new VariableInstructionMock(machine, VariableStaticInfo.OP_NOT);
-    not.addOperand(new Operand(Operand.TYPENUM_LARGE_CONSTANT, (short) 0xaaaa));
-    not.setStoreVariable((short) 0x12);    
+    not.addOperand(new Operand(Operand.TYPENUM_LARGE_CONSTANT, (char) 0xaaaa));
+    not.setStoreVariable((char) 0x12);    
     not.execute();    
     assertTrue(not.nextInstructionCalled);
   }

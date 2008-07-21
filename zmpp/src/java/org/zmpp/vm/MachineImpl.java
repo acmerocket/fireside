@@ -227,11 +227,7 @@ public class MachineImpl implements Machine {
     return getMemory().readUnsigned16(address);
   }
   /** {@inheritDoc} */
-  public short readSigned16(int address) {
-    return getMemory().readSigned16(address);
-  }
-  /** {@inheritDoc} */
-  public short readUnsigned8(int address) {
+  public char readUnsigned8(int address) {
     return getMemory().readUnsigned8(address);
   }
   /** {@inheritDoc} */
@@ -239,11 +235,7 @@ public class MachineImpl implements Machine {
     getMemory().writeUnsigned16(address, value);
   }
   /** {@inheritDoc} */
-  public void writeSigned16(int address, short value) {
-    getMemory().writeSigned16(address, value);
-  }
-  /** {@inheritDoc} */
-  public void writeUnsigned8(int address, short value) {
+  public void writeUnsigned8(int address, char value) {
     getMemory().writeUnsigned8(address, value);
   }
   /** {@inheritDoc} */
@@ -271,19 +263,19 @@ public class MachineImpl implements Machine {
   // **********************************************************************
   private Cpu getCpu() { return cpu; }
   /** {@inheritDoc} */
-  public short getVariable(int varnum) { return getCpu().getVariable(varnum); }
+  public char getVariable(char varnum) { return getCpu().getVariable(varnum); }
   /** {@inheritDoc} */
-  public void setVariable(int varnum, short value) {
+  public void setVariable(int varnum, char value) {
     getCpu().setVariable(varnum, value);
   }
   /** {@inheritDoc} */
-  public short getStackTop() { return getCpu().getStackTop(); }
+  public char getStackTop() { return getCpu().getStackTop(); }
   /** {@inheritDoc} */
-  public short getStackElement(int index) {
+  public char getStackElement(int index) {
     return getCpu().getStackElement(index);
   }
   /** {@inheritDoc} */
-  public void setStackTop(short value) { getCpu().setStackTop(value); }
+  public void setStackTop(char value) { getCpu().setStackTop(value); }
   /** {@inheritDoc} */
   public void incrementPC(int length) { getCpu().incrementPC(length); }
   /** {@inheritDoc} */
@@ -293,11 +285,11 @@ public class MachineImpl implements Machine {
   /** {@inheritDoc} */
   public int getSP() { return getCpu().getSP(); }
   /** {@inheritDoc} */
-  public short popStack(int userstackAddress) {
+  public char popStack(int userstackAddress) {
     return getCpu().popStack(userstackAddress);
   }
   /** {@inheritDoc} */
-  public boolean pushStack(int stack, short value) {
+  public boolean pushStack(int stack, char value) {
     return getCpu().pushStack(stack, value);
   }
   /** {@inheritDoc} */
@@ -309,7 +301,7 @@ public class MachineImpl implements Machine {
     getCpu().setRoutineContexts(routineContexts);
   }
   /** {@inheritDoc} */
-  public void returnWith(short returnValue) {
+  public void returnWith(char returnValue) {
     getCpu().returnWith(returnValue);
   }
   /** {@inheritDoc} */
@@ -321,7 +313,7 @@ public class MachineImpl implements Machine {
     return getCpu().unpackStringAddress(packedAddress);
   }
   /** {@inheritDoc} */
-  public RoutineContext call(int packedAddress, int returnAddress, short[] args,
+  public RoutineContext call(int packedAddress, int returnAddress, char[] args,
                              int returnVar) {
     return getCpu().call(packedAddress, returnAddress, args, returnVar);
   }
@@ -448,7 +440,7 @@ public class MachineImpl implements Machine {
     input.selectInputStream(streamNumber);
   }
   /** {@inheritDoc} */
-  public short random(final short range) {
+  public char random(final short range) {
     if (range < 0) {
       random = new PredictableRandomGenerator(-range);
       return 0;
@@ -456,7 +448,7 @@ public class MachineImpl implements Machine {
       random = new UnpredictableRandomGenerator();
       return 0;
     }
-    return (short) ((random.next() % range) + 1);
+    return (char) ((random.next() % range) + 1);
   }
 
   // ************************************************************************
@@ -517,11 +509,11 @@ public class MachineImpl implements Machine {
   /** {@inheritDoc} */
   public void updateStatusLine() {
     if (getFileHeader().getVersion() <= 3 && statusLine != null) {
-      final int objNum = cpu.getVariable(0x10);    
+      final int objNum = cpu.getVariable((char) 0x10);    
       final String objectName = getZCharDecoder().decode2Zscii(getMemory(),
         getObjectTree().getPropertiesDescriptionAddress(objNum), 0).toString();      
-      final int global2 = cpu.getVariable(0x11);
-      final int global3 = cpu.getVariable(0x12);
+      final int global2 = cpu.getVariable((char) 0x11);
+      final int global3 = cpu.getVariable((char) 0x12);
       if (getFileHeader().isEnabled(Attribute.SCORE_GAME)) {
         statusLine.updateStatusScore(objectName, global2, global3);
       } else {
@@ -708,11 +700,11 @@ public class MachineImpl implements Machine {
     return getObjectTree().getPropertyLength(propertyAddress);
   }
   /** {@inheritDoc} */
-  public int getProperty(int objectNum, int property) {
+  public char getProperty(int objectNum, int property) {
     return getObjectTree().getProperty(objectNum, property);
   }
   /** {@inheritDoc} */
-  public void setProperty(int objectNum, int property, int value) {
+  public void setProperty(int objectNum, int property, char value) {
     getObjectTree().setProperty(objectNum, property, value);
   }
   /** {@inheritDoc} */

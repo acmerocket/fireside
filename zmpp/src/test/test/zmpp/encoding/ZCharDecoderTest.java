@@ -196,16 +196,16 @@ public class ZCharDecoderTest {
   
   @Test
   public void testEndCharacter() {
-    short notEndWord = 0x7123;
+    char notEndWord = 0x7123;
     assertFalse(DefaultZCharDecoder.isEndWord(notEndWord));
-    short endWord = (short) 0x8123;
+    char endWord = (char) 0x8123;
     assertTrue(DefaultZCharDecoder.isEndWord(endWord));
   }
 
   @Test
   public void testExtractZBytesOneWordOnly() {
     context.checking(new Expectations() {{
-      one (memory).readSigned16(0); will(returnValue((short) 0x9865));
+      one (memory).readUnsigned16(0); will(returnValue((char) 0x9865));
     }});    
     char[] data = DefaultZCharDecoder.extractZbytes(memory, 0, 0);
     assertEquals(3, data.length);
@@ -217,12 +217,12 @@ public class ZCharDecoderTest {
   @Test
   public void testExtractZBytesThreeWords() {
     context.checking(new Expectations() {{
-      one (memory).readSigned16(0);
-      will(returnValue((short) 0x5432));
-      one (memory).readSigned16(2);
-      will(returnValue((short) 0x1234));
-      one (memory).readSigned16(4);
-      will(returnValue((short) 0x9865));
+      one (memory).readUnsigned16(0);
+      will(returnValue((char) 0x5432));
+      one (memory).readUnsigned16(2);
+      will(returnValue((char) 0x1234));
+      one (memory).readUnsigned16(4);
+      will(returnValue((char) 0x9865));
     }});
     char[] data = DefaultZCharDecoder.extractZbytes(memory, 0, 0);
     assertEquals(9, data.length);

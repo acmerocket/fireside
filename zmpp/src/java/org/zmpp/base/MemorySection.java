@@ -60,12 +60,7 @@ public class MemorySection implements Memory {
   }
 
   /** {@inheritDoc} */
-  public void writeSigned16(final int address, final short value) {
-    memory.writeSigned16(address + start, value);
-  }
-
-  /** {@inheritDoc} */
-  public void writeUnsigned8(final int address, final short value) {
+  public void writeUnsigned8(final int address, final char value) {
     memory.writeUnsigned8(address + start, value);
   }
 
@@ -75,12 +70,7 @@ public class MemorySection implements Memory {
   }
 
   /** {@inheritDoc} */
-  public short readSigned16(final int address) {
-    return memory.readSigned16(address + start);
-  }
-
-  /** {@inheritDoc} */
-  public short readUnsigned8(final int address) {
+  public char readUnsigned8(final int address) {
     return memory.readUnsigned8(address + start);
   }
 

@@ -187,9 +187,8 @@ public class VariableInstruction extends AbstractInstruction {
     final Memory memory = getMemory();
     final int array = getUnsignedValue(0);
     final int wordIndex = getUnsignedValue(1);
-    final short value = getValue(2);
-    
-    memory.writeSigned16(array + wordIndex * 2, value);
+    final char value = getUnsignedValue(2);    
+    memory.writeUnsigned16(array + wordIndex * 2, value);
     nextInstruction();
   }
   
@@ -198,14 +197,14 @@ public class VariableInstruction extends AbstractInstruction {
     final int array = getUnsignedValue(0);
     final int byteIndex = getUnsignedValue(1);
     final int value = getUnsignedValue(2);    
-    memory.writeUnsigned8(array + byteIndex, (short) (value & 0xff));
+    memory.writeUnsigned8(array + byteIndex, (char) (value & 0xff));
     nextInstruction();
   }
   
   private void put_prop() {
     final int obj = getUnsignedValue(0);
     final int property = getUnsignedValue(1);
-    final short value = getValue(2);
+    final char value = getUnsignedValue(2);
     
     if (obj > 0) {
       getMachine().setProperty(obj, property, value);
@@ -224,13 +223,13 @@ public class VariableInstruction extends AbstractInstruction {
   }
   
   private void print_num() {
-    final short number = getValue(0);
+    final short number = getSignedValue(0);
     getMachine().printNumber(number);
     nextInstruction();
   }
   
   private void push() {
-    final short value = getValue(0);
+    final char value = getUnsignedValue(0);
     getMachine().setVariable(0, value);
     nextInstruction();
   }
@@ -254,7 +253,7 @@ public class VariableInstruction extends AbstractInstruction {
   
   private void pull_std() {
     final int varnum = getUnsignedValue(0);
-    final short value = getMachine().getVariable(0);
+    final char value = getMachine().getVariable((char) 0);
     
     // standard 1.1
     if (varnum == 0) {
@@ -266,7 +265,7 @@ public class VariableInstruction extends AbstractInstruction {
   
   private void output_stream() {
     // Stream number should be a signed byte
-    final short streamnumber = getValue(0);
+    final short streamnumber = getSignedValue(0);
     
     if (streamnumber < 0 && streamnumber >= -3) {
       getMachine().selectOutputStream(-streamnumber, false);
@@ -293,7 +292,7 @@ public class VariableInstruction extends AbstractInstruction {
   }
   
   private void random() {
-    final short range = getValue(0);
+    final short range = getSignedValue(0);
     storeResult(getMachine().random(range));
     nextInstruction();
   }
@@ -309,12 +308,12 @@ public class VariableInstruction extends AbstractInstruction {
   private void sreadStage1() {
     final int version = getStoryFileVersion();
     int time = 0;
-    short routine = 0;
+    char routine = 0;
     if (getNumOperands() >= 3) {
       time = getUnsignedValue(2);
     }
     if (getNumOperands() >= 4) {
-      routine = getValue(3);
+      routine = getUnsignedValue(3);
     }    
     
     if (version <= 3) {
@@ -346,7 +345,7 @@ public class VariableInstruction extends AbstractInstruction {
     if (storesResult()) {
       // The specification suggests that we store the terminating character
       // here, this can be NULL or NEWLINE at the moment
-      storeResult((short) terminal);
+      storeResult(terminal);
     }
     nextInstruction();
   }
@@ -434,8 +433,7 @@ public class VariableInstruction extends AbstractInstruction {
   private void erase_window() { 
     final ScreenModel screenModel = getMachine().getScreen();
     if (screenModel != null) {
-      
-      screenModel.eraseWindow(getValue(0));
+      screenModel.eraseWindow(getSignedValue(0));
     }
     nextInstruction();    
   }
@@ -443,8 +441,7 @@ public class VariableInstruction extends AbstractInstruction {
   private void erase_line() {
     final ScreenModel screenModel = getMachine().getScreen();
     if (screenModel != null) {
-      
-      screenModel.eraseLine(getValue(0));
+      screenModel.eraseLine(getUnsignedValue(0));
     }
     nextInstruction();    
   }
@@ -454,19 +451,17 @@ public class VariableInstruction extends AbstractInstruction {
     final ScreenModel screenModel = getMachine().getScreen();
     if (screenModel != null) {
     
-      final int line = getValue(0);
-      int column = 0;
-      int window = ScreenModel.CURRENT_WINDOW;
+      final short line = getSignedValue(0);
+      char column = 0;
+      short window = ScreenModel.CURRENT_WINDOW;
       
       if (getNumOperands() >= 2) {
-        column = getValue(1);
+        column = getUnsignedValue(1);
       }
       if (getNumOperands() >= 3) {
-        window = getValue(2);
+        window = getSignedValue(2);
       }
-      
-      if (line > 0) {
-        
+      if (line > 0) {        
         screenModel.setTextCursor(line, column, window);        
       }
     }
@@ -479,8 +474,8 @@ public class VariableInstruction extends AbstractInstruction {
       final TextCursor cursor = screenModel.getTextCursor();
       final Memory memory = getMemory();
       final int arrayAddr = getUnsignedValue(0);
-      memory.writeSigned16(arrayAddr, (short) cursor.getLine());
-      memory.writeSigned16(arrayAddr + 2, (short) cursor.getColumn());
+      memory.writeUnsigned16(arrayAddr, (char) cursor.getLine());
+      memory.writeUnsigned16(arrayAddr + 2, (char) cursor.getColumn());
     }
     nextInstruction();
   }
@@ -488,7 +483,7 @@ public class VariableInstruction extends AbstractInstruction {
   private void scan_table() {    
     final Memory memory = getMemory();
     int x = getUnsignedValue(0);
-    final int table = getUnsignedValue(1);
+    final char table = getUnsignedValue(1);
     final int length = getUnsignedValue(2);
     int form  = 0x82; // default value
     if (getNumOperands() == 4) {
@@ -496,7 +491,7 @@ public class VariableInstruction extends AbstractInstruction {
     }
     final int fieldlen = form & 0x7f;
     final boolean isWordTable = (form & 0x80) > 0;
-    int pointer = table;
+    char pointer = table;
     boolean found = false;
     
     for (int i = 0; i < length; i++) {
@@ -509,16 +504,15 @@ public class VariableInstruction extends AbstractInstruction {
         x &= 0xff;
       }
       if (current == x) {
-        storeResult((short) pointer);
+        storeResult(pointer);
         found = true;
         break;
       }
       pointer += fieldlen;
     }
-    
     // not found
     if (!found) {      
-      storeResult((short) 0);
+      storeResult((char) 0);
     }
     branchOnTest(found);
   }
@@ -537,12 +531,12 @@ public class VariableInstruction extends AbstractInstruction {
       getMachine().updateStatusLine();
     }
     int time = 0;
-    int routine = 0;
+    char routine = 0;
     if (getNumOperands() >= 2) {     
       time = getUnsignedValue(1);
     }
     if (getNumOperands() >= 3) {
-      routine = getValue(2);
+      routine = getUnsignedValue(2);
     }
     getMachine().flushOutput();
     getMachine().setRunState(MachineRunState.createReadChar(time, routine));
@@ -550,7 +544,7 @@ public class VariableInstruction extends AbstractInstruction {
   
   private void readCharStage2() {
     getMachine().setRunState(MachineRunState.RUNNING);
-    storeResult((short) getMachine().readChar());
+    storeResult(getMachine().readChar());
     nextInstruction();
   }
   
@@ -560,7 +554,7 @@ public class VariableInstruction extends AbstractInstruction {
    */
   private void not()  {
     final int notvalue = ~getUnsignedValue(0);
-    storeResult((short) (notvalue & 0xffff));
+    storeResult((char) (notvalue & 0xffff));
     nextInstruction();
   }
   
@@ -589,13 +583,13 @@ public class VariableInstruction extends AbstractInstruction {
   private void copy_table() {
     final int first = getUnsignedValue(0);
     final int second = getUnsignedValue(1);
-    int size = Math.abs(getValue(2));
+    int size = Math.abs(getSignedValue(2));
     final Memory memory = getMemory();
 
     if (second == 0) {
       // Clear size bytes of first
       for (int i = 0; i < size; i++) {        
-        memory.writeUnsigned8(first + i, (short) 0);
+        memory.writeUnsigned8(first + i, (char) 0);
       }
     } else {
       memory.copyArea(first, second, size);

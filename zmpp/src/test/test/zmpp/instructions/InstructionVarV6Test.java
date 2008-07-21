@@ -56,13 +56,13 @@ public class InstructionVarV6Test extends InstructionTestBase {
   @Test
   public void testPullV6NoUserStack() {
     context.checking(new Expectations() {{
-      one (machine).popStack(0x00); will(returnValue((short) 0x14));
-      one (machine).setVariable(0x15, (short) 0x14);
+      one (machine).popStack(0x00); will(returnValue((char) 0x14));
+      one (machine).setVariable(0x15, (char) 0x14);
       one (machine).incrementPC(5);
     }});
     VariableInstruction pull = new VariableInstruction(machine,
         OperandCount.VAR, VariableStaticInfo.OP_PULL);
-    pull.setStoreVariable((short) 0x15);
+    pull.setStoreVariable((char) 0x15);
     pull.setLength(5);
     pull.execute();
   }  
@@ -70,14 +70,14 @@ public class InstructionVarV6Test extends InstructionTestBase {
   @Test
   public void testPullV6UserStack() {
     context.checking(new Expectations() {{
-      one (machine).popStack(0x1234); will(returnValue((short) 0x15));
-      one (machine).setVariable(0x15, (short) 0x15);
+      one (machine).popStack(0x1234); will(returnValue((char) 0x15));
+      one (machine).setVariable(0x15, (char) 0x15);
       one (machine).incrementPC(5);
     }});
     VariableInstruction pull = new VariableInstruction(machine,
         OperandCount.VAR, VariableStaticInfo.OP_PULL);
-    pull.addOperand(new Operand(Operand.TYPENUM_LARGE_CONSTANT, (short) 0x1234));
-    pull.setStoreVariable((short) 0x15);
+    pull.addOperand(new Operand(Operand.TYPENUM_LARGE_CONSTANT, (char) 0x1234));
+    pull.setStoreVariable((char) 0x15);
     pull.setLength(5);
     pull.execute();
   }  

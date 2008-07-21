@@ -118,10 +118,10 @@ public class WritableFormChunk implements FormChunk {
     final int datasize = Chunk.CHUNK_HEADER_LENGTH + getSize();    
     final byte[] data = new byte[datasize];
     final Memory memory = new DefaultMemory(data);
-    memory.writeUnsigned8(0, (short) 'F');
-    memory.writeUnsigned8(1, (short) 'O');
-    memory.writeUnsigned8(2, (short) 'R');
-    memory.writeUnsigned8(3, (short) 'M');
+    memory.writeUnsigned8(0, 'F');
+    memory.writeUnsigned8(1, 'O');
+    memory.writeUnsigned8(2, 'R');
+    memory.writeUnsigned8(3, 'M');
     writeUnsigned32(memory, 4, getSize());
     
     int offset = Chunk.CHUNK_HEADER_LENGTH;
@@ -150,7 +150,7 @@ public class WritableFormChunk implements FormChunk {
       offset += chunkSize;      
       // Pad if necessary
       if ((chunkSize % 2) != 0) {
-        memory.writeUnsigned8(offset++, (short) 0);
+        memory.writeUnsigned8(offset++, (char) 0);
       }
     }
     return data;

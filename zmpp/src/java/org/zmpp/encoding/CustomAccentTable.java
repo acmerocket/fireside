@@ -65,10 +65,10 @@ public class CustomAccentTable implements AccentTable {
   /**
    * {@inheritDoc}
    */
-  public short getAccent(final int index) {
-    short result = '?';
+  public char getAccent(final int index) {
+    char result = '?';
     if (tableAddress > 0) {
-      result = memory.readSigned16(tableAddress + (index * 2) + 1);
+      result = memory.readUnsigned16(tableAddress + (index * 2) + 1);
     }
     return result;
   }

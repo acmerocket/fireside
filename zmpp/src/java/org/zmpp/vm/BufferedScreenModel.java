@@ -170,7 +170,7 @@ public class BufferedScreenModel implements ScreenModel, StatusLine,
     return topWindow;
   }
   
-  public int setFont(int fontnumber) {
+  public char setFont(char fontnumber) {
     if (fontnumber != ScreenModel.FONT_FIXED &&
         fontnumber != ScreenModel.FONT_NORMAL) {
       return 0;

@@ -66,7 +66,7 @@ public class CursesObjectTreeTest extends CursesSetup {
   
   @Test
   public void testSetGetProperty() {
-	  objectTree.setProperty(122, 34, 0xdefe);
+	  objectTree.setProperty(122, 34, (char) 0xdefe);
 	  assertEquals(0xdefe, objectTree.getProperty(122, 34));
   }
   

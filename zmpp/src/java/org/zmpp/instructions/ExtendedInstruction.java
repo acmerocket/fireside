@@ -27,6 +27,7 @@ import org.zmpp.blorb.BlorbImage.Resolution;
 import org.zmpp.vm.Machine;
 import org.zmpp.vm.PortableGameState;
 import org.zmpp.vm.ScreenModel;
+import static org.zmpp.base.MemoryUtil.signedToUnsigned16;
 
 
 /**
@@ -154,41 +155,40 @@ public class ExtendedInstruction extends AbstractInstruction {
     // operand type byte compared to the 0OP instruction
     final int pc = getMachine().getPC() + 3;
     final boolean success = getMachine().save_undo(pc);
-    storeResult((short) (success ? TRUE : FALSE));
+    storeResult(success ? TRUE : FALSE);
     nextInstruction();
   }
   
-  private void restore_undo() {
-    
+  private void restore_undo() {    
     final PortableGameState gamestate = getMachine().restore_undo();
     if (gamestate == null) {
-      storeResult((short) FALSE);
+      storeResult(FALSE);
     } else {
-      
       final int storevar = gamestate.getStoreVariable(getMachine());      
-      getMachine().setVariable(storevar, (short) RESTORE_TRUE);      
+      getMachine().setVariable(storevar, RESTORE_TRUE);      
     }
   }
   
   private void art_shift() {
-    short number = getValue(0);
-    final short places = getValue(1);
+    short number = getSignedValue(0);
+    final short places = getSignedValue(1);
     number = (short) ((places >= 0) ? number << places : number >> (-places));
-    storeResult(number);
+    storeResult(signedToUnsigned16(number));
     nextInstruction();
   }
   
   private void log_shift() {
-    short number = getValue(0);
-    final short places = getValue(1);
-    number = (short) ((places >= 0) ? number << places : number >>> (-places));
+    char number = getUnsignedValue(0);
+    final short places = getSignedValue(1);
+    number = (char) ((places >= 0) ? number << places : number >>> (-places));
     storeResult(number);
     nextInstruction();
   }
   
   private void set_font() {
-    final int previousFont = getMachine().getScreen().setFont(getValue(0));
-    storeResult((short) previousFont);
+    final char previousFont =
+      getMachine().getScreen().setFont(getUnsignedValue(0));
+    storeResult(previousFont);
     nextInstruction();
   }
   
@@ -214,12 +214,12 @@ public class ExtendedInstruction extends AbstractInstruction {
   private void check_unicode() {
     // always return true, set bit 0 for can print and bit 1 for
     // can read
-    storeResult((short) 3);
+    storeResult((char) 3);
     nextInstruction();
   }
   
   private void mouse_window() {
-    getMachine().getScreen6().setMouseWindow(getValue(0));
+    getMachine().getScreen6().setMouseWindow(getSignedValue(0));
     nextInstruction();
   }
   
@@ -293,9 +293,9 @@ public class ExtendedInstruction extends AbstractInstruction {
   }
   
   private void window_size() {
-    final int window = getValue(0);
-    final int height = getValue(1);
-    final int width = getValue(2);
+    final short window = getSignedValue(0);
+    final char height = getUnsignedValue(1);
+    final char width = getUnsignedValue(2);
     getMachine().getScreen6().getWindow(window).setSize(height, width);
     nextInstruction();
   }
@@ -304,35 +304,33 @@ public class ExtendedInstruction extends AbstractInstruction {
     int operation = 0;
     if (getNumOperands() > 2) {
       operation = getUnsignedValue(2);
-    }
-    
-    getWindow(getValue(0)).setStyle(getUnsignedValue(1), operation);
+    }    
+    getWindow(getSignedValue(0)).setStyle(getUnsignedValue(1), operation);
     nextInstruction();
   }
   
   private void set_margins() {
     int window = ScreenModel.CURRENT_WINDOW;
-    if (getNumOperands() == 3) {
-      
-      window = getValue(2);
+    if (getNumOperands() == 3) {      
+      window = getSignedValue(2);
     }
     getWindow(window).setMargins(getUnsignedValue(0), getUnsignedValue(1));
     nextInstruction();
   }
   
   private void get_wind_prop() {
-    int window = getValue(0);
+    int window = getSignedValue(0);
     int propnum = getUnsignedValue(1);
-    short result;
-    result = (short) getWindow(window).getProperty(propnum);
+    char result;
+    result = (char) getWindow(window).getProperty(propnum);
     storeResult(result);
     nextInstruction();
   }
 
   private void put_wind_prop() {
-    int window = getValue(0);
-    int propnum = getUnsignedValue(1);
-    short value = getValue(2);
+    short window = getSignedValue(0);
+    char propnum = getUnsignedValue(1);
+    short value = getSignedValue(2);
     getWindow(window).putProperty(propnum, value);
     nextInstruction();
   }
@@ -356,7 +354,7 @@ public class ExtendedInstruction extends AbstractInstruction {
   }
   
   private void push_stack() {
-    short value = getValue(0);
+    char value = getUnsignedValue(0);
     int stack = 0;
     if (getNumOperands() == 2) {      
       stack = getUnsignedValue(1);
@@ -365,7 +363,7 @@ public class ExtendedInstruction extends AbstractInstruction {
   }
   
   private void scroll_window() {
-    getWindow(getValue(0)).scroll(getValue(1));
+    getWindow(getSignedValue(0)).scroll(getSignedValue(1));
     nextInstruction();
   }
   

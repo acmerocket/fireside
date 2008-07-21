@@ -85,8 +85,8 @@ public class InputFunctions {
     final int version = machine.getVersion();
     if (version >= 5) {      
       // Check if was cancelled
-      final byte numCharsTyped = (terminateChar == ZsciiEncoding.NULL) ?
-          0 : (byte) (textpointer - 2);
+      final char numCharsTyped = (terminateChar == ZsciiEncoding.NULL) ?
+          0 : (char) (textpointer - 2);
 
       // Write the number of characters typed in byte 1
       machine.writeUnsigned8(textbuffer + 1, numCharsTyped);      
@@ -97,7 +97,7 @@ public class InputFunctions {
       if (terminateChar == ZsciiEncoding.NULL) {
         terminatepos = 0;
       }
-      machine.writeUnsigned8(textbuffer + terminatepos, (short) 0);
+      machine.writeUnsigned8(textbuffer + terminatepos, (char) 0);
     }
   }
   
@@ -106,7 +106,7 @@ public class InputFunctions {
     int storeOffset = machine.getVersion() <= 4 ? 1 : 2;
     for (int i = 0; i < inputString.length(); i++) {
       machine.writeUnsigned8(textbuffer + i + storeOffset,
-              (short) (inputString.charAt(i) & 0xff));
+              (char) (inputString.charAt(i) & 0xff));
     }
     char terminateChar = inputString.charAt(inputString.length() - 1);
     checkTermination(terminateChar, textbuffer, inputString.length() + 1);
@@ -128,7 +128,7 @@ public class InputFunctions {
       }
     
       // Check the terminator table
-      short terminator;
+      char terminator;
     
       for (int i = 0; ; i++) {      
         terminator = machine.readUnsigned8(terminatorTable + i);
@@ -203,7 +203,7 @@ public class InputFunctions {
     final int numParsedTokens = Math.min(maxwords, tokens.size());
     
     // Write the number of parsed tokens into byte 1 of the parse buffer
-    machine.writeUnsigned8(parsebuffer + 1, (short) numParsedTokens);
+    machine.writeUnsigned8(parsebuffer + 1, (char) numParsedTokens);
     
     int parseaddr = parsebuffer + 2;
     
@@ -241,8 +241,8 @@ public class InputFunctions {
         
         // This is one slot
         machine.writeUnsigned16(parseaddr, toUnsigned16(entryAddress));     
-        machine.writeUnsigned8(parseaddr + 2, (short) token.length());
-        machine.writeUnsigned8(parseaddr + 3, (short) tokenIndex);
+        machine.writeUnsigned8(parseaddr + 2, (char) token.length());
+        machine.writeUnsigned8(parseaddr + 3, (char) tokenIndex);
       }
       parseaddr += 4;
     }

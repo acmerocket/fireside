@@ -129,7 +129,7 @@ public class PortableGameStateTest {
       atLeast(1).of (machine).getFileHeader(); will(returnValue(fileheader));
       one (machine).getRoutineContexts(); will(returnValue(emptyContexts));
       one (machine).getSP(); will(returnValue(4));
-      allowing (machine).getStackElement(with(any(int.class))); will(returnValue((short) 42));
+      allowing (machine).getStackElement(with(any(int.class))); will(returnValue((char) 42));
       one (fileheader).getRelease(); will(returnValue(42));
       one (fileheader).getChecksum(); will(returnValue(4712));
       one (fileheader).getSerialNumber(); will(returnValue("850101"));
@@ -151,11 +151,11 @@ public class PortableGameStateTest {
   @Test
   public void testExportToFormChunk() throws Exception {
     
-    short[] dummyStack = { (short) 1, (short) 2, (short) 3 };
+    char[] dummyStack = { (short) 1, (short) 2, (short) 3 };
     StackFrame dummyFrame = new StackFrame();
     dummyFrame.setArgs(new int[0]);
     dummyFrame.setEvalStack(dummyStack);
-    dummyFrame.setLocals(new short[0]);
+    dummyFrame.setLocals(new char[0]);
     
     byte[] dynamicMem = new byte[99];
     dynamicMem[35] = (byte) 12;
@@ -216,9 +216,9 @@ public class PortableGameStateTest {
     assertEquals(0, memaccess.readUnsigned8(12)); // retvar
     assertEquals(0, memaccess.readUnsigned8(13)); // argspec
     assertEquals(3, memaccess.readUnsigned16(14)); // stack size
-    assertEquals(1, memaccess.readSigned16(16)); // stack val 0
-    assertEquals(2, memaccess.readSigned16(18)); // stack val 1
-    assertEquals(3, memaccess.readSigned16(20)); // stack val 2
+    assertEquals(1, memaccess.readUnsigned16(16)); // stack val 0
+    assertEquals(2, memaccess.readUnsigned16(18)); // stack val 1
+    assertEquals(3, memaccess.readUnsigned16(20)); // stack val 2
     
     // Now read the form chunk into another gamestate and compare
     PortableGameState gameState2 = new PortableGameState();
@@ -273,7 +273,7 @@ public class PortableGameStateTest {
     }    
   }
   
-  private int decodePcBytes(short b0, short b1, short b2) {
+  private int decodePcBytes(char b0, char b1, char b2) {
     return ((b0 & 0xff) << 16) | ((b1 & 0xff) << 8) | (b2 & 0xff);
   }
   
@@ -327,24 +327,24 @@ public class PortableGameStateTest {
   public void testReadStackFrameFromChunkDiscardResult() {
     context.checking(new Expectations() {{
       // PC
-      one (machine).readUnsigned8(0); will(returnValue((short) 0x00));
-      one (machine).readUnsigned8(1); will(returnValue((short) 0x12));
-      one (machine).readUnsigned8(2); will(returnValue((short) 0x20));
+      one (machine).readUnsigned8(0); will(returnValue((char) 0x00));
+      one (machine).readUnsigned8(1); will(returnValue((char) 0x12));
+      one (machine).readUnsigned8(2); will(returnValue((char) 0x20));
       // Return variable/locals flag: discard result/3 locals (0x13)
-      one (machine).readUnsigned8(3); will(returnValue((short) 0x13));
+      one (machine).readUnsigned8(3); will(returnValue((char) 0x13));
       // return variable is always 0 if discard result
-      one (machine).readUnsigned8(4); will(returnValue((short) 0x00));
+      one (machine).readUnsigned8(4); will(returnValue((char) 0x00));
       // supplied arguments, we define a and b
-      one (machine).readUnsigned8(5); will(returnValue((short) 0x03));
+      one (machine).readUnsigned8(5); will(returnValue((char) 0x03));
       // stack size, we define 2
       one (machine).readUnsigned16(6); will(returnValue((char) 2));
       // local variables
       for (int i = 0; i < 3; i++) {
-        one (machine).readSigned16(8 + i * 2); will(returnValue((short) i));
+        one (machine).readUnsigned16(8 + i * 2); will(returnValue((char) i));
       }
       // stack variables
       for (int i = 0; i < 2; i++) {  
-        one (machine).readSigned16(8 + 6 + i * 2); will(returnValue((short) i));
+        one (machine).readUnsigned16(8 + 6 + i * 2); will(returnValue((char) i));
       }
     }});
     StackFrame stackFrame = new StackFrame();
@@ -361,24 +361,24 @@ public class PortableGameStateTest {
   public void testReadStackFrameFromChunkWithReturnVar() {
     context.checking(new Expectations() {{
       // PC
-      one (machine).readUnsigned8(0); will(returnValue((short) 0x00));
-      one (machine).readUnsigned8(1); will(returnValue((short) 0x12));
-      one (machine).readUnsigned8(2); will(returnValue((short) 0x21));
+      one (machine).readUnsigned8(0); will(returnValue((char) 0x00));
+      one (machine).readUnsigned8(1); will(returnValue((char) 0x12));
+      one (machine).readUnsigned8(2); will(returnValue((char) 0x21));
       // Return variable/locals flag: has return value/2 locals (0x02)
-      one (machine).readUnsigned8(3); will(returnValue((short) 0x02));
+      one (machine).readUnsigned8(3); will(returnValue((char) 0x02));
       // return variable is 5
-      one (machine).readUnsigned8(4); will(returnValue((short) 0x05));
+      one (machine).readUnsigned8(4); will(returnValue((char) 0x05));
       // supplied arguments, we define a, b and c
-      one (machine).readUnsigned8(5); will(returnValue((short) 0x07));
+      one (machine).readUnsigned8(5); will(returnValue((char) 0x07));
       // stack size, we define 3
       one (machine).readUnsigned16(6); will(returnValue((char) 3));
       // local variables
       for (int i = 0; i < 2; i++) {
-        one (machine).readSigned16(8 + i * 2); will(returnValue((short) i));
+        one (machine).readUnsigned16(8 + i * 2); will(returnValue((char) i));
       }
       // stack variables
       for (int i = 0; i < 3; i++) {  
-        one (machine).readSigned16(8 + 4 + i * 2); will(returnValue((short) i));
+        one (machine).readUnsigned16(8 + 4 + i * 2); will(returnValue((char) i));
       }
     }});
     StackFrame stackFrame = new StackFrame();
@@ -419,8 +419,8 @@ public class PortableGameStateTest {
       one (byteBuffer).add((byte) 0x06); will(returnValue(true));
     }});
     int[] args = { 0, 1 };
-    short[] locals = { (short) 1 };
-    short[] stack = { (short) 5, (short) 6 };
+    char[] locals = { (short) 1 };
+    char[] stack = { (short) 5, (short) 6 };
     
     StackFrame stackFrame = new StackFrame();
     stackFrame.setProgramCounter(0x1220);
@@ -461,8 +461,8 @@ public class PortableGameStateTest {
       one (byteBuffer).add((byte) 0x06); will(returnValue(true));
     }});
     int[] args = { 0, 1 };
-    short[] locals = { (short) 1 };
-    short[] stack = { (short) 5, (short) 6 };
+    char[] locals = { (short) 1 };
+    char[] stack = { (short) 5, (short) 6 };
     
     StackFrame stackFrame = new StackFrame();
     stackFrame.setProgramCounter(0x1221);

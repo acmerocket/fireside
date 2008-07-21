@@ -29,6 +29,7 @@ import org.zmpp.instructions.Operand;
 import org.zmpp.instructions.Short1Instruction;
 import org.zmpp.instructions.Short1StaticInfo;
 import org.zmpp.vm.Machine;
+import static org.zmpp.base.MemoryUtil.signedToUnsigned16;
 
 /**
  * This class tests the static and dynamic aspects of C1OP instructions.
@@ -65,11 +66,11 @@ public class Instruction1OpV3Test extends InstructionTestBase {
   @Test
   public void testInc() {
     context.checking(new Expectations() {{
-      one (machine).getVariable(2); will(returnValue((short) -1));
-      one (machine).setVariable(2, (short) 0);
+      one (machine).getVariable((char) 2); will(returnValue(signedToUnsigned16((short) -1)));
+      one (machine).setVariable(2, (char) 0);
     }});
     Instruction1OpMock inc = createInstructionMock(Short1StaticInfo.OP_INC,
-        Operand.TYPENUM_SMALL_CONSTANT, (short) 2);
+        Operand.TYPENUM_SMALL_CONSTANT, (char) 2);
     inc.execute();
     assertTrue(inc.nextInstructionCalled);
   }
@@ -81,11 +82,11 @@ public class Instruction1OpV3Test extends InstructionTestBase {
   @Test
   public void testDec() {
     context.checking(new Expectations() {{
-      one (machine).getVariable(6); will(returnValue((short) 123));
-      one (machine).setVariable(6, (short) 122);
+      one (machine).getVariable((char) 6); will(returnValue((char) 123));
+      one (machine).setVariable(6, (char) 122);
     }});
     Instruction1OpMock dec = createInstructionMock(Short1StaticInfo.OP_DEC,
-        Operand.TYPENUM_SMALL_CONSTANT, (short) 6);
+        Operand.TYPENUM_SMALL_CONSTANT, (char) 6);
     dec.execute();
     assertTrue(dec.nextInstructionCalled);
   }
@@ -93,11 +94,11 @@ public class Instruction1OpV3Test extends InstructionTestBase {
   @Test
   public void testDec0() {    
     context.checking(new Expectations() {{
-      one (machine).getVariable(7); will(returnValue((short) 0));
-      one (machine).setVariable(7, (short) -1);
+      one (machine).getVariable((char) 7); will(returnValue((char) 0));
+      one (machine).setVariable(7, signedToUnsigned16((short) -1));
     }});
     Instruction1OpMock dec = createInstructionMock(Short1StaticInfo.OP_DEC,
-        Operand.TYPENUM_SMALL_CONSTANT, (short) 7);
+        Operand.TYPENUM_SMALL_CONSTANT, (char) 7);
     dec.execute();
     assertTrue(dec.nextInstructionCalled);
   }
@@ -109,12 +110,12 @@ public class Instruction1OpV3Test extends InstructionTestBase {
   public void testGetParent() {    
     context.checking(new Expectations() {{
       one (machine).getParent(2); will(returnValue(27));
-      one (machine).setVariable(0x10, (short) 27);
+      one (machine).setVariable(0x10, (char) 27);
     }});
     Instruction1OpMock get_parent = createInstructionMock(
         Short1StaticInfo.OP_GET_PARENT, Operand.TYPENUM_SMALL_CONSTANT,
-        (short) 0x02);
-    get_parent.setStoreVariable((short)0x10);
+        (char) 0x02);
+    get_parent.setStoreVariable((char)0x10);
     get_parent.execute();
     assertTrue(get_parent.nextInstructionCalled);
   }
@@ -129,7 +130,7 @@ public class Instruction1OpV3Test extends InstructionTestBase {
       one (machine).incrementPC(18194);
     }});
     Instruction1OpMock jump = createInstructionMock(Short1StaticInfo.OP_JUMP,
-        Operand.TYPENUM_LARGE_CONSTANT, (short)0x4711);
+        Operand.TYPENUM_LARGE_CONSTANT, (char) 0x4711);
     jump.execute();
   }
 
@@ -142,14 +143,14 @@ public class Instruction1OpV3Test extends InstructionTestBase {
     // Simulate: value in variable 1 is to, indicating value is retrieved from
     // variable 2
     context.checking(new Expectations() {{
-      one (machine).getVariable(1); will(returnValue((short) 2));
-      one (machine).getVariable(2); will(returnValue((short) 4711));
-      one (machine).setVariable(0x12, (short) 4711);
+      one (machine).getVariable((char) 1); will(returnValue((char) 2));
+      one (machine).getVariable((char) 2); will(returnValue((char) 4711));
+      one (machine).setVariable(0x12, (char) 4711);
     }});
     Instruction1OpMock load = createInstructionMock(Short1StaticInfo.OP_LOAD,
-        Operand.TYPENUM_VARIABLE, (short) 0x01);
+        Operand.TYPENUM_VARIABLE, (char) 0x01);
     // Result will be in variable 0x12
-    load.setStoreVariable((short) 0x12);
+    load.setStoreVariable((char) 0x12);
     load.execute();
     assertTrue(load.nextInstructionCalled);
   }
@@ -157,13 +158,13 @@ public class Instruction1OpV3Test extends InstructionTestBase {
   @Test
   public void testLoadOperandIsConstant() {
     context.checking(new Expectations() {{
-      one (machine).getVariable(1); will(returnValue((short) 4715));
-      one (machine).setVariable(0x13, (short) 4715);
+      one (machine).getVariable((char) 1); will(returnValue((char) 4715));
+      one (machine).setVariable(0x13, (char) 4715);
     }});
     Instruction1OpMock load = createInstructionMock(Short1StaticInfo.OP_LOAD,
-        Operand.TYPENUM_SMALL_CONSTANT, (short) 0x01);
+        Operand.TYPENUM_SMALL_CONSTANT, (char) 0x01);
     // Result will be in variable 0x13
-    load.setStoreVariable((short) 0x13);
+    load.setStoreVariable((char) 0x13);
     load.execute();
     assertTrue(load.nextInstructionCalled);
   }
@@ -172,13 +173,13 @@ public class Instruction1OpV3Test extends InstructionTestBase {
   @Test
   public void testLoadOperandReferencesStack() {
     context.checking(new Expectations() {{
-      one (machine).getStackTop(); will(returnValue((short) 4715));
-      one (machine).setVariable(0x13, (short) 4715);
+      one (machine).getStackTop(); will(returnValue((char) 4715));
+      one (machine).setVariable(0x13, (char) 4715);
     }});
     Instruction1OpMock load = createInstructionMock(Short1StaticInfo.OP_LOAD,
-        Operand.TYPENUM_SMALL_CONSTANT, (short) 0x00);
+        Operand.TYPENUM_SMALL_CONSTANT, (char) 0x00);
     // Result will be in variable 0x13
-    load.setStoreVariable((short) 0x13);
+    load.setStoreVariable((char) 0x13);
     load.execute();
     assertTrue(load.nextInstructionCalled);
   }
@@ -192,7 +193,7 @@ public class Instruction1OpV3Test extends InstructionTestBase {
   @Test
   public void testJzBranchIfTrueNotZero() {    
     Instruction1OpMock jz = createInstructionMock(Short1StaticInfo.OP_JZ,
-        Operand.TYPENUM_SMALL_CONSTANT, (short) 0x01);        
+        Operand.TYPENUM_SMALL_CONSTANT, (char) 0x01);        
     jz.execute();
     assertTrue(jz.branchOnTestCalled);
     assertFalse(jz.branchOnTestCondition);
@@ -204,7 +205,7 @@ public class Instruction1OpV3Test extends InstructionTestBase {
   @Test
   public void testJzBranchIfTrueIsZero() {    
     Instruction1OpMock jz = createInstructionMock(Short1StaticInfo.OP_JZ,
-        Operand.TYPENUM_SMALL_CONSTANT, (short) 0x00);    
+        Operand.TYPENUM_SMALL_CONSTANT, (char) 0x00);    
     jz.execute();
     assertTrue(jz.branchOnTestCalled);
     assertTrue(jz.branchOnTestCondition);
@@ -219,12 +220,12 @@ public class Instruction1OpV3Test extends InstructionTestBase {
   public void testGetSiblingIs0() {    
     context.checking(new Expectations() {{
       one (machine).getSibling(8); will(returnValue(0));
-      one (machine).setVariable(0x01, (short) 0);
+      one (machine).setVariable(0x01, (char) 0);
     }});
     Instruction1OpMock get_sibling = createInstructionMock(
     		Short1StaticInfo.OP_GET_SIBLING,
-        Operand.TYPENUM_SMALL_CONSTANT, (short) 0x08);
-    get_sibling.setStoreVariable((short) 0x01);
+        Operand.TYPENUM_SMALL_CONSTANT, (char) 0x08);
+    get_sibling.setStoreVariable((char) 0x01);
     get_sibling.execute();
     assertTrue(get_sibling.branchOnTestCalled);
     assertFalse(get_sibling.branchOnTestCondition);
@@ -234,12 +235,12 @@ public class Instruction1OpV3Test extends InstructionTestBase {
   public void testGetSiblingHasSibling() {    
     context.checking(new Expectations() {{
       one (machine).getSibling(6); will(returnValue(152));
-      one (machine).setVariable(0x01, (short) 152);
+      one (machine).setVariable(0x01, (char) 152);
     }});
     // Object 6 has 152 as its sibling    
     Instruction1OpMock get_sibling = createInstructionMock(Short1StaticInfo.OP_GET_SIBLING,
-        Operand.TYPENUM_SMALL_CONSTANT, (short) 0x06);
-    get_sibling.setStoreVariable((short) 0x01);
+        Operand.TYPENUM_SMALL_CONSTANT, (char) 0x06);
+    get_sibling.setStoreVariable((char) 0x01);
     get_sibling.execute();    
     assertTrue(get_sibling.branchOnTestCalled);
     assertTrue(get_sibling.branchOnTestCondition);
@@ -252,11 +253,11 @@ public class Instruction1OpV3Test extends InstructionTestBase {
   public void testGetChildOfObject0() {
     context.checking(new Expectations() {{
       one (machine).warn("@get_child illegal access to object 0");
-      one (machine).setVariable(0x00, (short) 0);
+      one (machine).setVariable(0x00, (char) 0);
     }});
     // Object 0 does not exist
     Instruction1OpMock get_child = createInstructionMock(Short1StaticInfo.OP_GET_CHILD,
-        Operand.TYPENUM_SMALL_CONSTANT, (short) 0x00);
+        Operand.TYPENUM_SMALL_CONSTANT, (char) 0x00);
     get_child.execute();    
     assertTrue(get_child.branchOnTestCalled);
     assertFalse(get_child.branchOnTestCondition);
@@ -266,12 +267,12 @@ public class Instruction1OpV3Test extends InstructionTestBase {
   public void testGetChildIs0() {    
     context.checking(new Expectations() {{
       one (machine).getChild(4); will(returnValue(0));
-      one (machine).setVariable(0x01, (short) 0);
+      one (machine).setVariable(0x01, (char) 0);
     }});
     // Object 4 has no child
     Instruction1OpMock get_child = createInstructionMock(Short1StaticInfo.OP_GET_CHILD,
-        Operand.TYPENUM_SMALL_CONSTANT, (short) 0x04);
-    get_child.setStoreVariable((short) 0x01);    
+        Operand.TYPENUM_SMALL_CONSTANT, (char) 0x04);
+    get_child.setStoreVariable((char) 0x01);    
     get_child.execute();    
     assertTrue(get_child.branchOnTestCalled);
     assertFalse(get_child.branchOnTestCondition);
@@ -281,12 +282,12 @@ public class Instruction1OpV3Test extends InstructionTestBase {
   public void testGetChildAndBranch() {
     context.checking(new Expectations() {{
       one (machine).getChild(7); will(returnValue(41));
-      one (machine).setVariable(0x02, (short) 41);
+      one (machine).setVariable(0x02, (char) 41);
     }});
     // Object 7 has 41 as its child    
     Instruction1OpMock get_child = createInstructionMock(Short1StaticInfo.OP_GET_CHILD,
-        Operand.TYPENUM_SMALL_CONSTANT, (short) 0x07);
-    get_child.setStoreVariable((short) 0x02);    
+        Operand.TYPENUM_SMALL_CONSTANT, (char) 0x07);
+    get_child.setStoreVariable((char) 0x02);    
     get_child.execute();  
     assertTrue(get_child.branchOnTestCalled);
     assertTrue(get_child.branchOnTestCondition);
@@ -302,7 +303,7 @@ public class Instruction1OpV3Test extends InstructionTestBase {
       one (machine).printZString(0x28bc);
     }});
     Instruction1OpMock print_addr = createInstructionMock(Short1StaticInfo.OP_PRINT_ADDR,
-        Operand.TYPENUM_LARGE_CONSTANT, (short) 0x28bc);
+        Operand.TYPENUM_LARGE_CONSTANT, (char) 0x28bc);
     print_addr.execute();
     assertTrue(print_addr.nextInstructionCalled);
   }
@@ -318,7 +319,7 @@ public class Instruction1OpV3Test extends InstructionTestBase {
       one (machine).printZString(1234);
     }});
     Instruction1OpMock print_paddr = createInstructionMock(Short1StaticInfo.OP_PRINT_PADDR,
-        Operand.TYPENUM_LARGE_CONSTANT, (short) 0x145e);
+        Operand.TYPENUM_LARGE_CONSTANT, (char) 0x145e);
     print_paddr.execute();
     assertTrue(print_paddr.nextInstructionCalled);
   }
@@ -330,7 +331,7 @@ public class Instruction1OpV3Test extends InstructionTestBase {
   @Test
   public void testRet() {
     Instruction1OpMock ret = createInstructionMock(Short1StaticInfo.OP_RET,
-        Operand.TYPENUM_LARGE_CONSTANT, (short) 0x145e);    
+        Operand.TYPENUM_LARGE_CONSTANT, (char) 0x145e);    
     ret.execute();
     assertTrue(ret.returned);
     assertEquals((short) 0x145e, ret.returnValue);
@@ -339,10 +340,10 @@ public class Instruction1OpV3Test extends InstructionTestBase {
   @Test
   public void testRetWithVariable() {
     context.checking(new Expectations() {{
-      one (machine).getVariable(1); will(returnValue((short) 0x23));
+      one (machine).getVariable((char) 1); will(returnValue((char) 0x23));
     }});
     Instruction1OpMock ret = createInstructionMock(Short1StaticInfo.OP_RET,
-        Operand.TYPENUM_VARIABLE, (short) 0x01);
+        Operand.TYPENUM_VARIABLE, (char) 0x01);
     ret.execute();
     assertTrue(ret.returned);
     assertEquals((short) 0x23, ret.returnValue);
@@ -359,7 +360,7 @@ public class Instruction1OpV3Test extends InstructionTestBase {
       one (machine).printZString(4712);
     }});
     Instruction1OpMock print_obj = createInstructionMock(Short1StaticInfo.OP_PRINT_OBJ,
-        Operand.TYPENUM_SMALL_CONSTANT, (short) 0x03);
+        Operand.TYPENUM_SMALL_CONSTANT, (char) 0x03);
     print_obj.execute();
     assertTrue(print_obj.nextInstructionCalled);
   }
@@ -374,7 +375,7 @@ public class Instruction1OpV3Test extends InstructionTestBase {
       one (machine).removeObject(0x03);
     }});
     Instruction1OpMock remove_obj = createInstructionMock(Short1StaticInfo.OP_REMOVE_OBJ,
-        Operand.TYPENUM_SMALL_CONSTANT, (short) 0x03);
+        Operand.TYPENUM_SMALL_CONSTANT, (char) 0x03);
     remove_obj.execute();
     assertTrue(remove_obj.nextInstructionCalled);
   }
@@ -387,11 +388,11 @@ public class Instruction1OpV3Test extends InstructionTestBase {
   public void testGetPropLen() {
     context.checking(new Expectations() {{
       one (machine).getPropertyLength(0x1889); will(returnValue(4));
-      one (machine).setVariable(0x15, (short) 4);
+      one (machine).setVariable(0x15, (char) 4);
     }});
     Instruction1OpMock get_prop_len = createInstructionMock(Short1StaticInfo.OP_GET_PROP_LEN,
-        Operand.TYPENUM_LARGE_CONSTANT, (short) 0x1889);
-    get_prop_len.setStoreVariable((short) 0x15);
+        Operand.TYPENUM_LARGE_CONSTANT, (char) 0x1889);
+    get_prop_len.setStoreVariable((char) 0x15);
     get_prop_len.execute();
     assertTrue(get_prop_len.nextInstructionCalled);
   }
@@ -406,7 +407,7 @@ public class Instruction1OpV3Test extends InstructionTestBase {
       one (machine).halt("illegal instruction, type: SHORT operand count: C1OP opcode: 8");
     }});
     Short1Instruction call1s = createInstructionMock(Short1StaticInfo.OP_CALL_1S,
-        Operand.TYPENUM_LARGE_CONSTANT, (short) 4611);
+        Operand.TYPENUM_LARGE_CONSTANT, (char) 4611);
     call1s.execute();
   }
 
@@ -417,7 +418,7 @@ public class Instruction1OpV3Test extends InstructionTestBase {
   static class Instruction1OpMock extends Short1Instruction {
     public boolean nextInstructionCalled;
     public boolean returned;
-    public short returnValue;
+    public char returnValue;
     public boolean branchOnTestCalled;
     public boolean branchOnTestCondition;
     
@@ -431,7 +432,7 @@ public class Instruction1OpV3Test extends InstructionTestBase {
     }
     
     @Override
-    protected void returnFromRoutine(short retval) {
+    protected void returnFromRoutine(char retval) {
       returned = true;
       returnValue = retval;
     }
@@ -452,12 +453,12 @@ public class Instruction1OpV3Test extends InstructionTestBase {
   }
   
   private Instruction1OpMock createInstructionMock(int opcode, int typenum,
-  		short value) {
+  		char value) {
   	return createInstructionMock(machine, opcode, typenum, value);
   }
 
   static Instruction1OpMock createInstructionMock(Machine machine,
-  		int opcode, int typenum, short value) {    
+  		int opcode, int typenum, char value) {    
     Instruction1OpMock result = new Instruction1OpMock(machine, opcode);
     result.addOperand(new Operand(typenum, value));
     result.setLength(12);    

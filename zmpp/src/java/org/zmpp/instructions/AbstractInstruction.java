@@ -24,7 +24,7 @@ import java.util.ArrayList;
 import java.util.List;
 
 import org.zmpp.base.Memory;
-import org.zmpp.vm.Cpu;
+import org.zmpp.base.MemoryUtil;
 import org.zmpp.vm.Instruction;
 import org.zmpp.vm.Machine;
 import org.zmpp.vm.PortableGameState;
@@ -48,17 +48,17 @@ public abstract class AbstractInstruction implements Instruction {
   /**
    * The constant for false.
    */
-  public static final short FALSE = 0;
+  public static final char FALSE = 0;
   
   /**
    * The constant for true.
    */
-  public static final short TRUE = 1;
+  public static final char TRUE = 1;
 
   /**
    * The constant for true from restore.
    */
-  public static final short RESTORE_TRUE = 2;
+  public static final char RESTORE_TRUE = 2;
   
   /**
    * The available instruction forms.
@@ -75,15 +75,15 @@ public abstract class AbstractInstruction implements Instruction {
    */
   public static class InstructionResult {
   
-    private short value;
+    private char value;
     private boolean branchCondition;
     
-    public InstructionResult(short value, boolean branchCondition) {
+    public InstructionResult(char value, boolean branchCondition) {
       this.value = value;
       this.branchCondition = branchCondition;
     }
     
-    public short getValue() {
+    public char getValue() {
       return value;
     }
     
@@ -94,7 +94,7 @@ public abstract class AbstractInstruction implements Instruction {
   
   private int opcode;
   private List<Operand> operands;
-  private short storeVariable;
+  private char storeVariable;
   private boolean branchIfConditionTrue; 
   private short branchOffset;  
   private int length;  
@@ -179,7 +179,7 @@ public abstract class AbstractInstruction implements Instruction {
    * Returns the instruction's store variable.
    * @return the store variable
    */
-  public short getStoreVariable() { return storeVariable; }
+  public char getStoreVariable() { return storeVariable; }
   
   /**
    * Returns the branch offset.
@@ -209,7 +209,7 @@ public abstract class AbstractInstruction implements Instruction {
    * Sets the store variable.
    * @param var the store variable
    */
-  public void setStoreVariable(final short var) { this.storeVariable = var; }
+  public void setStoreVariable(final char var) { this.storeVariable = var; }
   
   /**
    * Sets the branch offset.
@@ -273,7 +273,35 @@ public abstract class AbstractInstruction implements Instruction {
    * @param operandNum the operand number
    * @return a signed value
    */
-  public short getValue(final int operandNum) {
+  public short getSignedValue(final int operandNum) {
+    return MemoryUtil.unsignedToSigned16(getUnsignedValue(operandNum));
+  }
+  
+  /**
+   * A method to return the signed representation of the contents of a variable
+   * @param varnum the variable number
+   * @return the signed value
+   */
+  protected short getSignedVarValue(char varnum) {
+    return MemoryUtil.unsignedToSigned16(getMachine().getVariable(varnum));
+  }
+  
+  /**
+   * A method to set a signed 16 Bit integer to the specified variable.
+   * @param varnum the variable number
+   * @param value the signed value
+   */
+  protected void setSignedVarValue(char varnum, short value) {
+    getMachine().setVariable(varnum, MemoryUtil.signedToUnsigned16(value));
+  }
+  
+  /**
+   * Retrieves the value of the specified operand as an unsigned 16 bit
+   * integer.
+   * @param operandNum the operand number
+   * @return the value
+   */
+  public char getUnsignedValue(final int operandNum) {
     final Operand operand = getOperand(operandNum);
     switch (operand.getType()) {
       case VARIABLE:
@@ -286,22 +314,19 @@ public abstract class AbstractInstruction implements Instruction {
   }
   
   /**
-   * Retrieves the value of the specified operand as an unsigned 16 bit
-   * integer.
-   * @param operandNum the operand number
-   * @return the value
-   */
-  public int getUnsignedValue(final int operandNum) {
-    final short signedValue = getValue(operandNum);
-    return signedValue & 0xffff;
-  }
-  
-  /**
    * Stores the specified value in the result variable.
    * @param value the value to store
    */
-  protected void storeResult(final short value) {
+  protected void storeResult(final char value) {
     getMachine().setVariable(getStoreVariable(), value);
+  }
+  
+  /**
+   * Stores a signed value in the result variable.
+   * @param value the value to store
+   */
+  protected void storeSignedResult(final short value) {
+    storeResult(MemoryUtil.signedToUnsigned16(value));
   }
   
   /**
@@ -341,6 +366,7 @@ public abstract class AbstractInstruction implements Instruction {
     return false;
   }
   
+  @Override
   public String toString() {
     final StringBuilder buffer = new StringBuilder();
     buffer.append(getStaticInfo().getOpName(getOpcode(),
@@ -364,7 +390,7 @@ public abstract class AbstractInstruction implements Instruction {
     }
   }
   
-  private String getVarValue(final int varnum) {
+  private String getVarValue(final char varnum) {
     int value = 0;
     if (varnum == 0) {
       value = getMachine().getStackTop();
@@ -442,7 +468,7 @@ public abstract class AbstractInstruction implements Instruction {
    * 
    * @param returnValue the return value
    */
-  protected void returnFromRoutine(final short returnValue) {
+  protected void returnFromRoutine(final char returnValue) {
     getMachine().returnWith(returnValue);
   }
   
@@ -454,14 +480,14 @@ public abstract class AbstractInstruction implements Instruction {
    */
   protected void call(final int numArgs) {
     final int packedAddress = getUnsignedValue(0);
-    final short[] args = new short[numArgs];
+    final char[] args = new char[numArgs];
     for (int i = 0; i < numArgs; i++) {
-      args[i] = getValue(i + 1);
+      args[i] = getUnsignedValue(i + 1);
     }
     call(packedAddress, args);
   }
   
-  protected void call(final int packedRoutineAddress, final short[] args) {
+  protected void call(final int packedRoutineAddress, final char[] args) {
     if (packedRoutineAddress == 0) {
       if (storesResult()) {
         // only if this instruction stores a result
@@ -470,9 +496,8 @@ public abstract class AbstractInstruction implements Instruction {
       nextInstruction();
     } else {
       final int returnAddress = getMachine().getPC() + getLength();
-      final short returnVariable = storesResult() ? getStoreVariable() :
-        RoutineContext.DISCARD_RESULT;
-      
+      final char returnVariable = storesResult() ? getStoreVariable() :
+        RoutineContext.DISCARD_RESULT;      
       machine.call(packedRoutineAddress, returnAddress, args,
                returnVariable);
     }
@@ -492,7 +517,7 @@ public abstract class AbstractInstruction implements Instruction {
       branchOnTest(success);
     } else {
       // changed behaviour in version >= 4
-      storeResult((short) (success ? TRUE : FALSE));
+      storeResult(success ? TRUE : FALSE);
       nextInstruction();
     }
   }
@@ -507,13 +532,12 @@ public abstract class AbstractInstruction implements Instruction {
     } else {
       // changed behaviour in version >= 4
       if (gamestate == null) {
-        storeResult((short) FALSE);
-        
+        storeResult(FALSE);        
         // If failure on restore, just continue
         nextInstruction();
       } else {
         final int storevar = gamestate.getStoreVariable(getMachine());        
-        getMachine().setVariable(storevar, (short) RESTORE_TRUE);        
+        getMachine().setVariable(storevar, RESTORE_TRUE);        
       }
     }
   }

@@ -127,7 +127,6 @@ public class Short1Instruction extends AbstractInstruction {
    * {@inheritDoc}
    */
   protected InstructionStaticInfo getStaticInfo() {
-
     return Short1StaticInfo.getInstance();
   }  
   
@@ -135,9 +134,9 @@ public class Short1Instruction extends AbstractInstruction {
    * inc instruction.
    */
   private void inc() {
-    final short varNum = getValue(0);
-    final short value = getMachine().getVariable(varNum);
-    getMachine().setVariable(varNum, (short) (value + 1));
+    final char varNum = getUnsignedValue(0);
+    final short value = getSignedVarValue(varNum);
+    setSignedVarValue(varNum, (short) (value + 1));
     nextInstruction();
   }
   
@@ -145,9 +144,9 @@ public class Short1Instruction extends AbstractInstruction {
    * dec instruction.
    */
   private void dec() {
-    final short varNum = getValue(0);
-    final short value = (short) getMachine().getVariable(varNum);
-    getMachine().setVariable(varNum, (short) (value - 1));
+    final char varNum = getUnsignedValue(0);
+    final short value = getSignedVarValue(varNum);
+    setSignedVarValue(varNum, (short) (value - 1));
     nextInstruction();
   }
 
@@ -155,9 +154,8 @@ public class Short1Instruction extends AbstractInstruction {
    * not instruction.
    */
   private void not()  {
-	
 	  final int notvalue = ~getUnsignedValue(0);
-	  storeResult((short) (notvalue & 0xffff));
+	  storeResult((char) (notvalue & 0xffff));
 	  nextInstruction();
   }
   
@@ -165,17 +163,16 @@ public class Short1Instruction extends AbstractInstruction {
    * jump instruction. The offset can be negative.
    */
   private void jump() {
-    
     // Unconditional jump
-    getMachine().incrementPC(getValue(0) + 1);
+    getMachine().incrementPC(getSignedValue(0) + 1);
   }
   
   /**
    * load instruction.
    */
   private void load() {
-    final int varnum = getValue(0);
-    final short value = varnum == 0 ? getMachine().getStackTop() :
+    final char varnum = getUnsignedValue(0);
+    final char value = varnum == 0 ? getMachine().getStackTop() :
       getMachine().getVariable(varnum);
     storeResult(value);
     nextInstruction();    
@@ -185,8 +182,7 @@ public class Short1Instruction extends AbstractInstruction {
    * jz instruction.
    */
   private void jz() {
-
-    branchOnTest(getValue(0) == 0);
+    branchOnTest(getUnsignedValue(0) == 0);
   }
   
   /**
@@ -200,7 +196,7 @@ public class Short1Instruction extends AbstractInstruction {
     } else {
       getMachine().warn("@get_parent illegal access to object " + obj);
     }
-    storeResult((short) (parent & 0xffff));
+    storeResult((char) (parent & 0xffff));
     nextInstruction();
   }
   
@@ -212,7 +208,7 @@ public class Short1Instruction extends AbstractInstruction {
     } else {
       getMachine().warn("@get_sibling illegal access to object " + obj);
     }
-    storeResult((short) (sibling & 0xffff));
+    storeResult((char) (sibling & 0xffff));
     branchOnTest(sibling > 0);
   }
   
@@ -224,7 +220,7 @@ public class Short1Instruction extends AbstractInstruction {
     } else {
       getMachine().warn("@get_child illegal access to object " + obj);
     }
-    storeResult((short) (child & 0xffff));
+    storeResult((char) (child & 0xffff));
     branchOnTest(child > 0);
   }
 
@@ -240,7 +236,7 @@ public class Short1Instruction extends AbstractInstruction {
   }
   
   private void ret() {
-    returnFromRoutine(getValue(0));
+    returnFromRoutine(getUnsignedValue(0));
   }
   
   private void print_obj() {
@@ -264,17 +260,11 @@ public class Short1Instruction extends AbstractInstruction {
 
   private void get_prop_len() {
     final int propertyAddress = getUnsignedValue(0);    
-    final short proplen = (short)
+    final char proplen = (char)
       getMachine().getPropertyLength(propertyAddress);
     storeResult(proplen);
     nextInstruction();
   }
-  
-  private void call_1s() {
-    call(0);
-  }
-  
-  private void call_1n() {
-    call(0);
-  }
+  private void call_1s() { call(0); }
+  private void call_1n() { call(0); }
 }

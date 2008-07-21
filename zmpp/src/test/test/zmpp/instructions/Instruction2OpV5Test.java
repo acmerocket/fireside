@@ -73,8 +73,8 @@ public class Instruction2OpV5Test extends InstructionTestBase {
     }});
     Instruction2OpMock z_throw = createInstructionMock(
         LongStaticInfo.OP_THROW,
-        Operand.TYPENUM_SMALL_CONSTANT, (short) 42,
-        Operand.TYPENUM_SMALL_CONSTANT, (short) 2);
+        Operand.TYPENUM_SMALL_CONSTANT, (char) 42,
+        Operand.TYPENUM_SMALL_CONSTANT, (char) 2);
     z_throw.execute();
   }
 
@@ -94,19 +94,19 @@ public class Instruction2OpV5Test extends InstructionTestBase {
     contexts.add(new RoutineContext(5000, 5));
     context.checking(new Expectations() {{
       one (machine).getRoutineContexts(); will(returnValue(contexts));
-      exactly(2).of (machine).returnWith(with(any(short.class)));
+      exactly(2).of (machine).returnWith(with(any(char.class)));
     }});
     Instruction2OpMock z_throw = createInstructionMock(
         LongStaticInfo.OP_THROW,
-        Operand.TYPENUM_SMALL_CONSTANT, (short) 42,
-        Operand.TYPENUM_SMALL_CONSTANT, (short) 2);
+        Operand.TYPENUM_SMALL_CONSTANT, (char) 42,
+        Operand.TYPENUM_SMALL_CONSTANT, (char) 2);
     z_throw.execute();
     assertTrue(z_throw.returned);
     assertEquals((short) 42, z_throw.returnValue);
   }  
 
   private Instruction2OpMock createInstructionMock(int opcode, int typenum1,
-  		short value1, int typenum2, short value2) {
+  		char value1, int typenum2, char value2) {
   	return Instruction2OpV3Test.createInstructionMock(machine, opcode,
   			typenum1, value1, typenum2, value2);
   }

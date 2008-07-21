@@ -54,8 +54,8 @@ public class CustomAlphabetTableTest {
   @Test
   public void testGetA0Char() {
     context.checking(new Expectations() {{
-      one (memory).readUnsigned8(1000); will(returnValue((short) 3)); 
-      one (memory).readUnsigned8(1006); will(returnValue((short) 2)); 
+      one (memory).readUnsigned8(1000); will(returnValue((char) 3)); 
+      one (memory).readUnsigned8(1006); will(returnValue((char) 2)); 
     }});
     assertEquals(3, alphabetTable.getA0Char((byte) 6));
     assertEquals(2, alphabetTable.getA0Char((byte) 12));
@@ -65,8 +65,8 @@ public class CustomAlphabetTableTest {
   @Test
   public void testGetA1Char() {
     context.checking(new Expectations() {{
-      one (memory).readUnsigned8(1026); will(returnValue((short) 3)); 
-      one (memory).readUnsigned8(1032); will(returnValue((short) 2)); 
+      one (memory).readUnsigned8(1026); will(returnValue((char) 3)); 
+      one (memory).readUnsigned8(1032); will(returnValue((char) 2)); 
     }});
     assertEquals(3, alphabetTable.getA1Char((byte) 6));
     assertEquals(2, alphabetTable.getA1Char((byte) 12));
@@ -76,8 +76,8 @@ public class CustomAlphabetTableTest {
   @Test
   public void testGetA2Char() {
     context.checking(new Expectations() {{
-      one (memory).readUnsigned8(1052); will(returnValue((short) 3)); 
-      one (memory).readUnsigned8(1058); will(returnValue((short) 2)); 
+      one (memory).readUnsigned8(1052); will(returnValue((char) 3)); 
+      one (memory).readUnsigned8(1058); will(returnValue((char) 2)); 
     }});
     assertEquals(3, alphabetTable.getA2Char((byte) 6));
     assertEquals(2, alphabetTable.getA2Char((byte) 12));
@@ -90,7 +90,7 @@ public class CustomAlphabetTableTest {
     context.checking(new Expectations() {{
       for (int i = 0; i < 26; i++) {
         one (memory).readUnsigned8(1000 + i);
-        will(returnValue((short) 'a' ));
+        will(returnValue('a' ));
       }
     }});
     assertEquals(-1, alphabetTable.getA0CharCode('@'));
@@ -101,7 +101,7 @@ public class CustomAlphabetTableTest {
     context.checking(new Expectations() {{
       for (int i = 0; i < 26; i++) {
         one (memory).readUnsigned8(1026 + i);
-        will(returnValue((short) 'a' ));
+        will(returnValue('a' ));
       }
     }});
     assertEquals(-1, alphabetTable.getA1CharCode('@'));
@@ -111,10 +111,10 @@ public class CustomAlphabetTableTest {
   public void testA2IndexOfNotFound() {
     context.checking(new Expectations() {{
       // char 7 is directly returned !!
-      one (memory).readUnsigned8(1052); will(returnValue((short) 'a' ));
+      one (memory).readUnsigned8(1052); will(returnValue('a' ));
       for (int i = 2; i < 26; i++) {
         one (memory).readUnsigned8(1052 + i);
-        will(returnValue((short) 'a' ));
+        will(returnValue('a' ));
       }
     }});
     assertEquals(-1, alphabetTable.getA2CharCode('@'));

@@ -23,6 +23,7 @@ package org.zmpp.vm;
 import org.zmpp.base.Memory;
 import org.zmpp.encoding.ZCharDecoder;
 import org.zmpp.encoding.ZsciiString;
+import static org.zmpp.base.MemoryUtil.unsignedToSigned16;
 
 /**
  * Abstract super class of dictionaries.
@@ -94,10 +95,10 @@ public abstract class AbstractDictionary implements Dictionary {
   /**
    * {@inheritDoc}
    */
-  public int getNumberOfEntries() {
+  public short getNumberOfEntries() {
     // The number of entries is a signed value so that we can recognize
     // a negative number
-    return memory.readSigned16(address + getNumberOfSeparators() + 2);
+    return unsignedToSigned16(memory.readUnsigned16(address + getNumberOfSeparators() + 2));
   }
   
   /**
@@ -128,9 +129,9 @@ public abstract class AbstractDictionary implements Dictionary {
   
   /**
    * Creates a string presentation of this dictionary.
-   * 
    * @return the string presentation
    */
+  @Override
   public String toString() {
     final StringBuilder buffer = new StringBuilder();
     int entryAddress;

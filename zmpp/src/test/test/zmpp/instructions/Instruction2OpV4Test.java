@@ -84,15 +84,15 @@ public class Instruction2OpV4Test extends InstructionTestBase {
 
   @Test
   public void testCall2s() {
-    final short[] args = { 2 };
+    final char[] args = { 2 };
     final int returnvalue = 0;
     context.checking(new Expectations() {{
       one (machine).getPC(); will(returnValue(4611));
       one (machine).call(1, 4616, args, returnvalue);
     }});
     LongInstruction call2s = createInstructionMock(LongStaticInfo.OP_CALL_2S,
-        Operand.TYPENUM_SMALL_CONSTANT, (short) 1 ,
-        Operand.TYPENUM_SMALL_CONSTANT, (short) 2);
+        Operand.TYPENUM_SMALL_CONSTANT, (char) 1 ,
+        Operand.TYPENUM_SMALL_CONSTANT, (char) 2);
     call2s.execute();
   }  
 
@@ -106,13 +106,13 @@ public class Instruction2OpV4Test extends InstructionTestBase {
       one (machine).halt("illegal instruction, type: LONG operand count: C2OP opcode: 26");
     }});
     LongInstruction call2n = createInstructionMock(LongStaticInfo.OP_CALL_2N,
-        Operand.TYPENUM_SMALL_CONSTANT, (short) 1 ,
-        Operand.TYPENUM_SMALL_CONSTANT, (short) 2);
+        Operand.TYPENUM_SMALL_CONSTANT, (char) 1 ,
+        Operand.TYPENUM_SMALL_CONSTANT, (char) 2);
     call2n.execute();
   }  
 
   private Instruction2OpMock createInstructionMock(int opcode, int typenum1,
-  		short value1, int typenum2, short value2) {
+  		char value1, int typenum2, char value2) {
   	return Instruction2OpV3Test.createInstructionMock(machine, opcode,
   			typenum1, value1, typenum2, value2);
   }

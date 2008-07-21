@@ -198,7 +198,7 @@ public class Instruction0OpV3Test extends InstructionTestBase {
   @Test
   public void testRetPopped() {
     context.checking(new Expectations() {{
-      one (machine).getVariable(0); will(returnValue((short) 15));
+      one (machine).getVariable((char) 0); will(returnValue((char) 15));
     }});
     Instruction0OpMock ret_popped = createInstructionMock(Short0StaticInfo.OP_RET_POPPED);
     ret_popped.execute();    
@@ -209,7 +209,7 @@ public class Instruction0OpV3Test extends InstructionTestBase {
   @Test
   public void testPop() {
     context.checking(new Expectations() {{
-      one (machine).getVariable(0); will(returnValue((short) 42));
+      one (machine).getVariable((char) 0); will(returnValue((char) 42));
     }});
     Instruction0OpMock pop = createInstructionMock(Short0StaticInfo.OP_POP);
     pop.execute();
@@ -259,7 +259,7 @@ public class Instruction0OpV3Test extends InstructionTestBase {
   public static class Instruction0OpMock extends Short0Instruction {
     public boolean nextInstructionCalled;
     public boolean returned;
-    public short returnValue;
+    public char returnValue;
     public boolean branchOnTestCalled;
     public boolean branchOnTestCondition;
     
@@ -273,7 +273,7 @@ public class Instruction0OpV3Test extends InstructionTestBase {
     }
     
     @Override
-    protected void returnFromRoutine(short retval) {
+    protected void returnFromRoutine(char retval) {
       returned = true;
       returnValue = retval;
     }

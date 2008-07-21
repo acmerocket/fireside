@@ -43,20 +43,12 @@ public interface Memory {
   char readUnsigned16(int address);
   
   /**
-   * Returns the signed 16 bit word at the specified address.
-   * 
-   * @param address the address
-   * @return the 16 bit signed value
-   */
-  short readSigned16(int address);
-  
-  /**
    * Returns the unsigned 8 bit value at the specified address.
    * 
    * @param address the address
    * @return the 8 bit unsigned value
    */
-  short readUnsigned8(int address); 
+  char readUnsigned8(int address); 
   
   // ************************************************************************
   // ****
@@ -72,20 +64,12 @@ public interface Memory {
   void writeUnsigned16(int address, char value);
   
   /**
-   * Writes a short value to the memory.
-   * 
-   * @param address the address
-   * @param value the value
-   */
-  void writeSigned16(int address, short value);
-
-  /**
    * Writes an unsigned byte value to the specified address.
    * 
    * @param address the address to write to
    * @param value the value to write
    */
-  void writeUnsigned8(int address, short value);
+  void writeUnsigned8(int address, char value);
   
   /**
    * A rather common operation: copy the specified number of bytes from

@@ -88,7 +88,7 @@ public class InstructionDecoderTest extends MiniZorkSetup {
     
     assertEquals(0x3b36, info.getOperand(0).getValue() * 2);
     assertEquals(0x3e88, info.getOperand(1).getValue());
-    assertEquals((short) (0xffff), info.getOperand(2).getValue());
+    assertEquals((char) 0xffff, info.getOperand(2).getValue());
     assertEquals(0x00, info.getStoreVariable());
     assertEquals(0x37e2, 0x37d9 + info.getLength());
     
@@ -156,7 +156,7 @@ public class InstructionDecoderTest extends MiniZorkSetup {
     assertEquals(1, jump.getNumOperands());
     assertEquals(Short1StaticInfo.OP_JUMP, jump.getOpcode());
     assertEquals(OperandType.LARGE_CONSTANT, jump.getOperand(0).getType());    
-    assertEquals((short) (0xffc2), jump.getOperand(0).getValue());
+    assertEquals((char) 0xffc2, jump.getOperand(0).getValue());
     
     // SHORT 1OP: Instruction at 0x37c7 is inc L01
     AbstractInstruction incL02 = (AbstractInstruction) decoder.decodeInstruction(0x37c7);
@@ -282,7 +282,7 @@ public class InstructionDecoderTest extends MiniZorkSetup {
       for (int i = 0; i <= 2; i++) {
         atLeast(1).of (machine4).readUnsigned8(i); will(returnValue(amfvmem.readUnsigned8(i)));
       }
-      atLeast(1).of (machine4).readSigned16(3); will(returnValue(amfvmem.readSigned16(3)));
+      atLeast(1).of (machine4).readUnsigned16(3); will(returnValue(amfvmem.readUnsigned16(3)));
       for (int i = 5; i <= 9; i++) {
         atLeast(1).of (machine4).readUnsigned8(i); will(returnValue(amfvmem.readUnsigned8(i)));
       }

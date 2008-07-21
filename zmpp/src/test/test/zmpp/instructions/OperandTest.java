@@ -35,10 +35,10 @@ public class OperandTest {
 
   @Test
   public void testCreateOperand() {
-    Operand operand1 = new Operand(Operand.TYPENUM_SMALL_CONSTANT, (byte) 5);
-    Operand operand2 = new Operand(Operand.TYPENUM_LARGE_CONSTANT, (short) 6);
-    Operand operand3 = new Operand(Operand.TYPENUM_VARIABLE, (short) 11);
-    Operand operand4 = new Operand(Operand.TYPENUM_OMITTED, (short) 13);
+    Operand operand1 = new Operand(Operand.TYPENUM_SMALL_CONSTANT, (char) 5);
+    Operand operand2 = new Operand(Operand.TYPENUM_LARGE_CONSTANT, (char) 6);
+    Operand operand3 = new Operand(Operand.TYPENUM_VARIABLE, (char) 11);
+    Operand operand4 = new Operand(Operand.TYPENUM_OMITTED, (char) 13);
     
     assertEquals(5, operand1.getValue());
     assertEquals(6, operand2.getValue());

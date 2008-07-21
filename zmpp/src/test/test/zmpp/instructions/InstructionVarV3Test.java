@@ -32,6 +32,7 @@ import org.zmpp.instructions.VariableStaticInfo;
 import org.zmpp.instructions.AbstractInstruction.OperandCount;
 import org.zmpp.vm.Machine;
 import org.zmpp.vm.ScreenModel;
+import static org.zmpp.base.MemoryUtil.signedToUnsigned16;
 
 /**
  * This class tests the VariableInstruction class.
@@ -73,20 +74,20 @@ public class InstructionVarV3Test extends InstructionTestBase {
   @Test
   public void testCall() {
     context.checking(new Expectations() {{
-      one (machine).setVariable(0, (short) 0);
+      one (machine).setVariable(0, (char) 0);
       one (machine).incrementPC(5);
     }});
     VariableInstruction call_0 = new VariableInstruction(machine,
         OperandCount.VAR, VariableStaticInfo.OP_CALL);
-    call_0.addOperand(new Operand(Operand.TYPENUM_LARGE_CONSTANT, (short) 0x0000));
-    call_0.addOperand(new Operand(Operand.TYPENUM_SMALL_CONSTANT, (short) 0x01));
+    call_0.addOperand(new Operand(Operand.TYPENUM_LARGE_CONSTANT, (char) 0x0000));
+    call_0.addOperand(new Operand(Operand.TYPENUM_SMALL_CONSTANT, (char) 0x01));
     call_0.setLength(5);    
     call_0.execute();
   }
   
   @Test
   public void testCallReal() {
-    final short[] args = { 1, 2 };
+    final char[] args = { 1, 2 };
     final int retval = 17;
     context.checking(new Expectations() {{
       one (machine).getPC(); will(returnValue(4711));
@@ -95,10 +96,10 @@ public class InstructionVarV3Test extends InstructionTestBase {
     // Real call
     VariableInstruction call = new VariableInstruction(machine,
         OperandCount.VAR, VariableStaticInfo.OP_CALL);
-    call.addOperand(new Operand(Operand.TYPENUM_LARGE_CONSTANT, (short) 0x1bc5));
-    call.addOperand(new Operand(Operand.TYPENUM_SMALL_CONSTANT, (short) 0x01));
-    call.addOperand(new Operand(Operand.TYPENUM_SMALL_CONSTANT, (short) 0x02));
-    call.setStoreVariable((short) 0x11);
+    call.addOperand(new Operand(Operand.TYPENUM_LARGE_CONSTANT, (char) 0x1bc5));
+    call.addOperand(new Operand(Operand.TYPENUM_SMALL_CONSTANT, (char) 0x01));
+    call.addOperand(new Operand(Operand.TYPENUM_SMALL_CONSTANT, (char) 0x02));
+    call.setStoreVariable((char) 0x11);
     call.setLength(5);    
     call.execute();
   }
@@ -114,8 +115,8 @@ public class InstructionVarV3Test extends InstructionTestBase {
     }});
     VariableInstruction call = new VariableInstruction(machine,
         OperandCount.VAR, VariableStaticInfo.OP_CALL_VS2);
-    call.addOperand(new Operand(Operand.TYPENUM_LARGE_CONSTANT, (short) 0x0000));
-    call.addOperand(new Operand(Operand.TYPENUM_SMALL_CONSTANT, (short) 0x01));
+    call.addOperand(new Operand(Operand.TYPENUM_LARGE_CONSTANT, (char) 0x0000));
+    call.addOperand(new Operand(Operand.TYPENUM_SMALL_CONSTANT, (char) 0x01));
     call.setLength(5);
     call.execute();
   }
@@ -127,14 +128,14 @@ public class InstructionVarV3Test extends InstructionTestBase {
   @Test
   public void testStorew() {
     context.checking(new Expectations() {{
-      one (machine).writeSigned16(2, (short) 0x1000);
+      one (machine).writeUnsigned16(2, (char) 0x1000);
       one (machine).incrementPC(5);
     }});
     VariableInstruction storew = new VariableInstruction(machine,
         OperandCount.VAR, VariableStaticInfo.OP_STOREW);    
-    storew.addOperand(new Operand(Operand.TYPENUM_LARGE_CONSTANT, (short) 0x0000));
-    storew.addOperand(new Operand(Operand.TYPENUM_SMALL_CONSTANT, (short) 1));
-    storew.addOperand(new Operand(Operand.TYPENUM_LARGE_CONSTANT, (short) 0x1000));
+    storew.addOperand(new Operand(Operand.TYPENUM_LARGE_CONSTANT, (char) 0x0000));
+    storew.addOperand(new Operand(Operand.TYPENUM_SMALL_CONSTANT, (char) 1));
+    storew.addOperand(new Operand(Operand.TYPENUM_LARGE_CONSTANT, (char) 0x1000));
     storew.setLength(5);    
     storew.execute();
   }
@@ -146,14 +147,14 @@ public class InstructionVarV3Test extends InstructionTestBase {
   @Test
   public void testStoreb() {
     context.checking(new Expectations() {{
-      one (machine).writeUnsigned8(1, (short) 0x15);
+      one (machine).writeUnsigned8(1, (char) 0x15);
       one (machine).incrementPC(5);
     }});
     VariableInstruction storeb = new VariableInstruction(machine,
         OperandCount.VAR, VariableStaticInfo.OP_STOREB);    
-    storeb.addOperand(new Operand(Operand.TYPENUM_LARGE_CONSTANT, (short) 0x0000));
-    storeb.addOperand(new Operand(Operand.TYPENUM_SMALL_CONSTANT, (short) 1));
-    storeb.addOperand(new Operand(Operand.TYPENUM_SMALL_CONSTANT, (short) 0x15));
+    storeb.addOperand(new Operand(Operand.TYPENUM_LARGE_CONSTANT, (char) 0x0000));
+    storeb.addOperand(new Operand(Operand.TYPENUM_SMALL_CONSTANT, (char) 1));
+    storeb.addOperand(new Operand(Operand.TYPENUM_SMALL_CONSTANT, (char) 0x15));
     storeb.setLength(5);
     storeb.execute();
   }
@@ -161,14 +162,14 @@ public class InstructionVarV3Test extends InstructionTestBase {
   @Test
   public void testPutProp() {
     context.checking(new Expectations() {{
-      one (machine).setProperty(2, 24, -1);
+      one (machine).setProperty(2, 24, (char) 0xffff);
       one (machine).incrementPC(5);
     }});
     VariableInstruction put_prop1 = new VariableInstruction(machine,
         OperandCount.VAR, VariableStaticInfo.OP_PUT_PROP);    
-    put_prop1.addOperand(new Operand(Operand.TYPENUM_SMALL_CONSTANT, (short) 2));
-    put_prop1.addOperand(new Operand(Operand.TYPENUM_SMALL_CONSTANT, (short) 24));
-    put_prop1.addOperand(new Operand(Operand.TYPENUM_LARGE_CONSTANT, (short) 0xffff));
+    put_prop1.addOperand(new Operand(Operand.TYPENUM_SMALL_CONSTANT, (char) 2));
+    put_prop1.addOperand(new Operand(Operand.TYPENUM_SMALL_CONSTANT, (char) 24));
+    put_prop1.addOperand(new Operand(Operand.TYPENUM_LARGE_CONSTANT, (char) 0xffff));
     put_prop1.setLength(5);
     put_prop1.execute();
   }
@@ -181,7 +182,7 @@ public class InstructionVarV3Test extends InstructionTestBase {
     }});
     VariableInstruction print_char = new VariableInstruction(machine,
         OperandCount.VAR, VariableStaticInfo.OP_PRINT_CHAR);
-    print_char.addOperand(new Operand(Operand.TYPENUM_SMALL_CONSTANT, (short) 0x61));
+    print_char.addOperand(new Operand(Operand.TYPENUM_SMALL_CONSTANT, (char) 0x61));
     print_char.setLength(5);    
     print_char.execute();
   }
@@ -198,7 +199,7 @@ public class InstructionVarV3Test extends InstructionTestBase {
     }});
     VariableInstruction print_num = new VariableInstruction(machine,
         OperandCount.VAR, VariableStaticInfo.OP_PRINT_NUM);
-    print_num.addOperand(new Operand(Operand.TYPENUM_LARGE_CONSTANT, (short) -12));
+    print_num.addOperand(new Operand(Operand.TYPENUM_LARGE_CONSTANT, signedToUnsigned16((short) -12)));
     print_num.setLength(5);
     print_num.execute();
   }
@@ -210,12 +211,12 @@ public class InstructionVarV3Test extends InstructionTestBase {
   @Test
   public void testPush() {
     context.checking(new Expectations() {{
-      one (machine).setVariable(0x00, (short) 0x13);
+      one (machine).setVariable(0x00, (char) 0x13);
       one (machine).incrementPC(5);
     }});
     VariableInstruction push = new VariableInstruction(machine,
         OperandCount.VAR, VariableStaticInfo.OP_PUSH);
-    push.addOperand(new Operand(Operand.TYPENUM_LARGE_CONSTANT, (short) 0x13));
+    push.addOperand(new Operand(Operand.TYPENUM_LARGE_CONSTANT, (char) 0x13));
     push.setLength(5);
     push.execute();
   }
@@ -227,13 +228,13 @@ public class InstructionVarV3Test extends InstructionTestBase {
   @Test
   public void testPull() {
     context.checking(new Expectations() {{
-      one (machine).getVariable(0x00); will(returnValue((short) 0x14));
-      one (machine).setVariable(0x13, (short) 0x14);
+      one (machine).getVariable((char) 0x00); will(returnValue((char) 0x14));
+      one (machine).setVariable(0x13, (char) 0x14);
       one (machine).incrementPC(5);
     }});
     VariableInstruction pull = new VariableInstruction(machine,
         OperandCount.VAR, VariableStaticInfo.OP_PULL);
-    pull.addOperand(new Operand(Operand.TYPENUM_LARGE_CONSTANT, (short) 0x13));
+    pull.addOperand(new Operand(Operand.TYPENUM_LARGE_CONSTANT, (char) 0x13));
     pull.setLength(5);
     pull.execute();
   }
@@ -243,13 +244,13 @@ public class InstructionVarV3Test extends InstructionTestBase {
   @Test
   public void testPullToStack() {
     context.checking(new Expectations() {{
-      one (machine).getVariable(0x00); will(returnValue((short) 0x00));
-      one (machine).setStackTop((short) 0x00);
+      one (machine).getVariable((char) 0x00); will(returnValue((char) 0x00));
+      one (machine).setStackTop((char) 0x00);
       one (machine).incrementPC(5);
     }});
     VariableInstruction pull = new VariableInstruction(machine,
         OperandCount.VAR, VariableStaticInfo.OP_PULL);
-    pull.addOperand(new Operand(Operand.TYPENUM_LARGE_CONSTANT, (short) 0x00));
+    pull.addOperand(new Operand(Operand.TYPENUM_LARGE_CONSTANT, (char) 0x00));
     pull.setLength(5);
     pull.execute();
   }
@@ -266,7 +267,7 @@ public class InstructionVarV3Test extends InstructionTestBase {
     }});
     VariableInstruction inputstream = new VariableInstruction(machine,
         OperandCount.VAR, VariableStaticInfo.OP_INPUTSTREAM);
-    inputstream.addOperand(new Operand(Operand.TYPENUM_SMALL_CONSTANT, (short) 1));
+    inputstream.addOperand(new Operand(Operand.TYPENUM_SMALL_CONSTANT, (char) 1));
     inputstream.setLength(5);
     inputstream.execute();
   }
@@ -284,7 +285,8 @@ public class InstructionVarV3Test extends InstructionTestBase {
     // disable
     VariableInstruction outputstream_disable = new VariableInstruction(machine,
         OperandCount.VAR, VariableStaticInfo.OP_OUTPUTSTREAM);
-    outputstream_disable.addOperand(new Operand(Operand.TYPENUM_SMALL_CONSTANT, (short) -2));
+    outputstream_disable.addOperand(new Operand(Operand.TYPENUM_SMALL_CONSTANT,
+            signedToUnsigned16((short) -2)));
     outputstream_disable.setLength(5);
     outputstream_disable.execute();
   }
@@ -297,7 +299,7 @@ public class InstructionVarV3Test extends InstructionTestBase {
     // do nothing
     VariableInstruction outputstream_nothing = new VariableInstruction(machine,
         OperandCount.VAR, VariableStaticInfo.OP_OUTPUTSTREAM);
-    outputstream_nothing.addOperand(new Operand(Operand.TYPENUM_SMALL_CONSTANT, (short) 0));
+    outputstream_nothing.addOperand(new Operand(Operand.TYPENUM_SMALL_CONSTANT, (char) 0));
     outputstream_nothing.setLength(5);
     outputstream_nothing.execute();
   }
@@ -311,7 +313,7 @@ public class InstructionVarV3Test extends InstructionTestBase {
     // enable
     VariableInstruction outputstream_enable = new VariableInstruction(machine,
         OperandCount.VAR, VariableStaticInfo.OP_OUTPUTSTREAM);
-    outputstream_enable.addOperand(new Operand(Operand.TYPENUM_SMALL_CONSTANT, (short) 2));
+    outputstream_enable.addOperand(new Operand(Operand.TYPENUM_SMALL_CONSTANT, (char) 2));
     outputstream_enable.setLength(5);
     outputstream_enable.execute();
   } 
@@ -323,15 +325,15 @@ public class InstructionVarV3Test extends InstructionTestBase {
   @Test
   public void testRandom() {
     context.checking(new Expectations() {{
-      one (machine).random((short) 1234); will(returnValue((short) 3));
-      one (machine).setVariable(0x13, (short) 3);
+      one (machine).random((short) 1234); will(returnValue((char) 3));
+      one (machine).setVariable(0x13, (char) 3);
       one (machine).incrementPC(5);
     }});
     VariableInstruction random = new VariableInstruction(machine,
         OperandCount.VAR, VariableStaticInfo.OP_RANDOM);
-    random.addOperand(new Operand(Operand.TYPENUM_LARGE_CONSTANT, (short) 1234));
+    random.addOperand(new Operand(Operand.TYPENUM_LARGE_CONSTANT, (char) 1234));
     random.setLength(5);
-    random.setStoreVariable((short) 0x13);
+    random.setStoreVariable((char) 0x13);
     random.execute();
   }
   
@@ -347,7 +349,7 @@ public class InstructionVarV3Test extends InstructionTestBase {
     }});
     VariableInstructionMock split_window =
       new VariableInstructionMock(machine, VariableStaticInfo.OP_SPLIT_WINDOW);
-    split_window.addOperand(new Operand(Operand.TYPENUM_SMALL_CONSTANT, (short) 12));
+    split_window.addOperand(new Operand(Operand.TYPENUM_SMALL_CONSTANT, (char) 12));
     split_window.execute();
     assertTrue(split_window.nextInstructionCalled);
   }
@@ -364,7 +366,7 @@ public class InstructionVarV3Test extends InstructionTestBase {
     }});
     VariableInstructionMock set_window =
       new VariableInstructionMock(machine, VariableStaticInfo.OP_SET_WINDOW);
-    set_window.addOperand(new Operand(Operand.TYPENUM_SMALL_CONSTANT, (short) 2));
+    set_window.addOperand(new Operand(Operand.TYPENUM_SMALL_CONSTANT, (char) 2));
     set_window.execute();
     assertTrue(set_window.nextInstructionCalled);
   }
@@ -381,7 +383,7 @@ public class InstructionVarV3Test extends InstructionTestBase {
     VariableInstructionMock set_text_style =
       new VariableInstructionMock(machine, VariableStaticInfo.OP_SET_TEXT_STYLE);
     
-    set_text_style.addOperand(new Operand(Operand.TYPENUM_SMALL_CONSTANT, (short) 2));
+    set_text_style.addOperand(new Operand(Operand.TYPENUM_SMALL_CONSTANT, (char) 2));
     set_text_style.execute();
   }
   
@@ -393,7 +395,7 @@ public class InstructionVarV3Test extends InstructionTestBase {
     VariableInstructionMock buffer_mode =
       new VariableInstructionMock(machine, VariableStaticInfo.OP_BUFFER_MODE);
     
-    buffer_mode.addOperand(new Operand(Operand.TYPENUM_SMALL_CONSTANT, (short) 1));
+    buffer_mode.addOperand(new Operand(Operand.TYPENUM_SMALL_CONSTANT, (char) 1));
     buffer_mode.execute();
   }
   
@@ -409,7 +411,7 @@ public class InstructionVarV3Test extends InstructionTestBase {
     VariableInstructionMock erase_window =
       new VariableInstructionMock(machine, VariableStaticInfo.OP_ERASE_WINDOW);
     
-    erase_window.addOperand(new Operand(Operand.TYPENUM_SMALL_CONSTANT, (short) 1));
+    erase_window.addOperand(new Operand(Operand.TYPENUM_SMALL_CONSTANT, (char) 1));
     erase_window.execute();
   }
 
@@ -421,7 +423,7 @@ public class InstructionVarV3Test extends InstructionTestBase {
     VariableInstructionMock erase_line =
       new VariableInstructionMock(machine, VariableStaticInfo.OP_ERASE_LINE);
     
-    erase_line.addOperand(new Operand(Operand.TYPENUM_SMALL_CONSTANT, (short) 1));
+    erase_line.addOperand(new Operand(Operand.TYPENUM_SMALL_CONSTANT, (char) 1));
     erase_line.execute();
   }
 
@@ -437,7 +439,7 @@ public class InstructionVarV3Test extends InstructionTestBase {
     VariableInstructionMock set_cursor =
       new VariableInstructionMock(machine, VariableStaticInfo.OP_SET_CURSOR);
     
-    set_cursor.addOperand(new Operand(Operand.TYPENUM_SMALL_CONSTANT, (short) 1));
+    set_cursor.addOperand(new Operand(Operand.TYPENUM_SMALL_CONSTANT, (char) 1));
     set_cursor.execute();
   }
 
@@ -449,7 +451,7 @@ public class InstructionVarV3Test extends InstructionTestBase {
     VariableInstructionMock get_cursor =
       new VariableInstructionMock(machine, VariableStaticInfo.OP_GET_CURSOR);
     
-    get_cursor.addOperand(new Operand(Operand.TYPENUM_LARGE_CONSTANT, (short) 4711));
+    get_cursor.addOperand(new Operand(Operand.TYPENUM_LARGE_CONSTANT, (char) 4711));
     get_cursor.execute();
   }
 
@@ -480,7 +482,7 @@ public class InstructionVarV3Test extends InstructionTestBase {
   static class VariableInstructionMock extends VariableInstruction {  
     public boolean nextInstructionCalled;
     public boolean returned;
-    public short returnValue;
+    public char returnValue;
     public boolean branchOnTestCalled;
     public boolean branchOnTestCondition;
     
@@ -494,7 +496,7 @@ public class InstructionVarV3Test extends InstructionTestBase {
     }
     
     @Override
-    protected void returnFromRoutine(short retval) {
+    protected void returnFromRoutine(char retval) {
       returned = true;
       returnValue = retval;
     }

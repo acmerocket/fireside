@@ -177,14 +177,13 @@ public class LongInstruction extends AbstractInstruction {
   
   private void je() {    
     boolean equalsFollowing = false;
-    final short op1 = getValue(0);
+    final char op1 = getUnsignedValue(0);
     if (getNumOperands() <= 1) {
-
       getMachine().halt("je expects at least two operands, only " +
                         "one provided");
     } else {
       for (int i = 1; i < getNumOperands(); i++) {
-        short value = getValue(i);
+        char value = getUnsignedValue(i);
         if (op1 == value) {
           equalsFollowing = true;
           break;
@@ -195,14 +194,14 @@ public class LongInstruction extends AbstractInstruction {
   }
     
   private void jl() {
-    final short op1 = getValue(0);
-    final short op2 = getValue(1);
+    final short op1 = getSignedValue(0);
+    final short op2 = getSignedValue(1);
     branchOnTest(op1 < op2);
   }
   
   private void jg() {
-    final short op1 = getValue(0);
-    final short op2 = getValue(1);
+    final short op1 = getSignedValue(0);
+    final short op2 = getSignedValue(1);
     branchOnTest(op1 > op2);
   }
   
@@ -220,18 +219,18 @@ public class LongInstruction extends AbstractInstruction {
   }
   
   private void dec_chk() {
-    final int varnum = getUnsignedValue(0);
-    final short value = getValue(1);
-    final short varValue = (short) (getMachine().getVariable(varnum) - 1);
-    getMachine().setVariable(varnum, varValue);
+    final char varnum = getUnsignedValue(0);
+    final short value = getSignedValue(1);
+    final short varValue = (short) (getSignedVarValue(varnum) - 1);
+    setSignedVarValue(varnum, varValue);
     branchOnTest(varValue < value);
   }
   
   private void inc_chk() {
-    final int varnum = getUnsignedValue(0);
-    final short value = getValue(1);
-    final short varValue = (short) (getMachine().getVariable(varnum) + 1);
-    getMachine().setVariable(varnum, varValue);
+    final char varnum = getUnsignedValue(0);
+    final short value = getSignedValue(1);
+    final short varValue = (short) (getSignedVarValue(varnum) + 1);
+    setSignedVarValue(varnum, varValue);
     branchOnTest(varValue > value);
   }
   
@@ -244,56 +243,56 @@ public class LongInstruction extends AbstractInstruction {
   private void or() {
     final int op1 = getUnsignedValue(0);
     final int op2 = getUnsignedValue(1);
-    storeResult((short) ((op1 | op2) & 0xffff));
+    storeResult((char) ((op1 | op2) & 0xffff));
     nextInstruction();
   }
   
   private void and() {
     final int op1 = getUnsignedValue(0);
     final int op2 = getUnsignedValue(1);
-    storeResult((short) ((op1 & op2) & 0xffff));
+    storeResult((char) ((op1 & op2) & 0xffff));
     nextInstruction();
   }
   
   private void add() {
-    final short op1 = getValue(0);
-    final short op2 = getValue(1);
-    storeResult((short) (op1 + op2));
+    final short op1 = getSignedValue(0);
+    final short op2 = getSignedValue(1);
+    storeSignedResult((short) (op1 + op2));
     nextInstruction();
   }
   
   private void sub() {
-    final short op1 = getValue(0);
-    final short op2 = getValue(1);
-    storeResult((short) (op1 - op2));
+    final short op1 = getSignedValue(0);
+    final short op2 = getSignedValue(1);
+    storeSignedResult((short) (op1 - op2));
     nextInstruction();
   }
   
   private void mul() {
-    final short op1 = getValue(0);
-    final short op2 = getValue(1);
-    storeResult((short)(op1 * op2));
+    final short op1 = getSignedValue(0);
+    final short op2 = getSignedValue(1);
+    storeSignedResult((short)(op1 * op2));
     nextInstruction();
   }
   
   private void div() {
-    final short op1 = getValue(0);
-    final short op2 = getValue(1);
+    final short op1 = getSignedValue(0);
+    final short op2 = getSignedValue(1);
     if (op2 == 0) {
       getMachine().halt("@div division by zero");
     } else {
-      storeResult((short) (op1 / op2));
+      storeSignedResult((short) (op1 / op2));
       nextInstruction();
     }
   }
   
   private void mod() {
-    final short op1 = getValue(0);
-    final short op2 = getValue(1);
+    final short op1 = getSignedValue(0);
+    final short op2 = getSignedValue(1);
     if (op2 == 0) {
       getMachine().halt("@mod division by zero");
     } else {
-      storeResult((short) (op1 % op2));
+      storeSignedResult((short) (op1 % op2));
       nextInstruction();
     }
   }
@@ -335,8 +334,7 @@ public class LongInstruction extends AbstractInstruction {
   
   private void store() {
     final int varnum = getUnsignedValue(0);
-    final short value = getValue(1);
-    
+    final char value = getUnsignedValue(1);    
     // Handle stack variable as a special case (standard 1.1)
     if (varnum == 0) {
       getMachine().setStackTop(value);
@@ -362,7 +360,7 @@ public class LongInstruction extends AbstractInstruction {
     final int arrayAddress = getUnsignedValue(0);
     final int index = getUnsignedValue(1);
     final Memory memory = getMemory();
-    storeResult((short) memory.readUnsigned8(arrayAddress + index));
+    storeResult((char) memory.readUnsigned8(arrayAddress + index));
     nextInstruction();
   }
 
@@ -370,7 +368,7 @@ public class LongInstruction extends AbstractInstruction {
     final int arrayAddress = getUnsignedValue(0);
     final int index = getUnsignedValue(1);
     final Memory memory = getMemory();
-    storeResult(memory.readSigned16(arrayAddress + 2 * index));
+    storeResult(memory.readUnsigned16(arrayAddress + 2 * index));
     nextInstruction();
   }
 
@@ -379,8 +377,8 @@ public class LongInstruction extends AbstractInstruction {
     final int property = getUnsignedValue(1);
     
     if (obj > 0) {
-      int value = getMachine().getProperty(obj, property);
-      storeResult((short) value); 
+      char value = (char) getMachine().getProperty(obj, property);
+      storeResult(value); 
     } else {
       getMachine().warn("@get_prop illegal access to object " + obj);
     }
@@ -391,8 +389,9 @@ public class LongInstruction extends AbstractInstruction {
     final int obj = getUnsignedValue(0);
     final int property = getUnsignedValue(1);    
     if (obj > 0) {
-      int value = getMachine().getPropertyAddress(obj, property) & 0xffff;
-      storeResult((short) value);
+      char value = (char)
+        (getMachine().getPropertyAddress(obj, property) & 0xffff);
+      storeResult(value);
     } else {
       getMachine().warn("@get_prop_addr illegal access to object " + obj);
     }
@@ -402,9 +401,9 @@ public class LongInstruction extends AbstractInstruction {
   private void get_next_prop() {
     final int obj = getUnsignedValue(0);
     final int property = getUnsignedValue(1);
-    short value = 0;    
+    char value = 0;    
     if (obj > 0) {
-      value = (short) (getMachine().getNextProperty(obj, property) & 0xffff);
+      value = (char) (getMachine().getNextProperty(obj, property) & 0xffff);
       storeResult(value);
       nextInstruction();
     } else {
@@ -417,15 +416,15 @@ public class LongInstruction extends AbstractInstruction {
   private void set_colour() {
     int window = ScreenModel.CURRENT_WINDOW;
     if (getNumOperands() == 3) {
-      window = getValue(2);
+      window = getSignedValue(2);
     }
-    getMachine().getScreen().setForeground(getValue(0), window);
-    getMachine().getScreen().setBackground(getValue(1), window);
+    getMachine().getScreen().setForeground(getSignedValue(0), window);
+    getMachine().getScreen().setBackground(getSignedValue(1), window);
     nextInstruction();
   }
   
   private void z_throw() {
-    final short returnValue = getValue(0);
+    final char returnValue = getUnsignedValue(0);
     final int stackFrame = getUnsignedValue(1);
     
     // Unwind the stack
@@ -438,7 +437,7 @@ public class LongInstruction extends AbstractInstruction {
       // reached
       final int diff = currentStackFrame - stackFrame;
       for (int i = 0; i < diff; i++) {
-        getMachine().returnWith((short) 0);
+        getMachine().returnWith((char) 0);
       }
       
       // and return with the return value

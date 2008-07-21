@@ -31,6 +31,7 @@ import org.zmpp.instructions.LongStaticInfo;
 import org.zmpp.instructions.Operand;
 import org.zmpp.instructions.AbstractInstruction.OperandCount;
 import org.zmpp.vm.Machine;
+import static org.zmpp.base.MemoryUtil.signedToUnsigned16;
 
 /**
  * This class tests the LongInstruction class.
@@ -79,8 +80,8 @@ public class Instruction2OpV3Test extends InstructionTestBase {
       one (machine).halt("illegal instruction, type: LONG operand count: C2OP opcode: 238");
     }});
     LongInstruction illegal = createInstructionMock(0xee,
-        Operand.TYPENUM_SMALL_CONSTANT, (short) 1 ,
-        Operand.TYPENUM_SMALL_CONSTANT, (short) 2);
+        Operand.TYPENUM_SMALL_CONSTANT, (char) 1 ,
+        Operand.TYPENUM_SMALL_CONSTANT, (char) 2);
     illegal.execute();
   }
 
@@ -90,8 +91,8 @@ public class Instruction2OpV3Test extends InstructionTestBase {
       one (machine).halt("illegal instruction, type: LONG operand count: C2OP opcode: 25");
     }});
     LongInstruction call2s = createInstructionMock(LongStaticInfo.OP_CALL_2S,
-        Operand.TYPENUM_SMALL_CONSTANT, (short) 1 ,
-        Operand.TYPENUM_SMALL_CONSTANT, (short) 2);
+        Operand.TYPENUM_SMALL_CONSTANT, (char) 1 ,
+        Operand.TYPENUM_SMALL_CONSTANT, (char) 2);
     call2s.execute();
   }
 
@@ -106,19 +107,19 @@ public class Instruction2OpV3Test extends InstructionTestBase {
       one (machine).halt("je expects at least two operands, only one provided");
     }});
     Instruction2OpMock je1 = createInstructionMockVarOps(LongStaticInfo.OP_JE);
-    je1.addOperand(new Operand(Operand.TYPENUM_SMALL_CONSTANT, (byte) 0x01));
+    je1.addOperand(new Operand(Operand.TYPENUM_SMALL_CONSTANT, (char) 0x01));
     je1.execute();
   }
   
 	@Test
   public void testJe3Operands() {
     context.checking(new Expectations() {{
-      one (machine).getVariable(0x11); will(returnValue((short) 1));
+      one (machine).getVariable((char) 0x11); will(returnValue((char) 1));
     }});
     Instruction2OpMock je3 = createInstructionMockVarOps(LongStaticInfo.OP_JE);    
-    je3.addOperand(new Operand(Operand.TYPENUM_SMALL_CONSTANT, (short) 0x01));
-    je3.addOperand(new Operand(Operand.TYPENUM_LARGE_CONSTANT, (short) 0x04));
-    je3.addOperand(new Operand(Operand.TYPENUM_VARIABLE, (short) 0x11));
+    je3.addOperand(new Operand(Operand.TYPENUM_SMALL_CONSTANT, (char) 0x01));
+    je3.addOperand(new Operand(Operand.TYPENUM_LARGE_CONSTANT, (char) 0x04));
+    je3.addOperand(new Operand(Operand.TYPENUM_VARIABLE, (char) 0x11));
     je3.execute();    
     assertTrue(je3.branchOnTestCalled);
     assertTrue(je3.branchOnTestCondition);
@@ -127,15 +128,15 @@ public class Instruction2OpV3Test extends InstructionTestBase {
 	@Test
   public void testJe2() {
     Instruction2OpMock je_nobranch = createInstructionMock(LongStaticInfo.OP_JE,
-        Operand.TYPENUM_SMALL_CONSTANT, (short) 2,
-        Operand.TYPENUM_SMALL_CONSTANT, (short) 3);    
+        Operand.TYPENUM_SMALL_CONSTANT, (char) 2,
+        Operand.TYPENUM_SMALL_CONSTANT, (char) 3);    
     je_nobranch.execute();
     assertTrue(je_nobranch.branchOnTestCalled);
     assertFalse(je_nobranch.branchOnTestCondition);
     
     Instruction2OpMock je_branch = createInstructionMock(LongStaticInfo.OP_JE,
-        Operand.TYPENUM_SMALL_CONSTANT, (short) 3,
-        Operand.TYPENUM_SMALL_CONSTANT, (short) 3);
+        Operand.TYPENUM_SMALL_CONSTANT, (char) 3,
+        Operand.TYPENUM_SMALL_CONSTANT, (char) 3);
     je_branch.execute();
     assertTrue(je_branch.branchOnTestCalled);
     assertTrue(je_branch.branchOnTestCondition);
@@ -148,15 +149,15 @@ public class Instruction2OpV3Test extends InstructionTestBase {
 	@Test
   public void testJl() {
     Instruction2OpMock jl_nobranch = createInstructionMock(LongStaticInfo.OP_JL,
-        Operand.TYPENUM_SMALL_CONSTANT, (short) 5,
-        Operand.TYPENUM_SMALL_CONSTANT, (short) 3);    
+        Operand.TYPENUM_SMALL_CONSTANT, (char) 5,
+        Operand.TYPENUM_SMALL_CONSTANT, (char) 3);    
     jl_nobranch.execute();
     assertTrue(jl_nobranch.branchOnTestCalled);
     assertFalse(jl_nobranch.branchOnTestCondition);
     
     Instruction2OpMock jl_branch = createInstructionMock(LongStaticInfo.OP_JL,
-        Operand.TYPENUM_SMALL_CONSTANT, (short) 2,
-        Operand.TYPENUM_SMALL_CONSTANT, (short) 3);
+        Operand.TYPENUM_SMALL_CONSTANT, (char) 2,
+        Operand.TYPENUM_SMALL_CONSTANT, (char) 3);
     jl_branch.execute();
     assertTrue(jl_branch.branchOnTestCalled);
     assertTrue(jl_branch.branchOnTestCondition);
@@ -169,15 +170,15 @@ public class Instruction2OpV3Test extends InstructionTestBase {
 	@Test
   public void testJg() {
     Instruction2OpMock jg_nobranch = createInstructionMock(LongStaticInfo.OP_JG,
-        Operand.TYPENUM_SMALL_CONSTANT, (short) 3,
-        Operand.TYPENUM_SMALL_CONSTANT, (short) 5);
+        Operand.TYPENUM_SMALL_CONSTANT, (char) 3,
+        Operand.TYPENUM_SMALL_CONSTANT, (char) 5);
     jg_nobranch.execute();
     assertTrue(jg_nobranch.branchOnTestCalled);
     assertFalse(jg_nobranch.branchOnTestCondition);
     
     Instruction2OpMock jg_branch = createInstructionMock(LongStaticInfo.OP_JG,
-        Operand.TYPENUM_SMALL_CONSTANT, (short) 3,
-        Operand.TYPENUM_SMALL_CONSTANT, (short) 2);
+        Operand.TYPENUM_SMALL_CONSTANT, (char) 3,
+        Operand.TYPENUM_SMALL_CONSTANT, (char) 2);
     jg_branch.execute();
     assertTrue(jg_branch.branchOnTestCalled);
     assertTrue(jg_branch.branchOnTestCondition);
@@ -193,8 +194,8 @@ public class Instruction2OpV3Test extends InstructionTestBase {
       one (machine).getParent(1); will(returnValue(12));
     }});
     Instruction2OpMock jin_nobranch = createInstructionMock(LongStaticInfo.OP_JIN,
-        Operand.TYPENUM_SMALL_CONSTANT, (short) 1,
-        Operand.TYPENUM_SMALL_CONSTANT, (short) 5);
+        Operand.TYPENUM_SMALL_CONSTANT, (char) 1,
+        Operand.TYPENUM_SMALL_CONSTANT, (char) 5);
     jin_nobranch.execute();
     assertTrue(jin_nobranch.branchOnTestCalled);
     assertFalse(jin_nobranch.branchOnTestCondition);
@@ -206,8 +207,8 @@ public class Instruction2OpV3Test extends InstructionTestBase {
       one (machine).getParent(1); will(returnValue(36));
     }});
     Instruction2OpMock jin_branch = createInstructionMock(LongStaticInfo.OP_JIN,
-        Operand.TYPENUM_SMALL_CONSTANT, (short) 1,
-        Operand.TYPENUM_SMALL_CONSTANT, (short) 36);
+        Operand.TYPENUM_SMALL_CONSTANT, (char) 1,
+        Operand.TYPENUM_SMALL_CONSTANT, (char) 36);
     jin_branch.execute();
     assertTrue(jin_branch.branchOnTestCalled);
     assertTrue(jin_branch.branchOnTestCondition);
@@ -220,13 +221,13 @@ public class Instruction2OpV3Test extends InstructionTestBase {
 	@Test
   public void testDecChkNoBranch() {
     context.checking(new Expectations() {{
-      one (machine).getVariable(0x11); will(returnValue((short) 6));
-      one (machine).setVariable(0x11, (short) 5);
+      one (machine).getVariable((char) 0x11); will(returnValue((char) 6));
+      one (machine).setVariable((char) 0x11, (char) 5);
     }});
     Instruction2OpMock dec_chk_nobranch = createInstructionMock(
         LongStaticInfo.OP_DEC_CHK,
-        Operand.TYPENUM_SMALL_CONSTANT, (short) 0x11,
-        Operand.TYPENUM_SMALL_CONSTANT, (short) 5);
+        Operand.TYPENUM_SMALL_CONSTANT, (char) 0x11,
+        Operand.TYPENUM_SMALL_CONSTANT, (char) 5);
     dec_chk_nobranch.execute();
     assertTrue(dec_chk_nobranch.branchOnTestCalled);
     assertFalse(dec_chk_nobranch.branchOnTestCondition);
@@ -235,13 +236,13 @@ public class Instruction2OpV3Test extends InstructionTestBase {
 	@Test
   public void testDecChkBranch() {
     context.checking(new Expectations() {{
-      one (machine).getVariable(0x11); will(returnValue((short) 5));
-      one (machine).setVariable(0x11, (short) 4);
+      one (machine).getVariable((char) 0x11); will(returnValue((char) 5));
+      one (machine).setVariable((char) 0x11, (char) 4);
     }});
     Instruction2OpMock dec_chk_branch = createInstructionMock(
         LongStaticInfo.OP_DEC_CHK,
-        Operand.TYPENUM_SMALL_CONSTANT, (short) 0x11,
-        Operand.TYPENUM_SMALL_CONSTANT, (short) 5);
+        Operand.TYPENUM_SMALL_CONSTANT, (char) 0x11,
+        Operand.TYPENUM_SMALL_CONSTANT, (char) 5);
     dec_chk_branch.execute();
     assertTrue(dec_chk_branch.branchOnTestCalled);
     assertTrue(dec_chk_branch.branchOnTestCondition);
@@ -254,13 +255,13 @@ public class Instruction2OpV3Test extends InstructionTestBase {
 	@Test
   public void testIncChkNoBranch() {
     context.checking(new Expectations() {{
-      one (machine).getVariable(0x11); will(returnValue((short) 6));
-      one (machine).setVariable(0x11, (short) 7);
+      one (machine).getVariable((char) 0x11); will(returnValue((char) 6));
+      one (machine).setVariable(0x11, (char) 7);
     }});
     Instruction2OpMock inc_chk_nobranch = createInstructionMock(
         LongStaticInfo.OP_INC_CHK,
-        Operand.TYPENUM_SMALL_CONSTANT, (short) 0x11,
-        Operand.TYPENUM_SMALL_CONSTANT, (short) 7);
+        Operand.TYPENUM_SMALL_CONSTANT, (char) 0x11,
+        Operand.TYPENUM_SMALL_CONSTANT, (char) 7);
     inc_chk_nobranch.execute();
     assertTrue(inc_chk_nobranch.branchOnTestCalled);
     assertFalse(inc_chk_nobranch.branchOnTestCondition);
@@ -269,13 +270,13 @@ public class Instruction2OpV3Test extends InstructionTestBase {
 	@Test
   public void testIncChkBranch() {
     context.checking(new Expectations() {{
-      one (machine).getVariable(0x11); will(returnValue((short) 5));
-      one (machine).setVariable(0x11, (short) 6);
+      one (machine).getVariable((char) 0x11); will(returnValue((char) 5));
+      one (machine).setVariable(0x11, (char) 6);
     }});
     Instruction2OpMock inc_chk_branch = createInstructionMock(
         LongStaticInfo.OP_INC_CHK,
-        Operand.TYPENUM_SMALL_CONSTANT, (short) 0x11,
-        Operand.TYPENUM_SMALL_CONSTANT, (short) 5);
+        Operand.TYPENUM_SMALL_CONSTANT, (char) 0x11,
+        Operand.TYPENUM_SMALL_CONSTANT, (char) 5);
     inc_chk_branch.execute();
     assertTrue(inc_chk_branch.branchOnTestCalled);
     assertTrue(inc_chk_branch.branchOnTestCondition);
@@ -288,8 +289,8 @@ public class Instruction2OpV3Test extends InstructionTestBase {
 	@Test
   public void testTestNoBranch() {
     Instruction2OpMock test_nobranch = createInstructionMock(LongStaticInfo.OP_TEST,
-        Operand.TYPENUM_LARGE_CONSTANT, (short) 0x7c,
-        Operand.TYPENUM_LARGE_CONSTANT, (short) 0x03);
+        Operand.TYPENUM_LARGE_CONSTANT, (char) 0x7c,
+        Operand.TYPENUM_LARGE_CONSTANT, (char) 0x03);
     test_nobranch.execute();
     assertTrue(test_nobranch.branchOnTestCalled);
     assertFalse(test_nobranch.branchOnTestCondition);
@@ -298,8 +299,8 @@ public class Instruction2OpV3Test extends InstructionTestBase {
 	@Test
   public void testTestBranch() {
     Instruction2OpMock test_branch = createInstructionMock(LongStaticInfo.OP_TEST,
-        Operand.TYPENUM_LARGE_CONSTANT, (short) 0x7c,
-        Operand.TYPENUM_LARGE_CONSTANT, (short) 0x14);
+        Operand.TYPENUM_LARGE_CONSTANT, (char) 0x7c,
+        Operand.TYPENUM_LARGE_CONSTANT, (char) 0x14);
     test_branch.execute();
     assertTrue(test_branch.branchOnTestCalled);
     assertTrue(test_branch.branchOnTestCondition);
@@ -312,12 +313,12 @@ public class Instruction2OpV3Test extends InstructionTestBase {
 	@Test
   public void testOr() {
     context.checking(new Expectations() {{
-      one (machine).setVariable(0x12, (short) 0xffff);
+      one (machine).setVariable(0x12, (char) 0xffff);
     }});
     Instruction2OpMock or = createInstructionMock(LongStaticInfo.OP_OR,
-        Operand.TYPENUM_LARGE_CONSTANT, (short) 0x00ff,
-        Operand.TYPENUM_LARGE_CONSTANT, (short) 0xff00);
-    or.setStoreVariable((short) 0x12);
+        Operand.TYPENUM_LARGE_CONSTANT, (char) 0x00ff,
+        Operand.TYPENUM_LARGE_CONSTANT, (char) 0xff00);
+    or.setStoreVariable((char) 0x12);
     or.execute();
     assertTrue(or.nextInstructionCalled);
   }
@@ -329,12 +330,12 @@ public class Instruction2OpV3Test extends InstructionTestBase {
 	@Test
   public void testAnd() {
     context.checking(new Expectations() {{
-      one (machine).setVariable(0x12, (short) 0x0000);
+      one (machine).setVariable(0x12, (char) 0x0000);
     }});
     Instruction2OpMock and = createInstructionMock(LongStaticInfo.OP_AND,
-        Operand.TYPENUM_LARGE_CONSTANT, (short) 0x00ff,
-        Operand.TYPENUM_LARGE_CONSTANT, (short) 0xff00);
-    and.setStoreVariable((short) 0x12);
+        Operand.TYPENUM_LARGE_CONSTANT, (char) 0x00ff,
+        Operand.TYPENUM_LARGE_CONSTANT, (char) 0xff00);
+    and.setStoreVariable((char) 0x12);
     and.execute();
     assertTrue(and.nextInstructionCalled);    
   }
@@ -346,12 +347,12 @@ public class Instruction2OpV3Test extends InstructionTestBase {
 	@Test
   public void testAdd() {
     context.checking(new Expectations() {{
-      one (machine).setVariable(0x12, (short) 0x0002);
+      one (machine).setVariable(0x12, (char) 0x0002);
     }});
     Instruction2OpMock add = createInstructionMock(LongStaticInfo.OP_ADD,
-        Operand.TYPENUM_LARGE_CONSTANT, (short) -1,
-        Operand.TYPENUM_LARGE_CONSTANT, (short) 3);
-    add.setStoreVariable((short) 0x12);
+        Operand.TYPENUM_LARGE_CONSTANT, signedToUnsigned16((short) -1),
+        Operand.TYPENUM_LARGE_CONSTANT, (char) 3);
+    add.setStoreVariable((char) 0x12);
     add.execute();
     assertTrue(add.nextInstructionCalled);
   }
@@ -363,12 +364,12 @@ public class Instruction2OpV3Test extends InstructionTestBase {
 	@Test
   public void testSub() {
     context.checking(new Expectations() {{
-      one (machine).setVariable(0x12, (short) -4);
+      one (machine).setVariable(0x12, signedToUnsigned16((short) -4));
     }});
     Instruction2OpMock sub = createInstructionMock(LongStaticInfo.OP_SUB,
-        Operand.TYPENUM_LARGE_CONSTANT, (short) -1,
-        Operand.TYPENUM_LARGE_CONSTANT, (short) 3);
-    sub.setStoreVariable((short) 0x12);
+        Operand.TYPENUM_LARGE_CONSTANT, signedToUnsigned16((short) -1),
+        Operand.TYPENUM_LARGE_CONSTANT, (char) 3);
+    sub.setStoreVariable((char) 0x12);
     sub.execute();
     assertTrue(sub.nextInstructionCalled);
   }
@@ -380,12 +381,12 @@ public class Instruction2OpV3Test extends InstructionTestBase {
 	@Test
   public void testMul() {
     context.checking(new Expectations() {{
-      one (machine).setVariable(0x12, (short) -12);
+      one (machine).setVariable(0x12, signedToUnsigned16((short) -12));
     }});
     Instruction2OpMock mul = createInstructionMock(LongStaticInfo.OP_MUL,
-        Operand.TYPENUM_LARGE_CONSTANT, (short) -4,
-        Operand.TYPENUM_LARGE_CONSTANT, (short) 3);
-    mul.setStoreVariable((short) 0x12);
+        Operand.TYPENUM_LARGE_CONSTANT, signedToUnsigned16((short) -4),
+        Operand.TYPENUM_LARGE_CONSTANT, (char) 3);
+    mul.setStoreVariable((char) 0x12);
     mul.execute();
     assertTrue(mul.nextInstructionCalled);
   }
@@ -397,12 +398,12 @@ public class Instruction2OpV3Test extends InstructionTestBase {
 	@Test
   public void testDiv() {
     context.checking(new Expectations() {{
-      one (machine).setVariable(0x12, (short) -2);
+      one (machine).setVariable(0x12, signedToUnsigned16((short) -2));
     }});
     Instruction2OpMock div = createInstructionMock(LongStaticInfo.OP_DIV,
-      Operand.TYPENUM_LARGE_CONSTANT, (short) -7,
-      Operand.TYPENUM_LARGE_CONSTANT, (short) 3);
-    div.setStoreVariable((short) 0x12);
+      Operand.TYPENUM_LARGE_CONSTANT, signedToUnsigned16((short) -7),
+      Operand.TYPENUM_LARGE_CONSTANT, (char) 3);
+    div.setStoreVariable((char) 0x12);
     div.execute();
     assertTrue(div.nextInstructionCalled);
   }
@@ -413,9 +414,9 @@ public class Instruction2OpV3Test extends InstructionTestBase {
       one (machine).halt("@div division by zero");
     }});
     Instruction2OpMock div0 = createInstructionMock(LongStaticInfo.OP_DIV,
-        Operand.TYPENUM_LARGE_CONSTANT, (short) 7,
-        Operand.TYPENUM_LARGE_CONSTANT, (short) 0);
-    div0.setStoreVariable((short) 0x12);
+        Operand.TYPENUM_LARGE_CONSTANT, (char) 7,
+        Operand.TYPENUM_LARGE_CONSTANT, (char) 0);
+    div0.setStoreVariable((char) 0x12);
     div0.execute();
   }
   
@@ -426,12 +427,12 @@ public class Instruction2OpV3Test extends InstructionTestBase {
 	@Test
   public void testMod() {
     context.checking(new Expectations() {{
-      one (machine).setVariable(0x12, (short) -1);
+      one (machine).setVariable(0x12, signedToUnsigned16((short) -1));
     }});
     Instruction2OpMock mod = createInstructionMock(LongStaticInfo.OP_MOD,
-        Operand.TYPENUM_LARGE_CONSTANT, (short) -7,
-        Operand.TYPENUM_LARGE_CONSTANT, (short) 3);
-    mod.setStoreVariable((short) 0x12);
+        Operand.TYPENUM_LARGE_CONSTANT, signedToUnsigned16((short) -7),
+        Operand.TYPENUM_LARGE_CONSTANT, (char) 3);
+    mod.setStoreVariable((char) 0x12);
     mod.execute();
     assertTrue(mod.nextInstructionCalled);
   }
@@ -442,9 +443,9 @@ public class Instruction2OpV3Test extends InstructionTestBase {
       one (machine).halt("@mod division by zero");
     }});
     Instruction2OpMock mod0 = createInstructionMock(LongStaticInfo.OP_MOD,
-        Operand.TYPENUM_LARGE_CONSTANT, (short) 7,
-        Operand.TYPENUM_LARGE_CONSTANT, (short) 0);
-    mod0.setStoreVariable((short) 0x12);
+        Operand.TYPENUM_LARGE_CONSTANT, (char) 7,
+        Operand.TYPENUM_LARGE_CONSTANT, (char) 0);
+    mod0.setStoreVariable((char) 0x12);
     mod0.execute();
   }
   
@@ -459,8 +460,8 @@ public class Instruction2OpV3Test extends InstructionTestBase {
     }});
     Instruction2OpMock test_attr_nobranch = createInstructionMock(
         LongStaticInfo.OP_TEST_ATTR,
-        Operand.TYPENUM_LARGE_CONSTANT, (short) 1,
-        Operand.TYPENUM_SMALL_CONSTANT, (byte) 2);
+        Operand.TYPENUM_LARGE_CONSTANT, (char) 1,
+        Operand.TYPENUM_SMALL_CONSTANT, (char) 2);
     test_attr_nobranch.execute();
     assertTrue(test_attr_nobranch.branchOnTestCalled);
     assertFalse(test_attr_nobranch.branchOnTestCondition);
@@ -473,8 +474,8 @@ public class Instruction2OpV3Test extends InstructionTestBase {
     }});
     Instruction2OpMock test_attr_branch = createInstructionMock(
         LongStaticInfo.OP_TEST_ATTR,
-        Operand.TYPENUM_LARGE_CONSTANT, (short) 1,
-        Operand.TYPENUM_SMALL_CONSTANT, (byte) 2);
+        Operand.TYPENUM_LARGE_CONSTANT, (char) 1,
+        Operand.TYPENUM_SMALL_CONSTANT, (char) 2);
     test_attr_branch.execute();
     assertTrue(test_attr_branch.branchOnTestCalled);
     assertTrue(test_attr_branch.branchOnTestCondition);
@@ -491,8 +492,8 @@ public class Instruction2OpV3Test extends InstructionTestBase {
     }});
     Instruction2OpMock set_attr = createInstructionMock(
         LongStaticInfo.OP_SET_ATTR,
-        Operand.TYPENUM_LARGE_CONSTANT, (short) 1,
-        Operand.TYPENUM_SMALL_CONSTANT, (byte) 2);
+        Operand.TYPENUM_LARGE_CONSTANT, (char) 1,
+        Operand.TYPENUM_SMALL_CONSTANT, (char) 2);
     set_attr.execute();    
     assertTrue(set_attr.nextInstructionCalled);
   }
@@ -508,8 +509,8 @@ public class Instruction2OpV3Test extends InstructionTestBase {
     }});
     Instruction2OpMock clear_attr = createInstructionMock(
         LongStaticInfo.OP_CLEAR_ATTR,
-        Operand.TYPENUM_LARGE_CONSTANT, (short) 1,
-        Operand.TYPENUM_SMALL_CONSTANT, (byte) 2);
+        Operand.TYPENUM_LARGE_CONSTANT, (char) 1,
+        Operand.TYPENUM_SMALL_CONSTANT, (char) 2);
     clear_attr.execute();
     assertTrue(clear_attr.nextInstructionCalled);
   }
@@ -521,11 +522,11 @@ public class Instruction2OpV3Test extends InstructionTestBase {
 	@Test
   public void testStore() {
     context.checking(new Expectations() {{
-      one (machine).setVariable(0x11, (short) 42);
+      one (machine).setVariable(0x11, (char) 42);
     }});
     Instruction2OpMock store = createInstructionMock(LongStaticInfo.OP_STORE,
-        Operand.TYPENUM_SMALL_CONSTANT, (byte) 0x11,
-        Operand.TYPENUM_SMALL_CONSTANT, (byte) 42);
+        Operand.TYPENUM_SMALL_CONSTANT, (char) 0x11,
+        Operand.TYPENUM_SMALL_CONSTANT, (char) 42);
     store.execute();
     assertTrue(store.nextInstructionCalled);
   }
@@ -534,11 +535,11 @@ public class Instruction2OpV3Test extends InstructionTestBase {
 	@Test
   public void testStoreOnStack() {
     context.checking(new Expectations() {{
-      one (machine).setStackTop((short) 42);
+      one (machine).setStackTop((char) 42);
     }});
     Instruction2OpMock store = createInstructionMock(LongStaticInfo.OP_STORE,
-        Operand.TYPENUM_SMALL_CONSTANT, (byte) 0x00,
-        Operand.TYPENUM_SMALL_CONSTANT, (byte) 42);
+        Operand.TYPENUM_SMALL_CONSTANT, (char) 0x00,
+        Operand.TYPENUM_SMALL_CONSTANT, (char) 42);
     store.execute();
     assertTrue(store.nextInstructionCalled);
   }
@@ -550,13 +551,13 @@ public class Instruction2OpV3Test extends InstructionTestBase {
 	@Test
   public void testLoadw() {
     context.checking(new Expectations() {{
-      one (machine).readSigned16(0x0010 + 2); will(returnValue((short) 123));
-      one (machine).setVariable(0x11, (short) 123);
+      one (machine).readUnsigned16(0x0010 + 2); will(returnValue((char) 123));
+      one (machine).setVariable(0x11, (char) 123);
     }});
     Instruction2OpMock loadw = createInstructionMock(LongStaticInfo.OP_LOADW,
-        Operand.TYPENUM_LARGE_CONSTANT, (short) 0x0010,
-        Operand.TYPENUM_SMALL_CONSTANT, (short) 1);
-    loadw.setStoreVariable((short) 0x11);  
+        Operand.TYPENUM_LARGE_CONSTANT, (char) 0x0010,
+        Operand.TYPENUM_SMALL_CONSTANT, (char) 1);
+    loadw.setStoreVariable((char) 0x11);  
     loadw.execute();
     assertTrue(loadw.nextInstructionCalled);
   }
@@ -569,13 +570,13 @@ public class Instruction2OpV3Test extends InstructionTestBase {
 	@Test
   public void testLoadb() {
     context.checking(new Expectations() {{
-      one (machine).readUnsigned8(0x0010 + 1); will(returnValue((short) 42));
-      one (machine).setVariable(0x11, (short) 42);
+      one (machine).readUnsigned8(0x0010 + 1); will(returnValue((char) 42));
+      one (machine).setVariable(0x11, (char) 42);
     }});
     Instruction2OpMock loadb = createInstructionMock(LongStaticInfo.OP_LOADB,
-        Operand.TYPENUM_LARGE_CONSTANT, (short) 0x0010,
-        Operand.TYPENUM_SMALL_CONSTANT, (byte) 1);
-    loadb.setStoreVariable((short) 0x11);
+        Operand.TYPENUM_LARGE_CONSTANT, (char) 0x0010,
+        Operand.TYPENUM_SMALL_CONSTANT, (char) 1);
+    loadb.setStoreVariable((char) 0x11);
     loadb.execute();
     assertTrue(loadb.nextInstructionCalled);
   }
@@ -587,16 +588,16 @@ public class Instruction2OpV3Test extends InstructionTestBase {
 	@Test
   public void testGetProp() {
     context.checking(new Expectations() {{
-      one (machine).getProperty(1, 18); will(returnValue(0x01ee));
-      one (machine).setVariable(17, (short) 494);
+      one (machine).getProperty(1, 18); will(returnValue((char) 0x01ee));
+      one (machine).setVariable(17, (char) 494);
       one (machine).incrementPC(6);
     }});
     // Two-byte property, Object 1, property 18
     LongInstruction get_prop_two = createInstruction(
         LongStaticInfo.OP_GET_PROP,
-        Operand.TYPENUM_SMALL_CONSTANT, (short) 1,
-        Operand.TYPENUM_SMALL_CONSTANT, (short) 18, 6);
-    get_prop_two.setStoreVariable((short) 0x11);    
+        Operand.TYPENUM_SMALL_CONSTANT, (char) 1,
+        Operand.TYPENUM_SMALL_CONSTANT, (char) 18, 6);
+    get_prop_two.setStoreVariable((char) 0x11);    
     get_prop_two.execute();    
   }
 
@@ -612,8 +613,8 @@ public class Instruction2OpV3Test extends InstructionTestBase {
     // Make Object 7 a child of Object 2
     Instruction2OpMock insert_obj = createInstructionMock(
         LongStaticInfo.OP_INSERT_OBJ,
-        Operand.TYPENUM_SMALL_CONSTANT, (short) 7,
-        Operand.TYPENUM_SMALL_CONSTANT, (short) 2);
+        Operand.TYPENUM_SMALL_CONSTANT, (char) 7,
+        Operand.TYPENUM_SMALL_CONSTANT, (char) 2);
     insert_obj.execute();
     assertTrue(insert_obj.nextInstructionCalled);
   }
@@ -626,14 +627,14 @@ public class Instruction2OpV3Test extends InstructionTestBase {
   public void testGetPropAddr() {
     context.checking(new Expectations() {{
       one (machine).getPropertyAddress(1, 18); will(returnValue(0x0a55));
-      one (machine).setVariable(17, (short) 0x0a55);
+      one (machine).setVariable(17, (char) 0x0a55);
       one (machine).incrementPC(6);
     }});
     LongInstruction get_prop_addr_exists = createInstruction(
         LongStaticInfo.OP_GET_PROP_ADDR,
-        Operand.TYPENUM_SMALL_CONSTANT, (short) 1,
-        Operand.TYPENUM_SMALL_CONSTANT, (short) 18, 6);
-    get_prop_addr_exists.setStoreVariable((short) 0x11);    
+        Operand.TYPENUM_SMALL_CONSTANT, (char) 1,
+        Operand.TYPENUM_SMALL_CONSTANT, (char) 18, 6);
+    get_prop_addr_exists.setStoreVariable((char) 0x11);    
     get_prop_addr_exists.execute();
   }
   
@@ -645,14 +646,14 @@ public class Instruction2OpV3Test extends InstructionTestBase {
   public void testGetNextProp() {
     context.checking(new Expectations() {{
       one (machine).getNextProperty(1, 12); will(returnValue(15));
-      one (machine).setVariable(0x11, (short) 15);
+      one (machine).setVariable(0x11, (char) 15);
     }});
     Instruction2OpMock get_next_prop = createInstructionMock(
         LongStaticInfo.OP_GET_NEXT_PROP,
-        Operand.TYPENUM_SMALL_CONSTANT, (short) 1,
-        Operand.TYPENUM_SMALL_CONSTANT, (short) 12);
+        Operand.TYPENUM_SMALL_CONSTANT, (char) 1,
+        Operand.TYPENUM_SMALL_CONSTANT, (char) 12);
     
-    get_next_prop.setStoreVariable((short) 0x11);    
+    get_next_prop.setStoreVariable((char) 0x11);    
     get_next_prop.execute();
     
     assertTrue(get_next_prop.nextInstructionCalled);
@@ -664,7 +665,7 @@ public class Instruction2OpV3Test extends InstructionTestBase {
   static class Instruction2OpMock extends LongInstruction {
     public boolean nextInstructionCalled;
     public boolean returned;
-    public short returnValue;
+    public char returnValue;
     public boolean branchOnTestCalled;
     public boolean branchOnTestCondition;
     
@@ -682,7 +683,7 @@ public class Instruction2OpV3Test extends InstructionTestBase {
     }
     
     @Override
-    protected void returnFromRoutine(short retval) {
+    protected void returnFromRoutine(char retval) {
       returned = true;
       returnValue = retval;
     }
@@ -694,7 +695,7 @@ public class Instruction2OpV3Test extends InstructionTestBase {
   }
     
   static Instruction2OpMock createInstructionMock(Machine machine,
-  		int opcode, int typenum1, short value1, int typenum2, short value2) {
+  		int opcode, int typenum1, char value1, int typenum2, char value2) {
     Instruction2OpMock result = new Instruction2OpMock(machine, opcode);
     result.addOperand(new Operand(typenum1, value1));
     result.addOperand(new Operand(typenum2, value2));
@@ -703,7 +704,7 @@ public class Instruction2OpV3Test extends InstructionTestBase {
   }
 
   private Instruction2OpMock createInstructionMock(int opcode, int typenum1,
-  		short value1, int typenum2, short value2) {
+  		char value1, int typenum2, char value2) {
   	return createInstructionMock(machine, opcode, typenum1, value1, typenum2,
   			value2);
   }
@@ -715,7 +716,7 @@ public class Instruction2OpV3Test extends InstructionTestBase {
   }  
   
   private LongInstruction createInstruction(int opcode, int typenum1,
-      short value1, int typenum2, short value2, int length) {    
+      char value1, int typenum2, char value2, int length) {    
     LongInstruction result = new LongInstruction(machine, opcode);
     result.addOperand(new Operand(typenum1, value1));
     result.addOperand(new Operand(typenum2, value2));

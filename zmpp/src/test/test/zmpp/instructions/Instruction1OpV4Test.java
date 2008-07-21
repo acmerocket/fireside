@@ -90,12 +90,12 @@ public class Instruction1OpV4Test extends InstructionTestBase {
   @Test
   public void testNot() {
     context.checking(new Expectations() {{
-      one (machine).setVariable(0x12, (short) 0x5555);
+      one (machine).setVariable(0x12, (char) 0x5555);
     }});
 	  // Create instruction	  
 	  Instruction1OpMock not = createInstructionMock(Short1StaticInfo.OP_NOT,
-        Operand.TYPENUM_LARGE_CONSTANT, (short) 0xaaaa);      
-    not.setStoreVariable((short) 0x12);
+        Operand.TYPENUM_LARGE_CONSTANT, (char) 0xaaaa);      
+    not.setStoreVariable((char) 0x12);
 	  not.execute();
 	  assertTrue(not.nextInstructionCalled);
   }  
@@ -106,19 +106,19 @@ public class Instruction1OpV4Test extends InstructionTestBase {
 
   @Test
   public void testCall1s() {
-    final short[] args = {};
+    final char[] args = {};
     context.checking(new Expectations() {{
       one (machine).getPC(); will(returnValue(4611));
       one (machine).call(4611, 4623, args, 0);
     }});
     Short1Instruction call1s = createInstructionMock(
     		Short1StaticInfo.OP_CALL_1S,
-        Operand.TYPENUM_LARGE_CONSTANT, (short) 4611);
+        Operand.TYPENUM_LARGE_CONSTANT, (char) 4611);
     call1s.execute();
   }
 
   private Instruction1OpMock createInstructionMock(int opcode, int typenum,
-  		short value) {
+  		char value) {
   	return Instruction1OpV3Test.createInstructionMock(machine, opcode,
   			typenum, value);
   }

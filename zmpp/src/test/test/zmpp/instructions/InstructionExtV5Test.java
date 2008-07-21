@@ -26,6 +26,7 @@ import org.junit.Before;
 import org.junit.Test;
 import static org.junit.Assert.*;
 import org.junit.runner.RunWith;
+import static org.zmpp.base.MemoryUtil.*;
 import org.zmpp.instructions.ExtendedInstruction;
 import org.zmpp.instructions.ExtendedStaticInfo;
 import org.zmpp.instructions.Operand;
@@ -67,7 +68,7 @@ public class InstructionExtV5Test extends InstructionTestBase {
       one (machine).getPC(); will(returnValue(1234));
       one (machine).incrementPC(3);
       one (machine).save_undo(with(any(int.class))); will(returnValue(true));
-      atLeast(1).of (machine).setVariable(0, (short) 1);
+      atLeast(1).of (machine).setVariable(0, (char) 1);
     }});
     ExtendedInstruction save_undo = new ExtendedInstruction(machine, ExtendedStaticInfo.OP_SAVE_UNDO);
     save_undo.setLength(3);
@@ -80,7 +81,7 @@ public class InstructionExtV5Test extends InstructionTestBase {
       one (machine).getPC(); will(returnValue(1234));
       one (machine).incrementPC(3);
       one (machine).save_undo(with(any(int.class))); will(returnValue(false));
-      atLeast(1).of (machine).setVariable(0, (short) 0);
+      atLeast(1).of (machine).setVariable(0, (char) 0);
     }});
     ExtendedInstruction save_undo = new ExtendedInstruction(machine, ExtendedStaticInfo.OP_SAVE_UNDO);
     save_undo.setLength(3);
@@ -95,13 +96,13 @@ public class InstructionExtV5Test extends InstructionTestBase {
   public void testArtShift0() {
     context.checking(new Expectations() {{
       one (machine).incrementPC(3);
-      atLeast(1).of (machine).setVariable(1, (short) 12);
+      atLeast(1).of (machine).setVariable(1, (char) 12);
     }});
     ExtendedInstruction art_shift = new ExtendedInstruction(machine, ExtendedStaticInfo.OP_ART_SHIFT);
     art_shift.setLength(3);
-    art_shift.addOperand(new Operand(Operand.TYPENUM_SMALL_CONSTANT, (short) 12));
-    art_shift.addOperand(new Operand(Operand.TYPENUM_SMALL_CONSTANT, (short) 0));
-    art_shift.setStoreVariable((short) 0x01);
+    art_shift.addOperand(new Operand(Operand.TYPENUM_SMALL_CONSTANT, (char) 12));
+    art_shift.addOperand(new Operand(Operand.TYPENUM_SMALL_CONSTANT, (char) 0));
+    art_shift.setStoreVariable((char) 0x01);
     art_shift.execute();
   }
 
@@ -109,13 +110,13 @@ public class InstructionExtV5Test extends InstructionTestBase {
   public void testArtShiftPositivePositiveShift() {
     context.checking(new Expectations() {{
       one (machine).incrementPC(3);
-      atLeast(1).of (machine).setVariable(1, (short) 24);
+      atLeast(1).of (machine).setVariable(1, (char) 24);
     }});
     ExtendedInstruction art_shift = new ExtendedInstruction(machine, ExtendedStaticInfo.OP_ART_SHIFT);
     art_shift.setLength(3);
-    art_shift.addOperand(new Operand(Operand.TYPENUM_SMALL_CONSTANT, (short) 12));
-    art_shift.addOperand(new Operand(Operand.TYPENUM_SMALL_CONSTANT, (short) 1));
-    art_shift.setStoreVariable((short) 0x01);
+    art_shift.addOperand(new Operand(Operand.TYPENUM_SMALL_CONSTANT, (char) 12));
+    art_shift.addOperand(new Operand(Operand.TYPENUM_SMALL_CONSTANT, (char) 1));
+    art_shift.setStoreVariable((char) 0x01);
     art_shift.execute();    
     
   }    
@@ -124,13 +125,14 @@ public class InstructionExtV5Test extends InstructionTestBase {
   public void testArtShiftNegativePositiveShift() {
     context.checking(new Expectations() {{
       one (machine).incrementPC(3);
-      atLeast(1).of (machine).setVariable(1, (short) -24);
+      atLeast(1).of (machine).setVariable(1, signedToUnsigned16((short) -24));
     }});
     ExtendedInstruction art_shift = new ExtendedInstruction(machine, ExtendedStaticInfo.OP_ART_SHIFT);
     art_shift.setLength(3);
-    art_shift.addOperand(new Operand(Operand.TYPENUM_SMALL_CONSTANT, (short) -12));
-    art_shift.addOperand(new Operand(Operand.TYPENUM_SMALL_CONSTANT, (short) 1));
-    art_shift.setStoreVariable((short) 0x01);
+    art_shift.addOperand(new Operand(Operand.TYPENUM_SMALL_CONSTANT,
+            signedToUnsigned16((short) -12)));
+    art_shift.addOperand(new Operand(Operand.TYPENUM_SMALL_CONSTANT, (char) 1));
+    art_shift.setStoreVariable((char) 0x01);
     art_shift.execute();        
   }    
 
@@ -138,13 +140,13 @@ public class InstructionExtV5Test extends InstructionTestBase {
   public void testArtShiftPositiveNegativeShift() {
     context.checking(new Expectations() {{
       one (machine).incrementPC(3);
-      atLeast(1).of (machine).setVariable(1, (short) 6);
+      atLeast(1).of (machine).setVariable(1, (char) 6);
     }});
     ExtendedInstruction art_shift = new ExtendedInstruction(machine, ExtendedStaticInfo.OP_ART_SHIFT);
     art_shift.setLength(3);
-    art_shift.addOperand(new Operand(Operand.TYPENUM_SMALL_CONSTANT, (short) 12));
-    art_shift.addOperand(new Operand(Operand.TYPENUM_SMALL_CONSTANT, (short) -1));
-    art_shift.setStoreVariable((short) 0x01);
+    art_shift.addOperand(new Operand(Operand.TYPENUM_SMALL_CONSTANT, (char) 12));
+    art_shift.addOperand(new Operand(Operand.TYPENUM_SMALL_CONSTANT, signedToUnsigned16((short) -1)));
+    art_shift.setStoreVariable((char) 0x01);
     art_shift.execute();        
   }    
 
@@ -152,13 +154,13 @@ public class InstructionExtV5Test extends InstructionTestBase {
   public void testArtShiftNegativeNegativeShift() {
     context.checking(new Expectations() {{
       one (machine).incrementPC(3);
-      atLeast(1).of (machine).setVariable(1, (short) -6);
+      atLeast(1).of (machine).setVariable(1, signedToUnsigned16((short) -6));
     }});
     ExtendedInstruction art_shift = new ExtendedInstruction(machine, ExtendedStaticInfo.OP_ART_SHIFT);
     art_shift.setLength(3);
-    art_shift.addOperand(new Operand(Operand.TYPENUM_SMALL_CONSTANT, (short) -12));
-    art_shift.addOperand(new Operand(Operand.TYPENUM_SMALL_CONSTANT, (short) -1));
-    art_shift.setStoreVariable((short) 0x01);
+    art_shift.addOperand(new Operand(Operand.TYPENUM_SMALL_CONSTANT, signedToUnsigned16((short) -12)));
+    art_shift.addOperand(new Operand(Operand.TYPENUM_SMALL_CONSTANT, signedToUnsigned16((short) -1)));
+    art_shift.setStoreVariable((char) 0x01);
     art_shift.execute();        
   }
   

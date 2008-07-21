@@ -76,8 +76,7 @@ public class MemoryOutputStream implements OutputStream {
   public void print(final char zsciiChar) {
     final TablePosition tablePos = tableStack.get(tableStack.size() - 1);
     final int position = tablePos.tableAddress + 2 + tablePos.bytesWritten;
-    machine.writeUnsigned8(
-        position, (short) zsciiChar);
+    machine.writeUnsigned8(position, zsciiChar);
     tablePos.bytesWritten++;
   }
 

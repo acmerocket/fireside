@@ -129,21 +129,21 @@ public class MachineTest extends MiniZorkSetup {
   
   @Test
   public void testRandom() {
-    short random1 = machine.random((short) 23);
+    char random1 = machine.random((short) 23);
     assertTrue(0 < random1 && random1 <= 23);    
     assertEquals(0, machine.random((short) 0));
     
-    short random2 = machine.random((short) 23);    
+    char random2 = machine.random((short) 23);    
     assertTrue(0 < random2 && random2 <= 23);
     assertEquals(0, machine.random((short) -23));
     
-    short random3 = machine.random((short) 23);
+    char random3 = machine.random((short) 23);
     assertTrue(0 < random3 && random3 <= 23);
   }
   
   @Test
   public void testRandom1() {
-    short value;
+    char value;
     for (int i = 0; i < 10; i++) {
       value = machine.random((short) 1);
       assertEquals(value, 1);
@@ -152,7 +152,7 @@ public class MachineTest extends MiniZorkSetup {
 
   @Test
   public void testRandom2() { 
-    short value;
+    char value;
     boolean contains1 = false;
     boolean contains2 = false;
     for (int i = 0; i < 10; i++) {
@@ -195,7 +195,7 @@ public class MachineTest extends MiniZorkSetup {
       one (statusLine).updateStatusScore(with(any(String.class)),
         with(any(int.class)), with(any(int.class)));
     }});
-    machine.setVariable(0x10, (short) 2);
+    machine.setVariable(0x10, (char) 2);
     machine.setStatusLine(statusLine);
     machine.updateStatusLine();
   }
@@ -206,9 +206,9 @@ public class MachineTest extends MiniZorkSetup {
       one (statusLine).updateStatusTime(with(any(String.class)),
         with(any(int.class)), with(any(int.class)));
     }});
-    machine.setVariable(0x10, (short) 2);
+    machine.setVariable(0x10, (char) 2);
     machine.setStatusLine(statusLine); // set the "time" flag
-    machine.writeUnsigned8(1, (short) 2);
+    machine.writeUnsigned8(1, (char) 2);
     machine.updateStatusLine();
   }
   

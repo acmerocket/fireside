@@ -117,8 +117,8 @@ public class MinizorkObjectTreeTest extends MiniZorkSetup {
   
   @Test
   public void testSetGetProperty() {
-  	objectTree.setProperty(OBJECT2, 22, 0xc5);
-  	objectTree.setProperty(8, 16, 0xcafe);
+  	objectTree.setProperty(OBJECT2, 22, (char) 0xc5);
+  	objectTree.setProperty(8, 16, (char) 0xcafe);
   	assertEquals(0xc5, objectTree.getProperty(OBJECT2, 22));
   	assertEquals(0xcafe, objectTree.getProperty(8, 16));
   }

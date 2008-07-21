@@ -131,7 +131,7 @@ public class DefaultStoryFileHeader implements StoryFileHeader {
    * {@inheritDoc}
    */
   public void setInterpreterNumber(final int number) {
-    memory.writeUnsigned8(0x1e, (short) number);
+    memory.writeUnsigned8(0x1e, (char) number);
   }
   
   /**
@@ -146,10 +146,9 @@ public class DefaultStoryFileHeader implements StoryFileHeader {
    */
   public void setInterpreterVersion(final int version) {
     if (getVersion() == 4 || getVersion() == 5) {
-      memory.writeUnsigned8(0x1f,
-                                  (short) String.valueOf(version).charAt(0));
+      memory.writeUnsigned8(0x1f, String.valueOf(version).charAt(0));
     } else {
-      memory.writeUnsigned8(0x1f, (short) version);
+      memory.writeUnsigned8(0x1f, (char) version);
     }
   }
   
@@ -157,7 +156,7 @@ public class DefaultStoryFileHeader implements StoryFileHeader {
    * {@inheritDoc}
    */
   public void setScreenWidth(final int numChars) {
-    memory.writeUnsigned8(0x21, (short) numChars);    
+    memory.writeUnsigned8(0x21, (char) numChars);    
   }
   
   /**
@@ -199,7 +198,7 @@ public class DefaultStoryFileHeader implements StoryFileHeader {
    * {@inheritDoc}
    */
   public void setScreenHeight(final int numLines) {
-    memory.writeUnsigned8(0x20, (short) numLines);
+    memory.writeUnsigned8(0x20, (char) numLines);
   }
 
   /**
@@ -241,22 +240,22 @@ public class DefaultStoryFileHeader implements StoryFileHeader {
    * {@inheritDoc}
    */
   public void setDefaultBackground(final int color) {
-    memory.writeUnsigned8(0x2c, (short) color);
+    memory.writeUnsigned8(0x2c, (char) color);
   }
   
   /**
    * {@inheritDoc}
    */
   public void setDefaultForeground(final int color) {
-    memory.writeUnsigned8(0x2d, (short) color);
+    memory.writeUnsigned8(0x2d, (char) color);
   }
  
   /**
    * {@inheritDoc}
    */
   public void setStandardRevision(final int major, final int minor) {
-    memory.writeUnsigned8(0x32, (short) major);
-    memory.writeUnsigned8(0x33, (short) minor);
+    memory.writeUnsigned8(0x32, (char) major);
+    memory.writeUnsigned8(0x33, (char) minor);
   }
   
   /**
@@ -271,9 +270,9 @@ public class DefaultStoryFileHeader implements StoryFileHeader {
    */
   public void setFontWidth(final int units) {
     if (getVersion() == 6) {
-      memory.writeUnsigned8(0x27, (short) units);
+      memory.writeUnsigned8(0x27, (char) units);
     } else {
-      memory.writeUnsigned8(0x26, (short) units);
+      memory.writeUnsigned8(0x26, (char) units);
     }
   }
   
@@ -290,9 +289,9 @@ public class DefaultStoryFileHeader implements StoryFileHeader {
    */
   public void setFontHeight(final int units) {
     if (getVersion() == 6) {
-      memory.writeUnsigned8(0x26, (short) units);
+      memory.writeUnsigned8(0x26, (char) units);
     } else {
-      memory.writeUnsigned8(0x27, (short) units);
+      memory.writeUnsigned8(0x27, (char) units);
     }
   }
   
@@ -458,7 +457,7 @@ public class DefaultStoryFileHeader implements StoryFileHeader {
   private void setTranscripting(final boolean flag) {
     int flags = memory.readUnsigned8(0x10);
     flags = flag ? (flags | 1) : (flags & 0xfe);
-    memory.writeUnsigned8(0x10, (short) flags);
+    memory.writeUnsigned8(0x10, (char) flags);
   }
   
   private boolean isTranscriptingOn() {
@@ -472,13 +471,13 @@ public class DefaultStoryFileHeader implements StoryFileHeader {
   private void setForceFixedFont(final boolean flag) {
     int flags = memory.readUnsigned8(0x10);
     flags = flag ? (flags | 2) : (flags & 0xfd);
-    memory.writeUnsigned8(0x10, (short) flags);
+    memory.writeUnsigned8(0x10, (char) flags);
   }
   
   private void setTimedInputAvailable(final boolean flag) {
     int flags = memory.readUnsigned8(0x01);
     flags = flag ? (flags | 128) : (flags & 0x7f);
-    memory.writeUnsigned8(0x01, (short) flags);
+    memory.writeUnsigned8(0x01, (char) flags);
   }
   
   private boolean isScoreGame() {
@@ -488,37 +487,37 @@ public class DefaultStoryFileHeader implements StoryFileHeader {
   private void setFixedFontAvailable(final boolean flag) {
     int flags = memory.readUnsigned8(0x01);
     flags = flag ? (flags | 16) : (flags & 0xef);
-    memory.writeUnsigned8(0x01, (short) flags);
+    memory.writeUnsigned8(0x01, (char) flags);
   }
   
   private void setBoldFaceAvailable(final boolean flag) {
     int flags = memory.readUnsigned8(0x01);
     flags = flag ? (flags | 4) : (flags & 0xfb);
-    memory.writeUnsigned8(0x01, (short) flags);
+    memory.writeUnsigned8(0x01, (char) flags);
   }  
 
   private void setItalicAvailable(final boolean flag) {
     int flags = memory.readUnsigned8(0x01);
     flags = flag ? (flags | 8) : (flags & 0xf7);
-    memory.writeUnsigned8(0x01, (short) flags);
+    memory.writeUnsigned8(0x01, (char) flags);
   }
   
   private void setScreenSplittingAvailable(final boolean flag) {
     int flags = memory.readUnsigned8(0x01);
     flags = flag ? (flags | 32) : (flags & 0xdf);
-    memory.writeUnsigned8(0x01, (short) flags);
+    memory.writeUnsigned8(0x01, (char) flags);
   }
   
   private void setStatusLineAvailable(final boolean flag) {
     int flags = memory.readUnsigned8(0x01);
     flags = flag ? (flags | 16) : (flags & 0xef);
-    memory.writeUnsigned8(0x01, (short) flags);
+    memory.writeUnsigned8(0x01, (char) flags);
   }  
 
   private void setDefaultFontIsVariablePitch(final boolean flag) {
     int flags = memory.readUnsigned8(0x01);
     flags = flag ? (flags | 64) : (flags & 0xbf);
-    memory.writeUnsigned8(0x01, (short) flags);
+    memory.writeUnsigned8(0x01, (char) flags);
   }
 
   private boolean defaultFontIsVariablePitch() {
@@ -528,7 +527,7 @@ public class DefaultStoryFileHeader implements StoryFileHeader {
   private void setSupportsColours(final boolean flag) {
     int flags = memory.readUnsigned8(0x01);
     flags = flag ? (flags | 1) : (flags & 0xfe);
-    memory.writeUnsigned8(0x01, (short) flags);
+    memory.writeUnsigned8(0x01, (char) flags);
   }
   
   private boolean useMouse() {
