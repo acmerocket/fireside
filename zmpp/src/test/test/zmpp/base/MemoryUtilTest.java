@@ -61,5 +61,23 @@ public class MemoryUtilTest {
     
     MemoryUtil.writeUnsigned32(memory, 0x00, 0xf0f00f0fL);
     assertEquals(0x00000000f0f00f0fL, MemoryUtil.readUnsigned32(memory, 0x00));
-  }  
+  }
+ 
+  @Test
+  public void testSignedToUnsigned16() {
+    assertEquals(0, MemoryUtil.signedToUnsigned16((short) 0));
+    assertEquals((char) 0xffff, MemoryUtil.signedToUnsigned16((short) -1));
+    assertEquals((char) 0xfffe, MemoryUtil.signedToUnsigned16((short) -2));
+    assertEquals((char) 32767, MemoryUtil.signedToUnsigned16((short) 32767));
+    assertEquals((char) 32768, MemoryUtil.signedToUnsigned16((short) -32768));
+  }
+
+  @Test
+  public void testUnsignedToSigned16() {
+    assertEquals(0, MemoryUtil.unsignedToSigned16((char) 0));
+    assertEquals(1, MemoryUtil.unsignedToSigned16((char) 1));
+    assertEquals(-32768, MemoryUtil.unsignedToSigned16((char) 32768));
+    assertEquals(32767, MemoryUtil.unsignedToSigned16((char) 32767));
+    assertEquals(-1, MemoryUtil.unsignedToSigned16((char) 65535));
+  }
 }
