@@ -234,7 +234,7 @@ implements ScreenModelListener {
           // output should be echoed in the interrupt, so set buffer mode to
           //false
           screenModel.setBufferMode(false);
-          short result =
+          char result =
             executionControl.callInterrupt(runState.getRoutine());
           if (result == AbstractInstruction.TRUE) {
             currentTimer.stop();

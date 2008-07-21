@@ -41,7 +41,7 @@ public class FontSelector {
                          annotation.isItalic());
   }
 
-  public Font getFont(int fontnum, int style) {
+  public Font getFont(char fontnum, int style) {
     return getFont(new TextAnnotation(fontnum, style));
   }
   
