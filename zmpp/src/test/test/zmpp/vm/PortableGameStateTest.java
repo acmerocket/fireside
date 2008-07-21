@@ -114,9 +114,9 @@ public class PortableGameStateTest {
   @Test
   public void testGetStackFrameStatusVars() {
     StackFrame stackFrame = new StackFrame();
-    stackFrame.setProgramCounter(4711);
+    stackFrame.setProgramCounter((char) 4711);
     assertEquals(4711, stackFrame.getProgramCounter());
-    stackFrame.setReturnVariable(5);
+    stackFrame.setReturnVariable((char) 5);
     assertEquals(5, stackFrame.getReturnVariable());
   }
   
@@ -128,16 +128,16 @@ public class PortableGameStateTest {
     context.checking(new Expectations() {{
       atLeast(1).of (machine).getFileHeader(); will(returnValue(fileheader));
       one (machine).getRoutineContexts(); will(returnValue(emptyContexts));
-      one (machine).getSP(); will(returnValue(4));
+      one (machine).getSP(); will(returnValue((char) 4));
       allowing (machine).getStackElement(with(any(int.class))); will(returnValue((char) 42));
       one (fileheader).getRelease(); will(returnValue(42));
       one (fileheader).getChecksum(); will(returnValue(4712));
       one (fileheader).getSerialNumber(); will(returnValue("850101"));
-      one (fileheader).getStaticsAddress(); will(returnValue(12345));
+      one (fileheader).getStaticsAddress(); will(returnValue((char) 12345));
       allowing (machine).copyBytesToArray(with(any(savedata.getClass())), with(0), with(0), with(12345));
       allowing (machine).readUnsigned8(with(any(int.class))); will(returnValue((short) 0));
     }});    
-    gameState.captureMachineState(machine, 4711);
+    gameState.captureMachineState(machine, (char) 4711);
     assertEquals(4711, gameState.getProgramCounter());
     assertEquals(42, gameState.getRelease());
     assertEquals(4712, gameState.getChecksum());
@@ -153,7 +153,7 @@ public class PortableGameStateTest {
     
     char[] dummyStack = { (short) 1, (short) 2, (short) 3 };
     StackFrame dummyFrame = new StackFrame();
-    dummyFrame.setArgs(new int[0]);
+    dummyFrame.setArgs(new char[0]);
     dummyFrame.setEvalStack(dummyStack);
     dummyFrame.setLocals(new char[0]);
     
@@ -168,7 +168,7 @@ public class PortableGameStateTest {
     gameState.setChecksum(4712);
     gameState.setSerialNumber("850101");
     gameState.setDynamicMem(dynamicMem);
-    gameState.setProgramCounter(4711);
+    gameState.setProgramCounter((char) 4711);
     gameState.getStackFrames().add(dummyFrame);
     
     // Export our mock machine to a FormChunk verify some basic information
@@ -418,12 +418,12 @@ public class PortableGameStateTest {
       one (byteBuffer).add((byte) 0x00); will(returnValue(true));
       one (byteBuffer).add((byte) 0x06); will(returnValue(true));
     }});
-    int[] args = { 0, 1 };
+    char[] args = { 0, 1 };
     char[] locals = { (short) 1 };
     char[] stack = { (short) 5, (short) 6 };
     
     StackFrame stackFrame = new StackFrame();
-    stackFrame.setProgramCounter(0x1220);
+    stackFrame.setProgramCounter((char) 0x1220);
     stackFrame.setReturnVariable(PortableGameState.DISCARD_RESULT);
     stackFrame.setArgs(args);
     stackFrame.setLocals(locals);
@@ -460,13 +460,13 @@ public class PortableGameStateTest {
       one (byteBuffer).add((byte) 0x00); will(returnValue(true));
       one (byteBuffer).add((byte) 0x06); will(returnValue(true));
     }});
-    int[] args = { 0, 1 };
+    char[] args = { 0, 1 };
     char[] locals = { (short) 1 };
     char[] stack = { (short) 5, (short) 6 };
     
     StackFrame stackFrame = new StackFrame();
-    stackFrame.setProgramCounter(0x1221);
-    stackFrame.setReturnVariable(6);
+    stackFrame.setProgramCounter((char) 0x1221);
+    stackFrame.setReturnVariable((char) 6);
     stackFrame.setArgs(args);
     stackFrame.setLocals(locals);
     stackFrame.setEvalStack(stack);

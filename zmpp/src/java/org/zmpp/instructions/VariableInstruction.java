@@ -230,7 +230,7 @@ public class VariableInstruction extends AbstractInstruction {
   
   private void push() {
     final char value = getUnsignedValue(0);
-    getMachine().setVariable(0, value);
+    getMachine().setVariable((char) 0, value);
     nextInstruction();
   }
   
@@ -244,7 +244,7 @@ public class VariableInstruction extends AbstractInstruction {
   }
   
   private void pull_v6() {
-    int stack = 0;
+    char stack = 0;
     if (getNumOperands() == 1) {
       stack = getUnsignedValue(0);
     }    
@@ -252,7 +252,7 @@ public class VariableInstruction extends AbstractInstruction {
   }
   
   private void pull_std() {
-    final int varnum = getUnsignedValue(0);
+    final char varnum = getUnsignedValue(0);
     final char value = getMachine().getVariable((char) 0);
     
     // standard 1.1

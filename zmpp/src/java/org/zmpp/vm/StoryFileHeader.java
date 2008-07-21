@@ -55,37 +55,37 @@ public interface StoryFileHeader {
    * Returns the high memory start address.
    * @return the start of the high memory
    */
-  int getHighMemAddress();
+  char getHighMemAddress();
   
   /**
    * Returns the program counter start address.
    * @return the PC start address
    */
-  int getProgramStart();
+  char getProgramStart();
   
   /**
    * Returns the dictionary's start address.
    * @return the dictionary start address
    */  
-  int getDictionaryAddress();
+  char getDictionaryAddress();
   
   /**
    * Returns the object table's start address.
    * @return the object table's start address
    */
-  int getObjectTableAddress();
+  char getObjectTableAddress();
   
   /**
    * Returns the address of the global variables.
    * @return the global variables section
    */
-  int getGlobalsAddress();
+  char getGlobalsAddress();
   
   /**
    * Returns the static memory start address.
    * @return the start address of the static memory
    */
-  int getStaticsAddress();
+  char getStaticsAddress();
   
   /**
    * Returns this game's serial number.
@@ -225,7 +225,7 @@ public interface StoryFileHeader {
    * Returns the address of the terminating characters table.
    * @return the address of the terminating characters table
    */
-  int getTerminatorsAddress();
+  char getTerminatorsAddress();
   
   /**
    * Sets the font width in width of a '0'.
@@ -255,7 +255,7 @@ public interface StoryFileHeader {
    * Returns the address of the custom alphabet table.
    * @return the custom alphabet table
    */
-  int getCustomAlphabetTable();
+  char getCustomAlphabetTable();
   
   /**
    * Sets the mouse coordinates.
@@ -268,7 +268,7 @@ public interface StoryFileHeader {
    * Returns the address of the cutom unicode translation table.
    * @return the address of the custom unicode translation table
    */
-  int getCustomAccentTable();
+  char getCustomAccentTable();
   
   /**
    * Sets the width of the text sent to output stream 3 in units.

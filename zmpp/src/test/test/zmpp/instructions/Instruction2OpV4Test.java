@@ -85,10 +85,10 @@ public class Instruction2OpV4Test extends InstructionTestBase {
   @Test
   public void testCall2s() {
     final char[] args = { 2 };
-    final int returnvalue = 0;
+    final char returnvalue = 0;
     context.checking(new Expectations() {{
-      one (machine).getPC(); will(returnValue(4611));
-      one (machine).call(1, 4616, args, returnvalue);
+      one (machine).getPC(); will(returnValue((char) 4611));
+      one (machine).call((char) 1, (char) 4616, args, returnvalue);
     }});
     LongInstruction call2s = createInstructionMock(LongStaticInfo.OP_CALL_2S,
         Operand.TYPENUM_SMALL_CONSTANT, (char) 1 ,

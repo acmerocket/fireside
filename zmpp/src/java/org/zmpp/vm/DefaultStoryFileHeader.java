@@ -57,36 +57,36 @@ public class DefaultStoryFileHeader implements StoryFileHeader {
   /**
    * {@inheritDoc}
    */
-  public int getHighMemAddress() { return memory.readUnsigned16(0x04); }
+  public char getHighMemAddress() { return memory.readUnsigned16(0x04); }
   
   /**
    * {@inheritDoc}
    */
-  public int getProgramStart() { return memory.readUnsigned16(0x06); }
+  public char getProgramStart() { return memory.readUnsigned16(0x06); }
   
   /**
    * {@inheritDoc}
    */
-  public int getDictionaryAddress() {
+  public char getDictionaryAddress() {
     return memory.readUnsigned16(0x08);
   }
   
   /**
    * {@inheritDoc}
    */
-  public int getObjectTableAddress() {
+  public char getObjectTableAddress() {
     return memory.readUnsigned16(0x0a);
   }
   
   /**
    * {@inheritDoc}
    */
-  public int getGlobalsAddress() { return memory.readUnsigned16(0x0c); }
+  public char getGlobalsAddress() { return memory.readUnsigned16(0x0c); }
   
   /**
    * {@inheritDoc}
    */
-  public int getStaticsAddress() { return memory.readUnsigned16(0x0e); }
+  public char getStaticsAddress() { return memory.readUnsigned16(0x0e); }
   
   /**
    * {@inheritDoc}
@@ -261,7 +261,7 @@ public class DefaultStoryFileHeader implements StoryFileHeader {
   /**
    * {@inheritDoc}
    */
-  public int getTerminatorsAddress() {
+  public char getTerminatorsAddress() {
     return memory.readUnsigned16(0x2e);
   }
   
@@ -306,7 +306,7 @@ public class DefaultStoryFileHeader implements StoryFileHeader {
   /**
    * {@inheritDoc}
    */
-  public int getCustomAlphabetTable() {
+  public char getCustomAlphabetTable() {
     return memory.readUnsigned16(0x34);
   }
   
@@ -333,16 +333,14 @@ public class DefaultStoryFileHeader implements StoryFileHeader {
   /**
    * {@inheritDoc}
    */
-  public int getCustomAccentTable() {
+  public char getCustomAccentTable() {
     // check the extension table
-    int result = 0;
+    char result = 0;
     final int extTable = memory.readUnsigned16(0x36);
     
     if (extTable > 0) {
-      
       final int numwords = memory.readUnsigned16(extTable);
       if (numwords >= 3) {
-        
         result = memory.readUnsigned16(extTable + 6);
       }
     }

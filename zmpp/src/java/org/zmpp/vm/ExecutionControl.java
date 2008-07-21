@@ -127,7 +127,7 @@ public class ExecutionControl {
       Instruction instr = instructionDecoder.decodeInstruction(pc);
       // if the print is executed after execute(), the result is different !!
       if (DEBUG && machine.getRunState() == MachineRunState.RUNNING)
-        LOG.info(String.format("%03d: $%04x %s\n", step, pc, instr.toString()));
+        LOG.info(String.format("%03d: $%04x %s\n", step, (int) pc, instr.toString()));
       instr.execute();
         
       // handle input situations here
@@ -184,7 +184,7 @@ public class ExecutionControl {
     final int originalRoutineStackSize = machine.getRoutineContexts().size();
     final RoutineContext routineContext =  machine.call(routineAddress,
         machine.getPC(),
-        new char[0], (short) RoutineContext.DISCARD_RESULT);
+        new char[0], RoutineContext.DISCARD_RESULT);
     
     for (;;) {
       final Instruction instr =

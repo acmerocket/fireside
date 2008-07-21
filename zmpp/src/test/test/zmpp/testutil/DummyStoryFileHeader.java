@@ -31,12 +31,12 @@ import org.zmpp.vm.StoryFileHeader;
 public class DummyStoryFileHeader implements StoryFileHeader {
   public int getVersion() { return 0; }
   public int getRelease() { return 0; }
-  public int getHighMemAddress() { return 0; }
-  public int getProgramStart() { return 0; }
-  public int getDictionaryAddress() { return 0; }
-  public int getObjectTableAddress() { return 0; }
-  public int getGlobalsAddress() { return 0; }
-  public int getStaticsAddress() { return 0; }
+  public char getHighMemAddress() { return 0; }
+  public char getProgramStart() { return 0; }
+  public char getDictionaryAddress() { return 0; }
+  public char getObjectTableAddress() { return 0; }
+  public char getGlobalsAddress() { return 0; }
+  public char getStaticsAddress() { return 0; }
   public String getSerialNumber() { return ""; }
   public int getAbbreviationsAddress() { return 0; }
   public int getFileLength() { return 0; }
@@ -59,14 +59,14 @@ public class DummyStoryFileHeader implements StoryFileHeader {
   public void setDefaultBackground(int color) { }
   public void setDefaultForeground(int color) { }
   public void setStandardRevision(int major, int minor) { }
-  public int getTerminatorsAddress() { return 0; }
+  public char getTerminatorsAddress() { return 0; }
   public void setFontWidth(int units) { }
   public int getFontWidth() { return 0; }
   public void setFontHeight(int units) { }
   public int getFontHeight() { return 0; }
-  public int getCustomAlphabetTable() { return 0; }
+  public char getCustomAlphabetTable() { return 0; }
   public void setMouseCoordinates(int x, int y) { }
-  public int getCustomAccentTable() { return 0; }
+  public char getCustomAccentTable() { return 0; }
   public void setOutputStream3TextWidth(int units) { }
   public void setEnabled(Attribute attribute, boolean flag) { }
   public boolean isEnabled(Attribute attribute) { return false; }

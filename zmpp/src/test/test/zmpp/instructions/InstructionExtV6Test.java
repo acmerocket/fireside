@@ -314,7 +314,7 @@ public class InstructionExtV6Test extends InstructionTestBase {
   @Test
   public void testPushStackStdStack() {
     context.checking(new Expectations() {{
-      one (machine).pushStack(0, (char) 11); will(returnValue(true));
+      one (machine).pushStack((char) 0, (char) 11); will(returnValue(true));
       one (machine).doBranch((short) 13, 3);
     }});
     ExtendedInstruction push_stack = new ExtendedInstruction(machine, ExtendedStaticInfo.OP_PUSH_STACK);
@@ -327,7 +327,7 @@ public class InstructionExtV6Test extends InstructionTestBase {
   @Test
   public void testPushStackUserStackOk() {
     context.checking(new Expectations() {{
-      one (machine).pushStack(1112, (char) 11); will(returnValue(true));
+      one (machine).pushStack((char) 1112, (char) 11); will(returnValue(true));
       one (machine).doBranch((short) 13, 3);
     }});
     ExtendedInstruction push_stack = new ExtendedInstruction(machine, ExtendedStaticInfo.OP_PUSH_STACK);
@@ -341,7 +341,7 @@ public class InstructionExtV6Test extends InstructionTestBase {
   @Test
   public void testPushStackUserStackOverflow() {
     context.checking(new Expectations() {{
-      one (machine).pushStack(1112, (char) 11); will(returnValue(false));
+      one (machine).pushStack((char) 1112, (char) 11); will(returnValue(false));
       one (machine).incrementPC(3);
     }});
     ExtendedInstruction push_stack = new ExtendedInstruction(machine, ExtendedStaticInfo.OP_PUSH_STACK);
@@ -359,7 +359,7 @@ public class InstructionExtV6Test extends InstructionTestBase {
   @Test
   public void testPopStackStdStack() {
     context.checking(new Expectations() {{
-      exactly(5).of (machine).popStack(0); will(returnValue((char) 11));
+      exactly(5).of (machine).popStack((char) 0); will(returnValue((char) 11));
       one (machine).incrementPC(3);
     }});
     ExtendedInstruction push_stack = new ExtendedInstruction(machine, ExtendedStaticInfo.OP_POP_STACK);
@@ -371,7 +371,7 @@ public class InstructionExtV6Test extends InstructionTestBase {
   @Test
   public void testPopStackUserStack() {
     context.checking(new Expectations() {{
-      exactly(3).of (machine).popStack(1113); will(returnValue((char) 11));
+      exactly(3).of (machine).popStack((char) 1113); will(returnValue((char) 11));
       one (machine).incrementPC(3);
     }});
     ExtendedInstruction push_stack = new ExtendedInstruction(machine, ExtendedStaticInfo.OP_POP_STACK);

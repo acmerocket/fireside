@@ -195,7 +195,7 @@ public class MachineTest extends MiniZorkSetup {
       one (statusLine).updateStatusScore(with(any(String.class)),
         with(any(int.class)), with(any(int.class)));
     }});
-    machine.setVariable(0x10, (char) 2);
+    machine.setVariable((char) 0x10, (char) 2);
     machine.setStatusLine(statusLine);
     machine.updateStatusLine();
   }
@@ -206,7 +206,7 @@ public class MachineTest extends MiniZorkSetup {
       one (statusLine).updateStatusTime(with(any(String.class)),
         with(any(int.class)), with(any(int.class)));
     }});
-    machine.setVariable(0x10, (char) 2);
+    machine.setVariable((char) 0x10, (char) 2);
     machine.setStatusLine(statusLine); // set the "time" flag
     machine.writeUnsigned8(1, (char) 2);
     machine.updateStatusLine();
@@ -251,7 +251,7 @@ public class MachineTest extends MiniZorkSetup {
       will(returnValue(true));
     }});
     machine.setSaveGameDataStore(datastore);
-    assertTrue(machine.save(4711));
+    assertTrue(machine.save((char) 4711));
   }
   
   @Test

@@ -74,7 +74,7 @@ public class InstructionVarV3Test extends InstructionTestBase {
   @Test
   public void testCall() {
     context.checking(new Expectations() {{
-      one (machine).setVariable(0, (char) 0);
+      one (machine).setVariable((char) 0, (char) 0);
       one (machine).incrementPC(5);
     }});
     VariableInstruction call_0 = new VariableInstruction(machine,
@@ -88,10 +88,10 @@ public class InstructionVarV3Test extends InstructionTestBase {
   @Test
   public void testCallReal() {
     final char[] args = { 1, 2 };
-    final int retval = 17;
+    final char retval = 17;
     context.checking(new Expectations() {{
-      one (machine).getPC(); will(returnValue(4711));
-      one (machine).call(7109, 4716, args, retval);
+      one (machine).getPC(); will(returnValue((char) 4711));
+      one (machine).call((char) 7109, (char) 4716, args, retval);
     }});
     // Real call
     VariableInstruction call = new VariableInstruction(machine,
@@ -211,7 +211,7 @@ public class InstructionVarV3Test extends InstructionTestBase {
   @Test
   public void testPush() {
     context.checking(new Expectations() {{
-      one (machine).setVariable(0x00, (char) 0x13);
+      one (machine).setVariable((char) 0x00, (char) 0x13);
       one (machine).incrementPC(5);
     }});
     VariableInstruction push = new VariableInstruction(machine,
@@ -229,7 +229,7 @@ public class InstructionVarV3Test extends InstructionTestBase {
   public void testPull() {
     context.checking(new Expectations() {{
       one (machine).getVariable((char) 0x00); will(returnValue((char) 0x14));
-      one (machine).setVariable(0x13, (char) 0x14);
+      one (machine).setVariable((char) 0x13, (char) 0x14);
       one (machine).incrementPC(5);
     }});
     VariableInstruction pull = new VariableInstruction(machine,
@@ -326,7 +326,7 @@ public class InstructionVarV3Test extends InstructionTestBase {
   public void testRandom() {
     context.checking(new Expectations() {{
       one (machine).random((short) 1234); will(returnValue((char) 3));
-      one (machine).setVariable(0x13, (char) 3);
+      one (machine).setVariable((char) 0x13, (char) 3);
       one (machine).incrementPC(5);
     }});
     VariableInstruction random = new VariableInstruction(machine,

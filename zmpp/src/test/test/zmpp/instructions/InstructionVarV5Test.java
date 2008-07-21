@@ -73,7 +73,7 @@ public class InstructionVarV5Test extends InstructionTestBase {
   @Test
   public void testNotInV5() {
     context.checking(new Expectations() {{
-      one (machine).setVariable(0x12, (char) 0x5555);
+      one (machine).setVariable((char) 0x12, (char) 0x5555);
     }});
     VariableInstructionMock not =
       new VariableInstructionMock(machine, VariableStaticInfo.OP_NOT);

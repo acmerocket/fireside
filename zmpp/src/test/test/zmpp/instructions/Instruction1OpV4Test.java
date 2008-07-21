@@ -90,7 +90,7 @@ public class Instruction1OpV4Test extends InstructionTestBase {
   @Test
   public void testNot() {
     context.checking(new Expectations() {{
-      one (machine).setVariable(0x12, (char) 0x5555);
+      one (machine).setVariable((char) 0x12, (char) 0x5555);
     }});
 	  // Create instruction	  
 	  Instruction1OpMock not = createInstructionMock(Short1StaticInfo.OP_NOT,
@@ -108,8 +108,8 @@ public class Instruction1OpV4Test extends InstructionTestBase {
   public void testCall1s() {
     final char[] args = {};
     context.checking(new Expectations() {{
-      one (machine).getPC(); will(returnValue(4611));
-      one (machine).call(4611, 4623, args, 0);
+      one (machine).getPC(); will(returnValue((char) 4611));
+      one (machine).call((char) 4611, (char) 4623, args, (char) 0);
     }});
     Short1Instruction call1s = createInstructionMock(
     		Short1StaticInfo.OP_CALL_1S,

@@ -40,7 +40,7 @@ import org.zmpp.iff.WritableFormChunk;
 public class PortableGameState {
 
   /** The return variable value for discard result. */
-  public static final int DISCARD_RESULT = -1;
+  public static final char DISCARD_RESULT = 0xffff;
   
   /**
    * This class represents a stack frame in the portable game state model.
@@ -48,10 +48,10 @@ public class PortableGameState {
   public static class StackFrame {
   
     /** The return program counter. */
-    int pc;
+    char pc;
     
     /** The return variable. */
-    int returnVariable;
+    char returnVariable;
     
     /** The local variables. */
     char[] locals;
@@ -60,21 +60,21 @@ public class PortableGameState {
     char[] evalStack;
     
     /** The arguments. */
-    int[] args;
+    char[] args;
     
-    public int getProgramCounter() { return pc; }    
-    public int getReturnVariable() { return returnVariable; }
+    public char getProgramCounter() { return pc; }    
+    public char getReturnVariable() { return returnVariable; }
     public char[] getEvalStack() { return evalStack; }
     public char[] getLocals() { return locals; }
-    public int[] getArgs() { return args; }
+    public char[] getArgs() { return args; }
     
-    public void setProgramCounter(final int pc) { this.pc = pc; }
-    public void setReturnVariable(final int varnum) {
+    public void setProgramCounter(final char pc) { this.pc = pc; }
+    public void setReturnVariable(final char varnum) {
       this.returnVariable = varnum;
     }
     public void setEvalStack(final char[] stack) { this.evalStack = stack; }
     public void setLocals(final char[] locals) { this.locals = locals; }
-    public void setArgs(final int[] args) { this.args = args; }
+    public void setArgs(final char[] args) { this.args = args; }
   }
 
   /**
@@ -95,7 +95,7 @@ public class PortableGameState {
   /**
    * The program counter.
    */
-  private int pc;
+  private char pc;
   
   /**
    * The uncompressed dynamic memory.
@@ -152,7 +152,7 @@ public class PortableGameState {
    * 
    * @return the program counter
    */
-  public int getProgramCounter() { return pc; }
+  public char getProgramCounter() { return pc; }
   
   /**
    * Returns the list of stack frames.
@@ -187,7 +187,7 @@ public class PortableGameState {
     this.serialBytes = serial.getBytes();
   }
   
-  public void setProgramCounter(final int pc) { this.pc = pc; }
+  public void setProgramCounter(final char pc) { this.pc = pc; }
   
   public void setDynamicMem(final byte[] memdata) { this.dynamicMem = memdata; }
   
@@ -281,7 +281,7 @@ public class PortableGameState {
     stackFrame.locals = new char[numLocals];
   
     // Read the return variable, ignore the result if DISCARD_RESULT
-    final int returnVar = chunkMem.readUnsigned8(tmpoff++);
+    final char returnVar = chunkMem.readUnsigned8(tmpoff++);
     stackFrame.returnVariable = discardResult ? DISCARD_RESULT :
                                                 returnVar;
     final byte argSpec = (byte) (chunkMem.readUnsigned8(tmpoff++) & 0xff);
@@ -369,7 +369,7 @@ public class PortableGameState {
    * @param machine a Machine
    * @param savePc the program counter restore value
    */
-  public void captureMachineState(final Machine machine, final int savePc) {
+  public void captureMachineState(final Machine machine, final char savePc) {
     final StoryFileHeader fileheader = machine.getFileHeader();
     release = fileheader.getRelease();
     checksum = fileheader.getChecksum();
@@ -394,7 +394,7 @@ public class PortableGameState {
     final List<RoutineContext> contexts = machine.getRoutineContexts();
     // Put in initial dummy stack frame
     final StackFrame dummyFrame = new StackFrame();
-    dummyFrame.args = new int[0];
+    dummyFrame.args = new char[0];
     dummyFrame.locals = new char[0];
     int numElements = calculateNumStackElements(machine, contexts, 0, 0);
     dummyFrame.evalStack = new char[numElements];
@@ -414,13 +414,13 @@ public class PortableGameState {
       // Copy local variables
       stackFrame.locals = new char[context.getNumLocalVariables()];
       for (int i = 0; i < stackFrame.locals.length; i++) {
-        stackFrame.locals[i] = context.getLocalVariable(i);
+        stackFrame.locals[i] = context.getLocalVariable((char) i);
       }
       
       // Create argument array
-      stackFrame.args = new int[context.getNumArguments()];
+      stackFrame.args = new char[context.getNumArguments()];
       for (int i = 0; i < stackFrame.args.length; i++) {
-        stackFrame.args[i] = i;
+        stackFrame.args[i] = (char) i;
       }
       
       // Transfer evaluation stack
@@ -570,7 +570,7 @@ public class PortableGameState {
     buffer.add((byte) (value & 0xff));
   }
   
-  private byte createArgSpecByte(final int[] args) {
+  private byte createArgSpecByte(final char[] args) {
     byte result = 0;
     for (int arg : args) { result |= (1 << arg); }
     return result;
@@ -599,7 +599,7 @@ public class PortableGameState {
       
       // Stack
       for (int s = 0; s < dummyFrame.getEvalStack().length; s++) {
-        machine.setVariable(0, dummyFrame.getEvalStack()[s]);
+        machine.setVariable((char) 0, dummyFrame.getEvalStack()[s]);
       }
     }
     
@@ -609,7 +609,7 @@ public class PortableGameState {
       final StackFrame stackFrame = stackFrames.get(i);
       // ignore the start address
       final RoutineContext context =
-        new RoutineContext(0, stackFrame.locals.length);
+        new RoutineContext((char) 0, stackFrame.locals.length);
       
       context.setReturnVariable(stackFrame.returnVariable);
       context.setReturnAddress(stackFrame.pc);
@@ -623,15 +623,14 @@ public class PortableGameState {
       
       // Stack
       for (int s = 0; s < stackFrame.evalStack.length; s++) {
-        
-        machine.setVariable(0, stackFrame.evalStack[s]);
+        machine.setVariable((char) 0, stackFrame.evalStack[s]);
       }
       contexts.add(context);      
     }    
     machine.setRoutineContexts(contexts);
 
     // Prepare the machine continue
-    int resumePc = getProgramCounter();
+    char resumePc = getProgramCounter();
     if (machine.getVersion() <= 3) {
       // In version 3 this is a branch target that needs to be read
       // Execution is continued at the first instruction after the branch offset
@@ -649,8 +648,8 @@ public class PortableGameState {
    * @param machine the machine
    * @return the store variable
    */
-  public int getStoreVariable(final Machine machine) {
-    final int storeVarAddress = getProgramCounter();
+  public char getStoreVariable(final Machine machine) {
+    final char storeVarAddress = getProgramCounter();
     return machine.readUnsigned8(storeVarAddress);
   }
 
@@ -679,21 +678,21 @@ public class PortableGameState {
    * @param argspec the argspec byte
    * @return the specified arguments
    */
-  private int[] getArgs(final byte argspec) {
+  private char[] getArgs(final byte argspec) {
     int andBit;
-    final List<Integer> result = new ArrayList<Integer>();
+    final List<Character> result = new ArrayList<Character>();
     
     for (int i = 0; i < 7; i++) {
       andBit = 1 << i;
       if ((andBit & argspec) > 0) {
-        result.add(i);
+        result.add((char) i);
       }      
     }
-    final int[] intArray = new int[result.size()];
+    final char[] charArray = new char[result.size()];
     for (int i = 0; i < result.size(); i++) {
-      intArray[i] = result.get(i);
+      charArray[i] = result.get(i);
     }
-    return intArray;
+    return charArray;
   }
   
   /**
@@ -704,7 +703,7 @@ public class PortableGameState {
    * @param b2 byte 2
    * @return the resulting program counter
    */
-  private int decodePcBytes(final char b0, final char b1, final char b2) {    
-    return ((b0 & 0xff) << 16) | ((b1 & 0xff) << 8) | (b2 & 0xff);
+  private char decodePcBytes(final char b0, final char b1, final char b2) {    
+    return (char) (((b0 & 0xff) << 16) | ((b1 & 0xff) << 8) | (b2 & 0xff));
   }
 }

@@ -65,8 +65,8 @@ public class Instruction2OpV5Test extends InstructionTestBase {
   @Test
   public void testThrowInvalid() {
     final List<RoutineContext> contexts = new ArrayList<RoutineContext>();
-    contexts.add(new RoutineContext(1000, 1));
-    contexts.add(new RoutineContext(2000, 2));
+    contexts.add(new RoutineContext((char) 1000, 1));
+    contexts.add(new RoutineContext((char) 2000, 2));
     context.checking(new Expectations() {{
       one (machine).getRoutineContexts(); will(returnValue(contexts));
       one (machine).halt("@throw from an invalid stack frame state");
@@ -87,11 +87,11 @@ public class Instruction2OpV5Test extends InstructionTestBase {
   @Test
   public void testThrowUnwind() {
     final List<RoutineContext> contexts = new ArrayList<RoutineContext>();
-    contexts.add(new RoutineContext(1000, 1));
-    contexts.add(new RoutineContext(2000, 2));
-    contexts.add(new RoutineContext(3000, 3));
-    contexts.add(new RoutineContext(4000, 4));
-    contexts.add(new RoutineContext(5000, 5));
+    contexts.add(new RoutineContext((char) 1000, 1));
+    contexts.add(new RoutineContext((char) 2000, 2));
+    contexts.add(new RoutineContext((char) 3000, 3));
+    contexts.add(new RoutineContext((char) 4000, 4));
+    contexts.add(new RoutineContext((char) 5000, 5));
     context.checking(new Expectations() {{
       one (machine).getRoutineContexts(); will(returnValue(contexts));
       exactly(2).of (machine).returnWith(with(any(char.class)));

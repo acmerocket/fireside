@@ -153,7 +153,7 @@ public class ExtendedInstruction extends AbstractInstruction {
   private void save_undo() {
     // Target PC offset is two because of the extra opcode byte and 
     // operand type byte compared to the 0OP instruction
-    final int pc = getMachine().getPC() + 3;
+    final char pc = (char) (getMachine().getPC() + 3);
     final boolean success = getMachine().save_undo(pc);
     storeResult(success ? TRUE : FALSE);
     nextInstruction();
@@ -164,7 +164,7 @@ public class ExtendedInstruction extends AbstractInstruction {
     if (gamestate == null) {
       storeResult(FALSE);
     } else {
-      final int storevar = gamestate.getStoreVariable(getMachine());      
+      final char storevar = gamestate.getStoreVariable(getMachine());      
       getMachine().setVariable(storevar, RESTORE_TRUE);      
     }
   }
@@ -196,7 +196,7 @@ public class ExtendedInstruction extends AbstractInstruction {
     // Saving to tables is not supported yet, this is the standard save feature
     // Offset is 3 because there are two opcode bytes + 1 optype byte before
     // the actual store var byte
-    saveToStorage(getMachine().getPC() + 3);
+    saveToStorage((char) (getMachine().getPC() + 3));
   }
   
   private void restore() {
@@ -343,7 +343,7 @@ public class ExtendedInstruction extends AbstractInstruction {
   
   private void pop_stack() {
     int numItems = getUnsignedValue(0);
-    int stack = 0;
+    char stack = 0;
     if (getNumOperands() == 2) {      
       stack = getUnsignedValue(1);
     }
@@ -355,7 +355,7 @@ public class ExtendedInstruction extends AbstractInstruction {
   
   private void push_stack() {
     char value = getUnsignedValue(0);
-    int stack = 0;
+    char stack = 0;
     if (getNumOperands() == 2) {      
       stack = getUnsignedValue(1);
     }

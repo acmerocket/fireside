@@ -45,7 +45,7 @@ public interface Cpu {
    * @param packedAddress the packed address
    * @return the translated byte address
    */
-  int unpackStringAddress(int packedAddress);
+  char unpackStringAddress(char packedAddress);
   
   /**
    * Computes a branch target from an offset.
@@ -58,14 +58,14 @@ public interface Cpu {
    * 
    * @return the current program counter
    */
-  int getPC();
+  char getPC();
   
   /**
    * Sets the program counter to a new address.
    * 
    * @param address the new address
    */
-  void setPC(int address);
+  void setPC(char address);
   
   /**
    * Increments the program counter by the specified offset.
@@ -82,7 +82,7 @@ public interface Cpu {
    * 
    * @return the stack pointer
    */
-  int getSP();
+  char getSP();
   
   /**
    * Returns the value at the top of the stack without removing it.
@@ -114,7 +114,7 @@ public interface Cpu {
    * @param value the value to push
    * @return true if operation was ok, false if overflow
    */
-  boolean pushStack(int userstackAddress, char value);
+  boolean pushStack(char userstackAddress, char value);
   
   /**
    * Pops the specified value from the user stack.
@@ -122,7 +122,7 @@ public interface Cpu {
    * @param userstackAddress the address of the user stack
    * @return the popped value
    */
-  char popStack(int userstackAddress);
+  char popStack(char userstackAddress);
   
   // ********************************************************************
   // ***** Variable access
@@ -148,7 +148,7 @@ public interface Cpu {
    * @throws IllegalStateException if a local variable is accessed without
    * a subroutine context or if a non-existent local variable is accessed
    */
-  void setVariable(int variableNumber, char value);
+  void setVariable(char variableNumber, char value);
 
   // ********************************************************************
   // ***** Routine stack frames
@@ -198,6 +198,6 @@ public interface Cpu {
    * @param returnVariable the return variable or DISCARD_RESULT
    * @return the routine context created
    */
-  RoutineContext call(int routineAddress, int returnAddress, char[] args,
-                      int returnVariable);
+  RoutineContext call(char routineAddress, char returnAddress, char[] args,
+                      char returnVariable);
 }

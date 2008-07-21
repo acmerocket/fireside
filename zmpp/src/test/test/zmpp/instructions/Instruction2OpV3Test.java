@@ -256,7 +256,7 @@ public class Instruction2OpV3Test extends InstructionTestBase {
   public void testIncChkNoBranch() {
     context.checking(new Expectations() {{
       one (machine).getVariable((char) 0x11); will(returnValue((char) 6));
-      one (machine).setVariable(0x11, (char) 7);
+      one (machine).setVariable((char) 0x11, (char) 7);
     }});
     Instruction2OpMock inc_chk_nobranch = createInstructionMock(
         LongStaticInfo.OP_INC_CHK,
@@ -271,7 +271,7 @@ public class Instruction2OpV3Test extends InstructionTestBase {
   public void testIncChkBranch() {
     context.checking(new Expectations() {{
       one (machine).getVariable((char) 0x11); will(returnValue((char) 5));
-      one (machine).setVariable(0x11, (char) 6);
+      one (machine).setVariable((char) 0x11, (char) 6);
     }});
     Instruction2OpMock inc_chk_branch = createInstructionMock(
         LongStaticInfo.OP_INC_CHK,
@@ -313,7 +313,7 @@ public class Instruction2OpV3Test extends InstructionTestBase {
 	@Test
   public void testOr() {
     context.checking(new Expectations() {{
-      one (machine).setVariable(0x12, (char) 0xffff);
+      one (machine).setVariable((char) 0x12, (char) 0xffff);
     }});
     Instruction2OpMock or = createInstructionMock(LongStaticInfo.OP_OR,
         Operand.TYPENUM_LARGE_CONSTANT, (char) 0x00ff,
@@ -330,7 +330,7 @@ public class Instruction2OpV3Test extends InstructionTestBase {
 	@Test
   public void testAnd() {
     context.checking(new Expectations() {{
-      one (machine).setVariable(0x12, (char) 0x0000);
+      one (machine).setVariable((char) 0x12, (char) 0x0000);
     }});
     Instruction2OpMock and = createInstructionMock(LongStaticInfo.OP_AND,
         Operand.TYPENUM_LARGE_CONSTANT, (char) 0x00ff,
@@ -347,7 +347,7 @@ public class Instruction2OpV3Test extends InstructionTestBase {
 	@Test
   public void testAdd() {
     context.checking(new Expectations() {{
-      one (machine).setVariable(0x12, (char) 0x0002);
+      one (machine).setVariable((char) 0x12, (char) 0x0002);
     }});
     Instruction2OpMock add = createInstructionMock(LongStaticInfo.OP_ADD,
         Operand.TYPENUM_LARGE_CONSTANT, signedToUnsigned16((short) -1),
@@ -364,7 +364,7 @@ public class Instruction2OpV3Test extends InstructionTestBase {
 	@Test
   public void testSub() {
     context.checking(new Expectations() {{
-      one (machine).setVariable(0x12, signedToUnsigned16((short) -4));
+      one (machine).setVariable((char) 0x12, signedToUnsigned16((short) -4));
     }});
     Instruction2OpMock sub = createInstructionMock(LongStaticInfo.OP_SUB,
         Operand.TYPENUM_LARGE_CONSTANT, signedToUnsigned16((short) -1),
@@ -381,7 +381,7 @@ public class Instruction2OpV3Test extends InstructionTestBase {
 	@Test
   public void testMul() {
     context.checking(new Expectations() {{
-      one (machine).setVariable(0x12, signedToUnsigned16((short) -12));
+      one (machine).setVariable((char) 0x12, signedToUnsigned16((short) -12));
     }});
     Instruction2OpMock mul = createInstructionMock(LongStaticInfo.OP_MUL,
         Operand.TYPENUM_LARGE_CONSTANT, signedToUnsigned16((short) -4),
@@ -398,7 +398,7 @@ public class Instruction2OpV3Test extends InstructionTestBase {
 	@Test
   public void testDiv() {
     context.checking(new Expectations() {{
-      one (machine).setVariable(0x12, signedToUnsigned16((short) -2));
+      one (machine).setVariable((char) 0x12, signedToUnsigned16((short) -2));
     }});
     Instruction2OpMock div = createInstructionMock(LongStaticInfo.OP_DIV,
       Operand.TYPENUM_LARGE_CONSTANT, signedToUnsigned16((short) -7),
@@ -427,7 +427,7 @@ public class Instruction2OpV3Test extends InstructionTestBase {
 	@Test
   public void testMod() {
     context.checking(new Expectations() {{
-      one (machine).setVariable(0x12, signedToUnsigned16((short) -1));
+      one (machine).setVariable((char) 0x12, signedToUnsigned16((short) -1));
     }});
     Instruction2OpMock mod = createInstructionMock(LongStaticInfo.OP_MOD,
         Operand.TYPENUM_LARGE_CONSTANT, signedToUnsigned16((short) -7),
@@ -522,7 +522,7 @@ public class Instruction2OpV3Test extends InstructionTestBase {
 	@Test
   public void testStore() {
     context.checking(new Expectations() {{
-      one (machine).setVariable(0x11, (char) 42);
+      one (machine).setVariable((char) 0x11, (char) 42);
     }});
     Instruction2OpMock store = createInstructionMock(LongStaticInfo.OP_STORE,
         Operand.TYPENUM_SMALL_CONSTANT, (char) 0x11,
@@ -552,7 +552,7 @@ public class Instruction2OpV3Test extends InstructionTestBase {
   public void testLoadw() {
     context.checking(new Expectations() {{
       one (machine).readUnsigned16(0x0010 + 2); will(returnValue((char) 123));
-      one (machine).setVariable(0x11, (char) 123);
+      one (machine).setVariable((char) 0x11, (char) 123);
     }});
     Instruction2OpMock loadw = createInstructionMock(LongStaticInfo.OP_LOADW,
         Operand.TYPENUM_LARGE_CONSTANT, (char) 0x0010,
@@ -571,7 +571,7 @@ public class Instruction2OpV3Test extends InstructionTestBase {
   public void testLoadb() {
     context.checking(new Expectations() {{
       one (machine).readUnsigned8(0x0010 + 1); will(returnValue((char) 42));
-      one (machine).setVariable(0x11, (char) 42);
+      one (machine).setVariable((char) 0x11, (char) 42);
     }});
     Instruction2OpMock loadb = createInstructionMock(LongStaticInfo.OP_LOADB,
         Operand.TYPENUM_LARGE_CONSTANT, (char) 0x0010,
@@ -589,7 +589,7 @@ public class Instruction2OpV3Test extends InstructionTestBase {
   public void testGetProp() {
     context.checking(new Expectations() {{
       one (machine).getProperty(1, 18); will(returnValue((char) 0x01ee));
-      one (machine).setVariable(17, (char) 494);
+      one (machine).setVariable((char) 17, (char) 494);
       one (machine).incrementPC(6);
     }});
     // Two-byte property, Object 1, property 18
@@ -627,7 +627,7 @@ public class Instruction2OpV3Test extends InstructionTestBase {
   public void testGetPropAddr() {
     context.checking(new Expectations() {{
       one (machine).getPropertyAddress(1, 18); will(returnValue(0x0a55));
-      one (machine).setVariable(17, (char) 0x0a55);
+      one (machine).setVariable((char) 17, (char) 0x0a55);
       one (machine).incrementPC(6);
     }});
     LongInstruction get_prop_addr_exists = createInstruction(
@@ -646,7 +646,7 @@ public class Instruction2OpV3Test extends InstructionTestBase {
   public void testGetNextProp() {
     context.checking(new Expectations() {{
       one (machine).getNextProperty(1, 12); will(returnValue(15));
-      one (machine).setVariable(0x11, (char) 15);
+      one (machine).setVariable((char) 0x11, (char) 15);
     }});
     Instruction2OpMock get_next_prop = createInstructionMock(
         LongStaticInfo.OP_GET_NEXT_PROP,

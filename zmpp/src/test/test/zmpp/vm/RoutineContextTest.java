@@ -36,7 +36,7 @@ public class RoutineContextTest {
   
   @Before
   public void setUp() {
-    context = new RoutineContext(0x4711, 2);
+    context = new RoutineContext((char) 0x4711, 2);
   }
   
   @Test
@@ -48,20 +48,20 @@ public class RoutineContextTest {
   @Test
   public void testSetters() {
     context.setLocalVariable(0, (char) 72);
-    assertEquals(72, context.getLocalVariable(0));
+    assertEquals(72, context.getLocalVariable((char) 0));
     context.setLocalVariable(1, (char) 76);
-    assertEquals(76, context.getLocalVariable(1));
+    assertEquals(76, context.getLocalVariable((char) 1));
     try {
       context.setLocalVariable(2, (char) 815);
       fail();
     } catch (IndexOutOfBoundsException expected) {
       // this is good
     }
-    context.setReturnAddress(0x4711);
+    context.setReturnAddress((char) 0x4711);
     assertEquals(0x4711, context.getReturnAddress());
-    context.setReturnVariable((short) 0x13);
+    context.setReturnVariable((char) 0x13);
     assertEquals(0x13, context.getReturnVariable());
-    context.setInvocationStackPointer(1234);
+    context.setInvocationStackPointer((char) 1234);
     assertEquals(1234, context.getInvocationStackPointer());
     context.setNumArguments(3);
     assertEquals(3, context.getNumArguments());

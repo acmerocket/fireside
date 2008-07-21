@@ -31,7 +31,7 @@ package org.zmpp.vmutil;
 public final class FastShortStack {
 
   private char[] values;
-  private int stackpointer;
+  private char stackpointer;
   
   /**
    * Constructor.
@@ -46,7 +46,7 @@ public final class FastShortStack {
    * Returns the current stack pointer.
    * @return the stack pointer
    */
-  public int getStackPointer() { return stackpointer; }
+  public char getStackPointer() { return stackpointer; }
   
   /**
    * Pushes a value on the stack and increases the stack pointer.

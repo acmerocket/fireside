@@ -67,7 +67,7 @@ public class Instruction1OpV3Test extends InstructionTestBase {
   public void testInc() {
     context.checking(new Expectations() {{
       one (machine).getVariable((char) 2); will(returnValue(signedToUnsigned16((short) -1)));
-      one (machine).setVariable(2, (char) 0);
+      one (machine).setVariable((char) 2, (char) 0);
     }});
     Instruction1OpMock inc = createInstructionMock(Short1StaticInfo.OP_INC,
         Operand.TYPENUM_SMALL_CONSTANT, (char) 2);
@@ -83,7 +83,7 @@ public class Instruction1OpV3Test extends InstructionTestBase {
   public void testDec() {
     context.checking(new Expectations() {{
       one (machine).getVariable((char) 6); will(returnValue((char) 123));
-      one (machine).setVariable(6, (char) 122);
+      one (machine).setVariable((char) 6, (char) 122);
     }});
     Instruction1OpMock dec = createInstructionMock(Short1StaticInfo.OP_DEC,
         Operand.TYPENUM_SMALL_CONSTANT, (char) 6);
@@ -95,7 +95,7 @@ public class Instruction1OpV3Test extends InstructionTestBase {
   public void testDec0() {    
     context.checking(new Expectations() {{
       one (machine).getVariable((char) 7); will(returnValue((char) 0));
-      one (machine).setVariable(7, signedToUnsigned16((short) -1));
+      one (machine).setVariable((char) 7, signedToUnsigned16((short) -1));
     }});
     Instruction1OpMock dec = createInstructionMock(Short1StaticInfo.OP_DEC,
         Operand.TYPENUM_SMALL_CONSTANT, (char) 7);
@@ -110,7 +110,7 @@ public class Instruction1OpV3Test extends InstructionTestBase {
   public void testGetParent() {    
     context.checking(new Expectations() {{
       one (machine).getParent(2); will(returnValue(27));
-      one (machine).setVariable(0x10, (char) 27);
+      one (machine).setVariable((char) 0x10, (char) 27);
     }});
     Instruction1OpMock get_parent = createInstructionMock(
         Short1StaticInfo.OP_GET_PARENT, Operand.TYPENUM_SMALL_CONSTANT,
@@ -145,7 +145,7 @@ public class Instruction1OpV3Test extends InstructionTestBase {
     context.checking(new Expectations() {{
       one (machine).getVariable((char) 1); will(returnValue((char) 2));
       one (machine).getVariable((char) 2); will(returnValue((char) 4711));
-      one (machine).setVariable(0x12, (char) 4711);
+      one (machine).setVariable((char) 0x12, (char) 4711);
     }});
     Instruction1OpMock load = createInstructionMock(Short1StaticInfo.OP_LOAD,
         Operand.TYPENUM_VARIABLE, (char) 0x01);
@@ -159,7 +159,7 @@ public class Instruction1OpV3Test extends InstructionTestBase {
   public void testLoadOperandIsConstant() {
     context.checking(new Expectations() {{
       one (machine).getVariable((char) 1); will(returnValue((char) 4715));
-      one (machine).setVariable(0x13, (char) 4715);
+      one (machine).setVariable((char) 0x13, (char) 4715);
     }});
     Instruction1OpMock load = createInstructionMock(Short1StaticInfo.OP_LOAD,
         Operand.TYPENUM_SMALL_CONSTANT, (char) 0x01);
@@ -174,7 +174,7 @@ public class Instruction1OpV3Test extends InstructionTestBase {
   public void testLoadOperandReferencesStack() {
     context.checking(new Expectations() {{
       one (machine).getStackTop(); will(returnValue((char) 4715));
-      one (machine).setVariable(0x13, (char) 4715);
+      one (machine).setVariable((char) 0x13, (char) 4715);
     }});
     Instruction1OpMock load = createInstructionMock(Short1StaticInfo.OP_LOAD,
         Operand.TYPENUM_SMALL_CONSTANT, (char) 0x00);
@@ -220,7 +220,7 @@ public class Instruction1OpV3Test extends InstructionTestBase {
   public void testGetSiblingIs0() {    
     context.checking(new Expectations() {{
       one (machine).getSibling(8); will(returnValue(0));
-      one (machine).setVariable(0x01, (char) 0);
+      one (machine).setVariable((char) 0x01, (char) 0);
     }});
     Instruction1OpMock get_sibling = createInstructionMock(
     		Short1StaticInfo.OP_GET_SIBLING,
@@ -235,7 +235,7 @@ public class Instruction1OpV3Test extends InstructionTestBase {
   public void testGetSiblingHasSibling() {    
     context.checking(new Expectations() {{
       one (machine).getSibling(6); will(returnValue(152));
-      one (machine).setVariable(0x01, (char) 152);
+      one (machine).setVariable((char) 0x01, (char) 152);
     }});
     // Object 6 has 152 as its sibling    
     Instruction1OpMock get_sibling = createInstructionMock(Short1StaticInfo.OP_GET_SIBLING,
@@ -253,7 +253,7 @@ public class Instruction1OpV3Test extends InstructionTestBase {
   public void testGetChildOfObject0() {
     context.checking(new Expectations() {{
       one (machine).warn("@get_child illegal access to object 0");
-      one (machine).setVariable(0x00, (char) 0);
+      one (machine).setVariable((char) 0x00, (char) 0);
     }});
     // Object 0 does not exist
     Instruction1OpMock get_child = createInstructionMock(Short1StaticInfo.OP_GET_CHILD,
@@ -267,7 +267,7 @@ public class Instruction1OpV3Test extends InstructionTestBase {
   public void testGetChildIs0() {    
     context.checking(new Expectations() {{
       one (machine).getChild(4); will(returnValue(0));
-      one (machine).setVariable(0x01, (char) 0);
+      one (machine).setVariable((char) 0x01, (char) 0);
     }});
     // Object 4 has no child
     Instruction1OpMock get_child = createInstructionMock(Short1StaticInfo.OP_GET_CHILD,
@@ -282,7 +282,7 @@ public class Instruction1OpV3Test extends InstructionTestBase {
   public void testGetChildAndBranch() {
     context.checking(new Expectations() {{
       one (machine).getChild(7); will(returnValue(41));
-      one (machine).setVariable(0x02, (char) 41);
+      one (machine).setVariable((char) 0x02, (char) 41);
     }});
     // Object 7 has 41 as its child    
     Instruction1OpMock get_child = createInstructionMock(Short1StaticInfo.OP_GET_CHILD,
@@ -315,7 +315,7 @@ public class Instruction1OpV3Test extends InstructionTestBase {
   @Test
   public void testPrintPaddr() {
     context.checking(new Expectations() {{
-      one (machine).unpackStringAddress(0x145e); will(returnValue(1234));
+      one (machine).unpackStringAddress((char) 0x145e); will(returnValue((char) 1234));
       one (machine).printZString(1234);
     }});
     Instruction1OpMock print_paddr = createInstructionMock(Short1StaticInfo.OP_PRINT_PADDR,
@@ -388,7 +388,7 @@ public class Instruction1OpV3Test extends InstructionTestBase {
   public void testGetPropLen() {
     context.checking(new Expectations() {{
       one (machine).getPropertyLength(0x1889); will(returnValue(4));
-      one (machine).setVariable(0x15, (char) 4);
+      one (machine).setVariable((char) 0x15, (char) 4);
     }});
     Instruction1OpMock get_prop_len = createInstructionMock(Short1StaticInfo.OP_GET_PROP_LEN,
         Operand.TYPENUM_LARGE_CONSTANT, (char) 0x1889);

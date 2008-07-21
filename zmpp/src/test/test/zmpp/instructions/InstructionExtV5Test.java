@@ -65,10 +65,10 @@ public class InstructionExtV5Test extends InstructionTestBase {
   @Test
   public void testSaveUndoSuccess() {
     context.checking(new Expectations() {{
-      one (machine).getPC(); will(returnValue(1234));
+      one (machine).getPC(); will(returnValue((char) 1234));
       one (machine).incrementPC(3);
-      one (machine).save_undo(with(any(int.class))); will(returnValue(true));
-      atLeast(1).of (machine).setVariable(0, (char) 1);
+      one (machine).save_undo(with(any(char.class))); will(returnValue(true));
+      atLeast(1).of (machine).setVariable((char) 0, (char) 1);
     }});
     ExtendedInstruction save_undo = new ExtendedInstruction(machine, ExtendedStaticInfo.OP_SAVE_UNDO);
     save_undo.setLength(3);
@@ -78,10 +78,10 @@ public class InstructionExtV5Test extends InstructionTestBase {
   @Test
   public void testSaveUndoFail() {
     context.checking(new Expectations() {{
-      one (machine).getPC(); will(returnValue(1234));
+      one (machine).getPC(); will(returnValue((char) 1234));
       one (machine).incrementPC(3);
-      one (machine).save_undo(with(any(int.class))); will(returnValue(false));
-      atLeast(1).of (machine).setVariable(0, (char) 0);
+      one (machine).save_undo(with(any(char.class))); will(returnValue(false));
+      atLeast(1).of (machine).setVariable((char) 0, (char) 0);
     }});
     ExtendedInstruction save_undo = new ExtendedInstruction(machine, ExtendedStaticInfo.OP_SAVE_UNDO);
     save_undo.setLength(3);
@@ -96,7 +96,7 @@ public class InstructionExtV5Test extends InstructionTestBase {
   public void testArtShift0() {
     context.checking(new Expectations() {{
       one (machine).incrementPC(3);
-      atLeast(1).of (machine).setVariable(1, (char) 12);
+      atLeast(1).of (machine).setVariable((char) 1, (char) 12);
     }});
     ExtendedInstruction art_shift = new ExtendedInstruction(machine, ExtendedStaticInfo.OP_ART_SHIFT);
     art_shift.setLength(3);
@@ -110,7 +110,7 @@ public class InstructionExtV5Test extends InstructionTestBase {
   public void testArtShiftPositivePositiveShift() {
     context.checking(new Expectations() {{
       one (machine).incrementPC(3);
-      atLeast(1).of (machine).setVariable(1, (char) 24);
+      atLeast(1).of (machine).setVariable((char) 1, (char) 24);
     }});
     ExtendedInstruction art_shift = new ExtendedInstruction(machine, ExtendedStaticInfo.OP_ART_SHIFT);
     art_shift.setLength(3);
@@ -125,7 +125,7 @@ public class InstructionExtV5Test extends InstructionTestBase {
   public void testArtShiftNegativePositiveShift() {
     context.checking(new Expectations() {{
       one (machine).incrementPC(3);
-      atLeast(1).of (machine).setVariable(1, signedToUnsigned16((short) -24));
+      atLeast(1).of (machine).setVariable((char) 1, signedToUnsigned16((short) -24));
     }});
     ExtendedInstruction art_shift = new ExtendedInstruction(machine, ExtendedStaticInfo.OP_ART_SHIFT);
     art_shift.setLength(3);
@@ -140,7 +140,7 @@ public class InstructionExtV5Test extends InstructionTestBase {
   public void testArtShiftPositiveNegativeShift() {
     context.checking(new Expectations() {{
       one (machine).incrementPC(3);
-      atLeast(1).of (machine).setVariable(1, (char) 6);
+      atLeast(1).of (machine).setVariable((char) 1, (char) 6);
     }});
     ExtendedInstruction art_shift = new ExtendedInstruction(machine, ExtendedStaticInfo.OP_ART_SHIFT);
     art_shift.setLength(3);
@@ -154,7 +154,7 @@ public class InstructionExtV5Test extends InstructionTestBase {
   public void testArtShiftNegativeNegativeShift() {
     context.checking(new Expectations() {{
       one (machine).incrementPC(3);
-      atLeast(1).of (machine).setVariable(1, signedToUnsigned16((short) -6));
+      atLeast(1).of (machine).setVariable((char) 1, signedToUnsigned16((short) -6));
     }});
     ExtendedInstruction art_shift = new ExtendedInstruction(machine, ExtendedStaticInfo.OP_ART_SHIFT);
     art_shift.setLength(3);

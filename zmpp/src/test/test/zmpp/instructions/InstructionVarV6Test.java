@@ -56,8 +56,8 @@ public class InstructionVarV6Test extends InstructionTestBase {
   @Test
   public void testPullV6NoUserStack() {
     context.checking(new Expectations() {{
-      one (machine).popStack(0x00); will(returnValue((char) 0x14));
-      one (machine).setVariable(0x15, (char) 0x14);
+      one (machine).popStack((char) 0x00); will(returnValue((char) 0x14));
+      one (machine).setVariable((char) 0x15, (char) 0x14);
       one (machine).incrementPC(5);
     }});
     VariableInstruction pull = new VariableInstruction(machine,
@@ -70,8 +70,8 @@ public class InstructionVarV6Test extends InstructionTestBase {
   @Test
   public void testPullV6UserStack() {
     context.checking(new Expectations() {{
-      one (machine).popStack(0x1234); will(returnValue((char) 0x15));
-      one (machine).setVariable(0x15, (char) 0x15);
+      one (machine).popStack((char) 0x1234); will(returnValue((char) 0x15));
+      one (machine).setVariable((char) 0x15, (char) 0x15);
       one (machine).incrementPC(5);
     }});
     VariableInstruction pull = new VariableInstruction(machine,

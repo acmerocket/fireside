@@ -212,14 +212,14 @@ extends ObjectTree, Input, Output, Cpu, Memory, IZsciiEncoding {
    * @param savepc the save pc
    * @return true on success, false otherwise
    */
-  boolean save(int savepc);
+  boolean save(char savepc);
   
   /**
    * Saves the current state in memory.
    * @param savepc the save pc
    * @return true on success, false otherwise
    */
-  boolean save_undo(int savepc);
+  boolean save_undo(char savepc);
 
   /**
    * Restores a previously saved state.

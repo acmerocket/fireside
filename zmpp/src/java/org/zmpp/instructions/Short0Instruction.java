@@ -58,7 +58,7 @@ public class Short0Instruction extends AbstractInstruction {
         nextInstruction();
         break;
       case Short0StaticInfo.OP_SAVE:
-        saveToStorage(getMachine().getPC() + 1);
+        saveToStorage((char) (getMachine().getPC() + 1));
         break;
       case Short0StaticInfo.OP_RESTORE:
         

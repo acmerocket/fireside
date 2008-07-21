@@ -391,13 +391,13 @@ public abstract class AbstractInstruction implements Instruction {
   }
   
   private String getVarValue(final char varnum) {
-    int value = 0;
+    char value = 0;
     if (varnum == 0) {
       value = getMachine().getStackTop();
     } else {
       value = getMachine().getVariable(varnum);
     }
-    return String.format("$%02x", value);
+    return String.format("$%02x", (int) value);
   }
   
   protected String getOperandString() {
@@ -409,10 +409,10 @@ public abstract class AbstractInstruction implements Instruction {
       final Operand operand = getOperand(i);
       switch (operand.getType()) {
         case SMALL_CONSTANT:
-          buffer.append(String.format("$%02x", operand.getValue()));
+          buffer.append(String.format("$%02x", (int) operand.getValue()));
           break;
         case LARGE_CONSTANT:
-          buffer.append(String.format("$%04x", operand.getValue()));
+          buffer.append(String.format("$%04x", (int) operand.getValue()));
           break;
         case VARIABLE:
           buffer.append(getVarName(operand.getValue()));
@@ -479,7 +479,7 @@ public abstract class AbstractInstruction implements Instruction {
    * @param discardResult whether to discard the result
    */
   protected void call(final int numArgs) {
-    final int packedAddress = getUnsignedValue(0);
+    final char packedAddress = getUnsignedValue(0);
     final char[] args = new char[numArgs];
     for (int i = 0; i < numArgs; i++) {
       args[i] = getUnsignedValue(i + 1);
@@ -487,7 +487,7 @@ public abstract class AbstractInstruction implements Instruction {
     call(packedAddress, args);
   }
   
-  protected void call(final int packedRoutineAddress, final char[] args) {
+  protected void call(final char packedRoutineAddress, final char[] args) {
     if (packedRoutineAddress == 0) {
       if (storesResult()) {
         // only if this instruction stores a result
@@ -495,7 +495,7 @@ public abstract class AbstractInstruction implements Instruction {
       }
       nextInstruction();
     } else {
-      final int returnAddress = getMachine().getPC() + getLength();
+      final char returnAddress = (char) (getMachine().getPC() + getLength());
       final char returnVariable = storesResult() ? getStoreVariable() :
         RoutineContext.DISCARD_RESULT;      
       machine.call(packedRoutineAddress, returnAddress, args,
@@ -503,7 +503,7 @@ public abstract class AbstractInstruction implements Instruction {
     }
   }
   
-  protected void saveToStorage(final int pc) {
+  protected void saveToStorage(final char pc) {
     // This is a little tricky: In version 3, the program counter needs to
     // point to the branch offset, and not to an instruction position
     // In version 4, this points to the store variable. In both cases this
@@ -536,7 +536,7 @@ public abstract class AbstractInstruction implements Instruction {
         // If failure on restore, just continue
         nextInstruction();
       } else {
-        final int storevar = gamestate.getStoreVariable(getMachine());        
+        final char storevar = gamestate.getStoreVariable(getMachine());        
         getMachine().setVariable(storevar, RESTORE_TRUE);        
       }
     }

@@ -87,12 +87,12 @@ public class Instruction0OpV5Test extends InstructionTestBase {
   @Test
   public void testCatch() {
     final List<RoutineContext> routineContexts = new ArrayList<RoutineContext>();
-    routineContexts.add(new RoutineContext(1234, 1));
-    routineContexts.add(new RoutineContext(2345, 0));
-    routineContexts.add(new RoutineContext(3456, 2));
+    routineContexts.add(new RoutineContext((char) 1234, 1));
+    routineContexts.add(new RoutineContext((char) 2345, 0));
+    routineContexts.add(new RoutineContext((char) 3456, 2));
     context.checking(new Expectations() {{
       one (machine).getRoutineContexts(); will(returnValue(routineContexts));
-      one (machine).setVariable(0x12, (char) 2);
+      one (machine).setVariable((char) 0x12, (char) 2);
     }});
     Instruction0OpMock zcatch = createInstructionMock(Short0StaticInfo.OP_POP);
     zcatch.setStoreVariable((char) 0x12);

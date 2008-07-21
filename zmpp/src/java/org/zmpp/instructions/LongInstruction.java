@@ -333,7 +333,7 @@ public class LongInstruction extends AbstractInstruction {
   }
   
   private void store() {
-    final int varnum = getUnsignedValue(0);
+    final char varnum = getUnsignedValue(0);
     final char value = getUnsignedValue(1);    
     // Handle stack variable as a special case (standard 1.1)
     if (varnum == 0) {

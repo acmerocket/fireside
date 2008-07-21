@@ -65,9 +65,9 @@ public class Instruction0OpV4Test extends InstructionTestBase {
   @Test
   public void testSaveSuccess() {
     context.checking(new Expectations() {{
-      one (machine).getPC(); will(returnValue(1234));
-      one (machine).save(with(any(int.class))); will(returnValue(true));
-      one (machine).setVariable(0, (char) 1);
+      one (machine).getPC(); will(returnValue((char) 1234));
+      one (machine).save(with(any(char.class))); will(returnValue(true));
+      one (machine).setVariable((char) 0, (char) 1);
     }});
     Instruction0OpMock save = createInstructionMock(Short0StaticInfo.OP_SAVE);
     save.execute();
@@ -80,7 +80,7 @@ public class Instruction0OpV4Test extends InstructionTestBase {
     context.checking(new Expectations() {{
       one (machine).restore(); will(returnValue(gamestate));
       // Store variable
-      one (machine).setVariable(5, (char) 2);
+      one (machine).setVariable((char) 5, (char) 2);
       one (machine).readUnsigned8(0); will(returnValue((char) 5));
     }});
     Instruction0OpMock restore = createInstructionMock(Short0StaticInfo.OP_RESTORE);
@@ -92,7 +92,7 @@ public class Instruction0OpV4Test extends InstructionTestBase {
   public void testRestoreFailV4() {
     context.checking(new Expectations() {{
       one (machine).restore(); will(returnValue(null));
-      one (machine).setVariable(0, (char) 0);
+      one (machine).setVariable((char) 0, (char) 0);
     }});
     Instruction0OpMock restore = createInstructionMock(Short0StaticInfo.OP_RESTORE);
     restore.execute();

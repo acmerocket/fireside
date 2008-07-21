@@ -36,7 +36,7 @@ public class RoutineContext {
   /**
    * The start address of the routine's code.
    */
-  private int startAddress;
+  private char startAddress;
   
   /**
    * The local variables.
@@ -46,17 +46,17 @@ public class RoutineContext {
   /**
    * The return address.
    */
-  private int returnAddress;
+  private char returnAddress;
   
   /**
    * The return variable number to store the return value to.
    */
-  private int returnVarNum;
+  private char returnVarNum;
   
   /**
    * The stack pointer at invocation time.
    */
-  private int invocationStackPointer;
+  private char invocationStackPointer;
   
   /**
    * The number of arguments.
@@ -70,22 +70,19 @@ public class RoutineContext {
   
   /**
    * Constructor.
-   * 
    * @param startAddress the routine's start address
    * @param numLocalVariables the number of local variables
    */
-  public RoutineContext(int startAddress, int numLocalVariables) {    
+  public RoutineContext(char startAddress, int numLocalVariables) {    
     this.startAddress = startAddress;
     locals = new char[numLocalVariables];
   }
   
   /**
    * Sets the number of arguments.
-   * 
    * @param numArgs the number of arguments
    */
   public void setNumArguments(final int numArgs) {
-    
     this.numArgs = numArgs;
   }
   
@@ -117,7 +114,7 @@ public class RoutineContext {
    * @param localNum the local variable number, starting at 0
    * @return the value of the specified variable
    */
-  public char getLocalVariable(final int localNum) {
+  public char getLocalVariable(final char localNum) {
     return locals[localNum];
   }
   
@@ -125,19 +122,19 @@ public class RoutineContext {
    * Returns this routine's start address.
    * @return the start address
    */
-  public int getStartAddress() { return startAddress; }
+  public char getStartAddress() { return startAddress; }
   
   /**
    * Returns the routine's return address.
    * @return the routine's return address
    */
-  public int getReturnAddress() { return returnAddress; }
+  public char getReturnAddress() { return returnAddress; }
   
   /**
    * Sets the return address.
    * @param address the return address
    */
-  public void setReturnAddress(final int address) {
+  public void setReturnAddress(final char address) {
     this.returnAddress = address;
   }
   
@@ -145,25 +142,25 @@ public class RoutineContext {
    * Returns the routine's return variable number.
    * @return the return variable number or DISCARD_RESULT
    */
-  public int getReturnVariable() { return returnVarNum; }
+  public char getReturnVariable() { return returnVarNum; }
   
   /**
    * Sets the routine's return variable number.
    * @param varnum the return variable number or DISCARD_RESULT
    */
-  public void setReturnVariable(final int varnum) { returnVarNum = varnum; }
+  public void setReturnVariable(final char varnum) { returnVarNum = varnum; }
   
   /**
    * Returns the stack pointer at invocation time.
    * @return the stack pointer at invocation time
    */
-  public int getInvocationStackPointer() { return invocationStackPointer; }
+  public char getInvocationStackPointer() { return invocationStackPointer; }
   
   /**
    * Sets the stack pointer at invocation time.
    * @param stackpointer the stack pointer at invocation time.
    */
-  public void setInvocationStackPointer(final int stackpointer) {
+  public void setInvocationStackPointer(final char stackpointer) {
     invocationStackPointer = stackpointer;
   }
   
