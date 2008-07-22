@@ -35,19 +35,14 @@ import org.zmpp.encoding.ZCharDecoder;
  */
 public class DefaultDictionary extends AbstractDictionary {
 
-  /**
-   * The lookup map.
-   */
+  /** The lookup map. */
   private Map<String, Integer> lookupMap;
   
-  /**
-   * The maximum entry size.
-   */
+  /** The maximum entry size. */
   private int maxEntrySize;
   
   /**
    * Constructor.
-   * 
    * @param memory the memory object
    * @param address the start address of the dictionary
    * @param converter a Z char decoder object
@@ -73,9 +68,7 @@ public class DefaultDictionary extends AbstractDictionary {
   /**
    * {@inheritDoc}
    */
-  protected int getMaxEntrySize() {
-    return maxEntrySize;
-  }
+  protected int getMaxEntrySize() { return maxEntrySize; }
   
   /**
    * Create the dictionary lookup map. The standards document suggests to

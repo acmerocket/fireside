@@ -28,7 +28,6 @@ import org.zmpp.encoding.ZCharDecoder;
  * lookup is implemented using linear search in case the user dictionary
  * is specified as unordered (negative number of entries) and in case of
  * ordered a binary search will be performed.
- * 
  * @author Wei-ju Wu
  * @version 1.5
  */
@@ -36,7 +35,6 @@ public class UserDictionary extends AbstractDictionary {
 
   /**
    * Constructor.
-   * 
    * @param memory the Memary object
    * @param address the start address of the dictionary
    * @param converter a Z char decoder object
@@ -47,22 +45,17 @@ public class UserDictionary extends AbstractDictionary {
     super(memory, address, decoder, new DictionarySizesV4ToV8());
   }
 
-  /**
-   * {@inheritDoc}
-   */
+  /** {@inheritDoc} */
   public int lookup(final String token) {
     // We only implement linear search for the moment
     final int n = Math.abs(getNumberOfEntries());
     final String lookupToken = truncateToken(token);
     for (int i = 0; i < n; i++) {
-      
       final int entryAddress = getEntryAddress(i);
       final String entry = getDecoder().decode2Zscii(getMemory(),
                                                      entryAddress,
                                                      getEntryLength());
-      if (lookupToken.equals(entry)) {
-        return entryAddress;
-      }
+      if (lookupToken.equals(entry)) { return entryAddress; }
     }
     return 0;
   }  

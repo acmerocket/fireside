@@ -27,7 +27,8 @@ package org.zmpp.vm;
  * @version 1.5
  */
 public class DictionarySizesV4ToV8 implements DictionarySizes {
-
+  /** {@inheritDoc} */
   public int getNumEntryBytes() { return 6; }
+  /** {@inheritDoc} */
   public int getMaxEntryChars() { return 9; }
 }

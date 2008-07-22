@@ -1,7 +1,7 @@
 /*
- * $Id$
+ * $Id: DictionaryTest.java 657 2008-07-22 18:11:23Z weiju $
  * 
- * Created on 2006/01/19
+ * Created on 07/22/2008
  * Copyright 2005-2008 by Wei-ju Wu
  * This file is part of The Z-machine Preservation Project (ZMPP).
  *
@@ -18,16 +18,30 @@
  * You should have received a copy of the GNU General Public License
  * along with ZMPP.  If not, see <http://www.gnu.org/licenses/>.
  */
-package org.zmpp.vm;
+package test.zmpp.vm;
+
+import org.junit.Test;
+import org.zmpp.vm.DictionarySizes;
+import org.zmpp.vm.DictionarySizesV1ToV3;
+import org.zmpp.vm.DictionarySizesV4ToV8;
+import static org.junit.Assert.*;
 
 /**
- * The dictionary size definitions for the story file versions 1-3.
+ * Test class for DictionarySizes.
  * @author Wei-ju Wu
  * @version 1.5
  */
-public class DictionarySizesV1ToV3 implements DictionarySizes {
-  /** {@inheritDoc} */
-  public int getNumEntryBytes() { return 4; }
-  /** {@inheritDoc} */
-  public int getMaxEntryChars() { return 6; }
+public class DictionarySizesTest {
+  @Test
+  public void testDictionarySizesV4ToV8() {
+    DictionarySizes sizes = new DictionarySizesV4ToV8();
+    assertEquals(6, sizes.getNumEntryBytes());
+    assertEquals(9, sizes.getMaxEntryChars());
+  }
+  @Test
+  public void testDictionarySizesV1ToV3() {
+    DictionarySizes sizes = new DictionarySizesV1ToV3();
+    assertEquals(4, sizes.getNumEntryBytes());
+    assertEquals(6, sizes.getMaxEntryChars());
+  }
 }

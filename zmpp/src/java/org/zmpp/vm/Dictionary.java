@@ -30,14 +30,12 @@ public interface Dictionary {
 
   /**
    * Returns the number of separators.
-   * 
    * @return the number of separators
    */
   int getNumberOfSeparators();
   
   /**
    * Returns the separator at position i as a ZSCII character.
-   * 
    * @param i the separator number, zero-based
    * @return the separator
    */
@@ -45,7 +43,6 @@ public interface Dictionary {
   
   /**
    * Returns the length of a dictionary entry.
-   * 
    * @return the entry length
    */
   int getEntryLength();
@@ -58,7 +55,6 @@ public interface Dictionary {
   
   /**
    * Returns the entry address at the specified position.
-   * 
    * @param entryNum entry number between (0 - getNumberOfEntries() - 1)
    * @return the entry address
    */

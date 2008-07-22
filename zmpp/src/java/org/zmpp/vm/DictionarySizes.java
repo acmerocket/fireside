@@ -39,14 +39,12 @@ public interface DictionarySizes {
 
   /**
    * The number of bytes for an entry.
-   * 
    * @return the number of bytes for an entry
    */
   int getNumEntryBytes();
   
   /**
    * The maximum number of characters for an entry.
-   * 
    * @return the maximum number of characters
    */
   int getMaxEntryChars();
