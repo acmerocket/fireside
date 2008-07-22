@@ -576,7 +576,7 @@ public class PortableGameState {
       final StackFrame stackFrame = stackFrames.get(i);
       // ignore the start address
       final RoutineContext context =
-        new RoutineContext(0, stackFrame.locals.length);
+        new RoutineContext(stackFrame.locals.length);
       
       context.setReturnVariable(stackFrame.returnVariable);
       context.setReturnAddress(stackFrame.pc);

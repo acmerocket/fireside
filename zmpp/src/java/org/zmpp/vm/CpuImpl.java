@@ -351,7 +351,8 @@ public class CpuImpl implements Cpu {
     pushRoutineContext(routineContext);
     
     // Jump to the address
-    setPC(routineContext.getStartAddress());
+    setPC(machine.getVersion() >= 5 ? routineAddress + 1 :
+      routineAddress + 1 + 2 * routineContext.getNumLocalVariables());
     return routineContext;
   }
 
@@ -377,7 +378,7 @@ public class CpuImpl implements Cpu {
         currentAddress += 2;
       }
     }
-    final RoutineContext info = new RoutineContext(currentAddress, numLocals);
+    final RoutineContext info = new RoutineContext(numLocals);
     
     for (int i = 0; i < numLocals; i++) {
       info.setLocalVariable((char) i, locals[i]);
@@ -387,7 +388,6 @@ public class CpuImpl implements Cpu {
     
   /**
    * Returns the local variable number for a specified variable number.
-   * 
    * @param variableNumber the variable number in an operand (0x01-0x0f)
    * @return the local variable number
    */
@@ -397,7 +397,6 @@ public class CpuImpl implements Cpu {
   
   /**
    * Returns the global variable for the specified variable number.
-   * 
    * @param variableNumber a variable number (0x10-0xff)
    * @return the global variable number
    */

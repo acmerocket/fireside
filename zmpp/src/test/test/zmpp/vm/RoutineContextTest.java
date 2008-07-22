@@ -36,12 +36,11 @@ public class RoutineContextTest {
   
   @Before
   public void setUp() {
-    context = new RoutineContext((char) 0x4711, 2);
+    context = new RoutineContext(2);
   }
   
   @Test
   public void testCreate() {
-    assertEquals(0x4711, context.getStartAddress());
     assertEquals(2, context.getNumLocalVariables());
   }
   

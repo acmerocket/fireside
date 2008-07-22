@@ -33,9 +33,6 @@ public class RoutineContext {
    */
   public static final char DISCARD_RESULT = 0xffff;
   
-  /** The start address of the routine's code. */
-  private int startAddress;
-  
   /** The local variables */
   private char[] locals;
   
@@ -59,8 +56,7 @@ public class RoutineContext {
    * @param startAddress the routine's start address
    * @param numLocalVariables the number of local variables
    */
-  public RoutineContext(int startAddress, int numLocalVariables) {    
-    this.startAddress = startAddress;
+  public RoutineContext(int numLocalVariables) {    
     locals = new char[numLocalVariables];
   }
   
@@ -103,12 +99,6 @@ public class RoutineContext {
   public char getLocalVariable(final char localNum) {
     return locals[localNum];
   }
-  
-  /**
-   * Returns this routine's start address.
-   * @return the start address
-   */
-  public int getStartAddress() { return startAddress; }
   
   /**
    * Returns the routine's return address.

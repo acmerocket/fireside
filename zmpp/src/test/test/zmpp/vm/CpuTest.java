@@ -66,7 +66,7 @@ public class CpuTest {
   @Before
   public void setUp() throws Exception {
     machine = context.mock(Machine.class);
-    routineInfo = new RoutineContext((char) 0x4711, 3);
+    routineInfo = new RoutineContext(3);
     context.checking(new Expectations() {{
       atLeast(1).of(machine).getFileHeader(); will(returnValue(fileheader));
       one (machine).getVersion(); will(returnValue(5));
@@ -130,7 +130,7 @@ public class CpuTest {
   @Test
   public void testSetRoutineContexts() {
     List<RoutineContext> contexts = new ArrayList<RoutineContext>();
-    RoutineContext routineContext = new RoutineContext((char) 4711, 2);
+    RoutineContext routineContext = new RoutineContext(2);
     contexts.add(routineContext);
     cpu.setRoutineContexts(contexts);
     
@@ -143,7 +143,7 @@ public class CpuTest {
   @Test
   public void testGetCurrentRoutineContext() {
     // Initialize the routine context
-    RoutineContext routineContext = new RoutineContext((char) 0x0815, 0);
+    RoutineContext routineContext = new RoutineContext(0);
     
     // simulate a call
     cpu.pushRoutineContext(routineContext);
@@ -189,7 +189,7 @@ public class CpuTest {
     // Write something to the stack now
     cpu.setVariable((char) 0, (char) 4711);
     
-    RoutineContext routineContext = new RoutineContext((char) 12345, 3);
+    RoutineContext routineContext = new RoutineContext(3);
     cpu.pushRoutineContext(routineContext);
     
     // Write a new value to the stack within the routine
@@ -269,7 +269,7 @@ public class CpuTest {
     int returnAddress = 0x749;
     
     // Initialize the routine context
-    RoutineContext routineContext = new RoutineContext((char) 0x0815, 0);
+    RoutineContext routineContext = new RoutineContext(0);
     routineContext.setReturnVariable((char) 0x12);
     
     // simulate a call
