@@ -279,9 +279,9 @@ public class MachineImpl implements Machine {
   /** {@inheritDoc} */
   public void incrementPC(int length) { getCpu().incrementPC(length); }
   /** {@inheritDoc} */
-  public void setPC(char address) { getCpu().setPC(address); }
+  public void setPC(int address) { getCpu().setPC(address); }
   /** {@inheritDoc} */
-  public char getPC() { return getCpu().getPC(); }
+  public int getPC() { return getCpu().getPC(); }
   /** {@inheritDoc} */
   public char getSP() { return getCpu().getSP(); }
   /** {@inheritDoc} */
@@ -309,11 +309,11 @@ public class MachineImpl implements Machine {
     return getCpu().getCurrentRoutineContext();
   }
   /** {@inheritDoc} */
-  public char unpackStringAddress(char packedAddress) {
+  public int unpackStringAddress(char packedAddress) {
     return getCpu().unpackStringAddress(packedAddress);
   }
   /** {@inheritDoc} */
-  public RoutineContext call(char packedAddress, char returnAddress,
+  public RoutineContext call(char packedAddress, int returnAddress,
                              char[] args, char returnVar) {
     return getCpu().call(packedAddress, returnAddress, args, returnVar);
   }
@@ -534,7 +534,7 @@ public class MachineImpl implements Machine {
   /** {@inheritDoc} */
   public ScreenModel6 getScreen6() { return (ScreenModel6) screenModel; }  
   /** {@inheritDoc} */
-  public boolean save(final char savepc) {
+  public boolean save(final int savepc) {
     if (datastore != null) {
       final PortableGameState gamestate = new PortableGameState();
       gamestate.captureMachineState(this, savepc);
@@ -544,7 +544,7 @@ public class MachineImpl implements Machine {
     return false;
   }
   /** {@inheritDoc} */
-  public boolean save_undo(final char savepc) {
+  public boolean save_undo(final int savepc) {
     final PortableGameState undoGameState = new PortableGameState();
     undoGameState.captureMachineState(this, savepc);
     undostates.add(undoGameState);

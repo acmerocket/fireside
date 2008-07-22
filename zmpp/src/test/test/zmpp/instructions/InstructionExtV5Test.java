@@ -65,7 +65,7 @@ public class InstructionExtV5Test extends InstructionTestBase {
   @Test
   public void testSaveUndoSuccess() {
     context.checking(new Expectations() {{
-      one (machine).getPC(); will(returnValue((char) 1234));
+      one (machine).getPC(); will(returnValue(1234));
       one (machine).incrementPC(3);
       one (machine).save_undo(with(any(char.class))); will(returnValue(true));
       atLeast(1).of (machine).setVariable((char) 0, (char) 1);
@@ -78,7 +78,7 @@ public class InstructionExtV5Test extends InstructionTestBase {
   @Test
   public void testSaveUndoFail() {
     context.checking(new Expectations() {{
-      one (machine).getPC(); will(returnValue((char) 1234));
+      one (machine).getPC(); will(returnValue(1234));
       one (machine).incrementPC(3);
       one (machine).save_undo(with(any(char.class))); will(returnValue(false));
       atLeast(1).of (machine).setVariable((char) 0, (char) 0);

@@ -48,7 +48,7 @@ public class PortableGameState {
   public static class StackFrame {
   
     /** The return program counter. */
-    char pc;
+    int pc;
     
     /** The return variable. */
     char returnVariable;
@@ -62,13 +62,13 @@ public class PortableGameState {
     /** The arguments. */
     char[] args;
     
-    public char getProgramCounter() { return pc; }    
+    public int getProgramCounter() { return pc; }    
     public char getReturnVariable() { return returnVariable; }
     public char[] getEvalStack() { return evalStack; }
     public char[] getLocals() { return locals; }
     public char[] getArgs() { return args; }
     
-    public void setProgramCounter(final char pc) { this.pc = pc; }
+    public void setProgramCounter(final int pc) { this.pc = pc; }
     public void setReturnVariable(final char varnum) {
       this.returnVariable = varnum;
     }
@@ -77,47 +77,31 @@ public class PortableGameState {
     public void setArgs(final char[] args) { this.args = args; }
   }
 
-  /**
-   * The release number.
-   */
+  /** The release number. */
   private int release;
   
-  /**
-   * The story file checksum.
-   */
+  /** The story file checksum. */
   private int checksum;
   
-  /**
-   * The serial number.
-   */
+  /** The serial number. */
   private byte[] serialBytes;
   
-  /**
-   * The program counter.
-   */
-  private char pc;
+  /** The program counter. */
+  private int pc;
   
-  /**
-   * The uncompressed dynamic memory.
-   */
+  /** The uncompressed dynamic memory. */
   private byte[] dynamicMem;
   
-  /**
-   * The delta.
-   */
+  /** The delta. */
   private byte[] delta;
   
-  /**
-   * The list of stack frames in this game state, from oldest to latest.
-   */
+  /** The list of stack frames in this game state, from oldest to latest. */
   private List<StackFrame> stackFrames;
   
   /**
    * Constructor.
    */
   public PortableGameState() {
-    
-    super();
     serialBytes = new byte[6];
     stackFrames = new ArrayList<StackFrame>();
   }
@@ -128,35 +112,30 @@ public class PortableGameState {
   
   /**
    * Returns the game release number.
-   * 
    * @return the release number
    */
   public int getRelease() { return release; }
   
   /**
    * Returns the game checksum.
-   * 
    * @return the checksum
    */
   public int getChecksum() { return checksum; }
   
   /**
    * Returns the game serial number.
-   * 
    * @return the serial number
    */
   public String getSerialNumber() { return new String(serialBytes); }
   
   /**
    * Returns the program counter.
-   * 
    * @return the program counter
    */
-  public char getProgramCounter() { return pc; }
+  public int getProgramCounter() { return pc; }
   
   /**
    * Returns the list of stack frames.
-   * 
    * @return the stack frames
    */
   public List<StackFrame> getStackFrames() { return stackFrames; }
@@ -164,31 +143,21 @@ public class PortableGameState {
   /**
    * Returns the delta bytes. This is the changes in dynamic memory, where
    * 0 represents no change.
-   * 
    * @return the delta bytes
    */
   public byte[] getDeltaBytes() { return delta; }
   
   /**
    * Returns the current dump of dynamic memory captured from a Machine object.
-   * 
    * @return the dynamic memory dump
    */
   public byte[] getDynamicMemoryDump() { return dynamicMem; }
-  
-  public void setRelease(final int release) {
-    
-    this.release = release;
-  }
-  
+  public void setRelease(final int release) { this.release = release; }
   public void setChecksum(final int checksum) { this.checksum = checksum; }
-  
   public void setSerialNumber(final String serial) {
     this.serialBytes = serial.getBytes();
   }
-  
-  public void setProgramCounter(final char pc) { this.pc = pc; }
-  
+  public void setProgramCounter(final int pc) { this.pc = pc; }
   public void setDynamicMem(final byte[] memdata) { this.dynamicMem = memdata; }
   
   // **********************************************************************
@@ -196,7 +165,6 @@ public class PortableGameState {
   // *******************************************
   /**
    * Initialize the state from an IFF form.
-   * 
    * @param formChunk the IFF form
    * @return false if there was a consistency problem during the read
    */
@@ -214,7 +182,6 @@ public class PortableGameState {
   
   /**
    * Evaluate the contents of the IFhd chunk.
-   * 
    * @param formChunk the FORM chunk
    */
   private void readIfhdChunk(final FormChunk formChunk) {
@@ -369,7 +336,7 @@ public class PortableGameState {
    * @param machine a Machine
    * @param savePc the program counter restore value
    */
-  public void captureMachineState(final Machine machine, final char savePc) {
+  public void captureMachineState(final Machine machine, final int savePc) {
     final StoryFileHeader fileheader = machine.getFileHeader();
     release = fileheader.getRelease();
     checksum = fileheader.getChecksum();
@@ -609,7 +576,7 @@ public class PortableGameState {
       final StackFrame stackFrame = stackFrames.get(i);
       // ignore the start address
       final RoutineContext context =
-        new RoutineContext((char) 0, stackFrame.locals.length);
+        new RoutineContext(0, stackFrame.locals.length);
       
       context.setReturnVariable(stackFrame.returnVariable);
       context.setReturnAddress(stackFrame.pc);
@@ -617,8 +584,7 @@ public class PortableGameState {
       
       // local variables
       for (int l = 0; l < stackFrame.locals.length; l++) {
-        
-        context.setLocalVariable(l, stackFrame.locals[l]);
+        context.setLocalVariable((char) l, stackFrame.locals[l]);
       }
       
       // Stack
@@ -630,7 +596,7 @@ public class PortableGameState {
     machine.setRoutineContexts(contexts);
 
     // Prepare the machine continue
-    char resumePc = getProgramCounter();
+    int resumePc = getProgramCounter();
     if (machine.getVersion() <= 3) {
       // In version 3 this is a branch target that needs to be read
       // Execution is continued at the first instruction after the branch offset
@@ -644,18 +610,16 @@ public class PortableGameState {
   
   /**
    * For versions >= 4. Returns the store variable
-   * 
    * @param machine the machine
    * @return the store variable
    */
   public char getStoreVariable(final Machine machine) {
-    final char storeVarAddress = getProgramCounter();
+    final int storeVarAddress = getProgramCounter();
     return machine.readUnsigned8(storeVarAddress);
   }
 
   /**
    * Determine if the branch offset is one or two bytes long.
-   * 
    * @param memory the Memory object of the current story
    * @param offsetAddress the branch offset address
    * @return 1 or 2, depending on the value of the branch offset
@@ -674,7 +638,6 @@ public class PortableGameState {
   
   /**
    * There is no apparent reason at the moment to implement getArgs().
-   *  
    * @param argspec the argspec byte
    * @return the specified arguments
    */
@@ -697,13 +660,12 @@ public class PortableGameState {
   
   /**
    * Joins three bytes to a program counter value.
-   * 
    * @param b0 byte 0
    * @param b1 byte 1
    * @param b2 byte 2
    * @return the resulting program counter
    */
-  private char decodePcBytes(final char b0, final char b1, final char b2) {    
-    return (char) (((b0 & 0xff) << 16) | ((b1 & 0xff) << 8) | (b2 & 0xff));
+  private int decodePcBytes(final char b0, final char b1, final char b2) {    
+    return (int) (((b0 & 0xff) << 16) | ((b1 & 0xff) << 8) | (b2 & 0xff));
   }
 }

@@ -41,11 +41,10 @@ public interface Cpu {
 
   /**
    * Translates a packed string address into a byte address.
-   * 
    * @param packedAddress the packed address
    * @return the translated byte address
    */
-  char unpackStringAddress(char packedAddress);
+  int unpackStringAddress(char packedAddress);
   
   /**
    * Computes a branch target from an offset.
@@ -55,21 +54,18 @@ public interface Cpu {
   
   /**
    * Returns the current program counter.
-   * 
    * @return the current program counter
    */
-  char getPC();
+  int getPC();
   
   /**
    * Sets the program counter to a new address.
-   * 
    * @param address the new address
    */
-  void setPC(char address);
+  void setPC(int address);
   
   /**
    * Increments the program counter by the specified offset.
-   * 
    * @param offset the offset
    */
   void incrementPC(int offset);
@@ -79,14 +75,12 @@ public interface Cpu {
   // ***************************************
   /**
    * Returns the global stack pointer. Equals the stack size.
-   * 
    * @return the stack pointer
    */
   char getSP();
   
   /**
    * Returns the value at the top of the stack without removing it.
-   * 
    * @return the stack top element
    */
   char getStackTop();
@@ -94,14 +88,12 @@ public interface Cpu {
   /**
    * Sets the value of the element at the top of the stack without
    * incrementing the stack pointer.
-   * 
    * @param value the value to set
    */
   void setStackTop(char value);
   
   /**
    * Returns the evaluation stack element at the specified index.
-   * 
    * @param index an index
    * @return the stack value at the specified index
    */
@@ -109,7 +101,6 @@ public interface Cpu {
   
   /**
    * Pushes the specified value on the user stack.
-   * 
    * @param userstackAddress the address of the user stack
    * @param value the value to push
    * @return true if operation was ok, false if overflow
@@ -118,7 +109,6 @@ public interface Cpu {
   
   /**
    * Pops the specified value from the user stack.
-   * 
    * @param userstackAddress the address of the user stack
    * @return the popped value
    */
@@ -198,6 +188,6 @@ public interface Cpu {
    * @param returnVariable the return variable or DISCARD_RESULT
    * @return the routine context created
    */
-  RoutineContext call(char routineAddress, char returnAddress, char[] args,
+  RoutineContext call(char routineAddress, int returnAddress, char[] args,
                       char returnVariable);
 }

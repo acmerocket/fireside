@@ -108,7 +108,7 @@ public class Instruction1OpV4Test extends InstructionTestBase {
   public void testCall1s() {
     final char[] args = {};
     context.checking(new Expectations() {{
-      one (machine).getPC(); will(returnValue((char) 4611));
+      one (machine).getPC(); will(returnValue(4611));
       one (machine).call((char) 4611, (char) 4623, args, (char) 0);
     }});
     Short1Instruction call1s = createInstructionMock(

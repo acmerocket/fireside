@@ -301,7 +301,7 @@ public class CpuTest {
     context.checking(new Expectations() {{
       one (machine).getVersion(); will(returnValue(3));
     }});
-    char byteAddress = cpu.unpackAddress((char) 2312, true);
+    int byteAddress = cpu.unpackAddress((char) 2312, true);
     assertEquals(2312 * 2, byteAddress);
   }  
 

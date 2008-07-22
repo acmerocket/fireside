@@ -65,7 +65,7 @@ public class Instruction0OpV4Test extends InstructionTestBase {
   @Test
   public void testSaveSuccess() {
     context.checking(new Expectations() {{
-      one (machine).getPC(); will(returnValue((char) 1234));
+      one (machine).getPC(); will(returnValue(1234));
       one (machine).save(with(any(char.class))); will(returnValue(true));
       one (machine).setVariable((char) 0, (char) 1);
     }});

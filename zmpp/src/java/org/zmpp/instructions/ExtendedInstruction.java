@@ -153,7 +153,7 @@ public class ExtendedInstruction extends AbstractInstruction {
   private void save_undo() {
     // Target PC offset is two because of the extra opcode byte and 
     // operand type byte compared to the 0OP instruction
-    final char pc = (char) (getMachine().getPC() + 3);
+    final int pc = getMachine().getPC() + 3;
     final boolean success = getMachine().save_undo(pc);
     storeResult(success ? TRUE : FALSE);
     nextInstruction();
@@ -196,7 +196,7 @@ public class ExtendedInstruction extends AbstractInstruction {
     // Saving to tables is not supported yet, this is the standard save feature
     // Offset is 3 because there are two opcode bytes + 1 optype byte before
     // the actual store var byte
-    saveToStorage((char) (getMachine().getPC() + 3));
+    saveToStorage(getMachine().getPC() + 3);
   }
   
   private void restore() {

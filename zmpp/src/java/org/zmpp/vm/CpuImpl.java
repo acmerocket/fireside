@@ -37,38 +37,25 @@ public class CpuImpl implements Cpu {
 
   private static final Logger LOG = Logger.getLogger("org.zmpp");
 
-  /**
-   * The stack size is now 64 K.
-   */
+  /** The stack size is now 64 K. */
   private static final char STACKSIZE = 32768;
   
-  /**
-   * The machine object.
-   */
+  /** The machine object. */
   private Machine machine;
 
-  /**
-   * This machine's current program counter.
-   */
-  private char programCounter;
+  /** This machine's current program counter. */
+  private int programCounter;
   
-  /**
-   * This machine's global stack.
-   */
+  /** This machine's global stack. */
   private FastShortStack stack;
   
-  /**
-   * The routine info.
-   */
+  /** The routine info. */
   private List<RoutineContext> routineContextStack;
   
-  /**
-   * The start of global variables.
-   */
+  /** The start of global variables. */
   private int globalsAddress;
   
   public CpuImpl(final Machine machine) {
-    super();
     this.machine = machine;
   }
   
@@ -86,43 +73,35 @@ public class CpuImpl implements Cpu {
     }
   }
  
-  /**
-   * {@inheritDoc}
-   */
-  public char getPC() { return programCounter; }
+  /** {@inheritDoc} */
+  public int getPC() { return programCounter; }
 
-  /**
-   * {@inheritDoc}
-   */
-  public void setPC(final char address) { programCounter = address; }
+  /** {@inheritDoc} */
+  public void setPC(final int address) { programCounter = address; }
   
   public void incrementPC(final int offset) { programCounter += offset; }
 
-  /**
-   * {@inheritDoc}
-   */
-  public char unpackStringAddress(char packedAddress) {
+  /** {@inheritDoc} */
+  public int unpackStringAddress(char packedAddress) {
     return unpackAddress(packedAddress, false);
   }
 
-  public char unpackAddress(final char packedAddress,
-      final boolean isCall) {
+  public int unpackAddress(final char packedAddress, final boolean isCall) {
     // Version specific packed address translation    
     switch (machine.getVersion()) {
-    
       case 1: case 2: case 3:  
-        return (char) (packedAddress * 2);
+        return packedAddress * 2;
       case 4:
       case 5:
-        return (char) (packedAddress * 4);
+        return packedAddress * 4;
       case 6:
       case 7:
-        return (char) (packedAddress * 4 + 8 *
+        return packedAddress * 4 + 8 *
           (isCall ? machine.getFileHeader().getRoutineOffset() :
-                    machine.getFileHeader().getStaticStringOffset()));
+                    machine.getFileHeader().getStaticStringOffset());
       case 8:
       default:
-        return (char) (packedAddress * 8);
+        return packedAddress * 8;
     }
   }
   
@@ -131,7 +110,7 @@ public class CpuImpl implements Cpu {
    */
   public void doBranch(short branchOffset, int instructionLength) {
     if (branchOffset >= 2 || branchOffset < 0) {
-      setPC((char) computeBranchTarget(branchOffset, instructionLength));
+      setPC(computeBranchTarget(branchOffset, instructionLength));
     } else {
       // FALSE is defined as 0, TRUE as 1, so simply return the offset
       // since we do not have negative offsets
@@ -147,15 +126,12 @@ public class CpuImpl implements Cpu {
   // ********************************************************************
   // ***** Stack operations
   // ***************************************
-  /**
-   * {@inheritDoc}
-   */
+  /** {@inheritDoc} */
   public char getSP() { return stack.getStackPointer(); }
   
   /**
    * Sets the global stack pointer to the specified value. This might pop off
    * several values from the stack.
-   * 
    * @param stackpointer the new stack pointer value
    */
   private void setSP(final char stackpointer) {
@@ -164,36 +140,29 @@ public class CpuImpl implements Cpu {
     for (int i = 0; i < diff; i++) { stack.pop(); }
   }
   
-  /**
-   * {@inheritDoc}
-   */
+  /** {@inheritDoc} */
   public char getStackTop() {
     if (stack.size() > 0) { return stack.top(); }
     throw new java.lang.ArrayIndexOutOfBoundsException("Stack underflow error");
   }
   
-  /**
-   * {@inheritDoc}
-   */
+  /** {@inheritDoc} */
   public void setStackTop(final char value) {
     stack.replaceTopElement(value);
   }
   
-  /**
-   * {@inheritDoc}
-   */
+  /** {@inheritDoc} */
   public char getStackElement(final int index) {    
     return stack.getValueAt(index);
   }
   
-  /**
-   * {@inheritDoc}
-   */
+  /** {@inheritDoc} */
   public char popStack(char userstackAddress) {
     return userstackAddress == 0 ? getVariable((char) 0) :
       popUserStack(userstackAddress);
   }
 
+  /** {@inheritDoc} */
   private char popUserStack(char userstackAddress) {
     int numFreeSlots = machine.readUnsigned16(userstackAddress);
     numFreeSlots++;
@@ -201,9 +170,7 @@ public class CpuImpl implements Cpu {
     return machine.readUnsigned16(userstackAddress + (numFreeSlots * 2));
   }
   
-  /**
-   * {@inheritDoc}
-   */
+  /** {@inheritDoc} */
   public boolean pushStack(char userstackAddress, char value) {
     if (userstackAddress == 0) {
       setVariable((char) 0, value);
@@ -213,7 +180,7 @@ public class CpuImpl implements Cpu {
     }    
   }
   
-  private boolean pushUserStack(int userstackAddress, char value) {
+  private boolean pushUserStack(char userstackAddress, char value) {
     int numFreeSlots = machine.readUnsigned16(userstackAddress);
     if (numFreeSlots > 0) {
       machine.writeUnsigned16(userstackAddress + (numFreeSlots * 2), value);
@@ -223,9 +190,7 @@ public class CpuImpl implements Cpu {
     return false;
   }
   
-  /**
-   * {@inheritDoc}
-   */
+  /** {@inheritDoc} */
   public char getVariable(final char variableNumber) {
     final Cpu.VariableType varType = getVariableType(variableNumber);
     if (varType == Cpu.VariableType.STACK) {
@@ -255,9 +220,7 @@ public class CpuImpl implements Cpu {
       getCurrentRoutineContext().getInvocationStackPointer());
   }
 
-  /**
-   * {@inheritDoc}
-   */
+  /** {@inheritDoc} */
   public void setVariable(final char variableNumber, final char value) {
     final Cpu.VariableType varType = getVariableType(variableNumber);
     if (varType == Cpu.VariableType.STACK) {
@@ -353,9 +316,8 @@ public class CpuImpl implements Cpu {
   }
   
   public RoutineContext call(final char packedRoutineAddress,
-      final char returnAddress, final char[] args, final char returnVariable) {
-    
-    final char routineAddress = unpackAddress(packedRoutineAddress, true);
+      final int returnAddress, final char[] args, final char returnVariable) {
+    final int routineAddress = unpackAddress(packedRoutineAddress, true);
     final int numArgs = args == null ? 0 : args.length;    
     final RoutineContext routineContext = decodeRoutine(routineAddress);
     
@@ -379,7 +341,7 @@ public class CpuImpl implements Cpu {
                                    numArgs);
     
     for (int i = 0; i < numToCopy; i++) {
-      routineContext.setLocalVariable(i, args[i]);
+      routineContext.setLocalVariable((char) i, args[i]);
     }
     
     // save invocation stack pointer
@@ -399,14 +361,13 @@ public class CpuImpl implements Cpu {
   
   /**
    * Decodes the routine at the specified address.
-   * 
    * @param routineAddress the routine address
    * @return a RoutineContext object
    */
-  private RoutineContext decodeRoutine(final char routineAddress) {
+  private RoutineContext decodeRoutine(final int routineAddress) {
     final int numLocals = machine.readUnsigned8(routineAddress);
     final char[] locals = new char[numLocals];
-    char currentAddress = (char) (routineAddress + 1);
+    int currentAddress = routineAddress + 1;
     
     if (machine.getVersion() <= 4) {
       // Only story files <= 4 actually store default values here,
@@ -419,7 +380,7 @@ public class CpuImpl implements Cpu {
     final RoutineContext info = new RoutineContext(currentAddress, numLocals);
     
     for (int i = 0; i < numLocals; i++) {
-      info.setLocalVariable(i, locals[i]);
+      info.setLocalVariable((char) i, locals[i]);
     }
     return info;
   }

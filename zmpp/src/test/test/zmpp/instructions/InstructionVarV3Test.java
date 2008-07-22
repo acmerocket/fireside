@@ -90,8 +90,8 @@ public class InstructionVarV3Test extends InstructionTestBase {
     final char[] args = { 1, 2 };
     final char retval = 17;
     context.checking(new Expectations() {{
-      one (machine).getPC(); will(returnValue((char) 4711));
-      one (machine).call((char) 7109, (char) 4716, args, retval);
+      one (machine).getPC(); will(returnValue(4711));
+      one (machine).call((char) 7109, 4716, args, retval);
     }});
     // Real call
     VariableInstruction call = new VariableInstruction(machine,

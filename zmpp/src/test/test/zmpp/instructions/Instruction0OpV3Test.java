@@ -125,7 +125,7 @@ public class Instruction0OpV3Test extends InstructionTestBase {
   @Test
   public void testSaveSuccess() {
     context.checking(new Expectations() {{
-      one (machine).getPC(); will(returnValue((char) 1234));
+      one (machine).getPC(); will(returnValue(1234));
       one (machine).save(with(any(char.class))); will(returnValue(true));
     }});
     Instruction0OpMock save = createInstructionMock(Short0StaticInfo.OP_SAVE);
@@ -137,7 +137,7 @@ public class Instruction0OpV3Test extends InstructionTestBase {
   @Test
   public void testSaveFail() {
     context.checking(new Expectations() {{
-      one (machine).getPC(); will(returnValue((char) 1234));
+      one (machine).getPC(); will(returnValue(1234));
       one (machine).save(with(any(char.class))); will(returnValue(false));
     }});
     Instruction0OpMock save = createInstructionMock(Short0StaticInfo.OP_SAVE);

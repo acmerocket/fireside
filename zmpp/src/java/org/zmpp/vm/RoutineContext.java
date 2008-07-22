@@ -33,39 +33,25 @@ public class RoutineContext {
    */
   public static final char DISCARD_RESULT = 0xffff;
   
-  /**
-   * The start address of the routine's code.
-   */
-  private char startAddress;
+  /** The start address of the routine's code. */
+  private int startAddress;
   
-  /**
-   * The local variables.
-   */
+  /** The local variables */
   private char[] locals;
   
-  /**
-   * The return address.
-   */
-  private char returnAddress;
+  /** The return address. */
+  private int returnAddress;
   
-  /**
-   * The return variable number to store the return value to.
-   */
+  /** The return variable number to store the return value to. */
   private char returnVarNum;
   
-  /**
-   * The stack pointer at invocation time.
-   */
+  /** The stack pointer at invocation time. */
   private char invocationStackPointer;
   
-  /**
-   * The number of arguments.
-   */
+  /** The number of arguments. */
   private int numArgs;
   
-  /**
-   * The return value.
-   */
+  /** The return value. */
   private char returnValue;
   
   /**
@@ -73,7 +59,7 @@ public class RoutineContext {
    * @param startAddress the routine's start address
    * @param numLocalVariables the number of local variables
    */
-  public RoutineContext(char startAddress, int numLocalVariables) {    
+  public RoutineContext(int startAddress, int numLocalVariables) {    
     this.startAddress = startAddress;
     locals = new char[numLocalVariables];
   }
@@ -105,7 +91,7 @@ public class RoutineContext {
    * @param localNum the local variable number, starting with 0
    * @param value the value
    */
-  public void setLocalVariable(final int localNum, final char value) {
+  public void setLocalVariable(final char localNum, final char value) {
     locals[localNum] = value;
   }
 
@@ -122,19 +108,19 @@ public class RoutineContext {
    * Returns this routine's start address.
    * @return the start address
    */
-  public char getStartAddress() { return startAddress; }
+  public int getStartAddress() { return startAddress; }
   
   /**
    * Returns the routine's return address.
    * @return the routine's return address
    */
-  public char getReturnAddress() { return returnAddress; }
+  public int getReturnAddress() { return returnAddress; }
   
   /**
    * Sets the return address.
    * @param address the return address
    */
-  public void setReturnAddress(final char address) {
+  public void setReturnAddress(final int address) {
     this.returnAddress = address;
   }
   

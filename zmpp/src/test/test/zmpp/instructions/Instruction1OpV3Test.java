@@ -315,7 +315,7 @@ public class Instruction1OpV3Test extends InstructionTestBase {
   @Test
   public void testPrintPaddr() {
     context.checking(new Expectations() {{
-      one (machine).unpackStringAddress((char) 0x145e); will(returnValue((char) 1234));
+      one (machine).unpackStringAddress((char) 0x145e); will(returnValue(1234));
       one (machine).printZString(1234);
     }});
     Instruction1OpMock print_paddr = createInstructionMock(Short1StaticInfo.OP_PRINT_PADDR,
