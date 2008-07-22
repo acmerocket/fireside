@@ -66,7 +66,7 @@ import org.zmpp.vmutil.UnpredictableRandomGenerator;
  */
 public class MachineImpl implements Machine {
 
-  private static final Logger LOG = Logger.getLogger("MachineImpl");
+  private static final Logger LOG = Logger.getLogger("org.zmpp");
 
   /** Number of undo steps. */
   private static final int NUM_UNDO = 5;

@@ -70,7 +70,7 @@ import org.zmpp.vm.BufferedScreenModel.ScreenModelListener;
 public class ScreenModelSplitView extends JLayeredPane
 implements ScreenModelListener {
 
-  private static final Logger LOG = Logger.getLogger("ScreenModelSplitView");
+  private static final Logger LOG = Logger.getLogger("org.zmpp");
   //private static final Font STD_FONT = new Font("Baskerville", Font.PLAIN, 16);
   private static final Font STD_FONT = new Font("American Typewriter", Font.PLAIN, 12);
   private static final Font FIXED_FONT = new Font("Monaco", Font.PLAIN, 12);

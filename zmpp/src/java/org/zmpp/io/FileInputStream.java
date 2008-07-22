@@ -35,7 +35,7 @@ import org.zmpp.encoding.IZsciiEncoding;
  * @version 1.5
  */
 public class FileInputStream implements InputStream {
-  private static final Logger LOG = Logger.getLogger("FileInputStream");
+  private static final Logger LOG = Logger.getLogger("org.zmpp");
   private IOSystem iosys;
   private IZsciiEncoding encoding;
   private Reader filereader;

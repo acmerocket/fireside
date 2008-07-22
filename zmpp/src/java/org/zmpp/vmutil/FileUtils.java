@@ -49,7 +49,7 @@ import org.zmpp.media.Resources;
  */
 public class FileUtils {
 
-  private static final Logger LOG = Logger.getLogger("FileUtil");
+  private static final Logger LOG = Logger.getLogger("org.zmpp");
 
   /**
    * This class only contains static methods.

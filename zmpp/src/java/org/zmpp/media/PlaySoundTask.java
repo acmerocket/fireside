@@ -30,7 +30,7 @@ import org.zmpp.base.Interruptable;
  */
 public class PlaySoundTask implements Runnable, SoundStopListener {
 
-  private static final Logger LOG = Logger.getLogger("PlaySoundTask");
+  private static final Logger LOG = Logger.getLogger("org.zmpp");
   private int resourceNum;
   private SoundEffect sound;
   private int repeats;

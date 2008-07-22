@@ -38,13 +38,13 @@ import org.zmpp.vm.StoryFileHeader.Attribute;
  */
 public class ExecutionControl {
 
-  private static final Logger LOG = Logger.getLogger("ExecutionControl");
+  private static final Logger LOG = Logger.getLogger("org.zmpp");
   private Machine machine;
   private InstructionDecoder instructionDecoder =
           new InstructionDecoder();
   private LineBufferInputStream inputStream = new LineBufferInputStream();
   private int step = 1;
-  public static boolean DEBUG = false;
+  public static boolean DEBUG = true;
   
   /**
    * Constructor.
@@ -127,7 +127,7 @@ public class ExecutionControl {
       Instruction instr = instructionDecoder.decodeInstruction(pc);
       // if the print is executed after execute(), the result is different !!
       if (DEBUG && machine.getRunState() == MachineRunState.RUNNING)
-        LOG.info(String.format("%03d: $%04x %s\n", step, (int) pc, instr.toString()));
+        System.out.println(String.format("%03d: $%04x %s", step, (int) pc, instr.toString()));
       instr.execute();
         
       // handle input situations here

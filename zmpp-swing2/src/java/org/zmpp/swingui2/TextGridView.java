@@ -45,7 +45,7 @@ public class TextGridView extends JComponent {
   private FontSelector fontSelector;
   private AnnotatedCharacter[][] grid;
   private BufferedScreenModel screenModel;
-  private static final Logger LOG = Logger.getLogger("TextGridView");
+  private static final Logger LOG = Logger.getLogger("org.zmpp");
 
   public void setScreenModel(BufferedScreenModel screenModel) {
     this.screenModel = screenModel;

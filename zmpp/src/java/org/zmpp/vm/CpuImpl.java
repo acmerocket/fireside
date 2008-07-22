@@ -35,7 +35,7 @@ import static org.zmpp.base.MemoryUtil.toUnsigned16;
  */
 public class CpuImpl implements Cpu {
 
-  private static final Logger LOG = Logger.getLogger("CpuImpl");
+  private static final Logger LOG = Logger.getLogger("org.zmpp");
 
   /**
    * The stack size is now 64 K.

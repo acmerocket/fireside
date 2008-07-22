@@ -35,7 +35,7 @@ import org.zmpp.encoding.IZsciiEncoding;
  */
 public class TranscriptOutputStream implements OutputStream {
 
-  private static final Logger LOG = Logger.getLogger("TranscriptOutputStream");
+  private static final Logger LOG = Logger.getLogger("org.zmpp");
   private IOSystem iosys;
   private BufferedWriter output;
   private Writer transcriptWriter;

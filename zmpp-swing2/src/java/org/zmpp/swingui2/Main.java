@@ -22,6 +22,9 @@ package org.zmpp.swingui2;
 
 import java.io.File;
 import java.util.PropertyResourceBundle;
+import java.util.logging.Level;
+import java.util.logging.LogManager;
+import java.util.logging.Logger;
 import javax.swing.JFileChooser;
 import javax.swing.SwingUtilities;
 import javax.swing.UIManager;
@@ -60,13 +63,15 @@ public class Main {
   
   public static void main(String[] args) {
     setMacOsXProperties();
-     try {
+    try {
       UIManager.setLookAndFeel(UIManager.getSystemLookAndFeelClassName());
+      LogManager.getLogManager().readConfiguration();
+      Logger zmppLogger = Logger.getLogger("org.zmpp");
+      zmppLogger.setLevel(Level.WARNING);
     } catch (Exception ex) {
       ex.printStackTrace();
     }
-
-   try {
+    try {
     	SwingUtilities.invokeAndWait(new Runnable() {
     		public void run() {
     			JFileChooser fileChooser =
@@ -82,7 +87,7 @@ public class Main {
     			}
     		}
     	});
-    	} catch (Exception ignore) {}
+    } catch (Exception ignore) {}
   }
   
   private static void runStoryFile(final File storyfile) {

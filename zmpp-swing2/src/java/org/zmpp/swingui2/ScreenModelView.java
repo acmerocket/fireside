@@ -62,7 +62,7 @@ public class ScreenModelView extends JComponent
 implements AdjustmentListener, MainViewListener, MouseWheelListener,
            StatusLineListener {
 
-  private static final Logger LOG = Logger.getLogger("ScreenModelView");
+  private static final Logger LOG = Logger.getLogger("org.zmpp");
   private ScreenModelSplitView mainView = new ScreenModelSplitView();
   private BufferedScreenModel screenModel = new BufferedScreenModel();
   private JScrollBar scrollbar;

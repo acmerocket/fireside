@@ -38,7 +38,7 @@ public class ScreenModelViewInputHandler
   implements KeyListener, ChangeListener {
 
   private static final Logger LOG =
-    Logger.getLogger("ScreenModelViewInputHandler");
+    Logger.getLogger("org.zmpp");
   private ScreenModelSplitView view;
   private long lastConsumed;
   /**

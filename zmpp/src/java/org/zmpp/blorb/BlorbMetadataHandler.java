@@ -41,7 +41,7 @@ import org.zmpp.media.StoryMetadata;
  */
 public class BlorbMetadataHandler extends DefaultHandler {
 
-  private static final Logger LOG = Logger.getLogger("BlorbMetadataHandler");
+  private static final Logger LOG = Logger.getLogger("org.zmpp");
   private StoryMetadata story;
   private StringBuilder buffer;
   private boolean processAux;

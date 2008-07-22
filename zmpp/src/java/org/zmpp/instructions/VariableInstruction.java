@@ -38,7 +38,7 @@ import org.zmpp.windowing.TextCursor;
  */
 public class VariableInstruction extends AbstractInstruction {
 
-  private static final Logger LOG = Logger.getLogger("VariableInstruction");
+  private static final Logger LOG = Logger.getLogger("org.zmpp");
   /** The operand count. */
   private OperandCount operandCount;
   
