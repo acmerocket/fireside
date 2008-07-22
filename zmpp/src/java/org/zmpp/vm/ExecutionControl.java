@@ -75,8 +75,8 @@ public class ExecutionControl {
       enableHeaderFlag(Attribute.SUPPORTS_COLOURS);
       
     }
-    int defaultForeground = getFileHeader().getDefaultForeground();
-    int defaultBackground = getFileHeader().getDefaultBackground();
+    int defaultForeground = getDefaultForeground();
+    int defaultBackground = getDefaultBackground();
     LOG.info("GAME DEFAULT FOREGROUND: " + defaultForeground);
     LOG.info("GAME DEFAULT BACKGROUND: " + defaultBackground);
     machine.getScreen().setBackground(defaultBackground, -1);
@@ -92,8 +92,8 @@ public class ExecutionControl {
   public int getVersion() { return machine.getVersion(); }
   
   public void setDefaultColors(int defaultBackground, int defaultForeground) {
-    getFileHeader().setDefaultBackground(defaultBackground);
-    getFileHeader().setDefaultForeground(defaultForeground);
+    setDefaultBackground(defaultBackground);
+    setDefaultForeground(defaultForeground);
     
     // Also set the default colors in the screen model !!
     machine.getScreen().setBackground(defaultBackground, -1);
@@ -101,23 +101,33 @@ public class ExecutionControl {
   }
   
   public int getDefaultBackground() {
-    return getFileHeader().getDefaultBackground();
+    return machine.readUnsigned8(StoryFileHeader.DEFAULT_BACKGROUND);
   }
-  
   public int getDefaultForeground() {
-    return getFileHeader().getDefaultForeground();
+    return machine.readUnsigned8(StoryFileHeader.DEFAULT_FOREGROUND);
   }
+  private void setDefaultBackground(final int color) {
+    machine.writeUnsigned8(StoryFileHeader.DEFAULT_BACKGROUND, (char) color);
+  }  
+  private void setDefaultForeground(final int color) {
+    machine.writeUnsigned8(StoryFileHeader.DEFAULT_FOREGROUND, (char) color);
+  }
+ 
+  
 
   public void resizeScreen(int numRows, int numCharsPerRow) {
     if (getVersion() >= 4) {
-      getFileHeader().setScreenHeight(numRows);
-      getFileHeader().setScreenWidth(numCharsPerRow);
+      machine.writeUnsigned8(StoryFileHeader.SCREEN_HEIGHT, (char) numRows);
+      machine.writeUnsigned8(StoryFileHeader.SCREEN_WIDTH,
+                             (char) numCharsPerRow);
     }
     if (getVersion() >= 5) {
       getFileHeader().setFontHeight(1);
       getFileHeader().setFontWidth(1);
-      getFileHeader().setScreenHeightUnits(numRows);
-      getFileHeader().setScreenWidthUnits(numCharsPerRow);
+      machine.writeUnsigned16(StoryFileHeader.SCREEN_HEIGHT_UNITS,
+                              (char) numRows);
+      machine.writeUnsigned16(StoryFileHeader.SCREEN_WIDTH_UNITS,
+                              (char) numCharsPerRow);
     }
   }
 

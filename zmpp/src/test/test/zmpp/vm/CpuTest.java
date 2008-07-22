@@ -56,10 +56,9 @@ public class CpuTest {
     fileheader = context.mock(StoryFileHeader.class);
     routineInfo = new RoutineContext(3);
     context.checking(new Expectations() {{
-      atLeast(1).of (machine).getFileHeader(); will(returnValue(fileheader));
       one (machine).getVersion(); will(returnValue(5));
-      atLeast(1).of (fileheader).getProgramStart(); will(returnValue((char) 1000));
-      atLeast(1).of (fileheader).getGlobalsAddress(); will(returnValue((char) 5000));
+      one (machine).readUnsigned16(StoryFileHeader.PROGRAM_START); will(returnValue((char) 1000));
+      one (machine).readUnsigned16(StoryFileHeader.GLOBALS); will(returnValue((char) 5000));
     }});
     cpu = new CpuImpl(machine);
     cpu.reset();

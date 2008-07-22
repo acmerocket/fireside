@@ -148,15 +148,15 @@ public class MachineImpl implements Machine {
     // The object tree and dictionaries depend on the code system
     if (fileheader.getVersion() <= 3) {
       objectTree = new ClassicObjectTree(memory,
-          fileheader.getObjectTableAddress());
+          memory.readUnsigned16(StoryFileHeader.OBJECT_TABLE));
     } else {
       objectTree = new ModernObjectTree(memory,
-          fileheader.getObjectTableAddress());
+          memory.readUnsigned16(StoryFileHeader.OBJECT_TABLE));
     }
     final DictionarySizes sizes = (fileheader.getVersion() <= 3) ?
         new DictionarySizesV1ToV3() : new DictionarySizesV4ToV8();
     dictionary = new DefaultDictionary(memory,
-        fileheader.getDictionaryAddress(), decoder, sizes);
+        memory.readUnsigned16(StoryFileHeader.DICTIONARY), decoder, sizes);
   }
   
   private void initEncodingSystem() {
@@ -166,7 +166,9 @@ public class MachineImpl implements Machine {
     encoding = new ZsciiEncoding(accentTable);
 
     // Configure the alphabet table
-    if (fileheader.getCustomAlphabetTable() == 0) {
+    char customAlphabetTable =
+        memory.readUnsigned16(StoryFileHeader.CUSTOM_ALPHABET);
+    if (customAlphabetTable == 0) {
       if (fileheader.getVersion() == 1) {
         alphabetTable = new AlphabetTableV1();
       } else if (fileheader.getVersion() == 2) {
@@ -175,15 +177,14 @@ public class MachineImpl implements Machine {
         alphabetTable = new DefaultAlphabetTable();
       }
     } else {
-      alphabetTable = new CustomAlphabetTable(memory,
-          fileheader.getCustomAlphabetTable());
+      alphabetTable = new CustomAlphabetTable(memory, customAlphabetTable);
     }
     
     final ZCharTranslator translator =
       new DefaultZCharTranslator(alphabetTable);
         
     final Abbreviations abbreviations = new Abbreviations(memory,
-        fileheader.getAbbreviationsAddress());
+        memory.readUnsigned16(StoryFileHeader.ABBREVIATIONS));
     decoder = new DefaultZCharDecoder(encoding, translator, abbreviations);
     encoder = new ZCharEncoder(translator);
   }
@@ -206,10 +207,14 @@ public class MachineImpl implements Machine {
   public int getVersion() {
     return getFileHeader().getVersion();
   }
+  /** {@inheritDoc} */
+  public int getRelease() {
+    return getMemory().readUnsigned16(StoryFileHeader.RELEASE);
+  }
   
   /** {@inheritDoc} */
   public boolean hasValidChecksum() {
-    return this.checksum == getFileHeader().getChecksum();
+    return this.checksum == getChecksum();
   }
   
   /** {@inheritDoc} */
@@ -585,14 +590,18 @@ public class MachineImpl implements Machine {
   
   private boolean verifySaveGame(final PortableGameState gamestate) {
     // Verify the game according to the standard
-    int saveGameChecksum = getFileHeader().getChecksum();
+    int saveGameChecksum = getChecksum();
     if (saveGameChecksum == 0) {
       saveGameChecksum = this.checksum;
     }
-    return gamestate.getRelease() == getFileHeader().getRelease()
+    return gamestate.getRelease() == getRelease()
       && gamestate.getChecksum() == checksum
       && gamestate.getSerialNumber().equals(getFileHeader().getSerialNumber());
-  }  
+  }
+  
+  private int getChecksum() {
+    return memory.readUnsigned16(StoryFileHeader.CHECKSUM);
+  }
 
   /**
    * Close the streams.
@@ -610,12 +619,18 @@ public class MachineImpl implements Machine {
     output.reset();
     soundSystem.reset();
     cpu.reset();
-    getFileHeader().setStandardRevision(1, 0);
+    setStandardRevision(1, 0);
     if (getFileHeader().getVersion() >= 4) {
       getFileHeader().setEnabled(Attribute.SUPPORTS_TIMED_INPUT, true);
-      getFileHeader().setInterpreterNumber(6); // IBM PC
+      // IBM PC
+      getMemory().writeUnsigned8(StoryFileHeader.INTERPRETER_NUMBER, (char) 6);
       getFileHeader().setInterpreterVersion(1);
     }
+  }
+  
+  private void setStandardRevision(int major, int minor) {
+    memory.writeUnsigned8(StoryFileHeader.STD_REVISION_MAJOR, (char) major);
+    memory.writeUnsigned8(StoryFileHeader.STD_REVISION_MINOR, (char) minor);
   }
   
   private void restart(final boolean resetScreenModel) {

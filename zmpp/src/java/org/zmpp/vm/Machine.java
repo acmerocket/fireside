@@ -51,6 +51,12 @@ extends ObjectTree, Input, Output, Cpu, Memory, IZsciiEncoding {
    */
   int getVersion();
   
+  /**
+   * Returns the release.
+   * @return the release
+   */
+  int getRelease();
+  
   boolean hasValidChecksum();
 
   // **********************************************************************

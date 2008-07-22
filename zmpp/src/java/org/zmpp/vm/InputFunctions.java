@@ -119,11 +119,9 @@ public class InputFunctions {
   
   private boolean isFileHeaderTerminator(final char zsciiChar) {
     if (machine.getVersion() >= 5) {  
-      final StoryFileHeader fileheader = machine.getFileHeader();
-      final int terminatorTable = fileheader.getTerminatorsAddress();
-      if (terminatorTable == 0) {
-        return false;
-      }
+      final int terminatorTable =
+          machine.readUnsigned16(StoryFileHeader.TERMINATORS);
+      if (terminatorTable == 0) { return false; }
     
       // Check the terminator table
       char terminator;

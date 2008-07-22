@@ -32,6 +32,29 @@ package org.zmpp.vm;
  */
 public interface StoryFileHeader {
 
+  static final int RELEASE              = 0x02;
+  static final int PROGRAM_START        = 0x06;
+  static final int DICTIONARY           = 0x08;
+  static final int OBJECT_TABLE         = 0x0a;
+  static final int GLOBALS              = 0x0c;
+  static final int STATIC_MEM           = 0x0e;
+  static final int ABBREVIATIONS        = 0x18;
+  static final int CHECKSUM             = 0x1c;
+  static final int INTERPRETER_NUMBER   = 0x1e;
+  static final int SCREEN_HEIGHT        = 0x20;
+  static final int SCREEN_WIDTH         = 0x21;
+  static final int SCREEN_WIDTH_UNITS   = 0x22;
+  static final int SCREEN_HEIGHT_UNITS  = 0x24;
+  static final int ROUTINE_OFFSET       = 0x28;  
+  static final int STATIC_STRING_OFFSET = 0x2a;
+  static final int DEFAULT_BACKGROUND   = 0x2c;
+  static final int DEFAULT_FOREGROUND   = 0x2d;
+  static final int TERMINATORS          = 0x2e;
+  static final int OUTPUT_STREAM3_WIDTH = 0x30; // 16 bit
+  static final int STD_REVISION_MAJOR   = 0x32;
+  static final int STD_REVISION_MINOR   = 0x33;
+  static final int CUSTOM_ALPHABET      = 0x34;
+
   enum Attribute {
     DEFAULT_FONT_IS_VARIABLE,
     SCORE_GAME, SUPPORTS_STATUSLINE, SUPPORTS_SCREEN_SPLITTING, // V3 only
@@ -44,60 +67,12 @@ public interface StoryFileHeader {
    * @return the story file version
    */
   int getVersion();
-  
-  /**
-   * Returns the release number.
-   * @return the release number
-   */
-  int getRelease();
-  
-  /**
-   * Returns the high memory start address.
-   * @return the start of the high memory
-   */
-  char getHighMemAddress();
-  
-  /**
-   * Returns the program counter start address.
-   * @return the PC start address
-   */
-  char getProgramStart();
-  
-  /**
-   * Returns the dictionary's start address.
-   * @return the dictionary start address
-   */  
-  char getDictionaryAddress();
-  
-  /**
-   * Returns the object table's start address.
-   * @return the object table's start address
-   */
-  char getObjectTableAddress();
-  
-  /**
-   * Returns the address of the global variables.
-   * @return the global variables section
-   */
-  char getGlobalsAddress();
-  
-  /**
-   * Returns the static memory start address.
-   * @return the start address of the static memory
-   */
-  char getStaticsAddress();
-  
+
   /**
    * Returns this game's serial number.
    * @return the serial number
    */
   String getSerialNumber();
-  
-  /**
-   * Returns the start address of the abbreviations section.
-   * @return the abbreviations start address
-   */
-  int getAbbreviationsAddress();
   
   /**
    * Returns this story file's length.
@@ -106,114 +81,10 @@ public interface StoryFileHeader {
   int getFileLength();
   
   /**
-   * Returns the checksum for the story file.
-   * @return the checksum
-   */
-  int getChecksum();
-
-  /**
-   * Sets the interpreter number.
-   * @param number the interpreter number
-   */
-  void setInterpreterNumber(int number);
-  
-  /**
-   * Returns the interpreter number.
-   * @return the interpreter number
-   */
-  int getInterpreterNumber();
-  
-  /**
    * Sets the interpreter version.
    * @param version the version
    */
   void setInterpreterVersion(int version);
-  
-  /**
-   * Returns the screen width.
-   * @return the screen width
-   */
-  int getScreenWidth();
-
-  /**
-   * Sets the screen width in number of characters.
-   * @param numChars the number of characters
-   */
-  void setScreenWidth(int numChars);
-  
-  /**
-   * Sets the screen width in units.
-   * @param units the number of units
-   */
-  void setScreenWidthUnits(int units);
-  
-  /**
-   * Returns the screen width in units.
-   * @return the screen width in units
-   */
-  int getScreenWidthUnits();
-  
-  /**
-   * Returns the screen height.
-   * @return the screen height
-   */
-  int getScreenHeight();
-  
-  /**
-   * Returns the screen height in units.
-   * @return the screen height in units
-   */
-  int getScreenHeightUnits();
-  
-  /**
-   * Sets the screen height in number of lines.
-   * @param numLines the number of lines
-   */
-  void setScreenHeight(int numLines);
-  
-  /**
-   * Sets the screen height in units.
-   * @param units the number of units
-   */
-  void setScreenHeightUnits(int units);
-    
-  /**
-   * Returns the default background color.
-   * @return the default background color
-   */
-  int getDefaultBackground();
-  
-  /**
-   * Returns the default foreground color.
-   * @return the default foreground color
-   */
-  int getDefaultForeground();
-  
-  /**
-   * Sets the default background color.
-   * @param color the default background color.
-   */
-  void setDefaultBackground(int color);
-  
-  /**
-   * Sets the default foreground color.
-   * @param color the default foreground color
-   */
-  void setDefaultForeground(int color);
-  
-  /**
-   * Sets the standard revision number this machine supports to the
-   * header.
-   * @param major major revision number
-   * @param minor minor revision number
-   */
-  void setStandardRevision(int major, int minor);
-  
-  /**
-   * Returns the address of the terminating characters table.
-   * @return the address of the terminating characters table
-   */
-  char getTerminatorsAddress();
   
   /**
    * Sets the font width in width of a '0'.
@@ -222,28 +93,10 @@ public interface StoryFileHeader {
   void setFontWidth(int units);
   
   /**
-   * Returns the font width in width of a '0'.
-   * @return the font width in units
-   */
-  int getFontWidth();
-  
-  /**
    * Sets the font height in width of a '0'.
    * @param units the number of units in heights of a '0'
    */
   void setFontHeight(int units);
-  
-  /**
-   * Returns the font height in height of a '0'.
-   * @return the font height in units
-   */
-  int getFontHeight();
-  
-  /**
-   * Returns the address of the custom alphabet table.
-   * @return the custom alphabet table
-   */
-  char getCustomAlphabetTable();
   
   /**
    * Sets the mouse coordinates.
@@ -257,12 +110,6 @@ public interface StoryFileHeader {
    * @return the address of the custom unicode translation table
    */
   char getCustomAccentTable();
-  
-  /**
-   * Sets the width of the text sent to output stream 3 in units.
-   * @param units the text width in units
-   */
-  void setOutputStream3TextWidth(int units);
   
   // ********************************************************************
   // ****** Attributes

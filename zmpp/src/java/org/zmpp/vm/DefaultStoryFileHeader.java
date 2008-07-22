@@ -31,9 +31,7 @@ import static org.zmpp.base.MemoryUtil.toUnsigned16;
  */
 public class DefaultStoryFileHeader implements StoryFileHeader {
 
-  /**
-   * The memory map.
-   */
+  /** The memory map. */
   private Memory memory;
   
   /**
@@ -44,101 +42,25 @@ public class DefaultStoryFileHeader implements StoryFileHeader {
     this.memory = memory;
   }
 
-  /**
-   * {@inheritDoc}
-   */
+  /** {@inheritDoc} */
   public int getVersion() { return memory.readUnsigned8(0x00); }
   
-  /**
-   * {@inheritDoc}
-   */
-  public int getRelease() { return memory.readUnsigned16(0x02); }
-  
-  /**
-   * {@inheritDoc}
-   */
-  public char getHighMemAddress() { return memory.readUnsigned16(0x04); }
-  
-  /**
-   * {@inheritDoc}
-   */
-  public char getProgramStart() { return memory.readUnsigned16(0x06); }
-  
-  /**
-   * {@inheritDoc}
-   */
-  public char getDictionaryAddress() {
-    return memory.readUnsigned16(0x08);
-  }
-  
-  /**
-   * {@inheritDoc}
-   */
-  public char getObjectTableAddress() {
-    return memory.readUnsigned16(0x0a);
-  }
-  
-  /**
-   * {@inheritDoc}
-   */
-  public char getGlobalsAddress() { return memory.readUnsigned16(0x0c); }
-  
-  /**
-   * {@inheritDoc}
-   */
-  public char getStaticsAddress() { return memory.readUnsigned16(0x0e); }
-  
-  /**
-   * {@inheritDoc}
-   */
+  /** {@inheritDoc} */
   public String getSerialNumber() { return extractAscii(0x12, 6); }
   
-  /**
-   * {@inheritDoc}
-   */
-  public int getAbbreviationsAddress() {
-    return memory.readUnsigned16(0x18);
-  }
-  
-  /**
-   * {@inheritDoc}
-   */
+  /** {@inheritDoc} */
   public int getFileLength() {
     // depending on the story file version we have to multiply the
     // file length in the header by a constant
     int fileLength = memory.readUnsigned16(0x1a);
     if (getVersion() <= 3) {
-      
       fileLength *= 2;
-      
     } else if (getVersion() <= 5) {
-      
       fileLength *= 4;
-      
     } else {
-      
       fileLength *= 8;
     }
     return fileLength;
-  }
-  
-  /**
-   * {@inheritDoc}
-   */
-  public int getChecksum() { return memory.readUnsigned16(0x1c); }
-  
-  /**
-   * {@inheritDoc}
-   */
-  public void setInterpreterNumber(final int number) {
-    memory.writeUnsigned8(0x1e, (char) number);
-  }
-  
-  /**
-   * {@inheritDoc}
-   */
-  public int getInterpreterNumber() {
-    return memory.readUnsigned8(0x1e);
   }
   
   /**
@@ -155,119 +77,12 @@ public class DefaultStoryFileHeader implements StoryFileHeader {
   /**
    * {@inheritDoc}
    */
-  public void setScreenWidth(final int numChars) {
-    memory.writeUnsigned8(0x21, (char) numChars);    
-  }
-  
-  /**
-   * {@inheritDoc}
-   */
-  public void setScreenWidthUnits(final int units) {
-    memory.writeUnsigned16(0x22, toUnsigned16(units));
-  }
-  
-  /**
-   * {@inheritDoc}
-   */  
-  public int getScreenWidthUnits() {
-    return memory.readUnsigned16(0x22);
-  }
-  
-  /**
-   * {@inheritDoc}
-   */
-  public int getScreenWidth() {
-    return memory.readUnsigned8(0x21);
-  }
-
-  /**
-   * {@inheritDoc}
-   */
-  public int getScreenHeight() {
-    return memory.readUnsigned8(0x20);
-  }
-
-  /**
-   * {@inheritDoc}
-   */  
-  public int getScreenHeightUnits() {
-    return memory.readUnsigned16(0x24);
-  }
-  
-  /**
-   * {@inheritDoc}
-   */
-  public void setScreenHeight(final int numLines) {
-    memory.writeUnsigned8(0x20, (char) numLines);
-  }
-
-  /**
-   * {@inheritDoc}
-   */
-  public void setScreenHeightUnits(final int units) {
-    memory.writeUnsigned16(0x24, toUnsigned16(units));
-  }
-  
-  /**
-   * {@inheritDoc}
-   */
-  public int getDefaultBackground() {
-    return memory.readUnsigned8(0x2c);
-  }
-  
-  /**
-   * {@inheritDoc}
-   */
-  public int getDefaultForeground() {
-    return memory.readUnsigned8(0x2d);
-  }
-  
-  /**
-   * {@inheritDoc}
-   */
-  public void setDefaultBackground(final int color) {
-    memory.writeUnsigned8(0x2c, (char) color);
-  }
-  
-  /**
-   * {@inheritDoc}
-   */
-  public void setDefaultForeground(final int color) {
-    memory.writeUnsigned8(0x2d, (char) color);
-  }
- 
-  /**
-   * {@inheritDoc}
-   */
-  public void setStandardRevision(final int major, final int minor) {
-    memory.writeUnsigned8(0x32, (char) major);
-    memory.writeUnsigned8(0x33, (char) minor);
-  }
-  
-  /**
-   * {@inheritDoc}
-   */
-  public char getTerminatorsAddress() {
-    return memory.readUnsigned16(0x2e);
-  }
-  
-  /**
-   * {@inheritDoc}
-   */
   public void setFontWidth(final int units) {
     if (getVersion() == 6) {
       memory.writeUnsigned8(0x27, (char) units);
     } else {
       memory.writeUnsigned8(0x26, (char) units);
     }
-  }
-  
-  /**
-   * {@inheritDoc}
-   */
-  public int getFontWidth() {
-    return (getVersion() == 6) ? memory.readUnsigned8(0x27)
-        : memory.readUnsigned8(0x26);
   }
   
   /**
@@ -281,49 +96,26 @@ public class DefaultStoryFileHeader implements StoryFileHeader {
     }
   }
   
-  /**
-   * {@inheritDoc}
-   */
-  public int getFontHeight() {
-    return (getVersion() == 6) ? memory.readUnsigned8(0x26)
-        : memory.readUnsigned8(0x27);
-  }
-  
-  /**
-   * {@inheritDoc}
-   */
-  public char getCustomAlphabetTable() {
-    return memory.readUnsigned16(0x34);
-  }
-  
-  /**
-   * {@inheritDoc}
-   */
+  /** {@inheritDoc} */
   public void setMouseCoordinates(final int x, final int y) {
     // check the extension table
     final int extTable = memory.readUnsigned16(0x36);
     if (extTable > 0) {
-      
       final int numwords = memory.readUnsigned16(extTable);
       if (numwords >= 1) {
-        
         memory.writeUnsigned16(extTable + 2, toUnsigned16(x));
       }
       if (numwords >= 2) {
-        
         memory.writeUnsigned16(extTable + 4, toUnsigned16(y));
       }
     }
   }
   
-  /**
-   * {@inheritDoc}
-   */
+  /** {@inheritDoc} */
   public char getCustomAccentTable() {
     // check the extension table
     char result = 0;
-    final int extTable = memory.readUnsigned16(0x36);
-    
+    final int extTable = memory.readUnsigned16(0x36);    
     if (extTable > 0) {
       final int numwords = memory.readUnsigned16(extTable);
       if (numwords >= 3) {
@@ -382,7 +174,6 @@ public class DefaultStoryFileHeader implements StoryFileHeader {
    */
   public boolean isEnabled(final Attribute attribute) {
     switch (attribute) {
-    
     case TRANSCRIPTING:
       return isTranscriptingOn();
     case FORCE_FIXED_FONT:
@@ -398,20 +189,11 @@ public class DefaultStoryFileHeader implements StoryFileHeader {
     }
   }
 
-  /**
-   * {@inheritDoc}
-   */
-  public void setOutputStream3TextWidth(int units) {
-    memory.writeUnsigned16(0x30, toUnsigned16(units));
-  }
-  
-  /**
-   * {@inheritDoc}
-   */
+  /** {@inheritDoc} */
+  @Override
   public String toString() {
     StringBuilder builder = new StringBuilder();
     for (int i = 0; i < 55; i++) {
-      
       builder.append(String.format("Addr: %02x Byte: %02x\n", i, memory.readUnsigned8(i)));
     }
     return builder.toString();

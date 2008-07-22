@@ -130,13 +130,13 @@ public class PortableGameStateTest {
       one (machine).getRoutineContexts(); will(returnValue(emptyContexts));
       one (machine).getSP(); will(returnValue((char) 4));
       allowing (machine).getStackElement(with(any(int.class))); will(returnValue((char) 42));
-      one (fileheader).getRelease(); will(returnValue(42));
-      one (fileheader).getChecksum(); will(returnValue(4712));
+      one (machine).getRelease(); will(returnValue(42));
+      one (machine).readUnsigned16(StoryFileHeader.CHECKSUM); will(returnValue((char) 4712));
+      one (machine).readUnsigned16(StoryFileHeader.STATIC_MEM); will(returnValue((char) 12345));
       one (fileheader).getSerialNumber(); will(returnValue("850101"));
-      one (fileheader).getStaticsAddress(); will(returnValue((char) 12345));
       allowing (machine).copyBytesToArray(with(any(savedata.getClass())), with(0), with(0), with(12345));
       allowing (machine).readUnsigned8(with(any(int.class))); will(returnValue((short) 0));
-    }});    
+    }});
     gameState.captureMachineState(machine, (char) 4711);
     assertEquals(4711, gameState.getProgramCounter());
     assertEquals(42, gameState.getRelease());

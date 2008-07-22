@@ -25,6 +25,7 @@ import org.junit.Test;
 import static org.junit.Assert.*;
 import org.zmpp.vm.ClassicObjectTree;
 import org.zmpp.vm.ObjectTree;
+import org.zmpp.vm.StoryFileHeader;
 
 /**
  * Testing tree access with concrete data of Version 3 - Minizork.
@@ -42,7 +43,7 @@ public class MinizorkObjectTreeTest extends MiniZorkSetup {
   public void setUp() throws Exception {
     super.setUp();
     this.objectTree = new ClassicObjectTree(minizorkmap,
-        fileheader.getObjectTableAddress());
+        machine.readUnsigned16(StoryFileHeader.OBJECT_TABLE));
   }
   
   @Test

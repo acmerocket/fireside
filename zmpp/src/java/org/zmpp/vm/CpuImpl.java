@@ -55,22 +55,35 @@ public class CpuImpl implements Cpu {
   /** The start of global variables. */
   private int globalsAddress;
   
+  /**
+   * Constructor.
+   * @param machine the Machine object
+   */
   public CpuImpl(final Machine machine) {
     this.machine = machine;
   }
-  
+
+  /** @{inheritDoc} */
   public void reset() {
     stack = new FastShortStack(STACKSIZE);
     routineContextStack = new ArrayList<RoutineContext>();
-    globalsAddress = machine.getFileHeader().getGlobalsAddress();
+    globalsAddress = machine.readUnsigned16(StoryFileHeader.GLOBALS);
     
     if (machine.getVersion() == 6) {
       // Call main function in version 6
-      call(machine.getFileHeader().getProgramStart(), (char) 0,
+      call(getProgramStart(), (char) 0,
            new char[0], (char) 0);     
     } else {
-      programCounter = machine.getFileHeader().getProgramStart();
+      programCounter = getProgramStart();
     }
+  }
+  
+  /**
+   * Returns the story's start address.
+   * @return the start address
+   */
+  private char getProgramStart() {
+    return machine.readUnsigned16(StoryFileHeader.PROGRAM_START);
   }
  
   /** {@inheritDoc} */
@@ -105,13 +118,17 @@ public class CpuImpl implements Cpu {
    * Only for V6 and V7 games: the routine offset.
    * @return the routine offset
    */
-  private char getRoutineOffset() { return machine.readUnsigned16(0x28); }
+  private char getRoutineOffset() {
+    return machine.readUnsigned16(StoryFileHeader.ROUTINE_OFFSET);
+  }
 
   /**
    * Only in V6 and V7: the static string offset.
    * @return the static string offset
    */
-  private char getStaticStringOffset() { return machine.readUnsigned16(0x2a); }
+  private char getStaticStringOffset() {
+    return machine.readUnsigned16(StoryFileHeader.STATIC_STRING_OFFSET);
+  }
 
   /**
    * Version specific unpacking.

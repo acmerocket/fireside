@@ -53,7 +53,7 @@ public class BufferedScreenModel implements ScreenModel, StatusLine,
   private List<StatusLineListener> statusLineListeners =
     new ArrayList<StatusLineListener>();
   private IZsciiEncoding encoding;
-  private StoryFileHeader fileheader;
+  private Machine machine;
   
   public interface ScreenModelListener {
     void screenModelUpdated(BufferedScreenModel screenModel);
@@ -77,11 +77,11 @@ public class BufferedScreenModel implements ScreenModel, StatusLine,
   /**
    * Initialize the model, an Encoding object is needed to retrieve
    * Unicode characters.
-   * @param fileheader the story file header
+   * @param machine the machine
    * @param encoding the ZsciiEncoding object
    */
-  public void init(StoryFileHeader fileheader, IZsciiEncoding encoding) {
-    this.fileheader = fileheader;
+  public void init(Machine machine, IZsciiEncoding encoding) {
+    this.machine = machine;
     this.encoding = encoding;
   }
   
@@ -253,12 +253,19 @@ public class BufferedScreenModel implements ScreenModel, StatusLine,
   public int getBackground() {
     int background = bottomWindow.getBackground();
     return background == COLOR_DEFAULT ?
-      fileheader.getDefaultBackground() : background;
+      getDefaultBackground() : background;
   }
   public int getForeground() {
     int foreground = bottomWindow.getForeground();
     return foreground == COLOR_DEFAULT ?
-      fileheader.getDefaultForeground() : foreground;
+      getDefaultForeground() : foreground;
+  }
+  private int getDefaultBackground() {
+    return machine.readUnsigned8(StoryFileHeader.DEFAULT_BACKGROUND);
+  }
+  
+  private int getDefaultForeground() {
+    return machine.readUnsigned8(StoryFileHeader.DEFAULT_FOREGROUND);
   }
   
   public List<AnnotatedText> getLowerBuffer() {

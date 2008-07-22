@@ -25,6 +25,7 @@ import org.junit.Test;
 import static org.junit.Assert.*;
 import org.zmpp.vm.ModernObjectTree;
 import org.zmpp.vm.ObjectTree;
+import org.zmpp.vm.StoryFileHeader;
 
 /**
  * Testing the tree for Curses.
@@ -43,7 +44,7 @@ public class CursesObjectTreeTest extends CursesSetup {
   public void setUp() throws Exception {
 	  super.setUp();
 	  objectTree = new ModernObjectTree(curses,
-			fileheader.getObjectTableAddress());
+      machine.readUnsigned16(StoryFileHeader.OBJECT_TABLE));
   }
   
   @Test

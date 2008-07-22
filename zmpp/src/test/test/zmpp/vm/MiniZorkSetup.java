@@ -56,7 +56,7 @@ public abstract class MiniZorkSetup {
     fileheader = machine.getFileHeader();
     
     abbreviations = new Abbreviations(minizorkmap,
-        fileheader.getAbbreviationsAddress());
+        machine.readUnsigned16(StoryFileHeader.ABBREVIATIONS));
     ZsciiEncoding encoding = new ZsciiEncoding(new DefaultAccentTable());
     AlphabetTable alphabetTable = new DefaultAlphabetTable();
     ZCharTranslator translator = new DefaultZCharTranslator(alphabetTable);

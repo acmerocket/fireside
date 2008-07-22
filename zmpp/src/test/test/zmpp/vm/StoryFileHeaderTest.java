@@ -58,63 +58,7 @@ public class StoryFileHeaderTest {
     }});
     assertEquals(3, fileHeader.getVersion());
   }
-  
-  @Test
-  public void testGetRelease() {
-    context.checking(new Expectations() {{
-      atLeast(1).of (memory).readUnsigned16(0x02); will(returnValue((char) 35));
-    }});
-    assertEquals(35, fileHeader.getRelease());
-  }
-  
-  @Test
-  public void testGetHighMemAddress() {
-    context.checking(new Expectations() {{
-      atLeast(1).of (memory).readUnsigned16(0x04); will(returnValue((char) 4711));
-    }});
-    assertEquals(4711, fileHeader.getHighMemAddress());
-  }
-  
-  @Test
-  public void testGetInitialPC() {
-    context.checking(new Expectations() {{
-      atLeast(1).of (memory).readUnsigned16(0x06); will(returnValue((char) 4712));
-    }});
-    assertEquals(4712, fileHeader.getProgramStart());
-  }
 
-  @Test
-  public void testGetDictionaryAddress() {
-    context.checking(new Expectations() {{
-      atLeast(1).of (memory).readUnsigned16(0x08); will(returnValue((char) 4713));
-    }});
-    assertEquals(4713, fileHeader.getDictionaryAddress());
-  }
-  
-  @Test
-  public void testGetObjectTableAddress() {
-    context.checking(new Expectations() {{
-      atLeast(1).of (memory).readUnsigned16(0x0a); will(returnValue((char) 4714));
-    }});
-    assertEquals(4714, fileHeader.getObjectTableAddress());
-  }
-
-  @Test
-  public void testGetGlobalsAddress() {
-    context.checking(new Expectations() {{
-      atLeast(1).of (memory).readUnsigned16(0x0c); will(returnValue((char) 4715));
-    }});
-    assertEquals(4715, fileHeader.getGlobalsAddress());
-  }
-
-  @Test
-  public void testGetStaticMemAddress() {
-    context.checking(new Expectations() {{
-      one (memory).readUnsigned16(0x0e); will(returnValue((char) 4716));
-    }});
-    assertEquals(4716, fileHeader.getStaticsAddress());
-  }
-  
   @Test
   public void testGetSerialNumber() {
     context.checking(new Expectations() {{
@@ -126,14 +70,6 @@ public class StoryFileHeaderTest {
       one (memory).readUnsigned8(0x017); will(returnValue('9'));
     }});
     assertEquals("051209", fileHeader.getSerialNumber());
-  }
-
-  @Test
-  public void testGetAbbreviationsAddress() {
-    context.checking(new Expectations() {{
-      one (memory).readUnsigned16(0x18); will(returnValue((char) 4717));
-    }});
-    assertEquals(4717, fileHeader.getAbbreviationsAddress());
   }
 
   @Test
@@ -164,54 +100,6 @@ public class StoryFileHeaderTest {
   }
   
   @Test
-  public void testGetChecksum() {    
-    context.checking(new Expectations() {{
-      one (memory).readUnsigned16(0x1c); will(returnValue((char) 4719));
-    }});
-    assertEquals(4719, fileHeader.getChecksum());
-  }
-  
-  @Test
-  public void testSetScreenHeight() {
-    context.checking(new Expectations() {{
-      one (memory).writeUnsigned8(0x20, (char) 255);
-    }});
-    fileHeader.setScreenHeight(255);
-  }
-  
-  @Test
-  public void testSetScreenHeightUnits() {
-    context.checking(new Expectations() {{
-      one (memory).writeUnsigned16(0x24, (char) 40);
-    }});
-    fileHeader.setScreenHeightUnits(40);
-  }
-
-  @Test
-  public void testGetScreenWidth() {
-    context.checking(new Expectations() {{
-      one (memory).readUnsigned8(0x21); will(returnValue((char) 82));
-    }});
-    assertEquals(82, fileHeader.getScreenWidth());
-  }
-  
-  @Test
-  public void testSetScreenWidth() {
-    context.checking(new Expectations() {{
-      one (memory).writeUnsigned8(0x21, (char) 82);
-    }});
-    fileHeader.setScreenWidth(82);
-  }  
-
-  @Test
-  public void testSetScreenWidthUnits() {
-    context.checking(new Expectations() {{
-      one (memory).writeUnsigned16(0x22, (char) 82);
-    }});
-    fileHeader.setScreenWidthUnits(82);
-  }  
-  
-  @Test
   public void testSetInterpreterVersionV5() {
     // Story file version 4 or 5: version number as string
     context.checking(new Expectations() {{
@@ -229,14 +117,6 @@ public class StoryFileHeaderTest {
       one (memory).writeUnsigned8(0x1f, (char) 4);
     }});
     fileHeader.setInterpreterVersion(4);
-  }
-  
-  @Test
-  public void testSetInterpreterNumber() {
-    context.checking(new Expectations() {{
-      one (memory).writeUnsigned8(0x1e, (char) 3);
-    }});
-    fileHeader.setInterpreterNumber(3);
   }
   
   // *************************************************************************
@@ -408,23 +288,6 @@ public class StoryFileHeaderTest {
   }
   
   @Test
-  public void testGetTerminatorsAddress() {
-    context.checking(new Expectations() {{
-      one (memory).readUnsigned16(0x2e); will(returnValue((char) 1234));
-    }});
-    assertEquals(1234, fileHeader.getTerminatorsAddress());
-  }
-  
-  @Test
-  public void testSetStandardRevision() {  
-    context.checking(new Expectations() {{
-      one (memory).writeUnsigned8(0x32, (char) 1);
-      one (memory).writeUnsigned8(0x33, (char) 2);
-    }});
-    fileHeader.setStandardRevision(1, 2);
-  }
-  
-  @Test
   public void testSetFontWidthV5() { 
     context.checking(new Expectations() {{
       one (memory).readUnsigned8(0x00); will(returnValue((char) 5));
@@ -477,14 +340,6 @@ public class StoryFileHeaderTest {
     assertTrue(fileHeader.isEnabled(Attribute.USE_MOUSE));    
   }
 
-  @Test
-  public void testGetCustomAlphabetTable() {
-    context.checking(new Expectations() {{
-      one (memory).readUnsigned16(0x34); will(returnValue((char) 63));
-    }});    
-    fileHeader.getCustomAlphabetTable();
-  }
-  
   // Simulate a situation to set mouse coordinates
   @Test
   public void testSetMouseCoordinatesNoExtensionTable() {

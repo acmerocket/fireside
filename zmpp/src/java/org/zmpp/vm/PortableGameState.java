@@ -338,14 +338,15 @@ public class PortableGameState {
    */
   public void captureMachineState(final Machine machine, final int savePc) {
     final StoryFileHeader fileheader = machine.getFileHeader();
-    release = fileheader.getRelease();
-    checksum = fileheader.getChecksum();
+    release = machine.getRelease();
+    checksum = machine.readUnsigned16(StoryFileHeader.CHECKSUM);
     serialBytes = fileheader.getSerialNumber().getBytes();
     pc = savePc;
     
     // capture dynamic memory which ends at address(staticsMem) - 1
     // uncompressed
-    final int staticMemStart = fileheader.getStaticsAddress();
+    final int staticMemStart =
+        machine.readUnsigned16(StoryFileHeader.STATIC_MEM);
     dynamicMem = new byte[staticMemStart];
     // Save the state of dynamic memory
     machine.copyBytesToArray(dynamicMem, 0, 0, staticMemStart);

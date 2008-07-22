@@ -106,8 +106,8 @@ public class ZCharDecoderTest {
     file.close();
     
     Memory mem = new DefaultMemory(zork1data);
-    StoryFileHeader fileheader = new DefaultStoryFileHeader(mem);
-    AbbreviationsTable abbr = new Abbreviations(mem, fileheader.getAbbreviationsAddress());
+    AbbreviationsTable abbr = new Abbreviations(mem,
+            mem.readUnsigned16(StoryFileHeader.ABBREVIATIONS));
 
     ZsciiEncoding encoding = new ZsciiEncoding(new DefaultAccentTable());
     AlphabetTable alphabetTable = new DefaultAlphabetTable(); 
