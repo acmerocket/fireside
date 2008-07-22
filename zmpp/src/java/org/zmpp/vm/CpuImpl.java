@@ -83,22 +83,47 @@ public class CpuImpl implements Cpu {
 
   /** {@inheritDoc} */
   public int unpackStringAddress(char packedAddress) {
-    return unpackAddress(packedAddress, false);
+    int version = machine.getVersion();
+    return version == 6 || version == 7 ?
+      packedAddress * 4 + 8 * getStaticStringOffset()
+      : unpackAddress(packedAddress);
   }
+  
+  /**
+   * Unpacks a routine address, exposed for testing.
+   * @param packedAddress the packed address
+   * @return the unpacked address
+   */
+  public int unpackRoutineAddress(char packedAddress) {
+    int version = machine.getVersion();
+    return version == 6 || version == 7 ?
+      packedAddress * 4 + 8 * getRoutineOffset()
+      : unpackAddress(packedAddress);
+  }
+  
+  /**
+   * Only for V6 and V7 games: the routine offset.
+   * @return the routine offset
+   */
+  private char getRoutineOffset() { return machine.readUnsigned16(0x28); }
 
-  public int unpackAddress(final char packedAddress, final boolean isCall) {
-    // Version specific packed address translation    
+  /**
+   * Only in V6 and V7: the static string offset.
+   * @return the static string offset
+   */
+  private char getStaticStringOffset() { return machine.readUnsigned16(0x2a); }
+
+  /**
+   * Version specific unpacking.
+   * @param packedAddress the packed address
+   * @return the unpacked address
+   */
+  private int unpackAddress(final char packedAddress) {
     switch (machine.getVersion()) {
       case 1: case 2: case 3:  
         return packedAddress * 2;
-      case 4:
-      case 5:
+      case 4: case 5:
         return packedAddress * 4;
-      case 6:
-      case 7:
-        return packedAddress * 4 + 8 *
-          (isCall ? machine.getFileHeader().getRoutineOffset() :
-                    machine.getFileHeader().getStaticStringOffset());
       case 8:
       default:
         return packedAddress * 8;
@@ -315,9 +340,10 @@ public class CpuImpl implements Cpu {
     return (char) routineContextStack.size();
   }
   
+  /** {@inheritDoc} */
   public RoutineContext call(final char packedRoutineAddress,
       final int returnAddress, final char[] args, final char returnVariable) {
-    final int routineAddress = unpackAddress(packedRoutineAddress, true);
+    final int routineAddress = unpackRoutineAddress(packedRoutineAddress);
     final int numArgs = args == null ? 0 : args.length;    
     final RoutineContext routineContext = decodeRoutine(routineAddress);
     
@@ -368,24 +394,21 @@ public class CpuImpl implements Cpu {
   private RoutineContext decodeRoutine(final int routineAddress) {
     final int numLocals = machine.readUnsigned8(routineAddress);
     final char[] locals = new char[numLocals];
-    int currentAddress = routineAddress + 1;
     
     if (machine.getVersion() <= 4) {
       // Only story files <= 4 actually store default values here,
       // after V5 they are assumed as being 0 (standard document 1.0, S.5.2.1) 
       for (int i = 0; i < numLocals; i++) {
-        locals[i] = machine.readUnsigned16(currentAddress);
-        currentAddress += 2;
+        locals[i] = machine.readUnsigned16(routineAddress + 1 + 2 * i);
       }
     }
     final RoutineContext info = new RoutineContext(numLocals);
-    
     for (int i = 0; i < numLocals; i++) {
       info.setLocalVariable((char) i, locals[i]);
     }
     return info;
   }
-    
+
   /**
    * Returns the local variable number for a specified variable number.
    * @param variableNumber the variable number in an operand (0x01-0x0f)

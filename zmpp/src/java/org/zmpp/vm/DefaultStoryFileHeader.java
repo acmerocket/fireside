@@ -211,20 +211,6 @@ public class DefaultStoryFileHeader implements StoryFileHeader {
   /**
    * {@inheritDoc}
    */
-  public int getRoutineOffset() {
-    return memory.readUnsigned16(0x28);
-  }
-
-  /**
-   * {@inheritDoc}
-   */
-  public int getStaticStringOffset() {
-    return memory.readUnsigned16(0x2a);
-  }
-  
-  /**
-   * {@inheritDoc}
-   */
   public int getDefaultBackground() {
     return memory.readUnsigned8(0x2c);
   }

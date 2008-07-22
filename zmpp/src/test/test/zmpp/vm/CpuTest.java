@@ -35,7 +35,6 @@ import org.zmpp.vm.CpuImpl;
 import org.zmpp.vm.Machine;
 import org.zmpp.vm.RoutineContext;
 import org.zmpp.vm.StoryFileHeader;
-import test.zmpp.testutil.DummyStoryFileHeader;
 
 /**
  * Test class for the Cpu interface of the Machine object.
@@ -47,29 +46,20 @@ public class CpuTest {
   Mockery context = new JUnit4Mockery();
   private Machine machine;
   private CpuImpl cpu;
+  private StoryFileHeader fileheader;
   
-  /**
-   * Faked out file header.
-   */
-  private StoryFileHeader fileheader = new DummyStoryFileHeader() {
-    @Override
-    public char getProgramStart() { return 1000; }
-    @Override
-    public char getGlobalsAddress() { return 5000; }
-    @Override
-    public int getRoutineOffset() { return 5; }
-    @Override
-    public int getStaticStringOffset() { return 6; }
-  };
   private RoutineContext routineInfo;
   
   @Before
   public void setUp() throws Exception {
     machine = context.mock(Machine.class);
+    fileheader = context.mock(StoryFileHeader.class);
     routineInfo = new RoutineContext(3);
     context.checking(new Expectations() {{
-      atLeast(1).of(machine).getFileHeader(); will(returnValue(fileheader));
+      atLeast(1).of (machine).getFileHeader(); will(returnValue(fileheader));
       one (machine).getVersion(); will(returnValue(5));
+      atLeast(1).of (fileheader).getProgramStart(); will(returnValue((char) 1000));
+      atLeast(1).of (fileheader).getGlobalsAddress(); will(returnValue((char) 5000));
     }});
     cpu = new CpuImpl(machine);
     cpu.reset();
@@ -299,49 +289,48 @@ public class CpuTest {
   @Test
   public void testTranslatePackedAddressV3() {
     context.checking(new Expectations() {{
-      one (machine).getVersion(); will(returnValue(3));
+      atLeast(1).of (machine).getVersion(); will(returnValue(3));
     }});
-    int byteAddress = cpu.unpackAddress((char) 2312, true);
-    assertEquals(2312 * 2, byteAddress);
+    int byteAddressR = cpu.unpackRoutineAddress((char) 65000);
+    int byteAddressS = cpu.unpackStringAddress((char) 65000);
+    assertEquals(65000 * 2, byteAddressR);
+    assertEquals(65000 * 2, byteAddressS);
   }  
 
   @Test
   public void testTranslatePackedAddressV4() {
     context.checking(new Expectations() {{
-      one (machine).getVersion(); will(returnValue(4));
+      atLeast(1).of (machine).getVersion(); will(returnValue(4));
     }});
-    assertEquals(4711 * 4, cpu.unpackAddress((char) 4711, true));
+    int byteAddressR = cpu.unpackRoutineAddress((char) 65000);
+    int byteAddressS = cpu.unpackStringAddress((char) 65000);
+    assertEquals(65000 * 4, byteAddressR);
+    assertEquals(65000 * 4, byteAddressS);
   }
 
   @Test
-  public void testTranslatePackedAddressV5() {
+  public void testTranslatePackedAddressV7() {
     context.checking(new Expectations() {{
-      one (machine).getVersion(); will(returnValue(5));
+      atLeast(1).of (machine).getVersion(); will(returnValue(7));
+      // routine offset
+      one (machine).readUnsigned16(0x28); will(returnValue((char) 5));
+      // static string offset
+      one (machine).readUnsigned16(0x2a); will(returnValue((char) 6));
     }});
-    assertEquals(4711 * 4, cpu.unpackAddress((char) 4711, true));
+    int byteAddressR = cpu.unpackRoutineAddress((char) 65000);
+    int byteAddressS = cpu.unpackStringAddress((char) 65000);
+    assertEquals(65000 * 4 + 8 * 5, byteAddressR);
+    assertEquals(65000 * 4 + 8 * 6, byteAddressS);
   }
 
-  @Test
-  public void testTranslatePackedAddressV7Call() {
-    context.checking(new Expectations() {{
-      one (machine).getVersion(); will(returnValue(7));
-    }});
-    assertEquals(4711 * 4 + 8 * 5, cpu.unpackAddress((char) 4711, true));
-  }
-
-  @Test
-  public void testTranslatePackedAddressV7String() {
-    context.checking(new Expectations() {{
-      one (machine).getVersion(); will(returnValue(7));
-    }});
-    assertEquals(4711 * 4 + 8 * 6, cpu.unpackAddress((char) 4711, false));
-  }
-  
   @Test
   public void testTranslatePackedAddressV8() {
     context.checking(new Expectations() {{
-      one (machine).getVersion(); will(returnValue(8));
+      atLeast(1).of (machine).getVersion(); will(returnValue(8));
     }});
-    assertEquals(4711 * 8, cpu.unpackAddress((char) 4711, true));
+    int byteAddressR = cpu.unpackRoutineAddress((char) 65000);
+    int byteAddressS = cpu.unpackStringAddress((char) 65000);
+    assertEquals(65000 * 8, byteAddressR);
+    assertEquals(65000 * 8, byteAddressS);
   }
 }
