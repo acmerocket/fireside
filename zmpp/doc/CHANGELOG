@@ -8,7 +8,8 @@ Version 1.5
 - Using JMock 2.5
 - Memory, stack and variables are now all unsigned 16 or 8 bit values
 - better NetBeans integration
-- replaced ZsciiString and ZsciiStringBuilder with the J2SE versions
+- replaced ZsciiString and ZsciiStringBuilder and ZsciiStringTokenizer with
+  the J2SE versions
 
 Version 1.01
 ------------

@@ -25,8 +25,8 @@ import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
 
+import java.util.StringTokenizer;
 import org.zmpp.encoding.ZsciiEncoding;
-import org.zmpp.encoding.ZsciiStringTokenizer;
 import static org.zmpp.base.MemoryUtil.toUnsigned16;
 
 /**
@@ -284,8 +284,7 @@ public class InputFunctions {
     final List<String> result = new ArrayList<String>();    
     // The tokenizer will also return the delimiters
     final String delim = machine.getDictionaryDelimiters();
-    final ZsciiStringTokenizer tok = new ZsciiStringTokenizer(input, delim);
-    
+    final StringTokenizer tok = new StringTokenizer(input, delim);
     while (tok.hasMoreTokens()) {      
       final String token = tok.nextToken();
       if (!Character.isWhitespace(token.charAt(0))) {
