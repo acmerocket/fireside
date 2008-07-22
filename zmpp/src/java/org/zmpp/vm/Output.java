@@ -20,8 +20,6 @@
  */
 package org.zmpp.vm;
 
-import org.zmpp.encoding.ZsciiString;
-
 /**
  * The Output interface.
  * @author Wei-ju Wu
@@ -29,19 +27,13 @@ import org.zmpp.encoding.ZsciiString;
  */
 public interface Output {
 
-  /**
-   * The output stream number for the screen.
-   */
+  /** The output stream number for the screen. */
   final static int OUTPUTSTREAM_SCREEN = 1;
   
-  /**
-   * The output stream number for the transcript.
-   */
+  /** The output stream number for the transcript. */
   final static int OUTPUTSTREAM_TRANSCRIPT = 2;
   
-  /**
-   * The output stream number for the memory stream.
-   */
+  /** The output stream number for the memory stream. */
   final static int OUTPUTSTREAM_MEMORY = 3;
   
   /**
@@ -49,7 +41,6 @@ public interface Output {
    * is negative, |streamnumber| is deselected, if positive, it is selected.
    * Stream 3 (the memory stream) can not be selected by this function,
    * but can be deselected here.
-   * 
    * @param streamnumber the output stream number
    * @param flag true to enable, false to disable
    */
@@ -57,7 +48,6 @@ public interface Output {
   
   /**
    * Selects the output stream 3 which writes to memory.
-   * 
    * @param tableAddress the table address to write to
    * @param tableWidth the table width
    */
@@ -66,17 +56,15 @@ public interface Output {
   /**
    * Prints the ZSCII string at the specified address to the active
    * output streams.
-   * 
    * @param stringAddress the address of an ZSCII string
    */
   void printZString(int stringAddress);
   
   /**
    * Prints the specified string to the active output streams.
-   * 
-   * @param str the string to print
+   * @param str the string to print, encoding is ZSCII
    */
-  void print(ZsciiString str);
+  void print(String str);
   
   /**
    * Prints a newline to the active output streams.
@@ -85,14 +73,12 @@ public interface Output {
   
   /**
    * Prints the specified ZSCII character.
-   * 
    * @param zchar the ZSCII character to print
    */
   void printZsciiChar(char zchar);
   
   /**
    * Prints the specified signed number.
-   * 
    * @param num the number to print?
    */
   void printNumber(short num);

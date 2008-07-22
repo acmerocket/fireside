@@ -22,7 +22,6 @@ package org.zmpp.vm;
 
 import org.zmpp.base.Memory;
 import org.zmpp.encoding.IZsciiEncoding;
-import org.zmpp.encoding.ZsciiString;
 import org.zmpp.media.PictureManager;
 import org.zmpp.media.Resources;
 import org.zmpp.media.SoundSystem;
@@ -66,15 +65,15 @@ extends ObjectTree, Input, Output, Cpu, Memory, IZsciiEncoding {
   // **** instead of dictionary functionality
   // **********************************************************
   
-  int lookupToken(int dictionaryAddress, ZsciiString token);
-  ZsciiString getDictionaryDelimiters();
+  int lookupToken(int dictionaryAddress, String token);
+  String getDictionaryDelimiters();
   
   // **********************************************************************
   // **** Encoding functions
   // **********************************************************
   
   void encode(int source, int length, int destination);
-  ZsciiString decode2Zscii(int address, int length);
+  String decode2Zscii(int address, int length);
   
   // ************************************************************************
   // ****** Control functions

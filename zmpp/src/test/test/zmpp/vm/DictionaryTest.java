@@ -30,10 +30,7 @@ import org.junit.runner.RunWith;
 import static org.junit.Assert.*;
 
 import org.zmpp.base.Memory;
-import org.zmpp.encoding.DefaultAccentTable;
 import org.zmpp.encoding.ZCharDecoder;
-import org.zmpp.encoding.ZsciiEncoding;
-import org.zmpp.encoding.ZsciiString;
 import org.zmpp.vm.DefaultDictionary;
 import org.zmpp.vm.Dictionary;
 import org.zmpp.vm.DictionarySizesV1ToV3;
@@ -55,10 +52,8 @@ public class DictionaryTest {
   public void setUp() throws Exception {
     memory = context.mock(Memory.class);
     decoder = context.mock(ZCharDecoder.class);
-    ZsciiEncoding encoding = new ZsciiEncoding(new DefaultAccentTable());
-    ZsciiString.initialize(encoding);
-    final ZsciiString get = new ZsciiString(new char[] { 'g', 'e', 't'});
-    final ZsciiString look = new ZsciiString(new char[] { 'l', 'o', 'o', 'k' });
+    final String get = "get";
+    final String look = "look";
 
     // num separators
     context.checking(new Expectations() {{
@@ -123,9 +118,7 @@ public class DictionaryTest {
 
   @Test
   public void testLookup() {
-    char[] get = { 'g', 'e', 't' };
-    char[] nonsense = { 'n', 'o', 'n', 's', 'e', 'n', 's', 'e' };
-    assertEquals(1007, dictionary.lookup(new ZsciiString(get)));
-    assertEquals(0, dictionary.lookup(new ZsciiString(nonsense)));
+    assertEquals(1007, dictionary.lookup("get"));
+    assertEquals(0, dictionary.lookup("nonsense"));
   }
 }

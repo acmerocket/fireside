@@ -29,7 +29,6 @@ import org.junit.Test;
 import org.junit.Before;
 import static org.junit.Assert.*;
 
-import org.zmpp.encoding.ZsciiString;
 import org.zmpp.iff.WritableFormChunk;
 import org.zmpp.io.InputStream;
 import org.zmpp.io.OutputStream;
@@ -100,7 +99,7 @@ public class MachineTest extends MiniZorkSetup {
       one (outputStream1).print('s');
     }});    
     machine.selectOutputStream(1, true);    
-    machine.print(new ZsciiString("test"));
+    machine.print("test");
   }
   
   @Test

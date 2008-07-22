@@ -39,8 +39,6 @@ import org.zmpp.encoding.ZCharDecoder;
 import org.zmpp.encoding.ZCharEncoder;
 import org.zmpp.encoding.ZCharTranslator;
 import org.zmpp.encoding.ZsciiEncoding;
-import org.zmpp.encoding.ZsciiString;
-import org.zmpp.encoding.ZsciiStringBuilder;
 import org.zmpp.iff.FormChunk;
 import org.zmpp.iff.WritableFormChunk;
 import org.zmpp.io.InputStream;
@@ -188,7 +186,6 @@ public class MachineImpl implements Machine {
         fileheader.getAbbreviationsAddress());
     decoder = new DefaultZCharDecoder(encoding, translator, abbreviations);
     encoder = new ZCharEncoder(translator);
-    ZsciiString.initialize(encoding);
   }
   
   /**
@@ -325,12 +322,11 @@ public class MachineImpl implements Machine {
   // **********************************************************************
   // ***** Dictionary functionality
   // **********************************************************************
-  private static final ZsciiString WHITESPACE =
-    new ZsciiString(new char[] { ' ', '\n', '\t', '\r' });
+  private static final String WHITESPACE = " \n\t\r";
   
   private Dictionary getDictionary() { return dictionary; }
   /** {@inheritDoc} */
-  public int lookupToken(int dictionaryAddress, ZsciiString token) {
+  public int lookupToken(int dictionaryAddress, String token) {
     if (dictionaryAddress == 0) {
       return getDictionary().lookup(token);
     }
@@ -338,16 +334,16 @@ public class MachineImpl implements Machine {
                               getZCharDecoder()).lookup(token);
   }
   /** {@inheritDoc} */
-  public ZsciiString getDictionaryDelimiters() {
+  public String getDictionaryDelimiters() {
     // Retrieve the defined separators
-    final ZsciiStringBuilder separators = new ZsciiStringBuilder();
+    final StringBuilder separators = new StringBuilder();
     separators.append(WHITESPACE);    
     for (int i = 0, n = getDictionary().getNumberOfSeparators(); i < n; i++) {
       separators.append(getZCharDecoder().decodeZChar((char)
               getDictionary().getSeparator(i)));
     }
     // The tokenizer will also return the delimiters
-    return separators.toZsciiString();
+    return separators.toString();
   }
 
   // **********************************************************************
@@ -364,7 +360,7 @@ public class MachineImpl implements Machine {
     getZCharEncoder().encode(getMemory(), source, length, destination);
   }
   /** {@inheritDoc} */
-  public ZsciiString decode2Zscii(int address, int length) {
+  public String decode2Zscii(int address, int length) {
     return getZCharDecoder().decode2Zscii(getMemory(), address, length);
   }
   /** {@inheritDoc} */
@@ -396,7 +392,7 @@ public class MachineImpl implements Machine {
     output.printZString(stringAddress);
   }
 
-  public void print(ZsciiString str) {
+  public void print(String str) {
     output.print(str);
   }
 
@@ -464,7 +460,7 @@ public class MachineImpl implements Machine {
 
   /** {@inheritDoc} */
   public void halt(final String errormsg) {
-    print(new ZsciiString(errormsg));
+    print(errormsg);
     runstate = MachineRunState.STOPPED;
   }
   /** {@inheritDoc} */
@@ -477,7 +473,7 @@ public class MachineImpl implements Machine {
   public void quit() {
     runstate = MachineRunState.STOPPED;    
     // On quit, close the streams
-    output.print(new ZsciiString("*Game ended*"));
+    output.print("*Game ended*");
     closeStreams();
   }
   /** {@inheritDoc} */

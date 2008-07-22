@@ -22,7 +22,6 @@ package org.zmpp.vm;
 
 import org.zmpp.base.Memory;
 import org.zmpp.encoding.ZCharDecoder;
-import org.zmpp.encoding.ZsciiString;
 
 /**
  * This class implements a user dictionary. The specification suggests that
@@ -51,19 +50,17 @@ public class UserDictionary extends AbstractDictionary {
   /**
    * {@inheritDoc}
    */
-  public int lookup(final ZsciiString token) {
+  public int lookup(final String token) {
     // We only implement linear search for the moment
     final int n = Math.abs(getNumberOfEntries());
-    final ZsciiString lookupToken = truncateToken(token);
-    
+    final String lookupToken = truncateToken(token);
     for (int i = 0; i < n; i++) {
       
       final int entryAddress = getEntryAddress(i);
-      final ZsciiString entry = getDecoder().decode2Zscii(getMemory(),
-                                                          entryAddress,
-                                                          getEntryLength());
+      final String entry = getDecoder().decode2Zscii(getMemory(),
+                                                     entryAddress,
+                                                     getEntryLength());
       if (lookupToken.equals(entry)) {
-        
         return entryAddress;
       }
     }

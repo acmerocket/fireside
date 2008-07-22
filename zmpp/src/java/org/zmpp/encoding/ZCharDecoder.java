@@ -60,7 +60,7 @@ public interface ZCharDecoder {
    * @param length the maximum length in bytes
    * @return the decoded string
    */
-  ZsciiString decode2Zscii(Memory memory, int address, int length);
+  String decode2Zscii(Memory memory, int address, int length);
   
   /**
    * Decodes the given byte value to the specified buffer using the working

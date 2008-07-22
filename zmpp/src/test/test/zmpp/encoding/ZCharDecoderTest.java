@@ -43,7 +43,6 @@ import org.zmpp.encoding.DefaultZCharTranslator;
 import org.zmpp.encoding.ZCharDecoder;
 import org.zmpp.encoding.ZCharTranslator;
 import org.zmpp.encoding.ZsciiEncoding;
-import org.zmpp.encoding.ZsciiString;
 import org.zmpp.encoding.ZCharDecoder.AbbreviationsTable;
 import org.zmpp.vm.Abbreviations;
 import org.zmpp.vm.DefaultStoryFileHeader;
@@ -73,7 +72,6 @@ public class ZCharDecoderTest {
     memory = context.mock(Memory.class);
     
     ZsciiEncoding encoding = new ZsciiEncoding(new DefaultAccentTable());
-    ZsciiString.initialize(encoding);
     AlphabetTable alphabetTable = new DefaultAlphabetTable();
     ZCharTranslator translator = new DefaultZCharTranslator(alphabetTable);
     decoder = new DefaultZCharDecoder(encoding, translator, abbrev);

@@ -24,7 +24,6 @@ import java.util.ArrayList;
 import java.util.List;
 
 import org.zmpp.encoding.ZsciiEncoding;
-import org.zmpp.encoding.ZsciiString;
 import org.zmpp.vmutil.RingBuffer;
 
 /**
@@ -75,9 +74,9 @@ public class CommandHistory {
       }
       
       final StringBuilder buffer = new StringBuilder();
-      buffer.append(" (" + new ZsciiString(orig));
+      buffer.append(" (" + new String(orig));
       buffer.append(", ");
-      buffer.append(new ZsciiString(edit) + " )");
+      buffer.append(new String(edit) + " )");
       return buffer.toString();
     }
   }

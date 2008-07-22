@@ -22,11 +22,7 @@ package test.zmpp.encoding;
 
 import static org.junit.Assert.*;
 import org.junit.Test;
-import org.junit.Before;
 
-import org.zmpp.encoding.DefaultAccentTable;
-import org.zmpp.encoding.ZsciiEncoding;
-import org.zmpp.encoding.ZsciiString;
 import org.zmpp.encoding.ZsciiStringTokenizer;
 
 /**
@@ -36,15 +32,10 @@ import org.zmpp.encoding.ZsciiStringTokenizer;
  */
 public class ZsciiStringTokenizerTest {
 
-  @Before
-  public void setUp() {
-    ZsciiString.initialize(new ZsciiEncoding(new DefaultAccentTable()));
-  }
-  
   @Test
   public void testTokenizeWithSpace() {
-    ZsciiString input = new ZsciiString(new char[] { 'H', 'i', ' ', 'y', 'o', 'u' });
-    ZsciiString delim = new ZsciiString(new char[] { ' ' });
+    String input = new String(new char[] { 'H', 'i', ' ', 'y', 'o', 'u' });
+    String delim = new String(new char[] { ' ' });
       
     ZsciiStringTokenizer tok = new ZsciiStringTokenizer(input, delim);
     assertEquals("Hi", tok.nextToken().toString());
@@ -54,8 +45,8 @@ public class ZsciiStringTokenizerTest {
 
   @Test
   public void testTokenizeWithCommaAndSpace() {
-    ZsciiString input = new ZsciiString(new char[] { 'H', 'i', ',', ' ', 'y', 'o', 'u' });
-    ZsciiString delim = new ZsciiString(new char[] { ' ', ','});
+    String input = new String(new char[] { 'H', 'i', ',', ' ', 'y', 'o', 'u' });
+    String delim = new String(new char[] { ' ', ','});
       
     ZsciiStringTokenizer tok = new ZsciiStringTokenizer(input, delim);
     assertEquals("Hi", tok.nextToken().toString());

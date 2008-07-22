@@ -37,39 +37,29 @@ public class ZsciiStringTokenizer {
   /**
    * An iterator to implement the tokenizer.
    */
-  private Iterator<ZsciiString> iterator;
+  private Iterator<String> iterator;
   
   /**
    * Constructor.
-   * 
-   * @param input
-   * @param delim
+   * @param input the input string in ZSCII encoding
+   * @param delim the delimiter in ZSCII encoding
    */
-  public ZsciiStringTokenizer(final ZsciiString input,
-      final ZsciiString delim) {
-  
+  public ZsciiStringTokenizer(final String input, final String delim) {
     tokenize(input, delim);
   }
   
   /**
    * Returns true, if there are more tokens to process.
-   * 
    * @return true, if there are more tokens, false, otherwise
    */
-  public boolean hasMoreTokens() {
-    
-    return iterator.hasNext();
-  }
+  public boolean hasMoreTokens() { return iterator.hasNext(); }
   
   /**
    * Returns the next token.
    * 
    * @return the next token
    */
-  public ZsciiString nextToken() {
-    
-    return iterator.next();
-  }
+  public String nextToken() { return iterator.next(); }
   
   /**
    * This is the main algorithm. It sequentially processes the input and
@@ -79,27 +69,21 @@ public class ZsciiStringTokenizer {
    * @param input the input string
    * @param delim the delimiter string
    */
-  private void tokenize(final ZsciiString input, final ZsciiString delim) {
-   
-    final List<ZsciiString> tokens = new ArrayList<ZsciiString>();
+  private void tokenize(final String input, final String delim) {
+    final List<String> tokens = new ArrayList<String>();
     int currentIndex = 0;
     final int inputlength = input.length();
-    ZsciiStringBuilder currentTokenBuilder = new ZsciiStringBuilder();
+    StringBuilder currentTokenBuilder = new StringBuilder();
     
     while (currentIndex < inputlength) {
-      
       final char currentChar = input.charAt(currentIndex);
       if (isDelimiter(currentChar, delim)) {
-
         if (currentTokenBuilder.length() > 0) {
-                    
-          tokens.add(currentTokenBuilder.toZsciiString());
-          currentTokenBuilder = new ZsciiStringBuilder();
+          tokens.add(currentTokenBuilder.toString());
+          currentTokenBuilder = new StringBuilder();
         }
-        tokens.add(new ZsciiString(new char[] { currentChar }));
-        
+        tokens.add(String.valueOf(currentChar));
       } else {
-        
         currentTokenBuilder.append(currentChar);
       }
       currentIndex++;
@@ -107,10 +91,8 @@ public class ZsciiStringTokenizer {
     
     // If there is still a token in the builder
     if (currentTokenBuilder.length() > 0) {
-      
-      tokens.add(currentTokenBuilder.toZsciiString());
+      tokens.add(currentTokenBuilder.toString());
     }
-    
     iterator = tokens.iterator();
   }
 
@@ -121,11 +103,8 @@ public class ZsciiStringTokenizer {
    * @param delim the delimiter string
    * @return true, delimiter, false, otherwise
    */
-  private static boolean isDelimiter(final char zsciiChar,
-      final ZsciiString delim) {
-    
+  private static boolean isDelimiter(final char zsciiChar, final String delim) {
     for (int i = 0, n = delim.length(); i < n; i++) {
-      
       if (zsciiChar == delim.charAt(i)) {
         return true;
       }

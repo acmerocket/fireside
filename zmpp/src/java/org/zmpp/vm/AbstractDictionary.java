@@ -22,7 +22,6 @@ package org.zmpp.vm;
 
 import org.zmpp.base.Memory;
 import org.zmpp.encoding.ZCharDecoder;
-import org.zmpp.encoding.ZsciiString;
 import static org.zmpp.base.MemoryUtil.unsignedToSigned16;
 
 /**
@@ -115,7 +114,7 @@ public abstract class AbstractDictionary implements Dictionary {
   
   protected DictionarySizes getSizes() { return sizes; }
   
-  protected ZsciiString truncateToken(final ZsciiString token) {
+  protected String truncateToken(final String token) {
     // Unfortunately it seems that the maximum size of an entry is not equal 
     // to the size declared in the dictionary header, therefore we take
     // the maximum length of a token defined in the Z-machine specification.    
@@ -142,7 +141,7 @@ public abstract class AbstractDictionary implements Dictionary {
       
       entryAddress = getEntryAddress(i);
       final String str = getDecoder().decode2Zscii(getMemory(),
-          entryAddress, sizes.getNumEntryBytes()).toString();
+          entryAddress, sizes.getNumEntryBytes());
       buffer.append(String.format("[%4d] '%-9s' ", (i + 1), str));
       i++;
       if ((i % 4) == 0) {

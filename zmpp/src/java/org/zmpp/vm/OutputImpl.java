@@ -22,7 +22,6 @@ package org.zmpp.vm;
 
 import java.io.Closeable;
 import org.zmpp.encoding.ZsciiEncoding;
-import org.zmpp.encoding.ZsciiString;
 import org.zmpp.io.OutputStream;
 import org.zmpp.vm.StoryFileHeader.Attribute;
 
@@ -66,7 +65,7 @@ public class OutputImpl implements Output, Closeable {
   /**
    * {@inheritDoc}
    */
-  public void print(final ZsciiString str) {
+  public void print(final String str) {
     printZsciiChars(str);
   }
   
@@ -77,14 +76,11 @@ public class OutputImpl implements Output, Closeable {
     printZsciiChar(ZsciiEncoding.NEWLINE);
   }
   
-  private char[] zchars = new char[1];
-  
   /**
    * {@inheritDoc}
    */
   public void printZsciiChar(final char zchar) {
-    zchars[0] = zchar;
-    printZsciiChars(new ZsciiString(zchars));
+    printZsciiChars(String.valueOf(zchar));
   }
 
   /**
@@ -93,7 +89,7 @@ public class OutputImpl implements Output, Closeable {
    * 
    * @param zsciiString the array of ZSCII characters.
    */
-  private void printZsciiChars(final ZsciiString zsciiString) {
+  private void printZsciiChars(final String zsciiString) {
     checkTranscriptFlag();
     if (outputStream[OUTPUTSTREAM_MEMORY - 1].isSelected()) {
       for (int i = 0, n = zsciiString.length(); i < n; i++) {        
@@ -114,7 +110,7 @@ public class OutputImpl implements Output, Closeable {
    * {@inheritDoc}
    */
   public void printNumber(final short number) {
-    print(new ZsciiString(String.valueOf(number)));
+    print(String.valueOf(number));
   }
   
   public void flushOutput() {

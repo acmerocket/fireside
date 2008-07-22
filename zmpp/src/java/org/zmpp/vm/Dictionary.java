@@ -20,8 +20,6 @@
  */
 package org.zmpp.vm;
 
-import org.zmpp.encoding.ZsciiString;
-
 /**
  * This is the interface definition for a dictionary.
  *
@@ -70,9 +68,8 @@ public interface Dictionary {
    * Looks up a string in the dictionary. The word will be truncated to
    * the maximum word length and looked up. The result is the address
    * of the entry or 0 if it is not found.
-   * 
-   * @param token a token
+   * @param token a token in ZSCII encoding
    * @return the address of the token or 0
    */
-  int lookup(ZsciiString token);
+  int lookup(String token);
 }

@@ -59,9 +59,9 @@ public final class DefaultZCharDecoder implements ZCharDecoder {
   /**
    * {@inheritDoc}
    */
-  public ZsciiString decode2Zscii(final Memory memory,
+  public String decode2Zscii(final Memory memory,
       final int address, final int length) {
-    final ZsciiStringBuilder builder = new ZsciiStringBuilder();
+    final StringBuilder builder = new StringBuilder();
     translator.reset();    
     final char[] zbytes = extractZbytes(memory, address, length);
     char zchar;
@@ -85,10 +85,10 @@ public final class DefaultZCharDecoder implements ZCharDecoder {
         i++;
       }
     }
-    return builder.toZsciiString();
+    return builder.toString();
   }
   
-  private int handleAbbreviation(final ZsciiStringBuilder builder,
+  private int handleAbbreviation(final StringBuilder builder,
       final Memory memory, final char[] data, final int pos) {
     int position = pos;
     final char zchar = data[position];
@@ -121,7 +121,7 @@ public final class DefaultZCharDecoder implements ZCharDecoder {
               ex.printStackTrace();
             }
           }
-          final ZsciiString abbrev = abbreviationDecoder.decode2Zscii(memory,
+          final String abbrev = abbreviationDecoder.decode2Zscii(memory,
               entryAddress, 0);
           builder.append(abbrev);
         }
@@ -131,7 +131,7 @@ public final class DefaultZCharDecoder implements ZCharDecoder {
     return position;
   }
   
-  private int handleEscapeA2(final ZsciiStringBuilder builder,
+  private int handleEscapeA2(final StringBuilder builder,
       final char[] data, final int pos) {
     int position = pos;
     if (translator.willEscapeA2(data[position])) {
@@ -165,7 +165,7 @@ public final class DefaultZCharDecoder implements ZCharDecoder {
    * @param builder a ZsciiStringBuilder object
    * @param zchar the encoded character to decode and add
    */
-  private void decodeZchar(final ZsciiStringBuilder builder,
+  private void decodeZchar(final StringBuilder builder,
       final char zchar) {
     final char c = decodeZChar(zchar);
     if (c != 0) {
@@ -173,9 +173,7 @@ public final class DefaultZCharDecoder implements ZCharDecoder {
     }  
   }
   
-  /**
-   * {@inheritDoc}
-   */
+  /** {@inheritDoc} */
   public ZCharTranslator getTranslator() { return translator; }
 
   // ***********************************************************************
@@ -237,7 +235,6 @@ public final class DefaultZCharDecoder implements ZCharDecoder {
    * encoded in the word
    */
   private static char[] extractBytes(final char zword) {
-    
     final char[] result = new char[3];
     result[2] = (char) (zword & 0x1f);
     result[1] = (char) ((zword >> 5) & 0x1f);
@@ -251,7 +248,7 @@ public final class DefaultZCharDecoder implements ZCharDecoder {
    * @param top the byte holding the top 5 bit of the zchar
    * @param bottom the byte holding the bottom 5 bit of the zchar
    */  
-  private void joinToZsciiChar(final ZsciiStringBuilder builder,
+  private void joinToZsciiChar(final StringBuilder builder,
                                final char top, final char bottom) {
     builder.append((char) (top << 5 | bottom));
   }  

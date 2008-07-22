@@ -26,8 +26,6 @@ import java.util.List;
 import java.util.Map;
 
 import org.zmpp.encoding.ZsciiEncoding;
-import org.zmpp.encoding.ZsciiString;
-import org.zmpp.encoding.ZsciiStringBuilder;
 import org.zmpp.encoding.ZsciiStringTokenizer;
 import static org.zmpp.base.MemoryUtil.toUnsigned16;
 
@@ -189,12 +187,10 @@ public class InputFunctions {
                       0;
     
     // from version 5, text starts at position 2
-    final ZsciiString input = bufferToZscii(textbuffer + textbufferstart, bufferlen,
-                                            charsTyped);
-    final List<ZsciiString> tokens = tokenize(input);
-    
-    final Map<ZsciiString, Integer> parsedTokens =
-      new HashMap<ZsciiString, Integer>();
+    final String input = bufferToZscii(textbuffer + textbufferstart, bufferlen,
+                                       charsTyped);
+    final List<String> tokens = tokenize(input);    
+    final Map<String, Integer> parsedTokens = new HashMap<String, Integer>();
     
     // Write the number of tokens in byte 1 of the parse buffer
     final int maxwords = machine.readUnsigned8(parsebuffer);
@@ -209,7 +205,7 @@ public class InputFunctions {
     
     for (int i = 0; i < numParsedTokens; i++) {
       
-      final ZsciiString token = tokens.get(i);   
+      final String token = tokens.get(i);   
       final int entryAddress = machine.lookupToken(dictionaryAddress, token);
       int startIndex = 0;
       if (parsedTokens.containsKey(token)) {
@@ -259,22 +255,21 @@ public class InputFunctions {
    * to include in the input
    * @return the string contained in the buffer
    */
-  private ZsciiString bufferToZscii(final int address, final int bufferlen,
+  private String bufferToZscii(final int address, final int bufferlen,
       final int charsTyped) {    
     // If charsTyped is set, use that value as the limit
     final int numChars = (charsTyped > 0) ? charsTyped : bufferlen;
     
     // read input from text buffer
-    final ZsciiStringBuilder buffer = new ZsciiStringBuilder();
-    for (int i = 0; i < numChars; i++) {
-      
+    final StringBuilder buffer = new StringBuilder();
+    for (int i = 0; i < numChars; i++) {      
       final char charByte = (char) machine.readUnsigned8(address + i);
       if (charByte == 0) {
         break;
       }
       buffer.append(charByte);
     }    
-    return buffer.toZsciiString();
+    return buffer.toString();
   }
   
   /**
@@ -285,17 +280,15 @@ public class InputFunctions {
    * @param input the input string
    * @return the tokens
    */
-  private List<ZsciiString> tokenize(final ZsciiString input) {
-    
-    final List<ZsciiString> result = new ArrayList<ZsciiString>();    
+  private List<String> tokenize(final String input) {
+    final List<String> result = new ArrayList<String>();    
     // The tokenizer will also return the delimiters
-    final ZsciiString delim = machine.getDictionaryDelimiters();
+    final String delim = machine.getDictionaryDelimiters();
     final ZsciiStringTokenizer tok = new ZsciiStringTokenizer(input, delim);
     
     while (tok.hasMoreTokens()) {      
-      final ZsciiString token = tok.nextToken();
+      final String token = tok.nextToken();
       if (!Character.isWhitespace(token.charAt(0))) {
-        
         result.add(token);
       }
     }
