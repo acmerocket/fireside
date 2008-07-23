@@ -29,7 +29,7 @@ import org.junit.runner.RunWith;
 import org.zmpp.instructions.Operand;
 import org.zmpp.instructions.VariableInstruction;
 import org.zmpp.instructions.VariableStaticInfo;
-import org.zmpp.instructions.AbstractInstruction.OperandCount;
+import org.zmpp.vm.Instruction.OperandCount;
 
 /**
  * Test class for VAR instruction on V6.

@@ -33,10 +33,10 @@ import org.zmpp.instructions.AbstractInstruction;
 import org.zmpp.instructions.InstructionStaticInfo;
 import org.zmpp.instructions.Operand;
 import org.zmpp.instructions.VariableInstruction;
-import org.zmpp.instructions.AbstractInstruction.InstructionForm;
-import org.zmpp.instructions.AbstractInstruction.OperandCount;
 import org.zmpp.io.OutputStream;
 import org.zmpp.vm.Dictionary;
+import org.zmpp.vm.Instruction.InstructionForm;
+import org.zmpp.vm.Instruction.OperandCount;
 import org.zmpp.vm.Machine;
 import static org.zmpp.base.MemoryUtil.signedToUnsigned16;
 

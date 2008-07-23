@@ -24,8 +24,6 @@ import java.util.HashMap;
 import java.util.Map;
 import org.zmpp.base.Memory;
 import org.zmpp.instructions.AbstractInstruction;
-import org.zmpp.instructions.AbstractInstruction.InstructionForm;
-import org.zmpp.instructions.AbstractInstruction.OperandCount;
 import org.zmpp.instructions.ExtendedInstruction;
 import org.zmpp.instructions.LongInstruction;
 import org.zmpp.instructions.Operand;
@@ -35,6 +33,8 @@ import org.zmpp.instructions.Short0Instruction;
 import org.zmpp.instructions.Short1Instruction;
 import org.zmpp.instructions.VariableInstruction;
 import org.zmpp.instructions.VariableStaticInfo;
+import org.zmpp.vm.Instruction.InstructionForm;
+import org.zmpp.vm.Instruction.OperandCount;
 
 /**
  * The instruction decoder decodes an instruction at a specified address.

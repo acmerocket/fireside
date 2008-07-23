@@ -37,9 +37,9 @@ import org.zmpp.instructions.PrintLiteralStaticInfo;
 import org.zmpp.instructions.Short0StaticInfo;
 import org.zmpp.instructions.Short1StaticInfo;
 import org.zmpp.instructions.VariableStaticInfo;
-import org.zmpp.instructions.AbstractInstruction.InstructionForm;
-import org.zmpp.instructions.AbstractInstruction.OperandCount;
 import org.zmpp.instructions.Operand.OperandType;
+import org.zmpp.vm.Instruction.InstructionForm;
+import org.zmpp.vm.Instruction.OperandCount;
 import org.zmpp.vm.InstructionDecoder;
 import org.zmpp.vm.Machine;
 

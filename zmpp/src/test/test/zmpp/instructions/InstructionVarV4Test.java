@@ -27,7 +27,7 @@ import static org.junit.Assert.*;
 import org.zmpp.instructions.Operand;
 import org.zmpp.instructions.VariableInstruction;
 import org.zmpp.instructions.VariableStaticInfo;
-import org.zmpp.instructions.AbstractInstruction.OperandCount;
+import org.zmpp.vm.Instruction.OperandCount;
 import org.zmpp.vm.ScreenModel;
 import org.zmpp.windowing.TextCursor;
 

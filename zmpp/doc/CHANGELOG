@@ -10,6 +10,7 @@ Version 1.5
 - better NetBeans integration
 - replaced ZsciiString and ZsciiStringBuilder and ZsciiStringTokenizer with
   the J2SE versions
+- changed decoding scheme to resemble the one from the Erlang implementation
 
 Version 1.01
 ------------

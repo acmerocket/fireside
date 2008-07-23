@@ -46,31 +46,6 @@ import org.zmpp.vm.Window6;
 public abstract class AbstractInstruction implements Instruction {
 
   /**
-   * The constant for false.
-   */
-  public static final char FALSE = 0;
-  
-  /**
-   * The constant for true.
-   */
-  public static final char TRUE = 1;
-
-  /**
-   * The constant for true from restore.
-   */
-  public static final char RESTORE_TRUE = 2;
-  
-  /**
-   * The available instruction forms.
-   */
-  public enum InstructionForm { LONG, SHORT, VARIABLE }
-  
-  /**
-   * The available operand count types.
-   */
-  public enum OperandCount { C0OP, C1OP, C2OP, VAR, EXT }
-  
-  /**
    * This is the result of an instruction.
    */
   public static class InstructionResult {

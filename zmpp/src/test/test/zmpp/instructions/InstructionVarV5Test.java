@@ -29,8 +29,8 @@ import org.junit.runner.RunWith;
 import org.zmpp.instructions.Operand;
 import org.zmpp.instructions.VariableInstruction;
 import org.zmpp.instructions.VariableStaticInfo;
-import org.zmpp.instructions.AbstractInstruction.OperandCount;
 
+import org.zmpp.vm.Instruction.OperandCount;
 import test.zmpp.instructions.InstructionVarV3Test.VariableInstructionMock;
 
 /**

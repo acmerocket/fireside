@@ -29,7 +29,7 @@ import static org.junit.Assert.*;
 import org.zmpp.instructions.LongInstruction;
 import org.zmpp.instructions.LongStaticInfo;
 import org.zmpp.instructions.Operand;
-import org.zmpp.instructions.AbstractInstruction.OperandCount;
+import org.zmpp.vm.Instruction.OperandCount;
 import org.zmpp.vm.Machine;
 import static org.zmpp.base.MemoryUtil.signedToUnsigned16;
 
