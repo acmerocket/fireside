@@ -49,13 +49,14 @@ public class InstructionInfoDb {
    */
   public class InstructionInfo {
     private String name;
-    private boolean isStore, isBranch, isPrint;
+    private boolean isStore, isBranch, isPrint, isOutput;
     public InstructionInfo(String name, boolean isBranch, boolean isStore,
-                                 boolean isPrint) {
+                           boolean isPrint, boolean isOutput) {
       this.name = name;
       this.isBranch = isBranch;
       this.isStore = isStore;
       this.isPrint = isPrint;
+      this.isOutput = isOutput;
     }
     public boolean isStore() { return isStore; }
     public boolean isBranch() { return isBranch; }
@@ -66,19 +67,22 @@ public class InstructionInfoDb {
   // Factory methods to create the common InstructionInfo types
   
   private InstructionInfo createInfo(String name) {
-    return new InstructionInfo(name, false, false, false);
+    return new InstructionInfo(name, false, false, false, false);
   }
   private InstructionInfo createBranchAndStore(String name) {
-    return new InstructionInfo(name, true, true, false);
+    return new InstructionInfo(name, true, true, false, false);
   }
   private InstructionInfo createStore(String name) {
-    return new InstructionInfo(name, false, true, false);
+    return new InstructionInfo(name, false, true, false, false);
   }
   private InstructionInfo createBranch(String name) {
-    return new InstructionInfo(name, true, false, false);
+    return new InstructionInfo(name, true, false, false, false);
   }
   private InstructionInfo createPrint(String name) {
-    return new InstructionInfo(name, false, false, true);
+    return new InstructionInfo(name, false, false, true, true);
+  }
+  private InstructionInfo createOutput(String name) {
+    return new InstructionInfo(name, false, false, false, true);
   }
   
   /** The hashmap to represent the database */
@@ -102,7 +106,7 @@ public class InstructionInfoDb {
     addInfoFor(createInfo("POP"), C0OP, C0OP_POP, V1_TO_V4);
     addInfoFor(createStore("CATCH"), C0OP, C0OP_CATCH, V5_TO_V8);
     addInfoForAll(createInfo("QUIT"), C0OP, C0OP_QUIT);
-    addInfoForAll(createInfo("NEW_LINE"), C0OP, C0OP_NEW_LINE);
+    addInfoForAll(createOutput("NEW_LINE"), C0OP, C0OP_NEW_LINE);
     addInfoFor(createInfo("SHOW_STATUS"), C0OP, C0OP_SHOW_STATUS,
                new int[] {3});
     addInfoFor(createInfo("VERIFY"), C0OP, C0OP_VERIFY,
@@ -117,13 +121,13 @@ public class InstructionInfoDb {
     addInfoForAll(createStore("GET_PROP_LEN"), C1OP, C1OP_GET_PROP_LEN);
     addInfoForAll(createInfo("INC"), C1OP, C1OP_INC);
     addInfoForAll(createInfo("DEC"), C1OP, C1OP_DEC);
-    addInfoForAll(createInfo("PRINT_ADDR"), C1OP, C1OP_PRINT_ADDR);
+    addInfoForAll(createOutput("PRINT_ADDR"), C1OP, C1OP_PRINT_ADDR);
     addInfoFor(createStore("CALL_1S"), C1OP, C1OP_CALL_1S, V4_TO_V8);
     addInfoForAll(createInfo("REMOVE_OBJ"), C1OP, C1OP_REMOVE_OBJ);
-    addInfoForAll(createInfo("PRINT_OBJ"), C1OP, C1OP_PRINT_OBJ);
+    addInfoForAll(createOutput("PRINT_OBJ"), C1OP, C1OP_PRINT_OBJ);
     addInfoForAll(createInfo("RET"), C1OP, C1OP_RET);
     addInfoForAll(createInfo("JUMP"), C1OP, C1OP_JUMP);
-    addInfoForAll(createInfo("PRINT_PADDR"), C1OP, C1OP_PRINT_PADDR);
+    addInfoForAll(createOutput("PRINT_PADDR"), C1OP, C1OP_PRINT_PADDR);
     addInfoForAll(createStore("LOAD"), C1OP, C1OP_LOAD);
     addInfoFor(createStore("NOT"), C1OP, C1OP_NOT, V1_TO_V4);
     addInfoFor(createInfo("CALL_1N"), C1OP, C1OP_CALL_1N, V5_TO_V8);
@@ -166,20 +170,20 @@ public class InstructionInfoDb {
     addInfoForAll(createInfo("PUT_PROP"), VAR, VAR_PUT_PROP);
     addInfoFor(createInfo("SREAD"), VAR, VAR_SREAD, V1_TO_V4);
     addInfoFor(createStore("AREAD"), VAR, VAR_AREAD, V5_TO_V8);
-    addInfoForAll(createInfo("PRINT_CHAR"), VAR, VAR_PRINT_CHAR);
-    addInfoForAll(createInfo("PRINT_NUM"), VAR, VAR_PRINT_NUM);
+    addInfoForAll(createOutput("PRINT_CHAR"), VAR, VAR_PRINT_CHAR);
+    addInfoForAll(createOutput("PRINT_NUM"), VAR, VAR_PRINT_NUM);
     addInfoForAll(createStore("RANDOM"), VAR, VAR_RANDOM);
     addInfoForAll(createInfo("PUSH"), VAR, VAR_PUSH);
     addInfoFor(createInfo("PULL"), VAR, VAR_PULL,
                new int[] {1, 2, 3, 4, 5, 7, 8});
     addInfoFor(createInfo("PULL"), VAR, VAR_PULL, new int[] {6});
-    addInfoFor(createInfo("SPLIT_WINDOW"), VAR, VAR_SPLIT_WINDOW,
+    addInfoFor(createOutput("SPLIT_WINDOW"), VAR, VAR_SPLIT_WINDOW,
                V3_TO_V8);
     addInfoFor(createInfo("SET_WINDOW"), VAR, VAR_SET_WINDOW, V3_TO_V8);
     addInfoFor(createStore("CALL_VS2"), VAR, VAR_CALL_VS2, V4_TO_V8);
-    addInfoFor(createInfo("ERASE_WINDOW"), VAR, VAR_ERASE_WINDOW,
+    addInfoFor(createOutput("ERASE_WINDOW"), VAR, VAR_ERASE_WINDOW,
                V4_TO_V8);
-    addInfoFor(createInfo("ERASE_LINE"), VAR, VAR_ERASE_LINE, V4_TO_V8);
+    addInfoFor(createOutput("ERASE_LINE"), VAR, VAR_ERASE_LINE, V4_TO_V8);
     addInfoFor(createInfo("SET_CURSOR"), VAR, VAR_SET_CURSOR, V4_TO_V8);
     addInfoFor(createInfo("GET_CURSOR"), VAR, VAR_GET_CURSOR, V4_TO_V8);
     addInfoFor(createInfo("SET_TEXT_STYLE"), VAR, VAR_SET_TEXT_STYLE,
@@ -201,7 +205,7 @@ public class InstructionInfoDb {
     addInfoFor(createInfo("TOKENISE"), VAR, VAR_TOKENISE, V5_TO_V8);
     addInfoFor(createInfo("ENCODE_TEXT"), VAR, VAR_ENCODE_TEXT, V5_TO_V8);
     addInfoFor(createInfo("COPY_TABLE"), VAR, VAR_COPY_TABLE, V5_TO_V8);
-    addInfoFor(createInfo("PRINT_TABLE"), VAR, VAR_PRINT_TABLE, V5_TO_V8);
+    addInfoFor(createOutput("PRINT_TABLE"), VAR, VAR_PRINT_TABLE, V5_TO_V8);
     addInfoFor(createBranch("CHECK_ARG_COUNT"), VAR, VAR_CHECK_ARG_COUNT,
                V5_TO_V8);
     
@@ -211,28 +215,28 @@ public class InstructionInfoDb {
     addInfoFor(createStore("LOG_SHIFT"), EXT, EXT_LOG_SHIFT, V5_TO_V8);
     addInfoFor(createStore("ART_SHIFT"), EXT, EXT_ART_SHIFT, V5_TO_V8);
     addInfoFor(createStore("SET_FONT"), EXT, EXT_SET_FONT, V5_TO_V8);
-    addInfoFor(createInfo("DRAW_PICTURE"), EXT, EXT_DRAW_PICTURE, V6);
+    addInfoFor(createOutput("DRAW_PICTURE"), EXT, EXT_DRAW_PICTURE, V6);
     addInfoFor(createBranch("PICTURE_DATA"), EXT, EXT_PICTURE_DATA, V6);
-    addInfoFor(createInfo("ERASE_PICTURE"), EXT, EXT_ERASE_PICTURE, V6);
+    addInfoFor(createOutput("ERASE_PICTURE"), EXT, EXT_ERASE_PICTURE, V6);
     addInfoFor(createInfo("SET_MARGINS"), EXT, EXT_SET_MARGINS, V6);
     addInfoFor(createStore("SAVE_UNDO"), EXT, EXT_SAVE_UNDO, V5_TO_V8);
     addInfoFor(createStore("RESTORE_UNDO"), EXT, EXT_RESTORE_UNDO,
                V5_TO_V8);
-    addInfoFor(createInfo("PRINT_UNICODE"), EXT, EXT_PRINT_UNICODE,
+    addInfoFor(createOutput("PRINT_UNICODE"), EXT, EXT_PRINT_UNICODE,
                V5_TO_V8);
     addInfoFor(createInfo("CHECK_UNICODE"), EXT, EXT_CHECK_UNICODE,
                V5_TO_V8);
-    addInfoFor(createInfo("MOVE_WINDOW"), EXT, EXT_MOVE_WINDOW, V6);
+    addInfoFor(createOutput("MOVE_WINDOW"), EXT, EXT_MOVE_WINDOW, V6);
     addInfoFor(createInfo("WINDOW_SIZE"), EXT, EXT_WINDOW_SIZE, V6);
     addInfoFor(createInfo("WINDOW_STYLE"), EXT, EXT_WINDOW_STYLE, V6);
     addInfoFor(createStore("GET_WIND_PROP"), EXT, EXT_GET_WIND_PROP, V6);
-    addInfoFor(createInfo("SCROLL_WINDOW"), EXT, EXT_SCROLL_WINDOW, V6);
+    addInfoFor(createOutput("SCROLL_WINDOW"), EXT, EXT_SCROLL_WINDOW, V6);
     addInfoFor(createInfo("POP_STACK"), EXT, EXT_POP_STACK, V6);
     addInfoFor(createInfo("READ_MOUSE"), EXT, EXT_READ_MOUSE, V6);
     addInfoFor(createInfo("MOUSE_WINDOW"), EXT, EXT_MOUSE_WINDOW, V6);
     addInfoFor(createBranch("PUSH_STACK"), EXT, EXT_PUSH_STACK, V6);
     addInfoFor(createInfo("PUT_WIND_PROP"), EXT, EXT_PUT_WIND_PROP, V6);
-    addInfoFor(createInfo("PRINT_FORM"), EXT, EXT_PRINT_FORM, V6);
+    addInfoFor(createOutput("PRINT_FORM"), EXT, EXT_PRINT_FORM, V6);
     addInfoFor(createBranch("MAKE_MENU"), EXT, EXT_MAKE_MENU, V6);
     addInfoFor(createInfo("PICTURE_TABLE"), EXT, EXT_PICTURE_TABLE, V6);
   }

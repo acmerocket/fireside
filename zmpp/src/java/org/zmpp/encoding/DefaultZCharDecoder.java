@@ -207,7 +207,7 @@ public final class DefaultZCharDecoder implements ZCharDecoder {
     
     do {
       zword = memory.readUnsigned16(currentAddr);
-      byteList.add(extractBytes(zword));
+      byteList.add(extractZEncodedBytes(zword));
       currentAddr += 2; // increment pointer
       
       // if this is a dictionary entry, we need to provide the
@@ -226,6 +226,17 @@ public final class DefaultZCharDecoder implements ZCharDecoder {
     }
     return result;
   }
+
+  /** {@inheritDoc} */
+  public int getNumZEncodedBytes(Memory memory, int address) {
+    char zword = 0;
+    int currentAddress = address;
+    do {
+      zword = memory.readUnsigned16(currentAddress);
+      currentAddress += 2;
+    } while (!isEndWord(zword));
+    return currentAddress - address;
+  }
   
   /**
    * Extracts three 5 bit fields from the given 16 bit word and returns
@@ -234,7 +245,7 @@ public final class DefaultZCharDecoder implements ZCharDecoder {
    * @return an array of three bytes containing the three 5-bit ZSCII characters
    * encoded in the word
    */
-  private static char[] extractBytes(final char zword) {
+  private static char[] extractZEncodedBytes(final char zword) {
     final char[] result = new char[3];
     result[2] = (char) (zword & 0x1f);
     result[1] = (char) ((zword >> 5) & 0x1f);

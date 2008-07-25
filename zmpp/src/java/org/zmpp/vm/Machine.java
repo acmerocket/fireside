@@ -80,6 +80,7 @@ extends ObjectTree, Input, Output, Cpu, Memory, IZsciiEncoding {
   
   void encode(int source, int length, int destination);
   String decode2Zscii(int address, int length);
+  int getNumZEncodedBytes(int address);
   
   // ************************************************************************
   // ****** Control functions

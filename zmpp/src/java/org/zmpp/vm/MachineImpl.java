@@ -365,6 +365,10 @@ public class MachineImpl implements Machine {
     getZCharEncoder().encode(getMemory(), source, length, destination);
   }
   /** {@inheritDoc} */
+  public int getNumZEncodedBytes(int address) {
+    return getZCharDecoder().getNumZEncodedBytes(getMemory(), address);
+  }
+  /** {@inheritDoc} */
   public String decode2Zscii(int address, int length) {
     return getZCharDecoder().decode2Zscii(getMemory(), address, length);
   }

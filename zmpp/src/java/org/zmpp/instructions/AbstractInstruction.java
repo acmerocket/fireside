@@ -477,7 +477,7 @@ public abstract class AbstractInstruction implements Instruction {
                returnVariable);
     }
   }
-  
+
   protected void saveToStorage(final int pc) {
     // This is a little tricky: In version 3, the program counter needs to
     // point to the branch offset, and not to an instruction position

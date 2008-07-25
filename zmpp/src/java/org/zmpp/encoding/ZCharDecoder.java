@@ -61,7 +61,15 @@ public interface ZCharDecoder {
    * @return the decoded string
    */
   String decode2Zscii(Memory memory, int address, int length);
-  
+
+  /**
+   * Returns the number of Z encoded bytes at the specified position.
+   * @param memory the Memory object
+   * @param address the string address
+   * @return the number Z encoded bytes
+   */
+  int getNumZEncodedBytes(Memory memory, int address);
+
   /**
    * Decodes the given byte value to the specified buffer using the working
    * alphabet.
