@@ -80,4 +80,14 @@ public class MemoryUtilTest {
     assertEquals(32767, MemoryUtil.unsignedToSigned16((char) 32767));
     assertEquals(-1, MemoryUtil.unsignedToSigned16((char) 65535));
   }
+
+  @Test
+  public void testUnsignedToSigned8() {
+    assertEquals(0, MemoryUtil.unsignedToSigned8((char) 0));
+    assertEquals(1, MemoryUtil.unsignedToSigned8((char) 1));
+    assertEquals(-128, MemoryUtil.unsignedToSigned8((char) 128));
+    assertEquals(127, MemoryUtil.unsignedToSigned8((char) 127));
+    assertEquals(-1, MemoryUtil.unsignedToSigned8((char) 0xff));
+    assertEquals(-1, MemoryUtil.unsignedToSigned8((char) 0x10ff));
+  }
 }

@@ -31,18 +31,12 @@ import static org.junit.Assert.*;
 import org.zmpp.base.DefaultMemory;
 import org.zmpp.base.Memory;
 import org.zmpp.instructions.AbstractInstruction;
-import org.zmpp.instructions.LongStaticInfo;
-import org.zmpp.instructions.PrintLiteralInstruction;
-import org.zmpp.instructions.PrintLiteralStaticInfo;
-import org.zmpp.instructions.Short0StaticInfo;
-import org.zmpp.instructions.Short1StaticInfo;
-import org.zmpp.instructions.VariableStaticInfo;
 import org.zmpp.instructions.Operand.OperandType;
 import org.zmpp.vm.Instruction.InstructionForm;
 import org.zmpp.vm.Instruction.OperandCount;
-import org.zmpp.vm.InstructionDecoder;
 import org.zmpp.vm.Machine;
 
+import org.zmpp.vm.NewInstructionDecoder;
 import test.zmpp.vm.MiniZorkSetup;
 
 /**
@@ -54,7 +48,7 @@ import test.zmpp.vm.MiniZorkSetup;
 @RunWith(JMock.class)
 public class InstructionDecoderTest extends MiniZorkSetup {
   private Mockery context = new JUnit4Mockery();
-  private InstructionDecoder decoder;
+  private NewInstructionDecoder decoder;
   private Memory amfvmem;
   private byte[] call_vs2 = {
       (byte) 0xec, 0x25, (byte) 0xbf, 0x3b, (byte) 0xf7, (byte) 0xa0,
@@ -65,7 +59,7 @@ public class InstructionDecoderTest extends MiniZorkSetup {
   @Before
   public void setUp() throws Exception {
     super.setUp();
-    decoder = new InstructionDecoder();
+    decoder = new NewInstructionDecoder();
     decoder.initialize(machine);
   }
 

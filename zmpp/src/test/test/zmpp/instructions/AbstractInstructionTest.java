@@ -29,16 +29,14 @@ import org.junit.Test;
 import static org.junit.Assert.*;
 import org.junit.runner.RunWith;
 import org.zmpp.base.Memory;
+import static org.zmpp.base.MemoryUtil.*;
 import org.zmpp.instructions.AbstractInstruction;
-import org.zmpp.instructions.InstructionStaticInfo;
+import org.zmpp.instructions.AbstractInstruction.BranchInfo;
 import org.zmpp.instructions.Operand;
-import org.zmpp.instructions.VariableInstruction;
 import org.zmpp.io.OutputStream;
 import org.zmpp.vm.Dictionary;
-import org.zmpp.vm.Instruction.InstructionForm;
 import org.zmpp.vm.Instruction.OperandCount;
 import org.zmpp.vm.Machine;
-import static org.zmpp.base.MemoryUtil.signedToUnsigned16;
 
 /**
  * This class tests the AbstractInstruction class.
@@ -53,131 +51,161 @@ public class AbstractInstructionTest {
   protected OutputStream outputStream;
   protected Memory memory;
   protected Dictionary dictionary;
-  private AbstractInstruction info;
+
+  /**
+   * A Stub instruction class that exposes the protected methods to test
+   * their behaviour.
+   */
+  static class StubInstruction extends AbstractInstruction {
+    public StubInstruction(Machine machine, char opcodeNum, Operand[] operands,
+                           char storeVar, BranchInfo branchInfo,
+                           int instrAddress, int opcodeLength) {
+      super(machine, opcodeNum, operands, storeVar, branchInfo,
+            instrAddress, opcodeLength);
+    }
+    @Override
+    public int getNumOperands() { return super.getNumOperands(); }
+    @Override
+    public char getUnsignedValue(int operandNum) {
+      return super.getUnsignedValue(operandNum);
+    }
+    @Override
+    public short getSignedValue(int operandNum) {
+      return super.getSignedValue(operandNum);
+    }
+    @Override
+    public short getSignedVarValue(char varnum) {
+      return super.getSignedVarValue(varnum);
+    }
+    @Override
+    public void setSignedVarValue(char varnum, short value) {
+      super.setSignedVarValue(varnum, value);
+    }
+    @Override
+    public void storeUnsignedResult(char value) {
+      super.storeUnsignedResult(value);
+    }
+    @Override
+    public void storeSignedResult(short value) {
+      super.storeSignedResult(value);
+    }
+    @Override
+    public void nextInstruction() { super.nextInstruction(); }
+    @Override
+    public void branchOnTest(boolean cond) { super.branchOnTest(cond); }
+    @Override
+    public void returnFromRoutine(char retval) {
+      super.returnFromRoutine(retval);
+    }
+    @Override
+    public void call(int numArgs) { super.call(numArgs);}
+    @Override
+    public void call(char packedRoutineAddress, char[] args) {
+      super.call(packedRoutineAddress, args);
+    }
+    
+    @Override
+    protected OperandCount getOperandCount() { return null; }
+    public void execute() { }
+  }
   
+  private static final char STD_STOREVAR = 6;
+
   @Before
   public void setUp() throws Exception {
     machine = context.mock(Machine.class);
     outputStream = context.mock(OutputStream.class);
     memory = context.mock(Memory.class);
     dictionary = context.mock(Dictionary.class);
-    info = new VariableInstruction(machine, OperandCount.VAR, 0xe0);
+  }
+  
+  private StubInstruction createStubInstruction(Operand[] operands) {
+    char opcodeNum = 12;
+    char storeVar = STD_STOREVAR;
+    BranchInfo branchInfo = new BranchInfo(true, 0, 0, (short) 0);
+    int instrAddress = 4711;
+    int opcodeLength = 5;
+
+    return new StubInstruction(machine, opcodeNum,
+            operands, storeVar, branchInfo, instrAddress, opcodeLength);
+  }
+  private StubInstruction createStdInstruction() {
+    Operand stackOperand = new Operand(Operand.TYPENUM_VARIABLE, (char) 0x00);
+    Operand varOperand = new Operand(Operand.TYPENUM_VARIABLE, (char) 0x11);
+    Operand smallConstOperand = new Operand(Operand.TYPENUM_SMALL_CONSTANT, (char) 0xbe);
+    Operand largeConstOperand = new Operand(Operand.TYPENUM_LARGE_CONSTANT, (char) 0xface);
+    return createStubInstruction(new Operand[] {
+      stackOperand, varOperand, smallConstOperand, largeConstOperand});
   }
   
   @Test
   public void testCreateInstructionInfo() {
-    assertEquals(InstructionForm.VARIABLE, info.getInstructionForm());
-    assertEquals(OperandCount.VAR, info.getOperandCount());
-    assertEquals(0xe0, info.getOpcode());
-  }
-  
-  @Test
-  public void testSetters() {
-    info.setOpcode(0xe1);
-    assertEquals(0xe1, info.getOpcode());
-    info.setLength(9);
-    assertEquals(9, info.getLength());
-    info.setStoreVariable((char) 0x10);
-    assertEquals(0x10, info.getStoreVariable());
-    info.setBranchOffset((short) 4711);
-    assertEquals(4711, info.getBranchOffset());
-    info.setBranchIfTrue(false);
-    assertFalse(info.branchIfTrue());
-    info.setBranchIfTrue(true);
-    assertTrue(info.branchIfTrue());
+    assertEquals(4, createStdInstruction().getNumOperands());
   }
 
   @Test
-  public void testAddOperand() {
-    assertEquals(0, info.getNumOperands());
-    Operand operand = new Operand(Operand.TYPENUM_SMALL_CONSTANT, (char) 2);
-    info.addOperand(operand);
-    assertEquals(1, info.getNumOperands());
-    assertEquals(operand, info.getOperand(0));
+  public void testGetUnsignedValue() {
+    context.checking(new Expectations() {{
+      one (machine).getVariable((char) 0x00); will(returnValue((char) 0xcafe));
+      one (machine).getVariable((char) 0x11); will(returnValue((char) 0xdeca));
+    }});
+    StubInstruction instr = createStdInstruction();
+    assertEquals(0xcafe, instr.getUnsignedValue(0));
+    assertEquals(0xdeca, instr.getUnsignedValue(1));
+    assertEquals(0x00be, instr.getUnsignedValue(2));
+    assertEquals(0xface, instr.getUnsignedValue(3));
   }
 
   @Test
-  public void testGetValue() {
+  public void testGetSignedValue() {
     context.checking(new Expectations() {{
-      one (machine).getVariable((char) 17); will(returnValue((char) 1234));
+      one (machine).getVariable((char) 0x00); will(returnValue((char) 0xcafe));
+      one (machine).getVariable((char) 0x11); will(returnValue((char) 0xdeca));
     }});
-    Operand varOperand = new Operand(Operand.TYPENUM_VARIABLE, (char) 0x11);
-    Operand constOperand = new Operand(Operand.TYPENUM_SMALL_CONSTANT, (char) 0x11);
-    info.addOperand(varOperand);
-    info.addOperand(constOperand);
-    assertEquals(1234, info.getUnsignedValue(0));
-    assertEquals(0x11, info.getUnsignedValue(1));
-  }
-  
-  @Test
-  public void testGetUnsignedValueNegative() {
-    context.checking(new Expectations() {{
-      one (machine).getVariable((char) 17); will(returnValue((char) -2));
-    }});
-    Operand varOperand = new Operand(Operand.TYPENUM_VARIABLE, (char) 0x11);
-    Operand largeOperand = new Operand(Operand.TYPENUM_SMALL_CONSTANT, signedToUnsigned16((short) -4));
-    Operand smallOperand = new Operand(Operand.TYPENUM_SMALL_CONSTANT, signedToUnsigned16((short) -3));
-    
-    info.addOperand(varOperand);
-    info.addOperand(largeOperand);
-    info.addOperand(smallOperand);
-    assertEquals(0xfffe, info.getUnsignedValue(0));
-    assertEquals(0xfffc, info.getUnsignedValue(1));
-    assertEquals(0xfffd, info.getUnsignedValue(2));
-  }
-  
-  @Test
-  public void testGetUnsignedValueMaxPositive() {    
-    context.checking(new Expectations() {{
-      one (machine).getVariable((char) 17); will(returnValue((char) 32767));
-    }});
-    Operand varOperand = new Operand(Operand.TYPENUM_VARIABLE, (char) 0x11);
-    Operand largeOperand = new Operand(Operand.TYPENUM_SMALL_CONSTANT, (char) 32767);
-    Operand smallOperand = new Operand(Operand.TYPENUM_SMALL_CONSTANT, (char) 127);
-    
-    info.addOperand(varOperand);
-    info.addOperand(largeOperand);
-    info.addOperand(smallOperand);
-    assertEquals(0x7fff, info.getUnsignedValue(0));
-    assertEquals(0x7fff, info.getUnsignedValue(1));
-    assertEquals(0x7f, info.getUnsignedValue(2));
-  }
-  
-  @Test
-  public void testGetUnsignedValueMinNegative() {    
-    context.checking(new Expectations() {{
-      one (machine).getVariable((char) 17); will(returnValue(signedToUnsigned16((short) -32768)));
-    }});
-    Operand varOperand = new Operand(Operand.TYPENUM_VARIABLE, (char) 0x11);
-    Operand largeOperand = new Operand(Operand.TYPENUM_SMALL_CONSTANT, signedToUnsigned16((short) -32768));
-    Operand smallOperand = new Operand(Operand.TYPENUM_SMALL_CONSTANT, signedToUnsigned16((short) -128));
-    
-    info.addOperand(varOperand);
-    info.addOperand(largeOperand);
-    info.addOperand(smallOperand);
-    assertEquals(0x8000, info.getUnsignedValue(0));
-    assertEquals(0x8000, info.getUnsignedValue(1));
-    assertEquals(0xff80, info.getUnsignedValue(2));
-  }
-  
-  @Test
-  public void testConvertToSigned16() {   
-    context.checking(new Expectations() {{
-      one (machine).getVariable((char) 17); will(returnValue(signedToUnsigned16((short) -7)));
-    }});
-    Operand operandLargeConstant = new Operand(Operand.TYPENUM_LARGE_CONSTANT, (char) 0xfffd);
-    Operand operandVariable = new Operand(Operand.TYPENUM_VARIABLE, (char) 0x11);
-    Operand operandByte = new Operand(Operand.TYPENUM_SMALL_CONSTANT, (char) 0xfffb);
-    
-    info.addOperand(operandLargeConstant);
-    info.addOperand(operandVariable);
-    info.addOperand(operandByte);
-    
-    assertEquals(-3, info.getSignedValue(0));
-    assertEquals(-7, info.getSignedValue(1));
-    assertEquals(-5, info.getSignedValue(2)); // bytes values must be unsigned !!!
+    StubInstruction instr = createStdInstruction();
+    assertEquals(unsignedToSigned16((char) 0xcafe), instr.getSignedValue(0));
+    assertEquals(unsignedToSigned16((char) 0xdeca), instr.getSignedValue(1));
+    assertEquals(unsignedToSigned8((char) 0xbe), instr.getSignedValue(2));
+    assertEquals(unsignedToSigned16((char) 0xface), instr.getSignedValue(3));
   }
 
+  @Test
+  public void testGetSignedVarValue() {
+    context.checking(new Expectations() {{
+      one (machine).getVariable((char) 0x03); will(returnValue((char) 0xfffe));
+    }});
+    StubInstruction instr = createStdInstruction();
+    assertEquals(-2, instr.getSignedVarValue((char) 3));
+  }
+
+  @Test
+  public void testSetSignedVarValue() {
+    context.checking(new Expectations() {{
+      one (machine).setVariable((char) 3, (char) 0xfffe);
+    }});
+    StubInstruction instr = createStdInstruction();
+    instr.setSignedVarValue((char) 3, (short) -2);
+  }
+  
+  @Test
+  public void testStoreUnsignedResult() {
+    context.checking(new Expectations() {{
+      one (machine).setVariable((char) STD_STOREVAR, (char) 0xfeee);
+    }});
+    StubInstruction instr = createStdInstruction();
+    instr.storeUnsignedResult((char) 0xfeee);
+  }
+
+  @Test
+  public void testStoreSignedResult() {
+    context.checking(new Expectations() {{
+      one (machine).setVariable((char) STD_STOREVAR, (char) 0xfffd);
+    }});
+    StubInstruction instr = createStdInstruction();
+    instr.storeSignedResult((short) -3);
+  }
+
+  /*
   // *********************************************************************
   // ***** Branches
   // **********************************
@@ -206,10 +234,7 @@ public class AbstractInstructionTest {
       return new BranchInstructionInfo();
     }
   }
-  
-  /**
-   * Test positive offset branch.
-   */
+
   @Test
   public void testBranchConditionTrue() {
     context.checking(new Expectations() {{
@@ -221,10 +246,7 @@ public class AbstractInstructionTest {
     branchInstr.setBranchIfTrue(true);
     branchInstr.execute();
   }
-  
-  /**
-   * Branch on true, but branch condition is false.
-   */
+
   @Test
   public void testBranchIfTrueBranchConditionIsFalse() {    
     context.checking(new Expectations() {{
@@ -237,9 +259,6 @@ public class AbstractInstructionTest {
     branchInstr.execute();
   }
 
-  /**
-   * Branch on false, branch condition is true.
-   */
   @Test
   public void testBranchIfFalseBranchConditionIsTrue() {
     context.checking(new Expectations() {{
@@ -252,9 +271,6 @@ public class AbstractInstructionTest {
     branchInstr.execute();
   }
   
-  /**
-   * Branch on false, branch condition is false.
-   */
   @Test
   public void testBranchIfFalseBranchConditionIsFalse() {    
     context.checking(new Expectations() {{
@@ -274,5 +290,5 @@ public class AbstractInstructionTest {
     }});
     AbstractInstruction branchInstr = new BranchInstruction(machine, false);
     assertNotNull(branchInstr.toString());
-  }
+  } */
 }
