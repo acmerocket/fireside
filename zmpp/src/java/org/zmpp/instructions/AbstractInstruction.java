@@ -1,7 +1,6 @@
 /*
  * $Id$
- * 
- * Created on 10/03/2005
+ * Created on 2008/07/23
  * Copyright 2005-2008 by Wei-ju Wu
  * This file is part of The Z-machine Preservation Project (ZMPP).
  *
@@ -20,11 +19,8 @@
  */
 package org.zmpp.instructions;
 
-import java.util.ArrayList;
-import java.util.List;
-
-import org.zmpp.base.Memory;
 import org.zmpp.base.MemoryUtil;
+import org.zmpp.instructions.Operand.OperandType;
 import org.zmpp.vm.Instruction;
 import org.zmpp.vm.Machine;
 import org.zmpp.vm.PortableGameState;
@@ -33,213 +29,77 @@ import org.zmpp.vm.ScreenModel6;
 import org.zmpp.vm.Window6;
 
 /**
- * This class represents can be considered as a mutable value object, which
- * basically stores an instruction's information in order to restrict the
- * Instruction class's responsibility to executing logic.
- * 
- * This information will be incrementally added by the decoder, therefore
- * there are setter methods to add information.
- * 
+ * An abstract instruction to replace the old instruction scheme.
+ * Goes with the NewInstructionDecoder.
  * @author Wei-ju Wu
  * @version 1.5
  */
 public abstract class AbstractInstruction implements Instruction {
+  public static class BranchInfo {
+    public boolean branchOnTrue;
+    public int numOffsetBytes;
+    public int addressAfterBranchData;
+    public short branchOffset;
+    public BranchInfo(boolean branchOnTrue, int numOffsetBytes,
+                      int addressAfterBranchData, short branchOffset) {
+      this.branchOnTrue = branchOnTrue;
+      this.numOffsetBytes = numOffsetBytes;
+      this.addressAfterBranchData = addressAfterBranchData;
+      this.branchOffset = branchOffset;
+    }
+  }
+
+  private Machine machine;
+  private int opcodeNum;
+  private Operand[] operands;
+  private char storeVariable;
+  private BranchInfo branchInfo;
+  private int address;
+  private int opcodeLength;
+  
+  public AbstractInstruction(Machine machine, int opcodeNum,
+                                Operand[] operands,
+                                char storeVar,
+                                BranchInfo branchInfo,
+                                int instrAddress, int opcodeLength) {
+    this.machine = machine;
+    this.opcodeNum = opcodeNum;
+    this.operands = operands;
+    this.storeVariable = storeVar;
+    this.branchInfo = branchInfo;
+    this.address = instrAddress;
+    this.opcodeLength = opcodeLength;
+  }
 
   /**
-   * This is the result of an instruction.
+   * Returns the machine object.
+   * @return the Machine object
    */
-  public static class InstructionResult {
+  protected Machine getMachine() { return machine; }
   
-    private char value;
-    private boolean branchCondition;
-    
-    public InstructionResult(char value, boolean branchCondition) {
-      this.value = value;
-      this.branchCondition = branchCondition;
-    }
-    
-    public char getValue() {
-      return value;
-    }
-    
-    public boolean getBranchCondition() {
-      return branchCondition;
-    }
-  }
-  
-  private int opcode;
-  private List<Operand> operands;
-  private char storeVariable;
-  private boolean branchIfConditionTrue; 
-  private short branchOffset;  
-  private int length;  
-  private Machine machine;
-    
-  /**
-   * Constructor.
-   * @param machine a reference to the machine state
-   * @param opcode the opcode
-   */
-  public AbstractInstruction(final Machine machine, final int opcode) {
-    this.opcode = opcode;
-    this.machine = machine;
-    this.operands = new ArrayList<Operand>();
-    this.branchIfConditionTrue = true;
-  }
-  
-  /**
-   * Returns the reference to the machine state.
-   * @return the machine state
-   */
-  protected Machine getMachine() {
-    return machine;
-  }
-  
-  /**
-   * Returns the memory object.
-   * @return the memory object
-   */
-  protected Memory getMemory() { return machine; }
-  
+  protected int getStoryVersion() { return machine.getVersion(); }
+  protected abstract OperandCount getOperandCount();
+
   /**
    * Returns the instruction's opcode.
    * @return the opcode
    */
-  public int getOpcode() { return opcode; }
+  protected int getOpcodeNum() { return opcodeNum; }
   
-  /**
-   * Returns the instruction's form.
-   * @return the instruction form
-   */
-  public abstract InstructionForm getInstructionForm();
-  
-  /**
-   * Returns the instruction's operand count type.
-   * @return the operand count type
-   */
-  public abstract OperandCount getOperandCount();
-  
-  /**
-   * Returns the instruction's static info object.
-   * @return the static info object
-   */
-  protected abstract InstructionStaticInfo getStaticInfo();
-  
-  /**
-   * Returns the operand at the specified position.
-   * @param operandNum the operand number, starting with 0 as the first operand.
-   * @return the specified operand
-   */
-  public Operand getOperand(final int operandNum) {
-    return operands.get(operandNum);
+  protected boolean storesResult() {
+    return InstructionInfoDb.getInstance().getInfo(getOperandCount(),
+            opcodeNum, machine.getVersion()).isStore();
   }
-  
-  /**
-   * Returns the story file version.
-   * @return the story file version
-   */
-  protected int getStoryFileVersion() {
-    return machine.getVersion();
-  }
-  
+
+  // *********************************************************************
+  // ******** Variable access
+  // ***********************************
+
   /**
    * Returns the number of operands.
    * @return the number of operands
    */
-  public int getNumOperands() {
-    return operands.size();
-  }
-  
-  /**
-   * Returns the instruction's store variable.
-   * @return the store variable
-   */
-  public char getStoreVariable() { return storeVariable; }
-  
-  /**
-   * Returns the branch offset.
-   * @return the branch offset
-   */
-  public short getBranchOffset() { return branchOffset; }
-  
-  /**
-   * Returns the instruction's length in bytes.
-   * @return the instruction length
-   */
-  public int getLength() { return length; }
-  
-  /**
-   * Sets the instruction's opcode.
-   * @param opcode the opcode
-   */
-  public void setOpcode(final int opcode) { this.opcode = opcode; }
-  
-  /**
-   * Adds an operand to this object.
-   * @param operand the operand to add
-   */
-  public void addOperand(final Operand operand) { this.operands.add(operand); }
-  
-  /**
-   * Sets the store variable.
-   * @param var the store variable
-   */
-  public void setStoreVariable(final char var) { this.storeVariable = var; }
-  
-  /**
-   * Sets the branch offset.
-   * @param offset the branch offset
-   */
-  public void setBranchOffset(final short offset) {
-    this.branchOffset = offset;
-  }
-  
-  /**
-   * Sets the branch if condition true flag.
-   * @param flag the branch if condition true flag
-   */
-  public void setBranchIfTrue(final boolean flag) {
-    branchIfConditionTrue = flag;
-  }
-  
-  /**
-   * Sets the instruction's length in bytes.
-   * @param length the length in bytes
-   */
-  public void setLength(final int length) { this.length = length; }
-  
-  /**
-   * Returns true, if this instruction stores a result, false, otherwise.
-   * @return true if a result is stored, false otherwise
-   */
-  public boolean storesResult() {
-    return getStaticInfo().storesResult(getOpcode(), getStoryFileVersion());
-  }
-  
-  /**
-   * {@inheritDoc}
-   */
-  public boolean isOutput() {
-    return getStaticInfo().isOutput(getOpcode(), getStoryFileVersion());
-  }
-  
-  /**
-   * Returns true, if this instruction is a branch, false, otherwise.
-   * @return true if branch, false otherwise
-   */
-  public boolean isBranch() {
-    return getStaticInfo().isBranch(getOpcode(), getStoryFileVersion());
-  }
-  
-  /**
-   * Returns true if this is a branch condition and the branch is executed
-   * if the test condition is true, false otherwise.
-   * @return true if the branch is executed on a true test condition
-   */
-  public boolean branchIfTrue() {
-    return branchIfConditionTrue;
-  }
-
+  protected int getNumOperands() { return operands.length; }
   /**
    * Converts the specified value into a signed value, depending on the
    * type of the operand. If the operand is LARGE_CONSTANT or VARIABLE,
@@ -248,7 +108,10 @@ public abstract class AbstractInstruction implements Instruction {
    * @param operandNum the operand number
    * @return a signed value
    */
-  public short getSignedValue(final int operandNum) {
+  protected short getSignedValue(final int operandNum) {
+    if (operands[operandNum].getType() == OperandType.SMALL_CONSTANT) {
+      return MemoryUtil.unsignedToSigned8(getUnsignedValue(operandNum));
+    }
     return MemoryUtil.unsignedToSigned16(getUnsignedValue(operandNum));
   }
   
@@ -276,8 +139,8 @@ public abstract class AbstractInstruction implements Instruction {
    * @param operandNum the operand number
    * @return the value
    */
-  public char getUnsignedValue(final int operandNum) {
-    final Operand operand = getOperand(operandNum);
+  protected char getUnsignedValue(final int operandNum) {
+    final Operand operand = operands[operandNum];
     switch (operand.getType()) {
       case VARIABLE:
         return getMachine().getVariable(operand.getValue());
@@ -287,13 +150,13 @@ public abstract class AbstractInstruction implements Instruction {
         return operand.getValue();
     }
   }
-  
+
   /**
    * Stores the specified value in the result variable.
    * @param value the value to store
    */
-  protected void storeResult(final char value) {
-    getMachine().setVariable(getStoreVariable(), value);
+  protected void storeUnsignedResult(final char value) {
+    getMachine().setVariable(storeVariable, value);
   }
   
   /**
@@ -301,117 +164,17 @@ public abstract class AbstractInstruction implements Instruction {
    * @param value the value to store
    */
   protected void storeSignedResult(final short value) {
-    storeResult(MemoryUtil.signedToUnsigned16(value));
-  }
-  
-  /**
-   * Halt the virtual machine with an error message about this instruction.
-   */
-  protected void throwInvalidOpcode() {
-    getMachine().halt("illegal instruction, type: " + getInstructionForm() +
-        " operand count: " + getOperandCount() + " opcode: " + getOpcode());
-  }
-  
-  public void execute() {
-    if (isOpcodeAvailable()) {
-      doInstruction();
-    } else {
-      throwInvalidOpcode();
-    }
-  }
-  
-  /**
-   * Executes the instruction and returns a result.
-   */
-  protected abstract void doInstruction();
-  
-  /**
-   * Checks the availability of the instruction for the current version.
-   * 
-   * @return true if available, false otherwise
-   */
-  private boolean isOpcodeAvailable() {
-    final int version = getStoryFileVersion();
-    final int[] validVersions = getStaticInfo().getValidVersions(getOpcode());
-    for (int validVersion : validVersions) {
-      if (validVersion == version) {
-        return true;
-      }
-    }
-    return false;
-  }
-  
-  @Override
-  public String toString() {
-    final StringBuilder buffer = new StringBuilder();
-    buffer.append(getStaticInfo().getOpName(getOpcode(),
-                  getStoryFileVersion()));
-    buffer.append(" ");
-    buffer.append(getOperandString());
-    if (storesResult()) {
-      buffer.append(" -> ");
-      buffer.append(getVarName(getStoreVariable()));
-    }
-    return buffer.toString();
-  }
-  
-  private String getVarName(final int varnum) {
-    if (varnum == 0) {
-      return "(SP)";
-    } else if (varnum <= 15) {
-      return String.format("L%02x", (varnum - 1));
-    } else {
-      return String.format("G%02x", (varnum - 16));
-    }
-  }
-  
-  private String getVarValue(final char varnum) {
-    char value = 0;
-    if (varnum == 0) {
-      value = getMachine().getStackTop();
-    } else {
-      value = getMachine().getVariable(varnum);
-    }
-    return String.format("$%02x", (int) value);
-  }
-  
-  protected String getOperandString() {
-    final StringBuilder buffer = new StringBuilder();
-    for (int i = 0; i < getNumOperands(); i++) {
-      if (i > 0) {
-        buffer.append(", ");
-      }
-      final Operand operand = getOperand(i);
-      switch (operand.getType()) {
-        case SMALL_CONSTANT:
-          buffer.append(String.format("$%02x", (int) operand.getValue()));
-          break;
-        case LARGE_CONSTANT:
-          buffer.append(String.format("$%04x", (int) operand.getValue()));
-          break;
-        case VARIABLE:
-          buffer.append(getVarName(operand.getValue()));
-          buffer.append("[");
-          buffer.append(getVarValue(operand.getValue()));
-          buffer.append("]");
-        default:
-          break;
-      }
-    }
-    return buffer.toString();
+    storeUnsignedResult(MemoryUtil.signedToUnsigned16(value));
   }
 
   // *********************************************************************
   // ******** Program flow control
   // ***********************************
-
   /**
    * Advances the program counter to the next instruction.
    */
-  protected void nextInstruction() {
-    getMachine().incrementPC(getLength());
-  }  
-  
+  protected void nextInstruction() { machine.incrementPC(opcodeLength); }
+
   /**
    * Performs a branch, depending on the state of the condition flag.
    * If branchIfConditionTrue is true, the branch will be performed if
@@ -420,7 +183,7 @@ public abstract class AbstractInstruction implements Instruction {
    * @param condition the test condition
    */
   protected void branchOnTest(final boolean condition) {
-    final boolean test = branchIfConditionTrue ? condition : !condition; 
+    final boolean test = branchInfo.branchOnTrue ? condition : !condition; 
     if (test) {
       applyBranch();
     } else {
@@ -434,19 +197,19 @@ public abstract class AbstractInstruction implements Instruction {
    * @param offset the offset
    */
   private void applyBranch() {
-    getMachine().doBranch(getBranchOffset(), getLength());
+    //System.out.printf("ApplyBranch, offset: %d, opcodeLength: %d\n", branchInfo.branchOffset, opcodeLength);
+    machine.doBranch(branchInfo.branchOffset, opcodeLength);
   }
-  
+
   /**
    * This function returns from the current routine, setting the return value
    * into the specified return variable.
-   * 
    * @param returnValue the return value
    */
   protected void returnFromRoutine(final char returnValue) {
-    getMachine().returnWith(returnValue);
+    machine.returnWith(returnValue);
   }
-  
+
   /**
    * Calls in the Z-machine are all very similar and only differ in the
    * number of arguments.
@@ -466,16 +229,24 @@ public abstract class AbstractInstruction implements Instruction {
     if (packedRoutineAddress == 0) {
       if (storesResult()) {
         // only if this instruction stores a result
-        storeResult(FALSE);
+        storeUnsignedResult(FALSE);
       }
       nextInstruction();
     } else {
-      final char returnAddress = (char) (getMachine().getPC() + getLength());
-      final char returnVariable = storesResult() ? getStoreVariable() :
+      final char returnAddress = (char) (getMachine().getPC() + opcodeLength);
+      final char returnVariable = storesResult() ? storeVariable :
         RoutineContext.DISCARD_RESULT;      
       machine.call(packedRoutineAddress, returnAddress, args,
                returnVariable);
     }
+  }
+
+  /**
+   * Halt the virtual machine with an error message about this instruction.
+   */
+  protected void throwInvalidOpcode() {
+    machine.halt("illegal instruction, operand count: " + getOperandCount() +
+        " opcode: " + opcodeNum);
   }
 
   protected void saveToStorage(final int pc) {
@@ -485,21 +256,21 @@ public abstract class AbstractInstruction implements Instruction {
     // address is the instruction address + 1
     final boolean success = getMachine().save(pc);
     
-    if (getStoryFileVersion() <= 3) {
+    if (machine.getVersion() <= 3) {
       //int target = getMachine().getProgramCounter() + getLength();
       //target--; // point to the previous branch offset
       //boolean success = getMachine().save(target);
       branchOnTest(success);
     } else {
       // changed behaviour in version >= 4
-      storeResult(success ? TRUE : FALSE);
+      storeUnsignedResult(success ? TRUE : FALSE);
       nextInstruction();
     }
   }
   
   protected void restoreFromStorage() {
     final PortableGameState gamestate = getMachine().restore();
-    if (getStoryFileVersion() <= 3) {
+    if (machine.getVersion() <= 3) {
       if (gamestate == null) {
         // If failure on restore, just continue
         nextInstruction();
@@ -507,7 +278,7 @@ public abstract class AbstractInstruction implements Instruction {
     } else {
       // changed behaviour in version >= 4
       if (gamestate == null) {
-        storeResult(FALSE);        
+        storeUnsignedResult(FALSE);        
         // If failure on restore, just continue
         nextInstruction();
       } else {
@@ -515,8 +286,8 @@ public abstract class AbstractInstruction implements Instruction {
         getMachine().setVariable(storevar, RESTORE_TRUE);        
       }
     }
-  }
-  
+  }  
+
   /**
    * Returns the window for a given window number.
    * @param windownum the window number
@@ -526,5 +297,75 @@ public abstract class AbstractInstruction implements Instruction {
     return (windownum == ScreenModel6.CURRENT_WINDOW) ?
             getMachine().getScreen6().getSelectedWindow() :
             getMachine().getScreen6().getWindow(windownum);
-  }  
+  }
+  
+  /**
+   * Helper function
+   * @return
+   */
+  public boolean isOutput() {
+    return InstructionInfoDb.getInstance().getInfo(getOperandCount(), opcodeNum,
+        getStoryVersion()).isOutput();
+  }
+
+  /** {@inheritDoc} */
+  @Override
+  public String toString() {
+    final StringBuilder buffer = new StringBuilder();
+    buffer.append(InstructionInfoDb.getInstance().getInfo(getOperandCount(),
+                  opcodeNum, getStoryVersion()).getName());
+    buffer.append(" ");
+    buffer.append(getOperandString());
+    if (storesResult()) {
+      buffer.append(" -> ");
+      buffer.append(getVarName(storeVariable));
+    }
+    return buffer.toString();
+  }
+  
+  private String getVarName(final int varnum) {
+    if (varnum == 0) {
+      return "(SP)";
+    } else if (varnum <= 15) {
+      return String.format("L%02x", (varnum - 1));
+    } else {
+      return String.format("G%02x", (varnum - 16));
+    }
+  }
+  
+  private String getVarValue(final char varnum) {
+    char value = 0;
+    if (varnum == 0) {
+      value = machine.getStackTop();
+    } else {
+      value = machine.getVariable(varnum);
+    }
+    return String.format("$%02x", (int) value);
+  }
+  
+  protected String getOperandString() {
+    final StringBuilder buffer = new StringBuilder();
+    for (int i = 0; i < getNumOperands(); i++) {
+      if (i > 0) {
+        buffer.append(", ");
+      }
+      final Operand operand = operands[i];
+      switch (operand.getType()) {
+        case SMALL_CONSTANT:
+          buffer.append(String.format("$%02x", (int) operand.getValue()));
+          break;
+        case LARGE_CONSTANT:
+          buffer.append(String.format("$%04x", (int) operand.getValue()));
+          break;
+        case VARIABLE:
+          buffer.append(getVarName(operand.getValue()));
+          buffer.append("[");
+          buffer.append(getVarValue(operand.getValue()));
+          buffer.append("]");
+        default:
+          break;
+      }
+    }
+    return buffer.toString();
+  }
 }

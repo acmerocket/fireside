@@ -33,7 +33,7 @@ import org.zmpp.windowing.TextCursor;
  * @author Wei-ju Wu
  * @version 1.5
  */
-public class VarInstruction extends NewAbstractInstruction {
+public class VarInstruction extends AbstractInstruction {
 
   private static Logger LOG = Logger.getLogger("org.zmpp");
   public VarInstruction(Machine machine, int opcodeNum,
@@ -215,7 +215,7 @@ public class VarInstruction extends NewAbstractInstruction {
     if (getNumOperands() == 1) {
       stack = getUnsignedValue(0);
     }    
-    storeResult(getMachine().popStack(stack));
+    storeUnsignedResult(getMachine().popStack(stack));
   }
   
   private void pull_std() {
@@ -260,7 +260,7 @@ public class VarInstruction extends NewAbstractInstruction {
   
   private void random() {
     final short range = getSignedValue(0);
-    storeResult(getMachine().random(range));
+    storeUnsignedResult(getMachine().random(range));
     nextInstruction();
   }
   
@@ -312,7 +312,7 @@ public class VarInstruction extends NewAbstractInstruction {
     if (storesResult()) {
       // The specification suggests that we store the terminating character
       // here, this can be NULL or NEWLINE at the moment
-      storeResult(terminal);
+      storeUnsignedResult(terminal);
     }
     nextInstruction();
   }
@@ -469,7 +469,7 @@ public class VarInstruction extends NewAbstractInstruction {
         x &= 0xff;
       }
       if (current == x) {
-        storeResult(pointer);
+        storeUnsignedResult(pointer);
         found = true;
         break;
       }
@@ -477,7 +477,7 @@ public class VarInstruction extends NewAbstractInstruction {
     }
     // not found
     if (!found) {      
-      storeResult((char) 0);
+      storeUnsignedResult((char) 0);
     }
     branchOnTest(found);
   }
@@ -509,7 +509,7 @@ public class VarInstruction extends NewAbstractInstruction {
   
   private void readCharStage2() {
     getMachine().setRunState(MachineRunState.RUNNING);
-    storeResult(getMachine().readChar());
+    storeUnsignedResult(getMachine().readChar());
     nextInstruction();
   }
   
@@ -519,7 +519,7 @@ public class VarInstruction extends NewAbstractInstruction {
    */
   private void not()  {
     final int notvalue = ~getUnsignedValue(0);
-    storeResult((char) (notvalue & 0xffff));
+    storeUnsignedResult((char) (notvalue & 0xffff));
     nextInstruction();
   }
   

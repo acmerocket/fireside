@@ -25,10 +25,11 @@ import org.zmpp.instructions.C2OpInstruction;
 import org.zmpp.instructions.ExtInstruction;
 import org.zmpp.instructions.InstructionInfoDb;
 import org.zmpp.instructions.InstructionInfoDb.InstructionInfo;
-import org.zmpp.instructions.NewAbstractInstruction.BranchInfo;
+import org.zmpp.instructions.AbstractInstruction.BranchInfo;
 import org.zmpp.instructions.Operand;
 import org.zmpp.instructions.VarInstruction;
 import org.zmpp.vm.Instruction.InstructionForm;
+import static org.zmpp.vm.Instruction.*;
 import static org.zmpp.vm.Instruction.InstructionForm.*;
 import static org.zmpp.vm.Instruction.OperandCount;
 import static org.zmpp.vm.Instruction.OperandCount.*;
@@ -107,8 +108,14 @@ public class NewInstructionDecoder {
   private Instruction decodeShort(int instrAddress, char byte1) {
     OperandCount opCount = (byte1 & BITS_4_5) == BITS_4_5 ? C0OP : C1OP;
     char opcodeNum = (char) (byte1 & LOWER_4_BITS);
-    InstructionInfo info =
-        infoDb.getInfo(opCount, opcodeNum, machine.getVariable(opcodeNum));
+    InstructionInfo info = infoDb.getInfo(opCount, opcodeNum,
+                                          machine.getVersion());
+    if (info == null) {
+      System.out.printf("ILLEGAL SHORT operation, instrAddr: $%04x, OC: %s, opcode: #$%02x, Version: %d\n",
+                        instrAddress, opCount.toString(), (int) opcodeNum, machine.getVersion());
+      //infoDb.printKeys();
+      throw new java.lang.UnsupportedOperationException("Exit !!");
+    }
     int zsciiLength = 0;
 
     // extract operand
@@ -144,6 +151,8 @@ public class NewInstructionDecoder {
     char operand2 = machine.readUnsigned8(instrAddress + 2);
     int numOperandBytes = LEN_LONG_OPERANDS;
     int currentAddr = instrAddress + LEN_OPCODE + LEN_LONG_OPERANDS;
+    //System.out.printf("LONG 2OP, opnum: %d, byte1: %d, addr: $%04x\n",
+    //        (int) opcodeNum, (int) byte1, instrAddress);
     return createInstruction(C2OP, instrAddress, opcodeNum, currentAddr,
                              numOperandBytes, 0,
       new int[] {operandType1, operandType2}, new char[] {operand1, operand2},
@@ -162,7 +171,7 @@ public class NewInstructionDecoder {
     int opTypesOffset;
     int[] operandTypes;
     // The only instruction taking up to 8 parameters is CALL_VS2
-    if (opCount == VAR && opcodeNum == Instruction.VAR_CALL_VS2) {
+    if (isVx2(opCount, opcodeNum)) {
       operandTypes = joinArrays(
           extractOperandTypes(machine.readUnsigned8(instrAddress + 1)),
           extractOperandTypes(machine.readUnsigned8(instrAddress + 2)));      
@@ -173,7 +182,13 @@ public class NewInstructionDecoder {
       opTypesOffset = 2;
     }
     return decodeVarInstruction(instrAddress, opCount, opcodeNum, operandTypes,
-                                opTypesOffset);
+                                opTypesOffset - 1, opTypesOffset);
+  }
+  
+  private boolean isVx2(OperandCount opCount, char opcodeNum) {
+    return opCount == VAR &&
+        (opcodeNum == VAR_CALL_VN2 || opcodeNum == VAR_CALL_VS2);
+                              
   }
   
   /**
@@ -199,19 +214,20 @@ public class NewInstructionDecoder {
   private Instruction decodeExtended(int instrAddress, char byte1) {
     return decodeVarInstruction(instrAddress, EXT,
         machine.readUnsigned8(instrAddress + 1),
-        extractOperandTypes(machine.readUnsigned8(instrAddress + 2)), 3);
+        extractOperandTypes(machine.readUnsigned8(instrAddress + 2)), 1, 3);
   }
   
   private Instruction decodeVarInstruction(int instrAddress,
                                            OperandCount opCount,
                                            char opcodeNum, int[] operandTypes,
+                                           int numOperandTypeBytes,
                                            int opTypesOffset) {
     char[] operands = extractOperands(instrAddress + opTypesOffset,
                                       operandTypes);
     int numOperandBytes = getNumOperandBytes(operandTypes);
     int currentAddr = instrAddress + opTypesOffset + numOperandBytes;
     return createInstruction(opCount, instrAddress, opcodeNum, currentAddr,
-                             numOperandBytes,
+                             numOperandBytes + numOperandTypeBytes,
                              0, operandTypes, operands, null);
   }
   
@@ -230,7 +246,7 @@ public class NewInstructionDecoder {
    */
   private Instruction createInstruction(OperandCount opCount,
                                         int instrAddress,
-                                        int opcodeNum,
+                                        char opcodeNum,
                                         int addrAfterOperands,
                                         int numOperandBytes,
                                         int zsciiLength,
@@ -240,8 +256,14 @@ public class NewInstructionDecoder {
     int storeVarLen = 0;
     char storeVar = 0;
     Operand[] instrOperands = createOperands(operandTypes, operands);
-    InstructionInfo info = infoDb.getInfo(C2OP, opcodeNum,
+    InstructionInfo info = infoDb.getInfo(opCount, opcodeNum,
                                           machine.getVersion());
+    if (info == null) {
+      System.out.printf("ILLEGAL operation, instrAddr: $%04x OC: %s, opcode: #$%02x, Version: %d\n",
+                        instrAddress, opCount.toString(), (int) opcodeNum,
+                        machine.getVersion());
+      throw new java.lang.UnsupportedOperationException("Exit !!");
+    }
     if (info.isStore()) {
       storeVar = machine.readUnsigned8(currentAddr);
       currentAddr++;
@@ -253,6 +275,8 @@ public class NewInstructionDecoder {
     }
     int opcodeLength = LEN_OPCODE + numOperandBytes + storeVarLen + 
             branchInfo.numOffsetBytes + zsciiLength;
+    //System.out.printf("OPCODELEN: %d, len opcode: %d, # operand bytes: %d, len storevar: %d, broffsetbytes: %d, zsciilen: %d\n",
+    //    opcodeLength, LEN_OPCODE, numOperandBytes, storeVarLen, branchInfo.numOffsetBytes, zsciiLength);
     switch (opCount) {
       case C0OP:
         return new C0OpInstruction(machine, opcodeNum, instrOperands, str,
@@ -348,6 +372,7 @@ public class NewInstructionDecoder {
     } else {
       numOffsetBytes = 2;
       char branchByte2 = machine.readUnsigned8(branchInfoAddr + 1);
+      //System.out.printf("14 Bit offset, bracnh byte1: %02x byte2: %02x\n", (int) branchByte1, (int) branchByte2);
       branchOffset =
           toSigned14((char) (((branchByte1 << 8) | branchByte2) & 0x3fff));
     }
@@ -362,7 +387,7 @@ public class NewInstructionDecoder {
    * @return true if simple offset, false if compound
    */
   private boolean isSimpleOffset(char branchByte1) {
-    return (branchByte1 & BIT_7) != 0;
+    return (branchByte1 & BIT_6) != 0;
   }
   
   private static short WORD_14_UNSIGNED_MAX = 16383;

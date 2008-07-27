@@ -27,7 +27,7 @@ import static org.zmpp.vm.Instruction.*;
  * @author Wei-ju Wu
  * @version 1.5
  */
-public class C0OpInstruction extends NewAbstractInstruction {
+public class C0OpInstruction extends AbstractInstruction {
   private String str;
   public C0OpInstruction(Machine machine, int opcodeNum,
                          Operand[] operands, String str, char storeVar,
@@ -53,10 +53,12 @@ public class C0OpInstruction extends NewAbstractInstruction {
       case C0OP_PRINT:
         getMachine().print(str);
         nextInstruction();
+        break;
       case C0OP_PRINT_RET:
         getMachine().print(str);
         getMachine().newline();
         returnFromRoutine(TRUE);
+        break;
       case C0OP_NOP:
         nextInstruction();
         break;
@@ -100,6 +102,19 @@ public class C0OpInstruction extends NewAbstractInstruction {
         throwInvalidOpcode();    
     }
   }
+  
+  private boolean isPrint() {
+    return InstructionInfoDb.getInstance().getInfo(getOperandCount(),
+            getOpcodeNum(), getStoryVersion()).isPrint();
+  }
+
+  @Override
+  protected String getOperandString() {
+    if (isPrint()) {
+      return String.format("\"%s\"", str);
+    }
+    return super.getOperandString();
+  }
 
   private void pop() {
     getMachine().getVariable((char) 0);
@@ -108,7 +123,7 @@ public class C0OpInstruction extends NewAbstractInstruction {
   
   private void z_catch() {
     // Stores the index of the current stack frame
-    storeResult((char) (getMachine().getRoutineContexts().size() - 1));
+    storeUnsignedResult((char) (getMachine().getRoutineContexts().size() - 1));
     nextInstruction();
   }
 }

@@ -32,7 +32,7 @@ import org.zmpp.vm.ScreenModel;
  * @author Wei-ju Wu
  * @version 1.5
  */
-public class ExtInstruction extends NewAbstractInstruction {
+public class ExtInstruction extends AbstractInstruction {
 
   public ExtInstruction(Machine machine, int opcodeNum,
                          Operand[] operands, char storeVar,
@@ -130,14 +130,14 @@ public class ExtInstruction extends NewAbstractInstruction {
     // operand type byte compared to the 0OP instruction
     final int pc = getMachine().getPC() + 3;
     final boolean success = getMachine().save_undo(pc);
-    storeResult(success ? TRUE : FALSE);
+    storeUnsignedResult(success ? TRUE : FALSE);
     nextInstruction();
   }
   
   private void restore_undo() {    
     final PortableGameState gamestate = getMachine().restore_undo();
     if (gamestate == null) {
-      storeResult(FALSE);
+      storeUnsignedResult(FALSE);
     } else {
       final char storevar = gamestate.getStoreVariable(getMachine());      
       getMachine().setVariable(storevar, RESTORE_TRUE);      
@@ -148,7 +148,7 @@ public class ExtInstruction extends NewAbstractInstruction {
     short number = getSignedValue(0);
     final short places = getSignedValue(1);
     number = (short) ((places >= 0) ? number << places : number >> (-places));
-    storeResult(signedToUnsigned16(number));
+    storeUnsignedResult(signedToUnsigned16(number));
     nextInstruction();
   }
   
@@ -156,14 +156,14 @@ public class ExtInstruction extends NewAbstractInstruction {
     char number = getUnsignedValue(0);
     final short places = getSignedValue(1);
     number = (char) ((places >= 0) ? number << places : number >>> (-places));
-    storeResult(number);
+    storeUnsignedResult(number);
     nextInstruction();
   }
   
   private void set_font() {
     final char previousFont =
       getMachine().getScreen().setFont(getUnsignedValue(0));
-    storeResult(previousFont);
+    storeUnsignedResult(previousFont);
     nextInstruction();
   }
   
@@ -189,7 +189,7 @@ public class ExtInstruction extends NewAbstractInstruction {
   private void check_unicode() {
     // always return true, set bit 0 for can print and bit 1 for
     // can read
-    storeResult((char) 3);
+    storeUnsignedResult((char) 3);
     nextInstruction();
   }
   
@@ -297,7 +297,7 @@ public class ExtInstruction extends NewAbstractInstruction {
     int propnum = getUnsignedValue(1);
     char result;
     result = (char) getWindow(window).getProperty(propnum);
-    storeResult(result);
+    storeUnsignedResult(result);
     nextInstruction();
   }
 

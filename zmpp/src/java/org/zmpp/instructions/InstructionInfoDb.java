@@ -37,11 +37,13 @@ public class InstructionInfoDb {
 
   // Commonly used version ranges
   private static final int[] ALL_VERSIONS = { 1, 2, 3, 4, 5, 6, 7, 8 };
+  private static final int[] EXCEPT_V6    = { 1, 2, 3, 4, 5, 7, 8 };
   private static final int[] V1_TO_V3     = { 1, 2, 3 };
   private static final int[] V1_TO_V4     = { 1, 2, 3, 4 };
   private static final int[] V5_TO_V8     = { 5, 6, 7, 8 };
   private static final int[] V3_TO_V8     = { 3, 4, 5, 6, 7, 8 };
   private static final int[] V4_TO_V8     = { 4, 5, 6, 7, 8 };
+  private static final int[] V4           = { 4 };
   private static final int[] V6           = { 6 };
   
   /**
@@ -61,6 +63,7 @@ public class InstructionInfoDb {
     public boolean isStore() { return isStore; }
     public boolean isBranch() { return isBranch; }
     public boolean isPrint() { return isPrint; }
+    public boolean isOutput() { return isOutput; }
     public String getName() { return name; }
   }
   
@@ -99,8 +102,10 @@ public class InstructionInfoDb {
     addInfoForAll(createPrint("PRINT"), C0OP, C0OP_PRINT);
     addInfoForAll(createPrint("PRINT_RET"), C0OP, C0OP_PRINT_RET);
     addInfoForAll(createInfo("NOP"), C0OP, C0OP_NOP);
-    addInfoFor(createBranchAndStore("SAVE"), C0OP, C0OP_SAVE, V1_TO_V4);
-    addInfoFor(createBranchAndStore("RESTORE"), C0OP, C0OP_RESTORE, V1_TO_V4);
+    addInfoFor(createBranch("SAVE"), C0OP, C0OP_SAVE, V1_TO_V3);
+    addInfoFor(createBranch("RESTORE"), C0OP, C0OP_RESTORE, V1_TO_V3);
+    addInfoFor(createStore("SAVE"), C0OP, C0OP_SAVE, V4);
+    addInfoFor(createStore("RESTORE"), C0OP, C0OP_RESTORE, V4);
     addInfoForAll(createInfo("RESTART"), C0OP, C0OP_RESTART);
     addInfoForAll(createInfo("RET_POPPED"), C0OP, C0OP_RET_POPPED);
     addInfoFor(createInfo("POP"), C0OP, C0OP_POP, V1_TO_V4);
@@ -109,7 +114,7 @@ public class InstructionInfoDb {
     addInfoForAll(createOutput("NEW_LINE"), C0OP, C0OP_NEW_LINE);
     addInfoFor(createInfo("SHOW_STATUS"), C0OP, C0OP_SHOW_STATUS,
                new int[] {3});
-    addInfoFor(createInfo("VERIFY"), C0OP, C0OP_VERIFY,
+    addInfoFor(createBranch("VERIFY"), C0OP, C0OP_VERIFY,
                new int[] {3, 4, 5, 6, 7, 8});
     addInfoFor(createInfo("PIRACY"), C0OP, C0OP_PIRACY, V5_TO_V8);
     
@@ -174,9 +179,8 @@ public class InstructionInfoDb {
     addInfoForAll(createOutput("PRINT_NUM"), VAR, VAR_PRINT_NUM);
     addInfoForAll(createStore("RANDOM"), VAR, VAR_RANDOM);
     addInfoForAll(createInfo("PUSH"), VAR, VAR_PUSH);
-    addInfoFor(createInfo("PULL"), VAR, VAR_PULL,
-               new int[] {1, 2, 3, 4, 5, 7, 8});
-    addInfoFor(createInfo("PULL"), VAR, VAR_PULL, new int[] {6});
+    addInfoFor(createInfo("PULL"), VAR, VAR_PULL, EXCEPT_V6);
+    addInfoFor(createStore("PULL"), VAR, VAR_PULL, V6);
     addInfoFor(createOutput("SPLIT_WINDOW"), VAR, VAR_SPLIT_WINDOW,
                V3_TO_V8);
     addInfoFor(createInfo("SET_WINDOW"), VAR, VAR_SET_WINDOW, V3_TO_V8);
@@ -294,6 +298,7 @@ public class InstructionInfoDb {
    */
   public InstructionInfo getInfo(OperandCount opCount, int opcodeNum,
                                        int version) {
+    //System.out.println("GENERATING KEY: " + createKey(opCount, opcodeNum, version));
     return infoMap.get(createKey(opCount, opcodeNum, version));
   }
 
@@ -307,5 +312,12 @@ public class InstructionInfoDb {
   public boolean isValid(OperandCount opCount, int opcodeNum,
                          int version) {
     return infoMap.containsKey(createKey(opCount, opcodeNum, version));
-  }  
+  }
+  
+  public void printKeys() {
+    System.out.println("INFO MAP KEYS: ");
+    for (String key : infoMap.keySet()) {
+      if (key.startsWith("C1OP:0")) System.out.println(key);
+    }
+  }
 }

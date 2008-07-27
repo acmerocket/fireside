@@ -81,4 +81,17 @@ public class MemoryUtil {
     return (short) (value > Short.MAX_VALUE ?
       -(Character.MAX_VALUE - (value - 1)) : value);
   }
+
+  /**
+   * Converts the specified unsigned 8 bit value to a signed 8 bit value.
+   * If the value specified is actually a 16 bit value, only the lower 8 bit
+   * will be used.
+   * @param value the unsigned value
+   * @return the signed value
+   */
+  public static short unsignedToSigned8(char value) {
+    char workvalue = (char) (value & 0xff);
+    return (short) (workvalue > Byte.MAX_VALUE ?
+      -(255 - (workvalue - 1)) : workvalue);
+  }
 }

@@ -27,7 +27,7 @@ import static org.zmpp.vm.Instruction.*;
  * @author Wei-ju Wu
  * @version 1.5
  */
-public class C1OpInstruction extends NewAbstractInstruction {
+public class C1OpInstruction extends AbstractInstruction {
 
   public C1OpInstruction(Machine machine, int opcodeNum,
                          Operand[] operands, char storeVar,
@@ -114,7 +114,7 @@ public class C1OpInstruction extends NewAbstractInstruction {
 
   private void not()  {
 	  final int notvalue = ~getUnsignedValue(0);
-	  storeResult((char) (notvalue & 0xffff));
+	  storeUnsignedResult((char) (notvalue & 0xffff));
 	  nextInstruction();
   }
 
@@ -126,7 +126,7 @@ public class C1OpInstruction extends NewAbstractInstruction {
     final char varnum = getUnsignedValue(0);
     final char value = varnum == 0 ? getMachine().getStackTop() :
       getMachine().getVariable(varnum);
-    storeResult(value);
+    storeUnsignedResult(value);
     nextInstruction();    
   }
   
@@ -142,7 +142,7 @@ public class C1OpInstruction extends NewAbstractInstruction {
     } else {
       getMachine().warn("@get_parent illegal access to object " + obj);
     }
-    storeResult((char) (parent & 0xffff));
+    storeUnsignedResult((char) (parent & 0xffff));
     nextInstruction();
   }
   
@@ -154,7 +154,7 @@ public class C1OpInstruction extends NewAbstractInstruction {
     } else {
       getMachine().warn("@get_sibling illegal access to object " + obj);
     }
-    storeResult((char) (sibling & 0xffff));
+    storeUnsignedResult((char) (sibling & 0xffff));
     branchOnTest(sibling > 0);
   }
   
@@ -166,7 +166,7 @@ public class C1OpInstruction extends NewAbstractInstruction {
     } else {
       getMachine().warn("@get_child illegal access to object " + obj);
     }
-    storeResult((char) (child & 0xffff));
+    storeUnsignedResult((char) (child & 0xffff));
     branchOnTest(child > 0);
   }
 
@@ -208,7 +208,7 @@ public class C1OpInstruction extends NewAbstractInstruction {
     final int propertyAddress = getUnsignedValue(0);    
     final char proplen = (char)
       getMachine().getPropertyLength(propertyAddress);
-    storeResult(proplen);
+    storeUnsignedResult(proplen);
     nextInstruction();
   }
   private void call_1s() { call(0); }

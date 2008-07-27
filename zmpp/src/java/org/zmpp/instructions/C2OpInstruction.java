@@ -28,7 +28,7 @@ import static org.zmpp.vm.Instruction.*;
  * @author Wei-ju Wu
  * @version 1.5
  */
-public class C2OpInstruction extends NewAbstractInstruction {
+public class C2OpInstruction extends AbstractInstruction {
 
   public C2OpInstruction(Machine machine, int opcodeNum,
                          Operand[] operands, char storeVar,
@@ -201,14 +201,14 @@ public class C2OpInstruction extends NewAbstractInstruction {
   private void or() {
     final int op1 = getUnsignedValue(0);
     final int op2 = getUnsignedValue(1);
-    storeResult((char) ((op1 | op2) & 0xffff));
+    storeUnsignedResult((char) ((op1 | op2) & 0xffff));
     nextInstruction();
   }
   
   private void and() {
     final int op1 = getUnsignedValue(0);
     final int op2 = getUnsignedValue(1);
-    storeResult((char) ((op1 & op2) & 0xffff));
+    storeUnsignedResult((char) ((op1 & op2) & 0xffff));
     nextInstruction();
   }
   
@@ -317,14 +317,14 @@ public class C2OpInstruction extends NewAbstractInstruction {
   private void loadb() {
     final int arrayAddress = getUnsignedValue(0);
     final int index = getUnsignedValue(1);
-    storeResult((char) getMachine().readUnsigned8(arrayAddress + index));
+    storeUnsignedResult((char) getMachine().readUnsigned8(arrayAddress + index));
     nextInstruction();
   }
 
   private void loadw() {
     final int arrayAddress = getUnsignedValue(0);
     final int index = getUnsignedValue(1);
-    storeResult(getMachine().readUnsigned16(arrayAddress + 2 * index));
+    storeUnsignedResult(getMachine().readUnsigned16(arrayAddress + 2 * index));
     nextInstruction();
   }
 
@@ -334,7 +334,7 @@ public class C2OpInstruction extends NewAbstractInstruction {
     
     if (obj > 0) {
       char value = (char) getMachine().getProperty(obj, property);
-      storeResult(value); 
+      storeUnsignedResult(value); 
     } else {
       getMachine().warn("@get_prop illegal access to object " + obj);
     }
@@ -347,7 +347,7 @@ public class C2OpInstruction extends NewAbstractInstruction {
     if (obj > 0) {
       char value = (char)
         (getMachine().getPropertyAddress(obj, property) & 0xffff);
-      storeResult(value);
+      storeUnsignedResult(value);
     } else {
       getMachine().warn("@get_prop_addr illegal access to object " + obj);
     }
@@ -360,7 +360,7 @@ public class C2OpInstruction extends NewAbstractInstruction {
     char value = 0;    
     if (obj > 0) {
       value = (char) (getMachine().getNextProperty(obj, property) & 0xffff);
-      storeResult(value);
+      storeUnsignedResult(value);
       nextInstruction();
     } else {
       // issue warning and continue

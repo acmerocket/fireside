@@ -31,16 +31,16 @@ package org.zmpp.instructions;
 public class Operand {
 
   /** Type number for a large constant. */
-  public static final byte TYPENUM_LARGE_CONSTANT = 0x00;
+  public static final int TYPENUM_LARGE_CONSTANT = 0x00;
   
   /** Type number for a small constant. */
-  public static final byte TYPENUM_SMALL_CONSTANT = 0x01;
+  public static final int TYPENUM_SMALL_CONSTANT = 0x01;
   
   /** Type number for a variable. */
-  public static final byte TYPENUM_VARIABLE       = 0x02;
+  public static final int TYPENUM_VARIABLE       = 0x02;
   
   /** Type number for omitted. */
-  public static final byte TYPENUM_OMITTED        = 0x03;
+  public static final int TYPENUM_OMITTED        = 0x03;
   
   /**
    * The available operand types.

@@ -40,8 +40,8 @@ public class ExecutionControl {
 
   private static final Logger LOG = Logger.getLogger("org.zmpp");
   private Machine machine;
-  private InstructionDecoder instructionDecoder =
-          new InstructionDecoder();
+  private NewInstructionDecoder instructionDecoder =
+          new NewInstructionDecoder();
   private LineBufferInputStream inputStream = new LineBufferInputStream();
   private int step = 1;
   public static boolean DEBUG = true;
@@ -87,6 +87,7 @@ public class ExecutionControl {
     getFileHeader().setEnabled(attr, true);
   }
   
+  public Machine getMachine() { return machine; }
   public StoryFileHeader getFileHeader() { return machine.getFileHeader(); }
   
   public int getVersion() { return machine.getVersion(); }
