@@ -20,13 +20,14 @@
 package test.zmpp.iff;
 
 import java.io.File;
+import java.io.IOException;
 import java.io.RandomAccessFile;
 import java.util.ArrayList;
 import java.util.Iterator;
 import java.util.List;
 
+import org.junit.BeforeClass;
 import static org.junit.Assert.*;
-import org.junit.Before;
 import org.junit.Test;
 import org.zmpp.base.DefaultMemory;
 import org.zmpp.base.Memory;
@@ -36,17 +37,17 @@ import org.zmpp.iff.FormChunk;
 import static test.zmpp.testutil.ZmppTestUtil.*;
 
 /**
- * Test class for FormChunk.
+ * Test class for DefaultFormChunk.
  * @author Wei-ju Wu
  * @version 1.5
  */
-public class FormChunkTest {
+public class DefaultFormChunkTest {
 
-  private Memory formChunkData;
-  private FormChunk formChunk; 
+  private static Memory formChunkData;
+  private static FormChunk formChunk;
   
-  @Before
-  public void setUp() throws Exception {
+  @BeforeClass
+  public static void setUpClass() throws Exception {
     File testSaveFile = createLocalFile("testfiles/leathersave.ifzs");
     RandomAccessFile saveFile = new RandomAccessFile(testSaveFile, "r");
     byte[] data = new byte[(int) saveFile.length()];
@@ -54,6 +55,22 @@ public class FormChunkTest {
     formChunkData = new DefaultMemory(data);
     formChunk = new DefaultFormChunk(formChunkData);
     saveFile.close();
+  }
+  
+  @Test
+  public void testInvalidIff() {
+    byte[] illegalData = {
+      (byte) 0x01, (byte) 0x02, (byte) 0x03, (byte) 0x04, (byte) 0x05,
+      (byte) 0x01, (byte) 0x02, (byte) 0x03, (byte) 0x04, (byte) 0x05,
+      (byte) 0x01, (byte) 0x02, (byte) 0x03, (byte) 0x04, (byte) 0x05,
+      (byte) 0x01, (byte) 0x02, (byte) 0x03, (byte) 0x04, (byte) 0x05,
+    };
+    try {
+      new DefaultFormChunk(new DefaultMemory(illegalData));
+      fail("IOException should be thrown on an illegal IFF file");
+    } catch (IOException expected) {
+      assertTrue(expected.getMessage() != null);
+    }
   }
   
   @Test
@@ -76,10 +93,13 @@ public class FormChunkTest {
     }
     assertEquals("IFhd", new String(result.get(0).getId()));
     assertEquals(13, result.get(0).getSize());
+    assertEquals(0x000c, result.get(0).getAddress());
     assertEquals("CMem", new String(result.get(1).getId()));
     assertEquals(351, result.get(1).getSize());
+    assertEquals(0x0022, result.get(1).getAddress());
     assertEquals("Stks", new String(result.get(2).getId()));
     assertEquals(118, result.get(2).getSize());
+    assertEquals(0x018a, result.get(2).getAddress());
     assertEquals(3, result.size());
   }
   
@@ -89,5 +109,13 @@ public class FormChunkTest {
     assertNotNull(formChunk.getSubChunk("CMem".getBytes()));
     assertNotNull(formChunk.getSubChunk("Stks".getBytes()));
     assertNull(formChunk.getSubChunk("Test".getBytes()));
+  }
+  
+  @Test
+  public void testGetSubChunkByAddress() {
+    assertEquals("IFhd", new String(formChunk.getSubChunk(0x000c).getId()));
+    assertEquals("CMem", new String(formChunk.getSubChunk(0x0022).getId()));
+    assertEquals("Stks", new String(formChunk.getSubChunk(0x018a).getId()));
+    assertNull(formChunk.getSubChunk(0x1234));
   }
 }

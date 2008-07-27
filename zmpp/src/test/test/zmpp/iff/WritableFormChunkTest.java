@@ -45,5 +45,7 @@ public class WritableFormChunkTest {
     assertTrue(formChunk.isValid());
     assertNotNull(formChunk.getMemory());
     assertNotNull(formChunk.getSubChunks());
+    assertNull(formChunk.getSubChunk(1234));
+    assertEquals(0, formChunk.getAddress());
   }
 }

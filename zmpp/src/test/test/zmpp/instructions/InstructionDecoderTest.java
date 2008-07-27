@@ -32,7 +32,7 @@ import static org.junit.Assert.*;
 import org.zmpp.base.Memory;
 import org.zmpp.instructions.AbstractInstruction;
 
-import org.zmpp.vm.InstructionDecoder;
+import org.zmpp.instructions.InstructionDecoder;
 import org.zmpp.vm.Machine;
 import test.zmpp.vm.MiniZorkSetup;
 
