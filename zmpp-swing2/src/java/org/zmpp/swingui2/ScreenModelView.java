@@ -41,7 +41,7 @@ import javax.swing.JScrollBar;
 import org.zmpp.blorb.NativeImage;
 import org.zmpp.blorb.NativeImageFactory;
 import org.zmpp.swingui2.ScreenModelSplitView.MainViewListener;
-import org.zmpp.vm.ExecutionControl;
+import org.zmpp.ExecutionControl;
 import org.zmpp.vm.InvalidStoryException;
 import org.zmpp.vm.MachineRunState;
 import org.zmpp.vm.MachineFactory.MachineInitStruct;

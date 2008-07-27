@@ -27,7 +27,7 @@ import javax.swing.event.ChangeEvent;
 import javax.swing.event.ChangeListener;
 import javax.swing.text.BadLocationException;
 import javax.swing.text.Document;
-import org.zmpp.vm.ExecutionControl;
+import org.zmpp.ExecutionControl;
 
 /**
  * An input handler for the standard screen model.

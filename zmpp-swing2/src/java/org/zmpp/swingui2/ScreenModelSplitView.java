@@ -45,7 +45,7 @@ import javax.swing.text.BadLocationException;
 import javax.swing.text.Document;
 import javax.swing.text.MutableAttributeSet;
 import javax.swing.text.StyleConstants;
-import org.zmpp.vm.ExecutionControl;
+import org.zmpp.ExecutionControl;
 import org.zmpp.vm.MachineRunState;
 import org.zmpp.vm.ScreenModel;
 import org.zmpp.windowing.AnnotatedCharacter;
