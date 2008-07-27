@@ -45,7 +45,6 @@ import javax.swing.text.BadLocationException;
 import javax.swing.text.Document;
 import javax.swing.text.MutableAttributeSet;
 import javax.swing.text.StyleConstants;
-import org.zmpp.instructions.AbstractInstruction;
 import org.zmpp.vm.ExecutionControl;
 import org.zmpp.vm.MachineRunState;
 import org.zmpp.vm.ScreenModel;
@@ -54,6 +53,7 @@ import org.zmpp.windowing.AnnotatedText;
 import org.zmpp.windowing.TextAnnotation;
 import org.zmpp.vm.BufferedScreenModel;
 import org.zmpp.vm.BufferedScreenModel.ScreenModelListener;
+import org.zmpp.vm.Instruction;
 
 /**
  * The MainView class is the main view component. It contains the upper and
@@ -236,12 +236,12 @@ implements ScreenModelListener {
           screenModel.setBufferMode(false);
           char result =
             executionControl.callInterrupt(runState.getRoutine());
-          if (result == AbstractInstruction.TRUE) {
+          if (result == Instruction.TRUE) {
             currentTimer.stop();
             // TODO: Clear input and print
             //executionControl.resumeWithInput("\u0000");
             pressEnterKey();
-          } else if (result == AbstractInstruction.FALSE) {
+          } else if (result == Instruction.FALSE) {
           }
           screenModel.setBufferMode(true);
         }

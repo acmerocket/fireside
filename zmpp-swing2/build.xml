@@ -24,7 +24,7 @@
     <jar jarfile="${dist}/zmpp-text-${app.version}.jar" index="true" basedir="${build.prj}">
       <manifest>
       	<attribute name="Built-By" value="Wei-ju Wu"/>
-        <attribute name="Main-Class" value="org.zmpp.textui.Main"/>
+        <attribute name="Main-Class" value="org.zmpp.swingui2.Main"/>
       </manifest>
       <fileset dir="${build.prj}" />
       <fileset dir="${zmpp.core}" />

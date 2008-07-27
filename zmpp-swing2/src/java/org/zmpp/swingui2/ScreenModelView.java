@@ -195,7 +195,7 @@ implements AdjustmentListener, MainViewListener, MouseWheelListener,
   
   private void initUI(MachineInitStruct initStruct) {
     ((BufferedScreenModel) initStruct.screenModel).init(
-       executionControl.getFileHeader(),
+       executionControl.getMachine(),
        executionControl.getZsciiEncoding());
     int version = executionControl.getVersion();
     statusPanel.setVisible(version <= 3);
