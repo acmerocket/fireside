@@ -58,7 +58,7 @@
         <pathelement location="${build.prj}"/>
       </classpath>
       <classpath refid="junit.path" />
-       <!--
+      <!--
       <include name="**/base/*.java" />
       <include name="**/iff/*.java" />
       -->
@@ -134,7 +134,7 @@
      </pmd>
   </target>
 
-  <target name="dist" depends="test"
+  <target name="dist" depends="compile"
         description="generate the distribution" >
     <mkdir dir="${dist}"/>
     <mkdir dir="${dist}/lib"/>

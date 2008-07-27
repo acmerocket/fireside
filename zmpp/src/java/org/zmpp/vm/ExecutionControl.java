@@ -40,8 +40,8 @@ public class ExecutionControl {
 
   private static final Logger LOG = Logger.getLogger("org.zmpp");
   private Machine machine;
-  private NewInstructionDecoder instructionDecoder =
-          new NewInstructionDecoder();
+  private InstructionDecoder instructionDecoder =
+          new InstructionDecoder();
   private LineBufferInputStream inputStream = new LineBufferInputStream();
   private int step = 1;
   public static boolean DEBUG = true;

@@ -340,7 +340,7 @@ public abstract class AbstractInstruction implements Instruction {
     } else {
       value = machine.getVariable(varnum);
     }
-    return String.format("$%02x", (int) value);
+    return String.format("$%04x", (int) value);
   }
   
   protected String getOperandString() {

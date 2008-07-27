@@ -41,7 +41,7 @@ import static org.zmpp.vm.Instruction.OperandCount.*;
  * @author Wei-ju Wu
  * @version 1.5
  */
-public class NewInstructionDecoder {
+public class InstructionDecoder {
 
   private static final char EXTENDED_MASK     = 0xbe;
   private static final char VAR_MASK          = 0xc0; // 2#11000000
