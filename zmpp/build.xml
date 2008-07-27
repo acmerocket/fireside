@@ -122,12 +122,11 @@
   </target>  
 
   <target name="pmd">
-    <mkdir dir="${pmdreport.dir}"/>
-      <taskdef name="pmd" classname="net.sourceforge.pmd.ant.PMDTask"
+    <taskdef name="pmd" classname="net.sourceforge.pmd.ant.PMDTask"
                classpathref="pmd.classpath"/>
       <pmd targetjdk="1.5">
         <ruleset>basic</ruleset>
-        <formatter type="xml" toFile="${pmdreport.dir}/pmd_report.xml" />
+        <formatter type="html" toFile="target/pmd_report.html" />
         <fileset dir="${src.prj}">
          <include name="**/*.java"/>
         </fileset>
@@ -142,7 +141,7 @@
   </target>
   
   <target name="findbugs" depends="dist">
-    <findbugs home="${findbugs.home}" output="xml" outputFile="target/zmpp-fb.xml">
+    <findbugs home="${findbugs.home}" output="html" outputFile="target/zmpp-fb.html">
       <sourcePath path="${src.prj}" />
       <class location="${dist}/lib/zmpp-${app.version}.jar" />
     </findbugs>

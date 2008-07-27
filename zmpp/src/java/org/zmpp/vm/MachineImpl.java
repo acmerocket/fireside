@@ -516,7 +516,7 @@ public class MachineImpl implements Machine {
     if (getFileHeader().getVersion() <= 3 && statusLine != null) {
       final int objNum = cpu.getVariable((char) 0x10);    
       final String objectName = getZCharDecoder().decode2Zscii(getMemory(),
-        getObjectTree().getPropertiesDescriptionAddress(objNum), 0).toString();      
+        getObjectTree().getPropertiesDescriptionAddress(objNum), 0);      
       final int global2 = cpu.getVariable((char) 0x11);
       final int global3 = cpu.getVariable((char) 0x12);
       if (getFileHeader().isEnabled(Attribute.SCORE_GAME)) {

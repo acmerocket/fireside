@@ -86,12 +86,12 @@ public class MachineRunState {
   /**
    * Running state.
    */
-  public static MachineRunState RUNNING = new MachineRunState();
+  public static final MachineRunState RUNNING = new MachineRunState();
   
   /**
    * Stopped state.
    */
-  public static MachineRunState STOPPED = new MachineRunState();
+  public static final MachineRunState STOPPED = new MachineRunState();
   
   /**
    * Creates a read line mode object with the specified interrup data.

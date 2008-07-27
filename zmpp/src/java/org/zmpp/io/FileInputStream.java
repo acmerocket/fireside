@@ -66,7 +66,7 @@ public class FileInputStream implements InputStream {
           if (encoding.isConvertableToZscii(c)) {
             return encoding.getZsciiChar(c);
           }*/
-          return new String(encoding.convertToZscii(line));
+          return encoding.convertToZscii(line);
         }
       } catch (IOException ex) {
         LOG.throwing("FileInputStream", "readLine", ex);

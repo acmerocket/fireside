@@ -46,7 +46,7 @@ public class ExecutionControl {
           new InstructionDecoder();
   private LineBufferInputStream inputStream = new LineBufferInputStream();
   private int step = 1;
-  public static boolean DEBUG = true;
+  public static final boolean DEBUG = true;
   
   /**
    * Constructor.

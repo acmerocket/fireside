@@ -27,8 +27,7 @@ package org.zmpp.encoding;
  */
 public class DefaultAccentTable implements AccentTable {
 
-  public static final char[] STANDARD_TRANSLATION_TABLE = {
-    
+  private static final char[] STANDARD_TRANSLATION_TABLE = {    
     '\u00e4', '\u00f6', '\u00fc', '\u00c4', '\u00d6', '\u00dc', '\u00df',
     '\u00bb', '\u00ab',
     '\u00eb', '\u00ef', '\u00ff', '\u00cb', '\u00cf',
@@ -48,8 +47,7 @@ public class DefaultAccentTable implements AccentTable {
   /**
    * {@inheritDoc}
    */
-  public int getLength() {
-  
+  public int getLength() {  
     return STANDARD_TRANSLATION_TABLE.length;
   }
   

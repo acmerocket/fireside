@@ -109,7 +109,7 @@ public class ZsciiEncodingTest {
   
   @Test
   public void testStandardTable() {
-    assertEquals(69, DefaultAccentTable.STANDARD_TRANSLATION_TABLE.length);
+    assertEquals(69, new DefaultAccentTable().getLength());
   }
   
   @Test

@@ -106,29 +106,38 @@ public final class DefaultZCharDecoder implements ZCharDecoder {
           final int x = data[position];
           final int entryNum = 32 * (zchar - 1) + x;
           final int entryAddress = abbreviations.getWordAddress(entryNum);
-          
-          if (abbreviationDecoder == null) {
-            
-            // We only use one abbreviation decoder instance here, we need
-            // to clone the alphabet table, so the abbreviation decoding
-            // will not influence the continuation of the decoding process
-            try {
-              abbreviationDecoder = new DefaultZCharDecoder(encoding,
-                  (ZCharTranslator) translator.clone(), null);
-            } catch (CloneNotSupportedException ex) {
-              
-              // should never happen
-              ex.printStackTrace();
-            }
-          }
-          final String abbrev = abbreviationDecoder.decode2Zscii(memory,
-              entryAddress, 0);
-          builder.append(abbrev);
+          createAbbreviationDecoderIfNotExists();
+          appendAbbreviationAtAddress(memory, entryAddress, builder);
         }
       }
       position++;
     }
     return position;
+  }
+  
+  private void createAbbreviationDecoderIfNotExists() {
+    if (abbreviationDecoder == null) {
+
+      // We only use one abbreviation decoder instance here, we need
+      // to clone the alphabet table, so the abbreviation decoding
+      // will not influence the continuation of the decoding process
+      try {
+        abbreviationDecoder = new DefaultZCharDecoder(encoding,
+                (ZCharTranslator) translator.clone(), null);
+      } catch (CloneNotSupportedException ex) {
+        // should never happen
+        ex.printStackTrace();
+      }
+    }
+  }
+  
+  private void appendAbbreviationAtAddress(Memory memory, int entryAddress,
+          StringBuilder builder) {
+    if (abbreviationDecoder != null) {
+      final String abbrev = abbreviationDecoder.decode2Zscii(memory,
+        entryAddress, 0);
+        builder.append(abbrev);
+    }
   }
   
   private int handleEscapeA2(final StringBuilder builder,

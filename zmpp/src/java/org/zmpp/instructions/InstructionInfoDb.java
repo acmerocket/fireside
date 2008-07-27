@@ -49,7 +49,7 @@ public class InstructionInfoDb {
   /**
    * Information structure about the instruction.
    */
-  public class InstructionInfo {
+  public static class InstructionInfo {
     private String name;
     private boolean isStore, isBranch, isPrint, isOutput;
     public InstructionInfo(String name, boolean isBranch, boolean isStore,
