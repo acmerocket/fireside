@@ -33,7 +33,7 @@ import static org.zmpp.vm.Instruction.*;
 import static org.zmpp.vm.Instruction.OperandCount.*;
 import org.zmpp.vm.Machine;
 import static org.zmpp.base.MemoryUtil.*;
-import org.zmpp.vm.ScreenModel;
+import org.zmpp.windowing.ScreenModel;
 import org.zmpp.windowing.TextCursor;
 
 /**

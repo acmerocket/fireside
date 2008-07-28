@@ -37,7 +37,7 @@ import org.zmpp.vm.MachineRunState;
 import org.zmpp.vm.MemoryOutputStream;
 import org.zmpp.vm.Output;
 import org.zmpp.vm.SaveGameDataStore;
-import org.zmpp.vm.ScreenModel;
+import org.zmpp.windowing.ScreenModel;
 import org.zmpp.vm.StatusLine;
 import org.zmpp.vm.StoryFileHeader.Attribute;
 

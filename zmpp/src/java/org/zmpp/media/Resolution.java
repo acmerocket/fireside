@@ -1,7 +1,7 @@
 /*
  * $Id$
  * 
- * Created on 2008/07/16
+ * Created on 2008/07/28
  * Copyright 2005-2008 by Wei-ju Wu
  * This file is part of The Z-machine Preservation Project (ZMPP).
  *
@@ -18,25 +18,42 @@
  * You should have received a copy of the GNU General Public License
  * along with ZMPP.  If not, see <http://www.gnu.org/licenses/>.
  */
-package test.zmpp.windowing;
-
-import org.junit.Test;
-import static org.junit.Assert.*;
-import org.zmpp.windowing.ScreenModel;
-import org.zmpp.windowing.TextAnnotation;
+package org.zmpp.media;
 
 /**
- * Test class for TextAnnotation.
+ * An object similar to Dimension, but can be used in environments outside of
+ * J2SE.
  * @author Wei-ju Wu
  * @version 1.5
  */
-public class TextAnnotationTest {
+public class Resolution {
 
-  @Test
-  public void testCreateFull() {
-    TextAnnotation annot = new TextAnnotation(ScreenModel.FONT_NORMAL,
-            ScreenModel.TEXTSTYLE_ITALIC, ScreenModel.COLOR_BLUE,
-            ScreenModel.COLOR_YELLOW);
-    assertEquals(ScreenModel.FONT_NORMAL, annot.getFont());
+  private int width;
+  private int height;
+
+  /**
+   * Constructor.
+   * @param width the width
+   * @param height the height
+   */
+  public Resolution(int width, int height) {
+    this.width = width;
+    this.height = height;
   }
+
+  /**
+   * Returns the width attribute.
+   * @return the width attribute
+   */
+  public int getWidth() { return width; }
+
+  /**
+   * Returns the height attribute.
+   * @return the height attribute
+   */
+  public int getHeight() { return height; }
+
+  /** {@inheritDoc} */
+  @Override
+  public String toString() { return width + "x" + height; }
 }

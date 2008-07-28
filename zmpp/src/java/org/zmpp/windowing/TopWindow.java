@@ -20,9 +20,6 @@
  */
 package org.zmpp.windowing;
 
-import org.zmpp.vm.BufferedScreenModel.ScreenModelListener;
-import org.zmpp.vm.ScreenModel;
-
 /**
  * This class implements the virtual top window of the Z-machine screen model.
  * @author Wei-ju Wu

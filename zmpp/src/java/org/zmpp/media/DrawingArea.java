@@ -1,7 +1,7 @@
 /*
  * $Id$
  * 
- * Created on 2008/07/16
+ * Created on 2008/07/28
  * Copyright 2005-2008 by Wei-ju Wu
  * This file is part of The Z-machine Preservation Project (ZMPP).
  *
@@ -18,25 +18,17 @@
  * You should have received a copy of the GNU General Public License
  * along with ZMPP.  If not, see <http://www.gnu.org/licenses/>.
  */
-package test.zmpp.windowing;
-
-import org.junit.Test;
-import static org.junit.Assert.*;
-import org.zmpp.windowing.ScreenModel;
-import org.zmpp.windowing.TextAnnotation;
+package org.zmpp.media;
 
 /**
- * Test class for TextAnnotation.
+ * An interface to a DrawingArea.
  * @author Wei-ju Wu
  * @version 1.5
  */
-public class TextAnnotationTest {
-
-  @Test
-  public void testCreateFull() {
-    TextAnnotation annot = new TextAnnotation(ScreenModel.FONT_NORMAL,
-            ScreenModel.TEXTSTYLE_ITALIC, ScreenModel.COLOR_BLUE,
-            ScreenModel.COLOR_YELLOW);
-    assertEquals(ScreenModel.FONT_NORMAL, annot.getFont());
-  }
+public interface DrawingArea {
+  /**
+   * Returns the resolution of the DrawingArea.
+   * @return the resolution of the DrawingArea
+   */
+  Resolution getResolution();
 }

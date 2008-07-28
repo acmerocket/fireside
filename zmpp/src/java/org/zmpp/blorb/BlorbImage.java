@@ -20,6 +20,9 @@
  */
 package org.zmpp.blorb;
 
+import org.zmpp.media.Resolution;
+import org.zmpp.media.ZmppImage;
+
 /**
  * This class contains informations related to Blorb images and their
  * scaling. Scaling information is optional and probably only relevant
@@ -29,7 +32,7 @@ package org.zmpp.blorb;
  * @author Wei-ju Wu
  * @version 1.5
  */
-public class BlorbImage {
+public class BlorbImage implements ZmppImage {
 
   /**
    * This class represents a ratio.
@@ -39,8 +42,7 @@ public class BlorbImage {
     private int numerator;
     private int denominator;
     
-    public Ratio(int numerator, int denominator) {
-     
+    public Ratio(int numerator, int denominator) {     
       this.numerator = numerator;
       this.denominator = denominator;
     }
@@ -54,24 +56,7 @@ public class BlorbImage {
     @Override
     public String toString() { return numerator + "/" + denominator; }
   }
-  
-  public static class Resolution {
     
-    private int width;
-    private int height;
-    
-    public Resolution(int width, int height) {
-  
-      this.width = width;
-      this.height = height;
-    }
-    
-    public int getWidth() { return width; }
-    public int getHeight() { return height; }
-    @Override
-    public String toString() { return width + "x" + height; }
-  }
-  
   /**
    * This class represents resolution information.
    */

@@ -20,10 +20,6 @@
  */
 package org.zmpp.media;
 
-import org.zmpp.blorb.BlorbImage;
-import org.zmpp.blorb.BlorbImage.Resolution;
-import org.zmpp.vm.Machine;
-
 /**
  * PictureManager implementation.
  * @author Wei-ju Wu
@@ -32,27 +28,25 @@ import org.zmpp.vm.Machine;
 public class PictureManagerImpl implements PictureManager {
 
   private int release;
-  private MediaCollection<BlorbImage> pictures;
-  private Machine machine;
+  private MediaCollection<? extends ZmppImage> pictures;
+  private DrawingArea drawingArea;
   
-  public PictureManagerImpl(int release, Machine machine,
-                            MediaCollection<BlorbImage> pictures) {
+  public PictureManagerImpl(int release, DrawingArea drawingArea,
+                            MediaCollection<? extends ZmppImage> pictures) {
     
     this.release = release;
     this.pictures = pictures;
-    this.machine = machine;
+    this.drawingArea = drawingArea;
   }
   
   /**
    * {@inheritDoc}
    */
   public Resolution getPictureSize(final int picturenum) {
-    
-    final BlorbImage img = pictures.getResource(picturenum);
+    final ZmppImage img = pictures.getResource(picturenum);
     if (img != null) {
-      
-      return img.getSize(machine.getScreen6().getWidth(), 
-          machine.getScreen6().getHeight());
+      Resolution reso = drawingArea.getResolution();
+      return img.getSize(reso.getWidth(), reso.getHeight());
     }
     return null;
   }
@@ -60,8 +54,7 @@ public class PictureManagerImpl implements PictureManager {
   /**
    * {@inheritDoc}
    */
-  public BlorbImage getPicture(final int picturenum) {
-    
+  public ZmppImage getPicture(final int picturenum) {    
     return pictures.getResource(picturenum);
   }
 
@@ -69,7 +62,7 @@ public class PictureManagerImpl implements PictureManager {
    * {@inheritDoc}
    */
   public int getNumPictures() {
-    
+//    
     return pictures.getNumResources();
   }
 

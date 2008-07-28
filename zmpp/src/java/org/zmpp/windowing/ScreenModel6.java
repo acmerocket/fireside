@@ -18,14 +18,16 @@
  * You should have received a copy of the GNU General Public License
  * along with ZMPP.  If not, see <http://www.gnu.org/licenses/>.
  */
-package org.zmpp.vm;
+package org.zmpp.windowing;
+
+import org.zmpp.media.DrawingArea;
 
 /**
  * Screen model 6 interface.
  * @author Wei-ju Wu
  * @version 1.5
  */
-public interface ScreenModel6 extends ScreenModel {
+public interface ScreenModel6 extends ScreenModel, DrawingArea {
 
   /**
    * Restricts the mouse pointer to the specified window.
@@ -48,20 +50,6 @@ public interface ScreenModel6 extends ScreenModel {
    * @return the currently selected window
    */
   Window6 getSelectedWindow();
-
-  /**
-   * Returns the total screen model width.
-   * 
-   * @return the screen width
-   */
-  int getWidth();
-  
-  /**
-   * Returns the total screen model height.
-   * 
-   * @return the screen height
-   */
-  int getHeight();
 
   /**
    * Instructs the screen model to set the width of the current string

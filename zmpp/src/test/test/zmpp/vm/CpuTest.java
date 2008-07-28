@@ -263,7 +263,7 @@ public class CpuTest {
     routineContext.setReturnVariable((char) 0x12);
     
     // simulate a call
-    routineContext.setReturnAddress((char) returnAddress); // save the return address in the context
+    routineContext.setReturnAddress(returnAddress); // save the return address in the context
     cpu.pushRoutineContext(routineContext);
     cpu.setPC(0x15815);
     

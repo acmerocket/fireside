@@ -25,6 +25,7 @@ import org.zmpp.media.InformMetadata;
 import org.zmpp.media.MediaCollection;
 import org.zmpp.media.Resources;
 import org.zmpp.media.SoundEffect;
+import org.zmpp.media.ZmppImage;
 
 /**
  * This class encapsulates a Blorb file and offers access to the sound
@@ -76,7 +77,7 @@ public class BlorbResources implements Resources {
   /**
    * {@inheritDoc}
    */
-  public MediaCollection<BlorbImage> getImages() { return images; }
+  public MediaCollection<? extends ZmppImage> getImages() { return images; }
   
   /**
    * {@inheritDoc}

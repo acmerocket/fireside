@@ -28,11 +28,11 @@ import java.util.Map;
 import org.zmpp.base.Memory;
 import static org.zmpp.base.MemoryUtil.readUnsigned32;
 import org.zmpp.blorb.BlorbImage.Ratio;
-import org.zmpp.blorb.BlorbImage.Resolution;
 import org.zmpp.blorb.BlorbImage.ResolutionInfo;
 import org.zmpp.blorb.BlorbImage.ScaleInfo;
 import org.zmpp.iff.Chunk;
 import org.zmpp.iff.FormChunk;
+import org.zmpp.media.Resolution;
 
 /**
  * This class implements the Image collection.

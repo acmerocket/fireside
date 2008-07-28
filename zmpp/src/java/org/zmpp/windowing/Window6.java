@@ -18,9 +18,9 @@
  * You should have received a copy of the GNU General Public License
  * along with ZMPP.  If not, see <http://www.gnu.org/licenses/>.
  */
-package org.zmpp.vm;
+package org.zmpp.windowing;
 
-import org.zmpp.blorb.BlorbImage;
+import org.zmpp.media.ZmppImage;
 
 /**
  * Window 6 interface.
@@ -53,7 +53,7 @@ public interface Window6 {
    * @param y the y coordinate
    * @param x the x coordinate
    */
-  void drawPicture(BlorbImage picture, int y, int x);
+  void drawPicture(ZmppImage picture, int y, int x);
   
   /**
    * Clears the area of the specified picture at the given position.
@@ -62,7 +62,7 @@ public interface Window6 {
    * @param y the y coordinate
    * @param x the x coordinate
    */
-  void erasePicture(BlorbImage picture, int y, int x);
+  void erasePicture(ZmppImage picture, int y, int x);
   
   /**
    * Moves the window to the specified coordinates in pixels, (1, 1)

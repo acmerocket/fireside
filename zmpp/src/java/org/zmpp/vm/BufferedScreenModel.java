@@ -20,6 +20,7 @@
  */
 package org.zmpp.vm;
 
+import org.zmpp.windowing.ScreenModel;
 import org.zmpp.windowing.TextCursor;
 import org.zmpp.windowing.BufferedTextWindow;
 import java.util.ArrayList;
@@ -27,8 +28,8 @@ import java.util.List;
 import java.util.logging.Logger;
 import org.zmpp.encoding.IZsciiEncoding;
 import org.zmpp.io.OutputStream;
-import org.zmpp.windowing.AnnotatedCharacter;
 import org.zmpp.windowing.AnnotatedText;
+import org.zmpp.windowing.ScreenModelListener;
 import org.zmpp.windowing.TopWindow;
 
 /**
@@ -54,13 +55,6 @@ public class BufferedScreenModel implements ScreenModel, StatusLine,
     new ArrayList<StatusLineListener>();
   private IZsciiEncoding encoding;
   private Machine machine;
-  
-  public interface ScreenModelListener {
-    void screenModelUpdated(BufferedScreenModel screenModel);
-    void topWindowUpdated(int cursorx, int cursory, AnnotatedCharacter c);
-    void screenSplit(int linesUpperWindow);
-    void windowErased(int window);
-  }
   
   public interface StatusLineListener {
     void statusLineUpdated(String objectDescription, String status);

@@ -57,8 +57,8 @@ public class StoryMetadata {
   public String getGroup() { return group; }
   public void setGroup(final String group) { this.group = group; }
   
-  public String toString() {
-    
+  @Override
+  public String toString() {    
     final StringBuilder builder = new StringBuilder();
     builder.append("Title: '" + title + NEWLINE);
     builder.append("Headline: '" + headline + NEWLINE);

@@ -20,7 +20,6 @@
  */
 package org.zmpp.windowing;
 
-import org.zmpp.vm.ScreenModel;
 
 /**
  * An annotation to indicate how a sequence of characters should be printed.

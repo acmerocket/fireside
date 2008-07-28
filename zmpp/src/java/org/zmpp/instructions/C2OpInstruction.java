@@ -20,7 +20,7 @@
 package org.zmpp.instructions;
 
 import org.zmpp.vm.Machine;
-import org.zmpp.vm.ScreenModel;
+import org.zmpp.windowing.ScreenModel;
 import static org.zmpp.vm.Instruction.*;
 
 /**

@@ -20,9 +20,6 @@
  */
 package org.zmpp.media;
 
-import org.zmpp.blorb.BlorbImage;
-import org.zmpp.blorb.BlorbImage.Resolution;
-
 /**
  * Interface for managing pictures.
  * @author Wei-ju Wu
@@ -46,7 +43,7 @@ public interface PictureManager {
    * @param picturenum the picture number
    * @return the data
    */
-  BlorbImage getPicture(int picturenum);
+  ZmppImage getPicture(int picturenum);
   
   /**
    * Returns the number of pictures.

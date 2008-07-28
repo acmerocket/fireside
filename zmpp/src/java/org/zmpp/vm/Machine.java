@@ -20,6 +20,8 @@
  */
 package org.zmpp.vm;
 
+import org.zmpp.windowing.ScreenModel6;
+import org.zmpp.windowing.ScreenModel;
 import org.zmpp.base.Memory;
 import org.zmpp.encoding.IZsciiEncoding;
 import org.zmpp.media.PictureManager;

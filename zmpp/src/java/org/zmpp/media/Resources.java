@@ -20,8 +20,6 @@
  */
 package org.zmpp.media;
 
-import org.zmpp.blorb.BlorbImage;
-
 /**
  * This interface defines access to the Z-machine's media resources.
  * 
@@ -39,10 +37,9 @@ public interface Resources {
   
   /**
    * Returns the images of this file.
-   * 
    * @return the images
    */
-  MediaCollection<BlorbImage> getImages();
+  MediaCollection<? extends ZmppImage> getImages();
 
   /**
    * Returns the sounds of this file.

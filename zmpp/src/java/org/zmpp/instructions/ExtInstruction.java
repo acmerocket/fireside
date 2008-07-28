@@ -19,13 +19,12 @@
  */
 package org.zmpp.instructions;
 
-import org.zmpp.base.Memory;
+import org.zmpp.media.Resolution;
 import static org.zmpp.base.MemoryUtil.*;
-import org.zmpp.blorb.BlorbImage.Resolution;
 import static org.zmpp.vm.Instruction.*;
 import org.zmpp.vm.Machine;
 import org.zmpp.vm.PortableGameState;
-import org.zmpp.vm.ScreenModel;
+import org.zmpp.windowing.ScreenModel;
 
 /**
  * Implementation of instructions with EXT operand count.

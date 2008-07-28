@@ -24,8 +24,8 @@ import org.zmpp.vm.Instruction;
 import org.zmpp.vm.Machine;
 import org.zmpp.vm.PortableGameState;
 import org.zmpp.vm.RoutineContext;
-import org.zmpp.vm.ScreenModel6;
-import org.zmpp.vm.Window6;
+import org.zmpp.windowing.ScreenModel6;
+import org.zmpp.windowing.Window6;
 
 /**
  * An abstract instruction to replace the old instruction scheme.

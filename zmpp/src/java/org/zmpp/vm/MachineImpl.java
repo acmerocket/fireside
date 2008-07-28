@@ -20,11 +20,13 @@
  */
 package org.zmpp.vm;
 
+import org.zmpp.media.Resolution;
+import org.zmpp.windowing.ScreenModel6;
+import org.zmpp.windowing.ScreenModel;
 import java.util.List;
 import java.util.logging.Logger;
 import org.zmpp.base.DefaultMemory;
 import org.zmpp.base.Memory;
-import org.zmpp.blorb.BlorbImage;
 import org.zmpp.encoding.AccentTable;
 import org.zmpp.encoding.AlphabetTable;
 import org.zmpp.encoding.AlphabetTableV1;
@@ -43,6 +45,7 @@ import org.zmpp.iff.FormChunk;
 import org.zmpp.iff.WritableFormChunk;
 import org.zmpp.io.InputStream;
 import org.zmpp.io.OutputStream;
+import org.zmpp.media.DrawingArea;
 import org.zmpp.media.MediaCollection;
 import org.zmpp.media.PictureManager;
 import org.zmpp.media.PictureManagerImpl;
@@ -50,6 +53,7 @@ import org.zmpp.media.Resources;
 import org.zmpp.media.SoundEffect;
 import org.zmpp.media.SoundSystem;
 import org.zmpp.media.SoundSystemImpl;
+import org.zmpp.media.ZmppImage;
 import org.zmpp.vm.StoryFileHeader.Attribute;
 import org.zmpp.vmutil.PredictableRandomGenerator;
 import org.zmpp.vmutil.RandomGenerator;
@@ -62,7 +66,7 @@ import org.zmpp.vmutil.UnpredictableRandomGenerator;
  * @author Wei-ju Wu
  * @version 1.5
  */
-public class MachineImpl implements Machine {
+public class MachineImpl implements Machine, DrawingArea {
 
   private static final Logger LOG = Logger.getLogger("org.zmpp");
 
@@ -115,7 +119,7 @@ public class MachineImpl implements Machine {
     input = new InputImpl();
     
     MediaCollection<SoundEffect> sounds = null;
-    MediaCollection<BlorbImage> pictures = null;
+    MediaCollection<? extends ZmppImage> pictures = null;
     int resourceRelease = 0;
     
     if (resources != null) {
@@ -725,5 +729,9 @@ public class MachineImpl implements Machine {
   /** {@inheritDoc} */
   public int getNextProperty(int objectNum, int property) {
     return getObjectTree().getNextProperty(objectNum, property);
+  }
+  /** {@inheritDoc} */
+  public Resolution getResolution() {
+    return getScreen6().getResolution();
   }
 }

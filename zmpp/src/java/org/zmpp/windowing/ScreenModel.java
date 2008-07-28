@@ -18,9 +18,8 @@
  * You should have received a copy of the GNU General Public License
  * along with ZMPP.  If not, see <http://www.gnu.org/licenses/>.
  */
-package org.zmpp.vm;
+package org.zmpp.windowing;
 
-import org.zmpp.windowing.TextCursor;
 import org.zmpp.io.OutputStream;
 
 /**

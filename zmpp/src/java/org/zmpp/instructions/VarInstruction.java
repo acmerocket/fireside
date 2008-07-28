@@ -25,7 +25,7 @@ import static org.zmpp.vm.Instruction.*;
 import org.zmpp.vm.Machine;
 import org.zmpp.vm.MachineRunState;
 import org.zmpp.vm.Output;
-import org.zmpp.vm.ScreenModel;
+import org.zmpp.windowing.ScreenModel;
 import org.zmpp.windowing.TextCursor;
 
 /**
