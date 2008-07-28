@@ -154,6 +154,7 @@ public class C2OpInstruction extends AbstractInstruction {
   private void jl() {
     final short op1 = getSignedValue(0);
     final short op2 = getSignedValue(1);
+    //System.out.printf("Debugging jl op1: %d op2: %d\n", op1, op2);
     branchOnTest(op1 < op2);
   }
   

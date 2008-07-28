@@ -20,7 +20,6 @@
 package org.zmpp.instructions;
 
 import org.zmpp.base.MemoryUtil;
-import org.zmpp.instructions.Operand.OperandType;
 import org.zmpp.vm.Instruction;
 import org.zmpp.vm.Machine;
 import org.zmpp.vm.PortableGameState;
@@ -79,6 +78,12 @@ public abstract class AbstractInstruction implements Instruction {
   
   protected int getStoryVersion() { return machine.getVersion(); }
   protected abstract OperandCount getOperandCount();
+  /**
+   * The opcode length is a crucial attribute for program control, expose it
+   * for testing.
+   * @return the length of the instruction in memory
+   */
+  public int getLength() { return opcodeLength; }
 
   /**
    * Returns the instruction's opcode.
@@ -109,9 +114,11 @@ public abstract class AbstractInstruction implements Instruction {
    * @return a signed value
    */
   protected short getSignedValue(final int operandNum) {
+    /*
+    // I am not sure if this is ever applicable....
     if (operands[operandNum].getType() == OperandType.SMALL_CONSTANT) {
       return MemoryUtil.unsignedToSigned8(getUnsignedValue(operandNum));
-    }
+    }*/
     return MemoryUtil.unsignedToSigned16(getUnsignedValue(operandNum));
   }
   
@@ -184,6 +191,8 @@ public abstract class AbstractInstruction implements Instruction {
    */
   protected void branchOnTest(final boolean condition) {
     final boolean test = branchInfo.branchOnTrue ? condition : !condition; 
+    //System.out.printf("ApplyBranch, offset: %d, opcodeLength: %d, branchIfTrue: %b, test: %b\n",
+     //       branchInfo.branchOffset, opcodeLength, branchInfo.branchOnTrue, test);
     if (test) {
       applyBranch();
     } else {
@@ -197,7 +206,6 @@ public abstract class AbstractInstruction implements Instruction {
    * @param offset the offset
    */
   private void applyBranch() {
-    //System.out.printf("ApplyBranch, offset: %d, opcodeLength: %d\n", branchInfo.branchOffset, opcodeLength);
     machine.doBranch(branchInfo.branchOffset, opcodeLength);
   }
 

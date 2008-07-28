@@ -94,7 +94,7 @@ public class InstructionDecoder {
         instr = decodeVariable(instructionAddress, byte1);
         break;
       case EXTENDED:
-        instr = decodeExtended(instructionAddress, byte1);
+        instr = decodeExtended(instructionAddress);
         break;
     }
     return instr;
@@ -183,7 +183,7 @@ public class InstructionDecoder {
       opTypesOffset = 2;
     }
     return decodeVarInstruction(instrAddress, opCount, opcodeNum, operandTypes,
-                                opTypesOffset - 1, opTypesOffset);
+                                opTypesOffset - 1, opTypesOffset, false);
   }
   
   private boolean isVx2(OperandCount opCount, char opcodeNum) {
@@ -212,23 +212,30 @@ public class InstructionDecoder {
    * @param byte1 the first opcode byte
    * @return the decoded instruction
    */
-  private Instruction decodeExtended(int instrAddress, char byte1) {
+  private Instruction decodeExtended(int instrAddress) {
     return decodeVarInstruction(instrAddress, EXT,
         machine.readUnsigned8(instrAddress + 1),
-        extractOperandTypes(machine.readUnsigned8(instrAddress + 2)), 1, 3);
+        extractOperandTypes(machine.readUnsigned8(instrAddress + 2)), 1, 3,
+                            true);
   }
   
   private Instruction decodeVarInstruction(int instrAddress,
                                            OperandCount opCount,
-                                           char opcodeNum, int[] operandTypes,
+                                           char opcodeNum,
+                                           int[] operandTypes,
                                            int numOperandTypeBytes,
-                                           int opTypesOffset) {
+                                           int opTypesOffset,
+                                           boolean isExtended) {
     char[] operands = extractOperands(instrAddress + opTypesOffset,
                                       operandTypes);
     int numOperandBytes = getNumOperandBytes(operandTypes);
+    // it is important to note that extended instructions have an extra byte
+    // since the first byte is always $be
+    int numExtraOpcodeBytes = isExtended ? 1 : 0;
     int currentAddr = instrAddress + opTypesOffset + numOperandBytes;
     return createInstruction(opCount, instrAddress, opcodeNum, currentAddr,
-                             numOperandBytes + numOperandTypeBytes,
+                             numExtraOpcodeBytes + numOperandBytes +
+                               numOperandTypeBytes,
                              0, operandTypes, operands, null);
   }
   

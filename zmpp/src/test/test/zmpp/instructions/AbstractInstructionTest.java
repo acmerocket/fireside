@@ -165,7 +165,8 @@ public class AbstractInstructionTest {
     StubInstruction instr = createStdInstruction();
     assertEquals(unsignedToSigned16((char) 0xcafe), instr.getSignedValue(0));
     assertEquals(unsignedToSigned16((char) 0xdeca), instr.getSignedValue(1));
-    assertEquals(unsignedToSigned8((char) 0xbe), instr.getSignedValue(2));
+    // This is interesting, on small constants, it returns an unsigned !
+    assertEquals(unsignedToSigned16((char) 0xbe), instr.getSignedValue(2));
     assertEquals(unsignedToSigned16((char) 0xface), instr.getSignedValue(3));
   }
 
