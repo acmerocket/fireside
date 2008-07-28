@@ -37,7 +37,7 @@ import static org.zmpp.base.MemoryUtil.writeUnsigned32;
 public class WritableFormChunk implements FormChunk {
 
   private byte[] subId;
-  private static final byte[] FORM_ID = "FORM".getBytes();
+  private static final String FORM_ID = "FORM";
   private List<Chunk> subChunks;
   
   /**
@@ -60,8 +60,8 @@ public class WritableFormChunk implements FormChunk {
   }
   
   /** {@inheritDoc} */
-  public byte[] getSubId() {   
-    return subId;
+  public String getSubId() {   
+    return new String(subId);
   }
 
   /** {@inheritDoc} */
@@ -70,9 +70,9 @@ public class WritableFormChunk implements FormChunk {
   }
 
   /** {@inheritDoc} */
-  public Chunk getSubChunk(final byte[] id) {
+  public Chunk getSubChunk(final String id) {
     for (Chunk chunk : subChunks) {
-      if (Arrays.equals(chunk.getId(), id)) {
+      if (chunk.getId().equals(id)) {
         return chunk;
       }
     }
@@ -86,7 +86,7 @@ public class WritableFormChunk implements FormChunk {
   }
 
   /** {@inheritDoc} */
-  public byte[] getId() { return FORM_ID; }
+  public String getId() { return FORM_ID; }
 
   /** {@inheritDoc} */
   public int getSize() {
@@ -132,7 +132,7 @@ public class WritableFormChunk implements FormChunk {
     
     // Write sub chunk data
     for (Chunk chunk : subChunks) {
-      final byte[] chunkId = chunk.getId();
+      final byte[] chunkId = chunk.getId().getBytes();
       final int chunkSize = chunk.getSize();
       
       // Write id

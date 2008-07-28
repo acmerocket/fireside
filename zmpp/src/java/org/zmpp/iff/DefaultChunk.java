@@ -83,7 +83,7 @@ public class DefaultChunk implements Chunk {
   public boolean isValid() { return true; }
 
   /** {@inheritDoc} */
-  public byte[] getId() { return id; }
+  public String getId() { return new String(id); }
 
   /** {@inheritDoc} */
   public int getSize() { return chunkSize; }

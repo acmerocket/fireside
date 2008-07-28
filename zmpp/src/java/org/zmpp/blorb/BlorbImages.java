@@ -99,9 +99,7 @@ public class BlorbImages extends BlorbMediaCollection<BlorbImage> {
   }
   
   private boolean handlePlaceholder(final Chunk chunk, final int resnum) {
-    
-    if ("Rect".equals(new String(chunk.getId()))) {
-      
+    if ("Rect".equals(chunk.getId())) {
       // Place holder
       Memory memory = chunk.getMemory();
       int width = (int) readUnsigned32(memory, Chunk.CHUNK_HEADER_LENGTH);
@@ -129,7 +127,7 @@ public class BlorbImages extends BlorbMediaCollection<BlorbImage> {
   
   private void handleResoChunk() {
  
-    Chunk resochunk = getFormChunk().getSubChunk("Reso".getBytes());
+    Chunk resochunk = getFormChunk().getSubChunk("Reso");
     if (resochunk != null) {
 
       adjustResolution(resochunk);

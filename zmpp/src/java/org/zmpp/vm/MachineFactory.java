@@ -26,7 +26,7 @@ import java.net.URL;
 
 import org.zmpp.base.DefaultMemory;
 import org.zmpp.blorb.BlorbResources;
-import org.zmpp.blorb.BlorbStory;
+import org.zmpp.blorb.BlorbFile;
 import org.zmpp.blorb.NativeImageFactory;
 import org.zmpp.iff.DefaultFormChunk;
 import org.zmpp.iff.FormChunk;
@@ -122,7 +122,7 @@ public class MachineFactory {
     if (storyis != null) {
       return FileUtils.readFileBytes(storyis);
     } else {
-      return new BlorbStory(readBlorb(blorbis)).getStoryData();
+      return new BlorbFile(readBlorb(blorbis)).getStoryData();
     }
   }
 
@@ -135,7 +135,7 @@ public class MachineFactory {
     } else {
       // Read from Z BLORB
       FormChunk formchunk = readBlorbFromFile();
-      return formchunk != null ? new BlorbStory(formchunk).getStoryData() : null;
+      return formchunk != null ? new BlorbFile(formchunk).getStoryData() : null;
     }
   }
   
@@ -155,7 +155,7 @@ public class MachineFactory {
       byte[] data = FileUtils.readFileBytes(initStruct.blorbFile);
       if (data != null) {        
         blorbchunk = new DefaultFormChunk(new DefaultMemory(data));
-        if (!"IFRS".equals(new String(blorbchunk.getSubId()))) {
+        if (!"IFRS".equals(blorbchunk.getSubId())) {
           throw new IOException("not a valid Blorb file");
         }
       }

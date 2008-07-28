@@ -57,7 +57,7 @@ public class DefaultFormChunk extends DefaultChunk implements FormChunk {
    * Initialize the id field.
    */
   private void initBaseInfo() throws IOException {
-    if (!"FORM".equals(new String(getId()))) {
+    if (!"FORM".equals(getId())) {
       throw new IOException("not a valid IFF format");
     }
     // Determine the sub id
@@ -93,12 +93,10 @@ public class DefaultFormChunk extends DefaultChunk implements FormChunk {
   
   /** {@inheritDoc} */
   @Override
-  public boolean isValid() {
-    return (new String(getId())).equals("FORM");
-  }
+  public boolean isValid() { return "FORM".equals(getId()); }
   
   /** {@inheritDoc} */
-  public byte[] getSubId() { return subId; }
+  public String getSubId() { return new String(subId); }
 
   /** {@inheritDoc} */
   public Iterator<Chunk> getSubChunks() {
@@ -106,9 +104,9 @@ public class DefaultFormChunk extends DefaultChunk implements FormChunk {
   }
 
   /** {@inheritDoc} */
-  public Chunk getSubChunk(final byte[] id) {
+  public Chunk getSubChunk(final String id) {
     for (Chunk chunk : subChunks) {
-      if (Arrays.equals(id, chunk.getId())) {
+      if (chunk.getId().equals(id)) {
         return chunk;
       }
     }

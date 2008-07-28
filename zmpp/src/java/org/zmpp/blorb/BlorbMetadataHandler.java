@@ -55,7 +55,7 @@ public class BlorbMetadataHandler extends DefaultHandler {
   }
   
   private void extractMetadata(final FormChunk formchunk) {
-    final Chunk chunk = formchunk.getSubChunk("IFmd".getBytes());
+    final Chunk chunk = formchunk.getSubChunk("IFmd");
     if (chunk != null) {
       final Memory chunkmem = chunk.getMemory();      
       final MemoryInputStream meminput =

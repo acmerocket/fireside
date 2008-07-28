@@ -41,7 +41,7 @@ public class DefaultChunkTest {
     byte[] chunkdata = { (byte) 0x01, (byte) 0x02, (byte) 0x03 };
     Chunk chunk = new DefaultChunk(id, chunkdata);
     assertEquals(3, chunk.getSize());
-    assertTrue(equals(id, chunk.getId()));
+    assertEquals("FORM", chunk.getId());
     assertEquals(0, chunk.getAddress());
     Memory mem = chunk.getMemory();
     assertEquals('F', mem.readUnsigned8(0));
@@ -64,9 +64,7 @@ public class DefaultChunkTest {
     Memory mem = new DefaultMemory(data);
     Chunk chunk = new DefaultChunk(mem, 1234);
     assertEquals(1234, chunk.getAddress());
-    assertTrue(equals(
-      new byte[] {(byte) 'F', (byte) 'O', (byte) 'R', (byte) 'M' },
-                 chunk.getId()));
+    assertEquals("FORM", chunk.getId());
     assertSame(mem, chunk.getMemory());
     assertEquals(3, chunk.getSize());
   }

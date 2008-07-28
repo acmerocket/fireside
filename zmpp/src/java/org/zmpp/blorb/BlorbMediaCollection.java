@@ -67,7 +67,7 @@ public abstract class BlorbMediaCollection<T> implements MediaCollection<T> {
     initDatabase();
     
     // Ridx chunk
-    Chunk ridxChunk = formchunk.getSubChunk("RIdx".getBytes());
+    Chunk ridxChunk = formchunk.getSubChunk("RIdx");
     Memory chunkmem = ridxChunk.getMemory();
     int numresources = (int) readUnsigned32(chunkmem, 8);
     int offset = 12;

@@ -173,15 +173,15 @@ public class PortableGameStateTest {
     
     // Export our mock machine to a FormChunk verify some basic information
     WritableFormChunk exportFormChunk = gameState.exportToFormChunk();
-    assertTrue(Arrays.equals("FORM".getBytes(), exportFormChunk.getId()));
+    assertEquals("FORM", exportFormChunk.getId());
     assertEquals(156, exportFormChunk.getSize());
-    assertTrue(Arrays.equals("IFZS".getBytes(), exportFormChunk.getSubId()));
-    assertNotNull(exportFormChunk.getSubChunk("IFhd".getBytes()));    
-    assertNotNull(exportFormChunk.getSubChunk("UMem".getBytes()));
-    assertNotNull(exportFormChunk.getSubChunk("Stks".getBytes()));
+    assertEquals("IFZS", exportFormChunk.getSubId());
+    assertNotNull(exportFormChunk.getSubChunk("IFhd"));    
+    assertNotNull(exportFormChunk.getSubChunk("UMem"));
+    assertNotNull(exportFormChunk.getSubChunk("Stks"));
     
     // Read IFhd information
-    Chunk ifhdChunk = exportFormChunk.getSubChunk("IFhd".getBytes());
+    Chunk ifhdChunk = exportFormChunk.getSubChunk("IFhd");
     Memory memaccess = ifhdChunk.getMemory();
     assertEquals(13, ifhdChunk.getSize());
     assertEquals(gameState.getRelease(), memaccess.readUnsigned16(8));
@@ -195,7 +195,7 @@ public class PortableGameStateTest {
                                memaccess.readUnsigned8(20)));
     
     // Read the UMem information
-    Chunk umemChunk = exportFormChunk.getSubChunk("UMem".getBytes());
+    Chunk umemChunk = exportFormChunk.getSubChunk("UMem");
     memaccess = umemChunk.getMemory();
     assertEquals(dynamicMem.length, umemChunk.getSize());
     for (int i = 0; i < dynamicMem.length; i++) {
@@ -203,7 +203,7 @@ public class PortableGameStateTest {
     }
     
     // Read the Stks information
-    Chunk stksChunk = exportFormChunk.getSubChunk("Stks".getBytes());
+    Chunk stksChunk = exportFormChunk.getSubChunk("Stks");
     memaccess = stksChunk.getMemory();
     
     // There is only one frame at the moment
@@ -241,32 +241,32 @@ public class PortableGameStateTest {
     // in a separate test
     byte[] data = exportFormChunk.getBytes();
     FormChunk formChunk2 = new DefaultFormChunk(new DefaultMemory(data));
-    assertTrue(Arrays.equals(formChunk2.getId(), "FORM".getBytes()));
-    assertTrue(Arrays.equals(formChunk2.getSubId(), "IFZS".getBytes()));
+    assertEquals("FORM", formChunk2.getId());
+    assertEquals("IFZS", formChunk2.getSubId());
     assertEquals(exportFormChunk.getSize(), formChunk2.getSize());
 
     // IFhd chunk
-    Chunk ifhd2 = formChunk2.getSubChunk("IFhd".getBytes());
+    Chunk ifhd2 = formChunk2.getSubChunk("IFhd");
     assertEquals(13, ifhd2.getSize());
-    Memory ifhd1mem = exportFormChunk.getSubChunk("IFhd".getBytes()).getMemory();
+    Memory ifhd1mem = exportFormChunk.getSubChunk("IFhd").getMemory();
     Memory ifhd2mem = ifhd2.getMemory();
     for (int i = 0; i < 21; i++) {
       assertEquals(ifhd2mem.readUnsigned8(i), ifhd1mem.readUnsigned8(i));
     }
 
     // UMem chunk
-    Chunk umem2 = formChunk2.getSubChunk("UMem".getBytes());
+    Chunk umem2 = formChunk2.getSubChunk("UMem");
     assertEquals(dynamicMem.length, umem2.getSize());
-    Memory umem1mem = exportFormChunk.getSubChunk("UMem".getBytes()).getMemory();
+    Memory umem1mem = exportFormChunk.getSubChunk("UMem").getMemory();
     Memory umem2mem = umem2.getMemory();
     for (int i = 0; i < umem2.getSize() + Chunk.CHUNK_HEADER_LENGTH; i++) {      
       assertEquals(umem2mem.readUnsigned8(i), umem1mem.readUnsigned8(i));
     }
     
     // Stks chunk
-    Chunk stks2 = formChunk2.getSubChunk("Stks".getBytes());
+    Chunk stks2 = formChunk2.getSubChunk("Stks");
     assertEquals(14, stks2.getSize());
-    Memory stks1mem = exportFormChunk.getSubChunk("Stks".getBytes()).getMemory();
+    Memory stks1mem = exportFormChunk.getSubChunk("Stks").getMemory();
     Memory stks2mem = stks2.getMemory();
     for (int i = 0; i < stks2.getSize() + Chunk.CHUNK_HEADER_LENGTH; i++) {      
       assertEquals(stks2mem.readUnsigned8(i), stks1mem.readUnsigned8(i));

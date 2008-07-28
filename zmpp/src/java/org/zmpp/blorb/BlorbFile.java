@@ -29,21 +29,16 @@ import org.zmpp.iff.FormChunk;
  * @author Wei-ju Wu
  * @version 1.5
  */
-public class BlorbStory {
+public class BlorbFile {
 
-  private byte[] storydata;
+  private FormChunk formChunk;
   
-  public BlorbStory(final FormChunk formchunk) {
-    
-    super();
-    storydata = readStoryFromZBlorb(formchunk);
+  public BlorbFile(final FormChunk formchunk) {
+    this.formChunk = formchunk;
   }
   
-  public byte[] getStoryData() { return storydata; }
-  
-  private byte[] readStoryFromZBlorb(final FormChunk formchunk) {
-    
-    final Chunk chunk = formchunk.getSubChunk("ZCOD".getBytes());
+  public byte[] getStoryData() {    
+    final Chunk chunk = formChunk.getSubChunk("ZCOD");
     final int size = chunk.getSize();
     final byte[] data = new byte[size];
     chunk.getMemory().copyBytesToArray(data, 0, Chunk.CHUNK_HEADER_LENGTH,

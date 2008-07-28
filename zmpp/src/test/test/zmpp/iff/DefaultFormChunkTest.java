@@ -105,10 +105,10 @@ public class DefaultFormChunkTest {
   
   @Test
   public void testGetSubChunk() {
-    assertNotNull(formChunk.getSubChunk("IFhd".getBytes()));
-    assertNotNull(formChunk.getSubChunk("CMem".getBytes()));
-    assertNotNull(formChunk.getSubChunk("Stks".getBytes()));
-    assertNull(formChunk.getSubChunk("Test".getBytes()));
+    assertNotNull(formChunk.getSubChunk("IFhd"));
+    assertNotNull(formChunk.getSubChunk("CMem"));
+    assertNotNull(formChunk.getSubChunk("Stks"));
+    assertNull(formChunk.getSubChunk("Test"));
   }
   
   @Test

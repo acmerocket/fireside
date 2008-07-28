@@ -50,7 +50,7 @@ public interface Chunk {
    * Returns this IFF chunk's id. An id is a 4 byte array. 
    * @return the id
    */
-  byte[] getId();
+  String getId();
   
   /**
    * The chunk data size, excluding id and size word.

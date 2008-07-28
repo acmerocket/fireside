@@ -44,7 +44,7 @@ public class BlorbCoverArt {
   }
   
   private void readFrontispiece(final FormChunk formchunk) {
-    final Chunk fspcchunk = formchunk.getSubChunk("Fspc".getBytes());
+    final Chunk fspcchunk = formchunk.getSubChunk("Fspc");
     if (fspcchunk != null) {
       coverartnum = (int)  readUnsigned32(fspcchunk.getMemory(),
                                           Chunk.CHUNK_HEADER_LENGTH);

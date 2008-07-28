@@ -170,8 +170,7 @@ public class PortableGameState {
    */
   public boolean readSaveGame(final FormChunk formChunk) {
     stackFrames.clear();
-    if (formChunk != null
-        && (new String(formChunk.getSubId())).equals("IFZS")) {
+    if (formChunk != null && "IFZS".equals(formChunk.getSubId())) {
       readIfhdChunk(formChunk);
       readStacksChunk(formChunk);
       readMemoryChunk(formChunk);
@@ -185,7 +184,7 @@ public class PortableGameState {
    * @param formChunk the FORM chunk
    */
   private void readIfhdChunk(final FormChunk formChunk) {
-    final Chunk ifhdChunk = formChunk.getSubChunk("IFhd".getBytes());
+    final Chunk ifhdChunk = formChunk.getSubChunk("IFhd");
     final Memory chunkMem = ifhdChunk.getMemory();
     int offset = Chunk.CHUNK_HEADER_LENGTH;
     
@@ -213,7 +212,7 @@ public class PortableGameState {
    * @param formChunk the FORM chunk
    */
   private void readStacksChunk(final FormChunk formChunk) {
-    final Chunk stksChunk = formChunk.getSubChunk("Stks".getBytes());
+    final Chunk stksChunk = formChunk.getSubChunk("Stks");
     final Memory chunkMem = stksChunk.getMemory();
     int offset = Chunk.CHUNK_HEADER_LENGTH;
     final int chunksize = stksChunk.getSize() + Chunk.CHUNK_HEADER_LENGTH;
@@ -278,8 +277,8 @@ public class PortableGameState {
    * @param formChunk the FORM chunk
    */
   private void readMemoryChunk(final FormChunk formChunk) {
-    final Chunk cmemChunk = formChunk.getSubChunk("CMem".getBytes());
-    final Chunk umemChunk = formChunk.getSubChunk("UMem".getBytes());
+    final Chunk cmemChunk = formChunk.getSubChunk("CMem");
+    final Chunk umemChunk = formChunk.getSubChunk("UMem");
     if (cmemChunk != null) { readCMemChunk(cmemChunk); }
     if (umemChunk != null) { readUMemChunk(umemChunk); }
   }
