@@ -254,8 +254,9 @@ public class CpuTest {
     // Setup the environment
     cpu.setVariable((char) 0, (char) 10); // write something on the stack
     int oldSp = cpu.getSP();
-    cpu.setPC((char) 0x747);
-    int returnAddress = 0x749;
+    // Use addresses, which exceed 16 Bit
+    cpu.setPC(0x15747);
+    int returnAddress = 0x15749;
     
     // Initialize the routine context
     RoutineContext routineContext = new RoutineContext(0);
@@ -264,7 +265,7 @@ public class CpuTest {
     // simulate a call
     routineContext.setReturnAddress((char) returnAddress); // save the return address in the context
     cpu.pushRoutineContext(routineContext);
-    cpu.setPC((char) 0x0815);
+    cpu.setPC(0x15815);
     
     // assert that the context has saved the old stack pointer
     assertEquals(oldSp, routineContext.getInvocationStackPointer());
