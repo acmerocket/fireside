@@ -192,7 +192,7 @@ public abstract class AbstractInstruction implements Instruction {
   protected void branchOnTest(final boolean condition) {
     final boolean test = branchInfo.branchOnTrue ? condition : !condition; 
     //System.out.printf("ApplyBranch, offset: %d, opcodeLength: %d, branchIfTrue: %b, test: %b\n",
-     //       branchInfo.branchOffset, opcodeLength, branchInfo.branchOnTrue, test);
+      //      branchInfo.branchOffset, opcodeLength, branchInfo.branchOnTrue, test);
     if (test) {
       applyBranch();
     } else {
@@ -241,7 +241,7 @@ public abstract class AbstractInstruction implements Instruction {
       }
       nextInstruction();
     } else {
-      final char returnAddress = (char) (getMachine().getPC() + opcodeLength);
+      final int returnAddress = getMachine().getPC() + opcodeLength;
       final char returnVariable = storesResult() ? storeVariable :
         RoutineContext.DISCARD_RESULT;      
       machine.call(packedRoutineAddress, returnAddress, args,
