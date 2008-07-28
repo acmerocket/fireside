@@ -27,7 +27,7 @@ import java.awt.FontMetrics;
 import java.awt.LayoutManager2;
 import javax.swing.JComponent;
 import javax.swing.JLayeredPane;
-import org.zmpp.vm.ScreenModel;
+import org.zmpp.windowing.ScreenModel;
 
 /**
  * This layout manager manages a parent component and assumes it will contain

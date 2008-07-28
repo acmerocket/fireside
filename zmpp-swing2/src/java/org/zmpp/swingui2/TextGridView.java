@@ -26,10 +26,10 @@ import java.awt.FontMetrics;
 import java.awt.Graphics;
 import java.util.logging.Logger;
 import javax.swing.JComponent;
-import org.zmpp.vm.ScreenModel;
 import org.zmpp.windowing.AnnotatedCharacter;
 import org.zmpp.windowing.TextAnnotation;
 import org.zmpp.vm.BufferedScreenModel;
+import org.zmpp.windowing.ScreenModel;
 
 /**
  * A class representing a text grid in a Z-machine or Glk screen model.

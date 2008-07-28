@@ -21,7 +21,7 @@
 package org.zmpp.swingui2;
 
 import java.awt.Color;
-import org.zmpp.vm.ScreenModel;
+import org.zmpp.windowing.ScreenModel;
 
 /**
  * This class translates color numbers into Java AWT Color objects. It

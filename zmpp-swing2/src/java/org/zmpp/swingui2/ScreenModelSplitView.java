@@ -47,13 +47,13 @@ import javax.swing.text.MutableAttributeSet;
 import javax.swing.text.StyleConstants;
 import org.zmpp.ExecutionControl;
 import org.zmpp.vm.MachineRunState;
-import org.zmpp.vm.ScreenModel;
 import org.zmpp.windowing.AnnotatedCharacter;
 import org.zmpp.windowing.AnnotatedText;
 import org.zmpp.windowing.TextAnnotation;
 import org.zmpp.vm.BufferedScreenModel;
-import org.zmpp.vm.BufferedScreenModel.ScreenModelListener;
 import org.zmpp.vm.Instruction;
+import org.zmpp.windowing.ScreenModel;
+import org.zmpp.windowing.ScreenModelListener;
 
 /**
  * The MainView class is the main view component. It contains the upper and
@@ -347,8 +347,8 @@ implements ScreenModelListener {
   // *************************************************************************
   // ****** ScreenModelListener
   // ***************************************
-  public void screenModelUpdated(BufferedScreenModel screenModel) {
-    List<AnnotatedText> text = screenModel.getLowerBuffer();
+  public void screenModelUpdated(ScreenModel screenModel) {
+    List<AnnotatedText> text = this.screenModel.getLowerBuffer();
     for (AnnotatedText segment : text) {
       appendToLower(segment);
     }
