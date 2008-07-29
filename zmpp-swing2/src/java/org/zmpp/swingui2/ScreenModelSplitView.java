@@ -34,17 +34,12 @@ import java.util.List;
 import java.util.logging.Logger;
 import javax.swing.BorderFactory;
 import javax.swing.JLayeredPane;
-import javax.swing.JTextPane;
 import javax.swing.JViewport;
 import javax.swing.SwingUtilities;
 import javax.swing.Timer;
 import javax.swing.border.Border;
 import javax.swing.event.ChangeEvent;
 import javax.swing.event.ChangeListener;
-import javax.swing.text.BadLocationException;
-import javax.swing.text.Document;
-import javax.swing.text.MutableAttributeSet;
-import javax.swing.text.StyleConstants;
 import org.zmpp.ExecutionControl;
 import org.zmpp.vm.MachineRunState;
 import org.zmpp.windowing.AnnotatedCharacter;
@@ -74,8 +69,8 @@ implements ScreenModelListener {
   //private static final Font STD_FONT = new Font("Baskerville", Font.PLAIN, 16);
   private static final Font STD_FONT = new Font("American Typewriter", Font.PLAIN, 12);
   private static final Font FIXED_FONT = new Font("Monaco", Font.PLAIN, 12);
-  private static final int DEFAULT_FOREGROUND = ScreenModel.COLOR_WHITE;
-  private static final int DEFAULT_BACKGROUND = ScreenModel.COLOR_BLUE;
+  static final int DEFAULT_FOREGROUND = ScreenModel.COLOR_WHITE;
+  static final int DEFAULT_BACKGROUND = ScreenModel.COLOR_BLUE;
   private int editStart;
   private ExecutionControl executionControl;
   private BufferedScreenModel screenModel;
@@ -92,20 +87,7 @@ implements ScreenModelListener {
                                int currentViewPos);
   }
 
-  private JTextPane lower = new JTextPane() {
-
-    /**
-     * Ties the background color of the MainView to the background of the
-     * TextPane. That's because the upper window is treated as transparent
-     * at the beginning.
-     * @param color the new background color
-     */
-    @Override
-    public void setBackground(Color color) {
-      super.setBackground(color);
-      ScreenModelSplitView.this.setBackground(color);
-    }
-  };
+  private TextWindowView lower = new TextWindowView(this);
   private JViewport lowerViewport;
   private TextGridView upper = new TextGridView();
   private MainViewListener listener;
@@ -121,6 +103,8 @@ implements ScreenModelListener {
     createLowerView();
     split(0);
   }
+  
+  public int getNumUpperRows() { return upper.getNumRows(); }
   
   // ************************************************************************
   // **** User interface setup
@@ -143,7 +127,6 @@ implements ScreenModelListener {
   }
   
   private void createLowerView() {
-
     Border lowerBorder = BorderFactory.createCompoundBorder(
             BorderFactory.createLineBorder(Color.BLACK),
             BorderFactory.createEmptyBorder(5, 5, 5, 5));
@@ -167,6 +150,7 @@ implements ScreenModelListener {
 
       @Override
       public void componentMoved(ComponentEvent e) {
+        System.out.println("moved, pos: " + lower.getLocation().y);
         viewSizeChanged();
       }
     });
@@ -205,7 +189,7 @@ implements ScreenModelListener {
   // **** Protected interface
   // *********************************
 
-  JTextPane getLower() { return lower; }
+  TextWindowView getLower() { return lower; }
   int getEditStart() { return editStart; }
   boolean isReadChar() {
     return currentRunState == null ? false : currentRunState.isReadChar();
@@ -277,7 +261,7 @@ implements ScreenModelListener {
     upper.setScreenModel(screenModel);
     screenModel.addScreenModelListener(this);
     setSizes();
-    setLowerFontStyles();
+    lower.setCurrentStyle(screenModel.getBottomAnnotation());
   }
   
   private void setSizes() {
@@ -334,14 +318,18 @@ implements ScreenModelListener {
       getRomanFixedFont()).getHeight();
   }
   
-  private Font getRomanFixedFont() {
+  protected Font getRomanFixedFont() {
     return fontSelector.getFont(ScreenModel.FONT_FIXED,
                                 ScreenModel.TEXTSTYLE_ROMAN);
   }
   
-  private Font getRomanStdFont() {
+  protected Font getRomanStdFont() {
     return fontSelector.getFont(ScreenModel.FONT_NORMAL,
                                 ScreenModel.TEXTSTYLE_ROMAN);
+  }
+  
+  protected Font getFont(TextAnnotation annotation) {
+    return fontSelector.getFont(annotation);
   }
 
   // *************************************************************************
@@ -350,59 +338,16 @@ implements ScreenModelListener {
   public void screenModelUpdated(ScreenModel screenModel) {
     List<AnnotatedText> text = this.screenModel.getLowerBuffer();
     for (AnnotatedText segment : text) {
-      appendToLower(segment);
+      lower.append(segment);
     }
+    // flush and set styles
+    lower.setCurrentStyle(screenModel.getBottomAnnotation());
+    //upper.setCurrentStyle(screenModel.getBottomAnnotation());
   }
   
   public void topWindowUpdated(int cursorx, int cursory, AnnotatedCharacter c) {
     upper.setCharacter(cursory, cursorx, c);
     repaint();
-  }
-
-  private void appendToLower(AnnotatedText segment) {
-    Document doc = lower.getDocument();
-    try {
-      doc.insertString(doc.getLength(), zsciiToUnicode(segment.getText()),
-                       getStyleAttributes(segment.getAnnotation()));
-    } catch (BadLocationException ex) {
-      ex.printStackTrace();
-    }
-  }
-  
-  private MutableAttributeSet getStyleAttributes(TextAnnotation annotation) {
-     MutableAttributeSet attributes = getLowerAttributes();
-     Font font = fontSelector.getFont(annotation);
-     StyleConstants.setFontFamily(attributes, font.getFamily());
-     StyleConstants.setFontSize(attributes, font.getSize());
-     StyleConstants.setBold(attributes, annotation.isBold());
-     StyleConstants.setItalic(attributes, annotation.isItalic());
-     ColorTranslator colorTranslator = ColorTranslator.getInstance();
-     Color background = colorTranslator.translate(annotation.getBackground(),
-       DEFAULT_BACKGROUND);
-     Color foreground = colorTranslator.translate(annotation.getForeground(),
-       DEFAULT_FOREGROUND);
-     if (annotation.isReverseVideo()) {
-       StyleConstants.setBackground(attributes, foreground);
-       StyleConstants.setForeground(attributes, background.brighter());
-     } else {
-       StyleConstants.setBackground(attributes, background);
-       StyleConstants.setForeground(attributes, foreground.brighter());
-     }
-     return attributes;
-  }
-  
-  private void setLowerFontStyles() {
-    MutableAttributeSet bottomAttrs = getLowerAttributes();
-    StyleConstants.setFontFamily(bottomAttrs, getRomanStdFont().getFamily());
-    StyleConstants.setFontSize(bottomAttrs, getRomanStdFont().getSize());
-  }
-  
-  private MutableAttributeSet getLowerAttributes() {
-    return lower.getInputAttributes();
-  }
-  
-  private String zsciiToUnicode(String str) {
-    return str.replace("\r", "\n");
   }
 
   public void screenSplit(int linesUpperWindow) {
@@ -413,32 +358,11 @@ implements ScreenModelListener {
     if (window == -1) {
       clearAll();
     } else if (window == ScreenModel.WINDOW_BOTTOM) {
-      clearLower();
+      lower.clear(screenModel.getBackground(), screenModel.getForeground());
     } else if (window == ScreenModel.WINDOW_TOP) {
       clearUpper();
     } else {
       throw new UnsupportedOperationException("No support for erasing window: " + window);
-    }
-  }
-  
-  private void clearLower() {
-    try {
-      ColorTranslator translator = ColorTranslator.getInstance();
-      lower.setBackground(translator.translate(
-        screenModel.getBackground(), DEFAULT_BACKGROUND));
-      lower.setForeground(translator.translate(
-        screenModel.getForeground(), DEFAULT_FOREGROUND));
-      StringBuilder formFeed = new StringBuilder();
-      for (int i = 0; i < upper.getNumRows(); i++) {
-        formFeed.append("\n");
-      }
-      TextAnnotation annotation = new TextAnnotation(ScreenModel.FONT_NORMAL,
-        ScreenModel.TEXTSTYLE_ROMAN,
-        screenModel.getBackground(),
-        screenModel.getForeground());
-      appendToLower(new AnnotatedText(annotation, formFeed.toString()));
-    } catch (Exception ex) {
-      ex.printStackTrace();
     }
   }
   
@@ -447,7 +371,7 @@ implements ScreenModelListener {
   }
 
   private void clearAll() {
-    clearLower();
+    lower.clear(screenModel.getBackground(), screenModel.getForeground());
     clearUpper();
   }
   
