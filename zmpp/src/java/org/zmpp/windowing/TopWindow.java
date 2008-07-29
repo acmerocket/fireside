@@ -34,40 +34,84 @@ public class TopWindow implements TextCursor {
           ScreenModel.TEXTSTYLE_ROMAN, ScreenModel.COLOR_BLACK,
           ScreenModel.COLOR_WHITE);
 
-  public void resetCursor() {
-    cursorx = cursory = 1;
-  }
+  /** Resets the text cursor position. */
+  public void resetCursor() { cursorx = cursory = 1; }
   
+  /**
+   * Returns the current TextAnnotation used for this window.
+   * @return the text annotation
+   */
+  public TextAnnotation getCurrentAnnotation() { return annotation; }
+  
+  /**
+   * Sets the number of rows in this window.
+   * @param numRows the number of rows
+   */
   public void setNumRows(int numRows) { this.numRows = numRows; }
   
+  /**
+   * Returns the number of rows in this window.
+   * @return the number of rows
+   */
   public int getNumRows() { return numRows; }
 
+  /**
+   * Sets the new number of characters per row.
+   * @param numChars the number of characters
+   */
   public void setNumCharsPerRow(int numChars) {
     numCharsPerRow = numChars;
   }
 
+  /**
+   * Sets the font number for this window.
+   * @param font the font number
+   * @return returns the number of the previous font
+   */
   public char setFont(char font) {
     char previousFont = this.annotation.getFont();
     annotation = annotation.deriveFont(font);
     return previousFont;
   }
 
+  /**
+   * Sets the current text style in this window.
+   * @param style the text style
+   */
   public void setCurrentTextStyle(int style) {
     annotation = annotation.deriveStyle(style);
   }
 
+  /**
+   * Sets the foreground color in this window.
+   * @param color the new foreground color
+   */
   public void setForeground(int color) {
     annotation = annotation.deriveForeground(color);
   }
 
+  /**
+   * Sets the new background color in this window.
+   * @param color the new background color
+   */
   public void setBackground(int color) {
     annotation = annotation.deriveBackground(color);
   }
 
+  /**
+   * Annotates the specified character with the current annotation.
+   * @param zchar the character to annotate
+   * @return the annotated character
+   */
   public AnnotatedCharacter annotateCharacter(char zchar) {
     return new AnnotatedCharacter(annotation, zchar);
   }
-  
+
+  /**
+   * Sets the new text cursor position.
+   * @param line the line
+   * @param column the column
+   */
   public void setTextCursor(int line, int column) {
     if (outOfUpperBounds(line, column)) {
       // set to left margin of current line
@@ -78,6 +122,9 @@ public class TopWindow implements TextCursor {
     }
   }
   
+  /**
+   * Increments the current cursor position.
+   */
   public void incrementCursorXPos() {
     this.cursorx++;
     // Make sure the cursor does not overrun the margin

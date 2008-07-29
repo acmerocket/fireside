@@ -507,7 +507,7 @@ public class VarTest extends InstructionTestBase {
     public boolean branchOnTestCondition;
     
     public VarMock(Machine machine, int opcode, Operand[] operands, char storeVar) {
-      super(machine, opcode, operands, storeVar, null, 4620, 5);
+      super(machine, opcode, operands, storeVar, null, 5);
     }
     
     @Override

@@ -53,20 +53,18 @@ public abstract class AbstractInstruction implements Instruction {
   private Operand[] operands;
   private char storeVariable;
   private BranchInfo branchInfo;
-  private int address;
   private int opcodeLength;
   
   public AbstractInstruction(Machine machine, int opcodeNum,
-                                Operand[] operands,
-                                char storeVar,
-                                BranchInfo branchInfo,
-                                int instrAddress, int opcodeLength) {
+                             Operand[] operands,
+                             char storeVar,
+                             BranchInfo branchInfo,
+                             int opcodeLength) {
     this.machine = machine;
     this.opcodeNum = opcodeNum;
     this.operands = operands;
     this.storeVariable = storeVar;
     this.branchInfo = branchInfo;
-    this.address = instrAddress;
     this.opcodeLength = opcodeLength;
   }
 

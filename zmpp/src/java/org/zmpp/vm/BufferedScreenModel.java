@@ -30,6 +30,7 @@ import org.zmpp.encoding.IZsciiEncoding;
 import org.zmpp.io.OutputStream;
 import org.zmpp.windowing.AnnotatedText;
 import org.zmpp.windowing.ScreenModelListener;
+import org.zmpp.windowing.TextAnnotation;
 import org.zmpp.windowing.TopWindow;
 
 /**
@@ -79,6 +80,15 @@ public class BufferedScreenModel implements ScreenModel, StatusLine,
     this.encoding = encoding;
   }
   
+  /** {@inheritDoc} */
+  public TextAnnotation getTopAnnotation() {
+    return topWindow.getCurrentAnnotation();
+  }
+  /** {@inheritDoc} */
+  public TextAnnotation getBottomAnnotation() {
+    return bottomWindow.getCurrentAnnotation();
+  }
+
   /**
    * Sets the number of charactes per row, should be called if the size of
    * the output area or the size of the font changes.

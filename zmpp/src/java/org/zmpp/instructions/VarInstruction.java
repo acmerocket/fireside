@@ -38,10 +38,8 @@ public class VarInstruction extends AbstractInstruction {
   private static Logger LOG = Logger.getLogger("org.zmpp");
   public VarInstruction(Machine machine, int opcodeNum,
                          Operand[] operands, char storeVar,
-                         BranchInfo branchInfo,
-                         int instrAddress, int opcodeLength) {
-    super(machine, opcodeNum, operands, storeVar, branchInfo,
-          instrAddress, opcodeLength);
+                         BranchInfo branchInfo, int opcodeLength) {
+    super(machine, opcodeNum, operands, storeVar, branchInfo, opcodeLength);
   }
   
   @Override

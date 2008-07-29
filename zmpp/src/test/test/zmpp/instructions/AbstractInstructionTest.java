@@ -59,9 +59,8 @@ public class AbstractInstructionTest {
   static class StubInstruction extends AbstractInstruction {
     public StubInstruction(Machine machine, char opcodeNum, Operand[] operands,
                            char storeVar, BranchInfo branchInfo,
-                           int instrAddress, int opcodeLength) {
-      super(machine, opcodeNum, operands, storeVar, branchInfo,
-            instrAddress, opcodeLength);
+                           int opcodeLength) {
+      super(machine, opcodeNum, operands, storeVar, branchInfo, opcodeLength);
     }
     @Override
     public int getNumOperands() { return super.getNumOperands(); }
@@ -123,11 +122,10 @@ public class AbstractInstructionTest {
     char opcodeNum = 12;
     char storeVar = STD_STOREVAR;
     BranchInfo branchInfo = new BranchInfo(true, 0, 0, (short) 0);
-    int instrAddress = 4711;
     int opcodeLength = 5;
 
     return new StubInstruction(machine, opcodeNum,
-            operands, storeVar, branchInfo, instrAddress, opcodeLength);
+            operands, storeVar, branchInfo, opcodeLength);
   }
   private StubInstruction createStdInstruction() {
     Operand stackOperand = new Operand(Operand.TYPENUM_VARIABLE, (char) 0x00);

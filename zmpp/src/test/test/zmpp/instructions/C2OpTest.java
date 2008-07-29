@@ -747,7 +747,7 @@ public class C2OpTest extends InstructionTestBase {
     public boolean branchOnTestCondition;
     
     public C2OpMock(Machine machine, int opcode, Operand[] operands, char storeVar) {
-      super(machine, opcode, operands, storeVar, null, 4620, 5);
+      super(machine, opcode, operands, storeVar, null, 5);
     }
     
     @Override

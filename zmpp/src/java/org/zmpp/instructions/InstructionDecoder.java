@@ -288,19 +288,19 @@ public class InstructionDecoder {
     switch (opCount) {
       case C0OP:
         return new C0OpInstruction(machine, opcodeNum, instrOperands, str,
-            storeVar, branchInfo, instrAddress, opcodeLength);
+            storeVar, branchInfo, opcodeLength);
       case C1OP:
         return new C1OpInstruction(machine, opcodeNum, instrOperands,
-            storeVar, branchInfo, instrAddress, opcodeLength);
+            storeVar, branchInfo, opcodeLength);
       case C2OP:
         return new C2OpInstruction(machine, opcodeNum, instrOperands,
-            storeVar, branchInfo, instrAddress, opcodeLength);
+            storeVar, branchInfo, opcodeLength);
       case VAR:
         return new VarInstruction(machine, opcodeNum, instrOperands,
-            storeVar, branchInfo, instrAddress, opcodeLength);
+            storeVar, branchInfo, opcodeLength);
       case EXT:
         return new ExtInstruction(machine, opcodeNum, instrOperands,
-            storeVar, branchInfo, instrAddress, opcodeLength);
+            storeVar, branchInfo, opcodeLength);
     }
     return null;
   }

@@ -466,7 +466,7 @@ public class C1OpTest extends InstructionTestBase {
     public boolean branchOnTestCalled;
     public boolean branchOnTestCondition;
     public C1OpMock(Machine machine, int opcode, Operand[] operands, char storeVar) {
-      super(machine, opcode, operands, storeVar, null, 4620, 3);
+      super(machine, opcode, operands, storeVar, null, 3);
     }
     
     @Override

@@ -31,10 +31,8 @@ public class C1OpInstruction extends AbstractInstruction {
 
   public C1OpInstruction(Machine machine, int opcodeNum,
                          Operand[] operands, char storeVar,
-                         BranchInfo branchInfo,
-                         int instrAddress, int opcodeLength) {
-    super(machine, opcodeNum, operands, storeVar, branchInfo,
-          instrAddress, opcodeLength);
+                         BranchInfo branchInfo, int opcodeLength) {
+    super(machine, opcodeNum, operands, storeVar, branchInfo, opcodeLength);
   }
 
   protected OperandCount getOperandCount() { return OperandCount.C1OP; }

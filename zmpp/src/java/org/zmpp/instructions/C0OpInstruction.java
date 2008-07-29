@@ -31,10 +31,8 @@ public class C0OpInstruction extends AbstractInstruction {
   private String str;
   public C0OpInstruction(Machine machine, int opcodeNum,
                          Operand[] operands, String str, char storeVar,
-                         BranchInfo branchInfo,
-                         int instrAddress, int opcodeLength) {
-    super(machine, opcodeNum, operands, storeVar, branchInfo,
-          instrAddress, opcodeLength);
+                         BranchInfo branchInfo, int opcodeLength) {
+    super(machine, opcodeNum, operands, storeVar, branchInfo, opcodeLength);
     this.str = str;
   }
   

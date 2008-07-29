@@ -32,10 +32,8 @@ public class C2OpInstruction extends AbstractInstruction {
 
   public C2OpInstruction(Machine machine, int opcodeNum,
                          Operand[] operands, char storeVar,
-                         BranchInfo branchInfo,
-                         int instrAddress, int opcodeLength) {
-    super(machine, opcodeNum, operands, storeVar, branchInfo,
-          instrAddress, opcodeLength);
+                         BranchInfo branchInfo, int opcodeLength) {
+    super(machine, opcodeNum, operands, storeVar, branchInfo, opcodeLength);
   }
   
   @Override

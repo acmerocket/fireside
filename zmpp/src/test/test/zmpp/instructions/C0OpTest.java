@@ -381,16 +381,16 @@ public class C0OpTest extends InstructionTestBase {
     public boolean branchOnTestCondition;
     
     public C0OpMock(Machine machine, int opcode) {
-      super(machine, opcode, new Operand[0], null, (char) 0, null, 0, 0);
+      super(machine, opcode, new Operand[0], null, (char) 0, null, 0);
     }
     public C0OpMock(Machine machine, int opcode, String str) {
-      super(machine, opcode, new Operand[0], str, (char) 0, null, 0, 11);
+      super(machine, opcode, new Operand[0], str, (char) 0, null, 11);
     }
     public C0OpMock(Machine machine, int opcode, Operand[] operands) {
-      super(machine, opcode, operands, null, (char) 0, null, 0, 0);
+      super(machine, opcode, operands, null, (char) 0, null, 0);
     }
     public C0OpMock(Machine machine, int opcode, char storeVar) {
-      super(machine, opcode, new Operand[0], null, storeVar, null, 0, 0);
+      super(machine, opcode, new Operand[0], null, storeVar, null, 0);
     }
     
     @Override

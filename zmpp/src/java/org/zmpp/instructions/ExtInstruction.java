@@ -34,11 +34,9 @@ import org.zmpp.windowing.ScreenModel;
 public class ExtInstruction extends AbstractInstruction {
 
   public ExtInstruction(Machine machine, int opcodeNum,
-                         Operand[] operands, char storeVar,
-                         BranchInfo branchInfo,
-                         int instrAddress, int opcodeLength) {
-    super(machine, opcodeNum, operands, storeVar, branchInfo,
-          instrAddress, opcodeLength);
+                        Operand[] operands, char storeVar,
+                        BranchInfo branchInfo, int opcodeLength) {
+    super(machine, opcodeNum, operands, storeVar, branchInfo, opcodeLength);
   }
   
   @Override

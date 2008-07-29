@@ -37,6 +37,7 @@ public class BufferedTextWindow {
   private StringBuilder currentRun = new StringBuilder();
   private boolean isBuffered = true;
   
+  public TextAnnotation getCurrentAnnotation() { return currentAnnotation; }
   public boolean isBuffered() { return isBuffered; }
   public void setBuffered(boolean flag) { isBuffered = flag; }
   public char setCurrentFont(char font) {

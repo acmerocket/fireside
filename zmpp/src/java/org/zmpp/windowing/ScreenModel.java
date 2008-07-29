@@ -73,6 +73,18 @@ public interface ScreenModel {
   public static final int COLOR_MS_DOS_DARKISH_GREY   =  10;
 
   /**
+   * Returns the current annotation of the bottom window.
+   * @return the annotation in the bottom window
+   */
+  TextAnnotation getBottomAnnotation();
+  
+  /**
+   * Returns the current annotation of the top window.
+   * @return the annotation in the top window
+   */
+  TextAnnotation getTopAnnotation();
+
+  /**
    * Resets the screen model.
    */
   void reset();
