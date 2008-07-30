@@ -77,10 +77,10 @@ public class TextWindowView extends JTextPane {
   public void clear(int background, int foreground) {
     try {
       ColorTranslator translator = ColorTranslator.getInstance();
-      setBackground(translator.translate(
-        background, ScreenModelSplitView.DEFAULT_BACKGROUND));
-      setForeground(translator.translate(
-        foreground, ScreenModelSplitView.DEFAULT_FOREGROUND));
+      setBackground(translator.translate(background,
+              parent.getDefaultBackground()));
+      setForeground(translator.translate(foreground,
+              parent.getDefaultForeground()));
       StringBuilder formFeed = new StringBuilder();
       for (int i = 0; i < parent.getNumUpperRows(); i++) {
         formFeed.append("\n");
@@ -110,9 +110,9 @@ public class TextWindowView extends JTextPane {
     StyleConstants.setItalic(attributes, annotation.isItalic());
     ColorTranslator colorTranslator = ColorTranslator.getInstance();
     Color background = colorTranslator.translate(annotation.getBackground(),
-            ScreenModelSplitView.DEFAULT_BACKGROUND);
+            parent.getDefaultBackground());
     Color foreground = colorTranslator.translate(annotation.getForeground(),
-            ScreenModelSplitView.DEFAULT_FOREGROUND);
+            parent.getDefaultForeground());
     if (annotation.isReverseVideo()) {
       StyleConstants.setBackground(attributes, foreground);
       StyleConstants.setForeground(attributes, background.brighter());

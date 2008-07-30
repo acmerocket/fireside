@@ -30,6 +30,7 @@ import org.zmpp.windowing.AnnotatedCharacter;
 import org.zmpp.windowing.BufferedScreenModel;
 import org.zmpp.windowing.TextAnnotation;
 import org.zmpp.windowing.ScreenModel;
+import org.zmpp.windowing.TextCursor;
 
 /**
  * A class representing a text grid in a Z-machine or Glk screen model.
@@ -45,8 +46,12 @@ public class TextGridView extends JComponent {
   private FontSelector fontSelector;
   private AnnotatedCharacter[][] grid;
   private BufferedScreenModel screenModel;
+  private ScreenModelSplitView parent;
   private static final Logger LOG = Logger.getLogger("org.zmpp");
 
+  public TextGridView(ScreenModelSplitView parent) {
+    this.parent = parent;
+  }
   public void setScreenModel(BufferedScreenModel screenModel) {
     this.screenModel = screenModel;
   }
@@ -104,10 +109,10 @@ public class TextGridView extends JComponent {
       int posx = col * fontMetrics.charWidth(REF_CHAR);
       
       ColorTranslator colTranslator = ColorTranslator.getInstance();
-      Color foreground = colTranslator.translate(
-        annotation.getForeground(), ScreenModelSplitView.DEFAULT_FOREGROUND);
-      Color background = colTranslator.translate(
-        annotation.getBackground(), ScreenModelSplitView.DEFAULT_BACKGROUND);
+      Color foreground = colTranslator.translate(annotation.getForeground(),
+              parent.getDefaultForeground());
+      Color background = colTranslator.translate(annotation.getBackground(),
+              parent.getDefaultBackground());
       if (annotation.isReverseVideo()) {
         // swap colors
         Color tmp = foreground;
@@ -125,12 +130,14 @@ public class TextGridView extends JComponent {
   }
 
   public void setCharacter(int line, int column, AnnotatedCharacter c) {
+    if (c != null) {
     LOG.info(String.format(
       "SET_CHAR, line: %d col: %d c: '%c' BG: %d FG: %d REVERSE: %b\n",
              line, column, c.getCharacter(),
              c.getAnnotation().getBackground(),
              c.getAnnotation().getForeground(),
              c.getAnnotation().isReverseVideo()));
+    }
     grid[line - 1][column - 1] = c;
   }
 
@@ -140,6 +147,23 @@ public class TextGridView extends JComponent {
       for (int col = 0; col < grid[row].length; col++) {
         visualizeCursorPosition(g, row, col);
       }
+    }
+  }
+  
+  public void viewCursor(boolean flag) {
+    TextCursor cursor = screenModel.getTextCursor();
+    if (flag) {
+      TextAnnotation annotation = new TextAnnotation(ScreenModel.FONT_FIXED,
+        ScreenModel.TEXTSTYLE_REVERSE_VIDEO, parent.getDefaultBackground(),
+        parent.getDefaultForeground());
+      setCharacter(cursor.getLine(), cursor.getColumn(), new AnnotatedCharacter(annotation, ' '));
+      //System.out.printf("Display cursor in upper window line: %d col: %d\n",
+      //        cursor.getLine(), cursor.getColumn());
+      
+    } else {
+      System.out.printf("Hide cursor in upper window line: %d col: %d\n",
+              cursor.getLine(), cursor.getColumn());
+      setCharacter(cursor.getLine(), cursor.getColumn(), null);
     }
   }
 }

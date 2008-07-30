@@ -69,8 +69,8 @@ implements ScreenModelListener {
   //private static final Font STD_FONT = new Font("Baskerville", Font.PLAIN, 16);
   private static final Font STD_FONT = new Font("American Typewriter", Font.PLAIN, 12);
   private static final Font FIXED_FONT = new Font("Monaco", Font.PLAIN, 12);
-  static final int DEFAULT_FOREGROUND = ScreenModel.COLOR_WHITE;
-  static final int DEFAULT_BACKGROUND = ScreenModel.COLOR_BLUE;
+  private static final int DEFAULT_FOREGROUND = ScreenModel.COLOR_WHITE;
+  private static final int DEFAULT_BACKGROUND = ScreenModel.COLOR_BLUE;
   private int editStart;
   private ExecutionControl executionControl;
   private BufferedScreenModel screenModel;
@@ -87,9 +87,9 @@ implements ScreenModelListener {
                                int currentViewPos);
   }
 
-  private TextWindowView lower = new TextWindowView(this);
   private JViewport lowerViewport;
-  private TextGridView upper = new TextGridView();
+  private TextWindowView lower = new TextWindowView(this);
+  private TextGridView upper = new TextGridView(this);
   private MainViewListener listener;
   private ScreenModelLayout layout = new ScreenModelLayout();
   private FontSelector fontSelector = new FontSelector();
@@ -105,6 +105,8 @@ implements ScreenModelListener {
   }
   
   public int getNumUpperRows() { return upper.getNumRows(); }
+  public int getDefaultBackground() { return DEFAULT_BACKGROUND; }
+  public int getDefaultForeground() { return DEFAULT_FOREGROUND; }
   
   // ************************************************************************
   // **** User interface setup
@@ -353,6 +355,12 @@ implements ScreenModelListener {
   public void screenSplit(int linesUpperWindow) {
     split(linesUpperWindow);
   }
+  public void topWindowCursorMoving(int line, int column) {
+    if (currentRunState != null && currentRunState.isReadChar() &&
+        screenModel.getActiveWindow() == ScreenModel.WINDOW_TOP) {
+      upper.viewCursor(false);
+    }
+  }
 
   public void windowErased(int window) {
     if (window == -1) {
@@ -382,15 +390,23 @@ implements ScreenModelListener {
   private void viewCursor(final boolean flag) {
     runInUIThread(new Runnable() {
       public void run() {
-        if (flag) {
-          editStart = lower.getDocument().getLength();
-          lower.setCaretPosition(editStart);
-          lower.requestFocusInWindow();
-        } else {
-          // might set caret to invisible
+        if (screenModel.getActiveWindow() == ScreenModel.WINDOW_BOTTOM) {
+          viewCursorLower(flag);
+        } else if (screenModel.getActiveWindow() ==ScreenModel.WINDOW_TOP) {
+          upper.viewCursor(flag);
         }
       }
     });
+  }
+  
+  private void viewCursorLower(boolean flag) {
+    if (flag) {
+      editStart = lower.getDocument().getLength();
+      lower.setCaretPosition(editStart);
+      lower.requestFocusInWindow();
+    } else {
+      // might set caret to invisible
+    }
   }
 
   /**
