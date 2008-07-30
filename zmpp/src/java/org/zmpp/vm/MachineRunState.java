@@ -33,7 +33,7 @@ public class MachineRunState {
    */
   private enum ReadMode { NONE, READ_CHAR, READ_LINE };
   private int time, numLeftOverChars;
-  private char routine;
+  private char routine, textbuffer;
   private ReadMode readMode = ReadMode.NONE;
   
   /**
@@ -49,11 +49,12 @@ public class MachineRunState {
    * @param numLeftOverChars the number of characters indicated as left over
    */
   private MachineRunState(ReadMode readMode, int time, char routine,
-    int numLeftOverChars) {
+    int numLeftOverChars, char textbuffer) {
     this.readMode = readMode;
     this.time = time;
     this.routine = routine;
     this.numLeftOverChars = numLeftOverChars;
+    this.textbuffer = textbuffer;
   }
   
   /**
@@ -91,7 +92,13 @@ public class MachineRunState {
    * @return the number of left over characters
    */
   public int getNumLeftOverChars() { return numLeftOverChars; }
-
+  
+  /**
+   * Returns the address of the text buffer.
+   * @return the text buffer
+   */
+  public char getTextBuffer() { return textbuffer; }
+  
   /**
    * Running state.
    */
@@ -107,12 +114,13 @@ public class MachineRunState {
    * @param time interrupt interval
    * @param routine interrupt routine
    * @param numLeftOverChars the number of characters left over
+   * @param textbuffer the address of the text buffer
    * @return machine run state object
    */
   public static MachineRunState createReadLine(int time, char routine,
-    int numLeftOverChars) {
+    int numLeftOverChars, char textbuffer) {
     return new MachineRunState(ReadMode.READ_LINE, time, routine,
-                               numLeftOverChars);
+                               numLeftOverChars, textbuffer);
   }
 
   /**
@@ -122,6 +130,6 @@ public class MachineRunState {
    * @return machine state
    */
   public static MachineRunState createReadChar(int time, char routine) {
-    return new MachineRunState(ReadMode.READ_CHAR, time, routine, 0);
+    return new MachineRunState(ReadMode.READ_CHAR, time, routine, 0, (char) 0);
   }
 }

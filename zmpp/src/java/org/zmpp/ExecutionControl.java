@@ -135,6 +135,11 @@ public class ExecutionControl {
     }
   }
 
+  /**
+   * The execution loop. It runs until either an input state is reached
+   * or the machine is set to stop state.
+   * @return the new MachineRunState
+   */
   public MachineRunState run() {
     while (machine.getRunState() != MachineRunState.STOPPED) {
       int pc = machine.getPC();
@@ -154,6 +159,12 @@ public class ExecutionControl {
     return machine.getRunState();
   }
   
+  /**
+   * Resumes from an input state to the run state using the specified Unicode
+   * input string.
+   * @param input the Unicode input string
+   * @return the new MachineRunState
+   */
   public MachineRunState resumeWithInput(String input) {
     inputStream.addInputLine(convertToZsciiInputLine(input));
     return run();
@@ -169,6 +180,21 @@ public class ExecutionControl {
   }
   
   public IZsciiEncoding getZsciiEncoding() { return machine; }
+  
+  /**
+   * This method should be called from a timed input method, to fill
+   * the text buffer with current input. By using this, it is ensured,
+   * the game could theoretically process preliminary input.
+   * @param text the input text as Unicode
+   */
+  public void setTextToInputBuffer(String text) {
+    MachineRunState runstate = machine.getRunState();
+    if (runstate != null && runstate.isReadLine()) {
+      inputStream.addInputLine(convertToZsciiInputLine(text));
+      int textbuffer = machine.getRunState().getTextBuffer();
+      machine.readLine(textbuffer);
+    }
+  }
 
   // ************************************************************************
   // ****** Interrupt functions

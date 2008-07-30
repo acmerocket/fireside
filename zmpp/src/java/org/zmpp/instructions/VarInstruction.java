@@ -271,9 +271,10 @@ public class VarInstruction extends AbstractInstruction {
   }
   
   private void sreadStage1() {
+    char textbuffer = getMachine().readUnsigned8(getUnsignedValue(0));
     getMachine().setRunState(MachineRunState.createReadLine(
             getReadInterruptTime(), getReadInterruptRoutine(),
-            getNumLeftOverChars()));
+            getNumLeftOverChars(textbuffer), textbuffer));
   }
   
   private int getReadInterruptTime() {
@@ -284,9 +285,9 @@ public class VarInstruction extends AbstractInstruction {
     return getNumOperands() >= 4 ? getUnsignedValue(3) : 0;
   }
   
-  private int getNumLeftOverChars() {
+  private int getNumLeftOverChars(char textbuffer) {
     return getStoryVersion() >= 5 ?
-      getMachine().readUnsigned8(getUnsignedValue(0) + 1) : 0;
+      getMachine().readUnsigned8(textbuffer + 1) : 0;
   }
   
   private void sreadStage2() {
