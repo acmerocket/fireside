@@ -18,10 +18,9 @@
  * You should have received a copy of the GNU General Public License
  * along with ZMPP.  If not, see <http://www.gnu.org/licenses/>.
  */
-package org.zmpp.vm;
+package org.zmpp.base;
 
-import org.zmpp.base.Memory;
-import static org.zmpp.base.MemoryUtil.toUnsigned16;
+import static org.zmpp.base.MemoryUtil.*;
 
 /**
  * This is the default implementation of the StoryFileHeader interface.

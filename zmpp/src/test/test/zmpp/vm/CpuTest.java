@@ -34,7 +34,7 @@ import org.zmpp.vm.Cpu;
 import org.zmpp.vm.CpuImpl;
 import org.zmpp.vm.Machine;
 import org.zmpp.vm.RoutineContext;
-import org.zmpp.vm.StoryFileHeader;
+import org.zmpp.base.StoryFileHeader;
 
 /**
  * Test class for the Cpu interface of the Machine object.

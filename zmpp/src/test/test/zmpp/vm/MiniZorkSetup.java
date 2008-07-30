@@ -32,7 +32,7 @@ import org.zmpp.encoding.ZCharTranslator;
 import org.zmpp.encoding.ZsciiEncoding;
 import org.zmpp.vm.Abbreviations;
 import org.zmpp.vm.MachineImpl;
-import org.zmpp.vm.StoryFileHeader;
+import org.zmpp.base.StoryFileHeader;
 import static test.zmpp.testutil.ZmppTestUtil.*;
 
 /**

@@ -25,7 +25,7 @@ import org.junit.Test;
 import static org.junit.Assert.*;
 import org.zmpp.vm.ModernObjectTree;
 import org.zmpp.vm.ObjectTree;
-import org.zmpp.vm.StoryFileHeader;
+import org.zmpp.base.StoryFileHeader;
 
 /**
  * Testing the tree for Curses.

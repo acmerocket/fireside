@@ -25,7 +25,7 @@ import org.junit.Test;
 import static org.junit.Assert.*;
 import org.zmpp.vm.ClassicObjectTree;
 import org.zmpp.vm.ObjectTree;
-import org.zmpp.vm.StoryFileHeader;
+import org.zmpp.base.StoryFileHeader;
 
 /**
  * Testing tree access with concrete data of Version 3 - Minizork.

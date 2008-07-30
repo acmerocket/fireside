@@ -20,6 +20,7 @@
  */
 package org.zmpp.vm;
 
+import org.zmpp.base.StoryFileHeader;
 import java.util.ArrayList;
 import java.util.Collections;
 import java.util.List;

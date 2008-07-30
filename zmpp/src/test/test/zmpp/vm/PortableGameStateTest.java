@@ -43,7 +43,7 @@ import org.zmpp.iff.WritableFormChunk;
 import org.zmpp.vm.Machine;
 import org.zmpp.vm.PortableGameState;
 import org.zmpp.vm.RoutineContext;
-import org.zmpp.vm.StoryFileHeader;
+import org.zmpp.base.StoryFileHeader;
 import org.zmpp.vm.PortableGameState.StackFrame;
 import static test.zmpp.testutil.ZmppTestUtil.*;
 

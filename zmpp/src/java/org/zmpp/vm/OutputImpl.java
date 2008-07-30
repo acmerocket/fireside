@@ -23,7 +23,7 @@ package org.zmpp.vm;
 import java.io.Closeable;
 import org.zmpp.encoding.ZsciiEncoding;
 import org.zmpp.io.OutputStream;
-import org.zmpp.vm.StoryFileHeader.Attribute;
+import org.zmpp.base.StoryFileHeader.Attribute;
 
 /**
  * Output implementation.

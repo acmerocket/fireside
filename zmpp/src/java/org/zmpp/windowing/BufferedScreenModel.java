@@ -18,20 +18,15 @@
  * You should have received a copy of the GNU General Public License
  * along with ZMPP.  If not, see <http://www.gnu.org/licenses/>.
  */
-package org.zmpp.vm;
+package org.zmpp.windowing;
 
-import org.zmpp.windowing.ScreenModel;
-import org.zmpp.windowing.TextCursor;
-import org.zmpp.windowing.BufferedTextWindow;
 import java.util.ArrayList;
 import java.util.List;
 import java.util.logging.Logger;
+import org.zmpp.base.Memory;
+import org.zmpp.base.StoryFileHeader;
 import org.zmpp.encoding.IZsciiEncoding;
 import org.zmpp.io.OutputStream;
-import org.zmpp.windowing.AnnotatedText;
-import org.zmpp.windowing.ScreenModelListener;
-import org.zmpp.windowing.TextAnnotation;
-import org.zmpp.windowing.TopWindow;
 
 /**
  * BufferedScreenModel is the attempt to provide a reusable screen model
@@ -55,7 +50,7 @@ public class BufferedScreenModel implements ScreenModel, StatusLine,
   private List<StatusLineListener> statusLineListeners =
     new ArrayList<StatusLineListener>();
   private IZsciiEncoding encoding;
-  private Machine machine;
+  private Memory memory;
   
   public interface StatusLineListener {
     void statusLineUpdated(String objectDescription, String status);
@@ -72,11 +67,11 @@ public class BufferedScreenModel implements ScreenModel, StatusLine,
   /**
    * Initialize the model, an Encoding object is needed to retrieve
    * Unicode characters.
-   * @param machine the machine
+   * @param memory a Memory object
    * @param encoding the ZsciiEncoding object
    */
-  public void init(Machine machine, IZsciiEncoding encoding) {
-    this.machine = machine;
+  public void init(Memory memory, IZsciiEncoding encoding) {
+    this.memory = memory;
     this.encoding = encoding;
   }
   
@@ -265,11 +260,11 @@ public class BufferedScreenModel implements ScreenModel, StatusLine,
       getDefaultForeground() : foreground;
   }
   private int getDefaultBackground() {
-    return machine.readUnsigned8(StoryFileHeader.DEFAULT_BACKGROUND);
+    return memory.readUnsigned8(StoryFileHeader.DEFAULT_BACKGROUND);
   }
   
   private int getDefaultForeground() {
-    return machine.readUnsigned8(StoryFileHeader.DEFAULT_FOREGROUND);
+    return memory.readUnsigned8(StoryFileHeader.DEFAULT_FOREGROUND);
   }
   
   public List<AnnotatedText> getLowerBuffer() {

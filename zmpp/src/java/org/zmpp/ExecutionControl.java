@@ -25,9 +25,10 @@ import org.zmpp.instructions.InstructionDecoder;
 import org.zmpp.io.LineBufferInputStream;
 import java.io.IOException;
 import java.util.logging.Logger;
+import org.zmpp.base.StoryFileHeader;
 import org.zmpp.encoding.IZsciiEncoding;
 import org.zmpp.vm.MachineFactory.MachineInitStruct;
-import org.zmpp.vm.StoryFileHeader.Attribute;
+import org.zmpp.base.StoryFileHeader.Attribute;
 
 /**
  * This is the execution control instance. Execution is handled by temporarily

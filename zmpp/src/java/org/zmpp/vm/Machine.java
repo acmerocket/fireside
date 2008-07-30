@@ -20,6 +20,8 @@
  */
 package org.zmpp.vm;
 
+import org.zmpp.base.StoryFileHeader;
+import org.zmpp.windowing.StatusLine;
 import org.zmpp.windowing.ScreenModel6;
 import org.zmpp.windowing.ScreenModel;
 import org.zmpp.base.Memory;

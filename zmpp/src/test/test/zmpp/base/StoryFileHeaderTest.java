@@ -18,7 +18,7 @@
  * You should have received a copy of the GNU General Public License
  * along with ZMPP.  If not, see <http://www.gnu.org/licenses/>.
  */
-package test.zmpp.vm;
+package test.zmpp.base;
 
 import org.jmock.Expectations;
 import org.jmock.Mockery;
@@ -29,9 +29,9 @@ import org.junit.Test;
 import static org.junit.Assert.*;
 import org.junit.runner.RunWith;
 import org.zmpp.base.Memory;
-import org.zmpp.vm.DefaultStoryFileHeader;
-import org.zmpp.vm.StoryFileHeader;
-import org.zmpp.vm.StoryFileHeader.Attribute;
+import org.zmpp.base.DefaultStoryFileHeader;
+import org.zmpp.base.StoryFileHeader;
+import org.zmpp.base.StoryFileHeader.Attribute;
 
 /**
  * This class is a test for the StoryFileHeader class.

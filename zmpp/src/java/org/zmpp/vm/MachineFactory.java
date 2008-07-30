@@ -20,6 +20,7 @@
  */
 package org.zmpp.vm;
 
+import org.zmpp.windowing.StatusLine;
 import org.zmpp.windowing.ScreenModel;
 import java.io.File;
 import java.io.IOException;

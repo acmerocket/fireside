@@ -20,6 +20,8 @@
  */
 package org.zmpp.vm;
 
+import org.zmpp.base.DefaultStoryFileHeader;
+import org.zmpp.windowing.StatusLine;
 import org.zmpp.media.Resolution;
 import org.zmpp.windowing.ScreenModel6;
 import org.zmpp.windowing.ScreenModel;
@@ -27,6 +29,7 @@ import java.util.List;
 import java.util.logging.Logger;
 import org.zmpp.base.DefaultMemory;
 import org.zmpp.base.Memory;
+import org.zmpp.base.StoryFileHeader;
 import org.zmpp.encoding.AccentTable;
 import org.zmpp.encoding.AlphabetTable;
 import org.zmpp.encoding.AlphabetTableV1;
@@ -54,7 +57,7 @@ import org.zmpp.media.SoundEffect;
 import org.zmpp.media.SoundSystem;
 import org.zmpp.media.SoundSystemImpl;
 import org.zmpp.media.ZmppImage;
-import org.zmpp.vm.StoryFileHeader.Attribute;
+import org.zmpp.base.StoryFileHeader.Attribute;
 import org.zmpp.vmutil.PredictableRandomGenerator;
 import org.zmpp.vmutil.RandomGenerator;
 import org.zmpp.vmutil.RingBuffer;

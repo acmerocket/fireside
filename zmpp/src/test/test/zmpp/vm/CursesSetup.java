@@ -36,7 +36,7 @@ import org.zmpp.encoding.ZsciiEncoding;
 import org.zmpp.vm.Abbreviations;
 import org.zmpp.vm.Machine;
 import org.zmpp.vm.MachineImpl;
-import org.zmpp.vm.StoryFileHeader;
+import org.zmpp.base.StoryFileHeader;
 import org.zmpp.vmutil.FileUtils;
 import static test.zmpp.testutil.ZmppTestUtil.*;
 

@@ -38,8 +38,8 @@ import org.zmpp.vm.MemoryOutputStream;
 import org.zmpp.vm.Output;
 import org.zmpp.vm.SaveGameDataStore;
 import org.zmpp.windowing.ScreenModel;
-import org.zmpp.vm.StatusLine;
-import org.zmpp.vm.StoryFileHeader.Attribute;
+import org.zmpp.windowing.StatusLine;
+import org.zmpp.base.StoryFileHeader.Attribute;
 
 /**
  * Tests the external i/o of the machine.
