@@ -271,29 +271,30 @@ public class VarInstruction extends AbstractInstruction {
   }
   
   private void sreadStage1() {
-    final int version = getStoryVersion();
-    int time = 0;
-    char routine = 0;
-    if (getNumOperands() >= 3) {
-      time = getUnsignedValue(2);
-    }
-    if (getNumOperands() >= 4) {
-      routine = getUnsignedValue(3);
-    }    
-    
-    if (version <= 3) {
-      getMachine().updateStatusLine();
-    }
-    getMachine().setRunState(MachineRunState.createReadLine(time, routine));
-    getMachine().flushOutput();
+    getMachine().setRunState(MachineRunState.createReadLine(
+            getReadInterruptTime(), getReadInterruptRoutine(),
+            getNumLeftOverChars()));
+  }
+  
+  private int getReadInterruptTime() {
+    return getNumOperands() >= 3 ? getUnsignedValue(2) : 0;
+  }
+  
+  private char getReadInterruptRoutine() {
+    return getNumOperands() >= 4 ? getUnsignedValue(3) : 0;
+  }
+  
+  private int getNumLeftOverChars() {
+    return getStoryVersion() >= 5 ?
+      getMachine().readUnsigned8(getUnsignedValue(0) + 1) : 0;
   }
   
   private void sreadStage2() {
     getMachine().setRunState(MachineRunState.RUNNING);
     
     final int version = getStoryVersion();
-    final int textbuffer = getUnsignedValue(0);
-    int parsebuffer = 0;
+    final char textbuffer = getUnsignedValue(0);
+    char parsebuffer = 0;
     if (getNumOperands() >= 2) {
       parsebuffer = getUnsignedValue(1);
     }
@@ -490,21 +491,18 @@ public class VarInstruction extends AbstractInstruction {
   }
   
   private void readCharStage1() {
-    if (getMachine().getVersion() <= 3) {
-      getMachine().updateStatusLine();
-    }
-    int time = 0;
-    char routine = 0;
-    if (getNumOperands() >= 2) {     
-      time = getUnsignedValue(1);
-    }
-    if (getNumOperands() >= 3) {
-      routine = getUnsignedValue(2);
-    }
-    getMachine().flushOutput();
-    getMachine().setRunState(MachineRunState.createReadChar(time, routine));
+    getMachine().setRunState(MachineRunState.createReadChar(
+      getReadCharInterruptTime(), getReadCharInterruptRoutine()));
   }
   
+  private int getReadCharInterruptTime() {
+    return getNumOperands() >= 2 ? getUnsignedValue(1) : 0;
+  }
+  
+  private char getReadCharInterruptRoutine() {
+    return getNumOperands() >= 3 ? getUnsignedValue(2) : 0;
+  }
+
   private void readCharStage2() {
     getMachine().setRunState(MachineRunState.RUNNING);
     storeUnsignedResult(getMachine().readChar());

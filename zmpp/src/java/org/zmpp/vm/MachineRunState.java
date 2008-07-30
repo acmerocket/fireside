@@ -32,7 +32,7 @@ public class MachineRunState {
    * Reading modes.
    */
   private enum ReadMode { NONE, READ_CHAR, READ_LINE };
-  private int time;
+  private int time, numLeftOverChars;
   private char routine;
   private ReadMode readMode = ReadMode.NONE;
   
@@ -46,11 +46,14 @@ public class MachineRunState {
    * @param readMode the read mode
    * @param time the interrupt routine time interval
    * @param routine the packed interrupt routine address
+   * @param numLeftOverChars the number of characters indicated as left over
    */
-  private MachineRunState(ReadMode readMode, int time, char routine) {
+  private MachineRunState(ReadMode readMode, int time, char routine,
+    int numLeftOverChars) {
     this.readMode = readMode;
     this.time = time;
     this.routine = routine;
+    this.numLeftOverChars = numLeftOverChars;
   }
   
   /**
@@ -84,6 +87,12 @@ public class MachineRunState {
   public boolean isReadLine() { return readMode == ReadMode.READ_LINE; }
 
   /**
+   * Returns the number of characters left over from previous input.
+   * @return the number of left over characters
+   */
+  public int getNumLeftOverChars() { return numLeftOverChars; }
+
+  /**
    * Running state.
    */
   public static final MachineRunState RUNNING = new MachineRunState();
@@ -97,12 +106,15 @@ public class MachineRunState {
    * Creates a read line mode object with the specified interrup data.
    * @param time interrupt interval
    * @param routine interrupt routine
+   * @param numLeftOverChars the number of characters left over
    * @return machine run state object
    */
-  public static MachineRunState createReadLine(int time, char routine) {
-    return new MachineRunState(ReadMode.READ_LINE, time, routine);
+  public static MachineRunState createReadLine(int time, char routine,
+    int numLeftOverChars) {
+    return new MachineRunState(ReadMode.READ_LINE, time, routine,
+                               numLeftOverChars);
   }
-  
+
   /**
    * Creates a read character mode object with the specified interrupt data.
    * @param time interrupt interval
@@ -110,6 +122,6 @@ public class MachineRunState {
    * @return machine state
    */
   public static MachineRunState createReadChar(int time, char routine) {
-    return new MachineRunState(ReadMode.READ_CHAR, time, routine);
+    return new MachineRunState(ReadMode.READ_CHAR, time, routine, 0);
   }
 }

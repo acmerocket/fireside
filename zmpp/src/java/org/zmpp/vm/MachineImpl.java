@@ -472,6 +472,10 @@ public class MachineImpl implements Machine, DrawingArea {
   /** {@inheritDoc} */
   public void setRunState(MachineRunState runstate) {
     this.runstate = runstate;
+    if (runstate != null && runstate.isWaitingForInput()) {
+      updateStatusLine();
+      flushOutput();
+    }
   }
 
   /** {@inheritDoc} */
