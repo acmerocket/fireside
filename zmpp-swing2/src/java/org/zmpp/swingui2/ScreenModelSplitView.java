@@ -40,6 +40,7 @@ import javax.swing.Timer;
 import javax.swing.border.Border;
 import javax.swing.event.ChangeEvent;
 import javax.swing.event.ChangeListener;
+import javax.swing.text.Document;
 import org.zmpp.ExecutionControl;
 import org.zmpp.vm.MachineRunState;
 import org.zmpp.windowing.AnnotatedCharacter;
@@ -152,7 +153,7 @@ implements ScreenModelListener {
 
       @Override
       public void componentMoved(ComponentEvent e) {
-        System.out.println("moved, pos: " + lower.getLocation().y);
+        //System.out.println("moved, pos: " + lower.getLocation().y);
         viewSizeChanged();
       }
     });
@@ -193,6 +194,12 @@ implements ScreenModelListener {
 
   TextWindowView getLower() { return lower; }
   int getEditStart() { return editStart; }
+  private void updateEditStart() {
+    int numLeftOverChars = currentRunState.getNumLeftOverChars();
+    //LOG.info("# OF LEFTOVER CHARS: " + numLeftOverChars);
+    editStart = lower.getDocument().getLength() - numLeftOverChars;
+  }
+
   boolean isReadChar() {
     return currentRunState == null ? false : currentRunState.isReadChar();
   }
@@ -213,10 +220,25 @@ implements ScreenModelListener {
     }
   }
   
+  protected String getCurrentInput() {
+    Document doc = lower.getDocument();
+    String input = null;
+    try {
+      input = doc.getText(editStart, doc.getLength() - editStart);
+    } catch (Exception ex) {
+      LOG.throwing("Document", "getText", ex);
+    }
+    return input;
+  }
+  
   private void startNewInterruptTimer(final MachineRunState runState) {
     currentTimer = new Timer(runState.getTime() * 100,
       new ActionListener() {
         public void actionPerformed(ActionEvent e) {
+          String currentInput = getCurrentInput();
+          if (currentInput != null) {
+            executionControl.setTextToInputBuffer(currentInput);
+          }
           // output should be echoed in the interrupt, so set buffer mode to
           //false
           screenModel.setBufferMode(false);
@@ -228,6 +250,8 @@ implements ScreenModelListener {
             //executionControl.resumeWithInput("\u0000");
             pressEnterKey();
           } else if (result == Instruction.FALSE) {
+            // carry on
+            updateEditStart();
           }
           screenModel.setBufferMode(true);
         }
@@ -401,16 +425,15 @@ implements ScreenModelListener {
   private void viewCursorLower(boolean flag) {
     if (flag) {
       // Respect left over chars
+      updateEditStart();
       int numLeftOverChars = currentRunState.getNumLeftOverChars();
-      LOG.info("# OF LEFTOVER CHARS: " + numLeftOverChars);
-      editStart = lower.getDocument().getLength() - numLeftOverChars;
-      lower.setCaretPosition(editStart + numLeftOverChars);
+      lower.setCaretPosition(getEditStart() + numLeftOverChars);
       lower.requestFocusInWindow();
     } else {
       // might set caret to invisible
     }
   }
-
+  
   /**
    * A little more readable to execute Runnable within UI thread.
    * @param runnable the Runnable

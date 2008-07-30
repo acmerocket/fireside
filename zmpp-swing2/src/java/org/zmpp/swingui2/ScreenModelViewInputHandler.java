@@ -122,8 +122,7 @@ public class ScreenModelViewInputHandler
     if (isReadLine()) {
       Document doc = getLowerDocument();
       try {
-        int editStart = getEditStart();
-        String input = doc.getText(editStart, doc.getLength() - editStart);
+        String input = view.getCurrentInput();
         LOG.info("ENTER PRESSED, input: [" + input + "]");
         doc.insertString(doc.getLength(), "\n", null);
         resumeWithInput(input);
