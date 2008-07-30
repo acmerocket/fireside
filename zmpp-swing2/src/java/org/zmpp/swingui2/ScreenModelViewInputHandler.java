@@ -48,6 +48,10 @@ public class ScreenModelViewInputHandler
    */
   private long TYPING_THRESHOLD = 200;
 
+  /**
+   * Constructor.
+   * @param view the main view component
+   */
   public ScreenModelViewInputHandler(ScreenModelSplitView view) {
     this.view = view;
   }
@@ -55,14 +59,15 @@ public class ScreenModelViewInputHandler
   // *************************************************************************
   // **** Keyboard input handling
   // *************************************************
+  /** {@inheritDoc} */
   public void keyTyped(KeyEvent e) {
     preventKeyActionIfNeeded(e);
   }
-
+  /** {@inheritDoc} */
   public void keyPressed(KeyEvent e) {
     preventKeyActionIfNeeded(e);
   }
-
+  /** {@inheritDoc} */
   public void keyReleased(KeyEvent e) {
     preventKeyActionIfNeeded(e);
   }
@@ -131,6 +136,7 @@ public class ScreenModelViewInputHandler
   // *************************************************************************
   // **** Caret handling
   // *************************************************
+  /** {@inheritDoc} */
   public void stateChanged(ChangeEvent e) {
     if (isReadLine()) {
       if (getLowerCaretPosition() < getEditStart()) {

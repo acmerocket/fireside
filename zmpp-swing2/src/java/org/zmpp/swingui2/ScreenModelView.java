@@ -71,6 +71,9 @@ implements AdjustmentListener, MainViewListener, MouseWheelListener,
   private JLabel objectDescLabel = new JLabel(" "),
                  statusLabel = new JLabel(" ");  
   
+  /**
+   * Constructor.
+   */
   public ScreenModelView() {
     setLayout(new BorderLayout());
     mainView.setPreferredSize(new Dimension(640, 480));
@@ -86,6 +89,10 @@ implements AdjustmentListener, MainViewListener, MouseWheelListener,
     add(createStatusPanel(), BorderLayout.NORTH);
   }
   
+  /**
+   * Creates the status panel.
+   * @return the status panel
+   */
   private JPanel createStatusPanel() {
     statusPanel = new JPanel(new GridLayout(1, 2));
     JPanel leftPanel = new JPanel(new FlowLayout(FlowLayout.LEFT));
@@ -136,16 +143,14 @@ implements AdjustmentListener, MainViewListener, MouseWheelListener,
    */
   private int mapViewPosToScrollPos(int viewPos) { return -viewPos; }
 
-  /**
-   * 
-   * @param e
-   */
+  /**  {@inheritDoc} */
   public void mouseWheelMoved(MouseWheelEvent e) {
     int units = e.getUnitsToScroll();
     scrollbar.setValue(scrollbar.getValue() + units);
     scrollToScrollbarPos();
   }
   
+  /** Scrolls the viewport according to the scroll bar position. */
   private void scrollToScrollbarPos() {
     mainView.scroll(mapScrollPosToViewPos(scrollbar.getValue()));    
   }
@@ -153,6 +158,7 @@ implements AdjustmentListener, MainViewListener, MouseWheelListener,
   // *************************************************************************
   // ****** StatusLineListener
   // ***************************************
+  /**  {@inheritDoc} */
   public void statusLineUpdated(String objectDescription, String status) {
     objectDescLabel.setText(objectDescription);
     statusLabel.setText(status);
@@ -162,7 +168,10 @@ implements AdjustmentListener, MainViewListener, MouseWheelListener,
   // ****** Game controls
   // ***************************************
   /**
-   * {@inheritDoc}
+   * Starts the specified game.
+   * @param storyFile the story file
+   * @throws java.io.IOException if I/O error occurred
+   * @throws org.zmpp.vm.InvalidStoryException if story is in invalid format
    */
   public void startGame(File storyFile)
       throws IOException, InvalidStoryException {
@@ -193,6 +202,10 @@ implements AdjustmentListener, MainViewListener, MouseWheelListener,
     }
   }
   
+  /**
+   * Initializes the user interface.
+   * @param initStruct initialization information
+   */
   private void initUI(MachineInitStruct initStruct) {
     ((BufferedScreenModel) initStruct.screenModel).init(
        executionControl.getMachine(),

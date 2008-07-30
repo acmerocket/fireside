@@ -63,24 +63,21 @@ public class ScreenModelLayout implements LayoutManager2 {
    * @param name the name of the component association
    * @param comp the component
    */
-  public void addLayoutComponent(String name, Component comp) {
-  }
-
+  public void addLayoutComponent(String name, Component comp) { }
   /**
    * Does nothing, removal not supported.
    * @param comp the removed component
    */
-  public void removeLayoutComponent(Component comp) {
-  }
-
+  public void removeLayoutComponent(Component comp) { }
+  /** {@inheritDoc} */
   public Dimension preferredLayoutSize(Container parent) {
     throw new UnsupportedOperationException("Not supported yet.");
   }
-
+  /** {@inheritDoc} */
   public Dimension minimumLayoutSize(Container parent) {
     throw new UnsupportedOperationException("Not supported yet.");
   }
-
+  /** {@inheritDoc} */
   public void layoutContainer(Container parent) {
     if (!valid) {
       int parentWidth = parent.getWidth();
@@ -92,17 +89,27 @@ public class ScreenModelLayout implements LayoutManager2 {
     }
   }
   
+  /**
+   * Returnsthe size of the upper window.
+   * @return the upper window size
+   */
   private int getUpperSize() {
     return getUpperFontMetrics().getHeight() * numRowsUpper;
   }
   
+  /**
+   * Returns the FontMetrics of the upper window.
+   * @return the FontMetrics of the upper window
+   */
   private FontMetrics getUpperFontMetrics() {
-    return upper.getFontMetrics(fontSelector.getFont(ScreenModel.FONT_FIXED, 1));
+    return upper.getFontMetrics(fontSelector.getFont(ScreenModel.FONT_FIXED,
+                                                     1));
   }
 
   // ***********************************************************************
   // ***** LayoutManager2
   // ***********************************
+  /** {@inheritDoc} */
   public void addLayoutComponent(Component comp, Object constraints) {
     Integer id = (Integer) constraints;
     if (id == JLayeredPane.DEFAULT_LAYER) {
@@ -111,19 +118,19 @@ public class ScreenModelLayout implements LayoutManager2 {
       upper = (JComponent) comp;
     }
   }
-
+  /** {@inheritDoc} */
   public Dimension maximumLayoutSize(Container target) {
     throw new UnsupportedOperationException("Not supported yet.");
   }
-
+  /** {@inheritDoc} */
   public float getLayoutAlignmentX(Container target) {
     throw new UnsupportedOperationException("Not supported yet.");
   }
-
+  /** {@inheritDoc} */
   public float getLayoutAlignmentY(Container target) {
     throw new UnsupportedOperationException("Not supported yet.");
   }
-
+  /** {@inheritDoc} */
   public void invalidateLayout(Container target) {
     valid = false;
   }

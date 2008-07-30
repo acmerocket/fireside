@@ -107,6 +107,7 @@ implements ScreenModelListener {
   public int getNumUpperRows() { return upper.getNumRows(); }
   public int getDefaultBackground() { return DEFAULT_BACKGROUND; }
   public int getDefaultForeground() { return DEFAULT_FOREGROUND; }
+  public BufferedScreenModel getScreenModel() { return screenModel; }
   
   // ************************************************************************
   // **** User interface setup
@@ -122,7 +123,6 @@ implements ScreenModelListener {
   }
 
   private void createUpperView() {
-    upper.setFontSelector(fontSelector);
     Border upperBorder = BorderFactory.createEmptyBorder(5, 5, 5, 5);
     upper.setBorder(upperBorder);
     add(upper, JLayeredPane.PALETTE_LAYER);
@@ -260,7 +260,6 @@ implements ScreenModelListener {
     executionControl.setDefaultColors(DEFAULT_BACKGROUND,
                                       DEFAULT_FOREGROUND);
     this.screenModel = screenModel;
-    upper.setScreenModel(screenModel);
     screenModel.addScreenModelListener(this);
     setSizes();
     lower.setCurrentStyle(screenModel.getBottomAnnotation());

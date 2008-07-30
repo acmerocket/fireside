@@ -32,31 +32,56 @@ public class FontSelector {
   
   private Font fixedFont, stdFont;
   
+  /**
+   * Sets the fixed font in the system.
+   * @param font the fixed font
+   */
   public void setFixedFont(Font font) { fixedFont = font; }
   
+  /**
+   * Sets the standard font in the system.
+   * @param font the standard font
+   */
   public void setStandardFont(Font font) { stdFont = font; }
   
+  /**
+   * Returns a font object for the specified TextAnnotation.
+   * @param annotation the TextAnnotation
+   * @return the font
+   */
   public Font getFont(TextAnnotation annotation) {
     return getStyledFont(annotation.isFixed(), annotation.isBold(),
                          annotation.isItalic());
   }
 
+  /**
+   * Returns a font with the specified font number and style. This is a
+   * convenience method.
+   * @param fontnum the font number
+   * @param style the style
+   * @return the font object
+   */
   public Font getFont(char fontnum, int style) {
     return getFont(new TextAnnotation(fontnum, style));
   }
   
-  public Font getFixedFont() {
-    return getStyledFont(true, false, false);
-  }
+  /**
+   * Returns the roman fixed font object.
+   * @return the roman fixed font object
+   */
+  public Font getFixedFont() { return getStyledFont(true, false, false); }
   
+  /**
+   * Returns a styled font object for the specified attributes.
+   * @param fixed true if fixed font
+   * @param bold true if bold style
+   * @param italic true if italic style
+   * @return the font object
+   */
   private Font getStyledFont(boolean fixed, boolean bold, boolean italic) {
     Font font = fixed ? fixedFont : stdFont;
-    if (bold) {
-      font = font.deriveFont(Font.BOLD);
-    }
-    if (italic) {
-      font = font.deriveFont(Font.ITALIC);
-    }
+    if (bold) { font = font.deriveFont(Font.BOLD); }
+    if (italic) { font = font.deriveFont(Font.ITALIC); }
     return font;
   }
 }

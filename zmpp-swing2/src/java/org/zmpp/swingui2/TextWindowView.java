@@ -40,14 +40,18 @@ public class TextWindowView extends JTextPane {
   
   private ScreenModelSplitView parent;
   
+  /**
+   * Constructor.
+   * @param parent the parent view
+   */
   public TextWindowView(ScreenModelSplitView parent) {
     this.parent = parent;
   }
   
   /**
    * Ties the background color of the MainView to the background of the
-   * TextPane. That's because the upper window is treated as transparent
-   * at the beginning.
+   * TextPane. That's because the upper window is treated as a transparent
+   * overlay that overlaps with the bottom window.
    * @param color the new background color
    */
   @Override
@@ -56,41 +60,71 @@ public class TextWindowView extends JTextPane {
     if (parent != null) { parent.setBackground(color); }
   }
 
+  /**
+   * Appends the specified annotated segment to the end of the displayed
+   * displayed document.
+   * @param segment the annotated text to append
+   */
   public void append(AnnotatedText segment) {
     Document doc = getDocument();
     try {
       doc.insertString(doc.getLength(), zsciiToUnicode(segment.getText()),
-                       getStyleAttributes(segment.getAnnotation()));
+                       setStyleAttributes(segment.getAnnotation()));
     } catch (BadLocationException ex) {
       ex.printStackTrace();
     }
   }
-  private String zsciiToUnicode(String str) {
-    return str.replace("\r", "\n");
+  
+  /**
+   * Convert a ZSCII string to a Unicode string
+   * @param zsciiString the ZSCII string
+   * @return the unicode representation
+   */
+  private String zsciiToUnicode(String zsciiString) {
+    return zsciiString.replace("\r", "\n");
   }
 
   /**
-   * TODO: Can be done with setCurrentStyle.
-   * @param background
-   * @param foreground
+   * Clears the text by printing a form feed.
+   * @param background the background color in ScreenModel constants
+   * @param foreground the foreground color in ScreenModel constants
    */
   public void clear(int background, int foreground) {
+    setComponentColors(background, foreground);
     try {
-      ColorTranslator translator = ColorTranslator.getInstance();
-      setBackground(translator.translate(background,
-              parent.getDefaultBackground()));
-      setForeground(translator.translate(foreground,
-              parent.getDefaultForeground()));
-      StringBuilder formFeed = new StringBuilder();
-      for (int i = 0; i < parent.getNumUpperRows(); i++) {
-        formFeed.append("\n");
-      }
       TextAnnotation annotation = new TextAnnotation(ScreenModel.FONT_NORMAL,
         ScreenModel.TEXTSTYLE_ROMAN, background, foreground);
-      append(new AnnotatedText(annotation, formFeed.toString()));
+      append(new AnnotatedText(annotation, getFormFeed()));
     } catch (Exception ex) {
       ex.printStackTrace();
     }
+  }
+  
+  /**
+   * Builds a form feed string by creating as many newlines as the component
+   * contains lines.
+   * @return the form feed string
+   */
+  private String getFormFeed() {
+    StringBuilder formFeed = new StringBuilder();
+    for (int i = 0; i < parent.getNumUpperRows(); i++) {
+      formFeed.append("\n");
+    }
+    return formFeed.toString();
+  }
+
+  /**
+   * Sets this components colors with the colors specified in ScreenModel
+   * color constants
+   * @param background the background color
+   * @param foreground the foreground color
+   */
+  private void setComponentColors(int background, int foreground) {
+    ColorTranslator translator = ColorTranslator.getInstance();
+    setBackground(translator.translate(background,
+      parent.getDefaultBackground()));
+    setForeground(translator.translate(foreground,
+      parent.getDefaultForeground()));
   }
   
   /**
@@ -98,10 +132,15 @@ public class TextWindowView extends JTextPane {
    * @param annotation the current annotation holding the style
    */
   public void setCurrentStyle(TextAnnotation annotation) {
-    getStyleAttributes(annotation);
+    setStyleAttributes(annotation);
   }
   
-  private MutableAttributeSet getStyleAttributes(TextAnnotation annotation) {
+  /**
+   * Sets the current style attributes and returns them.
+   * @param annotation the annotation that specifies the new style
+   * @return the changed attribute set
+   */
+  private MutableAttributeSet setStyleAttributes(TextAnnotation annotation) {
     MutableAttributeSet attributes = getInputAttributes();
     Font font = parent.getFont(annotation);
     StyleConstants.setFontFamily(attributes, font.getFamily());
