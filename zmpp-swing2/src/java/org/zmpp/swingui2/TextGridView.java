@@ -65,6 +65,7 @@ public class TextGridView extends JComponent {
   }
   
   public void clear(int color) {
+    LOG.info("clear top window with color: " + color);
     // Fill the size with the background color
     TextAnnotation annotation = new TextAnnotation(ScreenModel.FONT_FIXED,
       ScreenModel.TEXTSTYLE_ROMAN, color, color);
@@ -104,9 +105,9 @@ public class TextGridView extends JComponent {
       
       ColorTranslator colTranslator = ColorTranslator.getInstance();
       Color foreground = colTranslator.translate(
-        annotation.getForeground(), ScreenModel.COLOR_BLUE);
+        annotation.getForeground(), ScreenModelSplitView.DEFAULT_FOREGROUND);
       Color background = colTranslator.translate(
-        annotation.getBackground(), ScreenModel.COLOR_WHITE);
+        annotation.getBackground(), ScreenModelSplitView.DEFAULT_BACKGROUND);
       if (annotation.isReverseVideo()) {
         // swap colors
         Color tmp = foreground;
@@ -124,10 +125,12 @@ public class TextGridView extends JComponent {
   }
 
   public void setCharacter(int line, int column, AnnotatedCharacter c) {
-    //LOG.info("SET_CHAR, line: " + line + " col: " + column + " c: " +
-    //        c.getCharacter() + " BG: " + c.getAnnotation().getBackground() +
-    //        " FG: " + c.getAnnotation().getForeground() + " REVERSE: " +
-    //         c.getAnnotation().isReverseVideo());
+    LOG.info(String.format(
+      "SET_CHAR, line: %d col: %d c: '%c' BG: %d FG: %d REVERSE: %b\n",
+             line, column, c.getCharacter(),
+             c.getAnnotation().getBackground(),
+             c.getAnnotation().getForeground(),
+             c.getAnnotation().isReverseVideo()));
     grid[line - 1][column - 1] = c;
   }
 
