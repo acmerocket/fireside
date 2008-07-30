@@ -401,8 +401,11 @@ implements ScreenModelListener {
   
   private void viewCursorLower(boolean flag) {
     if (flag) {
-      editStart = lower.getDocument().getLength();
-      lower.setCaretPosition(editStart);
+      // Respect left over chars
+      int numLeftOverChars = currentRunState.getNumLeftOverChars();
+      LOG.info("# OF LEFTOVER CHARS: " + numLeftOverChars);
+      editStart = lower.getDocument().getLength() - numLeftOverChars;
+      lower.setCaretPosition(editStart + numLeftOverChars);
       lower.requestFocusInWindow();
     } else {
       // might set caret to invisible
