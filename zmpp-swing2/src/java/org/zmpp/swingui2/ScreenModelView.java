@@ -45,8 +45,8 @@ import org.zmpp.ExecutionControl;
 import org.zmpp.vm.InvalidStoryException;
 import org.zmpp.vm.MachineRunState;
 import org.zmpp.vm.MachineFactory.MachineInitStruct;
-import org.zmpp.vm.BufferedScreenModel;
-import org.zmpp.vm.BufferedScreenModel.StatusLineListener;
+import org.zmpp.windowing.BufferedScreenModel;
+import org.zmpp.windowing.BufferedScreenModel.StatusLineListener;
 
 /**
  * A Swing component that hosts sub views that represent the Z-machine

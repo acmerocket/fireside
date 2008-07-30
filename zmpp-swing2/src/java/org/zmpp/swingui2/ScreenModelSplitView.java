@@ -45,8 +45,8 @@ import org.zmpp.vm.MachineRunState;
 import org.zmpp.windowing.AnnotatedCharacter;
 import org.zmpp.windowing.AnnotatedText;
 import org.zmpp.windowing.TextAnnotation;
-import org.zmpp.vm.BufferedScreenModel;
 import org.zmpp.vm.Instruction;
+import org.zmpp.windowing.BufferedScreenModel;
 import org.zmpp.windowing.ScreenModel;
 import org.zmpp.windowing.ScreenModelListener;
 

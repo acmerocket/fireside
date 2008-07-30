@@ -27,8 +27,8 @@ import java.awt.Graphics;
 import java.util.logging.Logger;
 import javax.swing.JComponent;
 import org.zmpp.windowing.AnnotatedCharacter;
+import org.zmpp.windowing.BufferedScreenModel;
 import org.zmpp.windowing.TextAnnotation;
-import org.zmpp.vm.BufferedScreenModel;
 import org.zmpp.windowing.ScreenModel;
 
 /**
