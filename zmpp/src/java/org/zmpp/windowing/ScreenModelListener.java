@@ -41,5 +41,11 @@ public interface ScreenModelListener {
   void topWindowUpdated(int cursorx, int cursory, AnnotatedCharacter c);
   void screenSplit(int linesUpperWindow);
   void windowErased(int window);
+  /**
+   * Called before the cursor positions is updated.
+   * @param line the target line
+   * @param column the target column
+   */
+  void topWindowCursorMoving(int line, int column);
 }
   

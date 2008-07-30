@@ -100,10 +100,15 @@ public interface ScreenModel {
   
   /**
    * Sets the active window.
-   * 
    * @param window the active window
    */
   void setWindow(int window);
+  
+  /**
+   * Returns the active window.
+   * @return the active window
+   */
+  int getActiveWindow();
   
   /**
    * Sets the text style.

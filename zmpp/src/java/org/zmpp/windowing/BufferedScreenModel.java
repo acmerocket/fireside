@@ -104,7 +104,7 @@ public class BufferedScreenModel implements ScreenModel, StatusLine,
       l.screenSplit(linesUpperWindow);
     }
   }
-
+  /** {@inheritDoc} */
   public void setWindow(int window) {
     LOG.info("SET_WINDOW: " + window);
     current = window;
@@ -112,6 +112,8 @@ public class BufferedScreenModel implements ScreenModel, StatusLine,
       topWindow.resetCursor();
     }
   }
+  /** {@inheritDoc} */
+  public int getActiveWindow() { return current; }
 
   public void setTextStyle(int style) {
     LOG.info("SET_TEXT_STYLE: " + style);
@@ -154,6 +156,9 @@ public class BufferedScreenModel implements ScreenModel, StatusLine,
     //LOG.info(String.format("SET_TEXT_CURSOR, line: %d, column: %d, " +
     //                       "window: %d\n", line, column, targetWindow));
     if (targetWindow == WINDOW_TOP) {
+      for (ScreenModelListener l : screenModelListeners) {
+        l.topWindowCursorMoving(line, column);
+      }
       topWindow.setTextCursor(line, column);
     }
   }
