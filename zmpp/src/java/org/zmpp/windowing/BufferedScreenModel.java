@@ -40,7 +40,7 @@ import org.zmpp.io.OutputStream;
  */
 public class BufferedScreenModel implements ScreenModel, StatusLine,
   OutputStream {
-  private static final Logger LOG = Logger.getLogger("org.zmpp");
+  private static final Logger LOG = Logger.getLogger("org.zmpp.screen");
 
   private int current = WINDOW_BOTTOM;
   private BufferedTextWindow bottomWindow = new BufferedTextWindow();

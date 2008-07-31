@@ -271,7 +271,7 @@ public class VarInstruction extends AbstractInstruction {
   }
   
   private void sreadStage1() {
-    char textbuffer = getMachine().readUnsigned8(getUnsignedValue(0));
+    char textbuffer = getUnsignedValue(0);
     getMachine().setRunState(MachineRunState.createReadLine(
             getReadInterruptTime(), getReadInterruptRoutine(),
             getNumLeftOverChars(textbuffer), textbuffer));

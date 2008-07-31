@@ -41,7 +41,7 @@ import org.zmpp.base.StoryFileHeader.Attribute;
  */
 public class ExecutionControl {
 
-  private static final Logger LOG = Logger.getLogger("org.zmpp");
+  private static final Logger LOG = Logger.getLogger("org.zmpp.control");
   private Machine machine;
   private InstructionDecoder instructionDecoder =
           new InstructionDecoder();
