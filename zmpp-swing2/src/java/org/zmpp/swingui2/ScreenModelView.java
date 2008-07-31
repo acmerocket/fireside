@@ -167,6 +167,22 @@ implements AdjustmentListener, MainViewListener, MouseWheelListener,
   // *************************************************************************
   // ****** Game controls
   // ***************************************
+  
+  public void startGame(MachineInitStruct initStruct)
+    throws IOException, InvalidStoryException {
+    
+    initStruct.screenModel = screenModel;
+    initStruct.statusLine = screenModel;
+    
+    if (this.isVisible()) {
+      executionControl = new ExecutionControl(initStruct);
+      initUI(initStruct);
+      MachineRunState runState = executionControl.run();
+      LOG.info("PAUSING WITH STATE: " + runState);
+      mainView.setCurrentRunState(runState);
+    }
+  }
+
   /**
    * Starts the specified game.
    * @param storyFile the story file
@@ -190,16 +206,7 @@ implements AdjustmentListener, MainViewListener, MouseWheelListener,
         };
       }
     };
-    initStruct.screenModel = screenModel;
-    initStruct.statusLine = screenModel;
-    
-    if (this.isVisible()) {
-      executionControl = new ExecutionControl(initStruct);
-      initUI(initStruct);
-      MachineRunState runState = executionControl.run();
-      LOG.info("PAUSING WITH STATE: " + runState);
-      mainView.setCurrentRunState(runState);
-    }
+    startGame(initStruct);
   }
   
   /**
