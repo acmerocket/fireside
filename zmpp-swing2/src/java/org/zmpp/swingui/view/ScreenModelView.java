@@ -18,7 +18,7 @@
  * You should have received a copy of the GNU General Public License
  * along with ZMPP.  If not, see <http://www.gnu.org/licenses/>.
  */
-package org.zmpp.swingui2;
+package org.zmpp.swingui.view;
 
 import java.awt.BorderLayout;
 import java.awt.Color;
@@ -40,7 +40,7 @@ import javax.swing.JPanel;
 import javax.swing.JScrollBar;
 import org.zmpp.blorb.NativeImage;
 import org.zmpp.blorb.NativeImageFactory;
-import org.zmpp.swingui2.ScreenModelSplitView.MainViewListener;
+import org.zmpp.swingui.view.ScreenModelSplitView.MainViewListener;
 import org.zmpp.ExecutionControl;
 import org.zmpp.vm.InvalidStoryException;
 import org.zmpp.vm.MachineRunState;

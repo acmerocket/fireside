@@ -18,8 +18,9 @@
  * You should have received a copy of the GNU General Public License
  * along with ZMPP.  If not, see <http://www.gnu.org/licenses/>.
  */
-package org.zmpp.swingui2;
+package org.zmpp.swingui.app;
 
+import org.zmpp.swingui.view.ScreenModelView;
 import apple.dts.osxadapter.OSXAdapter;
 import javax.swing.JFrame;
 import javax.swing.JOptionPane;

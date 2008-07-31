@@ -18,8 +18,9 @@
  * You should have received a copy of the GNU General Public License
  * along with ZMPP.  If not, see <http://www.gnu.org/licenses/>.
  */
-package org.zmpp.swingui2;
+package org.zmpp.swingui.view;
 
+import org.zmpp.swingui.view.ScreenModelSplitView;
 import java.awt.event.KeyEvent;
 import java.awt.event.KeyListener;
 import java.util.logging.Logger;
