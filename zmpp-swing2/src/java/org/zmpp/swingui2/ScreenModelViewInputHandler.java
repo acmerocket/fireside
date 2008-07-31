@@ -28,6 +28,7 @@ import javax.swing.event.ChangeListener;
 import javax.swing.text.BadLocationException;
 import javax.swing.text.Document;
 import org.zmpp.ExecutionControl;
+import org.zmpp.windowing.ScreenModel;
 
 /**
  * An input handler for the standard screen model.
@@ -61,15 +62,28 @@ public class ScreenModelViewInputHandler
   // *************************************************
   /** {@inheritDoc} */
   public void keyTyped(KeyEvent e) {
-    preventKeyActionIfNeeded(e);
+    handleKeyEvent(e);
   }
   /** {@inheritDoc} */
   public void keyPressed(KeyEvent e) {
-    preventKeyActionIfNeeded(e);
+    handleKeyEvent(e);
   }
   /** {@inheritDoc} */
   public void keyReleased(KeyEvent e) {
-    preventKeyActionIfNeeded(e);
+    handleKeyEvent(e);
+  }
+  
+  private void handleKeyEvent(KeyEvent e) {
+    if (view.getScreenModel().getActiveWindow() == ScreenModel.WINDOW_BOTTOM) {
+      preventBottomWindowKeyActionIfNeeded(e);
+    } else {
+      System.out.println("KEY PRESSED IN UPPER WINDOW: " + e.getKeyChar());
+      if (isReadChar()) {
+        resumeWithInput(String.valueOf(e.getKeyChar()));
+        consumeKeyEvent(e);
+        return;
+      }
+    }
   }
 
   private void consumeKeyEvent(KeyEvent e) {
@@ -83,7 +97,7 @@ public class ScreenModelViewInputHandler
     return (Math.abs(e.getWhen() - lastConsumed) < TYPING_THRESHOLD);
   }
   
-  private void preventKeyActionIfNeeded(KeyEvent e) {
+  private void preventBottomWindowKeyActionIfNeeded(KeyEvent e) {
     // Shortcut: If character was previously consumed, don't handle it anymore
     if (wasConsumed(e)) {
       consumeKeyEvent(e);

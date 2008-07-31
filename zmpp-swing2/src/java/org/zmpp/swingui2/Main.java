@@ -28,6 +28,7 @@ import java.util.logging.Logger;
 import javax.swing.JFileChooser;
 import javax.swing.SwingUtilities;
 import javax.swing.UIManager;
+import org.zmpp.ExecutionControl;
 
 /**
  * New application class using the Swing 2 model.
@@ -67,7 +68,9 @@ public class Main {
       UIManager.setLookAndFeel(UIManager.getSystemLookAndFeelClassName());
       LogManager.getLogManager().readConfiguration();
       Logger zmppLogger = Logger.getLogger("org.zmpp");
-      zmppLogger.setLevel(Level.WARNING);
+      zmppLogger.setLevel(Level.SEVERE);
+      //ExecutionControl.DEBUG = true;
+      //ExecutionControl.DEBUG_INTERRUPT = true;
     } catch (Exception ex) {
       ex.printStackTrace();
     }

@@ -235,6 +235,7 @@ implements ScreenModelListener {
     currentTimer = new Timer(runState.getTime() * 100,
       new ActionListener() {
         public void actionPerformed(ActionEvent e) {
+          System.out.println("TIMED METHOD, active window: " + screenModel.getActiveWindow());
           String currentInput = getCurrentInput();
           if (currentInput != null) {
             executionControl.setTextToInputBuffer(currentInput);
@@ -244,6 +245,7 @@ implements ScreenModelListener {
           screenModel.setBufferMode(false);
           char result =
             executionControl.callInterrupt(runState.getRoutine());
+          System.out.println("RESULT OF TIMED: " + (int) result);
           if (result == Instruction.TRUE) {
             currentTimer.stop();
             // TODO: Clear input and print
@@ -413,6 +415,7 @@ implements ScreenModelListener {
   private void viewCursor(final boolean flag) {
     runInUIThread(new Runnable() {
       public void run() {
+        System.out.println("ACTIVE WINDOW IN READ: " + screenModel.getActiveWindow());
         if (screenModel.getActiveWindow() == ScreenModel.WINDOW_BOTTOM) {
           viewCursorLower(flag);
         } else if (screenModel.getActiveWindow() ==ScreenModel.WINDOW_TOP) {
