@@ -20,7 +20,6 @@
  */
 package org.zmpp.swingui.app;
 
-import org.zmpp.swingui.app.ZmppFrame;
 import java.io.File;
 import java.util.PropertyResourceBundle;
 import java.util.logging.Level;
@@ -68,9 +67,11 @@ public class Main {
     try {
       UIManager.setLookAndFeel(UIManager.getSystemLookAndFeelClassName());
       LogManager.getLogManager().readConfiguration();
-      Logger zmppLogger = Logger.getLogger("org.zmpp");
-      zmppLogger.setLevel(Level.SEVERE);
-      //ExecutionControl.DEBUG = true;
+      Logger.getLogger("org.zmpp").setLevel(Level.INFO);
+      Logger.getLogger("org.zmpp.screen").setLevel(Level.SEVERE);
+      Logger.getLogger("org.zmpp.ui").setLevel(Level.INFO);
+      Logger.getLogger("org.zmpp.control").setLevel(Level.SEVERE);
+      ExecutionControl.DEBUG = true;
       //ExecutionControl.DEBUG_INTERRUPT = true;
     } catch (Exception ex) {
       ex.printStackTrace();

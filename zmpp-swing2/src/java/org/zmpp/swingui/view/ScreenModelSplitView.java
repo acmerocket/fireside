@@ -66,7 +66,7 @@ import org.zmpp.windowing.ScreenModelListener;
 public class ScreenModelSplitView extends JLayeredPane
 implements ScreenModelListener {
 
-  private static final Logger LOG = Logger.getLogger("org.zmpp");
+  private static final Logger LOG = Logger.getLogger("org.zmpp.ui");
   //private static final Font STD_FONT = new Font("Baskerville", Font.PLAIN, 16);
   private static final Font STD_FONT = new Font("American Typewriter", Font.PLAIN, 12);
   private static final Font FIXED_FONT = new Font("Monaco", Font.PLAIN, 12);
@@ -195,9 +195,12 @@ implements ScreenModelListener {
   TextWindowView getLower() { return lower; }
   int getEditStart() { return editStart; }
   private void updateEditStart() {
-    int numLeftOverChars = currentRunState.getNumLeftOverChars();
-    //LOG.info("# OF LEFTOVER CHARS: " + numLeftOverChars);
-    editStart = lower.getDocument().getLength() - numLeftOverChars;
+    LOG.info("# OF LEFTOVER CHARS: " + getNumLeftOverChars());
+    editStart = lower.getDocument().getLength() - getNumLeftOverChars();
+  }
+  
+  private int getNumLeftOverChars() {
+    return currentRunState.getNumLeftOverChars();
   }
 
   boolean isReadChar() {
@@ -415,7 +418,7 @@ implements ScreenModelListener {
   private void viewCursor(final boolean flag) {
     runInUIThread(new Runnable() {
       public void run() {
-        System.out.println("ACTIVE WINDOW IN READ: " + screenModel.getActiveWindow());
+        //System.out.println("ACTIVE WINDOW IN READ: " + screenModel.getActiveWindow());
         if (screenModel.getActiveWindow() == ScreenModel.WINDOW_BOTTOM) {
           viewCursorLower(flag);
         } else if (screenModel.getActiveWindow() ==ScreenModel.WINDOW_TOP) {
@@ -429,8 +432,7 @@ implements ScreenModelListener {
     if (flag) {
       // Respect left over chars
       updateEditStart();
-      int numLeftOverChars = currentRunState.getNumLeftOverChars();
-      lower.setCaretPosition(getEditStart() + numLeftOverChars);
+      lower.setCaretPosition(getEditStart() + getNumLeftOverChars());
       lower.requestFocusInWindow();
     } else {
       // might set caret to invisible

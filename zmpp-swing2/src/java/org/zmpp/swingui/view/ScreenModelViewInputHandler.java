@@ -20,7 +20,6 @@
  */
 package org.zmpp.swingui.view;
 
-import org.zmpp.swingui.view.ScreenModelSplitView;
 import java.awt.event.KeyEvent;
 import java.awt.event.KeyListener;
 import java.util.logging.Logger;
@@ -39,8 +38,7 @@ import org.zmpp.windowing.ScreenModel;
 public class ScreenModelViewInputHandler
   implements KeyListener, ChangeListener {
 
-  private static final Logger LOG =
-    Logger.getLogger("org.zmpp");
+  private static final Logger LOG = Logger.getLogger("org.zmpp.ui");
   private ScreenModelSplitView view;
   private long lastConsumed;
   /**
@@ -78,7 +76,7 @@ public class ScreenModelViewInputHandler
     if (view.getScreenModel().getActiveWindow() == ScreenModel.WINDOW_BOTTOM) {
       preventBottomWindowKeyActionIfNeeded(e);
     } else {
-      System.out.println("KEY PRESSED IN UPPER WINDOW: " + e.getKeyChar());
+      //System.out.println("KEY PRESSED IN UPPER WINDOW: " + e.getKeyChar());
       if (isReadChar()) {
         resumeWithInput(String.valueOf(e.getKeyChar()));
         consumeKeyEvent(e);
