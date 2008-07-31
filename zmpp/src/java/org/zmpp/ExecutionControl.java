@@ -47,7 +47,8 @@ public class ExecutionControl {
           new InstructionDecoder();
   private LineBufferInputStream inputStream = new LineBufferInputStream();
   private int step = 1;
-  public static final boolean DEBUG = false;
+  public static boolean DEBUG = false;
+  public static boolean DEBUG_INTERRUPT = false;
   
   /**
    * Constructor.
@@ -229,6 +230,8 @@ public class ExecutionControl {
     for (;;) {
       final Instruction instr =
         instructionDecoder.decodeInstruction(machine.getPC());
+      if (DEBUG_INTERRUPT)
+        System.out.println(String.format("%03d: $%04x %s", step, (int) machine.getPC(), instr.toString()));
       instr.execute();
       // check if something was printed
       if (instr.isOutput()) {
