@@ -61,13 +61,16 @@ Big thanks go to the Interactive Fiction community:
 
 - the rec.arts.int-fiction group and their representatives for providing
 well written specifications
+- Eric Forgeot for a lot of ideas and suggestions, the design of ZMPP's
+  website and french translation of ZMPP's user interface
 - Fredrik Ramsberg for contributing his thoughts, suggestions and time towards
 better language support in ZMPP
+- Pichuneke for his feedback and the spanish translation of the user interface
 - Richard Vivian for selling me his copy "Masterpieces of Infocom"
 - Stefan Jokisch, David Kinder, Andrew Plotkin, Jon Zeppieri and Andrew Hunter
   for their Z-code/Glulx interpreters, that implementations served and still
   serve as an inspiration to ZMPP
-- Pichuneke and the spanish "CAAD" forum for their feedback
+- The spanish "CAAD" forum for their feedback
 - Matthias Schmidt for his suggestions that will hopefully lead to a more
 accessible ZMPP
 - An Ni for revealing an issue in Unicode handling that prevented displaying
