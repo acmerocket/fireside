@@ -67,11 +67,6 @@ public class ScreenModelSplitView extends JLayeredPane
 implements ScreenModelListener {
 
   private static final Logger LOG = Logger.getLogger("org.zmpp.ui");
-  //private static final Font STD_FONT = new Font("Baskerville", Font.PLAIN, 16);
-  private static final Font STD_FONT = new Font("American Typewriter", Font.PLAIN, 12);
-  private static final Font FIXED_FONT = new Font("Monaco", Font.PLAIN, 12);
-  private static final int DEFAULT_FOREGROUND = ScreenModel.COLOR_WHITE;
-  private static final int DEFAULT_BACKGROUND = ScreenModel.COLOR_BLUE;
   private int editStart;
   private ExecutionControl executionControl;
   private BufferedScreenModel screenModel;
@@ -94,11 +89,13 @@ implements ScreenModelListener {
   private MainViewListener listener;
   private ScreenModelLayout layout = new ScreenModelLayout();
   private FontSelector fontSelector = new FontSelector();
-
+  private DisplaySettings displaySettings;
+  
   /**
    * Constructor.
    */
-  public ScreenModelSplitView() {
+  public ScreenModelSplitView(DisplaySettings displaySettings) {
+    this.displaySettings = displaySettings;
     initLayout();
     createUpperView();
     createLowerView();
@@ -106,8 +103,12 @@ implements ScreenModelListener {
   }
   
   public int getNumUpperRows() { return upper.getNumRows(); }
-  public int getDefaultBackground() { return DEFAULT_BACKGROUND; }
-  public int getDefaultForeground() { return DEFAULT_FOREGROUND; }
+  public int getDefaultBackground() {
+    return displaySettings.getDefaultBackground();
+  }
+  public int getDefaultForeground() {
+    return displaySettings.getDefaultForeground();
+  }
   public BufferedScreenModel getScreenModel() { return screenModel; }
   
   // ************************************************************************
@@ -117,8 +118,8 @@ implements ScreenModelListener {
   private void initLayout() {
     setOpaque(true);
     setPreferredSize(new Dimension(640, 480));
-    fontSelector.setFixedFont(FIXED_FONT);
-    fontSelector.setStandardFont(STD_FONT);    
+    fontSelector.setFixedFont(displaySettings.getFixedFont());
+    fontSelector.setStandardFont(displaySettings.getStdFont());    
     layout.setFontSelector(fontSelector);
     setLayout(layout);    
   }
@@ -135,8 +136,8 @@ implements ScreenModelListener {
             BorderFactory.createEmptyBorder(5, 5, 5, 5));
     lower.setEditable(true);
     lower.setEnabled(true);
-    lower.setBackground(getBackgroundColor(DEFAULT_BACKGROUND));
-    lower.setForeground(getForegroundColor(DEFAULT_FOREGROUND));
+    lower.setBackground(getBackgroundColor(getDefaultBackground()));
+    lower.setForeground(getForegroundColor(getDefaultForeground()));
     lowerViewport = new JViewport();
     lowerViewport.setView(lower);
     lowerViewport.addChangeListener(new ChangeListener() {
@@ -286,8 +287,8 @@ implements ScreenModelListener {
   public void initUI(BufferedScreenModel screenModel,
                      ExecutionControl control) {
     executionControl = control;
-    executionControl.setDefaultColors(DEFAULT_BACKGROUND,
-                                      DEFAULT_FOREGROUND);
+    executionControl.setDefaultColors(getDefaultBackground(),
+                                      getDefaultForeground());
     this.screenModel = screenModel;
     screenModel.addScreenModelListener(this);
     setSizes();

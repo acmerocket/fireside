@@ -45,7 +45,7 @@ public class TextGridView extends JComponent {
 
   private static final char REF_CHAR = '0';
   private static final AnnotatedCharacter EMPTY_CHAR = null;
-  private AnnotatedCharacter[][] grid;
+  private AnnotatedCharacter[][] grid = new AnnotatedCharacter[0][0];
   private ScreenModelSplitView parent;
   //private static final Logger LOG = Logger.getLogger("org.zmpp");
   private boolean cursorShown = false;

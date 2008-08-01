@@ -23,10 +23,17 @@ package org.zmpp.swingui.applet;
 import org.zmpp.swingui.view.DisplaySettings;
 import org.zmpp.swingui.view.ScreenModelView;
 import java.awt.BorderLayout;
+import java.awt.Font;
+import java.io.IOException;
+import java.io.InputStream;
 import java.net.URL;
 import java.util.HashMap;
 import java.util.Map;
+import java.util.logging.Level;
+import java.util.logging.Logger;
 import javax.swing.JApplet;
+import org.zmpp.blorb.NativeImage;
+import org.zmpp.blorb.NativeImageFactory;
 import org.zmpp.vm.MachineFactory.MachineInitStruct;
 import org.zmpp.windowing.ScreenModel;
 
@@ -65,10 +72,26 @@ public class ZmppApplet extends JApplet {
   private ScreenModelView screenModelView;
   private MachineInitStruct initStruct;
 
+  /** Setting the log levels directly */
+  private void setLogLevels() {    
+    Logger.getLogger("org.zmpp").setLevel(Level.SEVERE);
+    Logger.getLogger("org.zmpp.screen").setLevel(Level.SEVERE);
+    Logger.getLogger("org.zmpp.ui").setLevel(Level.INFO);
+    Logger.getLogger("org.zmpp.control").setLevel(Level.SEVERE);
+  }
+  
+  private Font createStdFont(int size) {
+    return new Font("Times", Font.PLAIN, size);
+  }
+  
+  private Font createFixedFont(int size) {
+    return new Font("Monospaced", Font.PLAIN, size);
+  }
+
   /* {@inheritDoc} */
   @Override
   public void init() {
-    
+    setLogLevels();
     requestFocusInWindow();
     String story = getParameter("storyfile");
     String blorb = getParameter("blorbfile");
@@ -81,8 +104,8 @@ public class ZmppApplet extends JApplet {
     
     int sizeStdFont = 12;
     int sizeFixedFont = 12;
-    int defaultBackground = ScreenModel.UNDEFINED;
-    int defaultForeground = ScreenModel.UNDEFINED;
+    int defaultBackground = ScreenModel.COLOR_WHITE;
+    int defaultForeground = ScreenModel.COLOR_BLACK;
     boolean antialias = true;
     
     savetofile = "file".equalsIgnoreCase(saveto);
@@ -93,9 +116,10 @@ public class ZmppApplet extends JApplet {
     defaultForeground = parseColor(deffg, defaultForeground);
     antialias = parseBoolean(antialiasparam, antialias);
     
-    settings = new DisplaySettings(sizeStdFont, sizeFixedFont,
+    settings = new DisplaySettings(createStdFont(sizeStdFont),
+        createFixedFont(sizeFixedFont),
         defaultBackground, defaultForeground, antialias);
-    screenModelView = new ScreenModelView();
+    screenModelView = new ScreenModelView(settings);
     getContentPane().add(screenModelView, BorderLayout.CENTER);
     
     try {
@@ -104,8 +128,18 @@ public class ZmppApplet extends JApplet {
         new URL(getDocumentBase(), blorb) : null;
       initStruct.storyURL = (story != null) ?
         new URL(getDocumentBase(), story) : null;
+      // this is a simple dummy image factory since we do not handle
+      // pictures yet
+      initStruct.nativeImageFactory = new NativeImageFactory() {
+        public NativeImage createImage(InputStream inputStream)
+                throws IOException {
+          return new NativeImage() {
+            public int getWidth() { return 0; }
+            public int getHeight() { return 0; }        
+          };
+        }
+      };
     } catch (Exception ex) {
-      
       ex.printStackTrace();      
     }
   }

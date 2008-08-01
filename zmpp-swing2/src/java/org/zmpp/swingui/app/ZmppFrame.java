@@ -24,6 +24,7 @@ import org.zmpp.swingui.view.ScreenModelView;
 import apple.dts.osxadapter.OSXAdapter;
 import javax.swing.JFrame;
 import javax.swing.JOptionPane;
+import org.zmpp.swingui.view.DisplaySettings;
 
 /**
  * A new version of the ZmppFrame class.
@@ -37,10 +38,10 @@ public class ZmppFrame extends JFrame {
   /**
    * Constructor.
    */
-  public ZmppFrame() {
+  public ZmppFrame(DisplaySettings displaySettings) {
     super(Main.APP_NAME);
     setDefaultCloseOperation(JFrame.EXIT_ON_CLOSE);
-    setupUI();
+    setupUI(displaySettings);
     pack();
   }
   
@@ -68,8 +69,8 @@ public class ZmppFrame extends JFrame {
   /**
    * Sets up the user interface
    */
-  private void setupUI() {
-    screenModelView = new ScreenModelView();
+  private void setupUI(DisplaySettings displaySettings) {
+    screenModelView = new ScreenModelView(displaySettings);
     getContentPane().add(screenModelView);
     if (isMacOsX()) {
       setupMacOsAppMenu();

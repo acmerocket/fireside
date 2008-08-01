@@ -20,7 +20,10 @@
  */
 package org.zmpp.swingui.app;
 
+import java.awt.Font;
 import java.io.File;
+import java.io.IOException;
+import java.io.InputStream;
 import java.util.PropertyResourceBundle;
 import java.util.logging.Level;
 import java.util.logging.LogManager;
@@ -28,7 +31,11 @@ import java.util.logging.Logger;
 import javax.swing.JFileChooser;
 import javax.swing.SwingUtilities;
 import javax.swing.UIManager;
-import org.zmpp.ExecutionControl;
+import org.zmpp.blorb.NativeImage;
+import org.zmpp.blorb.NativeImageFactory;
+import org.zmpp.swingui.view.DisplaySettings;
+import org.zmpp.vm.MachineFactory.MachineInitStruct;
+import org.zmpp.windowing.ScreenModel;
 
 /**
  * New application class using the Swing 2 model.
@@ -47,6 +54,13 @@ public class Main {
    * Debug flag.
    */
   public static final boolean DEBUG = true;
+  private static final Font STD_FONT = new Font("American Typewriter", Font.PLAIN, 12);
+  private static final Font FIXED_FONT = new Font("Monaco", Font.PLAIN, 12);
+  private static final int DEFAULT_FOREGROUND = ScreenModel.COLOR_WHITE;
+  private static final int DEFAULT_BACKGROUND = ScreenModel.COLOR_BLUE;
+  //private static final Font STD_FONT = new Font("Baskerville", Font.PLAIN, 16);
+  private static final DisplaySettings displaySettings = new DisplaySettings(STD_FONT, FIXED_FONT,
+      DEFAULT_BACKGROUND, DEFAULT_FOREGROUND, true);
   
   /**
    * Application name.
@@ -71,7 +85,7 @@ public class Main {
       Logger.getLogger("org.zmpp.screen").setLevel(Level.SEVERE);
       Logger.getLogger("org.zmpp.ui").setLevel(Level.INFO);
       Logger.getLogger("org.zmpp.control").setLevel(Level.SEVERE);
-      ExecutionControl.DEBUG = true;
+      //ExecutionControl.DEBUG = true;
       //ExecutionControl.DEBUG_INTERRUPT = true;
     } catch (Exception ex) {
       ex.printStackTrace();
@@ -95,16 +109,44 @@ public class Main {
     } catch (Exception ignore) {}
   }
   
-  private static void runStoryFile(final File storyfile) {
-    ZmppFrame frame = new ZmppFrame();
+  private static void runStoryFile(final File storyFile) {
+    ZmppFrame frame = new ZmppFrame(displaySettings);
     frame.setVisible(true);
     try {
-      frame.getScreenModelView().startGame(storyfile);
+      MachineInitStruct initStruct = new MachineInitStruct();
+      if (storyFile.getName().endsWith("zblorb")) {
+        initStruct.blorbFile = storyFile;
+      } else {
+        initStruct.storyFile = storyFile;
+      }
+      // just for debugging
+      initStruct.nativeImageFactory = new NativeImageFactory() {
+        public NativeImage createImage(InputStream inputStream) throws IOException {
+          return new NativeImage() {
+            public int getWidth() { return 0; }
+            public int getHeight() { return 0; }        
+          };
+        }
+      };
+      frame.getScreenModelView().startGame(initStruct);
     } catch (Exception ex) {
       ex.printStackTrace();
     }
   }
   
+  /**
+   * Starts the specified game.
+   * @param storyFile the story file
+   * @throws java.io.IOException if I/O error occurred
+   * @throws org.zmpp.vm.InvalidStoryException if story is in invalid format
+   */
+  /*
+  public void startGame(File storyFile)
+      throws IOException, InvalidStoryException {
+    startGame(initStruct);
+  }
+  */
+
   public static boolean isMacOsX() {
   	return System.getProperty("mrj.version") != null;
   }

@@ -19,6 +19,8 @@
  */
 package org.zmpp.swingui.view;
 
+import java.awt.Font;
+
 /**
  * A class to hold the display settings.
  *
@@ -27,37 +29,37 @@ package org.zmpp.swingui.view;
  */
 public class DisplaySettings {
 
-  private int stdFontSize;
-  private int fixedFontSize;
+  private Font stdFont;
+  private Font fixedFont;
   private int defaultForeground;
   private int defaultBackground;
   private boolean antialias;
 
   /**
    * Constructor.
-   * @param stdFontSize the standard font size
-   * @param fixedFontSize the fixed font size
+   * @param stdFont the standard font
+   * @param fixedFont the fixed font
    * @param defaultBackground the default background
    * @param defaultForeground the default foreground
    * @param antialias the antialias flag
    */
-  public DisplaySettings(int stdFontSize, int fixedFontSize,
+  public DisplaySettings(Font stdFont, Font fixedFont,
       int defaultBackground, int defaultForeground, boolean antialias) {
-    setSettings(stdFontSize, fixedFontSize, defaultBackground,
+    setSettings(stdFont, fixedFont, defaultBackground,
         defaultForeground, antialias);
   }
   
   /**
-   * Returns the standard font size.
-   * @return the standard font size
+   * Returns the standard font.
+   * @return the standard font
    */
-  public int getStdFontSize() { return stdFontSize; }
+  public Font getStdFont() { return stdFont; }
   
   /**
    * Returns the fixed font size.
    * @retunr hte fixed font size
    */
-  public int getFixedFontSize() { return fixedFontSize; }
+  public Font getFixedFont() { return fixedFont; }
   
   /**
    * Returns the default background color number.
@@ -79,16 +81,16 @@ public class DisplaySettings {
   
   /**
    * Sets the settings.
-   * @param stdFontSize the standard font size
-   * @param fixedFontSize the fixed font size
+   * @param stdFont the standard font
+   * @param fixedFont the fixed font
    * @param defaultBackground the default background
    * @param defaultForeground the default foreground
    * @param antialias the antialias flag
    */
-  public void setSettings(int stdFontSize, int fixedFontSize,
+  public void setSettings(Font stdFont, Font fixedFont,
       int defaultBackground, int defaultForeground, boolean antialias) {
-    this.stdFontSize = stdFontSize;
-    this.fixedFontSize = fixedFontSize;
+    this.stdFont = stdFont;
+    this.fixedFont = fixedFont;
     this.defaultBackground = defaultBackground;
     this.defaultForeground = defaultForeground;
     this.antialias = antialias;

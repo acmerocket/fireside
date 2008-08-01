@@ -29,17 +29,13 @@ import java.awt.event.AdjustmentEvent;
 import java.awt.event.AdjustmentListener;
 import java.awt.event.MouseWheelEvent;
 import java.awt.event.MouseWheelListener;
-import java.io.File;
 import java.io.IOException;
-import java.io.InputStream;
 import java.util.logging.Logger;
 import javax.swing.BorderFactory;
 import javax.swing.JComponent;
 import javax.swing.JLabel;
 import javax.swing.JPanel;
 import javax.swing.JScrollBar;
-import org.zmpp.blorb.NativeImage;
-import org.zmpp.blorb.NativeImageFactory;
 import org.zmpp.swingui.view.ScreenModelSplitView.MainViewListener;
 import org.zmpp.ExecutionControl;
 import org.zmpp.vm.InvalidStoryException;
@@ -63,7 +59,7 @@ implements AdjustmentListener, MainViewListener, MouseWheelListener,
            StatusLineListener {
 
   private static final Logger LOG = Logger.getLogger("org.zmpp");
-  private ScreenModelSplitView mainView = new ScreenModelSplitView();
+  private ScreenModelSplitView mainView;
   private BufferedScreenModel screenModel = new BufferedScreenModel();
   private JScrollBar scrollbar;
   private ExecutionControl executionControl;
@@ -74,7 +70,8 @@ implements AdjustmentListener, MainViewListener, MouseWheelListener,
   /**
    * Constructor.
    */
-  public ScreenModelView() {
+  public ScreenModelView(DisplaySettings displaySettings) {
+    mainView = new ScreenModelSplitView(displaySettings);
     setLayout(new BorderLayout());
     mainView.setPreferredSize(new Dimension(640, 480));
     add(mainView, BorderLayout.CENTER);
@@ -183,32 +180,6 @@ implements AdjustmentListener, MainViewListener, MouseWheelListener,
     }
   }
 
-  /**
-   * Starts the specified game.
-   * @param storyFile the story file
-   * @throws java.io.IOException if I/O error occurred
-   * @throws org.zmpp.vm.InvalidStoryException if story is in invalid format
-   */
-  public void startGame(File storyFile)
-      throws IOException, InvalidStoryException {
-    MachineInitStruct initStruct = new MachineInitStruct();
-    if (storyFile.getName().endsWith("zblorb")) {
-      initStruct.blorbFile = storyFile;
-    } else {
-      initStruct.storyFile = storyFile;
-    }
-    // just for debugging
-    initStruct.nativeImageFactory = new NativeImageFactory() {
-      public NativeImage createImage(InputStream inputStream) throws IOException {
-        return new NativeImage() {
-          public int getWidth() { return 0; }
-          public int getHeight() { return 0; }        
-        };
-      }
-    };
-    startGame(initStruct);
-  }
-  
   /**
    * Initializes the user interface.
    * @param initStruct initialization information
