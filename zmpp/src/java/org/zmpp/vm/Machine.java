@@ -68,7 +68,7 @@ extends ObjectTree, Input, Output, Cpu, Memory, IZsciiEncoding {
   // *******************************
   
   StoryFileHeader getFileHeader();
-  
+  Resources getResources();
   // **********************************************************************
   // **** Tokenizing functions
   // **** We could refine this by exposing the tokenizers

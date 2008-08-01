@@ -97,7 +97,8 @@ public class MachineImpl implements Machine, DrawingArea {
   private ZsciiEncoding encoding;
   private ZCharDecoder decoder;
   private ZCharEncoder encoder;  
-  private AlphabetTable alphabetTable;  
+  private AlphabetTable alphabetTable;
+  private Resources resources;
   private byte[] storyfileData;
   private int checksum;
   
@@ -114,6 +115,7 @@ public class MachineImpl implements Machine, DrawingArea {
   /** {@inheritDoc} */
   public void initialize(final byte[] data, Resources resources) {
     this.storyfileData = data;
+    this.resources = resources;
     this.random = new UnpredictableRandomGenerator();
     this.undostates = new RingBuffer<PortableGameState>(NUM_UNDO);
     
@@ -226,6 +228,9 @@ public class MachineImpl implements Machine, DrawingArea {
   
   /** {@inheritDoc} */
   public StoryFileHeader getFileHeader() { return fileheader; }
+
+  /** {@inheritDoc} */
+  public Resources getResources() { return resources; }
 
   // **********************************************************************
   // ***** Memory interface functionality
