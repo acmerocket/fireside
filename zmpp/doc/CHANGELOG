@@ -2,16 +2,18 @@ Changelog
 
 Version 1.5
 -----------
-- broken V6 support for this version
 - core execution is now a pause-resume
 - timed input is now controlled by user interface
 - New screen model based on standard Swing components
+- Spanish user interface translation by Pichuneke
 - All tests are using JUnit 4 and JMock 2.5
 - Memory, stack and variables are now all unsigned 16 or 8 bit values
 - better NetBeans integration
 - replaced ZsciiString and ZsciiStringBuilder and ZsciiStringTokenizer with
   the J2SE versions
 - changed decoding scheme to resemble the one from the Erlang implementation
+- broken V6 support for this version
+
 
 Version 1.01
 ------------
