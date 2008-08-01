@@ -31,12 +31,21 @@ import java.util.List;
  */
 public class BufferedTextWindow {
 
-  private List<AnnotatedText> textBuffer = new ArrayList<AnnotatedText>();
+  private List<AnnotatedText> textBuffer;
   private TextAnnotation currentAnnotation = new TextAnnotation(
-          TextAnnotation.FONT_NORMAL, TextAnnotation.TEXTSTYLE_ROMAN);
-  private StringBuilder currentRun = new StringBuilder();
-  private boolean isBuffered = true;
+    TextAnnotation.FONT_NORMAL, TextAnnotation.TEXTSTYLE_ROMAN);
+  private StringBuilder currentRun;
+  private boolean isBuffered;
   
+  public BufferedTextWindow() {
+    reset();
+  }
+  
+  public void reset() {
+    textBuffer = new ArrayList<AnnotatedText>();
+    currentRun = new StringBuilder();
+    isBuffered = true;
+  }
   public TextAnnotation getCurrentAnnotation() { return currentAnnotation; }
   public boolean isBuffered() { return isBuffered; }
   public void setBuffered(boolean flag) { isBuffered = flag; }

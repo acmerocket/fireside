@@ -94,7 +94,9 @@ public class BufferedScreenModel implements ScreenModel, StatusLine,
   }
   
   public void reset() {
-    throw new UnsupportedOperationException("Not supported yet.");
+    topWindow.resetCursor();
+    bottomWindow.reset();
+    current = WINDOW_BOTTOM;
   }
 
   public void splitWindow(int linesUpperWindow) {

@@ -27,12 +27,17 @@ package org.zmpp.windowing;
  */
 public class TopWindow implements TextCursor {
 
-  private int cursorx = 1,  cursory = 1;
+  private int cursorx,  cursory;
   private int numCharsPerRow, numRows;
-  private TextAnnotation annotation = new TextAnnotation(
-          ScreenModel.FONT_FIXED,
-          ScreenModel.TEXTSTYLE_ROMAN, ScreenModel.COLOR_BLACK,
-          ScreenModel.COLOR_WHITE);
+  // Note: It is assumed that this annotation will be overridden,
+  // check if this is the case for Varicella
+  private TextAnnotation annotation  = new TextAnnotation(ScreenModel.FONT_FIXED,
+      ScreenModel.TEXTSTYLE_ROMAN, ScreenModel.COLOR_BLACK,
+      ScreenModel.COLOR_WHITE);
+  
+  public TopWindow() {
+    resetCursor();
+  }
 
   /** Resets the text cursor position. */
   public void resetCursor() { cursorx = cursory = 1; }
