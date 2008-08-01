@@ -34,6 +34,8 @@ import java.util.logging.Logger;
 import javax.swing.JApplet;
 import org.zmpp.blorb.NativeImage;
 import org.zmpp.blorb.NativeImageFactory;
+import org.zmpp.swingui.view.FileSaveGameDataStore;
+import org.zmpp.swingui.view.MemorySaveGameDataStore;
 import org.zmpp.vm.MachineFactory.MachineInitStruct;
 import org.zmpp.windowing.ScreenModel;
 
@@ -47,6 +49,13 @@ public class ZmppApplet extends JApplet {
    * The serial version.
    */
   private static final long serialVersionUID = 1L;
+  private static final int DEFAULT_BACKGROUND = ScreenModel.COLOR_WHITE;
+  private static final int DEFAULT_FOREGROUND = ScreenModel.COLOR_BLACK;
+  private static final int DEFAULT_FIXED_FONT_SIZE  = 12;
+  private static final int DEFAULT_STD_FONT_SIZE    = 12;
+  private static final boolean DEFAULT_ANTIALIAS = true;
+  private static final String DEFAULT_STD_FONT   = "Monaco";
+  private static final String DEFAULT_FIXED_FONT = "Courier New";
   
   /**
    * The color map maps parameters to color ids.
@@ -55,7 +64,6 @@ public class ZmppApplet extends JApplet {
     new HashMap<String, Integer>();
   
   static {
-    
     colormap.put("black",   2);
     colormap.put("red",     3);
     colormap.put("green",   4);
@@ -80,12 +88,14 @@ public class ZmppApplet extends JApplet {
     Logger.getLogger("org.zmpp.control").setLevel(Level.SEVERE);
   }
   
-  private Font createStdFont(int size) {
-    return new Font("Times", Font.PLAIN, size);
+  private Font createStdFont(String name, int size) {
+    String fontName = name == null ? DEFAULT_STD_FONT : name;
+    return new Font(fontName, Font.PLAIN, size);
   }
   
-  private Font createFixedFont(int size) {
-    return new Font("Monospaced", Font.PLAIN, size);
+  private Font createFixedFont(String name, int size) {
+    String fontName = name == null ? DEFAULT_FIXED_FONT : name;
+    return new Font(fontName, Font.PLAIN, size);
   }
 
   /* {@inheritDoc} */
@@ -93,31 +103,27 @@ public class ZmppApplet extends JApplet {
   public void init() {
     setLogLevels();
     requestFocusInWindow();
-    String story = getParameter("storyfile");
-    String blorb = getParameter("blorbfile");
-    String saveto = getParameter("saveto");
-    String fixedfontsize = getParameter("fixedfontsize");
-    String stdfontsize = getParameter("stdfontsize");
-    String defbg = getParameter("defaultbg");
-    String deffg = getParameter("defaultfg");
+    String story = getParameter("story-file");
+    String blorb = getParameter("blorb-file");
+    String saveto = getParameter("save-to");
+    String fixedFontName = getParameter("fixed-font-name");
+    String fixedFontSize = getParameter("fixed-font-size");
+    String stdFontName = getParameter("std-font-name");
+    String stdFontSize = getParameter("std-font-size");
+    String defaultBgStr = getParameter("default-background");
+    String defaultFgStr = getParameter("default-foreground");
     String antialiasparam = getParameter("antialias");
-    
-    int sizeStdFont = 12;
-    int sizeFixedFont = 12;
-    int defaultBackground = ScreenModel.COLOR_WHITE;
-    int defaultForeground = ScreenModel.COLOR_BLACK;
-    boolean antialias = true;
     
     savetofile = "file".equalsIgnoreCase(saveto);
 
-    sizeFixedFont = parseInt(fixedfontsize, sizeFixedFont);
-    sizeStdFont = parseInt(stdfontsize, sizeStdFont);
-    defaultBackground = parseColor(defbg, defaultBackground);
-    defaultForeground = parseColor(deffg, defaultForeground);
-    antialias = parseBoolean(antialiasparam, antialias);
+    int sizeFixedFont = parseInt(fixedFontSize, DEFAULT_FIXED_FONT_SIZE);
+    int sizeStdFont = parseInt(fixedFontSize, DEFAULT_STD_FONT_SIZE);
+    int defaultBackground = parseColor(defaultBgStr, DEFAULT_BACKGROUND);
+    int defaultForeground = parseColor(defaultFgStr, DEFAULT_FOREGROUND);
+    boolean antialias = parseBoolean(antialiasparam, DEFAULT_ANTIALIAS);
     
-    settings = new DisplaySettings(createStdFont(sizeStdFont),
-        createFixedFont(sizeFixedFont),
+    settings = new DisplaySettings(createStdFont(stdFontName, sizeStdFont),
+        createFixedFont(fixedFontName, sizeFixedFont),
         defaultBackground, defaultForeground, antialias);
     screenModelView = new ScreenModelView(settings);
     getContentPane().add(screenModelView, BorderLayout.CENTER);
@@ -139,6 +145,8 @@ public class ZmppApplet extends JApplet {
           };
         }
       };
+      initStruct.saveGameDataStore = savetofile ?
+        new FileSaveGameDataStore(this) : new MemorySaveGameDataStore();
     } catch (Exception ex) {
       ex.printStackTrace();      
     }

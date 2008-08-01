@@ -34,6 +34,7 @@ import javax.swing.UIManager;
 import org.zmpp.blorb.NativeImage;
 import org.zmpp.blorb.NativeImageFactory;
 import org.zmpp.swingui.view.DisplaySettings;
+import org.zmpp.swingui.view.FileSaveGameDataStore;
 import org.zmpp.vm.MachineFactory.MachineInitStruct;
 import org.zmpp.windowing.ScreenModel;
 
@@ -128,6 +129,7 @@ public class Main {
           };
         }
       };
+      initStruct.saveGameDataStore = new FileSaveGameDataStore(frame);
       frame.getScreenModelView().startGame(initStruct);
     } catch (Exception ex) {
       ex.printStackTrace();
