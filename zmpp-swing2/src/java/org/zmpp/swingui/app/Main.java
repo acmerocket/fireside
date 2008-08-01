@@ -21,6 +21,8 @@
 package org.zmpp.swingui.app;
 
 import java.awt.Font;
+import java.awt.Image;
+import java.awt.image.BufferedImage;
 import java.io.File;
 import java.io.IOException;
 import java.io.InputStream;
@@ -28,6 +30,7 @@ import java.util.PropertyResourceBundle;
 import java.util.logging.Level;
 import java.util.logging.LogManager;
 import java.util.logging.Logger;
+import javax.imageio.ImageIO;
 import javax.swing.JFileChooser;
 import javax.swing.SwingUtilities;
 import javax.swing.UIManager;
@@ -63,6 +66,21 @@ public class Main {
   private static final DisplaySettings displaySettings = new DisplaySettings(STD_FONT, FIXED_FONT,
       DEFAULT_BACKGROUND, DEFAULT_FOREGROUND, true);
   
+  static class AwtImage implements NativeImage {
+
+    private BufferedImage image;
+    public AwtImage(BufferedImage image) { this.image = image; }
+    public BufferedImage getImage() { return image; }
+    public int getWidth() { return image.getWidth(); }
+    public int getHeight() { return image.getHeight(); }
+  }
+
+  static class AwtImageFactory implements NativeImageFactory {
+    public NativeImage createImage(InputStream inputStream) throws IOException {
+      return new AwtImage(ImageIO.read(inputStream));
+    }
+  }
+
   /**
    * Application name.
    */
@@ -121,14 +139,7 @@ public class Main {
         initStruct.storyFile = storyFile;
       }
       // just for debugging
-      initStruct.nativeImageFactory = new NativeImageFactory() {
-        public NativeImage createImage(InputStream inputStream) throws IOException {
-          return new NativeImage() {
-            public int getWidth() { return 0; }
-            public int getHeight() { return 0; }        
-          };
-        }
-      };
+      initStruct.nativeImageFactory = new AwtImageFactory();
       initStruct.saveGameDataStore = new FileSaveGameDataStore(frame);
       frame.getScreenModelView().startGame(initStruct);
     } catch (Exception ex) {
@@ -136,19 +147,6 @@ public class Main {
     }
   }
   
-  /**
-   * Starts the specified game.
-   * @param storyFile the story file
-   * @throws java.io.IOException if I/O error occurred
-   * @throws org.zmpp.vm.InvalidStoryException if story is in invalid format
-   */
-  /*
-  public void startGame(File storyFile)
-      throws IOException, InvalidStoryException {
-    startGame(initStruct);
-  }
-  */
-
   public static boolean isMacOsX() {
   	return System.getProperty("mrj.version") != null;
   }

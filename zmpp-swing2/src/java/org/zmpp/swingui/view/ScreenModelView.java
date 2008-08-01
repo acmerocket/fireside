@@ -39,6 +39,7 @@ import javax.swing.JScrollBar;
 import org.zmpp.swingui.view.ScreenModelSplitView.MainViewListener;
 import org.zmpp.ExecutionControl;
 import org.zmpp.vm.InvalidStoryException;
+import org.zmpp.vm.Machine;
 import org.zmpp.vm.MachineRunState;
 import org.zmpp.vm.MachineFactory.MachineInitStruct;
 import org.zmpp.windowing.BufferedScreenModel;
@@ -85,6 +86,12 @@ implements AdjustmentListener, MainViewListener, MouseWheelListener,
     screenModel.addStatusLineListener(this);
     add(createStatusPanel(), BorderLayout.NORTH);
   }
+  
+  /**
+   * Returns the Machine object.
+   * @return the Machine object
+   */
+  public Machine getMachine() { return executionControl.getMachine(); }
   
   /**
    * Creates the status panel.

@@ -22,8 +22,13 @@ package org.zmpp.swingui.app;
 
 import org.zmpp.swingui.view.ScreenModelView;
 import apple.dts.osxadapter.OSXAdapter;
+import java.awt.event.ActionEvent;
+import java.awt.event.ActionListener;
+import java.util.prefs.Preferences;
 import javax.swing.JFrame;
-import javax.swing.JOptionPane;
+import javax.swing.JMenu;
+import javax.swing.JMenuBar;
+import javax.swing.JMenuItem;
 import org.zmpp.swingui.view.DisplaySettings;
 
 /**
@@ -34,14 +39,18 @@ import org.zmpp.swingui.view.DisplaySettings;
 public class ZmppFrame extends JFrame {
   
   private ScreenModelView screenModelView;
+  private DisplaySettings displaySettings;
+  private Preferences preferences;
 
   /**
    * Constructor.
    */
   public ZmppFrame(DisplaySettings displaySettings) {
     super(Main.APP_NAME);
+    this.displaySettings = displaySettings;
+    preferences = Preferences.userNodeForPackage(ZmppFrame.class);
     setDefaultCloseOperation(JFrame.EXIT_ON_CLOSE);
-    setupUI(displaySettings);
+    setupUI();
     pack();
   }
   
@@ -69,12 +78,55 @@ public class ZmppFrame extends JFrame {
   /**
    * Sets up the user interface
    */
-  private void setupUI(DisplaySettings displaySettings) {
+  private void setupUI() {
     screenModelView = new ScreenModelView(displaySettings);
     getContentPane().add(screenModelView);
     if (isMacOsX()) {
       setupMacOsAppMenu();
+    } else {
+      setupNonMacOsMenuBar();
     }
+  }
+  
+  private void setupNonMacOsMenuBar() {
+    JMenuBar menubar = new JMenuBar();
+    setJMenuBar(menubar);
+    JMenu helpMenu = null;
+    JMenu fileMenu = new JMenu(getMessage("menu.file.name"));
+    fileMenu.setMnemonic(getMessage("menu.file.mnemonic").charAt(0));
+    menubar.add(fileMenu);
+
+    // Quit is already in the application menu
+    JMenuItem exitItem = new JMenuItem(getMessage("menu.file.quit.name"));
+    exitItem.setMnemonic(getMessage("menu.file.quit.mnemonic").charAt(0));
+    fileMenu.add(exitItem);
+    exitItem.addActionListener(new ActionListener() {
+      /** {@inheritDoc} */
+      public void actionPerformed(ActionEvent e) { quit(); }
+    });
+    JMenu editMenu = new JMenu(getMessage("menu.edit.name"));
+    menubar.add(editMenu);
+    editMenu.setMnemonic(getMessage("menu.edit.mnemonic").charAt(0));
+    JMenuItem preferencesItem =
+            new JMenuItem(getMessage("menu.edit.prefs.name"));
+    preferencesItem.setMnemonic(getMessage("menu.edit.prefs.mnemonic").charAt(0));
+    editMenu.add(preferencesItem);
+    preferencesItem.addActionListener(new ActionListener() {
+      /** {@inheritDoc} */
+      public void actionPerformed(ActionEvent e) { editPreferences(); }
+    });
+
+    helpMenu = new JMenu(getMessage("menu.help.name"));
+    menubar.add(helpMenu);
+    helpMenu.setMnemonic(getMessage("menu.help.mnemonic").charAt(0));
+
+    JMenuItem aboutItem = new JMenuItem(getMessage("menu.help.about.name"));
+    aboutItem.setMnemonic(getMessage("menu.help.about.mnemonic").charAt(0));
+    helpMenu.add(aboutItem);
+    aboutItem.addActionListener(new ActionListener() {
+      /** {@inheritDoc} */
+      public void actionPerformed(ActionEvent e) { about(); }
+    });
   }
   
   /**
@@ -98,10 +150,9 @@ public class ZmppFrame extends JFrame {
    * Displays the about dialog.
    */
   public void about() {
-    JOptionPane.showMessageDialog(this,
-        Main.APP_NAME + getMessage("dialog.about.msg"),
-        getMessage("dialog.about.title"),
-        JOptionPane.INFORMATION_MESSAGE);
+    GameInfoDialog dialog = new GameInfoDialog(this,
+      screenModelView.getMachine().getResources());
+    dialog.setVisible(true);
   }
   
   /**
@@ -112,5 +163,10 @@ public class ZmppFrame extends JFrame {
   /**
    * Open the preferences dialog.
    */
-  public void editPreferences() { /* TODO */ }
+  public void editPreferences() {
+    PreferencesDialog dialog = new PreferencesDialog(this, preferences,
+                                                     displaySettings);
+    dialog.setLocationRelativeTo(this);
+    dialog.setVisible(true);
+  }
 }
