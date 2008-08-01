@@ -1,4 +1,4 @@
-<project name="zmpp-text" default="dist" basedir=".">
+<project name="zmpp-swing" default="dist" basedir=".">
   <description>
     Build file for ZmppText UI
   </description>
@@ -21,12 +21,11 @@
   <target name="dist" depends="compile"
         description="generate the distribution" >
     <mkdir dir="${dist}"/>
-    <jar jarfile="${dist}/zmpp-text-${app.version}.jar" index="true" basedir="${build.prj}">
+    <jar jarfile="${dist}/zmpp-${app.version}.jar" index="true" basedir="${build.prj}">
       <manifest>
       	<attribute name="Built-By" value="Wei-ju Wu"/>
         <attribute name="Main-Class" value="org.zmpp.swingui2.Main"/>
       </manifest>
-      <fileset dir="${build.prj}" />
       <fileset dir="${zmpp.core}" />
       <fileset dir="${resources}" />
     </jar>
@@ -37,7 +36,7 @@
   </target>
   
     <target name="run" depends="compile">
-    <java classname="org.zmpp.swingui2.Main" fork="true">
+    <java classname="org.zmpp.swingui.app.Main" fork="true">
       <classpath>
         <pathelement location="${build.prj}"/>
   	    <pathelement location="${zmpp.core}"/>
