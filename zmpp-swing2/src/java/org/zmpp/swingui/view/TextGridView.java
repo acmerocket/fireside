@@ -20,8 +20,6 @@
  */
 package org.zmpp.swingui.view;
 
-import org.zmpp.swingui.view.ScreenModelSplitView;
-import org.zmpp.swingui.view.ColorTranslator;
 import java.awt.Color;
 import java.awt.Font;
 import java.awt.FontMetrics;

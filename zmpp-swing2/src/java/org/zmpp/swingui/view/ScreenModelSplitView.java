@@ -131,9 +131,6 @@ implements ScreenModelListener {
   }
   
   private void createLowerView() {
-    Border lowerBorder = BorderFactory.createCompoundBorder(
-            BorderFactory.createLineBorder(Color.BLACK),
-            BorderFactory.createEmptyBorder(5, 5, 5, 5));
     lower.setEditable(true);
     lower.setEnabled(true);
     lower.setBackground(getBackgroundColor(getDefaultBackground()));
@@ -158,7 +155,13 @@ implements ScreenModelListener {
         viewSizeChanged();
       }
     });
+    /*
+    // was just for debugging
+    Border lowerBorder = BorderFactory.createCompoundBorder(
+            BorderFactory.createLineBorder(Color.BLACK),
+            BorderFactory.createEmptyBorder(5, 5, 5, 5));
     lower.setBorder(lowerBorder);
+     */
     add(lowerViewport, JLayeredPane.DEFAULT_LAYER);
     installLowerHandlers();
   }

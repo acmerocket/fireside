@@ -60,8 +60,8 @@ public class Main {
   public static final boolean DEBUG = true;
   private static final Font STD_FONT = new Font("American Typewriter", Font.PLAIN, 12);
   private static final Font FIXED_FONT = new Font("Monaco", Font.PLAIN, 12);
-  private static final int DEFAULT_FOREGROUND = ScreenModel.COLOR_WHITE;
-  private static final int DEFAULT_BACKGROUND = ScreenModel.COLOR_BLUE;
+  private static final int DEFAULT_FOREGROUND = ScreenModel.COLOR_BLACK;
+  private static final int DEFAULT_BACKGROUND = ScreenModel.COLOR_WHITE;
   //private static final Font STD_FONT = new Font("Baskerville", Font.PLAIN, 16);
   private static final DisplaySettings displaySettings = new DisplaySettings(STD_FONT, FIXED_FONT,
       DEFAULT_BACKGROUND, DEFAULT_FOREGROUND, true);
@@ -100,9 +100,9 @@ public class Main {
     try {
       UIManager.setLookAndFeel(UIManager.getSystemLookAndFeelClassName());
       LogManager.getLogManager().readConfiguration();
-      Logger.getLogger("org.zmpp").setLevel(Level.INFO);
+      Logger.getLogger("org.zmpp").setLevel(Level.SEVERE);
       Logger.getLogger("org.zmpp.screen").setLevel(Level.SEVERE);
-      Logger.getLogger("org.zmpp.ui").setLevel(Level.INFO);
+      Logger.getLogger("org.zmpp.ui").setLevel(Level.SEVERE);
       Logger.getLogger("org.zmpp.control").setLevel(Level.SEVERE);
       //ExecutionControl.DEBUG = true;
       //ExecutionControl.DEBUG_INTERRUPT = true;

@@ -30,8 +30,10 @@ import java.net.URL;
 import java.util.HashMap;
 import java.util.Map;
 import java.util.logging.Level;
+import java.util.logging.LogManager;
 import java.util.logging.Logger;
 import javax.swing.JApplet;
+import javax.swing.UIManager;
 import org.zmpp.blorb.NativeImage;
 import org.zmpp.blorb.NativeImageFactory;
 import org.zmpp.swingui.view.FileSaveGameDataStore;
@@ -84,7 +86,7 @@ public class ZmppApplet extends JApplet {
   private void setLogLevels() {    
     Logger.getLogger("org.zmpp").setLevel(Level.SEVERE);
     Logger.getLogger("org.zmpp.screen").setLevel(Level.SEVERE);
-    Logger.getLogger("org.zmpp.ui").setLevel(Level.INFO);
+    Logger.getLogger("org.zmpp.ui").setLevel(Level.SEVERE);
     Logger.getLogger("org.zmpp.control").setLevel(Level.SEVERE);
   }
   
@@ -97,10 +99,19 @@ public class ZmppApplet extends JApplet {
     String fontName = name == null ? DEFAULT_FIXED_FONT : name;
     return new Font(fontName, Font.PLAIN, size);
   }
+ 
+  private void setSystemLookAndFeel() {
+    try {
+      UIManager.setLookAndFeel(UIManager.getSystemLookAndFeelClassName());
+    } catch (Exception ex) {
+      ex.printStackTrace();
+    }
+  }
 
   /* {@inheritDoc} */
   @Override
   public void init() {
+    setSystemLookAndFeel();
     setLogLevels();
     requestFocusInWindow();
     String story = getParameter("story-file");
@@ -117,7 +128,7 @@ public class ZmppApplet extends JApplet {
     savetofile = "file".equalsIgnoreCase(saveto);
 
     int sizeFixedFont = parseInt(fixedFontSize, DEFAULT_FIXED_FONT_SIZE);
-    int sizeStdFont = parseInt(fixedFontSize, DEFAULT_STD_FONT_SIZE);
+    int sizeStdFont = parseInt(stdFontSize, DEFAULT_STD_FONT_SIZE);
     int defaultBackground = parseColor(defaultBgStr, DEFAULT_BACKGROUND);
     int defaultForeground = parseColor(defaultFgStr, DEFAULT_FOREGROUND);
     boolean antialias = parseBoolean(antialiasparam, DEFAULT_ANTIALIAS);
