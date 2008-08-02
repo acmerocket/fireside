@@ -30,6 +30,8 @@ import java.awt.event.AdjustmentListener;
 import java.awt.event.MouseWheelEvent;
 import java.awt.event.MouseWheelListener;
 import java.io.IOException;
+import java.util.HashSet;
+import java.util.Set;
 import java.util.logging.Logger;
 import javax.swing.BorderFactory;
 import javax.swing.JComponent;
@@ -64,6 +66,8 @@ implements AdjustmentListener, MainViewListener, MouseWheelListener,
   private BufferedScreenModel screenModel = new BufferedScreenModel();
   private JScrollBar scrollbar;
   private ExecutionControl executionControl;
+  private Set<GameLifeCycleListener> lifeCycleListeners =
+    new HashSet<GameLifeCycleListener>();
   private JPanel statusPanel;
   private JLabel objectDescLabel = new JLabel(" "),
                  statusLabel = new JLabel(" ");  
@@ -85,6 +89,14 @@ implements AdjustmentListener, MainViewListener, MouseWheelListener,
     
     screenModel.addStatusLineListener(this);
     add(createStatusPanel(), BorderLayout.NORTH);
+  }
+  
+  /**
+   * Adds a GameLoadedListener to the list.
+   * @param l the GameLoadedListener to add
+   */
+  public void addGameLoadedListener(GameLifeCycleListener l) {
+    lifeCycleListeners.add(l);
   }
   
   /**
@@ -181,9 +193,16 @@ implements AdjustmentListener, MainViewListener, MouseWheelListener,
     if (this.isVisible()) {
       executionControl = new ExecutionControl(initStruct);
       initUI(initStruct);
+      notifyGameInitialized();
       MachineRunState runState = executionControl.run();
       LOG.info("PAUSING WITH STATE: " + runState);
       mainView.setCurrentRunState(runState);
+    }
+  }
+  
+  private void notifyGameInitialized() {
+    for (GameLifeCycleListener l : lifeCycleListeners) {
+      l.gameInitialized();
     }
   }
 

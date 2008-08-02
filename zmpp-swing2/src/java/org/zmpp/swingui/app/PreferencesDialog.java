@@ -104,6 +104,8 @@ public class PreferencesDialog extends JDialog implements ActionListener {
   private JCheckBox antialiasCB;
   private Preferences preferences;
   private DisplaySettings settings;
+  private String stdFontName;
+  private String fixedFontName;
     
   /**
    * Constructor.
@@ -181,7 +183,10 @@ public class PreferencesDialog extends JDialog implements ActionListener {
     ((BorderLayout) getContentPane().getLayout()).setVgap(5);
 
     pack();
-    
+
+    // For now, just remember the fixed and std font names
+    stdFontName = settings.getStdFont().getFontName();
+    fixedFontName = settings.getFixedFont().getFontName();
   }
 
   /**
@@ -204,7 +209,10 @@ public class PreferencesDialog extends JDialog implements ActionListener {
       preferences.put("defaultbackground", String.valueOf(bgcolor));
       preferences.put("defaultforeground", String.valueOf(fgcolor));
       preferences.put("antialias", antialias ? "true" : "false");
+      preferences.put("stdfontname", stdFontName);
+      preferences.put("fixedfontname", fixedFontName);
       Font stdFont = new Font("Times", Font.PLAIN, stdfontsize);
+
       Font fixedFont = new Font("Courier", Font.PLAIN, fixedfontsize);
       settings.setSettings(stdFont, fixedFont, bgcolor, fgcolor, antialias);
       try {

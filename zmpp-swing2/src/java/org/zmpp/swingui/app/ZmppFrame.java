@@ -22,6 +22,7 @@ package org.zmpp.swingui.app;
 
 import org.zmpp.swingui.view.ScreenModelView;
 import apple.dts.osxadapter.OSXAdapter;
+import java.awt.Font;
 import java.awt.event.ActionEvent;
 import java.awt.event.ActionListener;
 import java.util.prefs.Preferences;
@@ -29,15 +30,32 @@ import javax.swing.JFrame;
 import javax.swing.JMenu;
 import javax.swing.JMenuBar;
 import javax.swing.JMenuItem;
+import javax.swing.JOptionPane;
+import org.zmpp.media.Resources;
+import org.zmpp.media.StoryMetadata;
 import org.zmpp.swingui.view.DisplaySettings;
+import org.zmpp.swingui.view.GameLifeCycleListener;
+import org.zmpp.windowing.ScreenModel;
 
 /**
  * A new version of the ZmppFrame class.
  * @author Wei-ju Wu
  * @version 1.5
  */
-public class ZmppFrame extends JFrame {
+public class ZmppFrame extends JFrame implements GameLifeCycleListener {
+  private static final String STD_FONT_NAME = "American Typewriter";
+  private static final int STD_FONT_SIZE = 12;
+  private static final String FIXED_FONT_NAME = "Monaco";
+  private static final int FIXED_FONT_SIZE = 12;
+  private static final int DEFAULT_FOREGROUND = ScreenModel.COLOR_BLACK;
+  private static final int DEFAULT_BACKGROUND = ScreenModel.COLOR_WHITE;
+  //private static final Font STD_FONT = new Font("Baskerville", Font.PLAIN, 16);
+  //private static final DisplaySettings displaySettings = new DisplaySettings(STD_FONT, FIXED_FONT,
+  //    DEFAULT_BACKGROUND, DEFAULT_FOREGROUND, true);
   
+  private JMenuBar menubar = new JMenuBar();
+  private JMenu helpMenu;
+  private JMenuItem aboutGameItem;
   private ScreenModelView screenModelView;
   private DisplaySettings displaySettings;
   private Preferences preferences;
@@ -45,10 +63,10 @@ public class ZmppFrame extends JFrame {
   /**
    * Constructor.
    */
-  public ZmppFrame(DisplaySettings displaySettings) {
+  public ZmppFrame() {
     super(Main.APP_NAME);
-    this.displaySettings = displaySettings;
     preferences = Preferences.userNodeForPackage(ZmppFrame.class);
+    this.displaySettings = createDisplaySettings(preferences);
     setDefaultCloseOperation(JFrame.EXIT_ON_CLOSE);
     setupUI();
     pack();
@@ -80,18 +98,38 @@ public class ZmppFrame extends JFrame {
    */
   private void setupUI() {
     screenModelView = new ScreenModelView(displaySettings);
+    screenModelView.addGameLoadedListener(this);
     getContentPane().add(screenModelView);
+    setJMenuBar(menubar);
     if (isMacOsX()) {
       setupMacOsAppMenu();
     } else {
       setupNonMacOsMenuBar();
     }
+    addAboutGameMenuItem();
+  }
+  
+  public void gameInitialized() {
+    StoryMetadata storyinfo = getStoryInfo();
+    if (storyinfo != null) {
+      setTitle(getMessage("app.name") + " - " + storyinfo.getTitle()
+          + " (" + storyinfo.getAuthor() + ")");
+    }
+    aboutGameItem.setEnabled(storyinfo != null);
+  }
+  
+  private void addAboutGameMenuItem() {
+    aboutGameItem = new JMenuItem(getMessage("menu.help.aboutgame.name"));
+    helpMenu.add(aboutGameItem);
+    aboutGameItem.addActionListener(new ActionListener() {
+      public void actionPerformed(ActionEvent e) {
+        aboutGame();
+      }
+    });
+    aboutGameItem.setEnabled(false);
   }
   
   private void setupNonMacOsMenuBar() {
-    JMenuBar menubar = new JMenuBar();
-    setJMenuBar(menubar);
-    JMenu helpMenu = null;
     JMenu fileMenu = new JMenu(getMessage("menu.file.name"));
     fileMenu.setMnemonic(getMessage("menu.file.mnemonic").charAt(0));
     menubar.add(fileMenu);
@@ -128,7 +166,7 @@ public class ZmppFrame extends JFrame {
       public void actionPerformed(ActionEvent e) { about(); }
     });
   }
-  
+
   /**
    * Sets up the Mac OS X application menu. This makes the application look
    * more like a native Mac application.
@@ -141,15 +179,32 @@ public class ZmppFrame extends JFrame {
               ZmppFrame.class.getDeclaredMethod("quit"));
       OSXAdapter.setPreferencesHandler(this,
               ZmppFrame.class.getDeclaredMethod("editPreferences"));
+      helpMenu = new JMenu(getMessage("menu.help.name"));
+      menubar.add(helpMenu);
     } catch (Exception ignore) {
       ignore.printStackTrace();
     }
-  } 
+  }
 
+  private StoryMetadata getStoryInfo() {
+    Resources resources = screenModelView.getMachine().getResources();
+    if (resources != null && resources.getMetadata() != null) {     
+      return resources.getMetadata().getStoryInfo();
+    }
+    return null;
+  }
+
+  public void about() {
+    JOptionPane.showMessageDialog(this,
+        getMessage("app.name") + getMessage("dialog.about.msg"),
+        getMessage("dialog.about.title"),
+        JOptionPane.INFORMATION_MESSAGE);
+  }
+  
   /**
    * Displays the about dialog.
    */
-  public void about() {
+  public void aboutGame() {
     GameInfoDialog dialog = new GameInfoDialog(this,
       screenModelView.getMachine().getResources());
     dialog.setVisible(true);
@@ -168,5 +223,24 @@ public class ZmppFrame extends JFrame {
                                                      displaySettings);
     dialog.setLocationRelativeTo(this);
     dialog.setVisible(true);
+  }
+
+
+  private DisplaySettings createDisplaySettings(Preferences preferences) {
+    String stdFontName = preferences.get("stdfontname", STD_FONT_NAME);
+    int stdFontSize = preferences.getInt("stdfontsize", STD_FONT_SIZE);
+    String fixedFontName = preferences.get("fixedfontname",
+        FIXED_FONT_NAME);
+    int fixedFontSize = preferences.getInt("fixedfontsize",
+        FIXED_FONT_SIZE);
+    int defaultforeground = preferences.getInt("defaultforeground",
+        DEFAULT_FOREGROUND);
+    int defaultbackground = preferences.getInt("defaultbackground",
+        DEFAULT_BACKGROUND);
+    boolean antialias = preferences.getBoolean("antialias", true);
+    
+    return new DisplaySettings(new Font(stdFontName, Font.PLAIN, stdFontSize),
+      new Font(fixedFontName, Font.PLAIN, fixedFontSize), defaultbackground,
+                               defaultforeground, antialias);    
   }
 }

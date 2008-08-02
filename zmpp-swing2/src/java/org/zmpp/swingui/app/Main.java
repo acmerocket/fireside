@@ -20,8 +20,6 @@
  */
 package org.zmpp.swingui.app;
 
-import java.awt.Font;
-import java.awt.Image;
 import java.awt.image.BufferedImage;
 import java.io.File;
 import java.io.IOException;
@@ -36,10 +34,8 @@ import javax.swing.SwingUtilities;
 import javax.swing.UIManager;
 import org.zmpp.blorb.NativeImage;
 import org.zmpp.blorb.NativeImageFactory;
-import org.zmpp.swingui.view.DisplaySettings;
 import org.zmpp.swingui.view.FileSaveGameDataStore;
 import org.zmpp.vm.MachineFactory.MachineInitStruct;
-import org.zmpp.windowing.ScreenModel;
 
 /**
  * New application class using the Swing 2 model.
@@ -58,13 +54,6 @@ public class Main {
    * Debug flag.
    */
   public static final boolean DEBUG = true;
-  private static final Font STD_FONT = new Font("American Typewriter", Font.PLAIN, 12);
-  private static final Font FIXED_FONT = new Font("Monaco", Font.PLAIN, 12);
-  private static final int DEFAULT_FOREGROUND = ScreenModel.COLOR_BLACK;
-  private static final int DEFAULT_BACKGROUND = ScreenModel.COLOR_WHITE;
-  //private static final Font STD_FONT = new Font("Baskerville", Font.PLAIN, 16);
-  private static final DisplaySettings displaySettings = new DisplaySettings(STD_FONT, FIXED_FONT,
-      DEFAULT_BACKGROUND, DEFAULT_FOREGROUND, true);
   
   static class AwtImage implements NativeImage {
 
@@ -129,7 +118,7 @@ public class Main {
   }
   
   private static void runStoryFile(final File storyFile) {
-    ZmppFrame frame = new ZmppFrame(displaySettings);
+    ZmppFrame frame = new ZmppFrame();
     frame.setVisible(true);
     try {
       MachineInitStruct initStruct = new MachineInitStruct();
