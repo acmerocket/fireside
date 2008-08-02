@@ -102,7 +102,7 @@ public class Main {
     	SwingUtilities.invokeAndWait(new Runnable() {
     		public void run() {
     			JFileChooser fileChooser =
-    					new JFileChooser(System.getProperty("user.dir"));
+    					new JFileChooser(System.getProperty("user.home"));
     			fileChooser.setDialogTitle(getMessage("dialog.open.msg"));
     			if (fileChooser.showOpenDialog(null) == JFileChooser.APPROVE_OPTION) {        
     				final File storyfile = fileChooser.getSelectedFile();
