@@ -26,16 +26,18 @@ import java.awt.BorderLayout;
 import java.awt.Font;
 import java.io.IOException;
 import java.io.InputStream;
+import java.io.Reader;
+import java.io.Writer;
 import java.net.URL;
 import java.util.HashMap;
 import java.util.Map;
 import java.util.logging.Level;
-import java.util.logging.LogManager;
 import java.util.logging.Logger;
 import javax.swing.JApplet;
 import javax.swing.UIManager;
 import org.zmpp.blorb.NativeImage;
 import org.zmpp.blorb.NativeImageFactory;
+import org.zmpp.io.IOSystem;
 import org.zmpp.swingui.view.FileSaveGameDataStore;
 import org.zmpp.swingui.view.MemorySaveGameDataStore;
 import org.zmpp.vm.MachineFactory.MachineInitStruct;
@@ -46,7 +48,7 @@ import org.zmpp.windowing.ScreenModel;
  * @author Wei-ju Wu
  * @version 1.5
  */
-public class ZmppApplet extends JApplet {
+public class ZmppApplet extends JApplet implements IOSystem {
   /**
    * The serial version.
    */
@@ -158,6 +160,7 @@ public class ZmppApplet extends JApplet {
       };
       initStruct.saveGameDataStore = savetofile ?
         new FileSaveGameDataStore(this) : new MemorySaveGameDataStore();
+      initStruct.ioSystem = this;
     } catch (Exception ex) {
       ex.printStackTrace();      
     }
@@ -213,4 +216,8 @@ public class ZmppApplet extends JApplet {
       ex.printStackTrace();
     }
   }
+
+  // IOSystem does nothing in an applet
+  public Writer getTranscriptWriter() { return null; }
+  public Reader getInputStreamReader() { return null; }
 }

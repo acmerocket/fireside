@@ -26,6 +26,11 @@ import java.awt.Font;
 import java.awt.event.ActionEvent;
 import java.awt.event.ActionListener;
 import java.io.File;
+import java.io.FileReader;
+import java.io.FileWriter;
+import java.io.IOException;
+import java.io.Reader;
+import java.io.Writer;
 import java.util.prefs.Preferences;
 import javax.swing.JFileChooser;
 import javax.swing.JFrame;
@@ -34,6 +39,7 @@ import javax.swing.JMenuBar;
 import javax.swing.JMenuItem;
 import javax.swing.JOptionPane;
 import javax.swing.SwingUtilities;
+import org.zmpp.io.IOSystem;
 import org.zmpp.media.Resources;
 import org.zmpp.media.StoryMetadata;
 import org.zmpp.swingui.app.Main.AwtImageFactory;
@@ -48,7 +54,8 @@ import org.zmpp.windowing.ScreenModel;
  * @author Wei-ju Wu
  * @version 1.5
  */
-public class ZmppFrame extends JFrame implements GameLifeCycleListener {
+public class ZmppFrame extends JFrame
+  implements GameLifeCycleListener, IOSystem {
   private static final String STD_FONT_NAME = "American Typewriter";
   private static final int STD_FONT_SIZE = 12;
   private static final String FIXED_FONT_NAME = "Monaco";
@@ -215,6 +222,36 @@ public class ZmppFrame extends JFrame implements GameLifeCycleListener {
   }
   
   // ***********************************************************************
+  // **** IOSys interface
+  // **********************************
+  public Writer getTranscriptWriter() {
+    File currentdir = new File(System.getProperty("user.dir"));    
+    JFileChooser fileChooser = new JFileChooser(currentdir);
+    fileChooser.setDialogTitle(getMessage("dialog.settranscript.title"));
+    if (fileChooser.showSaveDialog(this) == JFileChooser.APPROVE_OPTION) {
+      try {
+        return new FileWriter(fileChooser.getSelectedFile());
+      } catch (IOException ex) {
+        ex.printStackTrace();
+      }
+    }
+    return null;
+  }
+  
+  public Reader getInputStreamReader() {
+    File currentdir = new File(System.getProperty("user.dir"));    
+    JFileChooser fileChooser = new JFileChooser(currentdir);
+    fileChooser.setDialogTitle(getMessage("dialog.setinput.title"));
+    if (fileChooser.showOpenDialog(this) == JFileChooser.APPROVE_OPTION) {
+      try {
+        return new FileReader(fileChooser.getSelectedFile());
+      } catch (IOException ex) {
+        ex.printStackTrace();
+      }
+    }
+    return null;
+  }
+  // ***********************************************************************
   // **** Menu actions
   // **********************************
   public void about() {
@@ -301,6 +338,7 @@ public class ZmppFrame extends JFrame implements GameLifeCycleListener {
       }
       initStruct.nativeImageFactory = new AwtImageFactory();
       initStruct.saveGameDataStore = new FileSaveGameDataStore(zmppFrame);
+      initStruct.ioSystem = zmppFrame;
       zmppFrame.getScreenModelView().startGame(initStruct);
     } catch (Exception ex) {
       ex.printStackTrace();
