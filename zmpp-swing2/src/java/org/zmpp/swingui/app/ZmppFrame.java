@@ -25,16 +25,22 @@ import apple.dts.osxadapter.OSXAdapter;
 import java.awt.Font;
 import java.awt.event.ActionEvent;
 import java.awt.event.ActionListener;
+import java.io.File;
 import java.util.prefs.Preferences;
+import javax.swing.JFileChooser;
 import javax.swing.JFrame;
 import javax.swing.JMenu;
 import javax.swing.JMenuBar;
 import javax.swing.JMenuItem;
 import javax.swing.JOptionPane;
+import javax.swing.SwingUtilities;
 import org.zmpp.media.Resources;
 import org.zmpp.media.StoryMetadata;
+import org.zmpp.swingui.app.Main.AwtImageFactory;
 import org.zmpp.swingui.view.DisplaySettings;
+import org.zmpp.swingui.view.FileSaveGameDataStore;
 import org.zmpp.swingui.view.GameLifeCycleListener;
+import org.zmpp.vm.MachineFactory.MachineInitStruct;
 import org.zmpp.windowing.ScreenModel;
 
 /**
@@ -54,6 +60,7 @@ public class ZmppFrame extends JFrame implements GameLifeCycleListener {
   //    DEFAULT_BACKGROUND, DEFAULT_FOREGROUND, true);
   
   private JMenuBar menubar = new JMenuBar();
+  private JMenu fileMenu;
   private JMenu helpMenu;
   private JMenuItem aboutGameItem;
   private ScreenModelView screenModelView;
@@ -101,6 +108,7 @@ public class ZmppFrame extends JFrame implements GameLifeCycleListener {
     screenModelView.addGameLoadedListener(this);
     getContentPane().add(screenModelView);
     setJMenuBar(menubar);
+    createFileMenu();
     if (isMacOsX()) {
       setupMacOsAppMenu();
     } else {
@@ -118,6 +126,22 @@ public class ZmppFrame extends JFrame implements GameLifeCycleListener {
     aboutGameItem.setEnabled(storyinfo != null);
   }
   
+  // ***********************************************************************
+  // **** Menu initialization
+  // **********************************
+  
+  private void createFileMenu() {
+    fileMenu = new JMenu(getMessage("menu.file.name"));
+    fileMenu.setMnemonic(getMessage("menu.file.mnemonic").charAt(0));
+    menubar.add(fileMenu);
+    JMenuItem openItem = new JMenuItem(getMessage("menu.file.open.name"));
+    fileMenu.add(openItem);
+    openItem.addActionListener(new ActionListener() {
+      public void actionPerformed(ActionEvent e) {
+        openStoryFile(ZmppFrame.this);
+      }
+    });
+  }
   private void addAboutGameMenuItem() {
     aboutGameItem = new JMenuItem(getMessage("menu.help.aboutgame.name"));
     helpMenu.add(aboutGameItem);
@@ -129,11 +153,7 @@ public class ZmppFrame extends JFrame implements GameLifeCycleListener {
     aboutGameItem.setEnabled(false);
   }
   
-  private void setupNonMacOsMenuBar() {
-    JMenu fileMenu = new JMenu(getMessage("menu.file.name"));
-    fileMenu.setMnemonic(getMessage("menu.file.mnemonic").charAt(0));
-    menubar.add(fileMenu);
-
+  private void setupNonMacOsMenuBar() {    
     // Quit is already in the application menu
     JMenuItem exitItem = new JMenuItem(getMessage("menu.file.quit.name"));
     exitItem.setMnemonic(getMessage("menu.file.quit.mnemonic").charAt(0));
@@ -193,7 +213,10 @@ public class ZmppFrame extends JFrame implements GameLifeCycleListener {
     }
     return null;
   }
-
+  
+  // ***********************************************************************
+  // **** Menu actions
+  // **********************************
   public void about() {
     JOptionPane.showMessageDialog(this,
         getMessage("app.name") + getMessage("dialog.about.msg"),
@@ -242,5 +265,57 @@ public class ZmppFrame extends JFrame implements GameLifeCycleListener {
     return new DisplaySettings(new Font(stdFontName, Font.PLAIN, stdFontSize),
       new Font(fixedFontName, Font.PLAIN, fixedFontSize), defaultbackground,
                                defaultforeground, antialias);    
+  }
+  
+  public static void openStoryFile() { openStoryFile(null); }
+  private static void openStoryFile(ZmppFrame frame) {
+    if (frame != null) { frame.dispose(); }
+    try {
+    	runInEventDispatchThread(new Runnable() {
+    		public void run() {
+    			JFileChooser fileChooser =
+    					new JFileChooser(System.getProperty("user.home"));
+    			fileChooser.setDialogTitle(getMessage("dialog.open.msg"));
+    			if (fileChooser.showOpenDialog(null) == JFileChooser.APPROVE_OPTION) {        
+    				final File storyfile = fileChooser.getSelectedFile();
+    		    SwingUtilities.invokeLater(new Runnable() {  
+    		    	public void run() {
+    		        runStoryFile(storyfile);
+    		    	}
+    		    });
+    			}
+    		}
+    	});
+    } catch (Exception ignore) {}
+  }
+
+  private static void runStoryFile(final File storyFile) {
+    ZmppFrame zmppFrame = new ZmppFrame();
+    zmppFrame.setVisible(true);
+    try {
+      MachineInitStruct initStruct = new MachineInitStruct();
+      if (storyFile.getName().endsWith("zblorb")) {
+        initStruct.blorbFile = storyFile;
+      } else {
+        initStruct.storyFile = storyFile;
+      }
+      initStruct.nativeImageFactory = new AwtImageFactory();
+      initStruct.saveGameDataStore = new FileSaveGameDataStore(zmppFrame);
+      zmppFrame.getScreenModelView().startGame(initStruct);
+    } catch (Exception ex) {
+      ex.printStackTrace();
+    }
+  }
+  
+  private static void runInEventDispatchThread(Runnable runnable) {
+    if (SwingUtilities.isEventDispatchThread()) {
+      runnable.run();
+    } else {
+      try {
+        SwingUtilities.invokeAndWait(runnable);
+      } catch (Exception ex) {
+        ex.printStackTrace();
+      }
+    }
   }
 }

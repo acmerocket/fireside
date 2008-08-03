@@ -98,42 +98,7 @@ public class Main {
     } catch (Exception ex) {
       ex.printStackTrace();
     }
-    try {
-    	SwingUtilities.invokeAndWait(new Runnable() {
-    		public void run() {
-    			JFileChooser fileChooser =
-    					new JFileChooser(System.getProperty("user.home"));
-    			fileChooser.setDialogTitle(getMessage("dialog.open.msg"));
-    			if (fileChooser.showOpenDialog(null) == JFileChooser.APPROVE_OPTION) {        
-    				final File storyfile = fileChooser.getSelectedFile();
-    		    SwingUtilities.invokeLater(new Runnable() {  
-    		    	public void run() {
-    		        runStoryFile(storyfile);
-    		    	}
-    		    });
-    			}
-    		}
-    	});
-    } catch (Exception ignore) {}
-  }
-  
-  private static void runStoryFile(final File storyFile) {
-    ZmppFrame frame = new ZmppFrame();
-    frame.setVisible(true);
-    try {
-      MachineInitStruct initStruct = new MachineInitStruct();
-      if (storyFile.getName().endsWith("zblorb")) {
-        initStruct.blorbFile = storyFile;
-      } else {
-        initStruct.storyFile = storyFile;
-      }
-      // just for debugging
-      initStruct.nativeImageFactory = new AwtImageFactory();
-      initStruct.saveGameDataStore = new FileSaveGameDataStore(frame);
-      frame.getScreenModelView().startGame(initStruct);
-    } catch (Exception ex) {
-      ex.printStackTrace();
-    }
+    ZmppFrame.openStoryFile();
   }
   
   public static boolean isMacOsX() {
