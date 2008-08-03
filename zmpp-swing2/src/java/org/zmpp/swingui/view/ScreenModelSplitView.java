@@ -66,6 +66,8 @@ import org.zmpp.windowing.ScreenModelListener;
 public class ScreenModelSplitView extends JLayeredPane
 implements ScreenModelListener {
 
+  private static final int MARGIN_HORIZONTAL = 5;
+  private static final int MARGIN_VERTICAL   = 5;
   private static final Logger LOG = Logger.getLogger("org.zmpp.ui");
   private int editStart;
   private ExecutionControl executionControl;
@@ -125,7 +127,8 @@ implements ScreenModelListener {
   }
 
   private void createUpperView() {
-    Border upperBorder = BorderFactory.createEmptyBorder(5, 5, 5, 5);
+    Border upperBorder = BorderFactory.createEmptyBorder(MARGIN_HORIZONTAL,
+      MARGIN_VERTICAL, MARGIN_HORIZONTAL, MARGIN_VERTICAL);
     upper.setBorder(upperBorder);
     add(upper, JLayeredPane.PALETTE_LAYER);
   }
@@ -156,12 +159,13 @@ implements ScreenModelListener {
       }
     });
     /*
-    // was just for debugging
     Border lowerBorder = BorderFactory.createCompoundBorder(
             BorderFactory.createLineBorder(Color.BLACK),
             BorderFactory.createEmptyBorder(5, 5, 5, 5));
-    lower.setBorder(lowerBorder);
      */
+    Border lowerBorder = BorderFactory.createEmptyBorder(MARGIN_HORIZONTAL,
+      MARGIN_VERTICAL, MARGIN_HORIZONTAL, MARGIN_VERTICAL);
+    lower.setBorder(lowerBorder);
     add(lowerViewport, JLayeredPane.DEFAULT_LAYER);
     installLowerHandlers();
   }
