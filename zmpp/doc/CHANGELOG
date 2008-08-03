@@ -12,6 +12,8 @@ Version 1.5
 - replaced ZsciiString and ZsciiStringBuilder and ZsciiStringTokenizer with
   the J2SE versions
 - changed decoding scheme to resemble the one from the Erlang implementation
+- Open function added
+- Standard and fixed fonts can be specified
 - broken V6 support for this version
 
 
