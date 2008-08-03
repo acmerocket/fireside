@@ -58,7 +58,7 @@ public class ZmppApplet extends JApplet implements IOSystem {
   private static final int DEFAULT_FIXED_FONT_SIZE  = 12;
   private static final int DEFAULT_STD_FONT_SIZE    = 12;
   private static final boolean DEFAULT_ANTIALIAS = true;
-  private static final String DEFAULT_STD_FONT   = "Monaco";
+  private static final String DEFAULT_STD_FONT   = "Times";
   private static final String DEFAULT_FIXED_FONT = "Courier New";
   
   /**

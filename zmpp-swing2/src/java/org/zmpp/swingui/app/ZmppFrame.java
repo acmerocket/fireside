@@ -56,15 +56,15 @@ import org.zmpp.windowing.ScreenModel;
  */
 public class ZmppFrame extends JFrame
   implements GameLifeCycleListener, IOSystem {
-  private static final String STD_FONT_NAME = "American Typewriter";
-  private static final int STD_FONT_SIZE = 12;
-  private static final String FIXED_FONT_NAME = "Monaco";
-  private static final int FIXED_FONT_SIZE = 12;
-  private static final int DEFAULT_FOREGROUND = ScreenModel.COLOR_BLACK;
-  private static final int DEFAULT_BACKGROUND = ScreenModel.COLOR_WHITE;
   //private static final Font STD_FONT = new Font("Baskerville", Font.PLAIN, 16);
-  //private static final DisplaySettings displaySettings = new DisplaySettings(STD_FONT, FIXED_FONT,
-  //    DEFAULT_BACKGROUND, DEFAULT_FOREGROUND, true);
+  //private static final String STD_FONT_NAME = "American Typewriter";
+  //private static final String FIXED_FONT_NAME = "Monaco";
+  public static final String STD_FONT_NAME = "Times";
+  public static final String FIXED_FONT_NAME = "Courier New";
+  public static final int STD_FONT_SIZE = 14;
+  public static final int FIXED_FONT_SIZE = 14;
+  public static final int DEFAULT_FOREGROUND = ScreenModel.COLOR_BLACK;
+  public static final int DEFAULT_BACKGROUND = ScreenModel.COLOR_WHITE;
   
   private JMenuBar menubar = new JMenuBar();
   private JMenu fileMenu;

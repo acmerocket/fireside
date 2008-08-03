@@ -211,9 +211,9 @@ public class PreferencesDialog extends JDialog implements ActionListener {
       preferences.put("antialias", antialias ? "true" : "false");
       preferences.put("stdfontname", stdFontName);
       preferences.put("fixedfontname", fixedFontName);
-      Font stdFont = new Font("Times", Font.PLAIN, stdfontsize);
+      Font stdFont = new Font(ZmppFrame.STD_FONT_NAME, Font.PLAIN, stdfontsize);
 
-      Font fixedFont = new Font("Courier", Font.PLAIN, fixedfontsize);
+      Font fixedFont = new Font(ZmppFrame.FIXED_FONT_NAME, Font.PLAIN, fixedfontsize);
       settings.setSettings(stdFont, fixedFont, bgcolor, fgcolor, antialias);
       try {
         preferences.flush();
