@@ -117,18 +117,28 @@ public class ScreenModelViewInputHandler
       // Handle down key
       consumeKeyEvent(e);
     }
+    setCaretToEditMarkIfNeeded(e);
     if (e.getKeyCode() == KeyEvent.VK_ENTER) {
       consumeKeyEvent(e);
       handleEnterKey(e);
     }
-    if (getLowerCaretPosition() <= getEditStart() &&
-        keyCodeLeadsToPreviousPosition(e.getKeyCode())) {
+    if (atOrBeforeEditStart() && e.getKeyCode() == KeyEvent.VK_BACK_SPACE) {
       consumeKeyEvent(e);
     }
   }
   
-  private boolean keyCodeLeadsToPreviousPosition(int keyCode) {
-    return keyCode == KeyEvent.VK_BACK_SPACE || keyCode == KeyEvent.VK_LEFT;            
+  private void setCaretToEditMarkIfNeeded(KeyEvent e) {
+    if (getLowerCaretPosition() <= getEditStart() && isPrintable(e)) {
+      setLowerCaretPosition(getLowerDocument().getLength());
+    }
+  }
+  
+  private boolean isPrintable(KeyEvent e) {
+    return e.getKeyChar() != KeyEvent.CHAR_UNDEFINED;
+  }
+  
+  private boolean atOrBeforeEditStart() {
+    return getLowerCaretPosition() <= getEditStart();
   }
 
   private void handleEnterKey(KeyEvent e) {
@@ -150,11 +160,12 @@ public class ScreenModelViewInputHandler
   // *************************************************
   /** {@inheritDoc} */
   public void stateChanged(ChangeEvent e) {
+    /*
     if (isReadLine()) {
       if (getLowerCaretPosition() < getEditStart()) {
         setLowerCaretPosition(getEditStart());
       }
-    }
+    }*/
   }
   
   // *************************************************************************
