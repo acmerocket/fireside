@@ -122,7 +122,8 @@ public class ScreenModelViewInputHandler
       consumeKeyEvent(e);
       handleEnterKey(e);
     }
-    if (atOrBeforeEditStart() && e.getKeyCode() == KeyEvent.VK_BACK_SPACE) {
+    if (atOrBeforeEditStart() &&
+        e.getKeyCode() == KeyEvent.VK_BACK_SPACE) {
       consumeKeyEvent(e);
     }
   }
@@ -134,7 +135,14 @@ public class ScreenModelViewInputHandler
   }
   
   private boolean isPrintable(KeyEvent e) {
-    return e.getKeyChar() != KeyEvent.CHAR_UNDEFINED;
+    return e.getKeyChar() != KeyEvent.CHAR_UNDEFINED && !isCommandDown(e);
+  }
+  
+  private static final int APPLE_CMD = 4;
+  private boolean isCommandDown(KeyEvent e) {
+    int modifiers = e.getModifiers();
+    boolean appleCmd = ((modifiers & APPLE_CMD) == APPLE_CMD);
+    return appleCmd || e.isControlDown();
   }
   
   private boolean atOrBeforeEditStart() {
