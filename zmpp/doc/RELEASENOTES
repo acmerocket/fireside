@@ -27,9 +27,10 @@ Features:
 - accented characters and unicode
 - timed input, preinitialized input
 - game-defined dictionaries, alphabet tables and accent tables
-- user defined default colors and font sizes
+- user defined default colors and fonts
 - command history
 - multiple undo
+- internationalized user interface for English, Spanish, French, Swedish, German
 
 For remarks and suggestions for improvements, please contact
 me using the ZMPP project homepage:
