@@ -24,18 +24,17 @@ import java.awt.image.BufferedImage;
 import java.io.File;
 import java.io.IOException;
 import java.io.InputStream;
+import java.net.URL;
+import java.text.MessageFormat;
 import java.util.PropertyResourceBundle;
 import java.util.logging.Level;
 import java.util.logging.LogManager;
 import java.util.logging.Logger;
 import javax.imageio.ImageIO;
-import javax.swing.JFileChooser;
-import javax.swing.SwingUtilities;
+import javax.swing.JOptionPane;
 import javax.swing.UIManager;
 import org.zmpp.blorb.NativeImage;
 import org.zmpp.blorb.NativeImageFactory;
-import org.zmpp.swingui.view.FileSaveGameDataStore;
-import org.zmpp.vm.MachineFactory.MachineInitStruct;
 
 /**
  * New application class using the Swing 2 model.
@@ -98,7 +97,11 @@ public class Main {
     } catch (Exception ex) {
       ex.printStackTrace();
     }
-    ZmppFrame.openStoryFile();
+    if (args.length >= 1) {
+    	runWithParameters(args);
+    } else {
+      ZmppFrame.openStoryFile();
+    }
   }
   
   public static boolean isMacOsX() {
@@ -113,5 +116,36 @@ public class Main {
       System.setProperty("com.apple.mrj.application.apple.menu.about.name",
           "ZMPP");
     }
+  }
+
+  private static void runWithParameters(String[] args)
+  {
+  	if (isFile(args[0])) {
+      ZmppFrame.openStoryFile(new File(args[0]));
+  	} else if (isUrl(args[0])) {
+  		try {
+  			ZmppFrame.openStoryUrl(new URL(args[0]));
+  		} catch (Exception ex) {
+  			ex.printStackTrace();
+  		}
+  	} else {
+      JOptionPane.showMessageDialog(null,
+      	MessageFormat.format(getMessage("error.open.msg"), ""),
+        getMessage("error.open.title"), JOptionPane.ERROR_MESSAGE);
+  	}
+  }
+  
+  private static boolean isFile(String str) {
+  	File file = new File(str);
+  	return file.exists() && file.isFile();
+  }
+  
+  private static boolean isUrl(String str) {
+  	try {
+  		new URL(str);
+  		return true;
+  	} catch (Exception ex) {
+  		return false;
+  	}
   }
 }

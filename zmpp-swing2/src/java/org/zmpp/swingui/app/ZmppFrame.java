@@ -31,6 +31,7 @@ import java.io.FileWriter;
 import java.io.IOException;
 import java.io.Reader;
 import java.io.Writer;
+import java.net.URL;
 import java.util.prefs.Preferences;
 import javax.swing.JFileChooser;
 import javax.swing.JFrame;
@@ -145,7 +146,7 @@ public class ZmppFrame extends JFrame
     fileMenu.add(openItem);
     openItem.addActionListener(new ActionListener() {
       public void actionPerformed(ActionEvent e) {
-        openStoryFile(ZmppFrame.this);
+        openStoryFile(ZmppFrame.this, null);
       }
     });
   }
@@ -304,25 +305,35 @@ public class ZmppFrame extends JFrame
                                defaultforeground, antialias);    
   }
   
+  public static void openStoryUrl(URL url) {
+    runStoryUrl(url);
+  }
   public static void openStoryFile() { openStoryFile(null); }
-  private static void openStoryFile(ZmppFrame frame) {
+  public static void openStoryFile(File storyfile) {
+      openStoryFile(null, storyfile);
+  }
+  private static void openStoryFile(ZmppFrame frame, final File file) {
     if (frame != null) { frame.dispose(); }
     try {
     	runInEventDispatchThread(new Runnable() {
     		public void run() {
-    			JFileChooser fileChooser =
-    					new JFileChooser(System.getProperty("user.home"));
-    			fileChooser.setDialogTitle(getMessage("dialog.open.msg"));
-    			if (fileChooser.showOpenDialog(null) == JFileChooser.APPROVE_OPTION) {        
-    				final File storyfile = fileChooser.getSelectedFile();
-    		    SwingUtilities.invokeLater(new Runnable() {  
-    		    	public void run() {
-    		        runStoryFile(storyfile);
-    		    	}
-    		    });
-    			}
-    		}
-    	});
+          if (file == null && file.exists()) {
+      			JFileChooser fileChooser =
+      					new JFileChooser(System.getProperty("user.home"));
+        		fileChooser.setDialogTitle(getMessage("dialog.open.msg"));
+          	if (fileChooser.showOpenDialog(null) == JFileChooser.APPROVE_OPTION) {        
+              final File storyfile = fileChooser.getSelectedFile();
+              SwingUtilities.invokeLater(new Runnable() {  
+                public void run() {
+                  runStoryFile(storyfile);
+                }
+              });
+            }
+          } else {
+              runStoryFile(file);
+          }
+        }
+      });
     } catch (Exception ignore) {}
   }
 
@@ -344,7 +355,27 @@ public class ZmppFrame extends JFrame
       ex.printStackTrace();
     }
   }
-  
+
+  private static void runStoryUrl(final URL storyUrl) {
+    ZmppFrame zmppFrame = new ZmppFrame();
+    zmppFrame.setVisible(true);
+    try {
+      MachineInitStruct initStruct = new MachineInitStruct();
+      if (storyUrl.getPath().endsWith("zblorb") ||
+          storyUrl.getPath().endsWith("zblb")) {
+        initStruct.blorbURL = storyUrl;
+      } else {
+        initStruct.storyURL = storyUrl;
+      }
+      initStruct.nativeImageFactory = new AwtImageFactory();
+      initStruct.saveGameDataStore = new FileSaveGameDataStore(zmppFrame);
+      initStruct.ioSystem = zmppFrame;
+      zmppFrame.getScreenModelView().startGame(initStruct);
+    } catch (Exception ex) {
+      ex.printStackTrace();
+    }
+  }
+
   private static void runInEventDispatchThread(Runnable runnable) {
     if (SwingUtilities.isEventDispatchThread()) {
       runnable.run();
