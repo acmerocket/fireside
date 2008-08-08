@@ -51,7 +51,10 @@ public class BufferedTextWindow {
   public void setBuffered(boolean flag) { isBuffered = flag; }
   public char setCurrentFont(char font) {
     char previousFont = currentAnnotation.getFont();
-    startNewAnnotatedRun(currentAnnotation.deriveFont(font));
+    // no need to start a new run if the font is the same
+    if (previousFont != font) {
+      startNewAnnotatedRun(currentAnnotation.deriveFont(font));
+    }
     return previousFont;
   }
   public void setCurrentTextStyle(int style) {

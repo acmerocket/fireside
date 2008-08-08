@@ -23,8 +23,10 @@ package org.zmpp.windowing;
 import java.util.ArrayList;
 import java.util.List;
 import java.util.logging.Logger;
+import org.zmpp.base.DefaultStoryFileHeader;
 import org.zmpp.base.Memory;
 import org.zmpp.base.StoryFileHeader;
+import org.zmpp.base.StoryFileHeader.Attribute;
 import org.zmpp.encoding.IZsciiEncoding;
 import org.zmpp.io.OutputStream;
 
@@ -51,6 +53,7 @@ public class BufferedScreenModel implements ScreenModel, StatusLine,
     new ArrayList<StatusLineListener>();
   private IZsciiEncoding encoding;
   private Memory memory;
+  private StoryFileHeader fileheader;
   
   public interface StatusLineListener {
     void statusLineUpdated(String objectDescription, String status);
@@ -72,6 +75,7 @@ public class BufferedScreenModel implements ScreenModel, StatusLine,
    */
   public void init(Memory memory, IZsciiEncoding encoding) {
     this.memory = memory;
+    this.fileheader = new DefaultStoryFileHeader(memory);
     this.encoding = encoding;
   }
   
@@ -179,10 +183,15 @@ public class BufferedScreenModel implements ScreenModel, StatusLine,
   public char setFont(char fontnumber) {
     if (fontnumber != ScreenModel.FONT_FIXED &&
         fontnumber != ScreenModel.FONT_NORMAL) {
+      setFont(ScreenModel.FONT_FIXED); // call yourself again with the fixed
       return 0;
     }
     if (current == WINDOW_TOP) {
-      return topWindow.setFont(fontnumber);
+      // For the top window, the normal font should not be used, instead,
+      // we always assume the fixed font as the top window normal font
+      // The character graphics font is a fixed font, so we want to set that
+      return fontnumber == ScreenModel.FONT_NORMAL ? ScreenModel.FONT_FIXED :
+              topWindow.setFont(fontnumber);
     } else {
       return bottomWindow.setCurrentFont(fontnumber);
     }
@@ -200,12 +209,28 @@ public class BufferedScreenModel implements ScreenModel, StatusLine,
     bottomWindow.setForeground(colornumber);
   }
 
+  /** {@inheritDoc} */
   public OutputStream getOutputStream() { return this; }
 
   // OutputStream
   private boolean selected;
   
+  /**
+   * This checks the fixed font flag and adjust the font if necessary.
+   */
+  private void checkFixedFontFlag() {
+    if (fileheader.isEnabled(Attribute.FORCE_FIXED_FONT) &&
+        current == WINDOW_BOTTOM) {
+      bottomWindow.setCurrentFont(ScreenModel.FONT_FIXED);
+    } else if (!fileheader.isEnabled(Attribute.FORCE_FIXED_FONT) &&
+               current == WINDOW_BOTTOM) {
+      bottomWindow.setCurrentFont(ScreenModel.FONT_NORMAL);
+    }
+  }
+  
+  /** {@inheritDoc} */
   public void print(char zsciiChar) {
+    checkFixedFontFlag();
     char unicodeChar = encoding.getUnicodeChar(zsciiChar);
     if (current == WINDOW_BOTTOM) {
       bottomWindow.printChar(unicodeChar);
@@ -220,6 +245,7 @@ public class BufferedScreenModel implements ScreenModel, StatusLine,
     }
   }
   
+  /** {@inheritDoc} */
   public void close() { }
 
   /**

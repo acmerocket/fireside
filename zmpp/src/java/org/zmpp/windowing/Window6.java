@@ -23,7 +23,8 @@ package org.zmpp.windowing;
 import org.zmpp.media.ZmppImage;
 
 /**
- * Window 6 interface.
+ * Window 6 interface. V6 windows in the Z-machine are probably the hackiest
+ * and trickiest challenge in a Z-machine.
  * @author Wei-ju Wu
  * @version 1.5
  */
