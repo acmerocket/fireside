@@ -220,23 +220,23 @@ public class DefaultStoryFileHeader implements StoryFileHeader {
   }
     
   private void setTranscripting(final boolean flag) {
-    int flags = memory.readUnsigned8(0x10);
-    flags = flag ? (flags | 1) : (flags & 0xfe);
-    memory.writeUnsigned8(0x10, (char) flags);
+    char flags = memory.readUnsigned16(0x10);
+    flags = (char) (flag ? (flags | 1) : (flags & 0xfe));
+    memory.writeUnsigned16(0x10, (char) flags);
   }
   
   private boolean isTranscriptingOn() {
-    return (memory.readUnsigned8(0x10) & 1) > 0;
+    return (memory.readUnsigned16(0x10) & 1) > 0;
   }
   
   private boolean forceFixedFont() {
-    return (memory.readUnsigned8(0x10) & 2) > 0;
+    return (memory.readUnsigned16(0x10) & 2) > 0;
   }
   
   private void setForceFixedFont(final boolean flag) {
-    int flags = memory.readUnsigned8(0x10);
-    flags = flag ? (flags | 2) : (flags & 0xfd);
-    memory.writeUnsigned8(0x10, (char) flags);
+    char flags = memory.readUnsigned16(0x10);
+    flags = (char) (flag ? (flags | 2) : (flags & 0xfd));
+    memory.writeUnsigned16(0x10, (char) flags);
   }
   
   private void setTimedInputAvailable(final boolean flag) {

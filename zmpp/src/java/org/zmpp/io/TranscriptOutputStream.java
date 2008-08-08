@@ -105,7 +105,6 @@ public class TranscriptOutputStream implements OutputStream {
     try {
       if (output != null) {        
         output.write(linebuffer.toString());
-        output.write("\n");
         linebuffer = new StringBuilder();
       }
     } catch (IOException ex) { 

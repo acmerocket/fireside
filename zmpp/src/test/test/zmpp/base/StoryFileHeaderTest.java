@@ -132,9 +132,9 @@ public class StoryFileHeaderTest {
   @Test
   public void testSetTranscripting() {
     context.checking(new Expectations() {{
-      atLeast(1).of (memory).readUnsigned8(0x10); will(returnValue((char) 0));
-      one (memory).writeUnsigned8(0x10, (char) 1);
-      one (memory).writeUnsigned8(0x10, (char) 0);
+      atLeast(1).of (memory).readUnsigned16(0x10); will(returnValue((char) 0));
+      one (memory).writeUnsigned16(0x10, (char) 1);
+      one (memory).writeUnsigned16(0x10, (char) 0);
     }});
     fileHeader.setEnabled(Attribute.TRANSCRIPTING, true);
     fileHeader.setEnabled(Attribute.TRANSCRIPTING, false);
@@ -143,7 +143,7 @@ public class StoryFileHeaderTest {
   @Test
   public void testIsTranscriptingEnabled() {
     context.checking(new Expectations() {{
-      atLeast(1).of (memory).readUnsigned8(0x10);
+      atLeast(1).of (memory).readUnsigned16(0x10);
         will(onConsecutiveCalls(returnValue((char) 1), returnValue((char) 0)));
     }});
     assertTrue(fileHeader.isEnabled(Attribute.TRANSCRIPTING));
@@ -153,9 +153,9 @@ public class StoryFileHeaderTest {
   @Test
   public void testSetForceFixedFont() {
     context.checking(new Expectations() {{
-      atLeast(1).of (memory).readUnsigned8(0x10); will(returnValue((char) 1));
-      one (memory).writeUnsigned8(0x10, (char) 3);
-      one (memory).writeUnsigned8(0x10, (char) 1);
+      atLeast(1).of (memory).readUnsigned16(0x10); will(returnValue((char) 1));
+      one (memory).writeUnsigned16(0x10, (char) 3);
+      one (memory).writeUnsigned16(0x10, (char) 1);
     }});
     fileHeader.setEnabled(Attribute.FORCE_FIXED_FONT, true);
     fileHeader.setEnabled(Attribute.FORCE_FIXED_FONT, false);
@@ -164,7 +164,7 @@ public class StoryFileHeaderTest {
   @Test
   public void testIsForceFixedFont() {
     context.checking(new Expectations() {{
-      atLeast(1).of (memory).readUnsigned8(0x10);
+      atLeast(1).of (memory).readUnsigned16(0x10);
         will(onConsecutiveCalls(returnValue((char) 6), returnValue((char) 5)));
     }});
     assertTrue(fileHeader.isEnabled(Attribute.FORCE_FIXED_FONT));

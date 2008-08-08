@@ -147,7 +147,7 @@ public class ExecutionControl {
       Instruction instr = instructionDecoder.decodeInstruction(pc);
       // if the print is executed after execute(), the result is different !!
       if (DEBUG && machine.getRunState() == MachineRunState.RUNNING)
-        System.out.println(String.format("%03d: $%04x %s", step, (int) pc, instr.toString()));
+        System.out.println(String.format("%04d: $%05x %s", step, (int) pc, instr.toString()));
       instr.execute();
         
       // handle input situations here
