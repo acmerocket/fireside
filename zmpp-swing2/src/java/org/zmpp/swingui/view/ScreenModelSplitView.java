@@ -52,8 +52,9 @@ import org.zmpp.windowing.ScreenModel;
 import org.zmpp.windowing.ScreenModelListener;
 
 /**
- * The MainView class is the main view component. It contains the upper and
- * the lower windows.
+ * The MainView class is the main view component for a standard Z-machine
+ * game (everything except V6). It contains the upper and the lower windows.
+ * 
  * While the lower window is layed out so that its boundaries start
  * at the split position, the upper window component always uses up the
  * whole available space. The upper window in in fact an overlay over the

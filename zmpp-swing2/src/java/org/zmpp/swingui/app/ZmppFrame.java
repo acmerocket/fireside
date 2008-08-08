@@ -317,7 +317,7 @@ public class ZmppFrame extends JFrame
     try {
     	runInEventDispatchThread(new Runnable() {
     		public void run() {
-          if (file == null && file.exists()) {
+          if (file == null || !file.exists()) {
       			JFileChooser fileChooser =
       					new JFileChooser(System.getProperty("user.home"));
         		fileChooser.setDialogTitle(getMessage("dialog.open.msg"));
