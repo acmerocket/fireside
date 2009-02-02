@@ -14,8 +14,8 @@
   <path id="junit.path">
     <fileset dir="lib">
       <include name="junit-4.4.jar"/>
-      <include name="jmock-2.5.0.jar"/>
-      <include name="jmock-junit4-2.5.0.jar"/>
+      <include name="jmock-2.5.1.jar"/>
+      <include name="jmock-junit4-2.5.1.jar"/>
       <include name="hamcrest-core-1.1.jar"/>
       <include name="hamcrest-library-1.1.jar"/>
     </fileset>
