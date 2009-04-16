@@ -46,6 +46,6 @@ public abstract class InstructionTestBase {
   protected void expectStoryVersion(final int version) {
     context.checking(new Expectations() {{
       atLeast(1).of (machine).getVersion(); will(returnValue(version));
-    }});    
+    }});
   }
 }

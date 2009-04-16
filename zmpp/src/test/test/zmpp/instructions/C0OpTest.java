@@ -147,26 +147,28 @@ public class C0OpTest extends InstructionTestBase {
   public void testSaveSuccess() {
     expectStoryVersion(3);
     context.checking(new Expectations() {{
-      one (machine).getPC(); will(returnValue(1234));
-      one (machine).save(with(any(char.class))); will(returnValue(true));
+      oneOf (machine).getPC(); will(returnValue(1234));
+      oneOf (machine).save(with(any(char.class))); will(returnValue(true));
     }});
     C0OpMock save = createInstructionMock(C0OP_SAVE);
     save.execute();
     assertTrue(save.branchOnTestCalled);
     assertTrue(save.branchOnTestCondition);
+    context.assertIsSatisfied();
   }
   
   @Test
   public void testSaveFail() {
     expectStoryVersion(3);
     context.checking(new Expectations() {{
-      one (machine).getPC(); will(returnValue(1234));
-      one (machine).save(with(any(char.class))); will(returnValue(false));
+      oneOf (machine).getPC(); will(returnValue(1234));
+      oneOf (machine).save(with(any(char.class))); will(returnValue(false));
     }});
     C0OpMock save = createInstructionMock(C0OP_SAVE);
     save.execute();
     assertTrue(save.branchOnTestCalled);
     assertFalse(save.branchOnTestCondition);
+    context.assertIsSatisfied();
   }
 
   @Test
@@ -174,72 +176,79 @@ public class C0OpTest extends InstructionTestBase {
     expectStoryVersion(3);
     final PortableGameState gamestate = new PortableGameState();
     context.checking(new Expectations() {{
-      one (machine).restore(); will(returnValue(gamestate));
+      oneOf (machine).restore(); will(returnValue(gamestate));
     }});
     C0OpMock restore = createInstructionMock(C0OP_RESTORE);
     restore.execute();
     assertFalse(restore.nextInstructionCalled);
+    context.assertIsSatisfied();
   }
 
   @Test
   public void testRestoreFail() {    
     expectStoryVersion(3);
     context.checking(new Expectations() {{
-      one (machine).restore(); will(returnValue(null));
+      oneOf (machine).restore(); will(returnValue(null));
     }});
     C0OpMock restore = createInstructionMock(C0OP_RESTORE);
     restore.execute();
     assertTrue(restore.nextInstructionCalled);
+    context.assertIsSatisfied();
   }
 
   @Test
   public void testRestart() {
     context.checking(new Expectations() {{
-      one (machine).restart();
+      oneOf (machine).restart();
     }});
     C0OpMock restart = createInstructionMock(C0OP_RESTART);
     restart.execute();
+    context.assertIsSatisfied();
   }
   
   @Test
   public void testQuit() {
     context.checking(new Expectations() {{
-      one (machine).quit();
+      oneOf (machine).quit();
     }});
     C0OpMock quit = createInstructionMock(C0OP_QUIT);  
     quit.execute();
+    context.assertIsSatisfied();
   }
   
   @Test
   public void testNewLine() {
     context.checking(new Expectations() {{
-      one (machine).newline();
+      oneOf (machine).newline();
     }});
     C0OpMock newline = createInstructionMock(C0OP_NEW_LINE);
     newline.execute();
     assertTrue(newline.nextInstructionCalled);
+    context.assertIsSatisfied();
   }
   
   @Test
   public void testRetPopped() {
     context.checking(new Expectations() {{
-      one (machine).getVariable((char) 0); will(returnValue((char) 15));
+      oneOf (machine).getVariable((char) 0); will(returnValue((char) 15));
     }});
     C0OpMock ret_popped = createInstructionMock(C0OP_RET_POPPED);
     ret_popped.execute();    
     assertTrue(ret_popped.returned);
     assertEquals(15, ret_popped.returnValue);
+    context.assertIsSatisfied();
   }
   
   @Test
   public void testPop() {
     expectStoryVersion(3);
     context.checking(new Expectations() {{
-      one (machine).getVariable((char) 0); will(returnValue((char) 42));
+      oneOf (machine).getVariable((char) 0); will(returnValue((char) 42));
     }});
     C0OpMock pop = createInstructionMock(C0OP_POP);
     pop.execute();
     assertTrue(pop.nextInstructionCalled);
+    context.assertIsSatisfied();
   }
 
   // ***********************************************************************
@@ -249,33 +258,36 @@ public class C0OpTest extends InstructionTestBase {
   @Test
   public void testVerifyTrue() {
     context.checking(new Expectations() {{
-      one (machine).hasValidChecksum(); will(returnValue(true));
+      oneOf (machine).hasValidChecksum(); will(returnValue(true));
     }});
     C0OpMock verify = createInstructionMock(C0OP_VERIFY);
     verify.execute();
     assertTrue(verify.branchOnTestCalled);
     assertTrue(verify.branchOnTestCondition);
+    context.assertIsSatisfied();
   }
   
   @Test
   public void testVerifyFalse() {
     context.checking(new Expectations() {{
-      one (machine).hasValidChecksum(); will(returnValue(false));
+      oneOf (machine).hasValidChecksum(); will(returnValue(false));
     }});
     C0OpMock verify = createInstructionMock(C0OP_VERIFY);
     verify.execute();
     assertTrue(verify.branchOnTestCalled);
     assertFalse(verify.branchOnTestCondition);
+    context.assertIsSatisfied();
   }
   
   @Test
   public void testShowStatus() {
     context.checking(new Expectations() {{
-      one (machine).updateStatusLine();
+      oneOf (machine).updateStatusLine();
     }});
     C0OpMock showstatus = createInstructionMock(C0OP_SHOW_STATUS);    
     showstatus.execute();
     assertTrue(showstatus.nextInstructionCalled);
+    context.assertIsSatisfied();
   }
   
   // ***********************************************************************
@@ -286,13 +298,14 @@ public class C0OpTest extends InstructionTestBase {
   public void testSaveSuccessV4() {
     expectStoryVersion(4);
     context.checking(new Expectations() {{
-      one (machine).getPC(); will(returnValue(1234));
-      one (machine).save(with(any(char.class))); will(returnValue(true));
-      one (machine).setVariable((char) 0, (char) 1);
+      oneOf (machine).getPC(); will(returnValue(1234));
+      oneOf (machine).save(with(any(char.class))); will(returnValue(true));
+      oneOf (machine).setVariable((char) 0, (char) 1);
     }});
     C0OpMock save = createInstructionMock(C0OP_SAVE);
     save.execute();
     assertTrue(save.nextInstructionCalled);
+    context.assertIsSatisfied();
   }
 
   @Test
@@ -300,26 +313,28 @@ public class C0OpTest extends InstructionTestBase {
     expectStoryVersion(4);
     final PortableGameState gamestate = new PortableGameState();
     context.checking(new Expectations() {{
-      one (machine).restore(); will(returnValue(gamestate));
+      oneOf (machine).restore(); will(returnValue(gamestate));
       // Store variable
-      one (machine).setVariable((char) 5, (char) 2);
-      one (machine).readUnsigned8(0); will(returnValue((char) 5));
+      oneOf (machine).setVariable((char) 5, (char) 2);
+      oneOf (machine).readUnsigned8(0); will(returnValue((char) 5));
     }});
     C0OpMock restore = createInstructionMock(C0OP_RESTORE);
     restore.execute();
     assertFalse(restore.nextInstructionCalled);
+    context.assertIsSatisfied();
   }
 
   @Test
   public void testRestoreFailV4() {
     expectStoryVersion(4);
     context.checking(new Expectations() {{
-      one (machine).restore(); will(returnValue(null));
-      one (machine).setVariable((char) 0, (char) 0);
+      oneOf (machine).restore(); will(returnValue(null));
+      oneOf (machine).setVariable((char) 0, (char) 0);
     }});
     C0OpMock restore = createInstructionMock(C0OP_RESTORE);
     restore.execute();
     assertTrue(restore.nextInstructionCalled);
+    context.assertIsSatisfied();
   }
 
   // ***********************************************************************
@@ -335,12 +350,13 @@ public class C0OpTest extends InstructionTestBase {
     routineContexts.add(new RoutineContext(0));
     routineContexts.add(new RoutineContext(2));
     context.checking(new Expectations() {{
-      one (machine).getRoutineContexts(); will(returnValue(routineContexts));
-      one (machine).setVariable((char) 0x12, (char) 2);
+      oneOf (machine).getRoutineContexts(); will(returnValue(routineContexts));
+      oneOf (machine).setVariable((char) 0x12, (char) 2);
     }});
     C0OpMock zcatch = createInstructionMock(C0OP_POP, (char) 0x12);    
     zcatch.execute();
     assertTrue(zcatch.nextInstructionCalled);
+    context.assertIsSatisfied();
   }
 
   // ***********************************************************************
@@ -350,23 +366,25 @@ public class C0OpTest extends InstructionTestBase {
   @Test
   public void testPrint() {    
     context.checking(new Expectations() {{
-      one (machine).print("Hallo");
+      oneOf (machine).print("Hallo");
     }});
     C0OpMock print = createInstructionMock(C0OP_PRINT, "Hallo");
     print.execute();
     assertTrue(print.nextInstructionCalled);
+    context.assertIsSatisfied();
   }
   
   @Test
   public void testPrintRet() {
     context.checking(new Expectations() {{
-      one (machine).print("HalloRet");
-      one (machine).newline();
+      oneOf (machine).print("HalloRet");
+      oneOf (machine).newline();
     }});
     C0OpMock print_ret = createInstructionMock(C0OP_PRINT_RET, "HalloRet");
     print_ret.execute();
     assertTrue(print_ret.returned);
     assertEquals((char) 1, print_ret.returnValue);
+    context.assertIsSatisfied();
   }  
 
   // ***********************************************************************

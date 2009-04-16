@@ -144,21 +144,22 @@ public class AbstractInstructionTest {
   @Test
   public void testGetUnsignedValue() {
     context.checking(new Expectations() {{
-      one (machine).getVariable((char) 0x00); will(returnValue((char) 0xcafe));
-      one (machine).getVariable((char) 0x11); will(returnValue((char) 0xdeca));
+      oneOf (machine).getVariable((char) 0x00); will(returnValue((char) 0xcafe));
+      oneOf (machine).getVariable((char) 0x11); will(returnValue((char) 0xdeca));
     }});
     StubInstruction instr = createStdInstruction();
     assertEquals(0xcafe, instr.getUnsignedValue(0));
     assertEquals(0xdeca, instr.getUnsignedValue(1));
     assertEquals(0x00be, instr.getUnsignedValue(2));
     assertEquals(0xface, instr.getUnsignedValue(3));
+    context.assertIsSatisfied();
   }
 
   @Test
   public void testGetSignedValue() {
     context.checking(new Expectations() {{
-      one (machine).getVariable((char) 0x00); will(returnValue((char) 0xcafe));
-      one (machine).getVariable((char) 0x11); will(returnValue((char) 0xdeca));
+      oneOf (machine).getVariable((char) 0x00); will(returnValue((char) 0xcafe));
+      oneOf (machine).getVariable((char) 0x11); will(returnValue((char) 0xdeca));
     }});
     StubInstruction instr = createStdInstruction();
     assertEquals(unsignedToSigned16((char) 0xcafe), instr.getSignedValue(0));
@@ -166,42 +167,47 @@ public class AbstractInstructionTest {
     // This is interesting, on small constants, it returns an unsigned !
     assertEquals(unsignedToSigned16((char) 0xbe), instr.getSignedValue(2));
     assertEquals(unsignedToSigned16((char) 0xface), instr.getSignedValue(3));
+    context.assertIsSatisfied();
   }
 
   @Test
   public void testGetSignedVarValue() {
     context.checking(new Expectations() {{
-      one (machine).getVariable((char) 0x03); will(returnValue((char) 0xfffe));
+      oneOf (machine).getVariable((char) 0x03); will(returnValue((char) 0xfffe));
     }});
     StubInstruction instr = createStdInstruction();
     assertEquals(-2, instr.getSignedVarValue((char) 3));
+    context.assertIsSatisfied();
   }
 
   @Test
   public void testSetSignedVarValue() {
     context.checking(new Expectations() {{
-      one (machine).setVariable((char) 3, (char) 0xfffe);
+      oneOf (machine).setVariable((char) 3, (char) 0xfffe);
     }});
     StubInstruction instr = createStdInstruction();
     instr.setSignedVarValue((char) 3, (short) -2);
+    context.assertIsSatisfied();
   }
   
   @Test
   public void testStoreUnsignedResult() {
     context.checking(new Expectations() {{
-      one (machine).setVariable((char) STD_STOREVAR, (char) 0xfeee);
+      oneOf (machine).setVariable((char) STD_STOREVAR, (char) 0xfeee);
     }});
     StubInstruction instr = createStdInstruction();
     instr.storeUnsignedResult((char) 0xfeee);
+    context.assertIsSatisfied();
   }
 
   @Test
   public void testStoreSignedResult() {
     context.checking(new Expectations() {{
-      one (machine).setVariable((char) STD_STOREVAR, (char) 0xfffd);
+      oneOf (machine).setVariable((char) STD_STOREVAR, (char) 0xfffd);
     }});
     StubInstruction instr = createStdInstruction();
     instr.storeSignedResult((short) -3);
+    context.assertIsSatisfied();
   }
 
   /*
