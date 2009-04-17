@@ -101,7 +101,7 @@
             <compilation-unit>
                 <package-root>src/test</package-root>
                 <unit-tests/>
-                <classpath mode="compile">target/classes:lib/jmock-junit4-2.5.0.jar:lib/jmock-2.5.0.jar:lib/hamcrest-core-1.1.jar:lib/hamcrest-library-1.1.jar:lib/junit-4.4.jar</classpath>
+                <classpath mode="compile">target/classes:lib/hamcrest-core-1.1.jar:lib/hamcrest-library-1.1.jar:lib/junit-4.4.jar:lib/jmock-2.5.1.jar:lib/jmock-junit4-2.5.1.jar</classpath>
                 <built-to>target/testclasses</built-to>
                 <source-level>1.5</source-level>
             </compilation-unit>

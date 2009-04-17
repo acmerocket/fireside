@@ -24,14 +24,8 @@ import java.io.InputStream;
 import java.util.HashMap;
 import java.util.Map;
 
-import javax.sound.sampled.AudioFileFormat;
-import javax.sound.sampled.AudioInputStream;
-import javax.sound.sampled.AudioSystem;
-import javax.sound.sampled.Clip;
-
 import org.zmpp.iff.Chunk;
 import org.zmpp.iff.FormChunk;
-import org.zmpp.media.DefaultSoundEffect;
 import org.zmpp.media.SoundEffect;
 
 /**
@@ -52,8 +46,8 @@ public class BlorbSounds extends BlorbMediaCollection<SoundEffect> {
    * 
    * @param formchunk the form chunk
    */
-  public BlorbSounds(FormChunk formchunk) {
-    super(null, formchunk);
+  public BlorbSounds(SoundEffectFactory factory, FormChunk formchunk) {
+    super(null, factory, formchunk);
   }
   
   /**
@@ -86,31 +80,17 @@ public class BlorbSounds extends BlorbMediaCollection<SoundEffect> {
    * {@inheritDoc}
    */
   public SoundEffect getResource(final int resourcenumber) {
-
     return sounds.get(resourcenumber);
   }
 
   /**
    * {@inheritDoc}
    */
-  protected boolean putToDatabase(final Chunk chunk, final int resnum) {
-
-    final InputStream aiffStream =
-      new  MemoryInputStream(chunk.getMemory(), 0,
-          chunk.getSize() + Chunk.CHUNK_HEADER_LENGTH);
+  protected boolean putToDatabase(final Chunk aiffChunk, final int resnum) {
     try {
-
-      final AudioFileFormat aiffFormat =
-        AudioSystem.getAudioFileFormat(aiffStream);
-      final AudioInputStream stream = new AudioInputStream(aiffStream,
-        aiffFormat.getFormat(), (long) chunk.getSize());
-      final Clip clip = AudioSystem.getClip();
-      clip.open(stream);      
-      sounds.put(resnum, new DefaultSoundEffect(clip));
+      sounds.put(resnum, soundEffectFactory.createSoundEffect(aiffChunk));
       return true;
-
     } catch (Exception ex) {
-
       ex.printStackTrace();
     }
     return false;

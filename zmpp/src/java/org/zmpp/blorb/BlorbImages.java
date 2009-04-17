@@ -53,7 +53,7 @@ public class BlorbImages extends BlorbMediaCollection<BlorbImage> {
    * @param formchunk the form chunk
    */
   public BlorbImages(NativeImageFactory imageFactory, FormChunk formchunk) {
-    super(imageFactory, formchunk);
+    super(imageFactory, null, formchunk);
     handleResoChunk();
   }
   
