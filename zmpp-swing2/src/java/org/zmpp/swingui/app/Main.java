@@ -31,10 +31,18 @@ import java.util.logging.Level;
 import java.util.logging.LogManager;
 import java.util.logging.Logger;
 import javax.imageio.ImageIO;
+import javax.sound.sampled.AudioFileFormat;
+import javax.sound.sampled.AudioInputStream;
+import javax.sound.sampled.AudioSystem;
+import javax.sound.sampled.Clip;
 import javax.swing.JOptionPane;
 import javax.swing.UIManager;
+import org.zmpp.blorb.MemoryInputStream;
 import org.zmpp.blorb.NativeImage;
 import org.zmpp.blorb.NativeImageFactory;
+import org.zmpp.blorb.SoundEffectFactory;
+import org.zmpp.iff.Chunk;
+import org.zmpp.media.SoundEffect;
 
 /**
  * New application class using the Swing 2 model.
@@ -66,6 +74,26 @@ public class Main {
   static class AwtImageFactory implements NativeImageFactory {
     public NativeImage createImage(InputStream inputStream) throws IOException {
       return new AwtImage(ImageIO.read(inputStream));
+    }
+  }
+
+  static class DefaultSoundEffectFactory implements SoundEffectFactory {
+    public SoundEffect createSoundEffect(Chunk aiffChunk)
+        throws IOException {
+      final InputStream aiffStream =
+        new  MemoryInputStream(aiffChunk.getMemory(), 0,
+          aiffChunk.getSize() + Chunk.CHUNK_HEADER_LENGTH);
+      try {
+      final AudioFileFormat aiffFormat =
+        AudioSystem.getAudioFileFormat(aiffStream);
+      final AudioInputStream stream = new AudioInputStream(aiffStream,
+        aiffFormat.getFormat(), (long) aiffChunk.getSize());
+      final Clip clip = AudioSystem.getClip();
+      clip.open(stream);
+      return new DefaultSoundEffect(clip);
+      } catch (Exception ex) {
+        throw new IOException("could not read sound effect");
+      }
     }
   }
 
