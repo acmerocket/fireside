@@ -114,7 +114,8 @@ public class ZmppApplet extends JApplet implements IOSystem {
   @Override
   public void init() {
     setSystemLookAndFeel();
-    setLogLevels();
+    // unsigned applets do not go well with this option
+    //setLogLevels();
     requestFocusInWindow();
     String story = getParameter("story-file");
     String blorb = getParameter("blorb-file");

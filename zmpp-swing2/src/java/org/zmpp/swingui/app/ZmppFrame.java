@@ -26,6 +26,7 @@ import java.awt.Font;
 import java.awt.event.ActionEvent;
 import java.awt.event.ActionListener;
 import java.io.File;
+import java.io.FileInputStream;
 import java.io.FileReader;
 import java.io.FileWriter;
 import java.io.IOException;
@@ -340,12 +341,14 @@ public class ZmppFrame extends JFrame
   private static void runStoryFile(final File storyFile) {
     ZmppFrame zmppFrame = new ZmppFrame();
     zmppFrame.setVisible(true);
+    FileInputStream storyFileStream = null;
     try {
+      storyFileStream = new FileInputStream(storyFile);
       MachineInitStruct initStruct = new MachineInitStruct();
       if (storyFile.getName().endsWith("zblorb")) {
-        initStruct.blorbFile = storyFile;
+        initStruct.blorbFile = storyFileStream;
       } else {
-        initStruct.storyFile = storyFile;
+        initStruct.storyFile = storyFileStream;
       }
       initStruct.nativeImageFactory = new AwtImageFactory();
       initStruct.saveGameDataStore = new FileSaveGameDataStore(zmppFrame);
@@ -353,6 +356,10 @@ public class ZmppFrame extends JFrame
       zmppFrame.getScreenModelView().startGame(initStruct);
     } catch (Exception ex) {
       ex.printStackTrace();
+    } finally {
+      if (storyFileStream != null) {
+        try { storyFileStream.close(); } catch (Exception ioex) {}
+      }
     }
   }
 

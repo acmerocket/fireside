@@ -35,6 +35,7 @@ import org.zmpp.base.DefaultMemory;
 import org.zmpp.base.Memory;
 import org.zmpp.blorb.BlorbResources;
 import org.zmpp.blorb.NativeImageFactory;
+import org.zmpp.blorb.SoundEffectFactory;
 import org.zmpp.iff.DefaultFormChunk;
 import org.zmpp.iff.FormChunk;
 import org.zmpp.media.Resources;
@@ -63,7 +64,8 @@ public class FileUtils {
    * @return the resources object or null (on failure)
    */
   public static Resources createResources(NativeImageFactory imageFactory,
-          final File blorbfile) {
+    SoundEffectFactory soundEffectFactory,    
+    final File blorbfile) {
     RandomAccessFile raf = null;
     try {
       raf = new RandomAccessFile(blorbfile, "r");
@@ -71,7 +73,7 @@ public class FileUtils {
       raf.readFully(data);
       final Memory memory = new DefaultMemory(data);
       final FormChunk formchunk = new DefaultFormChunk(memory);
-      return new BlorbResources(imageFactory, formchunk);
+      return new BlorbResources(imageFactory, soundEffectFactory, formchunk);
     } catch (IOException ex) {
       ex.printStackTrace();
     } finally {

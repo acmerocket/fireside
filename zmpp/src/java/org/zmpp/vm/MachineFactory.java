@@ -30,6 +30,7 @@ import org.zmpp.base.DefaultMemory;
 import org.zmpp.blorb.BlorbResources;
 import org.zmpp.blorb.BlorbFile;
 import org.zmpp.blorb.NativeImageFactory;
+import org.zmpp.blorb.SoundEffectFactory;
 import org.zmpp.iff.DefaultFormChunk;
 import org.zmpp.iff.FormChunk;
 import org.zmpp.io.FileInputStream;
@@ -52,7 +53,7 @@ import org.zmpp.vmutil.FileUtils;
 public class MachineFactory {
 
   public static class MachineInitStruct {
-    public File storyFile, blorbFile;
+    public java.io.InputStream storyFile, blorbFile;
     public URL storyURL, blorbURL;
     public InputStream keyboardInputStream;
     public StatusLine statusLine;
@@ -60,6 +61,7 @@ public class MachineFactory {
     public IOSystem ioSystem;
     public SaveGameDataStore saveGameDataStore;
     public NativeImageFactory nativeImageFactory;
+    public SoundEffectFactory soundEffectFactory;
   }
   
   private MachineInitStruct initStruct;
@@ -168,7 +170,8 @@ public class MachineFactory {
   private Resources readResourcesFromFile() throws IOException {
     FormChunk formchunk = readBlorbFromFile();
     return (formchunk != null) ?
-      new BlorbResources(initStruct.nativeImageFactory, formchunk) : null;
+      new BlorbResources(initStruct.nativeImageFactory,
+                         initStruct.soundEffectFactory, formchunk) : null;
   }
 
   private FormChunk readBlorb(java.io.InputStream blorbis) throws IOException {
@@ -184,7 +187,8 @@ public class MachineFactory {
   private Resources readResourcesFromUrl() throws IOException {
     FormChunk formchunk = readBlorb(initStruct.blorbURL.openStream());
     return (formchunk != null) ?
-      new BlorbResources(initStruct.nativeImageFactory, formchunk) : null;
+      new BlorbResources(initStruct.nativeImageFactory,
+                         initStruct.soundEffectFactory, formchunk) : null;
   }
 
   // ************************************************************************
