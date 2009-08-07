@@ -1,7 +1,6 @@
 /*
- * $Id$
  * Created on 2008/07/24
- * Copyright 2005-2008 by Wei-ju Wu
+ * Copyright 2005-2009 by Wei-ju Wu
  * This file is part of The Z-machine Preservation Project (ZMPP).
  *
  * ZMPP is free software: you can redistribute it and/or modify
@@ -21,7 +20,6 @@ package org.zmpp.instructions;
 
 import java.util.logging.Logger;
 import org.zmpp.media.SoundSystem;
-import static org.zmpp.vm.Instruction.*;
 import org.zmpp.vm.Machine;
 import org.zmpp.vm.MachineRunState;
 import org.zmpp.vm.Output;

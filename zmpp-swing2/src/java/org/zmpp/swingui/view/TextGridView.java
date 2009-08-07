@@ -1,8 +1,6 @@
 /*
- * $Id$
- * 
  * Created on 2008/05/10
- * Copyright 2005-2008 by Wei-ju Wu
+ * Copyright 2005-2009 by Wei-ju Wu
  * This file is part of The Z-machine Preservation Project (ZMPP).
  *
  * ZMPP is free software: you can redistribute it and/or modify
@@ -40,7 +38,7 @@ import org.zmpp.windowing.TextCursor;
  * @version 1.5
  */
 public class TextGridView extends JComponent {
-
+  private static final long serialVersionUID = -8608625305330738243L;
   private static final char REF_CHAR = '0';
   private static final AnnotatedCharacter EMPTY_CHAR = null;
   private AnnotatedCharacter[][] grid = new AnnotatedCharacter[0][0];

@@ -1,8 +1,6 @@
 /*
- * $Id$
- * 
  * Created on 2006/02/06
- * Copyright 2005-2008 by Wei-ju Wu
+ * Copyright 2005-2009 by Wei-ju Wu
  * This file is part of The Z-machine Preservation Project (ZMPP).
  *
  * ZMPP is free software: you can redistribute it and/or modify
@@ -19,7 +17,6 @@
  * along with ZMPP.  If not, see <http://www.gnu.org/licenses/>.
  */
 package org.zmpp.media;
-
 
 /**
  * This interface is used to determine when a sound has finished playing.

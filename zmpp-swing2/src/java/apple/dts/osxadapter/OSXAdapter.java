@@ -1,5 +1,4 @@
 /*
-
 File: OSXAdapter.java
 
 Abstract: Hooks existing preferences/about/quit functionality from an
@@ -51,17 +50,14 @@ AND WHETHER UNDER THEORY OF CONTRACT, TORT (INCLUDING NEGLIGENCE),
 STRICT LIABILITY OR OTHERWISE, EVEN IF APPLE HAS BEEN ADVISED OF THE
 POSSIBILITY OF SUCH DAMAGE.
 
-Copyright © 2003-2007 Apple, Inc., All Rights Reserved
-
+Copyright © 2003-2009 Apple, Inc., All Rights Reserved
 */
-
 package apple.dts.osxadapter;
 
 import java.lang.reflect.InvocationHandler;
 import java.lang.reflect.InvocationTargetException;
 import java.lang.reflect.Method;
 import java.lang.reflect.Proxy;
-
 
 public class OSXAdapter implements InvocationHandler {
 

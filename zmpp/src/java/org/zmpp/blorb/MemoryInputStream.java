@@ -1,8 +1,6 @@
 /*
- * $Id: MemoryAccessInputStream.java 520 2007-11-13 19:14:51Z weiju $
- * 
  * Created on 2006/02/06
- * Copyright 2005-2008 by Wei-ju Wu
+ * Copyright 2005-2009 by Wei-ju Wu
  * This file is part of The Z-machine Preservation Project (ZMPP).
  *
  * ZMPP is free software: you can redistribute it and/or modify

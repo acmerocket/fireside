@@ -1,10 +1,6 @@
-package org.zmpp.swingui.view;
-
 /*
- * $Id$
- * 
  * Created on 2008/07/28
- * Copyright 2005-2008 by Wei-ju Wu
+ * Copyright 2005-2009 by Wei-ju Wu
  * This file is part of The Z-machine Preservation Project (ZMPP).
  *
  * ZMPP is free software: you can redistribute it and/or modify
@@ -20,7 +16,7 @@ package org.zmpp.swingui.view;
  * You should have received a copy of the GNU General Public License
  * along with ZMPP.  If not, see <http://www.gnu.org/licenses/>.
  */
-
+package org.zmpp.swingui.view;
 
 import org.zmpp.swingui.view.ScreenModelSplitView;
 import org.zmpp.swingui.view.ColorTranslator;
@@ -41,7 +37,8 @@ import org.zmpp.windowing.TextAnnotation;
  * @version 1.5
  */
 public class TextWindowView extends JTextPane {
-  
+
+  private static final long serialVersionUID = 2122838990704285L;
   private ScreenModelSplitView parent;
   
   /**

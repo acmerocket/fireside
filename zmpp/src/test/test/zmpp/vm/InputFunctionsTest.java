@@ -1,7 +1,5 @@
 /*
- * $Id$
- *
- * Copyright 2005-2008 by Wei-ju Wu
+ * Copyright 2005-2009 by Wei-ju Wu
  * This file is part of The Z-machine Preservation Project (ZMPP).
  *
  * ZMPP is free software: you can redistribute it and/or modify
@@ -19,9 +17,6 @@
  */
 package test.zmpp.vm;
 
-import java.util.ArrayList;
-import java.util.List;
-
 import org.jmock.Expectations;
 import org.jmock.Mockery;
 import org.jmock.integration.junit4.JMock;
@@ -31,7 +26,6 @@ import org.junit.runner.RunWith;
 import org.junit.Test;
 import static org.junit.Assert.*;
 
-import org.zmpp.encoding.DefaultAccentTable;
 import org.zmpp.encoding.ZsciiEncoding;
 import org.zmpp.vm.InputFunctions;
 import org.zmpp.vm.Machine;
@@ -50,21 +44,15 @@ import org.zmpp.vm.Machine;
 public class InputFunctionsTest {
   Mockery context = new JUnit4Mockery();
   private Machine machine;
-  private ZsciiEncoding encoding;
   
   private InputFunctions inputFunctions;
   private int textbuffer;
-  private List<Character> inputbuffer;
 
   @Before
   public void setUp() throws Exception {
-    machine = context.mock(Machine.class);
-    
-    encoding = new ZsciiEncoding(new DefaultAccentTable());
-    
+    machine = context.mock(Machine.class);    
     inputFunctions = new InputFunctions(machine);
     textbuffer = 4711;
-    inputbuffer = new ArrayList<Character>();
   }
 
   /**

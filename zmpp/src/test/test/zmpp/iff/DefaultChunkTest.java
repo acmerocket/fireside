@@ -1,8 +1,6 @@
 /*
- * $Id$
- * 
  * Created on 2008/07/20
- * Copyright 2005-2008 by Wei-ju Wu
+ * Copyright 2005-2009 by Wei-ju Wu
  * This file is part of The Z-machine Preservation Project (ZMPP).
  *
  * ZMPP is free software: you can redistribute it and/or modify
@@ -67,19 +65,5 @@ public class DefaultChunkTest {
     assertEquals("FORM", chunk.getId());
     assertSame(mem, chunk.getMemory());
     assertEquals(3, chunk.getSize());
-  }
-
-  /**
-   * Compares two byte arrays by their elements.
-   * @param arr1 array 1
-   * @param arr2 array 2
-   * @return true if equal, false otherwise
-   */
-  private boolean equals(byte[] arr1, byte[] arr2) {
-    if (arr1.length != arr2.length) return false;
-    for (int i = 0; i < arr1.length; i++) {
-      if (arr1[i] != arr2[i]) return false;
-    }
-    return true;
   }
 }

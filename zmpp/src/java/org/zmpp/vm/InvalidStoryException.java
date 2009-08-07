@@ -1,8 +1,6 @@
 /*
- * $Id$
- * 
  * Created on 2008/04/25
- * Copyright 2005-2008 by Wei-ju Wu
+ * Copyright 2005-2009 by Wei-ju Wu
  * This file is part of The Z-machine Preservation Project (ZMPP).
  *
  * ZMPP is free software: you can redistribute it and/or modify
@@ -26,5 +24,5 @@ package org.zmpp.vm;
  * @version 1.5
  */
 public class InvalidStoryException extends Exception {
-
+  private static final long serialVersionUID = -1238988006329747571L;
 }

@@ -1,8 +1,6 @@
 /*
- * $Id$
- * 
  * Created on 2008/05/01
- * Copyright 2005-2008 by Wei-ju Wu
+ * Copyright 2005-2009 by Wei-ju Wu
  * This file is part of The Z-machine Preservation Project (ZMPP).
  *
  * ZMPP is free software: you can redistribute it and/or modify
@@ -60,7 +58,7 @@ import org.zmpp.windowing.BufferedScreenModel.StatusLineListener;
 public class ScreenModelView extends JComponent
 implements AdjustmentListener, MainViewListener, MouseWheelListener,
            StatusLineListener {
-
+  private static final long serialVersionUID = -58130210544101411L;
   private static final Logger LOG = Logger.getLogger("org.zmpp");
   private ScreenModelSplitView mainView;
   private BufferedScreenModel screenModel = new BufferedScreenModel();

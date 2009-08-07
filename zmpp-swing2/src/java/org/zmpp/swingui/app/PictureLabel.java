@@ -1,6 +1,4 @@
 /*
- * $Id: PictureLabel.java 535 2008-02-19 06:02:50Z weiju $
- * 
  * Created on 2006/03/10
  * Copyright 2005-2008 by Wei-ju Wu
  * This file is part of The Z-machine Preservation Project (ZMPP).

@@ -1,7 +1,5 @@
 /*
- * $Id$
- *
- * Copyright 2005-2008 by Wei-ju Wu
+ * Copyright 2005-2009 by Wei-ju Wu
  * This file is part of The Z-machine Preservation Project (ZMPP).
  *
  * ZMPP is free software: you can redistribute it and/or modify
@@ -46,14 +44,12 @@ public class CpuTest {
   Mockery context = new JUnit4Mockery();
   private Machine machine;
   private CpuImpl cpu;
-  private StoryFileHeader fileheader;
   
   private RoutineContext routineInfo;
   
   @Before
   public void setUp() throws Exception {
     machine = context.mock(Machine.class);
-    fileheader = context.mock(StoryFileHeader.class);
     routineInfo = new RoutineContext(3);
     context.checking(new Expectations() {{
       one (machine).getVersion(); will(returnValue(5));

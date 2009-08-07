@@ -1,8 +1,6 @@
 /*
- * $Id$
- * 
  * Created on 09/20/2005
- * Copyright 2005-2008 by Wei-ju Wu
+ * Copyright 2005-2009 by Wei-ju Wu
  * This file is part of The Z-machine Preservation Project (ZMPP).
  *
  * ZMPP is free software: you can redistribute it and/or modify
@@ -35,7 +33,6 @@ import org.zmpp.instructions.AbstractInstruction.BranchInfo;
 import org.zmpp.instructions.Operand;
 import org.zmpp.io.OutputStream;
 import org.zmpp.vm.Dictionary;
-import org.zmpp.vm.Instruction.OperandCount;
 import org.zmpp.vm.Machine;
 
 /**

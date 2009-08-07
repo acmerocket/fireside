@@ -1,8 +1,6 @@
 /*
- * $Id$
- * 
  * Created on 2008/07/14
- * Copyright 2005-2008 by Wei-ju Wu
+ * Copyright 2005-2009 by Wei-ju Wu
  * This file is part of The Z-machine Preservation Project (ZMPP).
  *
  * ZMPP is free software: you can redistribute it and/or modify
@@ -20,8 +18,6 @@
  */
 package org.zmpp.swingui.applet;
 
-import org.zmpp.swingui.view.DisplaySettings;
-import org.zmpp.swingui.view.ScreenModelView;
 import java.awt.BorderLayout;
 import java.awt.Font;
 import java.io.IOException;
@@ -31,15 +27,17 @@ import java.io.Writer;
 import java.net.URL;
 import java.util.HashMap;
 import java.util.Map;
-import java.util.logging.Level;
-import java.util.logging.Logger;
+
 import javax.swing.JApplet;
 import javax.swing.UIManager;
+
 import org.zmpp.blorb.NativeImage;
 import org.zmpp.blorb.NativeImageFactory;
 import org.zmpp.io.IOSystem;
+import org.zmpp.swingui.view.DisplaySettings;
 import org.zmpp.swingui.view.FileSaveGameDataStore;
 import org.zmpp.swingui.view.MemorySaveGameDataStore;
+import org.zmpp.swingui.view.ScreenModelView;
 import org.zmpp.vm.MachineFactory.MachineInitStruct;
 import org.zmpp.windowing.ScreenModel;
 
@@ -84,14 +82,6 @@ public class ZmppApplet extends JApplet implements IOSystem {
   private ScreenModelView screenModelView;
   private MachineInitStruct initStruct;
 
-  /** Setting the log levels directly */
-  private void setLogLevels() {    
-    Logger.getLogger("org.zmpp").setLevel(Level.SEVERE);
-    Logger.getLogger("org.zmpp.screen").setLevel(Level.SEVERE);
-    Logger.getLogger("org.zmpp.ui").setLevel(Level.SEVERE);
-    Logger.getLogger("org.zmpp.control").setLevel(Level.SEVERE);
-  }
-  
   private Font createStdFont(String name, int size) {
     String fontName = name == null ? DEFAULT_STD_FONT : name;
     return new Font(fontName, Font.PLAIN, size);

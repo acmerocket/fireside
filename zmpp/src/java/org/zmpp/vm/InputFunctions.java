@@ -1,8 +1,6 @@
 /*
- * $Id$
- * 
  * Created on 12/22/2005
- * Copyright 2005-2008 by Wei-ju Wu
+ * Copyright 2005-2009 by Wei-ju Wu
  * This file is part of The Z-machine Preservation Project (ZMPP).
  *
  * ZMPP is free software: you can redistribute it and/or modify
@@ -20,15 +18,15 @@
  */
 package org.zmpp.vm;
 
-import org.zmpp.base.StoryFileHeader;
+import static org.zmpp.base.MemoryUtil.toUnsigned16;
+
 import java.util.ArrayList;
 import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
-
 import java.util.StringTokenizer;
+
 import org.zmpp.encoding.ZsciiEncoding;
-import static org.zmpp.base.MemoryUtil.toUnsigned16;
 
 /**
  * This class contains functions that deal with user input.
@@ -101,7 +99,6 @@ public class InputFunctions {
   }
   
   private void processInput(final int textbuffer, String inputString) {
-    //final int bufferlen = machine.readUnsigned8(textbuffer);
     int storeOffset = machine.getVersion() <= 4 ? 1 : 2;
     for (int i = 0; i < inputString.length(); i++) {
       machine.writeUnsigned8(textbuffer + i + storeOffset,
@@ -111,8 +108,8 @@ public class InputFunctions {
     checkTermination(terminateChar, textbuffer, inputString.length() + 1);
   }
 
-  private boolean isTerminatingCharacter(final char zsciiChar) {
-    
+  /*
+  private boolean isTerminatingCharacter(final char zsciiChar) {    
     return isFileHeaderTerminator(zsciiChar) 
            || zsciiChar == ZsciiEncoding.NEWLINE
            || zsciiChar == ZsciiEncoding.NULL;
@@ -142,7 +139,7 @@ public class InputFunctions {
     }
     return false;
   }
-  
+  */
   /**
    * Depending on the terminating character, return the terminator to
    * the caller. We need this since aread stores the terminating character

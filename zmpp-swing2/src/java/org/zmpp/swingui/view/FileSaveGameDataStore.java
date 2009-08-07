@@ -1,8 +1,6 @@
 /*
- * $Id: FileSaveGameDataStore.java 548 2008-03-15 07:18:10Z weiju $
- * 
  * Created on 2006/03/22
- * Copyright 2005-2008 by Wei-ju Wu
+ * Copyright 2005-2009 by Wei-ju Wu
  * This file is part of The Z-machine Preservation Project (ZMPP).
  *
  * ZMPP is free software: you can redistribute it and/or modify

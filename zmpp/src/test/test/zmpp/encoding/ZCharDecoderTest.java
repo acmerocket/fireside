@@ -1,8 +1,6 @@
 /*
- * $Id$
- * 
  * Created on 2005/09/23
- * Copyright 2005-2008 by Wei-ju Wu
+ * Copyright 2005-2009 by Wei-ju Wu
  * This file is part of The Z-machine Preservation Project (ZMPP).
  *
  * ZMPP is free software: you can redistribute it and/or modify
@@ -45,7 +43,6 @@ import org.zmpp.encoding.ZCharTranslator;
 import org.zmpp.encoding.ZsciiEncoding;
 import org.zmpp.encoding.ZCharDecoder.AbbreviationsTable;
 import org.zmpp.vm.Abbreviations;
-import org.zmpp.base.DefaultStoryFileHeader;
 import org.zmpp.base.StoryFileHeader;
 import static test.zmpp.testutil.ZmppTestUtil.*;
 

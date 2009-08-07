@@ -1,8 +1,6 @@
 /*
- * $Id$
- * 
  * Created on 2008/07/14
- * Copyright 2005-2008 by Wei-ju Wu
+ * Copyright 2005-2009 by Wei-ju Wu
  * This file is part of The Z-machine Preservation Project (ZMPP).
  *
  * ZMPP is free software: you can redistribute it and/or modify
@@ -58,6 +56,7 @@ import org.zmpp.windowing.ScreenModel;
  */
 public class ZmppFrame extends JFrame
   implements GameLifeCycleListener, IOSystem {
+  private static final long serialVersionUID = -776528959779547763L;
   //private static final Font STD_FONT = new Font("Baskerville", Font.PLAIN, 16);
   //private static final String STD_FONT_NAME = "American Typewriter";
   //private static final String FIXED_FONT_NAME = "Monaco";

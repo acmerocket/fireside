@@ -1,8 +1,6 @@
 /*
- * $Id$
- * 
  * Created on 2008/05/10
- * Copyright 2005-2008 by Wei-ju Wu
+ * Copyright 2005-2009 by Wei-ju Wu
  * This file is part of The Z-machine Preservation Project (ZMPP).
  *
  * ZMPP is free software: you can redistribute it and/or modify
@@ -66,7 +64,7 @@ import org.zmpp.windowing.ScreenModelListener;
  */
 public class ScreenModelSplitView extends JLayeredPane
 implements ScreenModelListener {
-
+  private static final long serialVersionUID = -4845287980310690015L;
   private static final int MARGIN_HORIZONTAL = 5;
   private static final int MARGIN_VERTICAL   = 5;
   private static final Logger LOG = Logger.getLogger("org.zmpp.ui");
