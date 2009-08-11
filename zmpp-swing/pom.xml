@@ -1,0 +1,144 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<project xmlns="http://maven.apache.org/POM/4.0.0"
+  xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
+	xsi:schemaLocation="http://maven.apache.org/POM/4.0.0
+	                    http://maven.apache.org/xsd/maven-4.0.0.xsd">
+	<parent>
+	  <groupId>org.zmpp</groupId>
+		<artifactId>zmpp</artifactId>
+		<version>1.5-SNAPSHOT</version>
+	</parent>
+  <modelVersion>4.0.0</modelVersion>
+  <groupId>org.zmpp</groupId>
+  <version>1.5-SNAPSHOT</version>
+  <artifactId>zmpp-swing</artifactId>
+  <name>zmpp-swing</name>
+  <description>ZMPP Swing frontend</description>
+  <inceptionYear>2005</inceptionYear>
+  <organization>
+    <name>Box of Rats LLC</name>
+    <url>http://www.boxofrats.com/</url>
+  </organization>
+  
+	<packaging>jar</packaging>
+	
+  <developers>
+    <developer>
+      <id>weiju</id>
+      <name>Wei-ju Wu</name>
+      <email>Weiju.Wu@gmail.com</email>
+      <url>http://codingnaked.wordpress.com</url>
+      <organization>Box of Rats LLC</organization>
+      <roles>
+        <role>Software Developer</role>
+      </roles>
+      <timezone>-8</timezone>
+      <properties>
+      </properties>
+    </developer>
+  </developers>
+  
+  <!-- Plugin Repository -->
+  <pluginRepositories>
+    <pluginRepository>
+      <id>codehaus-plugins</id>
+      <url>http://dist.codehaus.org/</url>
+      <snapshots>
+        <enabled>true</enabled>
+      </snapshots>
+      <releases>
+        <enabled>true</enabled>
+      </releases>
+    </pluginRepository>
+    <pluginRepository>
+      <id>codehaus-plugins-legacy</id>
+      <url>http://dist.codehaus.org/</url>
+      <layout>legacy</layout>
+      <snapshots>
+        <enabled>true</enabled>
+      </snapshots>
+      <releases>
+        <enabled>true</enabled>
+      </releases>
+    </pluginRepository>
+  </pluginRepositories>
+  <build>
+    <pluginManagement>
+      <plugins>
+        <plugin>
+          <artifactId>maven-compiler-plugin</artifactId>
+          <configuration>
+            <showDeprecation>false</showDeprecation>
+            <source>1.5</source>
+            <target>1.5</target>
+          </configuration>
+        </plugin>
+      	<plugin>
+			    <artifactId>maven-assembly-plugin</artifactId>
+				  <configuration>
+				    <descriptors>
+						  <descriptor>assembly.xml</descriptor>
+					  </descriptors>
+				  </configuration>
+			  </plugin>
+      </plugins>
+    </pluginManagement>
+  </build>
+  <dependencies>
+    <!--  Apache Commons -->
+    <dependency>
+      <groupId>org.zmpp</groupId>
+      <artifactId>zmpp-core</artifactId>
+      <version>1.5-SNAPSHOT</version>
+    </dependency>
+  </dependencies>
+	<reporting>
+	  <plugins>
+      <plugin>
+        <groupId>org.codehaus.mojo</groupId>
+        <artifactId>findbugs-maven-plugin</artifactId>
+        <version>2.0.1</version>
+        <configuration>
+          <xmlOutput>true</xmlOutput>
+          <findbugsXmlOutput>true</findbugsXmlOutput>
+          <excludeFilterFile>findbugs-exclude.xml</excludeFilterFile>
+        </configuration>
+      </plugin>
+      <plugin>
+        <groupId>org.codehaus.mojo</groupId>
+        <artifactId>javancss-maven-plugin</artifactId>
+      </plugin>
+      <plugin>
+        <groupId>org.codehaus.mojo</groupId>
+        <artifactId>jdepend-maven-plugin</artifactId>
+      </plugin>
+      <plugin>
+        <artifactId>maven-javadoc-plugin</artifactId>
+      </plugin>
+			<plugin>
+        <groupId>org.apache.maven.plugins</groupId>
+        <artifactId>maven-checkstyle-plugin</artifactId>
+        <version>2.3</version>
+        <configuration>
+          <configLocation>${basedir}/zmpp_checkstyle.xml</configLocation>
+        </configuration>
+      </plugin>
+			<plugin>
+			  <groupId>org.apache.maven.plugins</groupId>
+				<artifactId>maven-pmd-plugin</artifactId>
+				<version>2.4</version>
+				<configuration>
+				  <linkXref>true</linkXref>
+				  <sourceEncoding>utf-8</sourceEncoding>
+					<minimumTokens>100</minimumTokens>
+					<targetJdk>1.5</targetJdk>
+			  </configuration>
+		  </plugin>
+		</plugins>
+	</reporting>
+  <properties>
+    <project.build.sourceEncoding>UTF-8</project.build.sourceEncoding>
+    <project.report.sourceEncoding>UTF-8</project.report.sourceEncoding>
+  </properties>
+</project>
+

@@ -19,6 +19,7 @@
 	
 	<modules>
 		<module>zmpp-core</module>
+		<module>zmpp-swing</module>
 	</modules>
 
   <ciManagement>
