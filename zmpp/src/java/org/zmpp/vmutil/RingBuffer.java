@@ -49,13 +49,13 @@ public class RingBuffer<T> {
    * @param elem the element
    */
   public void add(final T elem) {
-    bufferend = bufferend % elements.length;
     if (size == elements.length) {
       bufferstart = (bufferstart + 1) % elements.length;
     } else {
       size++;
     }
     elements[bufferend++] = elem;
+    bufferend = bufferend % elements.length;
   }
   
   /**
@@ -86,18 +86,22 @@ public class RingBuffer<T> {
    * @return the removed object
    */
   public T remove(final int index) {
-    // remember the removed element
-    final T elem = get(index);
+  	if (size > 0) {
+  		// remember the removed element
+  		final T elem = get(index);
     
-    // move the following element by one to the front
-    for (int i = index; i < (size - 1); i++) {
-      final int idx1 = mapIndex(i);
-      final int idx2 = mapIndex(i + 1);
-      elements[idx1] = elements[idx2];
-    }
-    size--;
-    bufferend = (bufferend - 1) % elements.length;
-    return elem;
+  		// move the following element by one to the front
+  		for (int i = index; i < (size - 1); i++) {
+  			final int idx1 = mapIndex(i);
+  			final int idx2 = mapIndex(i + 1);
+  			elements[idx1] = elements[idx2];
+  		}
+  		size--;
+  		bufferend = (bufferend - 1) % elements.length;
+  		if (bufferend < 0) bufferend = elements.length + bufferend;
+  		return elem;
+  	}
+  	return null;
   }
   
   /**

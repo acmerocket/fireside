@@ -18,11 +18,32 @@
  */
 package test.zmpp.instructions;
 
+import static org.junit.Assert.assertFalse;
+import static org.junit.Assert.assertTrue;
+import static org.zmpp.base.MemoryUtil.signedToUnsigned16;
+import static org.zmpp.vm.Instruction.EXT_ART_SHIFT;
+import static org.zmpp.vm.Instruction.EXT_DRAW_PICTURE;
+import static org.zmpp.vm.Instruction.EXT_ERASE_PICTURE;
+import static org.zmpp.vm.Instruction.EXT_LOG_SHIFT;
+import static org.zmpp.vm.Instruction.EXT_MOUSE_WINDOW;
+import static org.zmpp.vm.Instruction.EXT_MOVE_WINDOW;
+import static org.zmpp.vm.Instruction.EXT_PICTURE_DATA;
+import static org.zmpp.vm.Instruction.EXT_PICTURE_TABLE;
+import static org.zmpp.vm.Instruction.EXT_POP_STACK;
+import static org.zmpp.vm.Instruction.EXT_PUSH_STACK;
+import static org.zmpp.vm.Instruction.EXT_RESTORE_UNDO;
+import static org.zmpp.vm.Instruction.EXT_SAVE_UNDO;
+import static org.zmpp.vm.Instruction.EXT_SCROLL_WINDOW;
+import static org.zmpp.vm.Instruction.EXT_SET_FONT;
+import static org.zmpp.vm.Instruction.EXT_SET_MARGINS;
+import static org.zmpp.vm.Instruction.EXT_WINDOW_SIZE;
+import static org.zmpp.vm.Instruction.EXT_WINDOW_STYLE;
+import static org.zmpp.vm.Instruction.OperandCount.EXT;
+
 import org.jmock.Expectations;
 import org.jmock.integration.junit4.JMock;
 import org.junit.Before;
 import org.junit.Test;
-import static org.junit.Assert.*;
 import org.junit.runner.RunWith;
 import org.zmpp.blorb.BlorbImage;
 import org.zmpp.blorb.NativeImage;
@@ -32,11 +53,9 @@ import org.zmpp.instructions.Operand;
 import org.zmpp.media.PictureManager;
 import org.zmpp.media.Resolution;
 import org.zmpp.vm.Machine;
+import org.zmpp.vm.PortableGameState;
 import org.zmpp.windowing.ScreenModel6;
 import org.zmpp.windowing.Window6;
-import static org.zmpp.base.MemoryUtil.*;
-import static org.zmpp.vm.Instruction.*;
-import static org.zmpp.vm.Instruction.OperandCount.*;
 
 /**
  * This class tests the dynamic and static aspects of the extended
@@ -91,6 +110,28 @@ public class ExtTest extends InstructionTestBase {
     ExtMock save_undo = createExtMock(EXT_SAVE_UNDO, new Operand[0]);
     save_undo.execute();
     assertTrue(save_undo.nextInstructionCalled);
+  }
+  @Test
+  public void testRestoreUndoSuccess() {
+    context.checking(new Expectations() {{
+    	PortableGameState state = new PortableGameState();
+      one (machine).readUnsigned8(0); will(returnValue((char) 0));
+      one (machine).restore_undo(); will(returnValue(state));
+      one (machine).setVariable((char) 0, (char) ExtInstruction.RESTORE_TRUE);
+    }});
+    ExtMock restore_undo = createExtMock(EXT_RESTORE_UNDO, new Operand[0]);
+    restore_undo.execute();
+    assertFalse(restore_undo.nextInstructionCalled);
+  }
+  @Test
+  public void testRestoreUndoFail() {
+    context.checking(new Expectations() {{
+      one (machine).restore_undo(); will(returnValue(null));
+      one (machine).setVariable((char) 0, (char) ExtInstruction.FALSE);
+    }});
+    ExtMock restore_undo = createExtMock(EXT_RESTORE_UNDO, new Operand[0]);
+    restore_undo.execute();
+    assertTrue(restore_undo.nextInstructionCalled);
   }
   
   // **************************************************************************

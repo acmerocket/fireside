@@ -133,8 +133,9 @@ public class ExtInstruction extends AbstractInstruction {
     final PortableGameState gamestate = getMachine().restore_undo();
     if (gamestate == null) {
       storeUnsignedResult(FALSE);
+      nextInstruction();
     } else {
-      final char storevar = gamestate.getStoreVariable(getMachine());      
+      final char storevar = gamestate.getStoreVariable(getMachine());
       getMachine().setVariable(storevar, RESTORE_TRUE);      
     }
   }
