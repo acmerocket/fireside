@@ -147,10 +147,6 @@
       </plugin>
       <plugin>
         <artifactId>maven-javadoc-plugin</artifactId>
-        <configuration>
-          <links>http://java.sun.com/j2se/1.5/docs/api, http://jakarta.apache.org/log4j/docs/api, http://www.junit.org/junit/javadoc/4.5</links>
-          <use>true</use>
-        </configuration>
       </plugin>
 			<plugin>
         <groupId>org.apache.maven.plugins</groupId>
