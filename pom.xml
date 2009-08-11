@@ -1,0 +1,53 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<project xmlns="http://maven.apache.org/POM/4.0.0"
+  xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
+	xsi:schemaLocation="http://maven.apache.org/POM/4.0.0
+	                    http://maven.apache.org/xsd/maven-4.0.0.xsd">
+  <modelVersion>4.0.0</modelVersion>
+  <groupId>org.zmpp</groupId>
+  <version>1.5-SNAPSHOT</version>
+  <artifactId>zmpp</artifactId>
+  <name>Z-Machine Preservation Project</name>
+  <description>The Z-Machine Preservation Project</description>
+  <inceptionYear>2005</inceptionYear>
+  <organization>
+    <name>Box of Rats LLC</name>
+    <url>http://www.boxofrats.com/</url>
+  </organization>
+  
+	<packaging>pom</packaging>
+	
+	<modules>
+		<module>zmpp-core</module>
+	</modules>
+
+  <ciManagement>
+  	<system>Hudson</system>
+  	<url>http://localhost:8080/hudson</url>
+  </ciManagement>
+  <developers>
+    <developer>
+      <id>weiju</id>
+      <name>Wei-ju Wu</name>
+      <email>weiju.wu@gmail.com</email>
+      <url>http://codingnaked.wordpress.com</url>
+      <organization>Box of Rats LLC</organization>
+      <roles>
+        <role>Software Developer</role>
+      </roles>
+      <timezone>-8</timezone>
+    </developer>
+  </developers>
+  
+  <distributionManagement>
+  	<snapshotRepository>
+  		<id>boxofrats-snapshots</id>
+  		<name>Box of Rats Maven Snapshot Repostory</name>
+  		<url>file:///Users/weiju/tmp/maven-snapshots</url>
+  	</snapshotRepository>
+  </distributionManagement>
+  <properties>
+    <project.build.sourceEncoding>UTF-8</project.build.sourceEncoding>
+    <project.report.sourceEncoding>UTF-8</project.report.sourceEncoding>
+  </properties>
+</project>
