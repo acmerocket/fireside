@@ -66,56 +66,11 @@
     <pluginManagement>
       <plugins>
         <plugin>
-          <groupId>org.codehaus.mojo</groupId>
-          <artifactId>cobertura-maven-plugin</artifactId>
-          <version>2.2</version>
-          <configuration>
-            <formats>
-              <format>xml</format>
-            </formats>
-          </configuration>
-          <executions>
-            <execution>
-              <phase>package</phase>
-              <goals>
-                <goal>cobertura</goal>
-              </goals>
-            </execution>
-          </executions>
-        </plugin>
-        <plugin>
-          <groupId>org.codehaus.mojo</groupId>
-          <artifactId>findbugs-maven-plugin</artifactId>
-          <version>2.0.1</version>
-          <configuration>
-            <xmlOutput>true</xmlOutput>
-            <findbugsXmlOutput>true</findbugsXmlOutput>
-          </configuration>
-        </plugin>
-        <plugin>
-          <groupId>org.codehaus.mojo</groupId>
-          <artifactId>javancss-maven-plugin</artifactId>
-          <version>2.0-beta-2</version>
-        </plugin>
-        <plugin>
           <artifactId>maven-compiler-plugin</artifactId>
           <configuration>
             <showDeprecation>false</showDeprecation>
             <source>1.5</source>
             <target>1.5</target>
-          </configuration>
-        </plugin>
-        <plugin>
-          <artifactId>maven-javadoc-plugin</artifactId>
-          <configuration>
-            <links>http://java.sun.com/j2se/1.5/docs/api, http://jakarta.apache.org/log4j/docs/api, http://www.junit.org/junit/javadoc/4.5</links>
-            <use>true</use>
-          </configuration>
-        </plugin>
-        <plugin>
-          <artifactId>maven-surefire-plugin</artifactId>
-          <configuration>
-            <testFailureIgnore>true</testFailureIgnore>
           </configuration>
         </plugin>
       	<plugin>
@@ -192,6 +147,10 @@
       </plugin>
       <plugin>
         <artifactId>maven-javadoc-plugin</artifactId>
+        <configuration>
+          <links>http://java.sun.com/j2se/1.5/docs/api, http://jakarta.apache.org/log4j/docs/api, http://www.junit.org/junit/javadoc/4.5</links>
+          <use>true</use>
+        </configuration>
       </plugin>
 			<plugin>
         <groupId>org.apache.maven.plugins</groupId>
@@ -207,7 +166,6 @@
 				<configuration>
 				  <formats>
 				    <format>xml</format>
-				    <format>html</format>
 					</formats>
 				</configuration>
 		  </plugin>
