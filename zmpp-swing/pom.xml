@@ -74,13 +74,13 @@
           </configuration>
         </plugin>
       	<plugin>
-			    <artifactId>maven-assembly-plugin</artifactId>
-				  <configuration>
-				    <descriptors>
-						  <descriptor>assembly.xml</descriptor>
-					  </descriptors>
-				  </configuration>
-			  </plugin>
+	  <artifactId>maven-assembly-plugin</artifactId>
+	  <configuration>
+	    <descriptors>
+	      <descriptor>assembly.xml</descriptor>
+	    </descriptors>
+	  </configuration>
+	</plugin>
       </plugins>
     </pluginManagement>
   </build>
@@ -92,50 +92,6 @@
       <version>1.5-SNAPSHOT</version>
     </dependency>
   </dependencies>
-	<reporting>
-	  <plugins>
-      <plugin>
-        <groupId>org.codehaus.mojo</groupId>
-        <artifactId>findbugs-maven-plugin</artifactId>
-        <version>2.0.1</version>
-        <configuration>
-          <xmlOutput>true</xmlOutput>
-          <findbugsXmlOutput>true</findbugsXmlOutput>
-          <excludeFilterFile>findbugs-exclude.xml</excludeFilterFile>
-        </configuration>
-      </plugin>
-      <plugin>
-        <groupId>org.codehaus.mojo</groupId>
-        <artifactId>javancss-maven-plugin</artifactId>
-      </plugin>
-      <plugin>
-        <groupId>org.codehaus.mojo</groupId>
-        <artifactId>jdepend-maven-plugin</artifactId>
-      </plugin>
-      <plugin>
-        <artifactId>maven-javadoc-plugin</artifactId>
-      </plugin>
-			<plugin>
-        <groupId>org.apache.maven.plugins</groupId>
-        <artifactId>maven-checkstyle-plugin</artifactId>
-        <version>2.3</version>
-        <configuration>
-          <configLocation>${basedir}/zmpp_checkstyle.xml</configLocation>
-        </configuration>
-      </plugin>
-			<plugin>
-			  <groupId>org.apache.maven.plugins</groupId>
-				<artifactId>maven-pmd-plugin</artifactId>
-				<version>2.4</version>
-				<configuration>
-				  <linkXref>true</linkXref>
-				  <sourceEncoding>utf-8</sourceEncoding>
-					<minimumTokens>100</minimumTokens>
-					<targetJdk>1.5</targetJdk>
-			  </configuration>
-		  </plugin>
-		</plugins>
-	</reporting>
   <properties>
     <project.build.sourceEncoding>UTF-8</project.build.sourceEncoding>
     <project.report.sourceEncoding>UTF-8</project.report.sourceEncoding>
