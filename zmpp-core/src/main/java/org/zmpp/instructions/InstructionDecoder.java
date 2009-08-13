@@ -19,15 +19,8 @@
 package org.zmpp.instructions;
 
 import org.zmpp.vm.*;
-import org.zmpp.instructions.C0OpInstruction;
-import org.zmpp.instructions.C1OpInstruction;
-import org.zmpp.instructions.C2OpInstruction;
-import org.zmpp.instructions.ExtInstruction;
-import org.zmpp.instructions.InstructionInfoDb;
 import org.zmpp.instructions.InstructionInfoDb.InstructionInfo;
 import org.zmpp.instructions.AbstractInstruction.BranchInfo;
-import org.zmpp.instructions.Operand;
-import org.zmpp.instructions.VarInstruction;
 import org.zmpp.vm.Instruction.InstructionForm;
 import static org.zmpp.vm.Instruction.*;
 import static org.zmpp.vm.Instruction.InstructionForm.*;
@@ -42,7 +35,6 @@ import static org.zmpp.vm.Instruction.OperandCount.*;
  * @version 1.5
  */
 public class InstructionDecoder {
-
   private static final char EXTENDED_MASK     = 0xbe;
   private static final char VAR_MASK          = 0xc0; // 2#11000000
   private static final char SHORT_MASK        = 0x80; // 2#10000000

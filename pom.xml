@@ -10,21 +10,26 @@
   <name>Z-Machine Preservation Project</name>
   <description>The Z-Machine Preservation Project</description>
   <inceptionYear>2005</inceptionYear>
+  <licenses>
+    <license>
+      <name>GPL V3</name>
+      <url>http://www.gnu.org/licenses/gpl-3.0.txt</url>
+      <distribution>repo</distribution>
+      <comments>Free as in Freedom</comments>
+    </license>
+  </licenses>
   <organization>
     <name>Box of Rats LLC</name>
     <url>http://www.boxofrats.com/</url>
   </organization>
-  
-	<packaging>pom</packaging>
-	
-	<modules>
-		<module>zmpp-core</module>
-		<module>zmpp-swing</module>
-	</modules>
-
+  <packaging>pom</packaging>
+  <modules>
+    <module>zmpp-core</module>
+    <module>zmpp-swing</module>
+  </modules>
   <ciManagement>
-  	<system>Hudson</system>
-  	<url>http://localhost:8080/hudson</url>
+    <system>Hudson</system>
+    <url>http://localhost:8080/hudson</url>
   </ciManagement>
   <developers>
     <developer>
@@ -41,11 +46,11 @@
   </developers>
   
   <distributionManagement>
-  	<snapshotRepository>
-  		<id>boxofrats-snapshots</id>
-  		<name>Box of Rats Maven Snapshot Repostory</name>
-  		<url>file:///Users/weiju/tmp/maven-snapshots</url>
-  	</snapshotRepository>
+    <snapshotRepository>
+      <id>boxofrats-snapshots</id>
+      <name>Box of Rats Maven Snapshot Repostory</name>
+      <url>file:///Users/weiju/tmp/maven-snapshots</url>
+    </snapshotRepository>
   </distributionManagement>
   <properties>
     <project.build.sourceEncoding>UTF-8</project.build.sourceEncoding>

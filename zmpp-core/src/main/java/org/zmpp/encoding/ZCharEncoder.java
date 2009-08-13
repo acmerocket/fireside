@@ -64,18 +64,27 @@ public class ZCharEncoder {
     public int currentWord;
     public int wordPosition;
   }
-  
+
+  /**
+   * Constructor.
+   * @param translator ZCharTranslator object
+   */
   public ZCharEncoder(final ZCharTranslator translator) {
- 
     super();
     this.translator = translator;
   }
-  
+
+  /**
+   * Encodes the string at the specified address and writes it to the target
+   * address.
+   * @param memory the memory object
+   * @param sourceAddress the source address
+   * @param length the length of the string
+   * @param targetAddress the target address
+   */
   public void encode(final Memory memory,
       final int sourceAddress, final int length, final int targetAddress) {
-
     final int maxlen = Math.min(length, MAX_ENTRY_LENGTH);
-  
     final EncodingState state = new EncodingState();
     state.source = sourceAddress;
     state.target = targetAddress;
@@ -83,17 +92,14 @@ public class ZCharEncoder {
     state.memory = memory;
     
     while (state.source < (sourceAddress + maxlen)) {
-    
       processChar(state);     
     }
     
     // Padding
     // This pads the incomplete last encoded word
     if (state.wordPosition <= 2 && state.target <= (state.targetStart + 4)) {
-      
       int resultword = state.currentWord;
       for (int i = state.wordPosition; i < 3; i++) {
-    
         resultword = writeByteToWord(resultword, (short) 5, i);
       }
       state.memory.writeUnsigned16(state.target, toUnsigned16(resultword));
@@ -115,69 +121,51 @@ public class ZCharEncoder {
   }
   
   private void processChar(final EncodingState state) {
-    
     final char zsciiChar = (char) state.memory.readUnsigned8(state.source++);
     final AlphabetElement element = translator.getAlphabetElementFor(zsciiChar);
     if (element.getAlphabet() == null) {
-     
       final short zcharCode = element.getZCharCode();
-      
       // This is a ZMPP speciality, we do not want to end the string
       // in the middle of encoding, so we only encode if there is
       // enough space
       // how many slots left ?
       final int slotsleft = getSlotsLeft(state);
       if (slotsleft >= 4) {
-      
         // Escape A2
         processWord(state, (short) 5);
         processWord(state, (short) 6);
         processWord(state, getUpper5Bit(zcharCode));
         processWord(state, getLower5Bit(zcharCode));
-      
       } else {
-              
         for (int i = 0; i < slotsleft; i++) {
-          
           processWord(state, (short) 5);
         }
       }
-      
     } else {
-        
       final Alphabet alphabet = element.getAlphabet();
       final short zcharCode = element.getZCharCode();
-      
       if (alphabet == Alphabet.A1) {
-        
         processWord(state, (short) 4);
-        
       } else if (alphabet == Alphabet.A2) {
-
         processWord(state, (short) 5);
       }
-      
       processWord(state, zcharCode);      
     }    
   }
   
   private int getSlotsLeft(final EncodingState state) {
-    
     final int currentWord = (state.target - state.targetStart) / 2;
     return ((2 - currentWord) * 3) + (3 - state.wordPosition);
   }
   
   private void processWord(final EncodingState state, final short value) {
-    
     state.currentWord = writeByteToWord(state.currentWord, value,
                                         state.wordPosition++);
     writeWordIfNeeded(state);
   }
   
   private void writeWordIfNeeded(final EncodingState state) {
-    
     if (state.wordPosition > 2 && state.target <= (state.targetStart + 4)) {
-      
       // Write the result and increment the target position
       state.memory.writeUnsigned16(state.target,
                                    toUnsigned16(state.currentWord));
@@ -188,12 +176,10 @@ public class ZCharEncoder {
   }
   
   private short getUpper5Bit(final short zsciiChar) {
-    
     return (short) ((zsciiChar >>> 5) & 0x1f);
   }
   
   private short getLower5Bit(final short zsciiChar) {
-   
     return (short) (zsciiChar & 0x1f);
   }
   
@@ -209,7 +195,6 @@ public class ZCharEncoder {
    */
   private static short writeByteToWord(final int dataword,
       final short databyte, final int pos) {
-    
     final int shiftwidth = (2 - pos) * 5;
     return (short) (dataword | ((databyte & 0x1f) << shiftwidth));
   }

@@ -170,7 +170,9 @@ public class ZmppApplet extends JApplet implements IOSystem {
     if (str != null) {
       try {
         result = Integer.parseInt(str);
-      } catch (NumberFormatException ignore) { }
+      } catch (NumberFormatException ignore) {
+      	ignore.printStackTrace();
+      }
     }
     return result;
   }

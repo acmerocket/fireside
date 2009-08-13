@@ -443,6 +443,7 @@ implements ScreenModelListener {
       lower.requestFocusInWindow();
     } else {
       // might set caret to invisible
+    	System.out.println("hide cursor in bottom window");
     }
   }
   

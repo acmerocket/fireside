@@ -357,7 +357,9 @@ public class ZmppFrame extends JFrame
       ex.printStackTrace();
     } finally {
       if (storyFileStream != null) {
-        try { storyFileStream.close(); } catch (Exception ioex) {}
+        try { storyFileStream.close(); } catch (Exception ioex) {
+        	ioex.printStackTrace();
+        }
       }
     }
   }

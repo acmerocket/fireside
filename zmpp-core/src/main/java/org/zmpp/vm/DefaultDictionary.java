@@ -57,6 +57,8 @@ public class DefaultDictionary extends AbstractDictionary {
    */
   public int lookup(final String token) {
     final String lookupToken = truncateToken(token);
+  	System.out.printf("UserDictionary.lookup('%s'), truncated: '%s'\n",
+  			token, lookupToken);
     if (lookupMap.containsKey(lookupToken)) {
       return lookupMap.get(lookupToken);
     }

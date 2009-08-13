@@ -60,10 +60,7 @@ public class SoundSystemImpl implements SoundSystem {
    * @param sounds the sound resources
    */
   public SoundSystemImpl(final MediaCollection<SoundEffect> sounds) {
-    
-    super();
     this.sounds = sounds;
-
     // That's pretty cool:
     // We can control the number of concurrent sounds to be played
     // simultaneously by the size of the thread pool.
@@ -75,7 +72,6 @@ public class SoundSystemImpl implements SoundSystem {
    * be played and a previous one is not finished.
    */
   protected void handlePreviousNotFinished() {
-
     // The default behaviour is to stop the previous sound
     currentTask.stop();
   }
@@ -84,7 +80,6 @@ public class SoundSystemImpl implements SoundSystem {
    * {@inheritDoc}
    */
   public void reset() {
-  
     // no resetting supported
   }
   
@@ -93,42 +88,29 @@ public class SoundSystemImpl implements SoundSystem {
    */
   public void play(final int number, final int effect, final int volume,
       final int repeats, final int routine) {
-
     SoundEffect sound = null;
-    
     // @sound_effect 0 3 followed by @sound_effect 0 4 is called
     // by "The Lurking Horror" and hints that all sound effects should
     // be stopped and unloaded. ZMPP's sound system implementation does
     // nothing at the moment (hey, we have plenty of memory and are
     // in a Java environment)
-    if (number == 0) {
-      return;
-    }
+    if (number == 0) return;
     
     if (sounds != null) {
       sound = sounds.getResource(number);
     }
     if (sound == null) {
-
       // TODO: Beep ?
       //Toolkit.getDefaultToolkit().beep();
-      
+    	System.out.println("*BEEP*");
     } else {
-      
       if (effect == SoundSystem.EFFECT_START) {
-        
         startSound(number, sound, volume, repeats, routine);
-        
       } else if (effect == SoundSystem.EFFECT_STOP) {
-        
         stopSound(number);
-        
       } else if (effect == SoundSystem.EFFECT_PREPARE) {
-        
         sounds.loadResource(number);
-        
       } else if (effect == SoundSystem.EFFECT_FINISH) {
-        
         stopSound(number);
         sounds.unloadResource(number);
       }
@@ -137,7 +119,6 @@ public class SoundSystemImpl implements SoundSystem {
   
   /**
    * Starts the specified sound.
-   * 
    * @param number the sound number
    * @param sound the sound object
    * @param volume the volume
@@ -146,12 +127,9 @@ public class SoundSystemImpl implements SoundSystem {
    */
   private void startSound(final int number, final SoundEffect sound,
       final int volume, final int repeats, final int routine) {
-    
     if (currentTask != null && !currentTask.wasPlayed()) {
-      
       handlePreviousNotFinished();
     }
-    
     currentTask = (routine <= 0) ?
       new PlaySoundTask(number, sound, volume, repeats) :
       new PlaySoundTask(number, sound, volume, repeats, interruptable, routine);  
@@ -164,10 +142,8 @@ public class SoundSystemImpl implements SoundSystem {
    * @param number the number
    */
   private void stopSound(final int number) {
-    
     // only stop the sound if the numbers match
     if (currentTask != null && currentTask.getResourceNumber() == number) {
-      
       currentTask.stop();
     }
   }  

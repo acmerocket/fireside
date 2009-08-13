@@ -67,7 +67,9 @@ public class FileSaveGameDataStore implements SaveGameDataStore {
       } catch (IOException ex) {
         ex.printStackTrace();
       } finally {
-        if (raf != null) try { raf.close(); } catch (Exception ex) { }
+        if (raf != null) try { raf.close(); } catch (Exception ex) {
+        	ex.printStackTrace();
+        }
       }
     }
     return false;
@@ -86,11 +88,12 @@ public class FileSaveGameDataStore implements SaveGameDataStore {
         byte[] data = new byte[(int) raf.length()];
         raf.readFully(data);
         return new DefaultFormChunk(new DefaultMemory(data));
-        
       } catch (IOException ex) {
         ex.printStackTrace();
       } finally {
-        if (raf != null) try { raf.close(); } catch (Exception ex) { }
+        if (raf != null) try { raf.close(); } catch (Exception ex) {
+        	ex.printStackTrace();
+        }
       }
     }
     return null;

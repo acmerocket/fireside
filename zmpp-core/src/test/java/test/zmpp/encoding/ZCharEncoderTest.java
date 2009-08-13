@@ -31,9 +31,9 @@ import org.zmpp.encoding.ZCharEncoder;
 import org.zmpp.encoding.ZCharTranslator;
 
 /**
- * This is the test for the encoder class. In general it is not so good to
- * rely on exising classes for tests, but mocks are not so practical
- * either in this case. We will use a decoder and a DefaultMemoryAccess
+ * This is the test for the encoder class. In general it is not recommended to
+ * rely on existing classes for tests, but mocks are not so practical
+ * in this case either. We will use a decoder and a DefaultMemoryAccess
  * object to test our implementation instead of mocking these classes.
  * By this means we can instantly verify our result in an easy way.
  * 
