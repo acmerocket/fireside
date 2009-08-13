@@ -50,8 +50,8 @@ public class CustomAlphabetTable implements AlphabetTable {
     if (zchar == 0) {
       return ' ';
     }
-    return (char) memory.readUnsigned8(tableAddress
-                                      + (zchar - ALPHABET_START));
+    return (char) memory.readUnsigned8(tableAddress +
+                                       (zchar - ALPHABET_START));
   }
 
   /**
@@ -61,9 +61,9 @@ public class CustomAlphabetTable implements AlphabetTable {
     if (zchar == 0) {
       return ' ';
     }
-    return (char) memory.readUnsigned8(tableAddress
-                                      + ALPHABET_SIZE
-                                      + (zchar - ALPHABET_START));
+    return (char) memory.readUnsigned8(tableAddress +
+                                       ALPHABET_SIZE +
+                                       (zchar - ALPHABET_START));
   }
 
   /**
@@ -77,8 +77,8 @@ public class CustomAlphabetTable implements AlphabetTable {
     if (zchar == 7) {
       return (short) '\n';
     }
-    return (char) memory.readUnsigned8(tableAddress + 2 * ALPHABET_SIZE
-                                      + (zchar - ALPHABET_START));
+    return (char) memory.readUnsigned8(tableAddress + 2 * ALPHABET_SIZE +
+                                       (zchar - ALPHABET_START));
   }
 
   /**
@@ -86,7 +86,6 @@ public class CustomAlphabetTable implements AlphabetTable {
    */
   public final byte getA0CharCode(final char zsciiChar) {
     for (int i = ALPHABET_START; i < ALPHABET_START + ALPHABET_SIZE; i++) {
-
       if (getA0Char((byte) i) == zsciiChar) {
         return (byte) i;
       }

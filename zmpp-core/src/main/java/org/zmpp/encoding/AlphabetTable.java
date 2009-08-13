@@ -34,19 +34,19 @@ public interface AlphabetTable {
    */
   enum Alphabet {  A0, A1, A2 }
 
-  static final int ALPHABET_START  = 6;
-  static final int ALPHABET_END    = 31;
+  int ALPHABET_START  = 6;
+  int ALPHABET_END    = 31;
 
-  static final byte SHIFT_2 = 0x02; // Shift 1
-  static final byte SHIFT_3 = 0x03; // Shift 2
-  static final byte SHIFT_4 = 0x04; // Shift lock 1
-  static final byte SHIFT_5 = 0x05; // Shift lock 2
+  byte SHIFT_2 = 0x02; // Shift 1
+  byte SHIFT_3 = 0x03; // Shift 2
+  byte SHIFT_4 = 0x04; // Shift lock 1
+  byte SHIFT_5 = 0x05; // Shift lock 2
 
   /**
    * This character code, used from A2, denotes that a 10 bit value
    * follows.
    */
-  static final byte A2_ESCAPE = 0x06; // escape character
+  byte A2_ESCAPE = 0x06; // escape character
 
   /**
    * Returns the ZSCII character from alphabet 0 at the specified index.

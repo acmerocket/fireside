@@ -35,10 +35,10 @@ public class DefaultDictionary extends AbstractDictionary {
 
   /** The lookup map. */
   private Map<String, Integer> lookupMap;
-  
+
   /** The maximum entry size. */
   private int maxEntrySize;
-  
+
   /**
    * Constructor.
    * @param memory the memory object
@@ -50,7 +50,7 @@ public class DefaultDictionary extends AbstractDictionary {
                            ZCharDecoder decoder, DictionarySizes sizes) {
     super(memory, address, decoder, sizes);
     createLookupMap();
-  }  
+  }
 
   /**
    * {@inheritDoc}
@@ -64,12 +64,12 @@ public class DefaultDictionary extends AbstractDictionary {
     }
     return 0;
   }
-  
+
   /**
    * {@inheritDoc}
    */
   protected int getMaxEntrySize() { return maxEntrySize; }
-  
+
   /**
    * Create the dictionary lookup map. The standards document suggests to
    * convert the tokens into ZSCII strings and look them up in the dictionary
@@ -82,9 +82,9 @@ public class DefaultDictionary extends AbstractDictionary {
   private void createLookupMap() {
     lookupMap = new HashMap<String, Integer>();
     int entryAddress;
-    
+
     for (int i = 0, n = getNumberOfEntries(); i < n; i++) {
-      entryAddress = getEntryAddress(i);      
+      entryAddress = getEntryAddress(i);
       final String str = getDecoder().decode2Zscii(getMemory(),
           entryAddress, getSizes().getNumEntryBytes());
       maxEntrySize = Math.max(str.length(), maxEntrySize);

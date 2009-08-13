@@ -31,16 +31,16 @@ public abstract class AbstractDictionary implements Dictionary {
 
   /** The memory map. */
   private Memory memory;
-  
+
   /** The dictionary start address. */
   private int address;
-  
+
   /** A Z char decoder. */
   private ZCharDecoder decoder;
-  
+
   /** A sizes object. */
   private DictionarySizes sizes;
-  
+
   /**
    * Constructor.
    * @param memory the memory object
@@ -56,47 +56,47 @@ public abstract class AbstractDictionary implements Dictionary {
     this.decoder = decoder;
     this.sizes = sizes;
   }
-  
+
   /** {@inheritDoc} */
   public int getNumberOfSeparators() {
     return memory.readUnsigned8(address);
   }
-  
+
   /** {@inheritDoc} */
   public byte getSeparator(final int i) {
     return (byte) memory.readUnsigned8(address + i + 1);
   }
-  
+
   /** {@inheritDoc} */
   public int getEntryLength() {
     return memory.readUnsigned8(address + getNumberOfSeparators() + 1);
   }
-  
+
   /** {@inheritDoc} */
   public short getNumberOfEntries() {
     // The number of entries is a signed value so that we can recognize
     // a negative number
     return unsignedToSigned16(memory.readUnsigned16(address + getNumberOfSeparators() + 2));
   }
-  
+
   /** {@inheritDoc} */
   public int getEntryAddress(final int entryNum) {
-    final int headerSize = getNumberOfSeparators() + 4;    
+    final int headerSize = getNumberOfSeparators() + 4;
     return address + headerSize + entryNum * getEntryLength();
   }
-  
+
   /**
    * Access to the decoder object.
    * @return the decoder object
    */
   protected ZCharDecoder getDecoder() { return decoder; }
-  
+
   /**
    * Access to the Memory object.
    * @return the Memory object
    */
   protected Memory getMemory() { return memory; }
-  
+
   /**
    * Returns the DictionarySizes object for the current story file version.
    * @return the DictionarySizes object
@@ -104,9 +104,9 @@ public abstract class AbstractDictionary implements Dictionary {
   protected DictionarySizes getSizes() { return sizes; }
 
   /**
-   * Unfortunately it seems that the maximum size of an entry is not equal 
+   * Unfortunately it seems that the maximum size of an entry is not equal
    * to the size declared in the dictionary header, therefore we take
-   * the maximum length of a token defined in the Z-machine specification.    
+   * the maximum length of a token defined in the Z-machine specification.
    * The lookup token can only be 6 characters long in version 3
    * and 9 in versions >= 4
    * @param token the token to truncate
@@ -116,7 +116,7 @@ public abstract class AbstractDictionary implements Dictionary {
     return token.length() > sizes.getMaxEntryChars() ?
         token.substring(0, sizes.getMaxEntryChars()) : token;
   }
-  
+
   /**
    * Creates a string presentation of this dictionary.
    * @return the string presentation

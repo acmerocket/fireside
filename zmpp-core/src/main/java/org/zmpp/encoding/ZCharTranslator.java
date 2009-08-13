@@ -93,7 +93,7 @@ public interface ZCharTranslator extends Cloneable {
    * @param zchar the character
    * @return true if A2 escape, false otherwise
    */
-  public boolean willEscapeA2(char zchar);
+  boolean willEscapeA2(char zchar);
 
   /**
    * Return true if this the specified character is an abbreviation in the
@@ -102,7 +102,7 @@ public interface ZCharTranslator extends Cloneable {
    * @param zchar a Z encoded character
    * @return true if abbreviation, false otherwise
    */
-  public boolean isAbbreviation(char zchar);
+  boolean isAbbreviation(char zchar);
 
   /**
    * Provides a reverse translation. Given a ZSCII character, determine
@@ -112,5 +112,5 @@ public interface ZCharTranslator extends Cloneable {
    * @param zsciiChar a ZSCII character
    * @return the reverse translation
    */
-  public AlphabetElement getAlphabetElementFor(char zsciiChar);
+  AlphabetElement getAlphabetElementFor(char zsciiChar);
 }

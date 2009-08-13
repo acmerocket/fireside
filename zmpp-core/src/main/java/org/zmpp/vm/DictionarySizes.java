@@ -28,8 +28,8 @@ package org.zmpp.vm;
  * both the number of bytes and the number of maximum characters
  * per entry which we access here. By defining a dictionary
  * size object, we avoid keep dictionary classes clean of version
- * dependency. 
- *  
+ * dependency.
+ *
  * @author Wei-ju Wu
  * @version 1.5
  */
@@ -40,7 +40,7 @@ public interface DictionarySizes {
    * @return the number of bytes for an entry
    */
   int getNumEntryBytes();
-  
+
   /**
    * The maximum number of characters for an entry.
    * @return the maximum number of characters

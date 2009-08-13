@@ -30,28 +30,28 @@ package org.zmpp.base;
  */
 public interface StoryFileHeader {
 
-  static final int RELEASE              = 0x02;
-  static final int PROGRAM_START        = 0x06;
-  static final int DICTIONARY           = 0x08;
-  static final int OBJECT_TABLE         = 0x0a;
-  static final int GLOBALS              = 0x0c;
-  static final int STATIC_MEM           = 0x0e;
-  static final int ABBREVIATIONS        = 0x18;
-  static final int CHECKSUM             = 0x1c;
-  static final int INTERPRETER_NUMBER   = 0x1e;
-  static final int SCREEN_HEIGHT        = 0x20;
-  static final int SCREEN_WIDTH         = 0x21;
-  static final int SCREEN_WIDTH_UNITS   = 0x22;
-  static final int SCREEN_HEIGHT_UNITS  = 0x24;
-  static final int ROUTINE_OFFSET       = 0x28;
-  static final int STATIC_STRING_OFFSET = 0x2a;
-  static final int DEFAULT_BACKGROUND   = 0x2c;
-  static final int DEFAULT_FOREGROUND   = 0x2d;
-  static final int TERMINATORS          = 0x2e;
-  static final int OUTPUT_STREAM3_WIDTH = 0x30; // 16 bit
-  static final int STD_REVISION_MAJOR   = 0x32;
-  static final int STD_REVISION_MINOR   = 0x33;
-  static final int CUSTOM_ALPHABET      = 0x34;
+  int RELEASE              = 0x02;
+  int PROGRAM_START        = 0x06;
+  int DICTIONARY           = 0x08;
+  int OBJECT_TABLE         = 0x0a;
+  int GLOBALS              = 0x0c;
+  int STATIC_MEM           = 0x0e;
+  int ABBREVIATIONS        = 0x18;
+  int CHECKSUM             = 0x1c;
+  int INTERPRETER_NUMBER   = 0x1e;
+  int SCREEN_HEIGHT        = 0x20;
+  int SCREEN_WIDTH         = 0x21;
+  int SCREEN_WIDTH_UNITS   = 0x22;
+  int SCREEN_HEIGHT_UNITS  = 0x24;
+  int ROUTINE_OFFSET       = 0x28;
+  int STATIC_STRING_OFFSET = 0x2a;
+  int DEFAULT_BACKGROUND   = 0x2c;
+  int DEFAULT_FOREGROUND   = 0x2d;
+  int TERMINATORS          = 0x2e;
+  int OUTPUT_STREAM3_WIDTH = 0x30; // 16 bit
+  int STD_REVISION_MAJOR   = 0x32;
+  int STD_REVISION_MINOR   = 0x33;
+  int CUSTOM_ALPHABET      = 0x34;
 
   enum Attribute {
     DEFAULT_FONT_IS_VARIABLE,

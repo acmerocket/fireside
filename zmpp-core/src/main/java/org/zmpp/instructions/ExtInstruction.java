@@ -36,7 +36,7 @@ public class ExtInstruction extends AbstractInstruction {
                         BranchInfo branchInfo, int opcodeLength) {
     super(machine, opcodeNum, operands, storeVar, branchInfo, opcodeLength);
   }
-  
+
   @Override
   protected OperandCount getOperandCount() { return OperandCount.EXT; }
 
@@ -121,25 +121,25 @@ public class ExtInstruction extends AbstractInstruction {
   }
 
   private void save_undo() {
-    // Target PC offset is two because of the extra opcode byte and 
+    // Target PC offset is two because of the extra opcode byte and
     // operand type byte compared to the 0OP instruction
     final int pc = getMachine().getPC() + 3;
     final boolean success = getMachine().save_undo(pc);
     storeUnsignedResult(success ? TRUE : FALSE);
     nextInstruction();
   }
-  
-  private void restore_undo() {    
+
+  private void restore_undo() {
     final PortableGameState gamestate = getMachine().restore_undo();
     if (gamestate == null) {
       storeUnsignedResult(FALSE);
       nextInstruction();
     } else {
       final char storevar = gamestate.getStoreVariable(getMachine());
-      getMachine().setVariable(storevar, RESTORE_TRUE);      
+      getMachine().setVariable(storevar, RESTORE_TRUE);
     }
   }
-  
+
   private void art_shift() {
     short number = getSignedValue(0);
     final short places = getSignedValue(1);
@@ -147,7 +147,7 @@ public class ExtInstruction extends AbstractInstruction {
     storeUnsignedResult(signedToUnsigned16(number));
     nextInstruction();
   }
-  
+
   private void log_shift() {
     char number = getUnsignedValue(0);
     final short places = getSignedValue(1);
@@ -155,55 +155,55 @@ public class ExtInstruction extends AbstractInstruction {
     storeUnsignedResult(number);
     nextInstruction();
   }
-  
+
   private void set_font() {
     final char previousFont =
       getMachine().getScreen().setFont(getUnsignedValue(0));
     storeUnsignedResult(previousFont);
     nextInstruction();
   }
-  
+
   private void save() {
     // Saving to tables is not supported yet, this is the standard save feature
     // Offset is 3 because there are two opcode bytes + 1 optype byte before
     // the actual store var byte
     saveToStorage(getMachine().getPC() + 3);
   }
-  
+
   private void restore() {
-    // Reading from tables is not supported yet, this is the standard 
+    // Reading from tables is not supported yet, this is the standard
     // restore feature
     restoreFromStorage();
   }
-  
+
   private void print_unicode() {
     final char zchar = (char) getUnsignedValue(0);
     getMachine().printZsciiChar(zchar);
     nextInstruction();
   }
-  
+
   private void check_unicode() {
     // always return true, set bit 0 for can print and bit 1 for
     // can read
     storeUnsignedResult((char) 3);
     nextInstruction();
   }
-  
+
   private void mouse_window() {
     getMachine().getScreen6().setMouseWindow(getSignedValue(0));
     nextInstruction();
   }
-  
+
   private void picture_data() {
     final int picnum = getUnsignedValue(0);
     final int array = getUnsignedValue(1);
     boolean result = false;
-    
+
     if (picnum == 0) {
       writePictureFileInfo(array);
       // branch if any pictures are available: this information is only
       // available in the 1.1 spec
-      result = getMachine().getPictureManager().getNumPictures() > 0;  
+      result = getMachine().getPictureManager().getNumPictures() > 0;
     } else {
       final Resolution picdim =
         getMachine().getPictureManager().getPictureSize(picnum);
@@ -216,22 +216,22 @@ public class ExtInstruction extends AbstractInstruction {
     }
     branchOnTest(result);
   }
-  
+
   private void writePictureFileInfo(final int array) {
     getMachine().writeUnsigned16(array,
         toUnsigned16(getMachine().getPictureManager().getNumPictures()));
     getMachine().writeUnsigned16(array + 2,
         toUnsigned16(getMachine().getPictureManager().getRelease()));
   }
-  
+
   private void draw_picture() {
     final int picnum = getUnsignedValue(0);
     int x = 0, y = 0;
-    
+
     if (getNumOperands() > 1) {
       y = getUnsignedValue(1);
     }
-    
+
     if (getNumOperands() > 2) {
       x = getUnsignedValue(2);
     }
@@ -243,11 +243,11 @@ public class ExtInstruction extends AbstractInstruction {
   private void erase_picture() {
     final int picnum = getUnsignedValue(0);
     int x = 1, y = 1;
-    
+
     if (getNumOperands() > 1) {
       y = getUnsignedValue(1);
     }
-    
+
     if (getNumOperands() > 2) {
       x = getUnsignedValue(2);
     }
@@ -255,13 +255,13 @@ public class ExtInstruction extends AbstractInstruction {
         getMachine().getPictureManager().getPicture(picnum), y, x);
     nextInstruction();
   }
-  
+
   private void move_window() {
     getMachine().getScreen6().getWindow(getUnsignedValue(0)).move(
         getUnsignedValue(1), getUnsignedValue(2));
     nextInstruction();
   }
-  
+
   private void window_size() {
     final short window = getSignedValue(0);
     final char height = getUnsignedValue(1);
@@ -269,25 +269,25 @@ public class ExtInstruction extends AbstractInstruction {
     getMachine().getScreen6().getWindow(window).setSize(height, width);
     nextInstruction();
   }
-  
+
   private void window_style() {
     int operation = 0;
     if (getNumOperands() > 2) {
       operation = getUnsignedValue(2);
-    }    
+    }
     getWindow(getSignedValue(0)).setStyle(getUnsignedValue(1), operation);
     nextInstruction();
   }
-  
+
   private void set_margins() {
     int window = ScreenModel.CURRENT_WINDOW;
-    if (getNumOperands() == 3) {      
+    if (getNumOperands() == 3) {
       window = getSignedValue(2);
     }
     getWindow(window).setMargins(getUnsignedValue(0), getUnsignedValue(1));
     nextInstruction();
   }
-  
+
   private void get_wind_prop() {
     int window = getSignedValue(0);
     int propnum = getUnsignedValue(1);
@@ -304,17 +304,17 @@ public class ExtInstruction extends AbstractInstruction {
     getWindow(window).putProperty(propnum, value);
     nextInstruction();
   }
-  
+
   private void picture_table() {
     // @picture_table is a no-op, because all pictures are held in memory
     // anyways
     nextInstruction();
   }
-  
+
   private void pop_stack() {
     int numItems = getUnsignedValue(0);
     char stack = 0;
-    if (getNumOperands() == 2) {      
+    if (getNumOperands() == 2) {
       stack = getUnsignedValue(1);
     }
     for (int i = 0; i < numItems; i++) {
@@ -322,21 +322,21 @@ public class ExtInstruction extends AbstractInstruction {
     }
     nextInstruction();
   }
-  
+
   private void push_stack() {
     char value = getUnsignedValue(0);
     char stack = 0;
-    if (getNumOperands() == 2) {      
+    if (getNumOperands() == 2) {
       stack = getUnsignedValue(1);
     }
     branchOnTest(getMachine().pushStack(stack, value));
   }
-  
+
   private void scroll_window() {
     getWindow(getSignedValue(0)).scroll(getSignedValue(1));
     nextInstruction();
   }
-  
+
   private void read_mouse() {
     int array = getUnsignedValue(0);
     getMachine().getScreen6().readMouse(array);

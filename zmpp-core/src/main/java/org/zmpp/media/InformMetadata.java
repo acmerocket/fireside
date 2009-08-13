@@ -20,18 +20,18 @@ package org.zmpp.media;
 
 /**
  * This class holds Inform meta information.
- * 
+ *
  * @author Wei-ju Wu
  * @version 1.5
  */
 public class InformMetadata {
-    
+
   private StoryMetadata storyinfo;
-  
+
   public InformMetadata(StoryMetadata storyinfo) {
-   
+
     this.storyinfo = storyinfo;
   }
-  
+
   public StoryMetadata getStoryInfo() { return storyinfo; }
 }

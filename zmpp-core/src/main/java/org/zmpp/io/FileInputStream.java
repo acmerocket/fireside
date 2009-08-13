@@ -28,7 +28,7 @@ import org.zmpp.encoding.IZsciiEncoding;
 /**
  * This class implements a Z-machine input stream that takes its input from
  * a file. It queries a screen model to provide the input file.
- * 
+ *
  * @author Wei-ju Wu
  * @version 1.5
  */
@@ -38,10 +38,10 @@ public class FileInputStream implements InputStream {
   private IZsciiEncoding encoding;
   private Reader filereader;
   private BufferedReader input;
-  
+
   /**
    * Constructor.
-   * 
+   *
    * @param iosys an IOSystem object
    * @param encoding a ZSCII encoding object
    */
@@ -85,7 +85,7 @@ public class FileInputStream implements InputStream {
         LOG.throwing("FileInputStream", "close", ex);
       }
     }
-    
+
     if (filereader != null) {
       try {
         filereader.close();
@@ -93,13 +93,13 @@ public class FileInputStream implements InputStream {
       } catch (IOException ex) {
         LOG.throwing("FileInputStream", "readLine", ex);
       }
-    }      
+    }
   }
-  
+
   private void checkForReader() {
     if (filereader == null) {
       filereader = iosys.getInputStreamReader();
       input = new BufferedReader(filereader);
     }
-  }  
+  }
 }

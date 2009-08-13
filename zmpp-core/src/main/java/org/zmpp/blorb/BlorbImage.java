@@ -65,7 +65,6 @@ public class BlorbImage implements ZmppImage {
     private Resolution maximum;
 
     public ResolutionInfo(Resolution std, Resolution min, Resolution max) {
-
       standard = std;
       minimum = min;
       maximum = max;
@@ -170,7 +169,7 @@ public class BlorbImage implements ZmppImage {
     }
   }
 
-  protected void setScaleInfo(ScaleInfo scaleinfo) {
-    this.scaleinfo = scaleinfo;
+  protected void setScaleInfo(ScaleInfo aScaleinfo) {
+    this.scaleinfo = aScaleinfo;
   }
 }

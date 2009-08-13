@@ -55,7 +55,6 @@ public abstract class BlorbMediaCollection<T> implements MediaCollection<T> {
 
   /**
    * Constructor.
-   *
    * @param formchunk the Blorb file form chunk
    */
   public BlorbMediaCollection(NativeImageFactory imageFactory,
@@ -93,7 +92,6 @@ public abstract class BlorbMediaCollection<T> implements MediaCollection<T> {
    * {@inheritDoc}
    */
   public void clear() {
-
     resourceNumbers.clear();
   }
 
@@ -101,18 +99,15 @@ public abstract class BlorbMediaCollection<T> implements MediaCollection<T> {
    * {@inheritDoc}
    */
   public int getNumResources() {
-
     return resourceNumbers.size();
   }
 
   /**
    * Returns the resource number at the given index.
-   *
    * @param index the index
    * @return the resource number
    */
   public int getResourceNumber(final int index) {
-
     return resourceNumbers.get(index);
   }
 
@@ -120,7 +115,6 @@ public abstract class BlorbMediaCollection<T> implements MediaCollection<T> {
    * {@inheritDoc}
    */
   public void loadResource(final int resourcenumber) {
-
     // intentionally left empty for possible future use
   }
 
@@ -128,24 +122,21 @@ public abstract class BlorbMediaCollection<T> implements MediaCollection<T> {
    * {@inheritDoc}
    */
   public void unloadResource(final int resourcenumber) {
-
     // intentionally left empty for possible future use
   }
 
   /**
    * Access to the form chunk.
-   *
    * @return the form chunk
    */
   protected FormChunk getFormChunk() {
-
     return formchunk;
   }
 
   /**
    * Initialize the database.
    */
-  abstract protected void initDatabase();
+  protected abstract void initDatabase();
 
   /**
    * This method is invoked by the constructor to indicate if the
@@ -154,7 +145,7 @@ public abstract class BlorbMediaCollection<T> implements MediaCollection<T> {
    * @param usageId the usage id
    * @return true if the current class handles this resource, false, otherwise
    */
-  abstract protected boolean isHandledResource(byte[] usageId);
+  protected abstract boolean isHandledResource(byte[] usageId);
 
   /**
    * Puts the media object based on this sub chunk into the database.
@@ -163,5 +154,5 @@ public abstract class BlorbMediaCollection<T> implements MediaCollection<T> {
    * @param resnum the resource number
    * @return true if successful, false otherwise
    */
-  abstract protected boolean putToDatabase(Chunk chunk, int resnum);
+  protected abstract boolean putToDatabase(Chunk chunk, int resnum);
 }

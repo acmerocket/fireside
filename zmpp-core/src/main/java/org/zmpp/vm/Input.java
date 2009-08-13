@@ -30,31 +30,31 @@ public interface Input {
   /**
    * The input stream number for the keyboard.
    */
-  final static int INPUTSTREAM_KEYBOARD = 0;
-  
+  int INPUTSTREAM_KEYBOARD = 0;
+
   /**
    * The input stream number for file input.
    */
-  final static int INPUTSTREAM_FILE = 1;
-  
+  int INPUTSTREAM_FILE = 1;
+
   /**
    * Sets an input stream to the specified number.
    * @param streamnumber the input stream number
    * @param stream the input stream to set
    */
   //void setInputStream(int streamnumber, InputStream stream);
-  
+
   /**
    * Selects an input stream.
-   * 
+   *
    * @param streamnumber the input stream number to select
    */
   void selectInputStream(int streamnumber);
-  
+
   /**
    * Returns the selected input stream.
-   * 
+   *
    * @return the selected input stream
    */
-  InputStream getSelectedInputStream(); 
+  InputStream getSelectedInputStream();
 }

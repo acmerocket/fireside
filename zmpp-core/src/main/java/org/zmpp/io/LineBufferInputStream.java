@@ -35,7 +35,7 @@ public class LineBufferInputStream implements InputStream {
    * The queue holding input lines.
    */
   private Queue<String> inputLines = new LinkedList<String>();
-  
+
   /**
    * Adds an input line to the end of the buffer.
    * @param line the new input line

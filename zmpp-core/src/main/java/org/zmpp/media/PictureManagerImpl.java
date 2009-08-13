@@ -28,15 +28,15 @@ public class PictureManagerImpl implements PictureManager {
   private int release;
   private MediaCollection<? extends ZmppImage> pictures;
   private DrawingArea drawingArea;
-  
+
   public PictureManagerImpl(int release, DrawingArea drawingArea,
                             MediaCollection<? extends ZmppImage> pictures) {
-    
+
     this.release = release;
     this.pictures = pictures;
     this.drawingArea = drawingArea;
   }
-  
+
   /**
    * {@inheritDoc}
    */
@@ -48,11 +48,11 @@ public class PictureManagerImpl implements PictureManager {
     }
     return null;
   }
-  
+
   /**
    * {@inheritDoc}
    */
-  public ZmppImage getPicture(final int picturenum) {    
+  public ZmppImage getPicture(final int picturenum) {
     return pictures.getResource(picturenum);
   }
 
@@ -60,7 +60,7 @@ public class PictureManagerImpl implements PictureManager {
    * {@inheritDoc}
    */
   public int getNumPictures() {
-//    
+//
     return pictures.getNumResources();
   }
 
@@ -68,7 +68,7 @@ public class PictureManagerImpl implements PictureManager {
    * {@inheritDoc}
    */
   public void preload(final int[] picnumbers) {
-    
+
     // no preloading at the moment
   }
 
@@ -76,7 +76,7 @@ public class PictureManagerImpl implements PictureManager {
    * {@inheritDoc}
    */
   public int getRelease() {
-    
+
     return release;
   }
 
@@ -84,7 +84,7 @@ public class PictureManagerImpl implements PictureManager {
    * {@inheritDoc}
    */
   public void reset() {
-    
+
     // no resetting supported
   }
 }

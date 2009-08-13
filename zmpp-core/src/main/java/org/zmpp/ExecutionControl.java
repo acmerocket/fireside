@@ -146,7 +146,7 @@ public class ExecutionControl {
       // if the print is executed after execute(), the result is different !!
       if (DEBUG && machine.getRunState() == MachineRunState.RUNNING) {
         System.out.println(String.format("%04d: $%05x %s", step, (int) pc,
-        									 instr.toString()));
+                           instr.toString()));
       }
       instr.execute();
 
@@ -232,7 +232,7 @@ public class ExecutionControl {
         instructionDecoder.decodeInstruction(machine.getPC());
       if (DEBUG_INTERRUPT) {
         System.out.println(String.format("%03d: $%04x %s", step,
-        									 (int) machine.getPC(), instr.toString()));
+                           (int) machine.getPC(), instr.toString()));
       }
       instr.execute();
       // check if something was printed

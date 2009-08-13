@@ -22,7 +22,7 @@ package org.zmpp.media;
 /**
  * The game "The Lurking Horror" serializes sound effect playing rather
  * than stopping previous ones.
- * 
+ *
  * @author Wei-ju Wu
  * @version 1.5
  */
@@ -30,19 +30,19 @@ public class LurkingHorrorSoundSystem extends SoundSystemImpl {
 
   /**
    * Constructor.
-   * 
+   *
    * @param sounds the sound resources
    */
   public LurkingHorrorSoundSystem(MediaCollection<SoundEffect> sounds) {
-    
+
     super(sounds);
   }
-  
+
   /**
    * {@inheritDoc}
    */
   protected void handlePreviousNotFinished() {
-    
+
     currentTask.waitUntilDone();
   }
 }

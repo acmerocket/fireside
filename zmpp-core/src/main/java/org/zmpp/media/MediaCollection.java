@@ -23,7 +23,7 @@ package org.zmpp.media;
  * collection. A MediaCollection manages one specific type of media,
  * e.g. sound effects or pictures.
  * Resources might be loaded lazily and cached in an internal cache.
- * 
+ *
  * @author Wei-ju Wu
  * @version 1.5
  *
@@ -32,34 +32,34 @@ package org.zmpp.media;
 public interface MediaCollection<T> {
 
   void clear();
-  
+
   /**
    * Accesses the resource.
-   * 
+   *
    * @param number the number of the resource
    * @return the resource
    */
   T getResource(int number);
-  
+
   /**
    * Loads a resource into the internal cache if this collection supports
    * caching.
-   * 
+   *
    * @param number the number of the resource
    */
   void loadResource(int number);
-  
+
   /**
    * Throws the resource out of the internal cache if this collection
    * supports caching.
-   * 
+   *
    * @param number the number of the resource
    */
   void unloadResource(int number);
-  
+
   /**
    * Returns the number of resources.
-   * 
+   *
    * @return the number of resources
    */
   int getNumResources();

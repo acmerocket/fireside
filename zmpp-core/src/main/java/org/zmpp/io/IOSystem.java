@@ -23,7 +23,7 @@ import java.io.Writer;
 
 /**
  * Access the file system to implement the file based streams.
- * 
+ *
  * @author Wei-ju Wu
  * @version 1.5
  */
@@ -31,15 +31,15 @@ public interface IOSystem {
 
   /**
    * Returns the transcript output writer.
-   * 
+   *
    * @return the transcript writer
    */
   Writer getTranscriptWriter();
-  
+
   /**
    * Returns the reader for input stream 2.
-   * 
+   *
    * @return the input stream reader
    */
-  Reader getInputStreamReader();  
+  Reader getInputStreamReader();
 }

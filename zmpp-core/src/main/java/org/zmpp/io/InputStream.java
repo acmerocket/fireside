@@ -21,7 +21,7 @@ package org.zmpp.io;
 
 /**
  * This interface defines a Z-machine input stream.
- * 
+ *
  * @author Wei-ju Wu
  * @version 1.5
  */
@@ -33,9 +33,9 @@ public interface InputStream {
    * @return the next line of available ZSCII characters
    */
   String readLine();
-  
+
   /**
    * Release underlying resources.
    */
-  void close();  
+  void close();
 }

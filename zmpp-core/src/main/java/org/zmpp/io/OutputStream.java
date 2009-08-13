@@ -20,7 +20,7 @@ package org.zmpp.io;
 
 /**
  * This interface defines an output stream in the Z-machine.
- * 
+ *
  * @author Wei-ju Wu
  * @version 1.5
  */
@@ -29,32 +29,32 @@ public interface OutputStream {
   /**
    * Prints a ZSCII character to the stream. The isInput parameter is
    * needed to implement edit buffers.
-   * 
+   *
    * @param zchar the ZSCII character to print
    */
   void print(char zchar);
-  
+
   /**
    * Close underlying resources.
    */
   void close();
-  
+
   /**
    * Flushes the output.
    */
   void flush();
-  
+
   /**
    * Enables/disables this output stream.
-   * 
+   *
    * @param flag true to enable, false to disable
    */
   void select(boolean flag);
-  
+
   /**
    * Determine, if this stream is selected.
-   * 
+   *
    * @return true if selected, false if deselected
    */
-  boolean isSelected();  
+  boolean isSelected();
 }

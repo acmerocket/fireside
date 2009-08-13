@@ -24,6 +24,8 @@ package org.zmpp.base;
  * @version 1.5
  */
 public class MemoryUtil {
+  /** Private constructor. */
+  private MemoryUtil() { }
   /**
    * Convert an integer value to a char, which is an unsigned 16 bit value.
    * @param value the value to convert

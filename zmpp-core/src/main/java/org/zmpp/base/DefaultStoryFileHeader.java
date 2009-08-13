@@ -192,7 +192,7 @@ public class DefaultStoryFileHeader implements StoryFileHeader {
     StringBuilder builder = new StringBuilder();
     for (int i = 0; i < 55; i++) {
       builder.append(String.format("Addr: %02x Byte: %02x\n", i,
-      														 (int) memory.readUnsigned8(i)));
+                                   (int) memory.readUnsigned8(i)));
     }
     return builder.toString();
   }

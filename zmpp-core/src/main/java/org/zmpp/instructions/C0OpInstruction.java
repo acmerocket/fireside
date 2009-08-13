@@ -33,11 +33,11 @@ public class C0OpInstruction extends AbstractInstruction {
     super(machine, opcodeNum, operands, storeVar, branchInfo, opcodeLength);
     this.str = str;
   }
-  
+
   protected OperandCount getOperandCount() { return OperandCount.C0OP; }
-  
+
   public void execute() {
-    
+
     switch (getOpcodeNum()) {
 
       case C0OP_RTRUE:
@@ -61,7 +61,7 @@ public class C0OpInstruction extends AbstractInstruction {
       case C0OP_SAVE:
         saveToStorage(getMachine().getPC() + 1);
         break;
-      case C0OP_RESTORE:        
+      case C0OP_RESTORE:
         restoreFromStorage();
         break;
       case C0OP_RESTART:
@@ -70,7 +70,7 @@ public class C0OpInstruction extends AbstractInstruction {
       case C0OP_QUIT:
         getMachine().quit();
         break;
-      case C0OP_RET_POPPED:        
+      case C0OP_RET_POPPED:
         returnFromRoutine(getMachine().getVariable((char) 0));
         break;
       case C0OP_POP:
@@ -85,7 +85,7 @@ public class C0OpInstruction extends AbstractInstruction {
         nextInstruction();
         break;
       case C0OP_SHOW_STATUS:
-        getMachine().updateStatusLine();          
+        getMachine().updateStatusLine();
         nextInstruction();
         break;
       case C0OP_VERIFY:
@@ -94,11 +94,11 @@ public class C0OpInstruction extends AbstractInstruction {
       case C0OP_PIRACY:
         branchOnTest(true);
         break;
-      default:        
-        throwInvalidOpcode();    
+      default:
+        throwInvalidOpcode();
     }
   }
-  
+
   private boolean isPrint() {
     return InstructionInfoDb.getInstance().getInfo(getOperandCount(),
             getOpcodeNum(), getStoryVersion()).isPrint();
@@ -114,9 +114,9 @@ public class C0OpInstruction extends AbstractInstruction {
 
   private void pop() {
     getMachine().getVariable((char) 0);
-    nextInstruction();    
+    nextInstruction();
   }
-  
+
   private void z_catch() {
     // Stores the index of the current stack frame
     storeUnsignedResult((char) (getMachine().getRoutineContexts().size() - 1));

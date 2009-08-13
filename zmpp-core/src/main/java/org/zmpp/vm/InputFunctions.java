@@ -33,7 +33,7 @@ import org.zmpp.encoding.ZsciiEncoding;
  * Note: For version 1.5 a number of changes will be performed on this
  * class. Timed input will be eliminated completely, as well as leftover.
  * Command history might be left out as well
- * 
+ *
  * @author Wei-ju Wu
  * @version 1.5
  */
@@ -55,7 +55,7 @@ public class InputFunctions {
   // ****** terminator characters and controls the output as well as
   // ****** calling an optional interrupt routine.
   // *********************************************************************
-  
+
   /**
    * By delegating responsibility for timed input to the user interface,
    * reading input is strongly simplified.
@@ -67,12 +67,12 @@ public class InputFunctions {
     processInput(textbuffer, inputLine);
     return inputLine.charAt(inputLine.length() - 1);
   }
-  
+
   /**
    * Depending on the terminating character and the story file version,
    * either write a 0 to the end of the text buffer or write the length
    * of to the text buffer's first byte.
-   * 
+   *
    * @param terminateChar the terminating character
    * @param textbuffer the text buffer
    * @param textpointer points at the position behind the last input char
@@ -80,14 +80,14 @@ public class InputFunctions {
   public void checkTermination(final char terminateChar, final int textbuffer,
                                final int textpointer) {
     final int version = machine.getVersion();
-    if (version >= 5) {      
+    if (version >= 5) {
       // Check if was cancelled
       final char numCharsTyped = (terminateChar == ZsciiEncoding.NULL) ?
           0 : (char) (textpointer - 2);
 
       // Write the number of characters typed in byte 1
-      machine.writeUnsigned8(textbuffer + 1, numCharsTyped);      
-    } else {      
+      machine.writeUnsigned8(textbuffer + 1, numCharsTyped);
+    } else {
       // Terminate with 0 byte in versions < 5
       // Check if input was cancelled
       int terminatepos = textpointer; // (textpointer - textbuffer + 2);
@@ -97,7 +97,7 @@ public class InputFunctions {
       machine.writeUnsigned8(textbuffer + terminatepos, (char) 0);
     }
   }
-  
+
   private void processInput(final int textbuffer, String inputString) {
     int storeOffset = machine.getVersion() <= 4 ? 1 : 2;
     for (int i = 0; i < inputString.length(); i++) {
@@ -109,22 +109,22 @@ public class InputFunctions {
   }
 
   /*
-  private boolean isTerminatingCharacter(final char zsciiChar) {    
-    return isFileHeaderTerminator(zsciiChar) 
+  private boolean isTerminatingCharacter(final char zsciiChar) {
+    return isFileHeaderTerminator(zsciiChar)
            || zsciiChar == ZsciiEncoding.NEWLINE
            || zsciiChar == ZsciiEncoding.NULL;
   }
-  
+
   private boolean isFileHeaderTerminator(final char zsciiChar) {
-    if (machine.getVersion() >= 5) {  
+    if (machine.getVersion() >= 5) {
       final int terminatorTable =
           machine.readUnsigned16(StoryFileHeader.TERMINATORS);
       if (terminatorTable == 0) { return false; }
-    
+
       // Check the terminator table
       char terminator;
-    
-      for (int i = 0; ; i++) {      
+
+      for (int i = 0; ; i++) {
         terminator = machine.readUnsigned8(terminatorTable + i);
         if (terminator == 0) {
           break;
@@ -145,7 +145,7 @@ public class InputFunctions {
    * the caller. We need this since aread stores the terminating character
    * as a result. If a newline was typed as the terminator, a newline
    * will be echoed, in all other cases, the terminator is simply returned.
-   * 
+   *
    * @param terminateChar the terminating character
    * @return a terminating character that can be stored as a result
    */
@@ -154,11 +154,11 @@ public class InputFunctions {
       // Echo a newline into the streams
       // must be called with isInput == false since we are not
       // in input mode anymore when we receive NEWLINE
-      machine.printZsciiChar(ZsciiEncoding.NEWLINE);      
-    }      
+      machine.printZsciiChar(ZsciiEncoding.NEWLINE);
+    }
     return terminateChar;
   }
-  
+
   // **********************************************************************
   // ****** READ_CHAR
   // *******************************
@@ -169,7 +169,7 @@ public class InputFunctions {
     String inputLine = machine.getSelectedInputStream().readLine();
     return inputLine.charAt(0);
   }
-  
+
   /**
    * {@inheritDoc}
    */
@@ -181,70 +181,70 @@ public class InputFunctions {
     final int charsTyped = (version >= 5) ?
                       machine.readUnsigned8(textbuffer + 1) :
                       0;
-    
+
     // from version 5, text starts at position 2
     final String input = bufferToZscii(textbuffer + textbufferstart, bufferlen,
                                        charsTyped);
-    final List<String> tokens = tokenize(input);    
+    final List<String> tokens = tokenize(input);
     final Map<String, Integer> parsedTokens = new HashMap<String, Integer>();
-    
+
     // Write the number of tokens in byte 1 of the parse buffer
     final int maxwords = machine.readUnsigned8(parsebuffer);
-    
+
     // Do not go beyond the limit of maxwords
     final int numParsedTokens = Math.min(maxwords, tokens.size());
-    
+
     // Write the number of parsed tokens into byte 1 of the parse buffer
     machine.writeUnsigned8(parsebuffer + 1, (char) numParsedTokens);
-    
+
     int parseaddr = parsebuffer + 2;
-    
+
     for (int i = 0; i < numParsedTokens; i++) {
-      
-      final String token = tokens.get(i);   
+
+      final String token = tokens.get(i);
       final int entryAddress = machine.lookupToken(dictionaryAddress, token);
       int startIndex = 0;
       if (parsedTokens.containsKey(token)) {
-          
+
         final int timesContained = parsedTokens.get(token);
         parsedTokens.put(token, timesContained + 1);
-          
+
         for (int j = 0; j < timesContained; j++) {
           final int found = input.indexOf(token, startIndex);
           startIndex = found + token.length();
-        }    
-      } else { 
-        parsedTokens.put(token, 1);          
+        }
+      } else {
+        parsedTokens.put(token, 1);
       }
-      
-      int tokenIndex = input.indexOf(token, startIndex);    
-      
+
+      int tokenIndex = input.indexOf(token, startIndex);
+
       tokenIndex++; // adjust by the buffer length byte
-      
+
       if (version >= 5) {
         // if version >= 5, there is also numbers typed byte
         tokenIndex++;
       }
-      
+
       // if the tokenize flag is not set, write out the entry to the
       // parse buffer, if it is set then, only write the token position
       // if the token was recognized
       if (!flag || flag && entryAddress > 0) {
-        
+
         // This is one slot
-        machine.writeUnsigned16(parseaddr, toUnsigned16(entryAddress));     
+        machine.writeUnsigned16(parseaddr, toUnsigned16(entryAddress));
         machine.writeUnsigned8(parseaddr + 2, (char) token.length());
         machine.writeUnsigned8(parseaddr + 3, (char) tokenIndex);
       }
       parseaddr += 4;
     }
-  }  
+  }
 
   /**
    * Turns the buffer into a ZSCII string. This function reads at most
    * |bufferlen| bytes and treats each byte as an ASCII character.
    * The characters will be concatenated to the result string.
-   * 
+   *
    * @param address the buffer address
    * @param bufferlen the buffer length
    * @param charsTyped from version 5, this is the number of characters
@@ -252,36 +252,36 @@ public class InputFunctions {
    * @return the string contained in the buffer
    */
   private String bufferToZscii(final int address, final int bufferlen,
-      final int charsTyped) {    
+      final int charsTyped) {
     // If charsTyped is set, use that value as the limit
     final int numChars = (charsTyped > 0) ? charsTyped : bufferlen;
-    
+
     // read input from text buffer
     final StringBuilder buffer = new StringBuilder();
-    for (int i = 0; i < numChars; i++) {      
+    for (int i = 0; i < numChars; i++) {
       final char charByte = (char) machine.readUnsigned8(address + i);
       if (charByte == 0) {
         break;
       }
       buffer.append(charByte);
-    }    
+    }
     return buffer.toString();
   }
-  
+
   /**
    * Turns the specified input string into tokens. It will take whitespace
    * implicitly and dictionary separators explicitly to tokenize the
    * stream, dictionary specified separators are included in the result list.
-   * 
+   *
    * @param input the input string
    * @return the tokens
    */
   private List<String> tokenize(final String input) {
-    final List<String> result = new ArrayList<String>();    
+    final List<String> result = new ArrayList<String>();
     // The tokenizer will also return the delimiters
     final String delim = machine.getDictionaryDelimiters();
     final StringTokenizer tok = new StringTokenizer(input, delim);
-    while (tok.hasMoreTokens()) {      
+    while (tok.hasMoreTokens()) {
       final String token = tok.nextToken();
       if (!Character.isWhitespace(token.charAt(0))) {
         result.add(token);
@@ -289,13 +289,13 @@ public class InputFunctions {
     }
     return result;
   }
-  
+
   /**
    * Depending on the version, this returns the offset where text starts in
    * the text buffer. In versions up to 4 this is 1, since we have the
    * buffer size in the first byte, from versions 5, we also have the
    * number of typed characters in the second byte.
-   * 
+   *
    * @param version the story file version
    * @return 1 if version &lt; 4, 2, otherwise
    */

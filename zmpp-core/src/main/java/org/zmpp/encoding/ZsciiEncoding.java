@@ -32,31 +32,23 @@ package org.zmpp.encoding;
  * @version 1.5
  */
 public class ZsciiEncoding implements IZsciiEncoding {
-
-
   private AccentTable accentTable;
 
   /**
    * Constructor.
-   *
    * @param accentTable the accent table.
    */
   public ZsciiEncoding(final AccentTable accentTable) {
-
-    super();
     this.accentTable = accentTable;
   }
 
   /**
    * Returns true if the input is a valid ZSCII character, false otherwise.
-   *
    * @param zchar a ZSCII character
    * @return true if valid, false otherwise
    */
   public boolean isZsciiCharacter(final char zchar) {
-
     switch (zchar) {
-
     case NULL:
     case DELETE:
     case NEWLINE:
@@ -71,12 +63,10 @@ public class ZsciiEncoding implements IZsciiEncoding {
   /**
    * Returns true if the specified character can be converted to a ZSCII
    * character, false otherwise.
-   *
    * @param c a unicode character
    * @return true if c can be converted, false, otherwise
    */
   public boolean isConvertableToZscii(final char c) {
-
     return isAscii(c) || isInTranslationTable(c) || c == '\n'
            || c == 0 || isUnicodeCharacter(c);
   }
@@ -84,12 +74,10 @@ public class ZsciiEncoding implements IZsciiEncoding {
   /**
    * Converts a ZSCII character to a unicode character. Will return
    * '?' if the given character is not known.
-   *
    * @param zchar a ZSCII character.
    * @return the unicode representation
    */
   public char getUnicodeChar(final char zchar) {
-
     if (isAscii(zchar)) {
       return (char) zchar;
     }
@@ -115,7 +103,6 @@ public class ZsciiEncoding implements IZsciiEncoding {
 
   /**
    * Converts the specified string into its ZSCII representation.
-   *
    * @param str the input string
    * @return the ZSCII representation
    */
@@ -130,31 +117,22 @@ public class ZsciiEncoding implements IZsciiEncoding {
   /**
    * Converts the specified unicode character to a ZSCII character.
    * Will return 0 if the character can not be converted.
-   *
    * @param c the unicode character to convert
    * @return the ZSCII character
    */
   public char getZsciiChar(final char c) {
-
     if (isAscii(c)) {
-
       return c;
-
     } else if (isInTranslationTable(c)) {
-
       return (char) (getIndexInTranslationTable(c) + ACCENT_START);
-
     } else if (c == '\n') {
-
       return NEWLINE;
     }
     return 0;
   }
 
   private boolean isInTranslationTable(final char c) {
-
     for (int i = 0; i < accentTable.getLength(); i++) {
-
       if (accentTable.getAccent(i) == c) {
         return true;
       }
@@ -163,9 +141,7 @@ public class ZsciiEncoding implements IZsciiEncoding {
   }
 
   private int getIndexInTranslationTable(final char c) {
-
     for (int i = 0; i < accentTable.getLength(); i++) {
-
       if (accentTable.getAccent(i) == c) {
         return i;
       }
@@ -175,76 +151,62 @@ public class ZsciiEncoding implements IZsciiEncoding {
 
   /**
    * Tests the given ZSCII character if it falls in the ASCII range.
-   *
    * @param zchar the input character
    * @return true if in the ASCII range, false, otherwise
    */
   public static boolean isAscii(final char zchar) {
-
     return zchar >= ASCII_START && zchar <= ASCII_END;
   }
 
   /**
    * Tests the given ZSCII character for whether it is in the special range.
-   *
    * @param zchar the input character
    * @return true if in special range, false, otherwise
    */
   public static boolean isAccent(final char zchar) {
-
     return zchar >= ACCENT_START && zchar <= ACCENT_END;
   }
 
   /**
    * Returns true if zsciiChar is a cursor key.
-   *
    * @param zsciiChar a cursor key
    * @return true if cursor key, false, otherwise
    */
   public static boolean isCursorKey(final char zsciiChar) {
-
     return zsciiChar >= CURSOR_UP && zsciiChar <= CURSOR_RIGHT;
   }
 
   /**
    * Returns true if zchar is in the unicode range.
-   *
    * @param zchar a zscii character
    * @return the unicode character
    */
   private static boolean isUnicodeCharacter(final char zchar) {
-
     return zchar >= 256;
   }
 
   /**
    * Returns true if zsciiChar is a function key.
-   *
    * @param zsciiChar the zscii char
    * @return true if function key, false, otherwise
    */
   public static boolean isFunctionKey(final char zsciiChar) {
-
     return (zsciiChar >= 129 && zsciiChar <= 154)
            || (zsciiChar >= 252 && zsciiChar <= 254);
   }
 
   /**
    * Converts the character to lower case.
-   *
    * @param zsciiChar the ZSCII character to convert
    * @return the lower case character
    */
   public char toLower(final char zsciiChar) {
-
     if (isAscii(zsciiChar)) {
-
       return Character.toLowerCase(zsciiChar);
     }
     if (isAccent(zsciiChar)) {
-
-      return (char) (accentTable.getIndexOfLowerCase(zsciiChar - ACCENT_START)
-                      + ACCENT_START);
+      return (char) (accentTable.getIndexOfLowerCase(zsciiChar - ACCENT_START) +
+                     ACCENT_START);
     }
     return zsciiChar;
   }

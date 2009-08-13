@@ -21,14 +21,14 @@ package org.zmpp.media;
 
 /**
  * This class holds information about a story.
- * 
+ *
  * @author Wei-ju Wu
  * @version 1.5
  */
 public class StoryMetadata {
 
   private static final char NEWLINE = '\n';
-  
+
   private String title;
   private String headline;
   private String author;
@@ -37,7 +37,7 @@ public class StoryMetadata {
   private String year;
   private int coverpicture;
   private String group;
-  
+
   public String getTitle() { return title; }
   public void setTitle(final String title) { this.title = title; }
   public String getHeadline() { return headline; }
@@ -54,9 +54,9 @@ public class StoryMetadata {
   public void setCoverPicture(final int picnum) { this.coverpicture = picnum; }
   public String getGroup() { return group; }
   public void setGroup(final String group) { this.group = group; }
-  
+
   @Override
-  public String toString() {    
+  public String toString() {
     final StringBuilder builder = new StringBuilder();
     builder.append("Title: '" + title + NEWLINE);
     builder.append("Headline: '" + headline + NEWLINE);

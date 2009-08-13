@@ -23,15 +23,15 @@ import static org.zmpp.base.MemoryUtil.toUnsigned16;
 
 /**
  * This class is the abstract super class of object trees.
- * 
+ *
  * @author Wei-ju Wu
  * @version 1.5
  */
 public abstract class AbstractObjectTree implements ObjectTree {
-  
+
   private Memory memory;
   private int address;
-  
+
   /**
    * Constructor.
    * @param memory the memory access object
@@ -41,34 +41,34 @@ public abstract class AbstractObjectTree implements ObjectTree {
     this.memory = memory;
     this.address = address;
   }
-  
+
   /**
    * Returns the memory object.
    * @return the memory object
    */
   protected Memory getMemory() { return memory; }
-  
+
   /**
    * Returns this tree's start address.
-   * 
+   *
    * @return the address
    */
   protected int getAddress() { return address; }
-  
+
   /**
    * Returns the address of the specified object.
    * @param objectNum the object number
    * @return the object address
    */
   protected abstract int getObjectAddress(int objectNum);
-  
+
   /**
    * {@inheritDoc}
    */
   public void removeObject(final int objectNum) {
     int oldParent = getParent(objectNum);
     setParent(objectNum, 0);
-    
+
     if (oldParent != 0) {
       if (getChild(oldParent) == objectNum) {
         setChild(oldParent, getSibling(objectNum));
@@ -78,7 +78,7 @@ public abstract class AbstractObjectTree implements ObjectTree {
         // its new sibling
         int currentChild = getChild(oldParent);
         int sibling = getSibling(currentChild);
-      
+
         // We have to handle the case that in fact that object is a child
         // of its parent, but not directly (happens for some reasons).
         // We stop in this case and simply remove the object from its
@@ -97,35 +97,35 @@ public abstract class AbstractObjectTree implements ObjectTree {
     }
     setSibling(objectNum, 0);
   }
-  
+
   /**
    * {@inheritDoc}
    */
   public void insertObject(final int parentNum, final int objectNum) {
     // we want to ensure, the child has no old parent relationships
-    if (getParent(objectNum) > 0) {      
+    if (getParent(objectNum) > 0) {
       removeObject(objectNum);
     }
-    final int oldChild = getChild(parentNum);    
+    final int oldChild = getChild(parentNum);
     setParent(objectNum, parentNum);
     setChild(parentNum, objectNum);
     setSibling(objectNum, oldChild);
   }
-  
+
   /**
    * The size of the property defaults section.
    * @return the property defaults section
    */
   protected abstract int getPropertyDefaultsSize();
-  
+
   /**
    * Returns the start address of the object tree section.
-   * @return the object tree's start address 
+   * @return the object tree's start address
    */
   protected int getObjectTreeStart() {
     return getAddress() + getPropertyDefaultsSize();
   }
-    
+
   /**
    * Returns the story file version specific object entry size.
    * @return the size of an object entry
@@ -142,7 +142,7 @@ public abstract class AbstractObjectTree implements ObjectTree {
     final char value = memory.readUnsigned8(
     	getAttributeByteAddress(objectNum, attributeNum));
     return (value & (0x80 >> (attributeNum & 7))) > 0;
-  }  
+  }
 
   /**
    * {@inheritDoc}
@@ -165,7 +165,7 @@ public abstract class AbstractObjectTree implements ObjectTree {
   	value &= (~(0x80 >> (attributeNum & 7)));
   	memory.writeUnsigned8(attributeByteAddress, value);
   }
-  
+
   /**
    * Returns the address of the byte specified object attribute lies in.
    * @param objectNum the object number
@@ -201,12 +201,12 @@ public abstract class AbstractObjectTree implements ObjectTree {
     	int numPropBytes =  getNumPropertySizeBytes(propAddr);
     	propAddr += numPropBytes + getPropertyLength(propAddr + numPropBytes);
   	}
-  }  
+  }
 
   /**
    * {@inheritDoc}
    */
-  public int getNextProperty(final int objectNum, final int property) {  	
+  public int getNextProperty(final int objectNum, final int property) {
     if (property == 0) {
       final int addr = getPropertyEntriesStart(objectNum);
       return getPropertyNum(addr);
@@ -219,12 +219,12 @@ public abstract class AbstractObjectTree implements ObjectTree {
       return getPropertyNum(propDataAddr + getPropertyLength(propDataAddr));
     }
   }
-  
+
   private void reportPropertyNotAvailable(int objectNum, int property) {
     throw new IllegalArgumentException("Property " + property +
               " of object " + objectNum + " is not available.");
   }
-  
+
   /** {@inheritDoc} */
   public char getProperty(int objectNum, int property) {
   	int propertyDataAddress = getPropertyAddress(objectNum, property);
@@ -242,12 +242,12 @@ public abstract class AbstractObjectTree implements ObjectTree {
   	}
   	return (char) (value & 0xffff);
   }
-  
+
   /**
    * {@inheritDoc}
    */
   public void setProperty(int objectNum, int property, char value) {
-  	
+
   	int propertyDataAddress = getPropertyAddress(objectNum, property);
   	if (propertyDataAddress == 0) {
       reportPropertyNotAvailable(objectNum, property);
@@ -266,7 +266,7 @@ public abstract class AbstractObjectTree implements ObjectTree {
    * @param index the property address
    * @return the property number
    */
-  protected abstract int getPropertyNum(int propertyAddress); 
+  protected abstract int getPropertyNum(int propertyAddress);
 
   /**
    * Returns the address of an object's property table.
@@ -280,7 +280,7 @@ public abstract class AbstractObjectTree implements ObjectTree {
    * @param propertyAddress the address of the property entry
    * @return the number of size bytes
    */
-  protected abstract int getNumPropertySizeBytes(int propertyAddress);  
+  protected abstract int getNumPropertySizeBytes(int propertyAddress);
 
   /**
    * Returns the number of property size bytes at the specified property
@@ -299,13 +299,13 @@ public abstract class AbstractObjectTree implements ObjectTree {
     return getPropertyTableAddress(objectNum) +
     	getDescriptionHeaderSize(objectNum);
   }
-  
+
   /**
    * Returns the size of the description header in bytes that is,
    * the size byte plus the description string size. This stays the same
    * for all story file versions.
    * @param objectNum the object number
-   * @return the size of the description header 
+   * @return the size of the description header
    */
   private int getDescriptionHeaderSize(int objectNum) {
     final int startAddr = getPropertyTableAddress(objectNum);
@@ -321,5 +321,5 @@ public abstract class AbstractObjectTree implements ObjectTree {
   private char getPropertyDefault(final int propertyNum) {
     final int index = propertyNum - 1;
     return memory.readUnsigned16(address + index * 2);
-  } 
+  }
 }

@@ -29,23 +29,23 @@ import org.zmpp.vmutil.RingBuffer;
  * buffer stored in an array. This is done to prevent that the history is
  * too big, resulting in a big inefficient thing just to maintain the list
  * of entries.
- * 
+ *
  * @author Wei-ju Wu
  * @version 1.5
  */
 public class CommandHistory {
 
   private static final int NUM_ENTRIES = 5;
-  
+
   /**
    * The class HistoryEntry maintains input entries, there is both an original
    * line and a
    */
   private static class HistoryEntry {
-  
+
     public List<Character> original;
     public List<Character> edited;
-    
+
     /**
      * Constructor.
      */
@@ -53,24 +53,24 @@ public class CommandHistory {
       original = new ArrayList<Character>();
       edited = new ArrayList<Character>();
     }
-    
+
     /**
      * {@inheritDoc}
      */
     @Override
     public String toString() {
-      
+
       char[] orig = new char[original.size()];
       char[] edit = new char[edited.size()];
-      
+
       for (int i = 0; i < original.size(); i++) {
         orig[i] = original.get(i);
       }
-      
+
       for (int i = 0; i < edited.size(); i++) {
         edit[i] = edited.get(i);
       }
-      
+
       final StringBuilder buffer = new StringBuilder();
       buffer.append(" (" + new String(orig));
       buffer.append(", ");
@@ -79,33 +79,33 @@ public class CommandHistory {
     }
   }
 
-  private RingBuffer<HistoryEntry> history = 
+  private RingBuffer<HistoryEntry> history =
       new RingBuffer<HistoryEntry>(NUM_ENTRIES);
-  
+
   private int historyIndex;
   private int historySizeAtReset;
   private InputLine inputline;
 
   /**
    * Constructor.
-   * 
+   *
    * @param inputline the input line object
    */
   public CommandHistory(InputLine inputline) {
-    
+
     this.inputline = inputline;
   }
-  
+
   /**
    * Returns the current history index.
-   * 
+   *
    * @return the history index
    */
   public int getCurrentIndex() { return historyIndex; }
-  
+
   /**
    * Returns true if history char, false otherwise.
-   * 
+   *
    * @param zsciiChar the character
    * @return true if history character
    */
@@ -113,7 +113,7 @@ public class CommandHistory {
     return zsciiChar == ZsciiEncoding.CURSOR_UP
            || zsciiChar == ZsciiEncoding.CURSOR_DOWN;
   }
-  
+
   /**
    * Resets the index of the history to the last entry.
    */
@@ -125,7 +125,7 @@ public class CommandHistory {
       entry.edited.addAll(entry.original);
     }
   }
-  
+
   /**
    * Adds an input line to the history.
    * @param inputbuffer the input buffer
@@ -144,12 +144,12 @@ public class CommandHistory {
       // the history list
       history.add(entry);
     }
-  }  
-  
+  }
+
   /**
    * Deletes the current line and replaces it with a history entry, which
    * is determined depending on the input character.
-   * 
+   *
    * @param inputbuffer the input buffer
    * @param textbuffer the text buffer address
    * @param pointer the pointer in the text buffer
@@ -164,30 +164,30 @@ public class CommandHistory {
       return processHistoryDown(inputbuffer, textbuffer, pointer);
     }
   }
-  
+
   private int processHistoryUp(final List<Character> inputbuffer,
       final int textbuffer, final int pointer) {
     int newpointer = pointer;
     if (historyIndex > 0) {
       storeCurrentInput(inputbuffer);
       historyIndex--;
-      newpointer = fillInputLineFromHistory(inputbuffer, textbuffer, pointer);      
+      newpointer = fillInputLineFromHistory(inputbuffer, textbuffer, pointer);
     }
     return newpointer;
   }
-  
-  private int processHistoryDown(final List<Character> inputbuffer, 
+
+  private int processHistoryDown(final List<Character> inputbuffer,
       final int textbuffer, final int pointer) {
     int newpointer = pointer;
     if (historyIndex < history.size() - 1) {
       storeCurrentInput(inputbuffer);
       historyIndex++;
       newpointer = fillInputLineFromHistory(inputbuffer, textbuffer,
-                                            pointer);      
+                                            pointer);
     }
     return newpointer;
   }
-  
+
   private int fillInputLineFromHistory(final List<Character> inputbuffer,
       final int textbuffer, final int pointer) {
     int newpointer = deleteInputLine(inputbuffer, pointer);
@@ -218,7 +218,7 @@ public class CommandHistory {
       history.add(entry);
     }
   }
-  
+
   /**
    * Removes the text from the current input line.
    * @param inputbuffer the input buffer
@@ -229,10 +229,10 @@ public class CommandHistory {
       final int pointer) {
     final int n = inputbuffer.size();
     int newpointer = pointer;
-    
+
     for (int i = 0; i < n; i++) {
       newpointer = inputline.deletePreviousChar(inputbuffer, newpointer);
     }
     return newpointer;
-  }  
+  }
 }

@@ -27,7 +27,7 @@ import org.zmpp.encoding.IZsciiEncoding;
 
 /**
  * This class defines an output stream for transcript output (Stream 2).
- * 
+ *
  * @author Wei-ju Wu
  * @version 1.5
  */
@@ -44,18 +44,18 @@ public class TranscriptOutputStream implements OutputStream {
 
   /**
    * Constructor.
-   * 
+   *
    * @param iosys the I/O system
    */
   public TranscriptOutputStream(final IOSystem iosys,
       final IZsciiEncoding encoding) {
-  
+
     super();
     this.iosys = iosys;
     this.encoding = encoding;
     linebuffer = new StringBuilder();
   }
-  
+
   /**
    * {@inheritDoc}
    */
@@ -68,14 +68,14 @@ public class TranscriptOutputStream implements OutputStream {
       initialized = true;
     }
   }
-  
+
   /**
    * {@inheritDoc}
    */
   public void print(final char zsciiChar) {
     initFile();
     if (output != null) {
-      if (zsciiChar == IZsciiEncoding.NEWLINE) { 
+      if (zsciiChar == IZsciiEncoding.NEWLINE) {
         flush();
       } else if (zsciiChar == IZsciiEncoding.DELETE) {
         linebuffer.deleteCharAt(linebuffer.length() - 1);
@@ -85,7 +85,7 @@ public class TranscriptOutputStream implements OutputStream {
       flush();
     }
   }
-  
+
   /**
    * {@inheritDoc}
    */
@@ -95,21 +95,21 @@ public class TranscriptOutputStream implements OutputStream {
    * {@inheritDoc}
    */
   public boolean isSelected() { return enabled; }
-  
+
   /**
    * {@inheritDoc}
    */
   public void flush() {
     try {
-      if (output != null) {        
+      if (output != null) {
         output.write(linebuffer.toString());
         linebuffer = new StringBuilder();
       }
-    } catch (IOException ex) { 
+    } catch (IOException ex) {
         LOG.throwing("TranscriptOutputStream", "flush", ex);
     }
   }
-  
+
   /**
    * {@inheritDoc}
    */
@@ -120,17 +120,17 @@ public class TranscriptOutputStream implements OutputStream {
         output = null;
       } catch (Exception ex) {
         LOG.throwing("TranscriptOutputStream", "close", ex);
-      }      
+      }
     }
-    
+
     if (transcriptWriter != null) {
       try {
         transcriptWriter.close();
         transcriptWriter = null;
       } catch (Exception ex) {
         LOG.throwing("TranscriptOutputStream", "close", ex);
-      }      
+      }
     }
     initialized = false;
-  }  
+  }
 }

@@ -28,7 +28,7 @@ import org.zmpp.base.Interruptable;
  * is using a Java 5 thread executor which makes it very easy to
  * assign a control task to each sound which can handle the stopping
  * of a sound easily.
- * 
+ *
  * @author Wei-ju Wu
  * @version 1.5
  */
@@ -38,25 +38,25 @@ public class SoundSystemImpl implements SoundSystem {
    * The resource database.
    */
   private MediaCollection<SoundEffect> sounds;
-  
+
   /**
    * The executor service.
    */
   private ExecutorService executor;
-  
+
   /**
    * The interruptable.
    */
   private Interruptable interruptable;
-  
+
   /**
    * The current sound task.
    */
   protected PlaySoundTask currentTask;
-  
+
   /**
    * Constructor.
-   * 
+   *
    * @param sounds the sound resources
    */
   public SoundSystemImpl(final MediaCollection<SoundEffect> sounds) {
@@ -82,7 +82,7 @@ public class SoundSystemImpl implements SoundSystem {
   public void reset() {
     // no resetting supported
   }
-  
+
   /**
    * {@inheritDoc}
    */
@@ -95,7 +95,7 @@ public class SoundSystemImpl implements SoundSystem {
     // nothing at the moment (hey, we have plenty of memory and are
     // in a Java environment)
     if (number == 0) return;
-    
+
     if (sounds != null) {
       sound = sounds.getResource(number);
     }
@@ -116,7 +116,7 @@ public class SoundSystemImpl implements SoundSystem {
       }
     }
   }
-  
+
   /**
    * Starts the specified sound.
    * @param number the sound number
@@ -132,13 +132,13 @@ public class SoundSystemImpl implements SoundSystem {
     }
     currentTask = (routine <= 0) ?
       new PlaySoundTask(number, sound, volume, repeats) :
-      new PlaySoundTask(number, sound, volume, repeats, interruptable, routine);  
+      new PlaySoundTask(number, sound, volume, repeats, interruptable, routine);
     executor.submit(currentTask);
   }
-  
+
   /**
    * Stops the sound with the given number.
-   * 
+   *
    * @param number the number
    */
   private void stopSound(final int number) {
@@ -146,5 +146,5 @@ public class SoundSystemImpl implements SoundSystem {
     if (currentTask != null && currentTask.getResourceNumber() == number) {
       currentTask.stop();
     }
-  }  
+  }
 }

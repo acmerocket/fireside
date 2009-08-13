@@ -32,7 +32,7 @@ import static org.zmpp.vm.Instruction.OperandCount.*;
  * @version 1.5
  */
 public class InstructionInfoDb {
-  
+
 
   // Commonly used version ranges
   private static final int[] ALL_VERSIONS = { 1, 2, 3, 4, 5, 6, 7, 8 };
@@ -44,7 +44,7 @@ public class InstructionInfoDb {
   private static final int[] V4_TO_V8     = { 4, 5, 6, 7, 8 };
   private static final int[] V4           = { 4 };
   private static final int[] V6           = { 6 };
-  
+
   /**
    * Information structure about the instruction.
    */
@@ -65,9 +65,9 @@ public class InstructionInfoDb {
     public boolean isOutput() { return isOutput; }
     public String getName() { return name; }
   }
-  
+
   // Factory methods to create the common InstructionInfo types
-  
+
   private InstructionInfo createInfo(String name) {
     return new InstructionInfo(name, false, false, false, false);
   }
@@ -86,11 +86,11 @@ public class InstructionInfoDb {
   private InstructionInfo createOutput(String name) {
     return new InstructionInfo(name, false, false, false, true);
   }
-  
+
   /** The hashmap to represent the database */
   private Map<String, InstructionInfo> infoMap =
           new HashMap<String, InstructionInfo>();
-  
+
   /**
    * Private constructor.
    */
@@ -116,7 +116,7 @@ public class InstructionInfoDb {
     addInfoFor(createBranch("VERIFY"), C0OP, C0OP_VERIFY,
                new int[] {3, 4, 5, 6, 7, 8});
     addInfoFor(createInfo("PIRACY"), C0OP, C0OP_PIRACY, V5_TO_V8);
-    
+
     // 1OP
     addInfoForAll(createBranch("JZ"), C1OP, C1OP_JZ);
     addInfoForAll(createBranchAndStore("GET_SIBLING"), C1OP, C1OP_GET_SIBLING);
@@ -211,7 +211,7 @@ public class InstructionInfoDb {
     addInfoFor(createOutput("PRINT_TABLE"), VAR, VAR_PRINT_TABLE, V5_TO_V8);
     addInfoFor(createBranch("CHECK_ARG_COUNT"), VAR, VAR_CHECK_ARG_COUNT,
                V5_TO_V8);
-    
+
     // EXT
     addInfoFor(createStore("SAVE"), EXT, EXT_SAVE, V5_TO_V8);
     addInfoFor(createStore("RESTORE"), EXT, EXT_RESTORE, V5_TO_V8);
@@ -243,7 +243,7 @@ public class InstructionInfoDb {
     addInfoFor(createBranch("MAKE_MENU"), EXT, EXT_MAKE_MENU, V6);
     addInfoFor(createInfo("PICTURE_TABLE"), EXT, EXT_PICTURE_TABLE, V6);
   }
-  
+
   /**
    * Adds the specified info struct for all Z-machine versions.
    * @param info the InstructionInfo
@@ -268,9 +268,9 @@ public class InstructionInfoDb {
       infoMap.put(createKey(opCount, opcodeNum, version), info);
     }
   }
-  
+
   private static InstructionInfoDb instance = new InstructionInfoDb();
-  
+
   /**
    * Returns the Singleton instance of the database.
    * @return the database instance
@@ -312,7 +312,7 @@ public class InstructionInfoDb {
                          int version) {
     return infoMap.containsKey(createKey(opCount, opcodeNum, version));
   }
-  
+
   public void printKeys() {
     System.out.println("INFO MAP KEYS: ");
     for (String key : infoMap.keySet()) {

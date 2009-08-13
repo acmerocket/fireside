@@ -33,13 +33,13 @@ public class C2OpInstruction extends AbstractInstruction {
                          BranchInfo branchInfo, int opcodeLength) {
     super(machine, opcodeNum, operands, storeVar, branchInfo, opcodeLength);
   }
-  
+
   @Override
   protected OperandCount getOperandCount() { return OperandCount.C2OP; }
 
   public void execute() {
     switch (getOpcodeNum()) {
-    
+
       case C2OP_JE:
         je();
         break;
@@ -75,7 +75,7 @@ public class C2OpInstruction extends AbstractInstruction {
         break;
       case C2OP_CLEAR_ATTR:
         clear_attr();
-        break;        
+        break;
       case C2OP_STORE:
         store();
         break;
@@ -84,19 +84,19 @@ public class C2OpInstruction extends AbstractInstruction {
         break;
       case C2OP_LOADW:
         loadw();
-        break;        
+        break;
       case C2OP_LOADB:
         loadb();
-        break;        
+        break;
       case C2OP_GET_PROP:
         get_prop();
-        break;        
+        break;
       case C2OP_GET_PROP_ADDR:
         get_prop_addr();
-        break;        
+        break;
       case C2OP_GET_NEXT_PROP:
         get_next_prop();
-        break;        
+        break;
       case C2OP_ADD:
         add();
         break;
@@ -126,10 +126,10 @@ public class C2OpInstruction extends AbstractInstruction {
         break;
       default:
         throwInvalidOpcode();
-    }    
+    }
   }
 
-  private void je() {    
+  private void je() {
     boolean equalsFollowing = false;
     final char op1 = getUnsignedValue(0);
     if (getNumOperands() <= 1) {
@@ -146,25 +146,25 @@ public class C2OpInstruction extends AbstractInstruction {
       branchOnTest(equalsFollowing);
     }
   }
-    
+
   private void jl() {
     final short op1 = getSignedValue(0);
     final short op2 = getSignedValue(1);
     //System.out.printf("Debugging jl op1: %d op2: %d\n", op1, op2);
     branchOnTest(op1 < op2);
   }
-  
+
   private void jg() {
     final short op1 = getSignedValue(0);
     final short op2 = getSignedValue(1);
     branchOnTest(op1 > op2);
   }
-  
+
   private void jin() {
     final int obj1 = getUnsignedValue(0);
     final int obj2 = getUnsignedValue(1);
     int parentOfObj1 = 0;
-    
+
     if (obj1 > 0) {
       parentOfObj1 = getMachine().getParent(obj1);
     } else {
@@ -172,7 +172,7 @@ public class C2OpInstruction extends AbstractInstruction {
     }
     branchOnTest(parentOfObj1 == obj2);
   }
-  
+
   private void dec_chk() {
     final char varnum = getUnsignedValue(0);
     final short value = getSignedValue(1);
@@ -180,7 +180,7 @@ public class C2OpInstruction extends AbstractInstruction {
     setSignedVarValue(varnum, varValue);
     branchOnTest(varValue < value);
   }
-  
+
   private void inc_chk() {
     final char varnum = getUnsignedValue(0);
     final short value = getSignedValue(1);
@@ -188,48 +188,48 @@ public class C2OpInstruction extends AbstractInstruction {
     setSignedVarValue(varnum, varValue);
     branchOnTest(varValue > value);
   }
-  
+
   private void test() {
     final int op1 = getUnsignedValue(0);
     final int op2 = getUnsignedValue(1);
     branchOnTest((op1 & op2) == op2);
   }
-  
+
   private void or() {
     final int op1 = getUnsignedValue(0);
     final int op2 = getUnsignedValue(1);
     storeUnsignedResult((char) ((op1 | op2) & 0xffff));
     nextInstruction();
   }
-  
+
   private void and() {
     final int op1 = getUnsignedValue(0);
     final int op2 = getUnsignedValue(1);
     storeUnsignedResult((char) ((op1 & op2) & 0xffff));
     nextInstruction();
   }
-  
+
   private void add() {
     final short op1 = getSignedValue(0);
     final short op2 = getSignedValue(1);
     storeSignedResult((short) (op1 + op2));
     nextInstruction();
   }
-  
+
   private void sub() {
     final short op1 = getSignedValue(0);
     final short op2 = getSignedValue(1);
     storeSignedResult((short) (op1 - op2));
     nextInstruction();
   }
-  
+
   private void mul() {
     final short op1 = getSignedValue(0);
     final short op2 = getSignedValue(1);
     storeSignedResult((short)(op1 * op2));
     nextInstruction();
   }
-  
+
   private void div() {
     final short op1 = getSignedValue(0);
     final short op2 = getSignedValue(1);
@@ -240,7 +240,7 @@ public class C2OpInstruction extends AbstractInstruction {
       nextInstruction();
     }
   }
-  
+
   private void mod() {
     final short op1 = getSignedValue(0);
     final short op2 = getSignedValue(1);
@@ -251,7 +251,7 @@ public class C2OpInstruction extends AbstractInstruction {
       nextInstruction();
     }
   }
-  
+
   private void test_attr() {
     final int obj = getUnsignedValue(0);
     final int attr = getUnsignedValue(1);
@@ -262,7 +262,7 @@ public class C2OpInstruction extends AbstractInstruction {
       branchOnTest(false);
     }
   }
-  
+
   private void set_attr() {
     final int obj = getUnsignedValue(0);
     final int attr = getUnsignedValue(1);
@@ -274,7 +274,7 @@ public class C2OpInstruction extends AbstractInstruction {
     }
     nextInstruction();
   }
-  
+
   private void clear_attr() {
     final int obj = getUnsignedValue(0);
     final int attr = getUnsignedValue(1);
@@ -286,10 +286,10 @@ public class C2OpInstruction extends AbstractInstruction {
     }
     nextInstruction();
   }
-  
+
   private void store() {
     final char varnum = getUnsignedValue(0);
-    final char value = getUnsignedValue(1);    
+    final char value = getUnsignedValue(1);
     // Handle stack variable as a special case (standard 1.1)
     if (varnum == 0) {
       getMachine().setStackTop(value);
@@ -298,7 +298,7 @@ public class C2OpInstruction extends AbstractInstruction {
     }
     nextInstruction();
   }
-  
+
   private void insert_obj() {
     final int obj = getUnsignedValue(0);
     final int dest = getUnsignedValue(1);
@@ -328,19 +328,19 @@ public class C2OpInstruction extends AbstractInstruction {
   private void get_prop() {
     final int obj = getUnsignedValue(0);
     final int property = getUnsignedValue(1);
-    
+
     if (obj > 0) {
       char value = (char) getMachine().getProperty(obj, property);
-      storeUnsignedResult(value); 
+      storeUnsignedResult(value);
     } else {
       getMachine().warn("@get_prop illegal access to object " + obj);
     }
     nextInstruction();
   }
-  
+
   private void get_prop_addr() {
     final int obj = getUnsignedValue(0);
-    final int property = getUnsignedValue(1);    
+    final int property = getUnsignedValue(1);
     if (obj > 0) {
       char value = (char)
         (getMachine().getPropertyAddress(obj, property) & 0xffff);
@@ -350,11 +350,11 @@ public class C2OpInstruction extends AbstractInstruction {
     }
     nextInstruction();
   }
-  
+
   private void get_next_prop() {
     final int obj = getUnsignedValue(0);
     final int property = getUnsignedValue(1);
-    char value = 0;    
+    char value = 0;
     if (obj > 0) {
       value = (char) (getMachine().getNextProperty(obj, property) & 0xffff);
       storeUnsignedResult(value);
@@ -365,7 +365,7 @@ public class C2OpInstruction extends AbstractInstruction {
       nextInstruction();
     }
   }
-  
+
   private void set_colour() {
     int window = ScreenModel.CURRENT_WINDOW;
     if (getNumOperands() == 3) {
@@ -375,31 +375,31 @@ public class C2OpInstruction extends AbstractInstruction {
     getMachine().getScreen().setBackground(getSignedValue(1), window);
     nextInstruction();
   }
-  
+
   private void z_throw() {
     final char returnValue = getUnsignedValue(0);
     final int stackFrame = getUnsignedValue(1);
-    
+
     // Unwind the stack
     final int currentStackFrame = getMachine().getRoutineContexts().size() - 1;
     if (currentStackFrame < stackFrame) {
       getMachine().halt("@throw from an invalid stack frame state");
     } else {
-     
+
       // Pop off the routine contexts until the specified stack frame is
       // reached
       final int diff = currentStackFrame - stackFrame;
       for (int i = 0; i < diff; i++) {
         getMachine().returnWith((char) 0);
       }
-      
+
       // and return with the return value
       returnFromRoutine(returnValue);
     }
   }
-  
+
   private boolean isValidAttribute(final int attribute) {
     final int numAttr = getStoryVersion() <= 3 ? 32 : 48;
-    return attribute >= 0 && attribute < numAttr;    
+    return attribute >= 0 && attribute < numAttr;
   }
 }

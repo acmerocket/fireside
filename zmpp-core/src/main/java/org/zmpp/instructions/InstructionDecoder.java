@@ -54,7 +54,7 @@ public class InstructionDecoder {
   private static final char[] NO_OPERANDS     = new char[0];
 
   private Machine machine;
-  
+
   /**
    * Initialize decoder with a valid machine object.
    * @param machine the Machine
@@ -88,7 +88,7 @@ public class InstructionDecoder {
     }
     return instr;
   }
-  
+
   /**
    * Decodes an instruction in short form.
    * @param instrAddr the instruction address
@@ -128,10 +128,10 @@ public class InstructionDecoder {
                              opcodeNum, currentAddr, numOperandBytes,
                              zsciiLength, operandTypes, operands, str);
   }
-  
+
   private Instruction decodeLong(int instrAddress, char byte1) {
     char opcodeNum = (char) (byte1 & LOWER_5_BITS);
-    
+
     // extract long operands
     int operandType1 = (byte1 & BIT_6) != 0 ? Operand.TYPENUM_VARIABLE :
       Operand.TYPENUM_SMALL_CONSTANT;
@@ -148,7 +148,7 @@ public class InstructionDecoder {
       new int[] {operandType1, operandType2}, new char[] {operand1, operand2},
       null);
   }
-  
+
   /**
    * Decodes an instruction in variable form.
    * @param instrAddress the instruction address
@@ -164,7 +164,7 @@ public class InstructionDecoder {
     if (isVx2(opCount, opcodeNum)) {
       operandTypes = joinArrays(
           extractOperandTypes(machine.readUnsigned8(instrAddress + 1)),
-          extractOperandTypes(machine.readUnsigned8(instrAddress + 2)));      
+          extractOperandTypes(machine.readUnsigned8(instrAddress + 2)));
       opTypesOffset = 3;
     } else {
       operandTypes =
@@ -174,13 +174,13 @@ public class InstructionDecoder {
     return decodeVarInstruction(instrAddress, opCount, opcodeNum, operandTypes,
                                 opTypesOffset - 1, opTypesOffset, false);
   }
-  
+
   private boolean isVx2(OperandCount opCount, char opcodeNum) {
     return opCount == VAR &&
         (opcodeNum == VAR_CALL_VN2 || opcodeNum == VAR_CALL_VS2);
-                              
+
   }
-  
+
   /**
    * Join two int arrays which are not null.
    * @param arr1 the first int array
@@ -207,7 +207,7 @@ public class InstructionDecoder {
         extractOperandTypes(machine.readUnsigned8(instrAddress + 2)), 1, 3,
                             true);
   }
-  
+
   private Instruction decodeVarInstruction(int instrAddress,
                                            OperandCount opCount,
                                            char opcodeNum,
@@ -227,7 +227,7 @@ public class InstructionDecoder {
                                numOperandTypeBytes,
                              0, operandTypes, operands, null);
   }
-  
+
   /**
    * The generic part of instruction decoding, extracting store variable
    * and branch offset is always the same for all instruction forms.
@@ -270,7 +270,7 @@ public class InstructionDecoder {
     if (info.isBranch()) {
       branchInfo = getBranchInfo(currentAddr);
     }
-    int opcodeLength = LEN_OPCODE + numOperandBytes + storeVarLen + 
+    int opcodeLength = LEN_OPCODE + numOperandBytes + storeVarLen +
             branchInfo.numOffsetBytes + zsciiLength;
     //System.out.printf("OPCODELEN: %d, len opcode: %d, # operand bytes: %d, len storevar: %d, broffsetbytes: %d, zsciilen: %d\n",
     //    opcodeLength, LEN_OPCODE, numOperandBytes, storeVarLen, branchInfo.numOffsetBytes, zsciiLength);
@@ -293,7 +293,7 @@ public class InstructionDecoder {
     }
     return null;
   }
-  
+
   private Operand[] createOperands(int[] operandTypes, char[] operands) {
     Operand[] result = new Operand[operandTypes.length];
     for (int i = 0; i < operandTypes.length; i++) {
@@ -301,7 +301,7 @@ public class InstructionDecoder {
     }
     return result;
   }
-  
+
   // ************************************************************************
   // ***** Helper functions
   // ********************************
@@ -320,7 +320,7 @@ public class InstructionDecoder {
     }
     return result;
   }
-  
+
   private char[] extractOperands(int operandAddr, int[] operandTypes) {
     char[] result = new char[operandTypes.length];
     int currentAddr = operandAddr;
@@ -335,7 +335,7 @@ public class InstructionDecoder {
     }
     return result;
   }
-  
+
   private int getNumOperandBytes(int[] operandTypes) {
     int result = 0;
     for (int i = 0; i < operandTypes.length; i++) {
@@ -353,7 +353,7 @@ public class InstructionDecoder {
   private int getOperandType(char opTypeByte, int pos) {
     return ((opTypeByte >>> (6 - pos * 2)) & 0x03);
   }
-  
+
   /**
    * Extract the branch information at the specified address
    * @param branchInfoAddr the branch info address
@@ -373,7 +373,7 @@ public class InstructionDecoder {
       branchOffset =
           toSigned14((char) (((branchByte1 << 8) | branchByte2) & 0x3fff));
     }
-    return new BranchInfo(branchOnTrue, numOffsetBytes, 
+    return new BranchInfo(branchOnTrue, numOffsetBytes,
                           branchInfoAddr + numOffsetBytes,
                           (short) branchOffset);
   }
@@ -386,10 +386,10 @@ public class InstructionDecoder {
   private boolean isSimpleOffset(char branchByte1) {
     return (branchByte1 & BIT_6) != 0;
   }
-  
+
   private static short WORD_14_UNSIGNED_MAX = 16383;
   private static short WORD_14_SIGNED_MAX   = 8191;
-  
+
   /**
    * Helper function to extract a 14 bit signed branch offset.
    * @param value the value to convert
@@ -399,13 +399,13 @@ public class InstructionDecoder {
     return (short) (value > WORD_14_SIGNED_MAX ?
       -(WORD_14_UNSIGNED_MAX - (value - 1)) : value);
   }
-  
+
   private char getOperandAt(int operandAddress, int operandType) {
     return operandType == Operand.TYPENUM_LARGE_CONSTANT ?
       machine.readUnsigned16(operandAddress) :
-      machine.readUnsigned8(operandAddress); 
+      machine.readUnsigned8(operandAddress);
   }
-  
+
   /**
    * Determines the operand length of a specified type in bytes.
    * @param operandType the operand type
@@ -429,6 +429,6 @@ public class InstructionDecoder {
     if (byte1 == EXTENDED_MASK) return EXTENDED;
     if ((byte1 & VAR_MASK) == VAR_MASK) return VARIABLE;
     if ((byte1 & SHORT_MASK) == SHORT_MASK) return SHORT;
-    return LONG;    
+    return LONG;
   }
 }

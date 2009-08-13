@@ -188,8 +188,10 @@ public abstract class AbstractInstruction implements Instruction {
    */
   protected void branchOnTest(final boolean condition) {
     final boolean test = branchInfo.branchOnTrue ? condition : !condition;
-    //System.out.printf("ApplyBranch, offset: %d, opcodeLength: %d, branchIfTrue: %b, test: %b\n",
-      //      branchInfo.branchOffset, opcodeLength, branchInfo.branchOnTrue, test);
+    //System.out.printf("ApplyBranch, offset: %d, opcodeLength: %d,
+    //                  branchIfTrue: %b, test: %b\n",
+    //                  branchInfo.branchOffset, opcodeLength,
+    //                  branchInfo.branchOnTrue, test);
     if (test) {
       applyBranch();
     } else {

@@ -37,15 +37,15 @@ public class Abbreviations implements AbbreviationsTable {
    * The memory object.
    */
   private Memory memory;
-  
+
   /**
    * The start address of the abbreviations table.
    */
   private int address;
-  
+
   /**
    * Constructor.
-   * 
+   *
    * @param memory the memory map
    * @param address the start address of the abbreviations table
    */
@@ -54,15 +54,15 @@ public class Abbreviations implements AbbreviationsTable {
     this.memory = memory;
     this.address = address;
   }
-  
+
   /**
    * The abbreviation table contains word addresses, so read out the pointer
    * and multiply by two
-   * 
+   *
    * @param entryNum the entry index in the abbreviations table
    * @return the word address
    */
   public int getWordAddress(final int entryNum) {
     return memory.readUnsigned16(address + entryNum * 2) * 2;
-  }  
+  }
 }

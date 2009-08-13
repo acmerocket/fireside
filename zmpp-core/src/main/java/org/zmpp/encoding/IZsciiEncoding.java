@@ -25,31 +25,31 @@ package org.zmpp.encoding;
  */
 public interface IZsciiEncoding {
 
-  static final char NULL          = 0;
-  static final char DELETE        = 8;
-  static final char NEWLINE_10    = 10;
-  static final char NEWLINE       = 13;
-  static final char ESCAPE        = 27;
-  static final char CURSOR_UP     = 129;
-  static final char CURSOR_DOWN   = 130;
-  static final char CURSOR_LEFT   = 131;
-  static final char CURSOR_RIGHT  = 132;
-  static final char ASCII_START   = 32;
-  static final char ASCII_END     = 126;
+  char NULL          = 0;
+  char DELETE        = 8;
+  char NEWLINE_10    = 10;
+  char NEWLINE       = 13;
+  char ESCAPE        = 27;
+  char CURSOR_UP     = 129;
+  char CURSOR_DOWN   = 130;
+  char CURSOR_LEFT   = 131;
+  char CURSOR_RIGHT  = 132;
+  char ASCII_START   = 32;
+  char ASCII_END     = 126;
 
   /**
    * The start of the accent range.
    */
-  static final char ACCENT_START = 155;
+  char ACCENT_START = 155;
 
   /**
    * End of the accent range.
    */
-  static final char ACCENT_END   = 251;
+  char ACCENT_END   = 251;
 
 
-  static final char MOUSE_DOUBLE_CLICK = 253;
-  static final char MOUSE_SINGLE_CLICK = 254;
+  char MOUSE_DOUBLE_CLICK = 253;
+  char MOUSE_SINGLE_CLICK = 254;
 
   /**
    * Converts the specified string into its ZSCII representation.

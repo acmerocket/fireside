@@ -21,7 +21,7 @@ package org.zmpp.media;
 /**
  * This interface defines the sound system of the Z-machine preservation
  * project.
- * 
+ *
  * @author Wei-ju Wu
  * @version 1.5
  */
@@ -36,27 +36,27 @@ public interface SoundSystem {
    * Low pitched bleep.
    */
   public static final int BLEEP_LOW   = 2;
-  
+
   /**
    * Prepares a sound.
    */
   public static final int EFFECT_PREPARE  = 1;
-  
+
   /**
    * Starts a sound.
    */
   public static final int EFFECT_START    = 2;
-  
+
   /**
    * Stops a sound.
    */
   public static final int EFFECT_STOP     = 3;
-  
+
   /**
    * Finishes a sound.
    */
   public static final int EFFECT_FINISH   = 4;
-  
+
   /**
    * The maximum value for volume.
    */
@@ -66,15 +66,15 @@ public interface SoundSystem {
    * The minimum value for volume.
    */
   public static final int VOLUME_MIN = 255;
-  
+
   /**
    * Sets the volume to default.
    */
   public static final int VOLUME_DEFAULT = -1;
-  
+
   /**
    * Plays a sound.
-   * 
+   *
    * @param number the number of the resource, 1 and 2 are bleeps
    * @param effect the effect
    * @param volume the volume
@@ -82,9 +82,9 @@ public interface SoundSystem {
    * @param routine the interrupt routine (can be 0)
    */
   void play(int number, int effect, int volume, int repeats, int routine);
-  
+
   /**
    * Resets the sound system.
    */
-  void reset();  
+  void reset();
 }

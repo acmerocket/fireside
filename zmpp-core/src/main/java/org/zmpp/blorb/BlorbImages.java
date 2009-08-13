@@ -34,7 +34,7 @@ import org.zmpp.media.Resolution;
 
 /**
  * This class implements the Image collection.
- * 
+ *
  * @author Wei-ju Wu
  * @version 1.5
  */
@@ -44,17 +44,17 @@ public class BlorbImages extends BlorbMediaCollection<BlorbImage> {
    * This map implements the image database.
    */
   private Map<Integer, BlorbImage> images;
-  
+
   /**
    * Constructor.
-   * 
+   *
    * @param formchunk the form chunk
    */
   public BlorbImages(NativeImageFactory imageFactory, FormChunk formchunk) {
     super(imageFactory, null, formchunk);
     handleResoChunk();
   }
-  
+
   /**
    * {@inheritDoc}
    */
@@ -63,29 +63,29 @@ public class BlorbImages extends BlorbMediaCollection<BlorbImage> {
     super.clear();
     images.clear();
   }
-  
+
   /**
    * {@inheritDoc}
    */
   protected void initDatabase() {
-    images = new HashMap<Integer, BlorbImage>();    
+    images = new HashMap<Integer, BlorbImage>();
   }
-  
+
   /**
    * {@inheritDoc}
    */
-  protected boolean isHandledResource(final byte[] usageId) {    
+  protected boolean isHandledResource(final byte[] usageId) {
     return usageId[0] == 'P' && usageId[1] == 'i' && usageId[2] == 'c'
            && usageId[3] == 't';
   }
-  
+
   /**
    * {@inheritDoc}
    */
   public BlorbImage getResource(final int resourcenumber) {
     return images.get(resourcenumber);
   }
-  
+
   /**
    * {@inheritDoc}
    */
@@ -95,22 +95,22 @@ public class BlorbImages extends BlorbMediaCollection<BlorbImage> {
     }
     return true;
   }
-  
+
   private boolean handlePlaceholder(final Chunk chunk, final int resnum) {
     if ("Rect".equals(chunk.getId())) {
       // Place holder
       Memory memory = chunk.getMemory();
       int width = (int) readUnsigned32(memory, Chunk.CHUNK_HEADER_LENGTH);
-      int height = (int) readUnsigned32(memory, Chunk.CHUNK_HEADER_LENGTH + 4);      
+      int height = (int) readUnsigned32(memory, Chunk.CHUNK_HEADER_LENGTH + 4);
       images.put(resnum, new BlorbImage(width, height));
-      
+
       return true;
     }
     return false;
   }
-  
+
   private boolean handlePicture(final Chunk chunk, final int resnum) {
-    
+
     final InputStream is = new MemoryInputStream(chunk.getMemory(),
         Chunk.CHUNK_HEADER_LENGTH, chunk.getSize() + Chunk.CHUNK_HEADER_LENGTH);
     try {
@@ -122,16 +122,16 @@ public class BlorbImages extends BlorbMediaCollection<BlorbImage> {
     }
     return false;
   }
-  
+
   private void handleResoChunk() {
- 
+
     Chunk resochunk = getFormChunk().getSubChunk("Reso");
     if (resochunk != null) {
 
       adjustResolution(resochunk);
     }
   }
-  
+
   private void adjustResolution(Chunk resochunk) {
     Memory memory = resochunk.getMemory();
     int offset = Chunk.CHUNK_ID_LENGTH;
@@ -149,11 +149,11 @@ public class BlorbImages extends BlorbMediaCollection<BlorbImage> {
     offset += 4;
     int maxy = (int) readUnsigned32(memory, offset);
     offset += 4;
-    
+
     ResolutionInfo resinfo = new ResolutionInfo(new Resolution(px, py),
-        new Resolution(minx, miny), new Resolution(maxx, maxy));    
-    
-    for (int i = 0; i < getNumResources(); i++) {      
+        new Resolution(minx, miny), new Resolution(maxx, maxy));
+
+    for (int i = 0; i < getNumResources(); i++) {
       if (offset >= size) break;
       int imgnum = (int) readUnsigned32(memory, offset);
       offset += 4;
@@ -172,7 +172,7 @@ public class BlorbImages extends BlorbMediaCollection<BlorbImage> {
       ScaleInfo scaleinfo = new ScaleInfo(resinfo, new Ratio(ratnum, ratden),
           new Ratio(minnum, minden), new Ratio(maxnum, maxden));
       BlorbImage img = images.get(imgnum);
-      
+
       if (img != null) {
         img.setScaleInfo(scaleinfo);
       }

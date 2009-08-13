@@ -39,7 +39,7 @@ public class VarInstruction extends AbstractInstruction {
                          BranchInfo branchInfo, int opcodeLength) {
     super(machine, opcodeNum, operands, storeVar, branchInfo, opcodeLength);
   }
-  
+
   @Override
   protected OperandCount getOperandCount() { return OperandCount.VAR; }
 
@@ -147,56 +147,56 @@ public class VarInstruction extends AbstractInstruction {
   private void call() {
     call(getNumOperands() - 1);
   }
-    
+
   private void storew() {
     final int array = getUnsignedValue(0);
     final int wordIndex = getUnsignedValue(1);
-    final char value = getUnsignedValue(2);    
+    final char value = getUnsignedValue(2);
     getMachine().writeUnsigned16(array + wordIndex * 2, value);
     nextInstruction();
   }
-  
+
   private void storeb() {
     final int array = getUnsignedValue(0);
     final int byteIndex = getUnsignedValue(1);
-    final int value = getUnsignedValue(2);    
+    final int value = getUnsignedValue(2);
     getMachine().writeUnsigned8(array + byteIndex, (char) (value & 0xff));
     nextInstruction();
   }
-  
+
   private void put_prop() {
     final int obj = getUnsignedValue(0);
     final int property = getUnsignedValue(1);
     final char value = getUnsignedValue(2);
-    
+
     if (obj > 0) {
       getMachine().setProperty(obj, property, value);
       nextInstruction();
     } else {
       // Issue warning for non-existent object
       getMachine().warn("@put_prop illegal access to object " + obj);
-      nextInstruction();    
-    } 
+      nextInstruction();
+    }
   }
-  
+
   private void print_char() {
     final char zchar = (char) getUnsignedValue(0);
     getMachine().printZsciiChar(zchar);
     nextInstruction();
   }
-  
+
   private void print_num() {
     final short number = getSignedValue(0);
     getMachine().printNumber(number);
     nextInstruction();
   }
-  
+
   private void push() {
     final char value = getUnsignedValue(0);
     getMachine().setVariable((char) 0, value);
     nextInstruction();
   }
-  
+
   private void pull() {
     if (getStoryVersion() == 6) {
       pull_v6();
@@ -205,19 +205,19 @@ public class VarInstruction extends AbstractInstruction {
     }
     nextInstruction();
   }
-  
+
   private void pull_v6() {
     char stack = 0;
     if (getNumOperands() == 1) {
       stack = getUnsignedValue(0);
-    }    
+    }
     storeUnsignedResult(getMachine().popStack(stack));
   }
-  
+
   private void pull_std() {
     final char varnum = getUnsignedValue(0);
     final char value = getMachine().getVariable((char) 0);
-    
+
     // standard 1.1
     if (varnum == 0) {
       getMachine().setStackTop(value);
@@ -225,11 +225,11 @@ public class VarInstruction extends AbstractInstruction {
       getMachine().setVariable(varnum, value);
     }
   }
-  
+
   private void output_stream() {
     // Stream number should be a signed byte
     final short streamnumber = getSignedValue(0);
-    
+
     if (streamnumber < 0 && streamnumber >= -3) {
       getMachine().selectOutputStream(-streamnumber, false);
     } else if (streamnumber > 0 && streamnumber <= 3) {
@@ -248,18 +248,18 @@ public class VarInstruction extends AbstractInstruction {
     }
     nextInstruction();
   }
-  
+
   private void input_stream() {
     getMachine().selectInputStream(getUnsignedValue(0));
     nextInstruction();
   }
-  
+
   private void random() {
     final short range = getSignedValue(0);
     storeUnsignedResult(getMachine().random(range));
     nextInstruction();
   }
-  
+
   private void sread() {
     if (getMachine().getRunState() == MachineRunState.RUNNING) {
       sreadStage1();
@@ -267,30 +267,30 @@ public class VarInstruction extends AbstractInstruction {
       sreadStage2();
     }
   }
-  
+
   private void sreadStage1() {
     char textbuffer = getUnsignedValue(0);
     getMachine().setRunState(MachineRunState.createReadLine(
             getReadInterruptTime(), getReadInterruptRoutine(),
             getNumLeftOverChars(textbuffer), textbuffer));
   }
-  
+
   private int getReadInterruptTime() {
     return getNumOperands() >= 3 ? getUnsignedValue(2) : 0;
   }
-  
+
   private char getReadInterruptRoutine() {
     return getNumOperands() >= 4 ? getUnsignedValue(3) : 0;
   }
-  
+
   private int getNumLeftOverChars(char textbuffer) {
     return getStoryVersion() >= 5 ?
       getMachine().readUnsigned8(textbuffer + 1) : 0;
   }
-  
+
   private void sreadStage2() {
     getMachine().setRunState(MachineRunState.RUNNING);
-    
+
     final int version = getStoryVersion();
     final char textbuffer = getUnsignedValue(0);
     char parsebuffer = 0;
@@ -301,12 +301,12 @@ public class VarInstruction extends AbstractInstruction {
     // handles the whole input
     final char terminal =
       getMachine().readLine(textbuffer);
-    
+
     if (version < 5 || (version >= 5 && parsebuffer > 0)) {
       // Do not tokenise if parsebuffer is 0 (See specification of read)
       getMachine().tokenize(textbuffer, parsebuffer, 0, false);
     }
-    
+
     if (storesResult()) {
       // The specification suggests that we store the terminating character
       // here, this can be NULL or NEWLINE at the moment
@@ -314,7 +314,7 @@ public class VarInstruction extends AbstractInstruction {
     }
     nextInstruction();
   }
-  
+
   /**
    * Implements the sound_effect instruction.
    */
@@ -325,26 +325,26 @@ public class VarInstruction extends AbstractInstruction {
     int volume = SoundSystem.VOLUME_DEFAULT;
     int repeats = 0;
     int routine = 0;
-    
+
     // Truly variable
     // If no operands are set, this function will still try to send something
     if (getNumOperands() >= 1) {
       soundnum = getUnsignedValue(0);
     }
-    
+
     if (getNumOperands() >= 2) {
       effect = getUnsignedValue(1);
     }
-    
+
     if (getNumOperands() >= 3) {
       final int volumeRepeats = getUnsignedValue(2);
       volume = volumeRepeats & 0xff;
-      repeats = (volumeRepeats >>> 8) & 0xff;      
+      repeats = (volumeRepeats >>> 8) & 0xff;
       if (repeats <= 0) {
         repeats = 1;
       }
     }
-    
+
     if (getNumOperands() == 4) {
       routine = getUnsignedValue(3);
     }
@@ -355,12 +355,12 @@ public class VarInstruction extends AbstractInstruction {
     if (getStoryVersion() == 3) {
       repeats = 1;
     }
-        
+
     final SoundSystem soundSystem = getMachine().getSoundSystem();
     soundSystem.play(soundnum, effect, volume, repeats, routine);
     nextInstruction();
   }
-  
+
   private void split_window() {
     final ScreenModel screenModel = getMachine().getScreen();
     if (screenModel != null) {
@@ -368,7 +368,7 @@ public class VarInstruction extends AbstractInstruction {
     }
     nextInstruction();
   }
-  
+
   private void set_window() {
     final ScreenModel screenModel = getMachine().getScreen();
     if (screenModel != null) {
@@ -376,66 +376,66 @@ public class VarInstruction extends AbstractInstruction {
     }
     nextInstruction();
   }
-  
+
   private void set_text_style() {
     final ScreenModel screenModel = getMachine().getScreen();
     if (screenModel != null) {
-      
+
       screenModel.setTextStyle(getUnsignedValue(0));
     }
     nextInstruction();
   }
-  
+
   private void buffer_mode() {
     final ScreenModel screenModel = getMachine().getScreen();
     if (screenModel != null) {
-      
+
       screenModel.setBufferMode(getUnsignedValue(0) > 0);
     }
     nextInstruction();
   }
-  
-  private void erase_window() { 
+
+  private void erase_window() {
     final ScreenModel screenModel = getMachine().getScreen();
     if (screenModel != null) {
       screenModel.eraseWindow(getSignedValue(0));
     }
-    nextInstruction();    
+    nextInstruction();
   }
-  
+
   private void erase_line() {
     final ScreenModel screenModel = getMachine().getScreen();
     if (screenModel != null) {
       screenModel.eraseLine(getUnsignedValue(0));
     }
-    nextInstruction();    
+    nextInstruction();
   }
-  
+
   private void set_cursor() {
-    
+
     final ScreenModel screenModel = getMachine().getScreen();
     if (screenModel != null) {
-    
+
       final short line = getSignedValue(0);
       char column = 0;
       short window = ScreenModel.CURRENT_WINDOW;
-      
+
       if (getNumOperands() >= 2) {
         column = getUnsignedValue(1);
       }
       if (getNumOperands() >= 3) {
         window = getSignedValue(2);
       }
-      if (line > 0) {        
-        screenModel.setTextCursor(line, column, window);        
+      if (line > 0) {
+        screenModel.setTextCursor(line, column, window);
       }
     }
-    nextInstruction();    
+    nextInstruction();
   }
-  
+
   private void get_cursor() {
     final ScreenModel screenModel = getMachine().getScreen();
-    if (screenModel != null) {      
+    if (screenModel != null) {
       final TextCursor cursor = screenModel.getTextCursor();
       final int arrayAddr = getUnsignedValue(0);
       getMachine().writeUnsigned16(arrayAddr, (char) cursor.getLine());
@@ -443,8 +443,8 @@ public class VarInstruction extends AbstractInstruction {
     }
     nextInstruction();
   }
-  
-  private void scan_table() {    
+
+  private void scan_table() {
     int x = getUnsignedValue(0);
     final char table = getUnsignedValue(1);
     final int length = getUnsignedValue(2);
@@ -456,7 +456,7 @@ public class VarInstruction extends AbstractInstruction {
     final boolean isWordTable = (form & 0x80) > 0;
     char pointer = table;
     boolean found = false;
-    
+
     for (int i = 0; i < length; i++) {
       int current;
       if (isWordTable) {
@@ -474,7 +474,7 @@ public class VarInstruction extends AbstractInstruction {
       pointer += fieldlen;
     }
     // not found
-    if (!found) {      
+    if (!found) {
       storeUnsignedResult((char) 0);
     }
     branchOnTest(found);
@@ -488,16 +488,16 @@ public class VarInstruction extends AbstractInstruction {
       readCharStage2();
     }
   }
-  
+
   private void readCharStage1() {
     getMachine().setRunState(MachineRunState.createReadChar(
       getReadCharInterruptTime(), getReadCharInterruptRoutine()));
   }
-  
+
   private int getReadCharInterruptTime() {
     return getNumOperands() >= 2 ? getUnsignedValue(1) : 0;
   }
-  
+
   private char getReadCharInterruptRoutine() {
     return getNumOperands() >= 3 ? getUnsignedValue(2) : 0;
   }
@@ -507,7 +507,7 @@ public class VarInstruction extends AbstractInstruction {
     storeUnsignedResult(getMachine().readChar());
     nextInstruction();
   }
-  
+
   /**
    * not instruction. Actually a copy from Short1Instruction, probably we
    * can remove this duplication.
@@ -517,7 +517,7 @@ public class VarInstruction extends AbstractInstruction {
     storeUnsignedResult((char) (notvalue & 0xffff));
     nextInstruction();
   }
-  
+
   private void tokenise() {
     final int textbuffer = getUnsignedValue(0);
     final int parsebuffer = getUnsignedValue(1);
@@ -532,21 +532,21 @@ public class VarInstruction extends AbstractInstruction {
     getMachine().tokenize(textbuffer, parsebuffer, dictionary, (flag != 0));
     nextInstruction();
   }
-  
+
   private void check_arg_count() {
     final int argumentNumber = getUnsignedValue(0);
     final int currentNumArgs =
       getMachine().getCurrentRoutineContext().getNumArguments();
     branchOnTest(argumentNumber <= currentNumArgs);
   }
-  
+
   private void copy_table() {
     final int first = getUnsignedValue(0);
     final int second = getUnsignedValue(1);
     int size = Math.abs(getSignedValue(2));
     if (second == 0) {
       // Clear size bytes of first
-      for (int i = 0; i < size; i++) {        
+      for (int i = 0; i < size; i++) {
         getMachine().writeUnsigned8(first + i, (char) 0);
       }
     } else {
@@ -554,7 +554,7 @@ public class VarInstruction extends AbstractInstruction {
     }
     nextInstruction();
   }
-  
+
   /**
    * Do the print_table instruction. This method takes a text and formats
    * it in a specified format. It requires access to the cursor position
@@ -574,14 +574,14 @@ public class VarInstruction extends AbstractInstruction {
     if (getNumOperands() == 4) {
       skip = getUnsignedValue(3);
     }
-    
+
     char zchar = 0;
     final TextCursor cursor = getMachine().getScreen().getTextCursor();
     final int column = cursor.getColumn();
     int row = cursor.getLine();
-    
+
     for (int i = 0; i < height; i++) {
-      for (int j = 0; j < width; j++) { 
+      for (int j = 0; j < width; j++) {
         final int offset = (width * i) + j;
         zchar = (char) getMachine().readUnsigned8(zsciiText + offset);
         getMachine().printZsciiChar(zchar);
@@ -592,7 +592,7 @@ public class VarInstruction extends AbstractInstruction {
     }
     nextInstruction();
   }
-  
+
   private void encode_text() {
     final int zsciiText = getUnsignedValue(0);
     final int length = getUnsignedValue(1);

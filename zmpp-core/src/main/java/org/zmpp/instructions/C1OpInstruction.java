@@ -52,7 +52,7 @@ public class C1OpInstruction extends AbstractInstruction {
       case C1OP_GET_PROP_LEN:
         get_prop_len();
         break;
-      case C1OP_INC:        
+      case C1OP_INC:
         inc();
         break;
       case C1OP_DEC:
@@ -60,13 +60,13 @@ public class C1OpInstruction extends AbstractInstruction {
         break;
       case C1OP_PRINT_ADDR:
         print_addr();
-        break;        
+        break;
       case C1OP_REMOVE_OBJ:
         remove_obj();
-        break;        
+        break;
       case C1OP_PRINT_OBJ:
         print_obj();
-        break;        
+        break;
       case C1OP_JUMP:
         jump();
         break;
@@ -82,7 +82,7 @@ public class C1OpInstruction extends AbstractInstruction {
       case C1OP_NOT:
         if (getStoryVersion() <= 4) {
           not();
-        } else {          
+        } else {
           call_1n();
         }
         break;
@@ -100,7 +100,7 @@ public class C1OpInstruction extends AbstractInstruction {
     setSignedVarValue(varNum, (short) (value + 1));
     nextInstruction();
   }
-  
+
   private void dec() {
     final char varNum = getUnsignedValue(0);
     final short value = getSignedVarValue(varNum);
@@ -117,19 +117,19 @@ public class C1OpInstruction extends AbstractInstruction {
   private void jump() {
     getMachine().incrementPC(getSignedValue(0) + 1);
   }
-  
+
   private void load() {
     final char varnum = getUnsignedValue(0);
     final char value = varnum == 0 ? getMachine().getStackTop() :
       getMachine().getVariable(varnum);
     storeUnsignedResult(value);
-    nextInstruction();    
+    nextInstruction();
   }
-  
+
   private void jz() {
     branchOnTest(getUnsignedValue(0) == 0);
   }
-  
+
   private void get_parent() {
     final int obj = getUnsignedValue(0);
     int parent = 0;
@@ -141,7 +141,7 @@ public class C1OpInstruction extends AbstractInstruction {
     storeUnsignedResult((char) (parent & 0xffff));
     nextInstruction();
   }
-  
+
   private void get_sibling() {
     final int obj = getUnsignedValue(0);
     int sibling = 0;
@@ -153,7 +153,7 @@ public class C1OpInstruction extends AbstractInstruction {
     storeUnsignedResult((char) (sibling & 0xffff));
     branchOnTest(sibling > 0);
   }
-  
+
   private void get_child() {
     final int obj = getUnsignedValue(0);
     int child = 0;
@@ -170,38 +170,38 @@ public class C1OpInstruction extends AbstractInstruction {
     getMachine().printZString(getUnsignedValue(0));
     nextInstruction();
   }
-  
+
   private void print_paddr() {
     getMachine().printZString(
         getMachine().unpackStringAddress(getUnsignedValue(0)));
     nextInstruction();
   }
-  
+
   private void ret() {
     returnFromRoutine(getUnsignedValue(0));
   }
-  
+
   private void print_obj() {
     final int obj = getUnsignedValue(0);
     if (obj > 0) {
       getMachine().printZString(
         getMachine().getPropertiesDescriptionAddress(obj));
-    } else {      
+    } else {
       getMachine().warn("@print_obj illegal access to object " + obj);
     }
     nextInstruction();
   }
-  
+
   private void remove_obj() {
     final int obj = getUnsignedValue(0);
     if (obj > 0) {
       getMachine().removeObject(obj);
     }
     nextInstruction();
-  }  
+  }
 
   private void get_prop_len() {
-    final int propertyAddress = getUnsignedValue(0);    
+    final int propertyAddress = getUnsignedValue(0);
     final char proplen = (char)
       getMachine().getPropertyLength(propertyAddress);
     storeUnsignedResult(proplen);

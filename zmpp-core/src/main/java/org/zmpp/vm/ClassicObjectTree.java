@@ -22,7 +22,7 @@ import org.zmpp.base.Memory;
 
 /**
  * This class implements the object tree for story file version <= 3.
- * 
+ *
  * @author Wei-ju Wu
  * @version 1.5
  */
@@ -42,7 +42,7 @@ public class ClassicObjectTree extends AbstractObjectTree {
    * Property defaults entries in versions <= 3 have a size of 31 words.
    */
   private static final int PROPERTYDEFAULTS_SIZE = 31 * 2;
-  
+
   /**
    * Constructor.
    * @param memory the Memory object
@@ -50,7 +50,7 @@ public class ClassicObjectTree extends AbstractObjectTree {
    */
   public ClassicObjectTree(Memory memory, int address) {
     super(memory, address);
-  }  
+  }
 
   /**
    * {@inheritDoc}
@@ -68,7 +68,7 @@ public class ClassicObjectTree extends AbstractObjectTree {
    * {@inheritDoc}
    */
   protected int getObjectEntrySize() { return OBJECTENTRY_SIZE; }
-  
+
   /**
    * {@inheritDoc}
    */
@@ -144,15 +144,15 @@ public class ClassicObjectTree extends AbstractObjectTree {
   protected int getNumPropSizeBytesAtData(int propertyDataAddress) {
   	return 1;
   }
-  
+
   /**
    * {@inheritDoc}
    */
-  protected int getPropertyNum(final int propertyAddress) {    
+  protected int getPropertyNum(final int propertyAddress) {
     final int sizeByte = getMemory().readUnsigned8(propertyAddress);
     return sizeByte - 32 * (getPropertyLength(propertyAddress + 1) - 1);
   }
-  
+
   /**
    * This function represents the universal formula to calculate the length
    * of a property given the address of its data (as opposed to the address
@@ -171,7 +171,7 @@ public class ClassicObjectTree extends AbstractObjectTree {
     // version, so this is consistent
     final char sizebyte =
       memaccess.readUnsigned8(addressOfPropertyData - 1);
-    
+
     return sizebyte / 32 + 1;
   }
 }
