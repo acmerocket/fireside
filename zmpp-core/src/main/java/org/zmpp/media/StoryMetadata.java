@@ -47,7 +47,9 @@ public class StoryMetadata {
   public String getGenre() { return genre; }
   public void setGenre(final String genre) { this.genre = genre; }
   public String getDescription() { return description; }
-  public void setDescription(final String description) { this.description = description; }
+  public void setDescription(final String description) {
+    this.description = description;
+  }
   public String getYear() { return year; }
   public void setYear(final String year) { this.year = year; }
   public int getCoverPicture() { return coverpicture; }

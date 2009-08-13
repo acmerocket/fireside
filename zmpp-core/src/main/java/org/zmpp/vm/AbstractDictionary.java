@@ -76,7 +76,8 @@ public abstract class AbstractDictionary implements Dictionary {
   public short getNumberOfEntries() {
     // The number of entries is a signed value so that we can recognize
     // a negative number
-    return unsignedToSigned16(memory.readUnsigned16(address + getNumberOfSeparators() + 2));
+    return unsignedToSigned16(memory.readUnsigned16(address +
+        getNumberOfSeparators() + 2));
   }
 
   /** {@inheritDoc} */

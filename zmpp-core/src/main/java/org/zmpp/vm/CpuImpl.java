@@ -247,8 +247,8 @@ public class CpuImpl implements Cpu {
       checkLocalVariableAccess(localVarNumber);
       return getCurrentRoutineContext().getLocalVariable(localVarNumber);
     } else { // GLOBAL
-      return machine.readUnsigned16(globalsAddress
-          + (getGlobalVariableNumber(variableNumber) * 2));
+      return machine.readUnsigned16(globalsAddress +
+          (getGlobalVariableNumber(variableNumber) * 2));
     }
   }
 
@@ -271,8 +271,8 @@ public class CpuImpl implements Cpu {
       checkLocalVariableAccess(localVarNumber);
       getCurrentRoutineContext().setLocalVariable(localVarNumber, value);
     } else {
-      machine.writeUnsigned16(globalsAddress
-          + (getGlobalVariableNumber(variableNumber) * 2), value);
+      machine.writeUnsigned16(globalsAddress +
+          (getGlobalVariableNumber(variableNumber) * 2), value);
     }
   }
 
@@ -455,9 +455,11 @@ public class CpuImpl implements Cpu {
       throw new IllegalStateException("no routine context set");
     }
 
-    if (localVariableNumber >= getCurrentRoutineContext().getNumLocalVariables()) {
-      throw new IllegalStateException("access to non-existent local variable: "
-                                      + (int) localVariableNumber);
+    if (localVariableNumber >= getCurrentRoutineContext()
+        .getNumLocalVariables()) {
+      throw new IllegalStateException(
+          "access to non-existent local variable: " +
+          (int) localVariableNumber);
     }
   }
 }

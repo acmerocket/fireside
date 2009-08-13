@@ -48,7 +48,7 @@ public class InstructionDecoder {
   private static final int LEN_OPCODE         = 1;
   private static final int LEN_LONG_OPERANDS  = 2;
   private static final int LEN_STORE_VARIABLE = 1;
-  private static final InstructionInfoDb infoDb =
+  private static final InstructionInfoDb INFO_DB =
       InstructionInfoDb.getInstance();
   private static final BranchInfo DUMMY_BRANCH_INFO =
       new BranchInfo(false, 0, 0, (short) 0);
@@ -61,8 +61,8 @@ public class InstructionDecoder {
    * Initialize decoder with a valid machine object.
    * @param machine the Machine
    */
-  public void initialize(Machine machine) {
-    this.machine = machine;
+  public void initialize(Machine aMachine) {
+    this.machine = aMachine;
   }
 
   /**
@@ -87,6 +87,9 @@ public class InstructionDecoder {
       case EXTENDED:
         instr = decodeExtended(instructionAddress);
         break;
+      default:
+        System.out.println("unrecognized form: " + form);
+        break;
     }
     return instr;
   }
@@ -100,7 +103,7 @@ public class InstructionDecoder {
   private Instruction decodeShort(int instrAddress, char byte1) {
     OperandCount opCount = (byte1 & BITS_4_5) == BITS_4_5 ? C0OP : C1OP;
     char opcodeNum = (char) (byte1 & LOWER_4_BITS);
-    InstructionInfo info = infoDb.getInfo(opCount, opcodeNum,
+    InstructionInfo info = INFO_DB.getInfo(opCount, opcodeNum,
                                           machine.getVersion());
     if (info == null) {
       System.out.printf("ILLEGAL SHORT operation, instrAddr: $%04x, OC: %s, " +
@@ -257,7 +260,7 @@ public class InstructionDecoder {
     int storeVarLen = 0;
     char storeVar = 0;
     Operand[] instrOperands = createOperands(operandTypes, operands);
-    InstructionInfo info = infoDb.getInfo(opCount, opcodeNum,
+    InstructionInfo info = INFO_DB.getInfo(opCount, opcodeNum,
                                           machine.getVersion());
     if (info == null) {
       System.out.printf("ILLEGAL operation, instrAddr: $%04x OC: %s, " +
@@ -397,8 +400,8 @@ public class InstructionDecoder {
     return (branchByte1 & BIT_6) != 0;
   }
 
-  private static short WORD_14_UNSIGNED_MAX = 16383;
-  private static short WORD_14_SIGNED_MAX   = 8191;
+  private static final short WORD_14_UNSIGNED_MAX = 16383;
+  private static final short WORD_14_SIGNED_MAX   = 8191;
 
   /**
    * Helper function to extract a 14 bit signed branch offset.

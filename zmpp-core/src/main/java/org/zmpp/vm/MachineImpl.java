@@ -111,9 +111,9 @@ public class MachineImpl implements Machine, DrawingArea {
   // ***** Initialization
   // **************************************
   /** {@inheritDoc} */
-  public void initialize(final byte[] data, Resources resources) {
+  public void initialize(final byte[] data, Resources aResources) {
     this.storyfileData = data;
-    this.resources = resources;
+    this.resources = aResources;
     this.random = new UnpredictableRandomGenerator();
     this.undostates = new RingBuffer<PortableGameState>(NUM_UNDO);
 
@@ -473,8 +473,8 @@ public class MachineImpl implements Machine, DrawingArea {
   public MachineRunState getRunState() { return runstate; }
 
   /** {@inheritDoc} */
-  public void setRunState(MachineRunState runstate) {
-    this.runstate = runstate;
+  public void setRunState(MachineRunState aRunstate) {
+    this.runstate = aRunstate;
     if (runstate != null && runstate.isWaitingForInput()) {
       updateStatusLine();
       flushOutput();
@@ -522,8 +522,8 @@ public class MachineImpl implements Machine, DrawingArea {
   /** {@inheritDoc} */
   public PictureManager getPictureManager() { return pictureManager; }
   /** {@inheritDoc} */
-  public void setSaveGameDataStore(final SaveGameDataStore datastore) {
-    this.datastore = datastore;
+  public void setSaveGameDataStore(final SaveGameDataStore aDatastore) {
+    this.datastore = aDatastore;
   }
   /** {@inheritDoc} */
   public void updateStatusLine() {

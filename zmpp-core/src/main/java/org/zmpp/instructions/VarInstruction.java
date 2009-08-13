@@ -33,7 +33,7 @@ import org.zmpp.windowing.TextCursor;
  */
 public class VarInstruction extends AbstractInstruction {
 
-  private static Logger LOG = Logger.getLogger("org.zmpp");
+  private static final Logger LOG = Logger.getLogger("org.zmpp");
   public VarInstruction(Machine machine, int opcodeNum,
                          Operand[] operands, char storeVar,
                          BranchInfo branchInfo, int opcodeLength) {

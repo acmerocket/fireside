@@ -60,10 +60,10 @@ public class RoutineContext {
 
   /**
    * Sets the number of arguments.
-   * @param numArgs the number of arguments
+   * @param aNumArgs the number of arguments
    */
-  public void setNumArguments(final int numArgs) {
-    this.numArgs = numArgs;
+  public void setNumArguments(final int aNumArgs) {
+    this.numArgs = aNumArgs;
   }
 
   /**

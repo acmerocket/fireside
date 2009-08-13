@@ -93,7 +93,9 @@ public final class FileUtils {
     if (inputstream == null) return null;
 
     // Start with a buffer size between 1K and 1M based on available memory.
-    final int minBufferSize = (int)Math.max(1024, Math.min(Runtime.getRuntime().freeMemory()/10, 1024 * 1024));
+    final int minBufferSize = (int)
+      Math.max(1024,
+               Math.min(Runtime.getRuntime().freeMemory()/10, 1024 * 1024));
 
     List<ByteBuffer> buffers = new ArrayList<ByteBuffer>();
     int totalBytesRead = 0;
@@ -107,7 +109,8 @@ public final class FileUtils {
       int bytesRead;
       while ((bytesRead = rbc.read(bb)) != -1) {
         totalBytesRead += bytesRead;
-        // if this buffer is mostly full, create another one and avoid small read iterations
+        // if this buffer is mostly full, create another one and avoid small
+        // read iterations
         if (bb.remaining() < 16) {
           bb.flip();
           bb = ByteBuffer.allocate(Math.max(minBufferSize, totalBytesRead/2));
@@ -127,12 +130,14 @@ public final class FileUtils {
     }
     data.flip();
 
-    // allow intermeditate buffers to be collected before we create a possibly big array
+    // allow intermeditate buffers to be collected before we create a
+    // possibly big array
     buffers = null;
 
     // is the data buffer backed by a byte array?
     if (data.hasArray()) {
-      // just use the buffer's backing array since it's no longer needed and avoid the copy.
+      // just use the buffer's backing array since it's no longer needed
+      // and avoid the copy.
       return data.array();
     } else {
       // we need to copy the bytes into a byte array.

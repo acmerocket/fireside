@@ -24,7 +24,7 @@ package org.zmpp.vm;
  * @author Wei-ju Wu
  * @version 1.5
  */
-public class MachineRunState {
+public final class MachineRunState {
 
   /**
    * Reading modes.

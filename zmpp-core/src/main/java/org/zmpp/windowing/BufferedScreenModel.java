@@ -71,10 +71,10 @@ public class BufferedScreenModel implements ScreenModel, StatusLine,
    * @param memory a Memory object
    * @param encoding the ZsciiEncoding object
    */
-  public void init(Memory memory, IZsciiEncoding encoding) {
-    this.memory = memory;
+  public void init(Memory aMemory, IZsciiEncoding anEncoding) {
+    this.memory = aMemory;
     this.fileheader = new DefaultStoryFileHeader(memory);
-    this.encoding = encoding;
+    this.encoding = anEncoding;
   }
 
   /** {@inheritDoc} */

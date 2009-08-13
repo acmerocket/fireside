@@ -162,7 +162,7 @@ public class PlaySoundTask implements Runnable, SoundStopListener {
   /**
    * {@inheritDoc}
    */
-  public void soundStopped(final SoundEffect sound) {
+  public void soundStopped(final SoundEffect aSound) {
     setPlayed(true);
   }
 }

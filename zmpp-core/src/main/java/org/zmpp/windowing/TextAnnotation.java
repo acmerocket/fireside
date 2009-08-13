@@ -104,7 +104,7 @@ public class TextAnnotation {
   @Override
   public String toString() {
     return "TextAnnotation, fixed: " + isFixed() + " bold: " + isBold() +
-            " italic: " + isItalic() + " reverse: " + isReverseVideo() + " bg: " + background + " fg: " +
-            foreground;
+            " italic: " + isItalic() + " reverse: " + isReverseVideo() +
+            " bg: " + background + " fg: " + foreground;
   }
 }

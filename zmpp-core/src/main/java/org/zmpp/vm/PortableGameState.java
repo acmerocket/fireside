@@ -67,7 +67,7 @@ public class PortableGameState {
     public char[] getLocals() { return locals; }
     public char[] getArgs() { return args; }
 
-    public void setProgramCounter(final int pc) { this.pc = pc; }
+    public void setProgramCounter(final int aPc) { this.pc = aPc; }
     public void setReturnVariable(final char varnum) {
       this.returnVariable = varnum;
     }
@@ -156,7 +156,7 @@ public class PortableGameState {
   public void setSerialNumber(final String serial) {
     this.serialBytes = serial.getBytes();
   }
-  public void setProgramCounter(final int pc) { this.pc = pc; }
+  public void setProgramCounter(final int aPc) { this.pc = aPc; }
   public void setDynamicMem(final byte[] memdata) { this.dynamicMem = memdata; }
 
   // **********************************************************************

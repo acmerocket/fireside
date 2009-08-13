@@ -29,16 +29,19 @@ public class TopWindow implements TextCursor {
   private int numCharsPerRow, numRows;
   // Note: It is assumed that this annotation will be overridden,
   // check if this is the case for Varicella
-  private TextAnnotation annotation  = new TextAnnotation(ScreenModel.FONT_FIXED,
-      ScreenModel.TEXTSTYLE_ROMAN, ScreenModel.COLOR_BLACK,
-      ScreenModel.COLOR_WHITE);
+  private TextAnnotation annotation  =
+    new TextAnnotation(ScreenModel.FONT_FIXED, ScreenModel.TEXTSTYLE_ROMAN,
+                       ScreenModel.COLOR_BLACK, ScreenModel.COLOR_WHITE);
 
   public TopWindow() {
     resetCursor();
   }
 
   /** Resets the text cursor position. */
-  public void resetCursor() { cursorx = cursory = 1; }
+  public void resetCursor() {
+    cursorx = 1;
+    cursory = 1;
+  }
 
   /**
    * Returns the current TextAnnotation used for this window.

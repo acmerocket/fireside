@@ -118,8 +118,10 @@ public class CommandHistory {
    * Resets the index of the history to the last entry.
    */
   public void reset() {
-    historySizeAtReset = historyIndex = history.size();
-    for (int i = 0; i < history.size(); i++) {
+    int historySize = history.size();
+    historySizeAtReset = historySize;
+    historyIndex = historySize;
+    for (int i = 0; i < historySize; i++) {
       final HistoryEntry entry = history.get(i);
       entry.edited.clear();
       entry.edited.addAll(entry.original);
