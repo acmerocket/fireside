@@ -51,7 +51,7 @@ import org.zmpp.windowing.BufferedScreenModel.StatusLineListener;
  * functionality to its main view, which is a ScreenModelSplitView and
  * mainly deals with displaying and managing a scroll bar and a status
  * line.
- * 
+ *
  * @author Wei-ju Wu
  * @version 1.5
  */
@@ -68,8 +68,8 @@ implements AdjustmentListener, MainViewListener, MouseWheelListener,
     new HashSet<GameLifeCycleListener>();
   private JPanel statusPanel;
   private JLabel objectDescLabel = new JLabel(" "),
-                 statusLabel = new JLabel(" ");  
-  
+                 statusLabel = new JLabel(" ");
+
   /**
    * Constructor.
    */
@@ -84,11 +84,11 @@ implements AdjustmentListener, MainViewListener, MouseWheelListener,
     mainView.addMouseWheelListener(this);
     add(scrollbar, BorderLayout.EAST);
     mainView.addMainViewListener(this);
-    
+
     screenModel.addStatusLineListener(this);
     add(createStatusPanel(), BorderLayout.NORTH);
   }
-  
+
   /**
    * Adds a GameLoadedListener to the list.
    * @param l the GameLoadedListener to add
@@ -96,13 +96,13 @@ implements AdjustmentListener, MainViewListener, MouseWheelListener,
   public void addGameLoadedListener(GameLifeCycleListener l) {
     lifeCycleListeners.add(l);
   }
-  
+
   /**
    * Returns the Machine object.
    * @return the Machine object
    */
   public Machine getMachine() { return executionControl.getMachine(); }
-  
+
   /**
    * Creates the status panel.
    * @return the status panel
@@ -142,14 +142,14 @@ implements AdjustmentListener, MainViewListener, MouseWheelListener,
       scrollToScrollbarPos();
     }
   }
-  
+
   /**
    * Maps a scroll bar position to a view position
    * @param scrollPos the scroll position
    * @return the view position
    */
   private int mapScrollPosToViewPos(int scrollPos) { return -scrollPos; }
-  
+
   /**
    * Maps a view position to the scroll bar's position.
    * @param viewPos the view position
@@ -163,12 +163,12 @@ implements AdjustmentListener, MainViewListener, MouseWheelListener,
     scrollbar.setValue(scrollbar.getValue() + units);
     scrollToScrollbarPos();
   }
-  
+
   /** Scrolls the viewport according to the scroll bar position. */
   private void scrollToScrollbarPos() {
-    mainView.scroll(mapScrollPosToViewPos(scrollbar.getValue()));    
+    mainView.scroll(mapScrollPosToViewPos(scrollbar.getValue()));
   }
-  
+
   // *************************************************************************
   // ****** StatusLineListener
   // ***************************************
@@ -181,13 +181,13 @@ implements AdjustmentListener, MainViewListener, MouseWheelListener,
   // *************************************************************************
   // ****** Game controls
   // ***************************************
-  
+
   public void startGame(MachineInitStruct initStruct)
     throws IOException, InvalidStoryException {
-    
+
     initStruct.screenModel = screenModel;
     initStruct.statusLine = screenModel;
-    
+
     if (this.isVisible()) {
       executionControl = new ExecutionControl(initStruct);
       initUI(initStruct);
@@ -197,7 +197,7 @@ implements AdjustmentListener, MainViewListener, MouseWheelListener,
       mainView.setCurrentRunState(runState);
     }
   }
-  
+
   private void notifyGameInitialized() {
     for (GameLifeCycleListener l : lifeCycleListeners) {
       l.gameInitialized();

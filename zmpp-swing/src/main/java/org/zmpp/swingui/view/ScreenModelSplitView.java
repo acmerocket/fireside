@@ -52,13 +52,13 @@ import org.zmpp.windowing.ScreenModelListener;
 /**
  * The MainView class is the main view component for a standard Z-machine
  * game (everything except V6). It contains the upper and the lower windows.
- * 
+ *
  * While the lower window is layed out so that its boundaries start
  * at the split position, the upper window component always uses up the
  * whole available space. The upper window in in fact an overlay over the
  * lower window, which is controlled by implementing the MainView as a
  * JLayeredPane.
- * 
+ *
  * @author Wei-ju Wu
  * @version 1.5
  */
@@ -91,7 +91,7 @@ implements ScreenModelListener {
   private ScreenModelLayout layout = new ScreenModelLayout();
   private FontSelector fontSelector = new FontSelector();
   private DisplaySettings displaySettings;
-  
+
   /**
    * Constructor.
    */
@@ -102,7 +102,7 @@ implements ScreenModelListener {
     createLowerView();
     split(0);
   }
-  
+
   public int getNumUpperRows() { return upper.getNumRows(); }
   public int getDefaultBackground() {
     return displaySettings.getDefaultBackground();
@@ -111,18 +111,18 @@ implements ScreenModelListener {
     return displaySettings.getDefaultForeground();
   }
   public BufferedScreenModel getScreenModel() { return screenModel; }
-  
+
   // ************************************************************************
   // **** User interface setup
   // ************************************
-  
+
   private void initLayout() {
     setOpaque(true);
     setPreferredSize(new Dimension(640, 480));
     fontSelector.setFixedFont(displaySettings.getFixedFont());
-    fontSelector.setStandardFont(displaySettings.getStdFont());    
+    fontSelector.setStandardFont(displaySettings.getStdFont());
     layout.setFontSelector(fontSelector);
-    setLayout(layout);    
+    setLayout(layout);
   }
 
   private void createUpperView() {
@@ -131,7 +131,7 @@ implements ScreenModelListener {
     upper.setBorder(upperBorder);
     add(upper, JLayeredPane.PALETTE_LAYER);
   }
-  
+
   private void createLowerView() {
     lower.setEditable(true);
     lower.setEnabled(true);
@@ -180,21 +180,21 @@ implements ScreenModelListener {
     // override caret behaviour
     lower.getCaret().addChangeListener(inputHandler);
   }
-  
+
   private Color getBackgroundColor(int screenModelColor) {
     return executionControl != null ?
       ColorTranslator.getInstance().translate(screenModelColor,
         executionControl.getDefaultBackground()) :
       ColorTranslator.getInstance().translate(screenModelColor);
   }
-  
+
   private Color getForegroundColor(int screenModelColor) {
     return executionControl != null ?
       ColorTranslator.getInstance().translate(screenModelColor,
         executionControl.getDefaultForeground()) :
       ColorTranslator.getInstance().translate(screenModelColor);
   }
-  
+
   // ***********************************************************************
   // **** Protected interface
   // *********************************
@@ -205,7 +205,7 @@ implements ScreenModelListener {
     LOG.info("# OF LEFTOVER CHARS: " + getNumLeftOverChars());
     editStart = lower.getDocument().getLength() - getNumLeftOverChars();
   }
-  
+
   private int getNumLeftOverChars() {
     return currentRunState.getNumLeftOverChars();
   }
@@ -217,19 +217,19 @@ implements ScreenModelListener {
     return currentRunState == null ? false : currentRunState.isReadLine();
   }
   ExecutionControl getExecutionControl() { return executionControl; }
-  
+
   // ***********************************************************************
   // **** Public interface
   // *********************************
   private Timer currentTimer;
-  
+
   private void stopCurrentTimer() {
     if (currentTimer != null) {
       currentTimer.stop();
       currentTimer = null;
     }
   }
-  
+
   protected String getCurrentInput() {
     Document doc = lower.getDocument();
     String input = null;
@@ -240,7 +240,7 @@ implements ScreenModelListener {
     }
     return input;
   }
-  
+
   private void startNewInterruptTimer(final MachineRunState runState) {
     currentTimer = new Timer(runState.getTime() * 100,
       new ActionListener() {
@@ -270,7 +270,7 @@ implements ScreenModelListener {
       });
     currentTimer.start();
   }
-  
+
   private void pressEnterKey() {
     KeyEvent enterKeyEvent = new KeyEvent(lower, 1,
     System.currentTimeMillis(), 0, KeyEvent.VK_ENTER, (char) 0);
@@ -278,7 +278,7 @@ implements ScreenModelListener {
       l.keyReleased(enterKeyEvent);
     }
   }
-  
+
   public void setCurrentRunState(final MachineRunState runState) {
     stopCurrentTimer();
     if (runState.getRoutine() > 0) {
@@ -289,7 +289,7 @@ implements ScreenModelListener {
     currentRunState = runState;
     viewCursor(runState.isWaitingForInput());
   }
-  
+
   public void initUI(BufferedScreenModel screenModel,
                      ExecutionControl control) {
     executionControl = control;
@@ -300,7 +300,7 @@ implements ScreenModelListener {
     setSizes();
     lower.setCurrentStyle(screenModel.getBottomAnnotation());
   }
-  
+
   private void setSizes() {
     int componentWidth = getWidth();
     int componentHeight = getHeight();
@@ -319,7 +319,7 @@ implements ScreenModelListener {
   public void addMainViewListener(MainViewListener l) {
     listener = l;
   }
-  
+
   @Override
   public void addMouseWheelListener(MouseWheelListener l) {
     lower.addMouseWheelListener(l);
@@ -330,7 +330,7 @@ implements ScreenModelListener {
     validate();
     repaint();
   }
-  
+
   private void split(int numRowsUpper) {
     layout.setNumRowsUpper(numRowsUpper);
     // clear upper screen only in version 3
@@ -344,27 +344,27 @@ implements ScreenModelListener {
     listener.viewDimensionsChanged(lower.getHeight(), lowerViewport.getHeight(),
                                 lower.getY());
   }
-  
+
   public int getFixedFontWidth() {
     return upper.getGraphics().getFontMetrics(
       getRomanFixedFont()).charWidth('0');
   }
-  
+
   public int getFixedFontHeight() {
     return upper.getGraphics().getFontMetrics(
       getRomanFixedFont()).getHeight();
   }
-  
+
   protected Font getRomanFixedFont() {
     return fontSelector.getFont(ScreenModel.FONT_FIXED,
                                 ScreenModel.TEXTSTYLE_ROMAN);
   }
-  
+
   protected Font getRomanStdFont() {
     return fontSelector.getFont(ScreenModel.FONT_NORMAL,
                                 ScreenModel.TEXTSTYLE_ROMAN);
   }
-  
+
   protected Font getFont(TextAnnotation annotation) {
     return fontSelector.getFont(annotation);
   }
@@ -381,7 +381,7 @@ implements ScreenModelListener {
     lower.setCurrentStyle(screenModel.getBottomAnnotation());
     //upper.setCurrentStyle(screenModel.getBottomAnnotation());
   }
-  
+
   public void topWindowUpdated(int cursorx, int cursory, AnnotatedCharacter c) {
     upper.setCharacter(cursory, cursorx, c);
     repaint();
@@ -408,7 +408,7 @@ implements ScreenModelListener {
       throw new UnsupportedOperationException("No support for erasing window: " + window);
     }
   }
-  
+
   private void clearUpper() {
     upper.clear(screenModel.getBackground());
   }
@@ -417,7 +417,7 @@ implements ScreenModelListener {
     lower.clear(screenModel.getBackground(), screenModel.getForeground());
     clearUpper();
   }
-  
+
   // *************************************************************************
   // ****** Game control
   // ***************************************
@@ -434,7 +434,7 @@ implements ScreenModelListener {
       }
     });
   }
-  
+
   private void viewCursorLower(boolean flag) {
     if (flag) {
       // Respect left over chars
@@ -446,7 +446,7 @@ implements ScreenModelListener {
     	System.out.println("hide cursor in bottom window");
     }
   }
-  
+
   /**
    * A little more readable to execute Runnable within UI thread.
    * @param runnable the Runnable

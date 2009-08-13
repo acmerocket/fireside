@@ -1,18 +1,18 @@
-/*
+/
  * Created on 2008/05/10
  * Copyright 2005-2009 by Wei-ju Wu
  * This file is part of The Z-machine Preservation Project (ZMPP).
- *
+ 
  * ZMPP is free software: you can redistribute it and/or modify
  * it under the terms of the GNU General Public License as published by
  * the Free Software Foundation, either version 3 of the License, or
  * (at your option) any later version.
- *
+ 
  * ZMPP is distributed in the hope that it will be useful,
  * but WITHOUT ANY WARRANTY; without even the implied warranty of
  * MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the
  * GNU General Public License for more details.
- *
+ 
  * You should have received a copy of the GNU General Public License
  * along with ZMPP.  If not, see <http://www.gnu.org/licenses/>.
  */
@@ -28,7 +28,7 @@ import javax.swing.text.Document;
 import org.zmpp.ExecutionControl;
 import org.zmpp.windowing.ScreenModel;
 
-/**
+/*
  * An input handler for the standard screen model.
  * @author Wei-ju Wu
  * @version 1.5
@@ -39,14 +39,14 @@ public class ScreenModelViewInputHandler
   private static final Logger LOG = Logger.getLogger("org.zmpp.ui");
   private ScreenModelSplitView view;
   private long lastConsumed;
-  /**
+  /*
    * A threshold to prevent the handling of the same key event within
    * keypressed, keyreleased, keytyped. We assume the fastest user
    * can not type more than 5 characters per second.
    */
-  private long TYPING_THRESHOLD = 200;
+  private static final long TYPING_THRESHOLD = 200;
 
-  /**
+  /*
    * Constructor.
    * @param view the main view component
    */
@@ -54,9 +54,9 @@ public class ScreenModelViewInputHandler
     this.view = view;
   }
 
-  // *************************************************************************
+  // ************************************************************************
   // **** Keyboard input handling
-  // *************************************************
+  // ************************************************
   /** {@inheritDoc} */
   public void keyTyped(KeyEvent e) {
     handleKeyEvent(e);
@@ -161,12 +161,12 @@ public class ScreenModelViewInputHandler
     }
   }
   
-  // *************************************************************************
+  // ************************************************************************
   // **** Caret handling
-  // *************************************************
+  // ************************************************
   /** {@inheritDoc} */
   public void stateChanged(ChangeEvent e) {
-    /*
+    /
     if (isReadLine()) {
       if (getLowerCaretPosition() < getEditStart()) {
         setLowerCaretPosition(getEditStart());
@@ -174,9 +174,9 @@ public class ScreenModelViewInputHandler
     }*/
   }
   
-  // *************************************************************************
+  // ************************************************************************
   // **** Helpers that delegate to the view
-  // *************************************************
+  // ************************************************
   private ExecutionControl getExecutionControl() {
     return view.getExecutionControl();
   }

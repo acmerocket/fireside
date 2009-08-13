@@ -38,7 +38,7 @@ public class TextWindowView extends JTextPane {
 
   private static final long serialVersionUID = 2122838990704285L;
   private ScreenModelSplitView parent;
-  
+
   /**
    * Constructor.
    * @param parent the parent view
@@ -46,7 +46,7 @@ public class TextWindowView extends JTextPane {
   public TextWindowView(ScreenModelSplitView parent) {
     this.parent = parent;
   }
-  
+
   /**
    * Ties the background color of the MainView to the background of the
    * TextPane. That's because the upper window is treated as a transparent
@@ -73,7 +73,7 @@ public class TextWindowView extends JTextPane {
       ex.printStackTrace();
     }
   }
-  
+
   /**
    * Convert a ZSCII string to a Unicode string
    * @param zsciiString the ZSCII string
@@ -98,7 +98,7 @@ public class TextWindowView extends JTextPane {
       ex.printStackTrace();
     }
   }
-  
+
   /**
    * Builds a form feed string by creating as many newlines as the component
    * contains lines.
@@ -125,7 +125,7 @@ public class TextWindowView extends JTextPane {
     setForeground(translator.translate(foreground,
       parent.getDefaultForeground()));
   }
-  
+
   /**
    * Sets the current style for user input in this component.
    * @param annotation the current annotation holding the style
@@ -133,7 +133,7 @@ public class TextWindowView extends JTextPane {
   public void setCurrentStyle(TextAnnotation annotation) {
     setStyleAttributes(annotation);
   }
-  
+
   /**
    * Sets the current style attributes and returns them.
    * @param annotation the annotation that specifies the new style
@@ -159,5 +159,5 @@ public class TextWindowView extends JTextPane {
       StyleConstants.setForeground(attributes, foreground.brighter());
     }
     return attributes;
-  }  
+  }
 }

@@ -18,17 +18,9 @@
  */
 package org.zmpp.instructions;
 
-import static org.zmpp.vm.Instruction.VAR_CALL_VN2;
-import static org.zmpp.vm.Instruction.VAR_CALL_VS2;
-import static org.zmpp.vm.Instruction.InstructionForm.EXTENDED;
-import static org.zmpp.vm.Instruction.InstructionForm.LONG;
-import static org.zmpp.vm.Instruction.InstructionForm.SHORT;
-import static org.zmpp.vm.Instruction.InstructionForm.VARIABLE;
-import static org.zmpp.vm.Instruction.OperandCount.C0OP;
-import static org.zmpp.vm.Instruction.OperandCount.C1OP;
-import static org.zmpp.vm.Instruction.OperandCount.C2OP;
-import static org.zmpp.vm.Instruction.OperandCount.EXT;
-import static org.zmpp.vm.Instruction.OperandCount.VAR;
+import static org.zmpp.vm.Instruction.*;
+import static org.zmpp.vm.Instruction.InstructionForm.*;
+import static org.zmpp.vm.Instruction.OperandCount.*;
 
 import org.zmpp.instructions.AbstractInstruction.BranchInfo;
 import org.zmpp.instructions.InstructionInfoDb.InstructionInfo;

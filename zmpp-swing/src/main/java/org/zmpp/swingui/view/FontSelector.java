@@ -27,21 +27,21 @@ import org.zmpp.windowing.TextAnnotation;
  * @version 1.5
  */
 public class FontSelector {
-  
+
   private Font fixedFont, stdFont;
-  
+
   /**
    * Sets the fixed font in the system.
    * @param font the fixed font
    */
   public void setFixedFont(Font font) { fixedFont = font; }
-  
+
   /**
    * Sets the standard font in the system.
    * @param font the standard font
    */
   public void setStandardFont(Font font) { stdFont = font; }
-  
+
   /**
    * Returns a font object for the specified TextAnnotation.
    * @param annotation the TextAnnotation
@@ -62,13 +62,13 @@ public class FontSelector {
   public Font getFont(char fontnum, int style) {
     return getFont(new TextAnnotation(fontnum, style));
   }
-  
+
   /**
    * Returns the roman fixed font object.
    * @return the roman fixed font object
    */
   public Font getFixedFont() { return getStyledFont(true, false, false); }
-  
+
   /**
    * Returns a styled font object for the specified attributes.
    * @param fixed true if fixed font

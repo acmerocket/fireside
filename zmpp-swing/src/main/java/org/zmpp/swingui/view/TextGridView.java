@@ -32,7 +32,7 @@ import org.zmpp.windowing.TextCursor;
 /**
  * A class representing a text grid in a Z-machine or Glk screen model.
  * Rather than representing the view through its own Swing component,
- * conceptually it just a clipped area within a hosting component. 
+ * conceptually it just a clipped area within a hosting component.
  *
  * @author Wei-ju Wu
  * @version 1.5
@@ -53,7 +53,7 @@ public class TextGridView extends JComponent {
   public TextGridView(ScreenModelSplitView parent) {
     this.parent = parent;
   }
-  
+
   /**
    * Returns a reference to the current screen model.
    * @return the current screen model
@@ -71,13 +71,13 @@ public class TextGridView extends JComponent {
   public void setGridSize(int numrows, int numcols) {
     grid = new AnnotatedCharacter[numrows][numcols];
   }
-  
+
   /**
    * The number of rows this component can display.
    * @return the number of rows that can be displayed
    */
   public int getNumRows() { return grid == null ? 0 : grid.length; }
-  
+
   /**
    * The number of columns this component can display.
    * @return the number of columns that can be displayed
@@ -85,7 +85,7 @@ public class TextGridView extends JComponent {
   public int getNumColumns() {
     return grid == null || grid.length == 0 ? 0 : grid[0].length;
   }
-  
+
   /**
    * Clears the window by printing spaces in the specified color.
    * @param color the color as a ScreenModel constant
@@ -140,7 +140,7 @@ public class TextGridView extends JComponent {
       FontMetrics fontMetrics = g.getFontMetrics();
       int posy = row * fontMetrics.getHeight() + fontMetrics.getAscent();
       int posx = col * fontMetrics.charWidth(REF_CHAR);
-      
+
       ColorTranslator colTranslator = ColorTranslator.getInstance();
       Color foreground = colTranslator.translate(annotation.getForeground(),
               parent.getDefaultForeground());
@@ -161,7 +161,7 @@ public class TextGridView extends JComponent {
       g.drawString(String.valueOf(c.getCharacter()), posx, posy);
     }
   }
-  
+
   /**
    * Sets the character at the specified position.
    * @param line the 1-based line
@@ -190,7 +190,7 @@ public class TextGridView extends JComponent {
       }
     }
   }
-  
+
   /**
    * Displays or hides the cursor.
    * @param flag true to view, false to hide the cursor

@@ -48,7 +48,7 @@ public class ScreenModelLayout implements LayoutManager2 {
   public void setNumRowsUpper(int numrows) {
     this.numRowsUpper = numrows;
   }
-  
+
   public void setFontSelector(FontSelector selector) {
     this.fontSelector = selector;
   }
@@ -86,7 +86,7 @@ public class ScreenModelLayout implements LayoutManager2 {
       valid = true;
     }
   }
-  
+
   /**
    * Returnsthe size of the upper window.
    * @return the upper window size
@@ -94,7 +94,7 @@ public class ScreenModelLayout implements LayoutManager2 {
   private int getUpperSize() {
     return getUpperFontMetrics().getHeight() * numRowsUpper;
   }
-  
+
   /**
    * Returns the FontMetrics of the upper window.
    * @return the FontMetrics of the upper window
