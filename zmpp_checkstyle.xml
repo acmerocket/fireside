@@ -73,7 +73,9 @@
       <module name="LocalFinalVariableName"/>
       <module name="LocalVariableName"/>
       <module name="MemberName"/>
+			<!--
       <module name="MethodName"/>
+			-->
       <module name="PackageName"/>
       <module name="ParameterName"/>
       <module name="StaticVariableName"/>
@@ -194,11 +196,12 @@
           WW: I think package visible and protected members should
           be allowed
         -->
+				<!--
         <module name="VisibilityModifier">
           <property name="packageAllowed" value="true" />
           <property name="protectedAllowed" value="true" />
         </module>
-
+-->
 
         <!-- Miscellaneous other checks.                   -->
         <!-- See http://checkstyle.sf.net/config_misc.html -->

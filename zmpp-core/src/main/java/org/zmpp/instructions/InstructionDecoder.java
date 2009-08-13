@@ -26,8 +26,6 @@ import org.zmpp.instructions.AbstractInstruction.BranchInfo;
 import org.zmpp.instructions.InstructionInfoDb.InstructionInfo;
 import org.zmpp.vm.Instruction;
 import org.zmpp.vm.Machine;
-import org.zmpp.vm.Instruction.InstructionForm;
-import org.zmpp.vm.Instruction.OperandCount;
 
 /**
  * The revised instruction decoder, a direct port from the Erlang implementation
