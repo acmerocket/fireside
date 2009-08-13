@@ -102,7 +102,7 @@ public class SoundSystemImpl implements SoundSystem {
     if (sound == null) {
       // TODO: Beep ?
       //Toolkit.getDefaultToolkit().beep();
-    	System.out.println("*BEEP*");
+      System.out.println("*BEEP*");
     } else {
       if (effect == SoundSystem.EFFECT_START) {
         startSound(number, sound, volume, repeats, routine);

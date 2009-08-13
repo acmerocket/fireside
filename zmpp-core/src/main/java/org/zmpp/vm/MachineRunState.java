@@ -33,7 +33,7 @@ public class MachineRunState {
   private int time, numLeftOverChars;
   private char routine, textbuffer;
   private ReadMode readMode = ReadMode.NONE;
-  
+
   /**
    * Default constructor.
    */
@@ -54,31 +54,31 @@ public class MachineRunState {
     this.numLeftOverChars = numLeftOverChars;
     this.textbuffer = textbuffer;
   }
-  
+
   /**
    * Returns the interrupt interval.
    * @return the interrupt interval
    */
   public int getTime() { return time; }
-  
+
   /**
    * Returns the packed address of the interrupt address.
    * @return packed interrupt routine address
    */
   public char getRoutine() { return routine; }
-  
+
   /**
    * Returns true if machine is waiting for input.
    * @return true if waiting for input, false otherwise
    */
   public boolean isWaitingForInput() { return readMode != ReadMode.NONE; }
-  
+
   /**
    * Returns true if machine is in read character mode.
    * @return true if read character mode, false otherwise
    */
   public boolean isReadChar() { return readMode == ReadMode.READ_CHAR; }
-  
+
   /**
    * Returns true if machine is in read line mode.
    * @return true if read line mode, false otherwise
@@ -90,23 +90,23 @@ public class MachineRunState {
    * @return the number of left over characters
    */
   public int getNumLeftOverChars() { return numLeftOverChars; }
-  
+
   /**
    * Returns the address of the text buffer.
    * @return the text buffer
    */
   public char getTextBuffer() { return textbuffer; }
-  
+
   /**
    * Running state.
    */
   public static final MachineRunState RUNNING = new MachineRunState();
-  
+
   /**
    * Stopped state.
    */
   public static final MachineRunState STOPPED = new MachineRunState();
-  
+
   /**
    * Creates a read line mode object with the specified interrup data.
    * @param time interrupt interval

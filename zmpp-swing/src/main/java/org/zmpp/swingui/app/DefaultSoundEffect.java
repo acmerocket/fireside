@@ -30,7 +30,7 @@ import javax.sound.sampled.LineListener;
 /**
  * This class implements the SoundEffect interface and encapsulates an
  * audio clip. By this means we provide more abstractness and flexibility.
- * 
+ *
  * @author Wei-ju Wu
  * @version 1.5
  */
@@ -40,12 +40,12 @@ public class DefaultSoundEffect implements SoundEffect, LineListener {
    * The volume range is between 0 and 64 for AIFF sounds.
    */
   public static final int MAX_VOLUME = 64;
-  
+
   /**
    * The audio clip.
    */
   private Clip clip;
-  
+
   /**
    * The listeners.
    */
@@ -53,11 +53,11 @@ public class DefaultSoundEffect implements SoundEffect, LineListener {
 
   /**
    * Constructor.
-   * 
+   *
    * @param clip an audio clip
    */
   public DefaultSoundEffect(final Clip clip) {
-    
+
     super();
     this.clip = clip;
     listeners = new ArrayList<SoundStopListener>();
@@ -68,50 +68,50 @@ public class DefaultSoundEffect implements SoundEffect, LineListener {
    * {@inheritDoc}
    */
   public void play(final int number, final int volume) {
-    
+
     setVolume(volume);
-    
+
     if (number == 1) {
-      
+
       clip.start();
-      
+
     } else {
-      
+
       clip.loop(number - 1);
     }
     // Reset to full volume
     //setVolume(255);
   }
-  
+
   /**
    * Sets the volume.
-   * 
+   *
    * @param vol the volume
    */
   private void setVolume(final int vol) {
-    
+
     int volume = vol;
     if (volume < 0) {
-      
+
       volume = MAX_VOLUME;
     }
     float gainDb = 0.0f;
     final FloatControl gain = (FloatControl)
         clip.getControl(FloatControl.Type.MASTER_GAIN);
-    
+
     if (volume == 0) {
-      
+
       gainDb = gain.getMinimum();
-      
+
     } else if (volume < MAX_VOLUME) {
-      
+
       // The volume algorithm is subtractive: The implementation assumes that
       // the sound is already at maximum volume, so we avoid distortion by
       // making the amplitude values
       // The scaling factor for the volume would be 20 normally, but
       // it seems that 13 is better
       gainDb = (float) (Math.log10(MAX_VOLUME - volume) * 13.0);
-    }    
+    }
     gain.setValue(-gainDb);
   }
 
@@ -122,20 +122,20 @@ public class DefaultSoundEffect implements SoundEffect, LineListener {
 
     clip.stop();
   }
-  
+
   /**
    * {@inheritDoc}
    */
   public void addSoundStopListener(final SoundStopListener l) {
-    
+
     listeners.add(l);
   }
-  
+
   /**
    * {@inheritDoc}
    */
   public void removeSoundStopListener(final SoundStopListener l) {
-    
+
     listeners.remove(l);
   }
 
@@ -143,20 +143,20 @@ public class DefaultSoundEffect implements SoundEffect, LineListener {
    * {@inheritDoc}
    */
   public void update(final LineEvent e) {
-    
+
     if (e.getType() == LineEvent.Type.STOP) {
 
       notifySoundStopped();
     }
   }
-  
+
   /**
    * Notify all listeners that the sound has stopped.
    */
   private void notifySoundStopped() {
-    
+
     for (SoundStopListener l : listeners) {
-      
+
       l.soundStopped(this);
     }
   }

@@ -42,11 +42,11 @@ import org.zmpp.media.Resources;
  * This utility class was introduced to avoid a code smell in data
  * initialization.
  * It offers methods to read data from streams and files.
- * 
+ *
  * @author Wei-ju Wu
  * @version 1.5
  */
-public class FileUtils {
+public final class FileUtils {
 
   private static final Logger LOG = Logger.getLogger("org.zmpp");
 
@@ -54,7 +54,7 @@ public class FileUtils {
    * This class only contains static methods.
    */
   private FileUtils() { }
-  
+
   /**
    * Creates a resources object from a Blorb file.
    * @param imageFactory the NativeImageFactory
@@ -62,7 +62,7 @@ public class FileUtils {
    * @return the resources object or null (on failure)
    */
   public static Resources createResources(NativeImageFactory imageFactory,
-    SoundEffectFactory soundEffectFactory,    
+    SoundEffectFactory soundEffectFactory,
     final File blorbfile) {
     RandomAccessFile raf = null;
     try {
@@ -79,11 +79,11 @@ public class FileUtils {
         try { raf.close(); } catch (Exception ex) {
           LOG.throwing("FileUtils", "createResources", ex);
         }
-      }        
+      }
     }
     return null;
   }
-  
+
   /**
    * Reads an array of bytes from the given input stream.
    * @param inputstream the input stream
@@ -161,8 +161,8 @@ public class FileUtils {
         if (raf != null) {
           try { raf.close(); } catch (Exception ex) {
             LOG.throwing("FileUtils", "readFileBytes", ex);
-          } 
-        } 
+          }
+        }
       }
     }
     return data;

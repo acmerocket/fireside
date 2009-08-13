@@ -63,7 +63,7 @@ import org.zmpp.vmutil.UnpredictableRandomGenerator;
 
 /**
  * This class implements the state and some services of a Z-machine, version 3.
- * 
+ *
  * @author Wei-ju Wu
  * @version 1.5
  */
@@ -73,7 +73,7 @@ public class MachineImpl implements Machine, DrawingArea {
 
   /** Number of undo steps. */
   private static final int NUM_UNDO = 5;
-  
+
   private MachineRunState runstate;
   private RandomGenerator random;
   private StatusLine statusLine;
@@ -82,11 +82,11 @@ public class MachineImpl implements Machine, DrawingArea {
   private RingBuffer<PortableGameState> undostates;
   private InputFunctions inputFunctions;
   private SoundSystem soundSystem;
-  private PictureManager pictureManager;  
+  private PictureManager pictureManager;
   private Cpu cpu;
   private OutputImpl output;
   private InputImpl input;
-  
+
   // Formerly GameData
   private StoryFileHeader fileheader;
   private Memory memory;
@@ -94,19 +94,19 @@ public class MachineImpl implements Machine, DrawingArea {
   private ObjectTree objectTree;
   private ZsciiEncoding encoding;
   private ZCharDecoder decoder;
-  private ZCharEncoder encoder;  
+  private ZCharEncoder encoder;
   private AlphabetTable alphabetTable;
   private Resources resources;
   private byte[] storyfileData;
   private int checksum;
-  
+
   /**
    * Constructor.
    */
   public MachineImpl() {
     this.inputFunctions = new InputFunctions(this);
   }
-  
+
   // **********************************************************************
   // ***** Initialization
   // **************************************
@@ -116,24 +116,24 @@ public class MachineImpl implements Machine, DrawingArea {
     this.resources = resources;
     this.random = new UnpredictableRandomGenerator();
     this.undostates = new RingBuffer<PortableGameState>(NUM_UNDO);
-    
+
     cpu = new CpuImpl(this);
     output = new OutputImpl(this);
     input = new InputImpl();
-    
+
     MediaCollection<SoundEffect> sounds = null;
     MediaCollection<? extends ZmppImage> pictures = null;
     int resourceRelease = 0;
-    
+
     if (resources != null) {
       sounds = resources.getSounds();
       pictures = resources.getImages();
       resourceRelease = resources.getRelease();
     }
-    
+
     soundSystem = new SoundSystemImpl(sounds);
     pictureManager = new PictureManagerImpl(resourceRelease, this, pictures);
-    
+
     resetState();
   }
 
@@ -144,14 +144,14 @@ public class MachineImpl implements Machine, DrawingArea {
     // Make a copy and initialize from the copy
     final byte[] data = new byte[storyfileData.length];
     System.arraycopy(storyfileData, 0, data, 0, storyfileData.length);
-    
+
     memory = new DefaultMemory(data);
     fileheader = new DefaultStoryFileHeader(memory);
     checksum = calculateChecksum();
-    
+
     // Install the whole character code system here
     initEncodingSystem();
-    
+
     // The object tree and dictionaries depend on the code system
     if (fileheader.getVersion() <= 3) {
       objectTree = new ClassicObjectTree(memory,
@@ -165,7 +165,7 @@ public class MachineImpl implements Machine, DrawingArea {
     dictionary = new DefaultDictionary(memory,
         memory.readUnsigned16(StoryFileHeader.DICTIONARY), decoder, sizes);
   }
-  
+
   private void initEncodingSystem() {
     final AccentTable accentTable = (fileheader.getCustomAccentTable() == 0) ?
         new DefaultAccentTable() :
@@ -186,16 +186,16 @@ public class MachineImpl implements Machine, DrawingArea {
     } else {
       alphabetTable = new CustomAlphabetTable(memory, customAlphabetTable);
     }
-    
+
     final ZCharTranslator translator =
       new DefaultZCharTranslator(alphabetTable);
-        
+
     final Abbreviations abbreviations = new Abbreviations(memory,
         memory.readUnsigned16(StoryFileHeader.ABBREVIATIONS));
     decoder = new DefaultZCharDecoder(encoding, translator, abbreviations);
     encoder = new ZCharEncoder(translator);
   }
-  
+
   /**
    * Calculates the checksum of the file.
    * @param fileheader the file header
@@ -209,7 +209,7 @@ public class MachineImpl implements Machine, DrawingArea {
     }
     return (sum & 0xffff);
   }
- 
+
   /** {@inheritDoc} */
   public int getVersion() {
     return getFileHeader().getVersion();
@@ -218,12 +218,12 @@ public class MachineImpl implements Machine, DrawingArea {
   public int getRelease() {
     return getMemory().readUnsigned16(StoryFileHeader.RELEASE);
   }
-  
+
   /** {@inheritDoc} */
   public boolean hasValidChecksum() {
     return this.checksum == getChecksum();
   }
-  
+
   /** {@inheritDoc} */
   public StoryFileHeader getFileHeader() { return fileheader; }
 
@@ -333,12 +333,12 @@ public class MachineImpl implements Machine, DrawingArea {
   public void doBranch(short branchOffset, int instructionLength) {
     getCpu().doBranch(branchOffset, instructionLength);
   }
-  
+
   // **********************************************************************
   // ***** Dictionary functionality
   // **********************************************************************
   private static final String WHITESPACE = " \n\t\r";
-  
+
   private Dictionary getDictionary() { return dictionary; }
   /** {@inheritDoc} */
   public int lookupToken(int dictionaryAddress, String token) {
@@ -352,7 +352,7 @@ public class MachineImpl implements Machine, DrawingArea {
   public String getDictionaryDelimiters() {
     // Retrieve the defined separators
     final StringBuilder separators = new StringBuilder();
-    separators.append(WHITESPACE);    
+    separators.append(WHITESPACE);
     for (int i = 0, n = getDictionary().getNumberOfSeparators(); i < n; i++) {
       separators.append(getZCharDecoder().decodeZChar((char)
               getDictionary().getSeparator(i)));
@@ -390,7 +390,7 @@ public class MachineImpl implements Machine, DrawingArea {
   // **********************************************************************
   // ***** Output stream management, implemented by the OutputImpl object
   // **********************************************************************
-  /**  
+  /**
    * Sets the output stream to the specified number.
    * @param streamnumber the stream number
    * @param stream the output stream
@@ -434,7 +434,7 @@ public class MachineImpl implements Machine, DrawingArea {
   public void reset() {
     output.reset();
   }
-  
+
   // **********************************************************************
   // ***** Input stream management, implemented by the InputImpl object
   // ********************************************************************
@@ -471,7 +471,7 @@ public class MachineImpl implements Machine, DrawingArea {
   // ************************************************
   /** {@inheritDoc} */
   public MachineRunState getRunState() { return runstate; }
-  
+
   /** {@inheritDoc} */
   public void setRunState(MachineRunState runstate) {
     this.runstate = runstate;
@@ -489,19 +489,19 @@ public class MachineImpl implements Machine, DrawingArea {
   /** {@inheritDoc} */
   public void warn(final String msg) {
     LOG.warning("WARNING: " + msg);
-  }  
+  }
   /** {@inheritDoc} */
   public void restart() { restart(true); }
   /** {@inheritDoc} */
   public void quit() {
-    runstate = MachineRunState.STOPPED;    
+    runstate = MachineRunState.STOPPED;
     // On quit, close the streams
     output.print("*Game ended*");
     closeStreams();
   }
   /** {@inheritDoc} */
   public void start() { runstate = MachineRunState.RUNNING; }
-  
+
   // ************************************************************************
   // ****** Machine services
   // ************************************************
@@ -516,7 +516,7 @@ public class MachineImpl implements Machine, DrawingArea {
     return inputFunctions.readLine(textbuffer);
   }
   /** {@inheritDoc} */
-  public char readChar() { return inputFunctions.readChar(); }  
+  public char readChar() { return inputFunctions.readChar(); }
   /** {@inheritDoc} */
   public SoundSystem getSoundSystem() { return soundSystem; }
   /** {@inheritDoc} */
@@ -528,9 +528,9 @@ public class MachineImpl implements Machine, DrawingArea {
   /** {@inheritDoc} */
   public void updateStatusLine() {
     if (getFileHeader().getVersion() <= 3 && statusLine != null) {
-      final int objNum = cpu.getVariable((char) 0x10);    
+      final int objNum = cpu.getVariable((char) 0x10);
       final String objectName = getZCharDecoder().decode2Zscii(getMemory(),
-        getObjectTree().getPropertiesDescriptionAddress(objNum), 0);      
+        getObjectTree().getPropertiesDescriptionAddress(objNum), 0);
       final int global2 = cpu.getVariable((char) 0x11);
       final int global3 = cpu.getVariable((char) 0x12);
       if (getFileHeader().isEnabled(Attribute.SCORE_GAME)) {
@@ -551,7 +551,7 @@ public class MachineImpl implements Machine, DrawingArea {
   /** {@inheritDoc} */
   public ScreenModel getScreen() { return screenModel; }
   /** {@inheritDoc} */
-  public ScreenModel6 getScreen6() { return (ScreenModel6) screenModel; }  
+  public ScreenModel6 getScreen6() { return (ScreenModel6) screenModel; }
   /** {@inheritDoc} */
   public boolean save(final int savepc) {
     if (datastore != null) {
@@ -575,7 +575,7 @@ public class MachineImpl implements Machine, DrawingArea {
       final PortableGameState gamestate = new PortableGameState();
       final FormChunk formchunk = datastore.retrieveFormChunk();
       gamestate.readSaveGame(formchunk);
-      
+
       // verification has to be here
       if (verifySaveGame(gamestate)) {
         // do not reset screen model, since e.g. AMFV simply picks up the
@@ -593,7 +593,7 @@ public class MachineImpl implements Machine, DrawingArea {
     // current window state
     if (undostates.size() > 0) {
       final PortableGameState undoGameState =
-        undostates.remove(undostates.size() - 1);      
+        undostates.remove(undostates.size() - 1);
       restart(false);
       undoGameState.transferStateToMachine(this);
       LOG.info(String.format("restore(), pc is: %4x\n", cpu.getPC()));
@@ -601,11 +601,11 @@ public class MachineImpl implements Machine, DrawingArea {
     }
     return null;
   }
-  
+
   // ***********************************************************************
   // ***** Private methods
   // **************************************
-  
+
   private boolean verifySaveGame(final PortableGameState gamestate) {
     // Verify the game according to the standard
     int saveGameChecksum = getChecksum();
@@ -616,7 +616,7 @@ public class MachineImpl implements Machine, DrawingArea {
       && gamestate.getChecksum() == checksum
       && gamestate.getSerialNumber().equals(getFileHeader().getSerialNumber());
   }
-  
+
   private int getChecksum() {
     return memory.readUnsigned16(StoryFileHeader.CHECKSUM);
   }
@@ -628,7 +628,7 @@ public class MachineImpl implements Machine, DrawingArea {
     input.close();
     output.close();
   }
-  
+
   /**
    * Resets all state to initial values, using the configuration object.
    */
@@ -645,23 +645,23 @@ public class MachineImpl implements Machine, DrawingArea {
       getFileHeader().setInterpreterVersion(1);
     }
   }
-  
+
   private void setStandardRevision(int major, int minor) {
     memory.writeUnsigned8(StoryFileHeader.STD_REVISION_MAJOR, (char) major);
     memory.writeUnsigned8(StoryFileHeader.STD_REVISION_MINOR, (char) minor);
   }
-  
+
   private void restart(final boolean resetScreenModel) {
     // Transcripting and fixed font bits survive the restart
     final StoryFileHeader fileHeader = getFileHeader();
     final boolean fixedFontForced =
       fileHeader.isEnabled(Attribute.FORCE_FIXED_FONT);
     final boolean transcripting = fileHeader.isEnabled(Attribute.TRANSCRIPTING);
-    
+
     resetState();
-    
+
     if (resetScreenModel) {
-      screenModel.reset();    
+      screenModel.reset();
     }
     fileHeader.setEnabled(Attribute.TRANSCRIPTING, transcripting);
     fileHeader.setEnabled(Attribute.FORCE_FIXED_FONT, fixedFontForced);
@@ -670,7 +670,7 @@ public class MachineImpl implements Machine, DrawingArea {
   // ***********************************************************************
   // ***** Object accesss
   // ************************************
-  
+
   private ObjectTree getObjectTree() { return objectTree; }
   /** {@inheritDoc} */
   public void insertObject(int parentNum, int objectNum) {
@@ -715,7 +715,7 @@ public class MachineImpl implements Machine, DrawingArea {
   /** {@inheritDoc} */
   public void setSibling(int objectNum, int sibling) {
     getObjectTree().setSibling(objectNum, sibling);
-  }  
+  }
   /** {@inheritDoc} */
   public int getPropertiesDescriptionAddress(int objectNum) {
     return getObjectTree().getPropertiesDescriptionAddress(objectNum);

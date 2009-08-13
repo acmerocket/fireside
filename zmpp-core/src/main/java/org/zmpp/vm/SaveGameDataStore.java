@@ -25,7 +25,7 @@ import org.zmpp.iff.WritableFormChunk;
  * This interface should be implemented by user interfaces that implement
  * game saving functionality. This keeps the game saving facilities independent
  * of implementation details.
- * 
+ *
  * @author Wei-ju Wu
  * @version 1.5
  */
@@ -33,7 +33,7 @@ public interface SaveGameDataStore {
 
   /**
    * Save the given form chunk to the storage.
-   * 
+   *
    * @param formchunk a form chunk in Quetzal format
    * @return true if successful, false, otherwise
    */
@@ -41,7 +41,7 @@ public interface SaveGameDataStore {
 
   /**
    * Reads a form chunk from storage. Returns null if not successful.
-   * 
+   *
    * @return a saved game or null
    */
   FormChunk retrieveFormChunk();

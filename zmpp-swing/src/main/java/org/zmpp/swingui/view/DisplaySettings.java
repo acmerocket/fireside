@@ -46,37 +46,37 @@ public class DisplaySettings {
     setSettings(stdFont, fixedFont, defaultBackground,
         defaultForeground, antialias);
   }
-  
+
   /**
    * Returns the standard font.
    * @return the standard font
    */
   public Font getStdFont() { return stdFont; }
-  
+
   /**
    * Returns the fixed font size.
    * @retunr hte fixed font size
    */
   public Font getFixedFont() { return fixedFont; }
-  
+
   /**
    * Returns the default background color number.
    * @return the default background
    */
   public int getDefaultBackground() { return defaultBackground; }
-  
+
   /**
    * Returns the default foreground color number.
    * @return the default foreground
    */
   public int getDefaultForeground() { return defaultForeground; }
-  
+
   /**
    * Returns the antialias flag.
    * @return the antialias flag
    */
   public boolean getAntialias() { return antialias; }
-  
+
   /**
    * Sets the settings.
    * @param stdFont the standard font

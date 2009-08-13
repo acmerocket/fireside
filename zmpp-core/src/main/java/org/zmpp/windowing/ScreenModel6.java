@@ -29,14 +29,14 @@ public interface ScreenModel6 extends ScreenModel, DrawingArea {
 
   /**
    * Restricts the mouse pointer to the specified window.
-   * 
+   *
    * @param window the window
    */
   void setMouseWindow(int window);
 
   /**
    * Returns the specified window.
-   * 
+   *
    * @param window the window
    * @return the window
    */
@@ -44,7 +44,7 @@ public interface ScreenModel6 extends ScreenModel, DrawingArea {
 
   /**
    * Returns the currently selected window.
-   * 
+   *
    * @return the currently selected window
    */
   Window6 getSelectedWindow();
@@ -52,14 +52,14 @@ public interface ScreenModel6 extends ScreenModel, DrawingArea {
   /**
    * Instructs the screen model to set the width of the current string
    * to the header.
-   * 
+   *
    * @param zchars the z character array
    */
   void setTextWidthInUnits(char[] zchars);
-  
+
   /**
    * Reads the current mouse data into the specified array.
-   * 
+   *
    * @param array the array address
    */
   void readMouse(int array);

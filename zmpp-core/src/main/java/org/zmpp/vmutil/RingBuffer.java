@@ -23,7 +23,7 @@ package org.zmpp.vmutil;
  * dynamic list structure that should have a limited number of entries and
  * where the oldest n entries can be discarded.
  * This kind of container is particularly useful for undo and history buffers.
- * 
+ *
  * @author Wei-ju Wu
  * @version 1.5
  */
@@ -33,7 +33,7 @@ public class RingBuffer<T> {
   private int bufferstart;
   private int bufferend;
   private int size;
-  
+
   /**
    * Constructor.
    * @param size the size of the buffer
@@ -42,7 +42,7 @@ public class RingBuffer<T> {
   public RingBuffer(int size) {
     elements = (T[]) new Object[size];
   }
-  
+
   /**
    * Adds an element to the buffer. If the capacity of the buffer is exceeded,
    * the oldest element is replaced.
@@ -57,7 +57,7 @@ public class RingBuffer<T> {
     elements[bufferend++] = elem;
     bufferend = bufferend % elements.length;
   }
-  
+
   /**
    * Replaces the element at the specified index with the specified element.
    * @param index the replacement index
@@ -66,44 +66,44 @@ public class RingBuffer<T> {
   public void set(final int index, final T elem) {
     elements[mapIndex(index)] = elem;
   }
-  
+
   /**
    * Returns the element at the specified index.
    * @param index the index
    * @return the object
    */
   public T get(final int index) { return elements[mapIndex(index)]; }
-  
+
   /**
    * Returns the size of this ring buffer.
    * @return the size
    */
   public int size() { return size; }
-  
+
   /**
    * Removes the object at the specified index.
    * @param index the index
    * @return the removed object
    */
   public T remove(final int index) {
-  	if (size > 0) {
-  		// remember the removed element
-  		final T elem = get(index);
-    
-  		// move the following element by one to the front
-  		for (int i = index; i < (size - 1); i++) {
-  			final int idx1 = mapIndex(i);
-  			final int idx2 = mapIndex(i + 1);
-  			elements[idx1] = elements[idx2];
-  		}
-  		size--;
-  		bufferend = (bufferend - 1) % elements.length;
-  		if (bufferend < 0) bufferend = elements.length + bufferend;
-  		return elem;
-  	}
-  	return null;
+    if (size > 0) {
+      // remember the removed element
+      final T elem = get(index);
+
+      // move the following element by one to the front
+      for (int i = index; i < (size - 1); i++) {
+        final int idx1 = mapIndex(i);
+        final int idx2 = mapIndex(i + 1);
+        elements[idx1] = elements[idx2];
+      }
+      size--;
+      bufferend = (bufferend - 1) % elements.length;
+      if (bufferend < 0) bufferend = elements.length + bufferend;
+      return elem;
+    }
+    return null;
   }
-  
+
   /**
    * Maps a container index to a ring buffer index.
    * @param index the container index
@@ -112,7 +112,7 @@ public class RingBuffer<T> {
   private int mapIndex(final int index) {
     return (bufferstart + index) % elements.length;
   }
-  
+
   /**
    * {@inheritDoc}
    */

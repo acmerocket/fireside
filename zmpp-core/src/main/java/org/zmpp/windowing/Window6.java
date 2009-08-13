@@ -28,58 +28,58 @@ import org.zmpp.media.ZmppImage;
  */
 public interface Window6 {
 
-  static final int PROPERTY_Y_COORD           = 0;
-  static final int PROPERTY_X_COORD           = 1;
-  static final int PROPERTY_Y_SIZE            = 2;
-  static final int PROPERTY_X_SIZE            = 3;
-  static final int PROPERTY_Y_CURSOR          = 4;
-  static final int PROPERTY_X_CURSOR          = 5;
-  static final int PROPERTY_LEFT_MARGIN       = 6;
-  static final int PROPERTY_RIGHT_MARGIN      = 7;
-  static final int PROPERTY_INTERRUPT_ROUTINE = 8;
-  static final int PROPERTY_INTERRUPT_COUNT   = 9;
-  static final int PROPERTY_TEXTSTYLE         = 10;
-  static final int PROPERTY_COLOURDATA        = 11;
-  static final int PROPERTY_FONT_NUMBER       = 12;
-  static final int PROPERTY_FONT_SIZE         = 13;
-  static final int PROPERTY_ATTRIBUTES        = 14;
-  static final int PROPERTY_LINE_COUNT        = 15;
-  
+  int PROPERTY_Y_COORD           = 0;
+  int PROPERTY_X_COORD           = 1;
+  int PROPERTY_Y_SIZE            = 2;
+  int PROPERTY_X_SIZE            = 3;
+  int PROPERTY_Y_CURSOR          = 4;
+  int PROPERTY_X_CURSOR          = 5;
+  int PROPERTY_LEFT_MARGIN       = 6;
+  int PROPERTY_RIGHT_MARGIN      = 7;
+  int PROPERTY_INTERRUPT_ROUTINE = 8;
+  int PROPERTY_INTERRUPT_COUNT   = 9;
+  int PROPERTY_TEXTSTYLE         = 10;
+  int PROPERTY_COLOURDATA        = 11;
+  int PROPERTY_FONT_NUMBER       = 12;
+  int PROPERTY_FONT_SIZE         = 13;
+  int PROPERTY_ATTRIBUTES        = 14;
+  int PROPERTY_LINE_COUNT        = 15;
+
   /**
    * Draws the specified picture at the given position.
-   * 
+   *
    * @param picture the picture data
    * @param y the y coordinate
    * @param x the x coordinate
    */
   void drawPicture(ZmppImage picture, int y, int x);
-  
+
   /**
    * Clears the area of the specified picture at the given position.
-   * 
+   *
    * @param picture the picture
    * @param y the y coordinate
    * @param x the x coordinate
    */
   void erasePicture(ZmppImage picture, int y, int x);
-  
+
   /**
    * Moves the window to the specified coordinates in pixels, (1, 1)
    * being the top left.
-   * 
+   *
    * @param y the y coordinate
    * @param x the x coordinate
    */
   void move(int y, int x);
-  
+
   /**
    * Sets window size in pixels.
-   * 
+   *
    * @param height the height in pixels
    * @param width the width in pixels
    */
   void setSize(int height, int width);
-  
+
   /**
    * Sets the window style.
    * The <i>styleflags</i> parameter is a bitmask specified as follows:
@@ -87,22 +87,22 @@ public interface Window6 {
    * - Bit 1: scroll when at bottom
    * - Bit 2: copy text to transcript stream (stream 2)
    * - Bit 3: word wrapping
-   * 
+   *
    * The <i>operation</i> parameter is specified as this:
    * - 0: set style flags to the specified mask
    * - 1: set the bits supplied
    * - 2: clear the bits supplied
-   * - 3: reverse the bits supplied 
-   * 
+   * - 3: reverse the bits supplied
+   *
    * @param styleflags the style flags
    * @param op the operations
    */
   void setStyle(int styleflags, int operation);
-  
+
   /**
    * Sets the window margins in pixels. If the cursor is overtaken by the
    * new margins, set it to the new left margin.
-   * 
+   *
    * @param left the left margin
    * @param right the right margin
    */
@@ -116,24 +116,24 @@ public interface Window6 {
    * 3  x size          9   interrupt countdown         15  line count
    * 4  y cursor        10  text style
    * 5  x cursor        11  colour data
-   * 
+   *
    * @param propertynum the property number
    * @return the property value
    */
   int getProperty(int propertynum);
-  
+
   /**
    * Sets the specified window property.
-   * 
+   *
    * @param propertynum the property number
    * @param value the value
    */
   void putProperty(int propertynum, short value);
-  
+
   /**
    * Scrolls the window by the specified amount of pixels, negative values
    * scroll down, positive scroll up.
-   * 
+   *
    * @param pixels the number of pixels
    */
   void scroll(int pixels);

@@ -64,7 +64,7 @@ public class PreferencesDialog extends JDialog implements ActionListener {
      * @param name the name of the color
      */
     public ColorItem(int colornum, String name) {
-      
+
       this.color = colornum;
       this.name = name;
     }
@@ -75,7 +75,7 @@ public class PreferencesDialog extends JDialog implements ActionListener {
     @Override
     public String toString() { return name; }
   }
-  
+
   private static final ColorItem[] colors = {
     new ColorItem(ScreenModel.UNDEFINED, ""),
     new ColorItem(ScreenModel.COLOR_BLACK, getMessage("caption.black")),
@@ -87,14 +87,14 @@ public class PreferencesDialog extends JDialog implements ActionListener {
     new ColorItem(ScreenModel.COLOR_CYAN, getMessage("caption.cyan")),
     new ColorItem(ScreenModel.COLOR_WHITE, getMessage("caption.white")),
     new ColorItem(ScreenModel.COLOR_MS_DOS_DARKISH_GREY,
-    		getMessage("caption.darkgray")),
+        getMessage("caption.darkgray")),
   };
-  
+
   /**
    * Serial version uid.
    */
   private static final long serialVersionUID = 1L;
-  
+
   private JSpinner stdfontSpinner;
   private JSpinner fixedfontSpinner;
   private JComboBox foregroundCB;
@@ -104,7 +104,7 @@ public class PreferencesDialog extends JDialog implements ActionListener {
   private DisplaySettings settings;
   private String stdFontName;
   private String fixedFontName;
-    
+
   /**
    * Constructor.
    * @param parent the parent frame
@@ -116,14 +116,14 @@ public class PreferencesDialog extends JDialog implements ActionListener {
     super(parent, getMessage("dialog.prefs.title"), true);
     this.preferences = preferences;
     this.settings = settings;
-    
+
     // Control panel
     GridLayout grid = new GridLayout(5, 2);
     grid.setVgap(3);
     grid.setHgap(3);
-    
+
     JPanel mainpanel = new JPanel(grid);
-    
+
     JLabel stdfontLabel = new JLabel(getMessage("caption.stdfont.size"));
     mainpanel.add(stdfontLabel);
     stdfontSpinner = new JSpinner();
@@ -131,20 +131,20 @@ public class PreferencesDialog extends JDialog implements ActionListener {
     mainpanel.add(stdfontSpinner);
 
     JLabel fixedfontLabel = new JLabel(getMessage("caption.fixedfont.size"));
-    mainpanel.add(fixedfontLabel);    
+    mainpanel.add(fixedfontLabel);
     fixedfontSpinner = new JSpinner();
     fixedfontSpinner.setValue(settings.getFixedFont().getSize());
     mainpanel.add(fixedfontSpinner);
-    
+
     JLabel backgroundLabel = new JLabel(getMessage(
-    		"caption.default.background"));
+        "caption.default.background"));
     mainpanel.add(backgroundLabel);
     backgroundCB = new JComboBox(colors);
     mainpanel.add(backgroundCB);
     preselect(backgroundCB, settings.getDefaultBackground());
-    
+
     JLabel foregroundLabel = new JLabel(getMessage(
-    		"caption.default.foreground"));
+        "caption.default.foreground"));
     mainpanel.add(foregroundLabel);
     foregroundCB = new JComboBox(colors);
     mainpanel.add(foregroundCB);
@@ -155,13 +155,13 @@ public class PreferencesDialog extends JDialog implements ActionListener {
     antialiasCB = new JCheckBox();
     antialiasCB.setSelected(settings.getAntialias());
     mainpanel.add(antialiasCB);
-    
+
     // Button panel
     Box lowpanel = new Box(BoxLayout.Y_AXIS);
     lowpanel.add(new JSeparator());
     JPanel buttonpanel = new JPanel(new FlowLayout(FlowLayout.RIGHT));
     lowpanel.add(buttonpanel);
-    
+
     JButton okbutton = new JButton(getMessage("caption.ok"));
     JButton cancelbutton = new JButton(getMessage("caption.cancel"));
     getRootPane().setDefaultButton(okbutton);
@@ -169,13 +169,13 @@ public class PreferencesDialog extends JDialog implements ActionListener {
     buttonpanel.add(cancelbutton);
     okbutton.addActionListener(this);
     cancelbutton.addActionListener(this);
-    
+
     getContentPane().add(mainpanel, BorderLayout.NORTH);
     getContentPane().add(
         new JLabel(getMessage("caption.restarttochange")),
                    BorderLayout.CENTER);
     getContentPane().add(lowpanel, BorderLayout.SOUTH);
-    
+
     Border border = BorderFactory.createEmptyBorder(5, 5, 5, 3);
     ((JPanel) getContentPane()).setBorder(border);
     ((BorderLayout) getContentPane().getLayout()).setVgap(5);
@@ -234,8 +234,8 @@ public class PreferencesDialog extends JDialog implements ActionListener {
       }
     }
   }
-  
+
   private static String getMessage(String key) {
-  	return Main.getMessage(key);
+    return Main.getMessage(key);
   }
 }

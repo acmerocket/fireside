@@ -32,7 +32,7 @@ import org.zmpp.media.SoundSystem;
  * This interface acts as a central access point to the Z-Machine's components.
  * It is mainly provided as a service point for the instructions to manipulate
  * and read the VM's internal state.
- * 
+ *
  * @author Wei-ju Wu
  * @version 1.5
  */
@@ -41,30 +41,30 @@ extends ObjectTree, Input, Output, Cpu, Memory, IZsciiEncoding {
 
   /**
    * Initialization function.
-   * 
+   *
    * @param data the story data
    * @param resources Blorb resources
    */
-  void initialize(byte[] data, Resources resources);  
+  void initialize(byte[] data, Resources resources);
 
   /**
    * Returns the story file version.
    * @return the story file version
    */
   int getVersion();
-  
+
   /**
    * Returns the release.
    * @return the release
    */
   int getRelease();
-  
+
   boolean hasValidChecksum();
 
   // **********************************************************************
   // **** Main machine objects
   // *******************************
-  
+
   StoryFileHeader getFileHeader();
   Resources getResources();
   // **********************************************************************
@@ -72,18 +72,18 @@ extends ObjectTree, Input, Output, Cpu, Memory, IZsciiEncoding {
   // **** We could refine this by exposing the tokenizers
   // **** instead of dictionary functionality
   // **********************************************************
-  
+
   int lookupToken(int dictionaryAddress, String token);
   String getDictionaryDelimiters();
-  
+
   // **********************************************************************
   // **** Encoding functions
   // **********************************************************
-  
+
   void encode(int source, int length, int destination);
   String decode2Zscii(int address, int length);
   int getNumZEncodedBytes(int address);
-  
+
   // ************************************************************************
   // ****** Control functions
   // ************************************************
@@ -93,7 +93,7 @@ extends ObjectTree, Input, Output, Cpu, Memory, IZsciiEncoding {
    * @return the run state
    */
   MachineRunState getRunState();
-  
+
   /**
    * Sets the current run state of the machine
    * @param runstate the run state
@@ -110,28 +110,28 @@ extends ObjectTree, Input, Output, Cpu, Memory, IZsciiEncoding {
    * Restarts the virtual machine.
    */
   void restart();
-  
+
   /**
    * Starts the virtual machine.
    */
   void start();
-  
+
   /**
    * Exists the virtual machine.
    */
   void quit();
-  
+
   /**
    * Outputs a warning message.
-   *  
+   *
    * @param msg
    */
   void warn(String msg);
-  
+
   // **********************************************************************
   // **** Services
   // *******************************
-  
+
   /**
    * Tokenizes the text in the text buffer using the specified parse buffer.
    * @param textbuffer the text buffer
@@ -143,7 +143,7 @@ extends ObjectTree, Input, Output, Cpu, Memory, IZsciiEncoding {
    */
   void tokenize(int textbuffer, int parsebuffer, int dictionaryAddress,
                 boolean flag);
-  
+
   /**
    * Reads a string from the currently selected input stream into
    * the text buffer address.
@@ -151,25 +151,25 @@ extends ObjectTree, Input, Output, Cpu, Memory, IZsciiEncoding {
    * @return the terminator character
    */
   char readLine(int textbuffer);
-  
+
   /**
    * Reads a ZSCII char from the selected input stream.
    * @return the selected ZSCII char
    */
-  char readChar();  
-  
+  char readChar();
+
   /**
    * Returns the sound system.
    * @return the sound system
    */
   SoundSystem getSoundSystem();
-  
+
   /**
    * Returns the picture manager.
    * @return the picture manager
    */
   PictureManager getPictureManager();
-  
+
   /**
    * Generates a number in the range between 1 and <i>range</i>. If range is
    * negative, the random generator will be seeded to abs(range), if
@@ -178,50 +178,50 @@ extends ObjectTree, Input, Output, Cpu, Memory, IZsciiEncoding {
    * @param range the range
    * @return a random number
    */
-  char random(short range);  
+  char random(short range);
 
   /**
    * Updates the status line.
    */
   void updateStatusLine();
-  
+
   /**
    * Sets the Z-machine's status line.
    * @param statusline the status line
    */
   void setStatusLine(StatusLine statusline);
-  
+
   /**
    * Sets the game screen.
    * @param screen the screen model
    */
   void setScreen(ScreenModel screen);
-  
+
   /**
    * Gets the game screen.
    * @return the game screen
    */
   ScreenModel getScreen();
-  
+
   /**
    * Returns screen model 6.
    * @return screen model 6
    */
   ScreenModel6 getScreen6();
-  
+
   /**
    * Sets the save game data store.
    * @param datastore the data store
    */
   void setSaveGameDataStore(SaveGameDataStore datastore);
-  
+
   /**
    * Saves the current state.
    * @param savepc the save pc
    * @return true on success, false otherwise
    */
   boolean save(int savepc);
-  
+
   /**
    * Saves the current state in memory.
    * @param savepc the save pc
@@ -234,10 +234,10 @@ extends ObjectTree, Input, Output, Cpu, Memory, IZsciiEncoding {
    * @return the portable game state
    */
   PortableGameState restore();
-  
+
   /**
    * Restores a previously saved state from memory.
    * @return the portable game state
    */
-  PortableGameState restore_undo();  
+  PortableGameState restore_undo();
 }

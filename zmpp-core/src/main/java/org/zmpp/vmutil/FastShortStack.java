@@ -22,7 +22,7 @@ package org.zmpp.vmutil;
  * This class implements a faster version of the Z-machin main stack.
  * This combines abstract access with the bypassing of unnecessary
  * object creation.
- * 
+ *
  * @author Wei-ju Wu
  * @version 1.5
  */
@@ -30,7 +30,7 @@ public final class FastShortStack {
 
   private char[] values;
   private char stackpointer;
-  
+
   /**
    * Constructor.
    * @param size the stack size
@@ -39,13 +39,13 @@ public final class FastShortStack {
     values = new char[size];
     stackpointer = 0;
   }
-  
+
   /**
    * Returns the current stack pointer.
    * @return the stack pointer
    */
   public char getStackPointer() { return stackpointer; }
-  
+
   /**
    * Pushes a value on the stack and increases the stack pointer.
    * @param value the value
@@ -53,13 +53,13 @@ public final class FastShortStack {
   public void push(final char value) {
     values[stackpointer++] = value;
   }
-  
+
   /**
    * Returns the top value of the stack without modifying the stack pointer.
    * @return the top value
    */
   public char top() { return values[stackpointer - 1]; }
-  
+
   /**
    * Replaces the top element with the specified value.
    * @param value the value to replace
@@ -67,14 +67,14 @@ public final class FastShortStack {
   public void replaceTopElement(final char value) {
     values[stackpointer - 1] = value;
   }
-  
+
   /**
    * Returns the size of the stack. Is equal to stack pointer, but has a
    * different semantic meaning.
    * @return the size of the stack
    */
   public int size() { return stackpointer; }
-  
+
   /**
    * Returns the top value of the stack and decreases the stack pointer.
    * @return the top value
@@ -82,7 +82,7 @@ public final class FastShortStack {
   public char pop() {
     return values[--stackpointer];
   }
-  
+
   /**
    * Returns the value at index of the stack, here stack is treated as an array.
    * @param index the index

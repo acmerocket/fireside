@@ -31,19 +31,19 @@ import static org.zmpp.vm.Instruction.OperandCount.*;
  * @author Wei-ju Wu
  * @version 1.5
  */
-public class InstructionInfoDb {
+public final class InstructionInfoDb {
 
 
   // Commonly used version ranges
-  private static final int[] ALL_VERSIONS = { 1, 2, 3, 4, 5, 6, 7, 8 };
-  private static final int[] EXCEPT_V6    = { 1, 2, 3, 4, 5, 7, 8 };
-  private static final int[] V1_TO_V3     = { 1, 2, 3 };
-  private static final int[] V1_TO_V4     = { 1, 2, 3, 4 };
-  private static final int[] V5_TO_V8     = { 5, 6, 7, 8 };
-  private static final int[] V3_TO_V8     = { 3, 4, 5, 6, 7, 8 };
-  private static final int[] V4_TO_V8     = { 4, 5, 6, 7, 8 };
-  private static final int[] V4           = { 4 };
-  private static final int[] V6           = { 6 };
+  private static final int[] ALL_VERSIONS = {1, 2, 3, 4, 5, 6, 7, 8};
+  private static final int[] EXCEPT_V6    = {1, 2, 3, 4, 5, 7, 8};
+  private static final int[] V1_TO_V3     = {1, 2, 3};
+  private static final int[] V1_TO_V4     = {1, 2, 3, 4};
+  private static final int[] V5_TO_V8     = {5, 6, 7, 8};
+  private static final int[] V3_TO_V8     = {3, 4, 5, 6, 7, 8};
+  private static final int[] V4_TO_V8     = {4, 5, 6, 7, 8};
+  private static final int[] V4           = {4};
+  private static final int[] V6           = {6};
 
   /**
    * Information structure about the instruction.
@@ -297,7 +297,8 @@ public class InstructionInfoDb {
    */
   public InstructionInfo getInfo(OperandCount opCount, int opcodeNum,
                                        int version) {
-    //System.out.println("GENERATING KEY: " + createKey(opCount, opcodeNum, version));
+    //System.out.println("GENERATING KEY: " +
+    //                   createKey(opCount, opcodeNum, version));
     return infoMap.get(createKey(opCount, opcodeNum, version));
   }
 

@@ -34,11 +34,11 @@ public class BufferedTextWindow {
     TextAnnotation.FONT_NORMAL, TextAnnotation.TEXTSTYLE_ROMAN);
   private StringBuilder currentRun;
   private boolean isBuffered;
-  
+
   public BufferedTextWindow() {
     reset();
   }
-  
+
   public void reset() {
     textBuffer = new ArrayList<AnnotatedText>();
     currentRun = new StringBuilder();
@@ -58,38 +58,38 @@ public class BufferedTextWindow {
   public void setCurrentTextStyle(int style) {
     startNewAnnotatedRun(currentAnnotation.deriveStyle(style));
   }
-  
+
   public void setBackground(int background) {
     startNewAnnotatedRun(currentAnnotation.deriveBackground(background));
   }
-  
+
   public void setForeground(int foreground) {
     startNewAnnotatedRun(currentAnnotation.deriveForeground(foreground));
   }
-  
+
   public int getBackground() { return currentAnnotation.getBackground(); }
   public int getForeground() { return currentAnnotation.getForeground(); }
 
   private void startNewAnnotatedRun(TextAnnotation annotation) {
     textBuffer.add(new AnnotatedText(currentAnnotation, currentRun.toString()));
     currentRun = new StringBuilder();
-    currentAnnotation = annotation;    
+    currentAnnotation = annotation;
   }
-  
+
   public void printChar(char zchar) {
     currentRun.append(zchar);
     if (!isBuffered) flush();
   }
-  
+
   public List<AnnotatedText> getBuffer() {
     flush();
     List<AnnotatedText> result = textBuffer;
     textBuffer = new ArrayList<AnnotatedText>();
     return result;
   }
-  
+
   /**
-   * Flushes pending output into 
+   * Flushes pending output into
    */
   private void flush() {
     if (currentRun.length() > 0) {
@@ -98,7 +98,7 @@ public class BufferedTextWindow {
       currentRun = new StringBuilder();
     }
   }
-  
+
   /**
    * Override toString().
    * @return the string representation

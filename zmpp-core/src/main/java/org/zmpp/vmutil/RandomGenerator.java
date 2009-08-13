@@ -21,7 +21,7 @@ package org.zmpp.vmutil;
 /**
  * This interface defines the functions of a random number generator within
  * the Z machine.
- * 
+ *
  * @author Wei-ju Wu
  * @version 1.5
  */
@@ -31,7 +31,7 @@ public interface RandomGenerator {
    * The maximum generated value.
    */
   int MAX_VALUE = 32767;
-  
+
   /**
    * Returns the next random value between 1 and MAX_VALUE.
    * @return a random int value

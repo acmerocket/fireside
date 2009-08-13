@@ -26,14 +26,14 @@ package org.zmpp.vm;
 public interface Output {
 
   /** The output stream number for the screen. */
-  final static int OUTPUTSTREAM_SCREEN = 1;
-  
+  int OUTPUTSTREAM_SCREEN = 1;
+
   /** The output stream number for the transcript. */
-  final static int OUTPUTSTREAM_TRANSCRIPT = 2;
-  
+  int OUTPUTSTREAM_TRANSCRIPT = 2;
+
   /** The output stream number for the memory stream. */
-  final static int OUTPUTSTREAM_MEMORY = 3;
-  
+  int OUTPUTSTREAM_MEMORY = 3;
+
   /**
    * Selects/unselects the specified output stream. If the streamnumber
    * is negative, |streamnumber| is deselected, if positive, it is selected.
@@ -43,51 +43,51 @@ public interface Output {
    * @param flag true to enable, false to disable
    */
   void selectOutputStream(int streamnumber, boolean flag);
-  
+
   /**
    * Selects the output stream 3 which writes to memory.
    * @param tableAddress the table address to write to
    * @param tableWidth the table width
    */
   void selectOutputStream3(int tableAddress, int tableWidth);
-  
+
   /**
    * Prints the ZSCII string at the specified address to the active
    * output streams.
    * @param stringAddress the address of an ZSCII string
    */
   void printZString(int stringAddress);
-  
+
   /**
    * Prints the specified string to the active output streams.
    * @param str the string to print, encoding is ZSCII
    */
   void print(String str);
-  
+
   /**
    * Prints a newline to the active output streams.
    */
   void newline();
-  
+
   /**
    * Prints the specified ZSCII character.
    * @param zchar the ZSCII character to print
    */
   void printZsciiChar(char zchar);
-  
+
   /**
    * Prints the specified signed number.
    * @param num the number to print?
    */
   void printNumber(short num);
-  
+
   /**
    * Flushes the active output streams.
    */
   void flushOutput();
-  
+
   /**
    * Resets the output streams.
    */
-  void reset();  
+  void reset();
 }

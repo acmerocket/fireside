@@ -26,7 +26,7 @@ import javax.swing.JLabel;
 /**
  * This class implements a scalable image label. It preserves the aspect of
  * the displayed picture. This label class is used to display cover art.
- * 
+ *
  * @author Wei-ju Wu
  * @version 1.5
  */
@@ -34,7 +34,7 @@ public class PictureLabel extends JLabel {
 
   /** Label is serializable. */
   private static final long serialVersionUID = 1L;
-  
+
   /** The image. */
   private BufferedImage image;
 
@@ -43,16 +43,16 @@ public class PictureLabel extends JLabel {
    * @param image a BufferedImage
    */
   public PictureLabel(BufferedImage image) { this.image = image; }
-  
+
   /**
    * {@inheritDoc}
    */
   @Override
-  public void paint(Graphics g) {   
+  public void paint(Graphics g) {
     // To preserve the aspect, scale from the largest side
     int imageHeight = image.getHeight();
     int imageWidth = image.getWidth();
-    double scalefactor = (imageHeight > imageWidth) ?    
+    double scalefactor = (imageHeight > imageWidth) ?
       (double) getHeight() / (double) imageHeight :
       (double) getWidth() / (double) imageWidth;
     g.drawImage(image, 0, 0,

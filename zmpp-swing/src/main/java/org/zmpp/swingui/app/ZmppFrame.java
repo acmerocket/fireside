@@ -66,7 +66,7 @@ public class ZmppFrame extends JFrame
   public static final int FIXED_FONT_SIZE = 14;
   public static final int DEFAULT_FOREGROUND = ScreenModel.COLOR_BLACK;
   public static final int DEFAULT_BACKGROUND = ScreenModel.COLOR_WHITE;
-  
+
   private JMenuBar menubar = new JMenuBar();
   private JMenu fileMenu;
   private JMenu helpMenu;
@@ -86,13 +86,13 @@ public class ZmppFrame extends JFrame
     setupUI();
     pack();
   }
-  
+
   /**
-   * Determine if we are running under Mac OS X. 
+   * Determine if we are running under Mac OS X.
    * @return true if this is a Mac
    */
   private static boolean isMacOsX() { return Main.isMacOsX(); }
-  
+
   /**
    * Returns a localized message from the resource bundle.
    * @param property the message key
@@ -101,7 +101,7 @@ public class ZmppFrame extends JFrame
   private static String getMessage(String property) {
     return Main.getMessage(property);
   }
-  
+
   /**
    * Returns the Z-machine view
    * @return the Z-machine view
@@ -124,7 +124,7 @@ public class ZmppFrame extends JFrame
     }
     addAboutGameMenuItem();
   }
-  
+
   public void gameInitialized() {
     StoryMetadata storyinfo = getStoryInfo();
     if (storyinfo != null) {
@@ -133,11 +133,11 @@ public class ZmppFrame extends JFrame
     }
     aboutGameItem.setEnabled(storyinfo != null);
   }
-  
+
   // ***********************************************************************
   // **** Menu initialization
   // **********************************
-  
+
   private void createFileMenu() {
     fileMenu = new JMenu(getMessage("menu.file.name"));
     fileMenu.setMnemonic(getMessage("menu.file.mnemonic").charAt(0));
@@ -160,8 +160,8 @@ public class ZmppFrame extends JFrame
     });
     aboutGameItem.setEnabled(false);
   }
-  
-  private void setupNonMacOsMenuBar() {    
+
+  private void setupNonMacOsMenuBar() {
     // Quit is already in the application menu
     JMenuItem exitItem = new JMenuItem(getMessage("menu.file.quit.name"));
     exitItem.setMnemonic(getMessage("menu.file.quit.mnemonic").charAt(0));
@@ -216,17 +216,17 @@ public class ZmppFrame extends JFrame
 
   private StoryMetadata getStoryInfo() {
     Resources resources = screenModelView.getMachine().getResources();
-    if (resources != null && resources.getMetadata() != null) {     
+    if (resources != null && resources.getMetadata() != null) {
       return resources.getMetadata().getStoryInfo();
     }
     return null;
   }
-  
+
   // ***********************************************************************
   // **** IOSys interface
   // **********************************
   public Writer getTranscriptWriter() {
-    File currentdir = new File(System.getProperty("user.dir"));    
+    File currentdir = new File(System.getProperty("user.dir"));
     JFileChooser fileChooser = new JFileChooser(currentdir);
     fileChooser.setDialogTitle(getMessage("dialog.settranscript.title"));
     if (fileChooser.showSaveDialog(this) == JFileChooser.APPROVE_OPTION) {
@@ -238,9 +238,9 @@ public class ZmppFrame extends JFrame
     }
     return null;
   }
-  
+
   public Reader getInputStreamReader() {
-    File currentdir = new File(System.getProperty("user.dir"));    
+    File currentdir = new File(System.getProperty("user.dir"));
     JFileChooser fileChooser = new JFileChooser(currentdir);
     fileChooser.setDialogTitle(getMessage("dialog.setinput.title"));
     if (fileChooser.showOpenDialog(this) == JFileChooser.APPROVE_OPTION) {
@@ -261,7 +261,7 @@ public class ZmppFrame extends JFrame
         getMessage("dialog.about.title"),
         JOptionPane.INFORMATION_MESSAGE);
   }
-  
+
   /**
    * Displays the about dialog.
    */
@@ -270,7 +270,7 @@ public class ZmppFrame extends JFrame
       screenModelView.getMachine().getResources());
     dialog.setVisible(true);
   }
-  
+
   /**
    * Quits the application.
    */
@@ -299,12 +299,12 @@ public class ZmppFrame extends JFrame
     int defaultbackground = preferences.getInt("defaultbackground",
         DEFAULT_BACKGROUND);
     boolean antialias = preferences.getBoolean("antialias", true);
-    
+
     return new DisplaySettings(new Font(stdFontName, Font.PLAIN, stdFontSize),
       new Font(fixedFontName, Font.PLAIN, fixedFontSize), defaultbackground,
-                               defaultforeground, antialias);    
+                               defaultforeground, antialias);
   }
-  
+
   public static void openStoryUrl(URL url) {
     runStoryUrl(url);
   }
@@ -315,15 +315,15 @@ public class ZmppFrame extends JFrame
   private static void openStoryFile(ZmppFrame frame, final File file) {
     if (frame != null) { frame.dispose(); }
     try {
-    	runInEventDispatchThread(new Runnable() {
-    		public void run() {
+      runInEventDispatchThread(new Runnable() {
+        public void run() {
           if (file == null || !file.exists()) {
-      			JFileChooser fileChooser =
-      					new JFileChooser(System.getProperty("user.home"));
-        		fileChooser.setDialogTitle(getMessage("dialog.open.msg"));
-          	if (fileChooser.showOpenDialog(null) == JFileChooser.APPROVE_OPTION) {        
+            JFileChooser fileChooser =
+                new JFileChooser(System.getProperty("user.home"));
+            fileChooser.setDialogTitle(getMessage("dialog.open.msg"));
+            if (fileChooser.showOpenDialog(null) == JFileChooser.APPROVE_OPTION) {
               final File storyfile = fileChooser.getSelectedFile();
-              SwingUtilities.invokeLater(new Runnable() {  
+              SwingUtilities.invokeLater(new Runnable() {
                 public void run() {
                   runStoryFile(storyfile);
                 }
@@ -335,7 +335,7 @@ public class ZmppFrame extends JFrame
         }
       });
     } catch (Exception ignore) {
-    	ignore.printStackTrace();
+      ignore.printStackTrace();
     }
   }
 
@@ -360,7 +360,7 @@ public class ZmppFrame extends JFrame
     } finally {
       if (storyFileStream != null) {
         try { storyFileStream.close(); } catch (Exception ioex) {
-        	ioex.printStackTrace();
+          ioex.printStackTrace();
         }
       }
     }

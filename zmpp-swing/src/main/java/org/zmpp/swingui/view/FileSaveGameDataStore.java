@@ -34,14 +34,14 @@ import org.zmpp.vm.SaveGameDataStore;
 
 /**
  * This class saves game states into the file system.
- * 
+ *
  * @author Wei-ju Wu
  * @version 1.5
  */
 public class FileSaveGameDataStore implements SaveGameDataStore {
 
   private Component parent;
-  
+
   /**
    * Constructor.
    * @param parent the parent component for the file dialog
@@ -49,13 +49,13 @@ public class FileSaveGameDataStore implements SaveGameDataStore {
   public FileSaveGameDataStore(Component parent) {
     this.parent = parent;
   }
-  
+
   /** {@inheritDoc} */
   public boolean saveFormChunk(WritableFormChunk formchunk) {
-    File currentdir = new File(System.getProperty("user.dir"));    
+    File currentdir = new File(System.getProperty("user.dir"));
     JFileChooser fileChooser = new JFileChooser(currentdir);
     fileChooser.setDialogTitle(Main.getMessage("dialog.savegame.title"));
-    
+
     if (fileChooser.showSaveDialog(parent) == JFileChooser.APPROVE_OPTION) {
       File savefile = fileChooser.getSelectedFile();
       RandomAccessFile raf = null;
@@ -68,16 +68,16 @@ public class FileSaveGameDataStore implements SaveGameDataStore {
         ex.printStackTrace();
       } finally {
         if (raf != null) try { raf.close(); } catch (Exception ex) {
-        	ex.printStackTrace();
+          ex.printStackTrace();
         }
       }
     }
     return false;
-  }  
+  }
 
   /** {@inheritDoc} */
   public FormChunk retrieveFormChunk() {
-    File currentdir = new File(System.getProperty("user.dir"));    
+    File currentdir = new File(System.getProperty("user.dir"));
     JFileChooser fileChooser = new JFileChooser(currentdir);
     fileChooser.setDialogTitle(Main.getMessage("dialog.restoregame.title"));
     if (fileChooser.showOpenDialog(parent) == JFileChooser.APPROVE_OPTION) {
@@ -92,7 +92,7 @@ public class FileSaveGameDataStore implements SaveGameDataStore {
         ex.printStackTrace();
       } finally {
         if (raf != null) try { raf.close(); } catch (Exception ex) {
-        	ex.printStackTrace();
+          ex.printStackTrace();
         }
       }
     }

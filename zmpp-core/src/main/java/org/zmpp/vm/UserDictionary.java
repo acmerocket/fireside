@@ -56,5 +56,5 @@ public class UserDictionary extends AbstractDictionary {
       if (lookupToken.equals(entry)) { return entryAddress; }
     }
     return 0;
-  }  
+  }
 }

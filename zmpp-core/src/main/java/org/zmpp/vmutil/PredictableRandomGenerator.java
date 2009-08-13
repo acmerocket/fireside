@@ -24,14 +24,14 @@ import java.util.Random;
  * This class implements the predictable random number generator mentioned
  * in the Z machine standards document. It takes a seed and generates the
  * same sequence of numbers for equal seeds.
- * 
+ *
  * @author Wei-ju Wu
  * @version 1.5
  */
 public class PredictableRandomGenerator implements RandomGenerator {
 
   private Random rand;
-  
+
   /**
    * Constructor.
    * @param seed the start seed.

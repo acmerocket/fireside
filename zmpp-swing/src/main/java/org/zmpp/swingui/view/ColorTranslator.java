@@ -25,11 +25,11 @@ import org.zmpp.windowing.ScreenModel;
  * This class translates color numbers into Java AWT Color objects. It
  * was outfactored from the Viewport because it is common behaviour which
  * is shared between model 6 and non-model 6 screen models.
- * 
+ *
  * @author Wei-ju Wu
  * @version 1.5
  */
-public class ColorTranslator {
+public final class ColorTranslator {
 
   private static final Color GREEN    = new Color(0, 190, 0);
   private static final Color RED      = new Color(190, 0, 0);
@@ -37,7 +37,7 @@ public class ColorTranslator {
   private static final Color BLUE     = new Color(0, 0, 190);
   private static final Color MAGENTA  = new Color(190, 0, 190);
   private static final Color CYAN     = new Color(0, 190, 190);
-  
+
   private static ColorTranslator instance = new ColorTranslator();
 
   /**
@@ -50,10 +50,10 @@ public class ColorTranslator {
    * @return the singleton instance
    */
   public static ColorTranslator getInstance() { return instance; }
-  
+
   /**
    * Translates the specified color number.
-   * 
+   *
    * @param colornum the color number
    * @param defaultColor the default color
    * @return the color for the number
@@ -80,6 +80,8 @@ public class ColorTranslator {
       return Color.WHITE;
     case ScreenModel.COLOR_MS_DOS_DARKISH_GREY:
       return Color.DARK_GRAY;
+		default:
+			break;
     }
     return Color.BLACK;
   }

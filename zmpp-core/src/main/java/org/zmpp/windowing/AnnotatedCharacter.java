@@ -27,12 +27,12 @@ package org.zmpp.windowing;
 public class AnnotatedCharacter {
   private char character;
   private TextAnnotation annotation;
-  
+
   public AnnotatedCharacter(TextAnnotation annotation, char c) {
     this.annotation = annotation;
     this.character = c;
   }
-  
+
   public TextAnnotation getAnnotation() { return annotation; }
   public char getCharacter() { return character; }
 }

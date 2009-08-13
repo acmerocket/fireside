@@ -44,7 +44,7 @@ public class TextAnnotation {
   private int style;
   private int background;
   private int foreground;
-  
+
   public TextAnnotation(char font, int style, int background, int foreground) {
     this.font = font;
     this.style = style;
@@ -55,12 +55,12 @@ public class TextAnnotation {
   public TextAnnotation(char font, int style) {
     this(font, style, ScreenModel.COLOR_DEFAULT, ScreenModel.COLOR_DEFAULT);
   }
-  
+
   public TextAnnotation deriveFont(char newFont) {
     return new TextAnnotation(newFont, this.style, this.background,
                               this.foreground);
   }
-  
+
   public TextAnnotation deriveStyle(int newStyle) {
     int finalStyle = style;
     if (newStyle == TextAnnotation.TEXTSTYLE_ROMAN) {
@@ -71,25 +71,25 @@ public class TextAnnotation {
     return new TextAnnotation(this.font, finalStyle, this.background,
                               this.foreground);
   }
-  
+
   public TextAnnotation deriveBackground(int newBackground) {
     return new TextAnnotation(this.font, this.style, newBackground,
                               this.foreground);
   }
-  
+
   public TextAnnotation deriveForeground(int newForeground) {
     return new TextAnnotation(this.font, this.style, this.background,
                               newForeground);
   }
-  
+
   public char getFont() { return font; }
 
   public boolean isFixed() {
-    return font == FONT_FIXED || (style & TEXTSTYLE_FIXED) == TEXTSTYLE_FIXED; 
+    return font == FONT_FIXED || (style & TEXTSTYLE_FIXED) == TEXTSTYLE_FIXED;
   }
   public boolean isRoman() { return style == TEXTSTYLE_ROMAN; }
   public boolean isBold() {
-    return (style & TEXTSTYLE_BOLD) == TEXTSTYLE_BOLD; 
+    return (style & TEXTSTYLE_BOLD) == TEXTSTYLE_BOLD;
   }
   public boolean isItalic() {
     return (style & TEXTSTYLE_ITALIC) == TEXTSTYLE_ITALIC;
@@ -97,10 +97,10 @@ public class TextAnnotation {
   public boolean isReverseVideo() {
     return (style & TEXTSTYLE_REVERSE_VIDEO) == TEXTSTYLE_REVERSE_VIDEO;
   }
-  
+
   public int getBackground() { return background; }
   public int getForeground() { return foreground; }
-  
+
   @Override
   public String toString() {
     return "TextAnnotation, fixed: " + isFixed() + " bold: " + isBold() +

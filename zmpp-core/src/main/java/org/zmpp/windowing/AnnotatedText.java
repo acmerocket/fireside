@@ -27,21 +27,21 @@ public class AnnotatedText {
 
   private TextAnnotation annotation;
   private String text;
-  
+
   public AnnotatedText(TextAnnotation annotation, String text) {
     this.annotation = annotation;
     this.text = text;
   }
-  
+
   public AnnotatedText(String text) {
     this(new TextAnnotation(TextAnnotation.FONT_NORMAL,
                             TextAnnotation.TEXTSTYLE_ROMAN), text);
   }
-  
+
   public TextAnnotation getAnnotation() {
     return annotation;
   }
-  
+
   public String getText() {
     return text;
   }

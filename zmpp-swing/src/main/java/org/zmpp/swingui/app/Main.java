@@ -53,13 +53,13 @@ public class Main {
    * Localized message bundle.
    */
   private static PropertyResourceBundle MESSAGE_BUNDLE =
-		(PropertyResourceBundle) PropertyResourceBundle.getBundle("zmpp_messages");
-  
+    (PropertyResourceBundle) PropertyResourceBundle.getBundle("zmpp_messages");
+
   /**
    * Debug flag.
    */
   public static final boolean DEBUG = true;
-  
+
   static class AwtImage implements NativeImage {
 
     private BufferedImage image;
@@ -108,7 +108,7 @@ public class Main {
   public static String getMessage(String property) {
     return MESSAGE_BUNDLE.getString(property);
   }
-  
+
   public static void main(String[] args) {
     setMacOsXProperties();
     try {
@@ -124,16 +124,16 @@ public class Main {
       ex.printStackTrace();
     }
     if (args.length >= 1) {
-    	runWithParameters(args);
+      runWithParameters(args);
     } else {
       ZmppFrame.openStoryFile();
     }
   }
-  
+
   public static boolean isMacOsX() {
-  	return System.getProperty("mrj.version") != null;
+    return System.getProperty("mrj.version") != null;
   }
-  
+
   private static void setMacOsXProperties() {
     if (isMacOsX()) {
       System.setProperty("apple.laf.useScreenMenuBar", "true");
@@ -146,32 +146,32 @@ public class Main {
 
   private static void runWithParameters(String[] args)
   {
-  	if (isFile(args[0])) {
+    if (isFile(args[0])) {
       ZmppFrame.openStoryFile(new File(args[0]));
-  	} else if (isUrl(args[0])) {
-  		try {
-  			ZmppFrame.openStoryUrl(new URL(args[0]));
-  		} catch (Exception ex) {
-  			ex.printStackTrace();
-  		}
-  	} else {
+    } else if (isUrl(args[0])) {
+      try {
+        ZmppFrame.openStoryUrl(new URL(args[0]));
+      } catch (Exception ex) {
+        ex.printStackTrace();
+      }
+    } else {
       JOptionPane.showMessageDialog(null,
-      	MessageFormat.format(getMessage("error.open.msg"), ""),
+        MessageFormat.format(getMessage("error.open.msg"), ""),
         getMessage("error.open.title"), JOptionPane.ERROR_MESSAGE);
-  	}
+    }
   }
-  
+
   private static boolean isFile(String str) {
-  	File file = new File(str);
-  	return file.exists() && file.isFile();
+    File file = new File(str);
+    return file.exists() && file.isFile();
   }
-  
+
   private static boolean isUrl(String str) {
-  	try {
-  		new URL(str);
-  		return true;
-  	} catch (Exception ex) {
-  		return false;
-  	}
+    try {
+      new URL(str);
+      return true;
+    } catch (Exception ex) {
+      return false;
+    }
   }
 }

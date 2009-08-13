@@ -63,7 +63,7 @@ public class TranscriptOutputStream implements OutputStream {
     if (!initialized && transcriptWriter == null) {
       transcriptWriter = iosys.getTranscriptWriter();
       if (transcriptWriter != null) {
-      	output = new BufferedWriter(transcriptWriter);
+        output = new BufferedWriter(transcriptWriter);
       }
       initialized = true;
     }

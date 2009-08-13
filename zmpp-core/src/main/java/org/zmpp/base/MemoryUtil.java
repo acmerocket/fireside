@@ -23,7 +23,7 @@ package org.zmpp.base;
  * @author Wei-ju Wu
  * @version 1.5
  */
-public class MemoryUtil {
+public final class MemoryUtil {
   /** Private constructor. */
   private MemoryUtil() { }
   /**

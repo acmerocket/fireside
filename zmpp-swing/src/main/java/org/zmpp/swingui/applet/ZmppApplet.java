@@ -58,13 +58,13 @@ public class ZmppApplet extends JApplet implements IOSystem {
   private static final boolean DEFAULT_ANTIALIAS = true;
   private static final String DEFAULT_STD_FONT   = "Times";
   private static final String DEFAULT_FIXED_FONT = "Courier New";
-  
+
   /**
    * The color map maps parameters to color ids.
    */
   private static final Map<String, Integer> colormap =
     new HashMap<String, Integer>();
-  
+
   static {
     colormap.put("black",   2);
     colormap.put("red",     3);
@@ -86,12 +86,12 @@ public class ZmppApplet extends JApplet implements IOSystem {
     String fontName = name == null ? DEFAULT_STD_FONT : name;
     return new Font(fontName, Font.PLAIN, size);
   }
-  
+
   private Font createFixedFont(String name, int size) {
     String fontName = name == null ? DEFAULT_FIXED_FONT : name;
     return new Font(fontName, Font.PLAIN, size);
   }
- 
+
   private void setSystemLookAndFeel() {
     try {
       UIManager.setLookAndFeel(UIManager.getSystemLookAndFeelClassName());
@@ -117,7 +117,7 @@ public class ZmppApplet extends JApplet implements IOSystem {
     String defaultBgStr = getParameter("default-background");
     String defaultFgStr = getParameter("default-foreground");
     String antialiasparam = getParameter("antialias");
-    
+
     savetofile = "file".equalsIgnoreCase(saveto);
 
     int sizeFixedFont = parseInt(fixedFontSize, DEFAULT_FIXED_FONT_SIZE);
@@ -125,13 +125,13 @@ public class ZmppApplet extends JApplet implements IOSystem {
     int defaultBackground = parseColor(defaultBgStr, DEFAULT_BACKGROUND);
     int defaultForeground = parseColor(defaultFgStr, DEFAULT_FOREGROUND);
     boolean antialias = parseBoolean(antialiasparam, DEFAULT_ANTIALIAS);
-    
+
     settings = new DisplaySettings(createStdFont(stdFontName, sizeStdFont),
         createFixedFont(fixedFontName, sizeFixedFont),
         defaultBackground, defaultForeground, antialias);
     screenModelView = new ScreenModelView(settings);
     getContentPane().add(screenModelView, BorderLayout.CENTER);
-    
+
     try {
       initStruct = new MachineInitStruct();
       initStruct.blorbURL = (blorb != null) ?
@@ -145,7 +145,7 @@ public class ZmppApplet extends JApplet implements IOSystem {
                 throws IOException {
           return new NativeImage() {
             public int getWidth() { return 0; }
-            public int getHeight() { return 0; }        
+            public int getHeight() { return 0; }
           };
         }
       };
@@ -153,14 +153,14 @@ public class ZmppApplet extends JApplet implements IOSystem {
         new FileSaveGameDataStore(this) : new MemorySaveGameDataStore();
       initStruct.ioSystem = this;
     } catch (Exception ex) {
-      ex.printStackTrace();      
+      ex.printStackTrace();
     }
   }
 
   /**
    * Parses the specified string into an integer and returns it, if str
    * is null or not an integer, the fallback value is returned.
-   * 
+   *
    * @param str the string to parse
    * @param fallback the fallback value
    * @return the integer result
@@ -171,7 +171,7 @@ public class ZmppApplet extends JApplet implements IOSystem {
       try {
         result = Integer.parseInt(str);
       } catch (NumberFormatException ignore) {
-      	ignore.printStackTrace();
+        ignore.printStackTrace();
       }
     }
     return result;
@@ -186,7 +186,7 @@ public class ZmppApplet extends JApplet implements IOSystem {
   private int parseColor(String str, int fallback) {
     return colormap.get(str) == null ? fallback : colormap.get(str);
   }
-  
+
   /**
    * Retrievs the boolean value for the specified string. Values can
    * be true|false or on|off.
@@ -199,7 +199,7 @@ public class ZmppApplet extends JApplet implements IOSystem {
     if ("true".equals(str) || "on".equals(str)) return true;
     return fallback;
   }
-  
+
   /** {@inheritDoc} */
   @Override
   public void start() {

@@ -269,8 +269,8 @@ public class C2OpInstruction extends AbstractInstruction {
     if (obj > 0 && isValidAttribute(attr)) {
       getMachine().setAttribute(obj, attr);
     } else {
-      getMachine().warn("@set_attr illegal access to object " + obj
-                        + " attr: " + attr);
+      getMachine().warn("@set_attr illegal access to object " + obj +
+                        " attr: " + attr);
     }
     nextInstruction();
   }
@@ -281,8 +281,8 @@ public class C2OpInstruction extends AbstractInstruction {
     if (obj > 0 && isValidAttribute(attr)) {
       getMachine().clearAttribute(obj, attr);
     } else {
-      getMachine().warn("@clear_attr illegal access to object " + obj
-                        + " attr: " + attr);
+      getMachine().warn("@clear_attr illegal access to object " + obj +
+                        " attr: " + attr);
     }
     nextInstruction();
   }
@@ -305,8 +305,8 @@ public class C2OpInstruction extends AbstractInstruction {
     if (obj > 0 && dest > 0) {
       getMachine().insertObject(dest, obj);
     } else {
-      getMachine().warn("@insert_obj with object 0 called, obj: " + obj
-                        + ", dest: " + dest);
+      getMachine().warn("@insert_obj with object 0 called, obj: " + obj +
+                        ", dest: " + dest);
     }
     nextInstruction();
   }
@@ -314,7 +314,8 @@ public class C2OpInstruction extends AbstractInstruction {
   private void loadb() {
     final int arrayAddress = getUnsignedValue(0);
     final int index = getUnsignedValue(1);
-    storeUnsignedResult((char) getMachine().readUnsigned8(arrayAddress + index));
+    storeUnsignedResult((char) getMachine()
+        .readUnsigned8(arrayAddress + index));
     nextInstruction();
   }
 

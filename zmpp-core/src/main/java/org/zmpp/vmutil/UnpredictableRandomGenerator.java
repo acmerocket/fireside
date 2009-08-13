@@ -23,14 +23,14 @@ import java.util.Random;
 /**
  * This class implements the "random" random number generator mentioned
  * in the Z-machine standard document.
- * 
+ *
  * @author Wei-ju Wu
  * @version 1.5
  */
 public class UnpredictableRandomGenerator implements RandomGenerator {
 
   private Random rand;
-  
+
   /**
    * Constructor.
    */

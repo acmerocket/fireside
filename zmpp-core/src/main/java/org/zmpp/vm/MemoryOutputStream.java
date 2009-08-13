@@ -28,7 +28,7 @@ import static org.zmpp.base.MemoryUtil.toUnsigned16;
  * This class implements output stream 3. This stream writes to dynamic
  * memory. The stream contains a table address stack in order to
  * support nested selections.
- * 
+ *
  * @author Wei-ju Wu
  * @version 1.5
  */
@@ -38,27 +38,27 @@ public class MemoryOutputStream implements OutputStream {
    * Maximum nesting depth for this stream.
    */
   private static final int MAX_NESTING_DEPTH = 16;
-  
+
   static class TablePosition {
-    
+
     int tableAddress;
     int bytesWritten;
-    
+
     TablePosition(int tableAddress) {
       this.tableAddress = tableAddress;
     }
   }
-  
+
   /**
    * The machine object.
    */
   private Machine machine;
-  
+
   /**
    * Support nested selections.
    */
   private List<TablePosition> tableStack;
-  
+
   /**
    * Constructor.
    * @param machine the machine object
@@ -67,7 +67,7 @@ public class MemoryOutputStream implements OutputStream {
     tableStack = new ArrayList<TablePosition>();
     this.machine = machine;
   }
-  
+
   /**
    * {@inheritDoc}
    */
@@ -84,7 +84,7 @@ public class MemoryOutputStream implements OutputStream {
   public void flush() {
     // intentionally left empty
   }
-  
+
   /**
    * {@inheritDoc}
    */
@@ -102,26 +102,26 @@ public class MemoryOutputStream implements OutputStream {
       final TablePosition tablePos = tableStack.remove(tableStack.size() - 1);
       machine.writeUnsigned16(tablePos.tableAddress,
                               toUnsigned16(tablePos.bytesWritten));
-      
+
       if (machine.getVersion() == 6) {
         writeTextWidthInUnits(tablePos);
       }
     }
   }
-  
+
   private void writeTextWidthInUnits(TablePosition tablepos) {
     int numwords = tablepos.bytesWritten;
     char[] data = new char[numwords];
-    
+
     for (int i = 0; i < numwords; i++) {
-      data[i] = (char) machine.readUnsigned8(tablepos.tableAddress + i + 2); 
+      data[i] = (char) machine.readUnsigned8(tablepos.tableAddress + i + 2);
     }
     machine.getScreen6().setTextWidthInUnits(data);
   }
-  
+
   /**
    * Selects this memory stream.
-   * 
+   *
    * @param tableAddress the table address
    * @param tableWidth the table width
    */

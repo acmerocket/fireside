@@ -109,9 +109,9 @@ public class C1OpInstruction extends AbstractInstruction {
   }
 
   private void not()  {
-	  final int notvalue = ~getUnsignedValue(0);
-	  storeUnsignedResult((char) (notvalue & 0xffff));
-	  nextInstruction();
+    final int notvalue = ~getUnsignedValue(0);
+    storeUnsignedResult((char) (notvalue & 0xffff));
+    nextInstruction();
   }
 
   private void jump() {

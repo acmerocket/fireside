@@ -18,12 +18,24 @@
  */
 package org.zmpp.instructions;
 
-import org.zmpp.vm.*;
-import org.zmpp.instructions.InstructionInfoDb.InstructionInfo;
+import static org.zmpp.vm.Instruction.VAR_CALL_VN2;
+import static org.zmpp.vm.Instruction.VAR_CALL_VS2;
+import static org.zmpp.vm.Instruction.InstructionForm.EXTENDED;
+import static org.zmpp.vm.Instruction.InstructionForm.LONG;
+import static org.zmpp.vm.Instruction.InstructionForm.SHORT;
+import static org.zmpp.vm.Instruction.InstructionForm.VARIABLE;
+import static org.zmpp.vm.Instruction.OperandCount.C0OP;
+import static org.zmpp.vm.Instruction.OperandCount.C1OP;
+import static org.zmpp.vm.Instruction.OperandCount.C2OP;
+import static org.zmpp.vm.Instruction.OperandCount.EXT;
+import static org.zmpp.vm.Instruction.OperandCount.VAR;
+
 import org.zmpp.instructions.AbstractInstruction.BranchInfo;
-import static org.zmpp.vm.Instruction.*;
-import static org.zmpp.vm.Instruction.InstructionForm.*;
-import static org.zmpp.vm.Instruction.OperandCount.*;
+import org.zmpp.instructions.InstructionInfoDb.InstructionInfo;
+import org.zmpp.vm.Instruction;
+import org.zmpp.vm.Machine;
+import org.zmpp.vm.Instruction.InstructionForm;
+import org.zmpp.vm.Instruction.OperandCount;
 
 /**
  * The revised instruction decoder, a direct port from the Erlang implementation
@@ -101,8 +113,10 @@ public class InstructionDecoder {
     InstructionInfo info = infoDb.getInfo(opCount, opcodeNum,
                                           machine.getVersion());
     if (info == null) {
-      System.out.printf("ILLEGAL SHORT operation, instrAddr: $%04x, OC: %s, opcode: #$%02x, Version: %d\n",
-                        instrAddress, opCount.toString(), (int) opcodeNum, machine.getVersion());
+      System.out.printf("ILLEGAL SHORT operation, instrAddr: $%04x, OC: %s, " +
+                        "opcode: #$%02x, Version: %d\n",
+                        instrAddress, opCount.toString(), (int) opcodeNum,
+                        machine.getVersion());
       //infoDb.printKeys();
       throw new java.lang.UnsupportedOperationException("Exit !!");
     }
@@ -256,7 +270,8 @@ public class InstructionDecoder {
     InstructionInfo info = infoDb.getInfo(opCount, opcodeNum,
                                           machine.getVersion());
     if (info == null) {
-      System.out.printf("ILLEGAL operation, instrAddr: $%04x OC: %s, opcode: #$%02x, Version: %d\n",
+      System.out.printf("ILLEGAL operation, instrAddr: $%04x OC: %s, " +
+                        "opcode: #$%02x, Version: %d\n",
                         instrAddress, opCount.toString(), (int) opcodeNum,
                         machine.getVersion());
       throw new java.lang.UnsupportedOperationException("Exit !!");
@@ -272,8 +287,10 @@ public class InstructionDecoder {
     }
     int opcodeLength = LEN_OPCODE + numOperandBytes + storeVarLen +
             branchInfo.numOffsetBytes + zsciiLength;
-    //System.out.printf("OPCODELEN: %d, len opcode: %d, # operand bytes: %d, len storevar: %d, broffsetbytes: %d, zsciilen: %d\n",
-    //    opcodeLength, LEN_OPCODE, numOperandBytes, storeVarLen, branchInfo.numOffsetBytes, zsciiLength);
+    //System.out.printf("OPCODELEN: %d, len opcode: %d, # operand bytes: %d, " +
+    //                  "len storevar: %d, broffsetbytes: %d, zsciilen: %d\n",
+    //                  opcodeLength, LEN_OPCODE, numOperandBytes, storeVarLen,
+    //                  branchInfo.numOffsetBytes, zsciiLength);
     switch (opCount) {
       case C0OP:
         return new C0OpInstruction(machine, opcodeNum, instrOperands, str,
@@ -290,6 +307,8 @@ public class InstructionDecoder {
       case EXT:
         return new ExtInstruction(machine, opcodeNum, instrOperands,
             storeVar, branchInfo, opcodeLength);
+      default:
+        break;
     }
     return null;
   }
@@ -369,7 +388,8 @@ public class InstructionDecoder {
     } else {
       numOffsetBytes = 2;
       char branchByte2 = machine.readUnsigned8(branchInfoAddr + 1);
-      //System.out.printf("14 Bit offset, bracnh byte1: %02x byte2: %02x\n", (int) branchByte1, (int) branchByte2);
+      //System.out.printf("14 Bit offset, bracnh byte1: %02x byte2: %02x\n",
+      //                  (int) branchByte1, (int) branchByte2);
       branchOffset =
           toSigned14((char) (((branchByte1 << 8) | branchByte2) & 0x3fff));
     }

@@ -31,19 +31,19 @@ import org.zmpp.base.StoryFileHeader.Attribute;
 public class OutputImpl implements Output, Closeable {
 
   private Machine machine;
-  
+
   /**
    * This is the array of output streams.
    */
   private OutputStream[] outputStream;
-  
+
   public OutputImpl(final Machine machine) {
     super();
     this.machine = machine;
     outputStream = new OutputStream[3];
   }
-  
-  /**  
+
+  /**
    * Sets the output stream to the specified number.
    * @param streamnumber the stream number
    * @param stream the output stream
@@ -52,28 +52,28 @@ public class OutputImpl implements Output, Closeable {
       final OutputStream stream) {
     outputStream[streamnumber - 1] = stream;
   }
-  
+
   /**
    * {@inheritDoc}
    */
   public void printZString(final int address) {
     print(machine.decode2Zscii(address, 0));
   }
-  
+
   /**
    * {@inheritDoc}
    */
   public void print(final String str) {
     printZsciiChars(str);
   }
-  
+
   /**
    * {@inheritDoc}
    */
   public void newline() {
     printZsciiChar(ZsciiEncoding.NEWLINE);
   }
-  
+
   /**
    * {@inheritDoc}
    */
@@ -84,13 +84,13 @@ public class OutputImpl implements Output, Closeable {
   /**
    * Prints the specified array of ZSCII characters. This is the only function
    * that communicates with the output streams directly.
-   * 
+   *
    * @param zsciiString the array of ZSCII characters.
    */
   private void printZsciiChars(final String zsciiString) {
     checkTranscriptFlag();
     if (outputStream[OUTPUTSTREAM_MEMORY - 1].isSelected()) {
-      for (int i = 0, n = zsciiString.length(); i < n; i++) {        
+      for (int i = 0, n = zsciiString.length(); i < n; i++) {
         outputStream[OUTPUTSTREAM_MEMORY - 1].print(zsciiString.charAt(i));
       }
     } else {
@@ -103,14 +103,14 @@ public class OutputImpl implements Output, Closeable {
       }
     }
   }
-  
+
   /**
    * {@inheritDoc}
    */
   public void printNumber(final short number) {
     print(String.valueOf(number));
   }
-  
+
   public void flushOutput() {
     // At the moment flushing only makes sense for screen
     if (!outputStream[OUTPUTSTREAM_MEMORY - 1].isSelected()) {
@@ -133,21 +133,21 @@ public class OutputImpl implements Output, Closeable {
           machine.getFileHeader().isEnabled(Attribute.TRANSCRIPTING));
     }
   }
-  
+
   /**
    * {@inheritDoc}
    */
   public void selectOutputStream(final int streamnumber, final boolean flag) {
     outputStream[streamnumber - 1].select(flag);
-    
+
     // Sets the tranxdQscript flag if the transcipt is specified
     if (streamnumber == OUTPUTSTREAM_TRANSCRIPT) {
-      machine.getFileHeader().setEnabled(Attribute.TRANSCRIPTING, flag);      
+      machine.getFileHeader().setEnabled(Attribute.TRANSCRIPTING, flag);
     } else if (streamnumber == OUTPUTSTREAM_MEMORY && flag) {
       machine.halt("invalid selection of memory stream");
     }
   }
-  
+
   /**
    * {@inheritDoc}
    */
@@ -156,7 +156,7 @@ public class OutputImpl implements Output, Closeable {
     ((MemoryOutputStream) outputStream[OUTPUTSTREAM_MEMORY - 1]).select(
         tableAddress, tableWidth);
   }
-  
+
   /**
    * {@inheritDoc}
    */
@@ -170,11 +170,11 @@ public class OutputImpl implements Output, Closeable {
       }
     }
   }
-  
+
   /**
    * {@inheritDoc}
    */
-  public void reset() {    
+  public void reset() {
     for (int i = 0; i < outputStream.length; i++) {
       if (outputStream[i] != null) {
         outputStream[i].flush();

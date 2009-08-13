@@ -19,8 +19,8 @@
 package org.zmpp.windowing;
 
 /**
- * This interface defines the Z machine's status line. 
- * 
+ * This interface defines the Z machine's status line.
+ *
  * @author Wei-ju Wu
  * @version 1.5
  */
@@ -33,7 +33,7 @@ public interface StatusLine {
    * @param steps the number of steps
    */
   void updateStatusScore(String objectName, int score, int steps);
-  
+
   /**
    * Updates the status of a time game.
    * @param objectName the object name

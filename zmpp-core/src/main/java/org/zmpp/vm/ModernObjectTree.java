@@ -23,7 +23,7 @@ import static org.zmpp.base.MemoryUtil.*;
 
 /**
  * This class implements the object tree for story file version >= 4.
- * 
+ *
  * @author Wei-ju Wu
  * @version 1.5
  */
@@ -38,12 +38,12 @@ public class ModernObjectTree extends AbstractObjectTree {
    * Object entries in version >= 4 have a size of 14 bytes.
    */
   private static final int OBJECTENTRY_SIZE = 14;
-  
+
   /**
    * Property defaults entries in versions >= 4 have a size of 63 words.
    */
   private static final int PROPERTYDEFAULTS_SIZE = 63 * 2;
-  
+
   public ModernObjectTree(Memory memory, int address) {
     super(memory, address);
   }
@@ -63,7 +63,7 @@ public class ModernObjectTree extends AbstractObjectTree {
   /**
    * {@inheritDoc}
    */
-  protected int getObjectEntrySize() { return OBJECTENTRY_SIZE; } 
+  protected int getObjectEntrySize() { return OBJECTENTRY_SIZE; }
 
   // ************************************************************************
   // ****** Object methods
@@ -73,9 +73,9 @@ public class ModernObjectTree extends AbstractObjectTree {
    */
   public int getParent(final int objectNum) {
     return getMemory().readUnsigned16(getObjectAddress(objectNum) +
-    		                             OFFSET_PARENT);
+                                     OFFSET_PARENT);
   }
-  
+
   /**
    * {@inheritDoc}
    */
@@ -83,15 +83,15 @@ public class ModernObjectTree extends AbstractObjectTree {
     getMemory().writeUnsigned16(getObjectAddress(objectNum) + OFFSET_PARENT,
                                 toUnsigned16(parent));
   }
-  
+
   /**
    * {@inheritDoc}
    */
   public int getSibling(final int objectNum) {
     return getMemory().readUnsigned16(getObjectAddress(objectNum) +
-    									 OFFSET_SIBLING);
+                       OFFSET_SIBLING);
   }
-  
+
   /**
    * {@inheritDoc}
    */
@@ -99,15 +99,15 @@ public class ModernObjectTree extends AbstractObjectTree {
     getMemory().writeUnsigned16(getObjectAddress(objectNum) + OFFSET_SIBLING,
                                 toUnsigned16(sibling));
   }
-  
+
   /**
    * {@inheritDoc}
    */
   public int getChild(final int objectNum) {
     return getMemory().readUnsigned16(getObjectAddress(objectNum) +
-    									 OFFSET_CHILD);
+                       OFFSET_CHILD);
   }
-  
+
   /**
    * {@inheritDoc}
    */
@@ -115,11 +115,11 @@ public class ModernObjectTree extends AbstractObjectTree {
     getMemory().writeUnsigned16(getObjectAddress(objectNum) + OFFSET_CHILD,
                                 toUnsigned16(child));
   }
-  
+
   // ************************************************************************
   // ****** Property methods
   // ****************************
-  
+
   /**
    * {@inheritDoc}
    */
@@ -132,7 +132,7 @@ public class ModernObjectTree extends AbstractObjectTree {
    */
   protected int getPropertyTableAddress(int objectNum) {
     return getMemory().readUnsigned16(getObjectAddress(objectNum) +
-    									 OFFSET_PROPERTYTABLE);
+                       OFFSET_PROPERTYTABLE);
   }
 
   /**
@@ -148,7 +148,7 @@ public class ModernObjectTree extends AbstractObjectTree {
    * {@inheritDoc}
    */
   protected int getNumPropSizeBytesAtData(int propertyDataAddress) {
-  	return getNumPropertySizeBytes(propertyDataAddress - 1);
+    return getNumPropertySizeBytes(propertyDataAddress - 1);
   }
 
   /**
@@ -158,12 +158,12 @@ public class ModernObjectTree extends AbstractObjectTree {
     // Version >= 4 - take the lower 5 bit of the first size byte
     return getMemory().readUnsigned8(propertyAddress) & 0x3f;
   }
-  
+
   /**
    * This function represents the universal formula to calculate the length
    * of a property given the address of its data (as opposed to the address
    * of the property itself).
-   * 
+   *
    * @param memory the Memory object
    * @param addressOfPropertyData the address of the property data
    * @return the length of the property
@@ -177,7 +177,7 @@ public class ModernObjectTree extends AbstractObjectTree {
     // version, so this is consistent
     final char sizebyte =
       memory.readUnsigned8(addressOfPropertyData - 1);
-      
+
     // Bit 7 set => this is the second size byte
     if ((sizebyte & 0x80) > 0) {
       int proplen = sizebyte & 0x3f;
@@ -190,5 +190,5 @@ public class ModernObjectTree extends AbstractObjectTree {
       // the size is 2, else it is 1
       return (sizebyte & 0x40) > 0 ? 2 : 1;
     }
-  }  
+  }
 }

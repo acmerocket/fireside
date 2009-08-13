@@ -30,7 +30,7 @@ import org.zmpp.vm.SaveGameDataStore;
 public class MemorySaveGameDataStore implements SaveGameDataStore {
 
   private WritableFormChunk savegame;
-  
+
   /** {@inheritDoc} */
   public boolean saveFormChunk(WritableFormChunk formchunk) {
     savegame = formchunk;

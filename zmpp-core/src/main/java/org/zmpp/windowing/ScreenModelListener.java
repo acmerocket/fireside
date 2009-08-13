@@ -31,7 +31,7 @@ public interface ScreenModelListener {
   void screenModelUpdated(ScreenModel screenModel);
 
   /**
-   * 
+   *
    * @param cursorx
    * @param cursory
    * @param c
@@ -46,4 +46,4 @@ public interface ScreenModelListener {
    */
   void topWindowCursorMoving(int line, int column);
 }
-  
+

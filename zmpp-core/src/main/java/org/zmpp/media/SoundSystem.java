@@ -30,47 +30,47 @@ public interface SoundSystem {
   /**
    * High pitched bleep.
    */
-  public static final int BLEEP_HIGH  = 1;
+  int BLEEP_HIGH  = 1;
 
   /**
    * Low pitched bleep.
    */
-  public static final int BLEEP_LOW   = 2;
+  int BLEEP_LOW   = 2;
 
   /**
    * Prepares a sound.
    */
-  public static final int EFFECT_PREPARE  = 1;
+  int EFFECT_PREPARE  = 1;
 
   /**
    * Starts a sound.
    */
-  public static final int EFFECT_START    = 2;
+  int EFFECT_START    = 2;
 
   /**
    * Stops a sound.
    */
-  public static final int EFFECT_STOP     = 3;
+  int EFFECT_STOP     = 3;
 
   /**
    * Finishes a sound.
    */
-  public static final int EFFECT_FINISH   = 4;
+  int EFFECT_FINISH   = 4;
 
   /**
    * The maximum value for volume.
    */
-  public static final int VOLUME_MAX = 0;
+  int VOLUME_MAX = 0;
 
   /**
    * The minimum value for volume.
    */
-  public static final int VOLUME_MIN = 255;
+  int VOLUME_MIN = 255;
 
   /**
    * Sets the volume to default.
    */
-  public static final int VOLUME_DEFAULT = -1;
+  int VOLUME_DEFAULT = -1;
 
   /**
    * Plays a sound.

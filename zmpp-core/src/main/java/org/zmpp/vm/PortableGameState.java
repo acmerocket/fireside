@@ -32,7 +32,7 @@ import org.zmpp.iff.WritableFormChunk;
 /**
  * This class represents the state of the Z machine in an external format,
  * so it can be exchanged using the Quetzal IFF format.
- * 
+ *
  * @author Wei-ju Wu
  * @version 1.5
  */
@@ -40,33 +40,33 @@ public class PortableGameState {
 
   /** The return variable value for discard result. */
   public static final char DISCARD_RESULT = 0xffff;
-  
+
   /**
    * This class represents a stack frame in the portable game state model.
    */
   public static class StackFrame {
-  
+
     /** The return program counter. */
     int pc;
-    
+
     /** The return variable. */
     char returnVariable;
-    
+
     /** The local variables. */
     char[] locals;
-    
+
     /** The evaluation stack. */
     char[] evalStack;
-    
+
     /** The arguments. */
     char[] args;
-    
-    public int getProgramCounter() { return pc; }    
+
+    public int getProgramCounter() { return pc; }
     public char getReturnVariable() { return returnVariable; }
     public char[] getEvalStack() { return evalStack; }
     public char[] getLocals() { return locals; }
     public char[] getArgs() { return args; }
-    
+
     public void setProgramCounter(final int pc) { this.pc = pc; }
     public void setReturnVariable(final char varnum) {
       this.returnVariable = varnum;
@@ -78,25 +78,25 @@ public class PortableGameState {
 
   /** The release number. */
   private int release;
-  
+
   /** The story file checksum. */
   private int checksum;
-  
+
   /** The serial number. */
   private byte[] serialBytes;
-  
+
   /** The program counter. */
   private int pc;
-  
+
   /** The uncompressed dynamic memory. */
   private byte[] dynamicMem;
-  
+
   /** The delta. */
   private byte[] delta;
-  
+
   /** The list of stack frames in this game state, from oldest to latest. */
   private List<StackFrame> stackFrames;
-  
+
   /**
    * Constructor.
    */
@@ -104,48 +104,48 @@ public class PortableGameState {
     serialBytes = new byte[6];
     stackFrames = new ArrayList<StackFrame>();
   }
-  
+
   // **********************************************************************
   // ***** Accessing the state
   // *******************************************
-  
+
   /**
    * Returns the game release number.
    * @return the release number
    */
   public int getRelease() { return release; }
-  
+
   /**
    * Returns the game checksum.
    * @return the checksum
    */
   public int getChecksum() { return checksum; }
-  
+
   /**
    * Returns the game serial number.
    * @return the serial number
    */
   public String getSerialNumber() { return new String(serialBytes); }
-  
+
   /**
    * Returns the program counter.
    * @return the program counter
    */
   public int getProgramCounter() { return pc; }
-  
+
   /**
    * Returns the list of stack frames.
    * @return the stack frames
    */
   public List<StackFrame> getStackFrames() { return stackFrames; }
-  
+
   /**
    * Returns the delta bytes. This is the changes in dynamic memory, where
    * 0 represents no change.
    * @return the delta bytes
    */
   public byte[] getDeltaBytes() { return delta; }
-  
+
   /**
    * Returns the current dump of dynamic memory captured from a Machine object.
    * @return the dynamic memory dump
@@ -158,7 +158,7 @@ public class PortableGameState {
   }
   public void setProgramCounter(final int pc) { this.pc = pc; }
   public void setDynamicMem(final byte[] memdata) { this.dynamicMem = memdata; }
-  
+
   // **********************************************************************
   // ***** Reading the state from a file
   // *******************************************
@@ -177,7 +177,7 @@ public class PortableGameState {
     }
     return false;
   }
-  
+
   /**
    * Evaluate the contents of the IFhd chunk.
    * @param formChunk the FORM chunk
@@ -186,15 +186,15 @@ public class PortableGameState {
     final Chunk ifhdChunk = formChunk.getSubChunk("IFhd");
     final Memory chunkMem = ifhdChunk.getMemory();
     int offset = Chunk.CHUNK_HEADER_LENGTH;
-    
+
     // read release number
     release = chunkMem.readUnsigned16(offset);
     offset += 2;
-    
+
     // read serial number
     chunkMem.copyBytesToArray(serialBytes, 0, offset, 6);
     offset += 6;
-    
+
     // read check sum
     checksum = chunkMem.readUnsigned16(offset);
     offset += 2;
@@ -204,10 +204,10 @@ public class PortableGameState {
                        chunkMem.readUnsigned8(offset + 1),
                        chunkMem.readUnsigned8(offset + 2));
   }
-  
+
   /**
    * Evaluate the contents of the Stks chunk.
-   * 
+   *
    * @param formChunk the FORM chunk
    */
   private void readStacksChunk(final FormChunk formChunk) {
@@ -215,12 +215,12 @@ public class PortableGameState {
     final Memory chunkMem = stksChunk.getMemory();
     int offset = Chunk.CHUNK_HEADER_LENGTH;
     final int chunksize = stksChunk.getSize() + Chunk.CHUNK_HEADER_LENGTH;
-    
+
     while (offset < chunksize) {
       final StackFrame stackFrame = new StackFrame();
       offset = readStackFrame(stackFrame, chunkMem, offset);
       stackFrames.add(stackFrame);
-    }    
+    }
   }
 
   /**
@@ -239,12 +239,12 @@ public class PortableGameState {
                                   chunkMem.readUnsigned8(tmpoff + 1),
                                   chunkMem.readUnsigned8(tmpoff + 2));
     tmpoff += 3;
-  
+
     final byte pvFlags = (byte) (chunkMem.readUnsigned8(tmpoff++) & 0xff);
     final int numLocals = pvFlags & 0x0f;
     final boolean discardResult = (pvFlags & 0x10) > 0;
     stackFrame.locals = new char[numLocals];
-  
+
     // Read the return variable, ignore the result if DISCARD_RESULT
     final char returnVar = chunkMem.readUnsigned8(tmpoff++);
     stackFrame.returnVariable = discardResult ? DISCARD_RESULT :
@@ -254,13 +254,13 @@ public class PortableGameState {
     final int evalStackSize = chunkMem.readUnsigned16(tmpoff);
     stackFrame.evalStack = new char[evalStackSize];
     tmpoff += 2;
-  
+
     // Read local variables
     for (int i = 0; i < numLocals; i++) {
       stackFrame.locals[i] = chunkMem.readUnsigned16(tmpoff);
       tmpoff += 2;
     }
-  
+
     // Read evaluation stack values
     for (int i = 0; i < evalStackSize; i++) {
       stackFrame.evalStack[i] = chunkMem.readUnsigned16(tmpoff);
@@ -268,11 +268,11 @@ public class PortableGameState {
     }
     return tmpoff;
   }
-  
-  
+
+
   /**
    * Evaluate the contents of the Cmem and the UMem chunks.
-   * 
+   *
    * @param formChunk the FORM chunk
    */
   private void readMemoryChunk(final FormChunk formChunk) {
@@ -281,18 +281,18 @@ public class PortableGameState {
     if (cmemChunk != null) { readCMemChunk(cmemChunk); }
     if (umemChunk != null) { readUMemChunk(umemChunk); }
   }
-  
+
   /**
    * Decompresses and reads the dynamic memory state.
    * @param cmemChunk the CMem chunk
    */
-  private void readCMemChunk(final Chunk cmemChunk) {    
+  private void readCMemChunk(final Chunk cmemChunk) {
     final Memory chunkMem = cmemChunk.getMemory();
     int offset = Chunk.CHUNK_HEADER_LENGTH;
     final int chunksize = cmemChunk.getSize() + Chunk.CHUNK_HEADER_LENGTH;
     final List<Byte> byteBuffer = new ArrayList<Byte>();
     char b;
-    
+
     while (offset < chunksize) {
       b = chunkMem.readUnsigned8(offset++);
       if (b == 0) {
@@ -304,14 +304,14 @@ public class PortableGameState {
         byteBuffer.add((byte) (b & 0xff));
       }
     }
-    
+
     // Copy the results to the delta array
     delta = new byte[byteBuffer.size()];
     for (int i = 0; i < delta.length; i++) {
       delta[i] = byteBuffer.get(i);
-    }    
+    }
   }
-  
+
   /**
    * Reads the uncompressed dynamic memory state.
    * @param umemChunk the UMem chunk
@@ -323,11 +323,11 @@ public class PortableGameState {
     chunkMem.copyBytesToArray(dynamicMem, 0, Chunk.CHUNK_HEADER_LENGTH,
                               datasize);
   }
-  
+
   // **********************************************************************
   // ***** Reading the state from a Machine
   // *******************************************
-  
+
   /**
    * Makes a snapshot of the current machine state. The savePc argument
    * is taken as the restore program counter.
@@ -340,7 +340,7 @@ public class PortableGameState {
     checksum = machine.readUnsigned16(StoryFileHeader.CHECKSUM);
     serialBytes = fileheader.getSerialNumber().getBytes();
     pc = savePc;
-    
+
     // capture dynamic memory which ends at address(staticsMem) - 1
     // uncompressed
     final int staticMemStart =
@@ -350,13 +350,13 @@ public class PortableGameState {
     machine.copyBytesToArray(dynamicMem, 0, 0, staticMemStart);
     captureStackFrames(machine);
   }
-  
+
   /**
    * Read the list of RoutineContexts in Machine, convert them to StackFrames,
    * prepending a dummy stack frame.
    * @param machine the machine object
    */
-  private void captureStackFrames(final Machine machine) {    
+  private void captureStackFrames(final Machine machine) {
     final List<RoutineContext> contexts = machine.getRoutineContexts();
     // Put in initial dummy stack frame
     final StackFrame dummyFrame = new StackFrame();
@@ -368,27 +368,27 @@ public class PortableGameState {
       dummyFrame.evalStack[i] = machine.getStackElement(i);
     }
     stackFrames.add(dummyFrame);
-    
+
     // Write out stack frames
     for (int c = 0; c < contexts.size(); c++) {
       final RoutineContext context = contexts.get(c);
-      
+
       final StackFrame stackFrame = new StackFrame();
       stackFrame.pc = context.getReturnAddress();
       stackFrame.returnVariable = context.getReturnVariable();
-      
+
       // Copy local variables
       stackFrame.locals = new char[context.getNumLocalVariables()];
       for (int i = 0; i < stackFrame.locals.length; i++) {
         stackFrame.locals[i] = context.getLocalVariable((char) i);
       }
-      
+
       // Create argument array
       stackFrame.args = new char[context.getNumArguments()];
       for (int i = 0; i < stackFrame.args.length; i++) {
         stackFrame.args[i] = (char) i;
       }
-      
+
       // Transfer evaluation stack
       final int localStackStart = context.getInvocationStackPointer();
       numElements = calculateNumStackElements(machine, contexts, c + 1,
@@ -400,7 +400,7 @@ public class PortableGameState {
       stackFrames.add(stackFrame);
     }
   }
-  
+
   /**
    * Determines the number of stack elements between localStackStart and
    * the invocation stack pointer of the specified routine context.
@@ -408,7 +408,7 @@ public class PortableGameState {
    * functions assumes this is the top routine context and therefore
    * calculates the difference between the current stack pointer and
    * localStackStart.
-   *  
+   *
    * @param machine the Machine object
    * @param contexts a list of RoutineContext
    * @param contextIndex the index of the context to calculate the difference
@@ -418,22 +418,22 @@ public class PortableGameState {
   private int calculateNumStackElements(final Machine machine,
       final List<RoutineContext> contexts, final int contextIndex,
       final int localStackStart) {
-    
+
     if (contextIndex < contexts.size()) {
       final RoutineContext context = contexts.get(contextIndex);
       return context.getInvocationStackPointer() - localStackStart;
     } else {
-      return machine.getSP() - localStackStart; 
+      return machine.getSP() - localStackStart;
     }
   }
-  
+
   // ***********************************************************************
   // ******* Export to an IFF FORM chunk
   // *****************************************
-  
+
   /**
    * Exports the current object state to a FormChunk.
-   * 
+   *
    * @return the state as a FormChunk
    */
   public WritableFormChunk exportToFormChunk() {
@@ -442,16 +442,16 @@ public class PortableGameState {
     formChunk.addChunk(createIfhdChunk());
     formChunk.addChunk(createUMemChunk());
     formChunk.addChunk(createStksChunk());
-    
+
     return formChunk;
   }
-  
+
   private Chunk createIfhdChunk() {
     final byte[] id = "IFhd".getBytes();
     final byte[] data = new byte[13];
-    final Chunk chunk = new DefaultChunk(id, data);    
+    final Chunk chunk = new DefaultChunk(id, data);
     final Memory chunkmem = chunk.getMemory();
-    
+
     // Write release number
     chunkmem.writeUnsigned16(8, toUnsigned16(release));
 
@@ -461,137 +461,137 @@ public class PortableGameState {
     chunkmem.writeUnsigned8(18, (char) ((pc >>> 16) & 0xff));
     chunkmem.writeUnsigned8(19, (char) ((pc >>> 8) & 0xff));
     chunkmem.writeUnsigned8(20, (char) (pc & 0xff));
-    
+
     return chunk;
   }
-  
+
   private Chunk createUMemChunk() {
     final byte[] id = "UMem".getBytes();
     return new DefaultChunk(id, dynamicMem);
   }
-  
-  private Chunk createStksChunk() {    
+
+  private Chunk createStksChunk() {
     final byte[] id = "Stks".getBytes();
     final List<Byte> byteBuffer = new ArrayList<Byte>();
-    
+
     for (StackFrame stackFrame : stackFrames) {
       writeStackFrameToByteBuffer(byteBuffer, stackFrame);
     }
     final byte[] data = new byte[byteBuffer.size()];
     for (int i = 0; i < data.length; i++) {
       data[i] = byteBuffer.get(i);
-    }    
+    }
     return new DefaultChunk(id, data);
   }
-  
+
   /**
    * Writes the specified stackframe to the given byte buffer.
-   * 
+   *
    * @param byteBuffer a byte buffer
    * @param stackFrame the stack frame
    */
   public void writeStackFrameToByteBuffer(final List<Byte> byteBuffer,
-                                          final StackFrame stackFrame) {    
+                                          final StackFrame stackFrame) {
     final int returnPC = stackFrame.pc;
     byteBuffer.add((byte) ((returnPC >>> 16) & 0xff));
     byteBuffer.add((byte) ((returnPC >>> 8) & 0xff));
     byteBuffer.add((byte) (returnPC & 0xff));
-    
+
     // locals flag, is simply the number of local variables
     final boolean discardResult = stackFrame.returnVariable == DISCARD_RESULT;
     byte pvFlag = (byte) (stackFrame.locals.length & 0x0f);
     if (discardResult) { pvFlag |= 0x10; }
     byteBuffer.add(pvFlag);
-    
+
     // returnvar
     byteBuffer.add((byte) (discardResult ? 0 : stackFrame.returnVariable));
-    
+
     // argspec
     byteBuffer.add(createArgSpecByte(stackFrame.args));
-    
+
     // eval stack size
     final int stacksize = stackFrame.evalStack.length;
     addUnsignedShortToByteBuffer(byteBuffer, stacksize);
-    
+
     // local variables
     for (char local : stackFrame.locals) {
       addUnsigned16ToByteBuffer(byteBuffer, local);
     }
-    
+
     // stack values
     for (char stackValue : stackFrame.evalStack) {
       addUnsigned16ToByteBuffer(byteBuffer, stackValue);
     }
   }
-  
+
   private void addUnsignedShortToByteBuffer(final List<Byte> buffer,
       final int value) {
     buffer.add((byte) ((value & 0xff00) >> 8));
     buffer.add((byte) (value & 0xff));
   }
-  
+
   private void addUnsigned16ToByteBuffer(final List<Byte> buffer,
       final char value) {
     buffer.add((byte) ((value & 0xff00) >>> 8));
     buffer.add((byte) (value & 0xff));
   }
-  
+
   private byte createArgSpecByte(final char[] args) {
     byte result = 0;
     for (int arg : args) { result |= (1 << arg); }
     return result;
   }
-  
+
   // ***********************************************************************
   // ******* Transfer to Machine object
   // *****************************************
-  
+
   /**
    * Transfers the current object state to the specified Machine object.
    * The machine needs to be in a reset state in order to function correctly.
-   * 
+   *
    * @param machine a Machine object
    */
   public void transferStateToMachine(final Machine machine) {
     // Copy dynamic memory
     machine.copyBytesFromArray(dynamicMem, 0, 0, dynamicMem.length);
-    
+
     // Stack frames
     final List<RoutineContext> contexts = new ArrayList<RoutineContext>();
-            
+
     // Dummy frame, only the stack is interesting
     if (stackFrames.size() > 0) {
       final StackFrame dummyFrame = stackFrames.get(0);
-      
+
       // Stack
       for (int s = 0; s < dummyFrame.getEvalStack().length; s++) {
         machine.setVariable((char) 0, dummyFrame.getEvalStack()[s]);
       }
     }
-    
+
     // Now iterate through all real stack frames
     for (int i = 1; i < stackFrames.size(); i++) {
-    
+
       final StackFrame stackFrame = stackFrames.get(i);
       // ignore the start address
       final RoutineContext context =
         new RoutineContext(stackFrame.locals.length);
-      
+
       context.setReturnVariable(stackFrame.returnVariable);
       context.setReturnAddress(stackFrame.pc);
       context.setNumArguments(stackFrame.args.length);
-      
+
       // local variables
       for (int l = 0; l < stackFrame.locals.length; l++) {
         context.setLocalVariable((char) l, stackFrame.locals[l]);
       }
-      
+
       // Stack
       for (int s = 0; s < stackFrame.evalStack.length; s++) {
         machine.setVariable((char) 0, stackFrame.evalStack[s]);
       }
-      contexts.add(context);      
-    }    
+      contexts.add(context);
+    }
     machine.setRoutineContexts(contexts);
 
     // Prepare the machine continue
@@ -606,7 +606,7 @@ public class PortableGameState {
     }
     machine.setPC(resumePc);
   }
-  
+
   /**
    * For versions >= 4. Returns the store variable
    * @param machine the machine
@@ -626,15 +626,15 @@ public class PortableGameState {
   private static int getBranchOffsetLength(final Memory memory,
       final int offsetAddress) {
     final char offsetByte1 = memory.readUnsigned8(offsetAddress);
-      
+
     // Bit 6 set -> only one byte needs to be read
     return ((offsetByte1 & 0x40) > 0) ? 1 : 2;
   }
-  
+
   // ***********************************************************************
   // ******* Helpers
   // *****************************************
-  
+
   /**
    * There is no apparent reason at the moment to implement getArgs().
    * @param argspec the argspec byte
@@ -643,12 +643,12 @@ public class PortableGameState {
   private char[] getArgs(final byte argspec) {
     int andBit;
     final List<Character> result = new ArrayList<Character>();
-    
+
     for (int i = 0; i < 7; i++) {
       andBit = 1 << i;
       if ((andBit & argspec) > 0) {
         result.add((char) i);
-      }      
+      }
     }
     final char[] charArray = new char[result.size()];
     for (int i = 0; i < result.size(); i++) {
@@ -656,7 +656,7 @@ public class PortableGameState {
     }
     return charArray;
   }
-  
+
   /**
    * Joins three bytes to a program counter value.
    * @param b0 byte 0
@@ -664,7 +664,7 @@ public class PortableGameState {
    * @param b2 byte 2
    * @return the resulting program counter
    */
-  private int decodePcBytes(final char b0, final char b1, final char b2) {    
+  private int decodePcBytes(final char b0, final char b1, final char b2) {
     return (int) (((b0 & 0xff) << 16) | ((b1 & 0xff) << 8) | (b2 & 0xff));
   }
 }

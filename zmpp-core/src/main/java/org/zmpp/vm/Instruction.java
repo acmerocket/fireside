@@ -20,7 +20,7 @@ package org.zmpp.vm;
 
 /**
  * This interface defines an instruction's public methods.
- * 
+ *
  * @author Wei-ju Wu
  * @version 1.5
  */
@@ -28,7 +28,7 @@ public interface Instruction {
 
   /** The available operand count types. */
   enum OperandCount { C0OP, C1OP, C2OP, VAR, EXT }
-  
+
   /** The available instruction forms. */
   enum InstructionForm { LONG, SHORT, VARIABLE, EXTENDED }
 
@@ -144,7 +144,7 @@ public interface Instruction {
   int EXT_DRAW_PICTURE        = 0x05;
   int EXT_PICTURE_DATA        = 0x06;
   int EXT_ERASE_PICTURE       = 0x07;
-  int EXT_SET_MARGINS         = 0x08;  
+  int EXT_SET_MARGINS         = 0x08;
   int EXT_SAVE_UNDO           = 0x09;
   int EXT_RESTORE_UNDO        = 0x0a;
   int EXT_PRINT_UNICODE       = 0x0b;
@@ -160,23 +160,23 @@ public interface Instruction {
   int EXT_PUSH_STACK          = 0x18;
   int EXT_PUT_WIND_PROP       = 0x19;
   int EXT_PRINT_FORM          = 0x1a;
-  int EXT_MAKE_MENU           = 0x1b;  
-  int EXT_PICTURE_TABLE       = 0x1c;  
+  int EXT_MAKE_MENU           = 0x1b;
+  int EXT_PICTURE_TABLE       = 0x1c;
 
    /** The constant for false. */
   char FALSE = 0;
-  
+
   /** The constant for true. */
   char TRUE = 1;
 
   /** The constant for true from restore. */
   char RESTORE_TRUE = 2;
-  
+
   /**
    * Execute the instruction.
    */
   void execute();
-  
+
   /**
    * Returns true if this instruction prints output.
    * @return true if prints output, false otherwise

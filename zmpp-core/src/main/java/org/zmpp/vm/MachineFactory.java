@@ -39,11 +39,11 @@ import org.zmpp.vmutil.FileUtils;
 
 /**
  * Constructing a Machine object is a very complex task, the building process
- * deals with creating the game objects, the UI and the I/O system. 
+ * deals with creating the game objects, the UI and the I/O system.
  * Initialization was changed so it is not necessary to create a subclass
  * of MachineFactory. Instead, an init struct and a init callback object
  * should be provided.
- * 
+ *
  * @author Wei-ju Wu
  * @version 1.5
  */
@@ -60,7 +60,7 @@ public class MachineFactory {
     public NativeImageFactory nativeImageFactory;
     public SoundEffectFactory soundEffectFactory;
   }
-  
+
   private MachineInitStruct initStruct;
   private FormChunk blorbchunk;
 
@@ -68,13 +68,13 @@ public class MachineFactory {
    * Constructor.
    * @param initStruct an initialization structure
    */
-	public MachineFactory(MachineInitStruct initStruct) {
-		this.initStruct = initStruct;
-	}
-	
+  public MachineFactory(MachineInitStruct initStruct) {
+    this.initStruct = initStruct;
+  }
+
   /**
    * This is the main creation function.
-   * 
+   *
    * @return the machine
    */
   public Machine buildMachine() throws IOException, InvalidStoryException {
@@ -92,32 +92,32 @@ public class MachineFactory {
   // *****************************
   /**
    * Reads the story data.
-   * 
+   *
    * @return the story data
    * @throws IOException if reading story file revealed an error
    */
   private byte[] readStoryData() throws IOException {
-  	if (initStruct.storyFile != null || initStruct.blorbFile != null)
+    if (initStruct.storyFile != null || initStruct.blorbFile != null)
       return readStoryDataFromFile();
-  	if (initStruct.storyURL != null || initStruct.blorbURL != null)
+    if (initStruct.storyURL != null || initStruct.blorbURL != null)
       return readStoryDataFromUrl();
-  	return null;
+    return null;
   }
 
   /**
    * {@inheritDoc}
    */
   private byte[] readStoryDataFromUrl() throws IOException {
-  	java.io.InputStream storyis = null, blorbis = null;
+    java.io.InputStream storyis = null, blorbis = null;
     try {
       if (initStruct.storyURL != null) {
         storyis = initStruct.storyURL.openStream();
       }
       if (initStruct.blorbURL != null) {
         blorbis = initStruct.blorbURL.openStream();
-      }      
+      }
     } catch (Exception ex) {
-      ex.printStackTrace();      
+      ex.printStackTrace();
     }
 
     if (storyis != null) {
@@ -130,7 +130,7 @@ public class MachineFactory {
   /**
    * {@inheritDoc}
    */
-  private byte[] readStoryDataFromFile() throws IOException {        
+  private byte[] readStoryDataFromFile() throws IOException {
     if (initStruct.storyFile != null) {
       return FileUtils.readFileBytes(initStruct.storyFile);
     } else {
@@ -139,22 +139,22 @@ public class MachineFactory {
       return formchunk != null ? new BlorbFile(formchunk).getStoryData() : null;
     }
   }
-  
+
   /**
    * Reads the resource data.
    * @return the resource data
    * @throws IOException if reading resources revealed an error
    */
   protected Resources readResources() throws IOException {
-  	if (initStruct.blorbFile != null) return readResourcesFromFile();
-  	if (initStruct.blorbURL != null) return readResourcesFromUrl();
-  	return null;
+    if (initStruct.blorbFile != null) return readResourcesFromFile();
+    if (initStruct.blorbURL != null) return readResourcesFromUrl();
+    return null;
   }
-  
-  private FormChunk readBlorbFromFile() throws IOException {    
+
+  private FormChunk readBlorbFromFile() throws IOException {
     if (blorbchunk == null) {
       byte[] data = FileUtils.readFileBytes(initStruct.blorbFile);
-      if (data != null) {        
+      if (data != null) {
         blorbchunk = new DefaultFormChunk(new DefaultMemory(data));
         if (!"IFRS".equals(blorbchunk.getSubId())) {
           throw new IOException("not a valid Blorb file");
@@ -162,7 +162,7 @@ public class MachineFactory {
       }
     }
     return blorbchunk;
-  }  
+  }
 
   private Resources readResourcesFromFile() throws IOException {
     FormChunk formchunk = readBlorbFromFile();
@@ -172,13 +172,13 @@ public class MachineFactory {
   }
 
   private FormChunk readBlorb(java.io.InputStream blorbis) throws IOException {
-  	if (blorbchunk == null) {
-    	byte[] data = FileUtils.readFileBytes(blorbis);
+    if (blorbchunk == null) {
+      byte[] data = FileUtils.readFileBytes(blorbis);
       if (data != null) {
         blorbchunk = new DefaultFormChunk(new DefaultMemory(data));
       }
-  	}
-  	return blorbchunk;
+    }
+    return blorbchunk;
   }
 
   private Resources readResourcesFromUrl() throws IOException {
@@ -193,35 +193,35 @@ public class MachineFactory {
   // ********************************
   /**
    * Checks the story file version.
-   * 
+   *
    * @param version the story file version
    * @return true if not supported
    */
   private boolean isInvalidStory(final int version) {
-    
+
     return version < 1 || version > 8;
   }
-  
+
   /**
    * Initializes the I/O system.
-   * 
+   *
    * @param machine the machine object
    */
   private void initIOSystem(final MachineImpl machine) {
     initInputStreams(machine);
-    initOutputStreams(machine);    
+    initOutputStreams(machine);
     machine.setStatusLine(initStruct.statusLine);
     machine.setScreen(initStruct.screenModel);
-    machine.setSaveGameDataStore(initStruct.saveGameDataStore);    
+    machine.setSaveGameDataStore(initStruct.saveGameDataStore);
   }
-  
+
   /**
    * Initializes the input streams.
-   * 
+   *
    * @param machine the machine object
    */
   private void initInputStreams(final MachineImpl machine) {
-    
+
     machine.setInputStream(0, initStruct.keyboardInputStream);
     machine.setInputStream(1, new FileInputStream(initStruct.ioSystem,
         machine));
@@ -229,7 +229,7 @@ public class MachineFactory {
 
   /**
    * Initializes the output streams.
-   * 
+   *
    * @param machine the machine object
    */
   private void initOutputStreams(final MachineImpl machine) {

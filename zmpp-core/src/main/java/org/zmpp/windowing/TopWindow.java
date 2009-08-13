@@ -32,26 +32,26 @@ public class TopWindow implements TextCursor {
   private TextAnnotation annotation  = new TextAnnotation(ScreenModel.FONT_FIXED,
       ScreenModel.TEXTSTYLE_ROMAN, ScreenModel.COLOR_BLACK,
       ScreenModel.COLOR_WHITE);
-  
+
   public TopWindow() {
     resetCursor();
   }
 
   /** Resets the text cursor position. */
   public void resetCursor() { cursorx = cursory = 1; }
-  
+
   /**
    * Returns the current TextAnnotation used for this window.
    * @return the text annotation
    */
   public TextAnnotation getCurrentAnnotation() { return annotation; }
-  
+
   /**
    * Sets the number of rows in this window.
    * @param numRows the number of rows
    */
   public void setNumRows(int numRows) { this.numRows = numRows; }
-  
+
   /**
    * Returns the number of rows in this window.
    * @return the number of rows
@@ -124,7 +124,7 @@ public class TopWindow implements TextCursor {
       this.cursory = line;
     }
   }
-  
+
   /**
    * Increments the current cursor position.
    */
@@ -135,11 +135,11 @@ public class TopWindow implements TextCursor {
       cursorx = numCharsPerRow - 1;
     }
   }
-  
+
   public void notifyChange(ScreenModelListener l, char c) {
     l.topWindowUpdated(cursorx, cursory, annotateCharacter(c));
   }
-  
+
   private boolean outOfUpperBounds(int line, int column) {
     if (line < 1 || line > numRows) return true;
     if (column < 1 || column > numCharsPerRow) return true;

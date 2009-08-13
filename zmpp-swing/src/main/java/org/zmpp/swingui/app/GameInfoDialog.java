@@ -48,7 +48,7 @@ import org.zmpp.swingui.app.Main.AwtImage;
 
 /**
  * This dialog displays information about a story given its meta information.
- * 
+ *
  * @author Wei-ju Wu
  * @version 1.5
  */
@@ -56,8 +56,8 @@ public class GameInfoDialog extends JDialog {
 
   private static final int STD_WIDTH = 400;
   private static final long serialVersionUID = 1L;
-  
-  public GameInfoDialog(JFrame owner, Resources resources) {    
+
+  public GameInfoDialog(JFrame owner, Resources resources) {
     super(owner, Main.getMessage("caption.about") + " " +
     			resources.getMetadata().getStoryInfo().getTitle());
     getContentPane().add(createInfoPanel(resources));
@@ -78,53 +78,53 @@ public class GameInfoDialog extends JDialog {
     }
     return picpanel;
   }
-  
+
   private JComponent createInfoPanel(Resources resources) {
     StoryMetadata storyinfo = resources.getMetadata().getStoryInfo();
     Box infopanel = Box.createVerticalBox();
     infopanel.setBorder(BorderFactory.createEmptyBorder(3, 5, 3, 5));
     JComponent panel = infopanel;
-    
+
     // in case cover art is available, stack it into the info panel
-    int coverartnum = getCoverartNum(resources);    
+    int coverartnum = getCoverartNum(resources);
     if (coverartnum > 0 && resources.getImages().getNumResources() > 0) {
       Box wholepanel = Box.createHorizontalBox();
       wholepanel.add(createPicturePanel(resources, coverartnum));
       wholepanel.add(infopanel);
       panel = wholepanel;
     }
-    
+
     infopanel.setAlignmentX(Component.LEFT_ALIGNMENT);
     infopanel.setPreferredSize(new Dimension(STD_WIDTH, 400));
-    
+
     List<JLabel> labels = new ArrayList<JLabel>();
     labels.add(new JLabel(storyinfo.getTitle()));
-    
+
     if (storyinfo.getHeadline() != null) {
       labels.add(new JLabel(storyinfo.getHeadline()));
     }
-      
+
     labels.add(new JLabel(storyinfo.getAuthor() + " ("
         + storyinfo.getYear() + ")"));
-        
-    for (JLabel label : labels) {      
+
+    for (JLabel label : labels) {
       infopanel.add(label);
       label.setAlignmentX(Component.LEFT_ALIGNMENT);
-      
+
       // Ensure that the label fonts are all bold
       label.setFont(label.getFont().deriveFont(Font.BOLD));
     }
-    
+
     infopanel.add(Box.createVerticalStrut(6));
-    
-    JTextArea descarea = new JTextArea(storyinfo.getDescription());    
+
+    JTextArea descarea = new JTextArea(storyinfo.getDescription());
     descarea.setLineWrap(true);
     descarea.setWrapStyleWord(true);
     descarea.setEditable(false);
     Insets margins = new Insets(3, 3, 3, 3);
     descarea.setMargin(margins);
     descarea.setFont(labels.get(0).getFont().deriveFont(Font.PLAIN));
-    
+
     JScrollPane spane = new JScrollPane(descarea);
     spane.setHorizontalScrollBarPolicy(JScrollPane.HORIZONTAL_SCROLLBAR_NEVER);
     spane.setPreferredSize(new Dimension(STD_WIDTH, 200));
@@ -132,7 +132,7 @@ public class GameInfoDialog extends JDialog {
     infopanel.add(spane);
     return panel;
   }
-  
+
   private JPanel createButtonPanel() {
     // Set up the other controls
     JPanel buttonPanel = new JPanel(new FlowLayout(FlowLayout.RIGHT));
@@ -145,16 +145,16 @@ public class GameInfoDialog extends JDialog {
     buttonPanel.add(okButton);
     return buttonPanel;
   }
-  
-  private int getCoverartNum(Resources resources) {    
+
+  private int getCoverartNum(Resources resources) {
     int coverartnum = resources.getCoverArtNum();
     InformMetadata metadata = resources.getMetadata();
-    
+
     // If the picture number is not in the Frontispiece chunk, retrieve it
     // from the metadata
     if (coverartnum <= 0) {
       coverartnum = metadata.getStoryInfo().getCoverPicture();
     }
     return coverartnum;
-  }  
+  }
 }

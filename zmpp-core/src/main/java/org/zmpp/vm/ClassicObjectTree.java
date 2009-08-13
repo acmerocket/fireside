@@ -80,15 +80,15 @@ public class ClassicObjectTree extends AbstractObjectTree {
    * {@inheritDoc}
    */
   public int getChild(final int objectNum) {
-	return getMemory().readUnsigned8(getObjectAddress(objectNum) +
-				                        OFFSET_CHILD);
+  return getMemory().readUnsigned8(getObjectAddress(objectNum) +
+                                OFFSET_CHILD);
   }
 
   /**
    * {@inheritDoc}
    */
   public void setChild(final int objectNum, final int child) {
-	getMemory().writeUnsigned8(getObjectAddress(objectNum) + OFFSET_CHILD,
+  getMemory().writeUnsigned8(getObjectAddress(objectNum) + OFFSET_CHILD,
       (char) (child & 0xff));
   }
 
@@ -96,15 +96,15 @@ public class ClassicObjectTree extends AbstractObjectTree {
    * {@inheritDoc}
    */
   public int getParent(final int objectNum) {
-	return getMemory().readUnsigned8(getObjectAddress(objectNum) +
-			                            OFFSET_PARENT);
+  return getMemory().readUnsigned8(getObjectAddress(objectNum) +
+                                  OFFSET_PARENT);
   }
 
   /**
    * {@inheritDoc}
    */
   public void setParent(final int objectNum, final int parent) {
-	getMemory().writeUnsigned8(getObjectAddress(objectNum) + OFFSET_PARENT,
+  getMemory().writeUnsigned8(getObjectAddress(objectNum) + OFFSET_PARENT,
       (char) (parent & 0xff));
   }
 
@@ -112,15 +112,15 @@ public class ClassicObjectTree extends AbstractObjectTree {
    * {@inheritDoc}
    */
   public int getSibling(final int objectNum) {
-	return getMemory().readUnsigned8(getObjectAddress(objectNum) +
-										OFFSET_SIBLING);
+  return getMemory().readUnsigned8(getObjectAddress(objectNum) +
+                    OFFSET_SIBLING);
   }
 
   /**
    * {@inheritDoc}
    */
   public void setSibling(final int objectNum, final int sibling) {
-	getMemory().writeUnsigned8(getObjectAddress(objectNum) + OFFSET_SIBLING,
+  getMemory().writeUnsigned8(getObjectAddress(objectNum) + OFFSET_SIBLING,
       (char) (sibling & 0xff));
   }
 
@@ -129,20 +129,20 @@ public class ClassicObjectTree extends AbstractObjectTree {
    */
   protected int getPropertyTableAddress(final int objectNum) {
     return getMemory().readUnsigned16(getObjectAddress(objectNum) +
-    		                             OFFSET_PROPERTYTABLE);
+                                     OFFSET_PROPERTYTABLE);
   }
 
   /**
    * {@inheritDoc}
    */
   protected int getNumPropertySizeBytes(final int propertyDataAddress) {
-	  return 1;
+    return 1;
   }
   /**
    * {@inheritDoc}
    */
   protected int getNumPropSizeBytesAtData(int propertyDataAddress) {
-  	return 1;
+    return 1;
   }
 
   /**

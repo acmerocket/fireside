@@ -34,7 +34,7 @@ import org.zmpp.io.OutputStream;
  * configurable virtual window management model, providing virtual windows
  * that the machine writes to. It is intended to provide interfaces to
  * both Glk and Z-machine and to combine the abilities of both.
- * 
+ *
  * @author Wei-ju Wu
  * @version 1.5
  */
@@ -52,19 +52,19 @@ public class BufferedScreenModel implements ScreenModel, StatusLine,
   private IZsciiEncoding encoding;
   private Memory memory;
   private StoryFileHeader fileheader;
-  
+
   public interface StatusLineListener {
     void statusLineUpdated(String objectDescription, String status);
   }
-  
+
   public void addScreenModelListener(ScreenModelListener l) {
     screenModelListeners.add(l);
   }
-  
+
   public void addStatusLineListener(StatusLineListener l) {
     statusLineListeners.add(l);
   }
-  
+
   /**
    * Initialize the model, an Encoding object is needed to retrieve
    * Unicode characters.
@@ -76,7 +76,7 @@ public class BufferedScreenModel implements ScreenModel, StatusLine,
     this.fileheader = new DefaultStoryFileHeader(memory);
     this.encoding = encoding;
   }
-  
+
   /** {@inheritDoc} */
   public TextAnnotation getTopAnnotation() {
     return topWindow.getCurrentAnnotation();
@@ -94,7 +94,7 @@ public class BufferedScreenModel implements ScreenModel, StatusLine,
   public void setNumCharsPerRow(int num) {
     topWindow.setNumCharsPerRow(num);
   }
-  
+
   public void reset() {
     topWindow.resetCursor();
     bottomWindow.reset();
@@ -154,7 +154,7 @@ public class BufferedScreenModel implements ScreenModel, StatusLine,
       topWindow.resetCursor();
     }
   }
-  
+
   public void setTextCursor(int line, int column, int window) {
     int targetWindow = getTargetWindow(window);
     //LOG.info(String.format("SET_TEXT_CURSOR, line: %d, column: %d, " +
@@ -166,18 +166,18 @@ public class BufferedScreenModel implements ScreenModel, StatusLine,
       topWindow.setTextCursor(line, column);
     }
   }
-  
+
   private int getTargetWindow(int window) {
     return window == ScreenModel.CURRENT_WINDOW ? current : window;
   }
-  
+
   public TextCursor getTextCursor() {
     if (this.current != ScreenModel.WINDOW_TOP) {
       throw new UnsupportedOperationException("Not supported yet.");
     }
     return topWindow;
   }
-  
+
   public char setFont(char fontnumber) {
     if (fontnumber != ScreenModel.FONT_FIXED &&
         fontnumber != ScreenModel.FONT_NORMAL) {
@@ -212,7 +212,7 @@ public class BufferedScreenModel implements ScreenModel, StatusLine,
 
   // OutputStream
   private boolean selected;
-  
+
   /**
    * This checks the fixed font flag and adjust the font if necessary.
    */
@@ -225,7 +225,7 @@ public class BufferedScreenModel implements ScreenModel, StatusLine,
       bottomWindow.setCurrentFont(ScreenModel.FONT_NORMAL);
     }
   }
-  
+
   /** {@inheritDoc} */
   public void print(char zsciiChar) {
     checkFixedFontFlag();
@@ -242,7 +242,7 @@ public class BufferedScreenModel implements ScreenModel, StatusLine,
       }
     }
   }
-  
+
   /** {@inheritDoc} */
   public void close() { }
 
@@ -279,7 +279,7 @@ public class BufferedScreenModel implements ScreenModel, StatusLine,
   // ***************************************
 
   public int getNumRowsUpper() { return topWindow.getNumRows(); }
-  
+
   public int getBackground() {
     int background = bottomWindow.getBackground();
     return background == COLOR_DEFAULT ?
@@ -293,11 +293,11 @@ public class BufferedScreenModel implements ScreenModel, StatusLine,
   private int getDefaultBackground() {
     return memory.readUnsigned8(StoryFileHeader.DEFAULT_BACKGROUND);
   }
-  
+
   private int getDefaultForeground() {
     return memory.readUnsigned8(StoryFileHeader.DEFAULT_FOREGROUND);
   }
-  
+
   public List<AnnotatedText> getLowerBuffer() {
     return bottomWindow.getBuffer();
   }

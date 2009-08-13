@@ -30,14 +30,14 @@ public interface ObjectTree {
    * @param objectNum the object number
    */
   void removeObject(int objectNum);
-    
+
   /**
    * Inserts an object to a new parent.
    * @param parentNum the parent number
    * @param objectNum the object number
    */
   void insertObject(int parentNum, int objectNum);
-  
+
   /**
    * Determines the length of the property at the specified address.
    * The address is an address returned by ZObject.getPropertyAddress,
@@ -49,7 +49,7 @@ public interface ObjectTree {
 
   // ********************************************************************
   // ***** Methods on objects
-  // ***********************************  
+  // ***********************************
   /**
    * Tests if the specified attribute is set.
    * @param objectNum the object number
@@ -84,41 +84,41 @@ public interface ObjectTree {
    * @param parent the new parent object
    */
   void setParent(int objectNum, int parent);
-  
+
   /**
    * Returns the object number of this object's sibling object.
    * @param objectNum the object number
    * @return the sibling object's object number
    */
   int getSibling(int objectNum);
-  
+
   /**
    * Assigns a new sibling to this object.
    * @param objectNum the object number
    * @param sibling the new sibling's object number
    */
   void setSibling(int objectNum, int sibling);
-  
+
   /**
    * Returns the object number of this object's child object.
    * @param objectNum the object number
    * @return the child object's object number
    */
   int getChild(int objectNum);
-  
+
   /**
    * Assigns a new child to this object.
    * @param objectNum the object number
    * @param child the new child
    */
-  void setChild(int objectNum, int child);    
+  void setChild(int objectNum, int child);
 
   /**
    * Returns the properties description address.
    * @param objectNum the object number
    * @return the description address
    */
-  int getPropertiesDescriptionAddress(int objectNum);  
+  int getPropertiesDescriptionAddress(int objectNum);
 
   /**
    * Returns the address of the specified property. Note that this will not
@@ -128,7 +128,7 @@ public interface ObjectTree {
    * @return the specified property's address
    */
   int getPropertyAddress(int objectNum, int property);
-  
+
   /**
    * Returns the next property in the list. If property is 0, this
    * will return the first property number, if property is the last
@@ -137,7 +137,7 @@ public interface ObjectTree {
    * @param property the property number
    * @return the next property in the list or 0
    */
-  int getNextProperty(int objectNum, int property);  
+  int getNextProperty(int objectNum, int property);
 
   /**
    * Returns the the specified property.
@@ -146,7 +146,7 @@ public interface ObjectTree {
    * @return the value of the specified property
    */
   char getProperty(int objectNum, int property);
-  
+
   /**
    * Sets the specified property byte to the given value.
    * @param objectNum the object number
