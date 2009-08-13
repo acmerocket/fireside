@@ -47,7 +47,7 @@ import org.zmpp.media.SoundEffect;
  * @author Wei-ju Wu
  * @version 1.5
  */
-public class Main {
+public final class Main {
 
   /**
    * Private constructor.

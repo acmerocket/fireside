@@ -290,12 +290,12 @@ implements ScreenModelListener {
     viewCursor(runState.isWaitingForInput());
   }
 
-  public void initUI(BufferedScreenModel screenModel,
+  public void initUI(BufferedScreenModel aScreenModel,
                      ExecutionControl control) {
     executionControl = control;
     executionControl.setDefaultColors(getDefaultBackground(),
                                       getDefaultForeground());
-    this.screenModel = screenModel;
+    this.screenModel = aScreenModel;
     screenModel.addScreenModelListener(this);
     setSizes();
     lower.setCurrentStyle(screenModel.getBottomAnnotation());
@@ -372,8 +372,8 @@ implements ScreenModelListener {
   // *************************************************************************
   // ****** ScreenModelListener
   // ***************************************
-  public void screenModelUpdated(ScreenModel screenModel) {
-    List<AnnotatedText> text = this.screenModel.getLowerBuffer();
+  public void screenModelUpdated(ScreenModel aScreenModel) {
+    List<AnnotatedText> text = screenModel.getLowerBuffer();
     for (AnnotatedText segment : text) {
       lower.append(segment);
     }

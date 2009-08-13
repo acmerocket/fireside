@@ -79,18 +79,18 @@ public class DisplaySettings {
 
   /**
    * Sets the settings.
-   * @param stdFont the standard font
-   * @param fixedFont the fixed font
-   * @param defaultBackground the default background
-   * @param defaultForeground the default foreground
-   * @param antialias the antialias flag
+   * @param aStdFont the standard font
+   * @param aFixedFont the fixed font
+   * @param aDefaultBackground the default background
+   * @param aDefaultForeground the default foreground
+   * @param doAntialias the antialias flag
    */
-  public void setSettings(Font stdFont, Font fixedFont,
-      int defaultBackground, int defaultForeground, boolean antialias) {
-    this.stdFont = stdFont;
-    this.fixedFont = fixedFont;
-    this.defaultBackground = defaultBackground;
-    this.defaultForeground = defaultForeground;
-    this.antialias = antialias;
+  public void setSettings(Font aStdFont, Font aFixedFont,
+      int aDefaultBackground, int aDefaultForeground, boolean doAntialias) {
+    this.stdFont = aStdFont;
+    this.fixedFont = aFixedFont;
+    this.defaultBackground = aDefaultBackground;
+    this.defaultForeground = aDefaultForeground;
+    this.antialias = doAntialias;
   }
 }

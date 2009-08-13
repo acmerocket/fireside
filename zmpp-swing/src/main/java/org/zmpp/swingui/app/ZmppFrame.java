@@ -81,7 +81,7 @@ public class ZmppFrame extends JFrame
   public ZmppFrame() {
     super(Main.APP_NAME);
     preferences = Preferences.userNodeForPackage(ZmppFrame.class);
-    this.displaySettings = createDisplaySettings(preferences);
+    this.displaySettings = createDisplaySettings();
     setDefaultCloseOperation(JFrame.EXIT_ON_CLOSE);
     setupUI();
     pack();
@@ -286,8 +286,7 @@ public class ZmppFrame extends JFrame
     dialog.setVisible(true);
   }
 
-
-  private DisplaySettings createDisplaySettings(Preferences preferences) {
+  private DisplaySettings createDisplaySettings() {
     String stdFontName = preferences.get("stdfontname", STD_FONT_NAME);
     int stdFontSize = preferences.getInt("stdfontsize", STD_FONT_SIZE);
     String fixedFontName = preferences.get("fixedfontname",
