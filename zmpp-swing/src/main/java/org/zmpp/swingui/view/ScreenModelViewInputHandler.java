@@ -1,4 +1,4 @@
-/
+/*
  * Created on 2008/05/10
  * Copyright 2005-2009 by Wei-ju Wu
  * This file is part of The Z-machine Preservation Project (ZMPP).
@@ -166,7 +166,7 @@ public class ScreenModelViewInputHandler
   // ************************************************
   /** {@inheritDoc} */
   public void stateChanged(ChangeEvent e) {
-    /
+    /*
     if (isReadLine()) {
       if (getLowerCaretPosition() < getEditStart()) {
         setLowerCaretPosition(getEditStart());
