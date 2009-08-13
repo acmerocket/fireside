@@ -23,7 +23,7 @@ package org.zmpp.base;
  * support subsections within memory.
  * All access functions will be relative to the initialized start offset
  * within the global memory.
- * 
+ *
  * @author Wei-ju Wu
  * @version 1.5
  */
@@ -32,7 +32,7 @@ public class MemorySection implements Memory {
   private Memory memory;
   private int start;
   private int length;
-  
+
   /**
    * Constructor.
    * @param memory the Memory objeci to wrap
@@ -45,7 +45,7 @@ public class MemorySection implements Memory {
     this.start = start;
     this.length = length;
   }
-  
+
   /**
    * Returns the length of this object in bytes.
    * @return the length in bytes

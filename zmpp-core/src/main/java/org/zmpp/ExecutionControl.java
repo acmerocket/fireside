@@ -33,7 +33,7 @@ import org.zmpp.base.StoryFileHeader.Attribute;
  * suspending the VM on an input instruction, resuming after the input
  * buffer was filled and picking up from there.
  * This is the main public interface to the user interface.
- * 
+ *
  * @author Wei-ju Wu
  * @version 1.5
  */
@@ -45,9 +45,9 @@ public class ExecutionControl {
           new InstructionDecoder();
   private LineBufferInputStream inputStream = new LineBufferInputStream();
   private int step = 1;
-  public static boolean DEBUG = false;
-  public static boolean DEBUG_INTERRUPT = false;
-  
+  public static final boolean DEBUG = false;
+  public static final boolean DEBUG_INTERRUPT = false;
+
   /**
    * Constructor.
    * @param machine
@@ -75,7 +75,7 @@ public class ExecutionControl {
     }
     if (version >= 5) {
       enableHeaderFlag(Attribute.SUPPORTS_COLOURS);
-      
+
     }
     int defaultForeground = getDefaultForeground();
     int defaultBackground = getDefaultBackground();
@@ -88,21 +88,21 @@ public class ExecutionControl {
   private void enableHeaderFlag(Attribute attr) {
     getFileHeader().setEnabled(attr, true);
   }
-  
+
   public Machine getMachine() { return machine; }
   public StoryFileHeader getFileHeader() { return machine.getFileHeader(); }
-  
+
   public int getVersion() { return machine.getVersion(); }
-  
+
   public void setDefaultColors(int defaultBackground, int defaultForeground) {
     setDefaultBackground(defaultBackground);
     setDefaultForeground(defaultForeground);
-    
+
     // Also set the default colors in the screen model !!
     machine.getScreen().setBackground(defaultBackground, -1);
     machine.getScreen().setForeground(defaultForeground, -1);
   }
-  
+
   public int getDefaultBackground() {
     return machine.readUnsigned8(StoryFileHeader.DEFAULT_BACKGROUND);
   }
@@ -111,12 +111,12 @@ public class ExecutionControl {
   }
   private void setDefaultBackground(final int color) {
     machine.writeUnsigned8(StoryFileHeader.DEFAULT_BACKGROUND, (char) color);
-  }  
+  }
   private void setDefaultForeground(final int color) {
     machine.writeUnsigned8(StoryFileHeader.DEFAULT_FOREGROUND, (char) color);
   }
- 
-  
+
+
 
   public void resizeScreen(int numRows, int numCharsPerRow) {
     if (getVersion() >= 4) {
@@ -144,10 +144,12 @@ public class ExecutionControl {
       int pc = machine.getPC();
       Instruction instr = instructionDecoder.decodeInstruction(pc);
       // if the print is executed after execute(), the result is different !!
-      if (DEBUG && machine.getRunState() == MachineRunState.RUNNING)
-        System.out.println(String.format("%04d: $%05x %s", step, (int) pc, instr.toString()));
+      if (DEBUG && machine.getRunState() == MachineRunState.RUNNING) {
+        System.out.println(String.format("%04d: $%05x %s", step, (int) pc,
+        									 instr.toString()));
+      }
       instr.execute();
-        
+
       // handle input situations here
       if (machine.getRunState().isWaitingForInput()) {
         break;
@@ -157,7 +159,7 @@ public class ExecutionControl {
     }
     return machine.getRunState();
   }
-  
+
   /**
    * Resumes from an input state to the run state using the specified Unicode
    * input string.
@@ -177,9 +179,9 @@ public class ExecutionControl {
   private String convertToZsciiInputLine(String input) {
     return machine.convertToZscii(input.toLowerCase()) + "\r";
   }
-  
+
   public IZsciiEncoding getZsciiEncoding() { return machine; }
-  
+
   /**
    * This method should be called from a timed input method, to fill
    * the text buffer with current input. By using this, it is ensured,
@@ -202,19 +204,19 @@ public class ExecutionControl {
 
   /**
    * Indicates if the last interrupt routine performed any output.
-   * 
+   *
    * @return true if the routine performed output, false otherwise
    */
   public boolean interruptDidOutput() { return interruptDidOutput; }
-  
+
   /**
    * The flag to indicate interrupt output.
    */
   private boolean interruptDidOutput;
-  
+
  /**
    * Calls the specified interrupt routine.
-   * 
+   *
    * @param routineAddress the routine address
    * @return the return value
    */
@@ -224,12 +226,14 @@ public class ExecutionControl {
     final RoutineContext routineContext =  machine.call(routineAddress,
         machine.getPC(),
         new char[0], RoutineContext.DISCARD_RESULT);
-    
+
     for (;;) {
       final Instruction instr =
         instructionDecoder.decodeInstruction(machine.getPC());
-      if (DEBUG_INTERRUPT)
-        System.out.println(String.format("%03d: $%04x %s", step, (int) machine.getPC(), instr.toString()));
+      if (DEBUG_INTERRUPT) {
+        System.out.println(String.format("%03d: $%04x %s", step,
+        									 (int) machine.getPC(), instr.toString()));
+      }
       instr.execute();
       // check if something was printed
       if (instr.isOutput()) {

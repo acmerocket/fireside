@@ -34,37 +34,37 @@ public class AlphabetElement {
    * is null.
    */
   private short zcharCode;
-  
+
   /**
    * The alphabet or null, if index is a ZSCII code.
    */
   private Alphabet alphabet;
-  
+
   /**
    * Constructor.
-   * 
+   *
    * @param alphabet the alphabet (can be null)
    * @param zcharCode the zcharCode in the alphabet or the ZSCII code
    */
   public AlphabetElement(Alphabet alphabet, short zcharCode) {
-   
+
     this.alphabet = alphabet;
     this.zcharCode = zcharCode;
   }
-  
+
   /**
    * Returns the alphabet. Can be null, in that case index represents the
    * ZSCII code.
-   * 
+   *
    * @return the alphabet
    */
   public Alphabet getAlphabet() { return alphabet; }
-  
+
   /**
    * Returns the index to the table. If the alphabet is null, this is the
    * plain ZSCII code and should be turned into a 10-bit code by the
    * encoder.
-   * 
+   *
    * @return the z char code in the specified alphabet or the ZSCII code
    */
   public short getZCharCode() { return zcharCode; }

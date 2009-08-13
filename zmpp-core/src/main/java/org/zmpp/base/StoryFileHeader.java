@@ -24,7 +24,7 @@ package org.zmpp.base;
  * story file data.
  * By this means, changes in the memory map will be implicitly change
  * the header structure.
- * 
+ *
  * @author Wei-ju Wu
  * @version 1.5
  */
@@ -43,7 +43,7 @@ public interface StoryFileHeader {
   static final int SCREEN_WIDTH         = 0x21;
   static final int SCREEN_WIDTH_UNITS   = 0x22;
   static final int SCREEN_HEIGHT_UNITS  = 0x24;
-  static final int ROUTINE_OFFSET       = 0x28;  
+  static final int ROUTINE_OFFSET       = 0x28;
   static final int STATIC_STRING_OFFSET = 0x2a;
   static final int DEFAULT_BACKGROUND   = 0x2c;
   static final int DEFAULT_FOREGROUND   = 0x2d;
@@ -71,55 +71,55 @@ public interface StoryFileHeader {
    * @return the serial number
    */
   String getSerialNumber();
-  
+
   /**
    * Returns this story file's length.
    * @return the file length
    */
   int getFileLength();
-  
+
   /**
    * Sets the interpreter version.
    * @param version the version
    */
   void setInterpreterVersion(int version);
-  
+
   /**
    * Sets the font width in width of a '0'.
    * @param units the number of units in widths of a '0'
    */
   void setFontWidth(int units);
-  
+
   /**
    * Sets the font height in width of a '0'.
    * @param units the number of units in heights of a '0'
    */
   void setFontHeight(int units);
-  
+
   /**
    * Sets the mouse coordinates.
    * @param x the x coordinate
    * @param y the y coordinate
    */
   void setMouseCoordinates(int x, int y);
-  
+
   /**
    * Returns the address of the cutom unicode translation table.
    * @return the address of the custom unicode translation table
    */
   char getCustomAccentTable();
-  
+
   // ********************************************************************
   // ****** Attributes
   // **********************************
-  
+
   /**
    * Enables the specified attribute.
    * @param attribute the attribute to set
    * @param flag the value
    */
   void setEnabled(Attribute attribute, boolean flag);
-  
+
   /**
    * Checks the enabled status of the specified attribute
    * @param attribute the attribute name

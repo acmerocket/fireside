@@ -31,12 +31,12 @@ import org.zmpp.encoding.AlphabetTable.Alphabet;
  * stored in member variables. We use the strategy of having an encoding
  * state for a target word which is changed and passed around until the
  * word can written out.
- * 
+ *
  * The encoding has some restrictions defined in the specification:
  * The target string is restricted to 6 bytes and 9 characters, which is
  * the length of dictionary entries and no abbreviations need to be taken
  * into consideration.
- * 
+ *
  * @author Wei-ju Wu
  * @version 1.5
  */
@@ -46,17 +46,17 @@ public class ZCharEncoder {
    * The alphabet table.
    */
   private ZCharTranslator translator;
-  
+
   /**
    * The maximum entry length.
    */
   private static final int MAX_ENTRY_LENGTH = 9;
-  
+
   private static final int NUM_TARGET_BYTES = 6;
   private static final int TARGET_LAST_WORD = 4;
-  
+
   static class EncodingState {
-    
+
     public Memory memory;
     public int source;
     public int target;
@@ -90,11 +90,11 @@ public class ZCharEncoder {
     state.target = targetAddress;
     state.targetStart = targetAddress;
     state.memory = memory;
-    
+
     while (state.source < (sourceAddress + maxlen)) {
-      processChar(state);     
+      processChar(state);
     }
-    
+
     // Padding
     // This pads the incomplete last encoded word
     if (state.wordPosition <= 2 && state.target <= (state.targetStart + 4)) {
@@ -105,13 +105,13 @@ public class ZCharEncoder {
       state.memory.writeUnsigned16(state.target, toUnsigned16(resultword));
       state.target += 2;
     }
-    
+
     // If we did not encode 3 shorts, fill the rest with 0x14a5's
     final int targetOffset = state.target - targetAddress;
     for (int i = targetOffset; i < NUM_TARGET_BYTES; i+= 2) {
       state.memory.writeUnsigned16(targetAddress + i, toUnsigned16(0x14a5));
     }
-    
+
     // Always mark the last word as such, the last word is always
     // starting at the fifth byte
     final int lastword =
@@ -119,7 +119,7 @@ public class ZCharEncoder {
     memory.writeUnsigned16(targetAddress + TARGET_LAST_WORD,
                            toUnsigned16(lastword | 0x8000));
   }
-  
+
   private void processChar(final EncodingState state) {
     final char zsciiChar = (char) state.memory.readUnsigned8(state.source++);
     final AlphabetElement element = translator.getAlphabetElementFor(zsciiChar);
@@ -149,21 +149,21 @@ public class ZCharEncoder {
       } else if (alphabet == Alphabet.A2) {
         processWord(state, (short) 5);
       }
-      processWord(state, zcharCode);      
-    }    
+      processWord(state, zcharCode);
+    }
   }
-  
+
   private int getSlotsLeft(final EncodingState state) {
     final int currentWord = (state.target - state.targetStart) / 2;
     return ((2 - currentWord) * 3) + (3 - state.wordPosition);
   }
-  
+
   private void processWord(final EncodingState state, final short value) {
     state.currentWord = writeByteToWord(state.currentWord, value,
                                         state.wordPosition++);
     writeWordIfNeeded(state);
   }
-  
+
   private void writeWordIfNeeded(final EncodingState state) {
     if (state.wordPosition > 2 && state.target <= (state.targetStart + 4)) {
       // Write the result and increment the target position
@@ -172,22 +172,22 @@ public class ZCharEncoder {
       state.target += 2;
       state.currentWord = 0;
       state.wordPosition = 0;
-    }    
+    }
   }
-  
+
   private short getUpper5Bit(final short zsciiChar) {
     return (short) ((zsciiChar >>> 5) & 0x1f);
   }
-  
+
   private short getLower5Bit(final short zsciiChar) {
     return (short) (zsciiChar & 0x1f);
   }
-  
+
   /**
    * This function sets a byte value to the specified position within
    * a word. There are three positions within a 16 bit word and the bytes
    * are truncated such that only the lower 5 bit are taken as values.
-   * 
+   *
    * @param dataword the word to set
    * @param databyte the byte to set
    * @param pos a value between 0 and 2

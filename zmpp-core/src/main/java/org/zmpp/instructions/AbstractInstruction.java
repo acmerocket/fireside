@@ -53,7 +53,7 @@ public abstract class AbstractInstruction implements Instruction {
   private char storeVariable;
   private BranchInfo branchInfo;
   private int opcodeLength;
-  
+
   public AbstractInstruction(Machine machine, int opcodeNum,
                              Operand[] operands,
                              char storeVar,
@@ -72,7 +72,7 @@ public abstract class AbstractInstruction implements Instruction {
    * @return the Machine object
    */
   protected Machine getMachine() { return machine; }
-  
+
   protected int getStoryVersion() { return machine.getVersion(); }
   protected abstract OperandCount getOperandCount();
   /**
@@ -87,7 +87,7 @@ public abstract class AbstractInstruction implements Instruction {
    * @return the opcode
    */
   protected int getOpcodeNum() { return opcodeNum; }
-  
+
   protected boolean storesResult() {
     return InstructionInfoDb.getInstance().getInfo(getOperandCount(),
             opcodeNum, machine.getVersion()).isStore();
@@ -118,7 +118,7 @@ public abstract class AbstractInstruction implements Instruction {
     }*/
     return MemoryUtil.unsignedToSigned16(getUnsignedValue(operandNum));
   }
-  
+
   /**
    * A method to return the signed representation of the contents of a variable
    * @param varnum the variable number
@@ -127,7 +127,7 @@ public abstract class AbstractInstruction implements Instruction {
   protected short getSignedVarValue(char varnum) {
     return MemoryUtil.unsignedToSigned16(getMachine().getVariable(varnum));
   }
-  
+
   /**
    * A method to set a signed 16 Bit integer to the specified variable.
    * @param varnum the variable number
@@ -136,7 +136,7 @@ public abstract class AbstractInstruction implements Instruction {
   protected void setSignedVarValue(char varnum, short value) {
     getMachine().setVariable(varnum, MemoryUtil.signedToUnsigned16(value));
   }
-  
+
   /**
    * Retrieves the value of the specified operand as an unsigned 16 bit
    * integer.
@@ -162,7 +162,7 @@ public abstract class AbstractInstruction implements Instruction {
   protected void storeUnsignedResult(final char value) {
     getMachine().setVariable(storeVariable, value);
   }
-  
+
   /**
    * Stores a signed value in the result variable.
    * @param value the value to store
@@ -183,11 +183,11 @@ public abstract class AbstractInstruction implements Instruction {
    * Performs a branch, depending on the state of the condition flag.
    * If branchIfConditionTrue is true, the branch will be performed if
    * condition is true, if branchIfCondition is false, the branch will
-   * be performed if condition is false. 
+   * be performed if condition is false.
    * @param condition the test condition
    */
   protected void branchOnTest(final boolean condition) {
-    final boolean test = branchInfo.branchOnTrue ? condition : !condition; 
+    final boolean test = branchInfo.branchOnTrue ? condition : !condition;
     //System.out.printf("ApplyBranch, offset: %d, opcodeLength: %d, branchIfTrue: %b, test: %b\n",
       //      branchInfo.branchOffset, opcodeLength, branchInfo.branchOnTrue, test);
     if (test) {
@@ -196,7 +196,7 @@ public abstract class AbstractInstruction implements Instruction {
       nextInstruction();
     }
   }
-  
+
   /**
    * Applies a jump by applying the branch formula on the pc given the specified
    * offset.
@@ -229,7 +229,7 @@ public abstract class AbstractInstruction implements Instruction {
     }
     call(packedAddress, args);
   }
-  
+
   protected void call(final char packedRoutineAddress, final char[] args) {
     if (packedRoutineAddress == 0) {
       if (storesResult()) {
@@ -240,7 +240,7 @@ public abstract class AbstractInstruction implements Instruction {
     } else {
       final int returnAddress = getMachine().getPC() + opcodeLength;
       final char returnVariable = storesResult() ? storeVariable :
-        RoutineContext.DISCARD_RESULT;      
+        RoutineContext.DISCARD_RESULT;
       machine.call(packedRoutineAddress, returnAddress, args,
                returnVariable);
     }
@@ -260,7 +260,7 @@ public abstract class AbstractInstruction implements Instruction {
     // In version 4, this points to the store variable. In both cases this
     // address is the instruction address + 1
     final boolean success = getMachine().save(pc);
-    
+
     if (machine.getVersion() <= 3) {
       //int target = getMachine().getProgramCounter() + getLength();
       //target--; // point to the previous branch offset
@@ -272,7 +272,7 @@ public abstract class AbstractInstruction implements Instruction {
       nextInstruction();
     }
   }
-  
+
   protected void restoreFromStorage() {
     final PortableGameState gamestate = getMachine().restore();
     if (machine.getVersion() <= 3) {
@@ -283,15 +283,15 @@ public abstract class AbstractInstruction implements Instruction {
     } else {
       // changed behaviour in version >= 4
       if (gamestate == null) {
-        storeUnsignedResult(FALSE);        
+        storeUnsignedResult(FALSE);
         // If failure on restore, just continue
         nextInstruction();
       } else {
-        final char storevar = gamestate.getStoreVariable(getMachine());        
-        getMachine().setVariable(storevar, RESTORE_TRUE);        
+        final char storevar = gamestate.getStoreVariable(getMachine());
+        getMachine().setVariable(storevar, RESTORE_TRUE);
       }
     }
-  }  
+  }
 
   /**
    * Returns the window for a given window number.
@@ -303,7 +303,7 @@ public abstract class AbstractInstruction implements Instruction {
             getMachine().getScreen6().getSelectedWindow() :
             getMachine().getScreen6().getWindow(windownum);
   }
-  
+
   /**
    * Helper function
    * @return
@@ -327,7 +327,7 @@ public abstract class AbstractInstruction implements Instruction {
     }
     return buffer.toString();
   }
-  
+
   private String getVarName(final int varnum) {
     if (varnum == 0) {
       return "(SP)";
@@ -337,7 +337,7 @@ public abstract class AbstractInstruction implements Instruction {
       return String.format("G%02x", (varnum - 16));
     }
   }
-  
+
   private String getVarValue(final char varnum) {
     char value = 0;
     if (varnum == 0) {
@@ -347,7 +347,7 @@ public abstract class AbstractInstruction implements Instruction {
     }
     return String.format("$%04x", (int) value);
   }
-  
+
   protected String getOperandString() {
     final StringBuilder buffer = new StringBuilder();
     for (int i = 0; i < getNumOperands(); i++) {

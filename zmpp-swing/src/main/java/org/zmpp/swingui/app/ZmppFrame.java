@@ -334,7 +334,9 @@ public class ZmppFrame extends JFrame
           }
         }
       });
-    } catch (Exception ignore) {}
+    } catch (Exception ignore) {
+    	ignore.printStackTrace();
+    }
   }
 
   private static void runStoryFile(final File storyFile) {

@@ -28,7 +28,7 @@ import org.zmpp.media.ZmppImage;
 /**
  * This class encapsulates a Blorb file and offers access to the sound
  * and graphics media collections.
- * 
+ *
  * @author Wei-ju Wu
  * @version 1.5
  */
@@ -38,30 +38,30 @@ public class BlorbResources implements Resources {
    * The file's images.
    */
   private MediaCollection<BlorbImage> images;
-  
+
   /**
    * The file's sounds.
    */
   private MediaCollection<SoundEffect> sounds;
-  
+
   /**
    * The cover art.
    */
   private BlorbCoverArt coverart;
-  
+
   /**
    * The meta data.
    */
   private BlorbMetadataHandler metadata;
-  
+
   /**
    * The release number.
    */
   private int release;
-  
+
   /**
    * Constructor.
-   * 
+   *
    * @param imageFactory a NativeImageFactory
    * @param formchunk a form chunk in Blorb format
    */
@@ -73,33 +73,33 @@ public class BlorbResources implements Resources {
     coverart = new BlorbCoverArt(formchunk);
     metadata = new BlorbMetadataHandler(formchunk);
   }
-  
+
   /**
    * {@inheritDoc}
    */
   public MediaCollection<? extends ZmppImage> getImages() { return images; }
-  
+
   /**
    * {@inheritDoc}
    */
   public MediaCollection<SoundEffect> getSounds() { return sounds; }
-  
+
   /**
    * {@inheritDoc}
    */
   public int getCoverArtNum() { return coverart.getCoverArtNum(); }
-  
-  
+
+
   /**
    * {@inheritDoc}
    */
   public InformMetadata getMetadata() { return metadata.getMetadata(); }
-  
+
   /**
    * {@inheritDoc}
    */
   public int getRelease() { return release; }
-  
+
   /**
    * {@inheritDoc}
    */

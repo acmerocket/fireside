@@ -25,7 +25,7 @@ package org.zmpp.encoding;
  */
 public class DefaultAccentTable implements AccentTable {
 
-  private static final char[] STANDARD_TRANSLATION_TABLE = {    
+  private static final char[] STANDARD_TRANSLATION_TABLE = {
     '\u00e4', '\u00f6', '\u00fc', '\u00c4', '\u00d6', '\u00dc', '\u00df',
     '\u00bb', '\u00ab',
     '\u00eb', '\u00ef', '\u00ff', '\u00cb', '\u00cf',
@@ -39,23 +39,23 @@ public class DefaultAccentTable implements AccentTable {
     '\u00e3', '\u00f1', '\u00f5', '\u00c3', '\u00d1', '\u00d5',
     '\u00e6', '\u00c6', '\u00e7', '\u00c7',
     '\u00fe', '\u00fd', '\u00f0', '\u00d0',
-    '\u00a3', '\u0153', '\u0152', '\u00a1', '\u00bf'    
+    '\u00a3', '\u0153', '\u0152', '\u00a1', '\u00bf'
   };
-  
+
   /**
    * {@inheritDoc}
    */
-  public int getLength() {  
+  public int getLength() {
     return STANDARD_TRANSLATION_TABLE.length;
   }
-  
+
   /**
    * {@inheritDoc}
    */
-  public char getAccent(final int index) {    
+  public char getAccent(final int index) {
     return STANDARD_TRANSLATION_TABLE[index];
   }
-  
+
   /**
    * {@inheritDoc}
    */
@@ -65,7 +65,7 @@ public class DefaultAccentTable implements AccentTable {
     final char lower = Character.toLowerCase(c);
     final int length = getLength();
     for (int i = 0; i < length; i++) {
-      
+
       if (getAccent(i) == lower) {
         return i;
       }

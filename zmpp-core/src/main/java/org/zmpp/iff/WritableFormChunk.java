@@ -36,28 +36,28 @@ public class WritableFormChunk implements FormChunk {
   private byte[] subId;
   private static final String FORM_ID = "FORM";
   private List<Chunk> subChunks;
-  
+
   /**
    * Constructor.
    * @param subId the sub id
    */
-  public WritableFormChunk(final byte[] subId) {  
+  public WritableFormChunk(final byte[] subId) {
     super();
     this.subId = subId;
     this.subChunks = new ArrayList<Chunk>();
   }
-  
+
   /**
    * Adds a sub chunk.
    * @param chunk the sub chunk to add
    */
   public void addChunk(final Chunk chunk) {
-    
+
     subChunks.add(chunk);
   }
-  
+
   /** {@inheritDoc} */
-  public String getSubId() {   
+  public String getSubId() {
     return new String(subId);
   }
 
@@ -75,7 +75,7 @@ public class WritableFormChunk implements FormChunk {
     }
     return null;
   }
-  
+
   /** {@inheritDoc} */
   public Chunk getSubChunk(final int address) {
     // We do not need to implement this
@@ -88,7 +88,7 @@ public class WritableFormChunk implements FormChunk {
   /** {@inheritDoc} */
   public int getSize() {
     int size = subId.length;
-    
+
     for (Chunk chunk : subChunks) {
       int chunkSize = chunk.getSize();
       if ((chunkSize % 2) != 0) {
@@ -112,7 +112,7 @@ public class WritableFormChunk implements FormChunk {
    * @return the chunk data
    */
   public byte[] getBytes() {
-    final int datasize = Chunk.CHUNK_HEADER_LENGTH + getSize();    
+    final int datasize = Chunk.CHUNK_HEADER_LENGTH + getSize();
     final byte[] data = new byte[datasize];
     final Memory memory = new DefaultMemory(data);
     memory.writeUnsigned8(0, 'F');
@@ -120,31 +120,31 @@ public class WritableFormChunk implements FormChunk {
     memory.writeUnsigned8(2, 'R');
     memory.writeUnsigned8(3, 'M');
     writeUnsigned32(memory, 4, getSize());
-    
+
     int offset = Chunk.CHUNK_HEADER_LENGTH;
-    
+
     // Write sub id
     memory.copyBytesFromArray(subId, 0, offset, subId.length);
     offset += subId.length;
-    
+
     // Write sub chunk data
     for (Chunk chunk : subChunks) {
       final byte[] chunkId = chunk.getId().getBytes();
       final int chunkSize = chunk.getSize();
-      
+
       // Write id
       memory.copyBytesFromArray(chunkId, 0, offset, chunkId.length);
       offset += chunkId.length;
-      
+
       // Write chunk size
       writeUnsigned32(memory, offset, chunkSize);
       offset += 4; // add the size word length
-      
+
       // Write chunk data
       final Memory chunkMem = chunk.getMemory();
       memory.copyBytesFromMemory(chunkMem, Chunk.CHUNK_HEADER_LENGTH, offset,
                                  chunkSize);
-      offset += chunkSize;      
+      offset += chunkSize;
       // Pad if necessary
       if ((chunkSize % 2) != 0) {
         memory.writeUnsigned8(offset++, (char) 0);
@@ -152,7 +152,7 @@ public class WritableFormChunk implements FormChunk {
     }
     return data;
   }
-  
+
   /** {@inheritDoc} */
-  public int getAddress() { return 0; }  
+  public int getAddress() { return 0; }
 }

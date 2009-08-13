@@ -29,7 +29,7 @@ import org.zmpp.base.Memory;
  * 10 Bit escape characters and alphabet table characters. Alphabet
  * table characters and shift states are handled by the ZCharTranslator
  * object.
- * 
+ *
  * @author Wei-ju Wu
  * @version 1.5
  */
@@ -39,7 +39,7 @@ public final class DefaultZCharDecoder implements ZCharDecoder {
   private ZsciiEncoding encoding;
   private AbbreviationsTable abbreviations;
   private ZCharDecoder abbreviationDecoder;
-  
+
   /**
    * Constructor.
    * @param encoding the ZsciiEncoding object
@@ -48,19 +48,19 @@ public final class DefaultZCharDecoder implements ZCharDecoder {
    */
   public DefaultZCharDecoder(final ZsciiEncoding encoding,
       final ZCharTranslator translator,
-      final AbbreviationsTable abbreviations) { 
+      final AbbreviationsTable abbreviations) {
     this.abbreviations = abbreviations;
     this.translator = translator;
     this.encoding = encoding;
   }
-  
+
   /**
    * {@inheritDoc}
    */
   public String decode2Zscii(final Memory memory,
       final int address, final int length) {
     final StringBuilder builder = new StringBuilder();
-    translator.reset();    
+    translator.reset();
     final char[] zbytes = extractZbytes(memory, address, length);
     char zchar;
     int i = 0, newpos;
@@ -71,13 +71,13 @@ public final class DefaultZCharDecoder implements ZCharDecoder {
       newpos = handleAbbreviation(builder, memory, zbytes, i);
       decoded = (newpos > i);
       i = newpos;
-      
+
       if (!decoded) {
         newpos = handleEscapeA2(builder, zbytes, i);
         decoded = newpos > i;
         i = newpos;
       }
-      
+
       if (!decoded) {
         decodeZchar(builder, zchar);
         i++;
@@ -85,19 +85,19 @@ public final class DefaultZCharDecoder implements ZCharDecoder {
     }
     return builder.toString();
   }
-  
+
   private int handleAbbreviation(final StringBuilder builder,
       final Memory memory, final char[] data, final int pos) {
     int position = pos;
     final char zchar = data[position];
-    
+
     if (translator.isAbbreviation(zchar)) {
-    
+
       // we need to check if we are at the end of the buffer, even if an
       // abbreviation is suggested. This happens e.g. in Zork I
       if (position < (data.length - 1)) {
         position++; // retrieve the next byte to determine the abbreviation
-    
+
         // the abbreviations table could be null, simply skip that part in this
         // case
         if (abbreviations != null) {
@@ -112,7 +112,7 @@ public final class DefaultZCharDecoder implements ZCharDecoder {
     }
     return position;
   }
-  
+
   private void createAbbreviationDecoderIfNotExists() {
     if (abbreviationDecoder == null) {
 
@@ -128,7 +128,7 @@ public final class DefaultZCharDecoder implements ZCharDecoder {
       }
     }
   }
-  
+
   private void appendAbbreviationAtAddress(Memory memory, int entryAddress,
           StringBuilder builder) {
     if (abbreviationDecoder != null) {
@@ -137,7 +137,7 @@ public final class DefaultZCharDecoder implements ZCharDecoder {
         builder.append(abbrev);
     }
   }
-  
+
   private int handleEscapeA2(final StringBuilder builder,
       final char[] data, final int pos) {
     int position = pos;
@@ -164,9 +164,9 @@ public final class DefaultZCharDecoder implements ZCharDecoder {
       return zchar;
     } else {
       return translator.translate(zchar);
-    }  
+    }
   }
-  
+
   /**
    * Decodes an encoded character and adds it to the specified builder object.
    * @param builder a ZsciiStringBuilder object
@@ -177,16 +177,16 @@ public final class DefaultZCharDecoder implements ZCharDecoder {
     final char c = decodeZChar(zchar);
     if (c != 0) {
       builder.append(c);
-    }  
+    }
   }
-  
+
   /** {@inheritDoc} */
   public ZCharTranslator getTranslator() { return translator; }
 
   // ***********************************************************************
   // ******* Private
   // *****************************
-  
+
   /**
    * Determines the last word in a z sequence. The last word has the
    * MSB set.
@@ -196,7 +196,7 @@ public final class DefaultZCharDecoder implements ZCharDecoder {
   public static boolean isEndWord(final char zword) {
     return (zword & 0x8000) > 0;
   }
-  
+
   /**
    * This function unfortunately generates a List object on each invocation,
    * the advantage is that it will return all the characters of the Z string.
@@ -211,19 +211,19 @@ public final class DefaultZCharDecoder implements ZCharDecoder {
     char zword = 0;
     int currentAddr = address;
     final List<char[]> byteList = new ArrayList<char[]>();
-    
+
     do {
       zword = memory.readUnsigned16(currentAddr);
       byteList.add(extractZEncodedBytes(zword));
       currentAddr += 2; // increment pointer
-      
+
       // if this is a dictionary entry, we need to provide the
       // length and cancel the loop earlier
       if (length > 0 && (currentAddr - address) >= length) {
         break;
       }
     } while (!isEndWord(zword));
-    
+
     final char[] result = new char[byteList.size() * 3];
     int i = 0;
     for (char[] triplet : byteList) {
@@ -244,7 +244,7 @@ public final class DefaultZCharDecoder implements ZCharDecoder {
     } while (!isEndWord(zword));
     return currentAddress - address;
   }
-  
+
   /**
    * Extracts three 5 bit fields from the given 16 bit word and returns
    * an array of three bytes containing these characters.
@@ -259,15 +259,15 @@ public final class DefaultZCharDecoder implements ZCharDecoder {
     result[0] = (char) ((zword >> 10) & 0x1f);
     return result;
   }
-  
+
   /**
    * Joins the specified two bytes into a 10 bit ZSCII character.
    * @param builder the StringBuilder to write to
    * @param top the byte holding the top 5 bit of the zchar
    * @param bottom the byte holding the bottom 5 bit of the zchar
-   */  
+   */
   private void joinToZsciiChar(final StringBuilder builder,
                                final char top, final char bottom) {
     builder.append((char) (top << 5 | bottom));
-  }  
+  }
 }

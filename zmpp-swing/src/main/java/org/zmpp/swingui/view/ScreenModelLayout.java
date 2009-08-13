@@ -110,7 +110,7 @@ public class ScreenModelLayout implements LayoutManager2 {
   /** {@inheritDoc} */
   public void addLayoutComponent(Component comp, Object constraints) {
     Integer id = (Integer) constraints;
-    if (id == JLayeredPane.DEFAULT_LAYER) {
+    if (JLayeredPane.DEFAULT_LAYER.equals(id)) {
       lower = (JComponent) comp;
     } else {
       upper = (JComponent) comp;

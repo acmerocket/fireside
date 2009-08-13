@@ -21,10 +21,8 @@ package org.zmpp.instructions;
 import org.zmpp.vm.*;
 import org.zmpp.instructions.InstructionInfoDb.InstructionInfo;
 import org.zmpp.instructions.AbstractInstruction.BranchInfo;
-import org.zmpp.vm.Instruction.InstructionForm;
 import static org.zmpp.vm.Instruction.*;
 import static org.zmpp.vm.Instruction.InstructionForm.*;
-import static org.zmpp.vm.Instruction.OperandCount;
 import static org.zmpp.vm.Instruction.OperandCount.*;
 
 /**

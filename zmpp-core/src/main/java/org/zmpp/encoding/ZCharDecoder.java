@@ -27,10 +27,10 @@ import org.zmpp.base.Memory;
  * ZSCII is a character set that is similar to ASCII/iso-8859-1, the
  * Z characters are a encoded form of characters in memory that provide
  * some degree of compression and encryption.
- * 
+ *
  * ZCharConverter uses the alphabet tables specified in the Z machine
  * standards document 1.0, section 3.
- * 
+ *
  * @author Wei-ju Wu
  * @version 1.5
  */
@@ -38,13 +38,13 @@ public interface ZCharDecoder {
 
   /**
    * This interface defines the abstract access to an abbreviations
-   * table in memory, this will be used for decoding if needed. 
+   * table in memory, this will be used for decoding if needed.
    */
   public interface AbbreviationsTable {
-  
+
     int getWordAddress(int entryNum);
   }
-  
+
   /**
    * Performs a ZSCII decoding at the specified position of
    * the given memory object, this method is exclusively designed to
@@ -52,7 +52,7 @@ public interface ZCharDecoder {
    * leaving the string in a state, that can not be decoded properly
    * otherwise. If the provided length is 0, the semantics are
    * equal to the method without the length parameter.
-   * 
+   *
    * @param memory a Memory object
    * @param address the address of the string
    * @param length the maximum length in bytes
@@ -71,14 +71,14 @@ public interface ZCharDecoder {
   /**
    * Decodes the given byte value to the specified buffer using the working
    * alphabet.
-   * 
+   *
    * @param zchar a z encoded character, needs to be a non-shift character
    */
   char decodeZChar(char zchar);
-  
+
   /**
    * Returns the ZStringTranslator.
-   * 
+   *
    * @return the translator
    */
   ZCharTranslator getTranslator();

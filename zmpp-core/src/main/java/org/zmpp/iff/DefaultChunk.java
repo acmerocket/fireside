@@ -25,7 +25,7 @@ import static org.zmpp.base.MemoryUtil.writeUnsigned32;
 
 /**
  * This is the default implementation of the Chunk interface.
- * 
+ *
  * @author Wei-ju Wu
  * @version 1.5
  */
@@ -33,16 +33,16 @@ public class DefaultChunk implements Chunk {
 
   /** The memory access object. */
   protected Memory memory;
-  
+
   /** The chunk id. */
   private byte[] id;
-  
+
   /** The chunk size. */
   private int chunkSize;
-  
+
   /** The start address within the form chunk. */
   private int address;
-  
+
   /**
    * Constructor. Used for reading files.
    * @param memory a Memory object to the chunk data
@@ -54,7 +54,7 @@ public class DefaultChunk implements Chunk {
     this.address = address;
     id = new byte[CHUNK_ID_LENGTH];
     memory.copyBytesToArray(id, 0, 0, CHUNK_ID_LENGTH);
-    chunkSize = (int) readUnsigned32(memory, CHUNK_ID_LENGTH);    
+    chunkSize = (int) readUnsigned32(memory, CHUNK_ID_LENGTH);
   }
 
   /**
@@ -67,16 +67,16 @@ public class DefaultChunk implements Chunk {
    */
   public DefaultChunk(final byte[] id, final byte[] chunkdata) {
     this.id = id;
-    this.chunkSize = chunkdata.length;    
+    this.chunkSize = chunkdata.length;
     final byte[] chunkDataWithHeader =
       new byte[chunkSize + Chunk.CHUNK_HEADER_LENGTH];
     this.memory = new DefaultMemory(chunkDataWithHeader);
     memory.copyBytesFromArray(id, 0, 0, id.length);
-    writeUnsigned32(memory, id.length, chunkSize);    
+    writeUnsigned32(memory, id.length, chunkSize);
     memory.copyBytesFromArray(chunkdata, 0, id.length + 4,
                               chunkdata.length);
   }
-  
+
   /** {@inheritDoc} */
   public boolean isValid() { return true; }
 
@@ -85,10 +85,10 @@ public class DefaultChunk implements Chunk {
 
   /** {@inheritDoc} */
   public int getSize() { return chunkSize; }
-  
+
   /** {@inheritDoc} */
   public Memory getMemory() { return memory; }
-  
+
   /** {@inheritDoc} */
   public int getAddress() { return address; }
 }

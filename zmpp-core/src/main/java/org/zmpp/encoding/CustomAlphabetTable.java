@@ -23,7 +23,7 @@ import org.zmpp.base.Memory;
 /**
  * If the story file header defines a custom alphabet table, instances
  * of this class are used to retrieve the alphabet characters.
- * 
+ *
  * @author Wei-ju Wu
  * @version 1.5
  */
@@ -32,7 +32,7 @@ public class CustomAlphabetTable implements AlphabetTable {
   private static final int ALPHABET_SIZE = 26;
   private Memory memory;
   private int tableAddress;
- 
+
   /**
    * Constructor.
    * @param memory the Memory object
@@ -42,7 +42,7 @@ public class CustomAlphabetTable implements AlphabetTable {
     this.memory = memory;
     tableAddress = address;
   }
-  
+
   /**
    * {@inheritDoc}
    */
@@ -53,7 +53,7 @@ public class CustomAlphabetTable implements AlphabetTable {
     return (char) memory.readUnsigned8(tableAddress
                                       + (zchar - ALPHABET_START));
   }
-  
+
   /**
    * {@inheritDoc}
    */
@@ -65,12 +65,12 @@ public class CustomAlphabetTable implements AlphabetTable {
                                       + ALPHABET_SIZE
                                       + (zchar - ALPHABET_START));
   }
-  
+
   /**
    * {@inheritDoc}
    */
   public char getA2Char(final byte zchar) {
-    
+
     if (zchar == 0) {
       return ' ';
     }
@@ -80,26 +80,26 @@ public class CustomAlphabetTable implements AlphabetTable {
     return (char) memory.readUnsigned8(tableAddress + 2 * ALPHABET_SIZE
                                       + (zchar - ALPHABET_START));
   }
-  
+
   /**
    * {@inheritDoc}
    */
   public final byte getA0CharCode(final char zsciiChar) {
     for (int i = ALPHABET_START; i < ALPHABET_START + ALPHABET_SIZE; i++) {
-      
+
       if (getA0Char((byte) i) == zsciiChar) {
         return (byte) i;
       }
     }
     return -1;
   }
-  
+
   /**
    * {@inheritDoc}
    */
   public final byte getA1CharCode(final char zsciiChar) {
     for (int i = ALPHABET_START; i < ALPHABET_START + ALPHABET_SIZE; i++) {
-      
+
       if (getA1Char((byte) i) == zsciiChar) {
         return (byte) i;
       }
@@ -112,15 +112,15 @@ public class CustomAlphabetTable implements AlphabetTable {
    */
   public byte getA2CharCode(final char zsciiChar) {
     for (int i = ALPHABET_START; i < ALPHABET_START + ALPHABET_SIZE; i++) {
-      
+
       if (getA2Char((byte) i) == zsciiChar) {
         return (byte) i;
       }
     }
     return -1;
   }
-  
-  
+
+
   /**
    * {@inheritDoc}
    */
@@ -134,14 +134,14 @@ public class CustomAlphabetTable implements AlphabetTable {
   public boolean isShift1(final char zchar) {
     return zchar == AlphabetTable.SHIFT_4;
   }
-  
+
   /**
    * {@inheritDoc}
    */
   public boolean isShift2(final char zchar) {
     return zchar == AlphabetTable.SHIFT_5;
   }
-  
+
   /**
    * {@inheritDoc}
    */

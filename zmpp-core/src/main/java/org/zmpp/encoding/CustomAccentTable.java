@@ -23,7 +23,7 @@ import org.zmpp.base.Memory;
 /**
  * This accent table is used in case that there is an extension header
  * that specifies that accent table.
- * 
+ *
  * @author Wei-ju Wu
  * @version 1.5
  */
@@ -33,7 +33,7 @@ public class CustomAccentTable implements AccentTable {
    * The Memory object.
    */
   private Memory memory;
-  
+
   /**
    * The table adddress.
    */
@@ -48,7 +48,7 @@ public class CustomAccentTable implements AccentTable {
     this.memory = memory;
     this.tableAddress = address;
   }
-  
+
   /**
    * {@inheritDoc}
    */
@@ -70,7 +70,7 @@ public class CustomAccentTable implements AccentTable {
     }
     return result;
   }
-    
+
   /**
    * {@inheritDoc}
    */
@@ -78,7 +78,7 @@ public class CustomAccentTable implements AccentTable {
     final char c = (char) getAccent(index);
     final char lower = Character.toLowerCase(c);
     final int length = getLength();
-    
+
     for (int i = 0; i < length; i++) {
       if (getAccent(i) == lower) {
         return i;

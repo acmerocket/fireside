@@ -25,7 +25,7 @@ import org.zmpp.base.Memory;
 
 /**
  * This class encapsulates the a memory object within an input stream.
- * 
+ *
  * @author Wei-ju Wu
  * @version 1.5
  */
@@ -40,12 +40,12 @@ public class MemoryInputStream extends InputStream {
    * The position in the stream.
    */
   private int position;
-  
+
   /**
    * Supports a mark.
    */
   private int mark;
-  
+
   /**
    * The size of the memory.
    */
@@ -53,7 +53,7 @@ public class MemoryInputStream extends InputStream {
 
   /**
    * Constructor.
-   * 
+   *
    * @param memory a memory object
    * @param offset the byte offset
    * @param size the memory size
@@ -65,7 +65,7 @@ public class MemoryInputStream extends InputStream {
     position += offset;
     this.size = size;
   }
-  
+
   /**
    * {@inheritDoc}
    */
@@ -80,9 +80,9 @@ public class MemoryInputStream extends InputStream {
    * {@inheritDoc}
    */
   public void mark(final int readLimit) { mark = position; }
-  
+
   /**
    * {@inheritDoc}
    */
-  public void reset() { position = mark; }  
+  public void reset() { position = mark; }
 }

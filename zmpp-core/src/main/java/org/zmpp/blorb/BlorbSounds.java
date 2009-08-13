@@ -27,7 +27,7 @@ import org.zmpp.media.SoundEffect;
 
 /**
  * This class implements the Blorb sound collection.
- * 
+ *
  * @author Wei-ju Wu
  * @version 1.5
  */
@@ -37,16 +37,16 @@ public class BlorbSounds extends BlorbMediaCollection<SoundEffect> {
    * This map implements the database.
    */
   private Map<Integer, SoundEffect> sounds;
-  
+
   /**
    * Constructor.
-   * 
+   *
    * @param formchunk the form chunk
    */
   public BlorbSounds(SoundEffectFactory factory, FormChunk formchunk) {
     super(null, factory, formchunk);
   }
-  
+
   /**
    * {@inheritDoc}
    */
@@ -55,12 +55,12 @@ public class BlorbSounds extends BlorbMediaCollection<SoundEffect> {
     super.clear();
     sounds.clear();
   }
-  
+
   /**
    * {@inheritDoc}
    */
   protected void initDatabase() {
-    
+
     sounds = new HashMap<Integer, SoundEffect>();
   }
 
@@ -68,11 +68,11 @@ public class BlorbSounds extends BlorbMediaCollection<SoundEffect> {
    * {@inheritDoc}
    */
   protected boolean isHandledResource(final byte[] usageId) {
-    
+
     return usageId[0] == 'S' && usageId[1] == 'n' && usageId[2] == 'd'
            && usageId[3] == ' ';
   }
-  
+
   /**
    * {@inheritDoc}
    */

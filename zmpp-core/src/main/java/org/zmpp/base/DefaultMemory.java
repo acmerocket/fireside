@@ -20,7 +20,7 @@ package org.zmpp.base;
 
 /**
  * This class is the default implementation for MemoryAccess.
- * 
+ *
  * @author Wei-ju Wu
  * @version 1.5
  */
@@ -29,19 +29,19 @@ public class DefaultMemory implements Memory {
   /**
    * The data array containing the story file.
    */
-  private byte[] data;  
-  
+  private byte[] data;
+
   /**
    * Constructor.
    * @param data the story file data
    */
-  public DefaultMemory(final byte[] data) {    
+  public DefaultMemory(final byte[] data) {
     super();
-    this.data = data;    
+    this.data = data;
   }
-  
+
   /** {@inheritDoc} */
-  public char readUnsigned16(final int address) {    
+  public char readUnsigned16(final int address) {
     return (char)
       (((data[address] & 0xff) << 8 | (data[address + 1] & 0xff)) & 0xffff);
   }
@@ -50,15 +50,15 @@ public class DefaultMemory implements Memory {
   public char readUnsigned8(final int address) {
     return (char) (data[address] & 0xff);
   }
-  
+
   /** {@inheritDoc} */
   public void writeUnsigned16(final int address, final char value) {
     data[address] = (byte) ((value & 0xff00) >> 8);
     data[address + 1] = (byte) (value & 0xff);
   }
-  
+
   /** {@inheritDoc} */
-  public void writeUnsigned8(final int address, final char value) { 
+  public void writeUnsigned8(final int address, final char value) {
     data[address] = (byte) (value & 0xff);
   }
 

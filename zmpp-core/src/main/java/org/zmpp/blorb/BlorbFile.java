@@ -23,19 +23,19 @@ import org.zmpp.iff.FormChunk;
 
 /**
  * This class extracts story data from a Blorb file.
- * 
+ *
  * @author Wei-ju Wu
  * @version 1.5
  */
 public class BlorbFile {
 
   private FormChunk formChunk;
-  
+
   public BlorbFile(final FormChunk formchunk) {
     this.formChunk = formchunk;
   }
-  
-  public byte[] getStoryData() {    
+
+  public byte[] getStoryData() {
     final Chunk chunk = formChunk.getSubChunk("ZCOD");
     final int size = chunk.getSize();
     final byte[] data = new byte[size];

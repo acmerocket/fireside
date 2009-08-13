@@ -23,7 +23,7 @@ package org.zmpp.base;
  * This interface indicates that objects implementing it can interrupt
  * their current execution temporarily, executing the given routine and
  * returning to the former execution after finishing with that routine.
- * 
+ *
  * @author Wei-ju Wu
  * @version 1.5
  */
@@ -31,7 +31,7 @@ public interface Interruptable {
 
   /**
    * Indicates to the receiver that a interrupt should be started.
-   * 
+   *
    * @param routineAddress the routine address
    */
   void setInterruptRoutine(int routineAddress);

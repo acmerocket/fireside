@@ -60,7 +60,7 @@ public class MemoryUtil {
     memory.writeUnsigned8(address + 2, (char) ((value & 0x0000ff00) >> 8));
     memory.writeUnsigned8(address + 3, (char) (value & 0x000000ff));
   }
-  
+
   /**
    * Converts the specified signed 16 bit value to an unsigned 16 bit value.
    * @param value the signed value
@@ -69,7 +69,7 @@ public class MemoryUtil {
   public static char signedToUnsigned16(short value) {
     return (char) (value >= 0 ? value : Character.MAX_VALUE + (value + 1));
   }
-  
+
   /**
    * Converts the specified unsigned 16 bit value to a signed 16 bit value.
    * @param value the unsigned value

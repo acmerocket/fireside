@@ -34,7 +34,7 @@ import org.zmpp.media.MediaCollection;
  * is represented by a database and an index to the database, which maps
  * index numbers to resource numbers. The implementation of the database
  * is left to the sub classes.
- * 
+ *
  * @author Wei-ju Wu
  * @version 1.5
  */
@@ -44,7 +44,7 @@ public abstract class BlorbMediaCollection<T> implements MediaCollection<T> {
    * The list of resource numbers in the file.
    */
   private List<Integer> resourceNumbers;
-  
+
   /**
    * Access to the form chunk.
    */
@@ -52,10 +52,10 @@ public abstract class BlorbMediaCollection<T> implements MediaCollection<T> {
 
   protected NativeImageFactory imageFactory;
   protected SoundEffectFactory soundEffectFactory;
-  
+
   /**
    * Constructor.
-   * 
+   *
    * @param formchunk the Blorb file form chunk
    */
   public BlorbMediaCollection(NativeImageFactory imageFactory,
@@ -66,21 +66,21 @@ public abstract class BlorbMediaCollection<T> implements MediaCollection<T> {
     this.imageFactory = imageFactory;
     this.soundEffectFactory = soundEffectFactory;
     initDatabase();
-    
+
     // Ridx chunk
     Chunk ridxChunk = formchunk.getSubChunk("RIdx");
     Memory chunkmem = ridxChunk.getMemory();
     int numresources = (int) readUnsigned32(chunkmem, 8);
     int offset = 12;
     byte[] usage = new byte[4];
-    
+
     for (int i = 0; i < numresources; i++) {
       chunkmem.copyBytesToArray(usage, 0, offset, 4);
       if (isHandledResource(usage)) {
-        int resnum = (int) readUnsigned32(chunkmem, offset + 4);        
+        int resnum = (int) readUnsigned32(chunkmem, offset + 4);
         int address = (int) readUnsigned32(chunkmem, offset + 8);
         Chunk chunk = formchunk.getSubChunk(address);
-        
+
         if (putToDatabase(chunk, resnum)) {
           resourceNumbers.add(resnum);
         }
@@ -88,39 +88,39 @@ public abstract class BlorbMediaCollection<T> implements MediaCollection<T> {
       offset += 12;
     }
   }
-  
+
   /**
    * {@inheritDoc}
    */
   public void clear() {
-    
+
     resourceNumbers.clear();
   }
-  
+
   /**
    * {@inheritDoc}
    */
   public int getNumResources() {
-    
+
     return resourceNumbers.size();
   }
-  
+
   /**
    * Returns the resource number at the given index.
-   * 
+   *
    * @param index the index
    * @return the resource number
    */
   public int getResourceNumber(final int index) {
-    
+
     return resourceNumbers.get(index);
   }
-  
+
   /**
    * {@inheritDoc}
    */
   public void loadResource(final int resourcenumber) {
-    
+
     // intentionally left empty for possible future use
   }
 
@@ -128,37 +128,37 @@ public abstract class BlorbMediaCollection<T> implements MediaCollection<T> {
    * {@inheritDoc}
    */
   public void unloadResource(final int resourcenumber) {
-    
+
     // intentionally left empty for possible future use
   }
-  
+
   /**
    * Access to the form chunk.
-   * 
+   *
    * @return the form chunk
    */
   protected FormChunk getFormChunk() {
-    
+
     return formchunk;
   }
-  
+
   /**
    * Initialize the database.
    */
-  abstract protected void initDatabase();      
+  abstract protected void initDatabase();
 
   /**
    * This method is invoked by the constructor to indicate if the
    * class handles the given resource.
-   * 
+   *
    * @param usageId the usage id
    * @return true if the current class handles this resource, false, otherwise
    */
   abstract protected boolean isHandledResource(byte[] usageId);
-  
+
   /**
    * Puts the media object based on this sub chunk into the database.
-   * 
+   *
    * @param chunk the blorb sub chunk
    * @param resnum the resource number
    * @return true if successful, false otherwise

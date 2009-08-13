@@ -20,7 +20,7 @@ package org.zmpp.encoding;
 
 /**
  * The default alphabet table implementation.
- * 
+ *
  * @author Wei-ju Wu
  * @version 1.5
  */
@@ -45,7 +45,7 @@ public class DefaultAlphabetTable implements AlphabetTable {
    * {@inheritDoc}
    */
   public char getA1Char(final byte zchar) {
-  
+
     if (zchar == 0) {
       return ' ';
     }
@@ -56,13 +56,13 @@ public class DefaultAlphabetTable implements AlphabetTable {
    * {@inheritDoc}
    */
   public char getA2Char(final byte zchar) {
-    
+
     if (zchar == 0) {
       return ' ';
     }
     return A2CHARS.charAt(zchar - ALPHABET_START);
   }
-  
+
   /**
    * {@inheritDoc}
    */
@@ -70,7 +70,7 @@ public class DefaultAlphabetTable implements AlphabetTable {
 
     return getCharCodeFor(A0CHARS, zsciiChar);
   }
-  
+
   /**
    * {@inheritDoc}
    */
@@ -89,21 +89,21 @@ public class DefaultAlphabetTable implements AlphabetTable {
 
   protected static byte getCharCodeFor(final String chars,
       final char zsciiChar) {
-    
+
     int index = chars.indexOf(zsciiChar);
     if (index >= 0) {
-      
+
       index += ALPHABET_START;
     }
     return (byte) index;
   }
-  
-  
+
+
   /**
    * {@inheritDoc}
    */
   public boolean isShift1(final char zchar) {
-    
+
     return zchar == SHIFT_4;
   }
 
@@ -111,31 +111,31 @@ public class DefaultAlphabetTable implements AlphabetTable {
    * {@inheritDoc}
    */
   public boolean isShift2(final char zchar) {
-    
+
     return zchar == SHIFT_5;
   }
-  
+
   /**
    * {@inheritDoc}
    */
   public boolean isShift(final char zchar) {
-    
+
     return isShift1(zchar) || isShift2(zchar);
   }
-  
+
   /**
    * {@inheritDoc}
    */
   public boolean isShiftLock(final char zchar) {
-    
+
     return false;
   }
-  
+
   /**
    * {@inheritDoc}
    */
   public boolean isAbbreviation(final char zchar) {
-    
+
     return 1 <= zchar && zchar <= 3;
-  }  
+  }
 }

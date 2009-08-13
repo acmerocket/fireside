@@ -118,7 +118,7 @@ public class ScreenModelViewInputHandler
     setCaretToEditMarkIfNeeded(e);
     if (e.getKeyCode() == KeyEvent.VK_ENTER) {
       consumeKeyEvent(e);
-      handleEnterKey(e);
+      handleEnterKey();
     }
     if (atOrBeforeEditStart() &&
         e.getKeyCode() == KeyEvent.VK_BACK_SPACE) {
@@ -147,7 +147,7 @@ public class ScreenModelViewInputHandler
     return getLowerCaretPosition() <= getEditStart();
   }
 
-  private void handleEnterKey(KeyEvent e) {
+  private void handleEnterKey() {
     if (isReadLine()) {
       Document doc = getLowerDocument();
       try {

@@ -24,7 +24,7 @@ package org.zmpp.encoding;
  * abbreviations.
  * Furthermore, character 1 returns '\n'. This is a thing that leads
  * to the extension of the getAnChar() methods, handling index -5.
- * 
+ *
  * @author Wei-ju Wu
  * @version 1.5
  */
@@ -39,7 +39,7 @@ public class AlphabetTableV1 extends AlphabetTableV2 {
    * {@inheritDoc}
    */
   public char getA0Char(final byte zchar) {
-    
+
     if (zchar == 1) {
       return '\n';
     }
@@ -50,18 +50,18 @@ public class AlphabetTableV1 extends AlphabetTableV2 {
    * {@inheritDoc}
    */
   public char getA1Char(final byte zchar) {
-    
+
     if (zchar == 1) {
       return '\n';
     }
     return super.getA1Char(zchar);
   }
-  
+
   /**
    * {@inheritDoc}
    */
   public char getA2Char(final byte zchar) {
-    
+
     if (zchar == 0) {
       return ' ';
     }
@@ -70,14 +70,14 @@ public class AlphabetTableV1 extends AlphabetTableV2 {
     }
     return A2CHARS.charAt(zchar - ALPHABET_START);
   }
-  
+
   /**
    * {@inheritDoc}
    */
   public final byte getA2CharCode(final char zsciiChar) {
     return getCharCodeFor(A2CHARS, zsciiChar);
   }
-  
+
   /**
    * {@inheritDoc}
    */

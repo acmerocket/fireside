@@ -32,8 +32,8 @@ import org.zmpp.media.StoryMetadata;
 
 /**
  * This class parses the metadata chunk in the Blorb file and converts
- * it into a Treaty of Babel metadata object. 
- * 
+ * it into a Treaty of Babel metadata object.
+ *
  * @author Wei-ju Wu
  * @version 1.5
  */
@@ -43,43 +43,43 @@ public class BlorbMetadataHandler extends DefaultHandler {
   private StoryMetadata story;
   private StringBuilder buffer;
   private boolean processAux;
-    
+
   public BlorbMetadataHandler(FormChunk formchunk) {
-    extractMetadata(formchunk);    
+    extractMetadata(formchunk);
   }
-  
+
   public InformMetadata getMetadata() {
     return (story == null) ? null : new InformMetadata(story);
   }
-  
+
   private void extractMetadata(final FormChunk formchunk) {
     final Chunk chunk = formchunk.getSubChunk("IFmd");
     if (chunk != null) {
-      final Memory chunkmem = chunk.getMemory();      
+      final Memory chunkmem = chunk.getMemory();
       final MemoryInputStream meminput =
         new MemoryInputStream(chunkmem, Chunk.CHUNK_HEADER_LENGTH,
           chunk.getSize() + Chunk.CHUNK_HEADER_LENGTH);
-      
+
       try {
-        
+
         final SAXParser parser = SAXParserFactory.newInstance().newSAXParser();
         parser.parse(meminput, this);
-        
+
       } catch (Exception ex) {
-        
+
         ex.printStackTrace();
       }
     }
   }
-    
+
   // **********************************************************************
   // **** Parsing meta data
   // *********************************
-  
+
   @Override
   public void startElement(final String uri, final String localName,
       final String qname, final Attributes attributes) {
-    
+
     if ("story".equals(qname)) {
       story = new StoryMetadata();
     }
@@ -144,19 +144,19 @@ public class BlorbMetadataHandler extends DefaultHandler {
         LOG.throwing("BlorbMetadataHandler", "endElement", ex);
       }
     }
-    if ("auxiliary".equals(qname)) { 
+    if ("auxiliary".equals(qname)) {
       processAux = false;
     }
     if ("br".equals(qname) && buffer != null) {
-      
+
       buffer.append("\n");
     }
-  }  
-  
+  }
+
   @Override
   public void characters(final char[] ch, final int start, final int length) {
     if (buffer != null) {
-      
+
       final StringBuilder partbuilder = new StringBuilder();
       for (int i = start; i < start + length; i++) {
 
@@ -165,12 +165,12 @@ public class BlorbMetadataHandler extends DefaultHandler {
       buffer.append(partbuilder.toString().trim());
     }
   }
-  
+
   /**
    * Unfortunately, year was renamed to firstpublished between the preview
    * metadata version of Inform 7 and the Treaty of Babel version, so
    * we handle both here.
-   * 
+   *
    * @param str the qname
    * @return true if matches, false, otherwise
    */
