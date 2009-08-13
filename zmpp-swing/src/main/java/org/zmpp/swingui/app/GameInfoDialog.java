@@ -59,7 +59,7 @@ public class GameInfoDialog extends JDialog {
 
   public GameInfoDialog(JFrame owner, Resources resources) {
     super(owner, Main.getMessage("caption.about") + " " +
-    			resources.getMetadata().getStoryInfo().getTitle());
+          resources.getMetadata().getStoryInfo().getTitle());
     getContentPane().add(createInfoPanel(resources));
     getContentPane().add(createButtonPanel(), BorderLayout.SOUTH);
     pack();
@@ -104,8 +104,8 @@ public class GameInfoDialog extends JDialog {
       labels.add(new JLabel(storyinfo.getHeadline()));
     }
 
-    labels.add(new JLabel(storyinfo.getAuthor() + " ("
-        + storyinfo.getYear() + ")"));
+    labels.add(new JLabel(storyinfo.getAuthor() + " (" +
+                          storyinfo.getYear() + ")"));
 
     for (JLabel label : labels) {
       infopanel.add(label);

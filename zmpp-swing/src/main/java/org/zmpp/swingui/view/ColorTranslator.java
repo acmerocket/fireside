@@ -80,8 +80,8 @@ public final class ColorTranslator {
       return Color.WHITE;
     case ScreenModel.COLOR_MS_DOS_DARKISH_GREY:
       return Color.DARK_GRAY;
-		default:
-			break;
+    default:
+      break;
     }
     return Color.BLACK;
   }

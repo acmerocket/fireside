@@ -62,19 +62,19 @@ public class ZmppApplet extends JApplet implements IOSystem {
   /**
    * The color map maps parameters to color ids.
    */
-  private static final Map<String, Integer> colormap =
+  private static final Map<String, Integer> COLOR_MAP =
     new HashMap<String, Integer>();
 
   static {
-    colormap.put("black",   2);
-    colormap.put("red",     3);
-    colormap.put("green",   4);
-    colormap.put("yellow",  5);
-    colormap.put("blue",    6);
-    colormap.put("magenta", 7);
-    colormap.put("cyan",    8);
-    colormap.put("white",   9);
-    colormap.put("gray",   10);
+    COLOR_MAP.put("black",   2);
+    COLOR_MAP.put("red",     3);
+    COLOR_MAP.put("green",   4);
+    COLOR_MAP.put("yellow",  5);
+    COLOR_MAP.put("blue",    6);
+    COLOR_MAP.put("magenta", 7);
+    COLOR_MAP.put("cyan",    8);
+    COLOR_MAP.put("white",   9);
+    COLOR_MAP.put("gray",   10);
   }
 
   private DisplaySettings settings;
@@ -184,7 +184,7 @@ public class ZmppApplet extends JApplet implements IOSystem {
    * @return the color id
    */
   private int parseColor(String str, int fallback) {
-    return colormap.get(str) == null ? fallback : colormap.get(str);
+    return COLOR_MAP.get(str) == null ? fallback : COLOR_MAP.get(str);
   }
 
   /**

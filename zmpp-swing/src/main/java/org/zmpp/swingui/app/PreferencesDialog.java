@@ -64,7 +64,6 @@ public class PreferencesDialog extends JDialog implements ActionListener {
      * @param name the name of the color
      */
     public ColorItem(int colornum, String name) {
-
       this.color = colornum;
       this.name = name;
     }
@@ -76,7 +75,7 @@ public class PreferencesDialog extends JDialog implements ActionListener {
     public String toString() { return name; }
   }
 
-  private static final ColorItem[] colors = {
+  private static final ColorItem[] COLORS = {
     new ColorItem(ScreenModel.UNDEFINED, ""),
     new ColorItem(ScreenModel.COLOR_BLACK, getMessage("caption.black")),
     new ColorItem(ScreenModel.COLOR_RED, getMessage("caption.red")),
@@ -139,14 +138,14 @@ public class PreferencesDialog extends JDialog implements ActionListener {
     JLabel backgroundLabel = new JLabel(getMessage(
         "caption.default.background"));
     mainpanel.add(backgroundLabel);
-    backgroundCB = new JComboBox(colors);
+    backgroundCB = new JComboBox(COLORS);
     mainpanel.add(backgroundCB);
     preselect(backgroundCB, settings.getDefaultBackground());
 
     JLabel foregroundLabel = new JLabel(getMessage(
         "caption.default.foreground"));
     mainpanel.add(foregroundLabel);
-    foregroundCB = new JComboBox(colors);
+    foregroundCB = new JComboBox(COLORS);
     mainpanel.add(foregroundCB);
     preselect(foregroundCB, settings.getDefaultForeground());
 
@@ -197,7 +196,8 @@ public class PreferencesDialog extends JDialog implements ActionListener {
       // Transfer the settings to the user settings only, they will
       // only take effect on the next restart
       int stdfontsize = Integer.valueOf(stdfontSpinner.getValue().toString());
-      int fixedfontsize = Integer.valueOf(fixedfontSpinner.getValue().toString());
+      int fixedfontsize =
+        Integer.valueOf(fixedfontSpinner.getValue().toString());
       int bgcolor = ((ColorItem) backgroundCB.getSelectedItem()).color;
       int fgcolor = ((ColorItem) foregroundCB.getSelectedItem()).color;
       boolean antialias = antialiasCB.isSelected();
@@ -227,9 +227,9 @@ public class PreferencesDialog extends JDialog implements ActionListener {
    * @param value the value to select
    */
   private void preselect(JComboBox combobox, int value) {
-    for (int i = 0; i < colors.length; i++) {
-      if (colors[i].color == value) {
-        combobox.setSelectedItem(colors[i]);
+    for (int i = 0; i < COLORS.length; i++) {
+      if (COLORS[i].color == value) {
+        combobox.setSelectedItem(COLORS[i]);
         break;
       }
     }

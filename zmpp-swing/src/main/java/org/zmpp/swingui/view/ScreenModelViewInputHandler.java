@@ -2,17 +2,17 @@
  * Created on 2008/05/10
  * Copyright 2005-2009 by Wei-ju Wu
  * This file is part of The Z-machine Preservation Project (ZMPP).
- 
+
  * ZMPP is free software: you can redistribute it and/or modify
  * it under the terms of the GNU General Public License as published by
  * the Free Software Foundation, either version 3 of the License, or
  * (at your option) any later version.
- 
+
  * ZMPP is distributed in the hope that it will be useful,
  * but WITHOUT ANY WARRANTY; without even the implied warranty of
  * MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the
  * GNU General Public License for more details.
- 
+
  * You should have received a copy of the GNU General Public License
  * along with ZMPP.  If not, see <http://www.gnu.org/licenses/>.
  */
@@ -69,7 +69,7 @@ public class ScreenModelViewInputHandler
   public void keyReleased(KeyEvent e) {
     handleKeyEvent(e);
   }
-  
+
   private void handleKeyEvent(KeyEvent e) {
     if (view.getScreenModel().getActiveWindow() == ScreenModel.WINDOW_BOTTOM) {
       preventBottomWindowKeyActionIfNeeded(e);
@@ -89,11 +89,11 @@ public class ScreenModelViewInputHandler
       lastConsumed = e.getWhen();
     }
   }
-  
+
   private boolean wasConsumed(KeyEvent e) {
     return (Math.abs(e.getWhen() - lastConsumed) < TYPING_THRESHOLD);
   }
-  
+
   private void preventBottomWindowKeyActionIfNeeded(KeyEvent e) {
     // Shortcut: If character was previously consumed, don't handle it anymore
     if (wasConsumed(e)) {
@@ -125,24 +125,24 @@ public class ScreenModelViewInputHandler
       consumeKeyEvent(e);
     }
   }
-  
+
   private void setCaretToEditMarkIfNeeded(KeyEvent e) {
     if (getLowerCaretPosition() <= getEditStart() && isPrintable(e)) {
       setLowerCaretPosition(getLowerDocument().getLength());
     }
   }
-  
+
   private boolean isPrintable(KeyEvent e) {
     return e.getKeyChar() != KeyEvent.CHAR_UNDEFINED && !isCommandDown(e);
   }
-  
+
   private static final int APPLE_CMD = 4;
   private boolean isCommandDown(KeyEvent e) {
     int modifiers = e.getModifiers();
     boolean appleCmd = ((modifiers & APPLE_CMD) == APPLE_CMD);
     return appleCmd || e.isControlDown();
   }
-  
+
   private boolean atOrBeforeEditStart() {
     return getLowerCaretPosition() <= getEditStart();
   }
@@ -160,7 +160,7 @@ public class ScreenModelViewInputHandler
       }
     }
   }
-  
+
   // ************************************************************************
   // **** Caret handling
   // ************************************************
@@ -173,7 +173,7 @@ public class ScreenModelViewInputHandler
       }
     }*/
   }
-  
+
   // ************************************************************************
   // **** Helpers that delegate to the view
   // ************************************************

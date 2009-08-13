@@ -18,7 +18,6 @@
  */
 package org.zmpp.swingui.app;
 
-import org.zmpp.media.*;
 import java.util.ArrayList;
 import java.util.List;
 
@@ -26,6 +25,9 @@ import javax.sound.sampled.Clip;
 import javax.sound.sampled.FloatControl;
 import javax.sound.sampled.LineEvent;
 import javax.sound.sampled.LineListener;
+
+import org.zmpp.media.SoundEffect;
+import org.zmpp.media.SoundStopListener;
 
 /**
  * This class implements the SoundEffect interface and encapsulates an

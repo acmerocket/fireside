@@ -50,9 +50,13 @@ import org.zmpp.media.SoundEffect;
 public class Main {
 
   /**
+   * Private constructor.
+   */
+  private Main() { }
+  /**
    * Localized message bundle.
    */
-  private static PropertyResourceBundle MESSAGE_BUNDLE =
+  private static final PropertyResourceBundle MESSAGE_BUNDLE =
     (PropertyResourceBundle) PropertyResourceBundle.getBundle("zmpp_messages");
 
   /**
