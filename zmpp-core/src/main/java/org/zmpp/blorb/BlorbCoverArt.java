@@ -41,6 +41,10 @@ public class BlorbCoverArt {
     readFrontispiece(formchunk);
   }
 
+  /**
+   * Reads the frontiscpiece image from the specified FORM chunk.
+   * @param formchunk the FORM chunk
+   */
   private void readFrontispiece(final FormChunk formchunk) {
     final Chunk fspcchunk = formchunk.getSubChunk("Fspc");
     if (fspcchunk != null) {

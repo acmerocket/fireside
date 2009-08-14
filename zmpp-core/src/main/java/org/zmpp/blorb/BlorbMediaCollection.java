@@ -37,6 +37,7 @@ import org.zmpp.media.MediaCollection;
  *
  * @author Wei-ju Wu
  * @version 1.5
+ * @param <T> collection type
  */
 public abstract class BlorbMediaCollection<T> implements MediaCollection<T> {
 
@@ -55,6 +56,8 @@ public abstract class BlorbMediaCollection<T> implements MediaCollection<T> {
 
   /**
    * Constructor.
+   * @param imageFactory the NativeImageFactory
+   * @param soundEffectFactory the SoundEffectFactory
    * @param formchunk the Blorb file form chunk
    */
   public BlorbMediaCollection(NativeImageFactory imageFactory,
@@ -91,16 +94,12 @@ public abstract class BlorbMediaCollection<T> implements MediaCollection<T> {
   /**
    * {@inheritDoc}
    */
-  public void clear() {
-    resourceNumbers.clear();
-  }
+  public void clear() { resourceNumbers.clear(); }
 
   /**
    * {@inheritDoc}
    */
-  public int getNumResources() {
-    return resourceNumbers.size();
-  }
+  public int getNumResources() { return resourceNumbers.size(); }
 
   /**
    * Returns the resource number at the given index.

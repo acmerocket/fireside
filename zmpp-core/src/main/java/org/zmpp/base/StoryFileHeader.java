@@ -53,6 +53,9 @@ public interface StoryFileHeader {
   int STD_REVISION_MINOR   = 0x33;
   int CUSTOM_ALPHABET      = 0x34;
 
+  /**
+   * Attributes for the file header flags.
+   */
   enum Attribute {
     DEFAULT_FONT_IS_VARIABLE,
     SCORE_GAME, SUPPORTS_STATUSLINE, SUPPORTS_SCREEN_SPLITTING, // V3 only

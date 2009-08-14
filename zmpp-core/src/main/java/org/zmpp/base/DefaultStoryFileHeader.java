@@ -236,72 +236,124 @@ public class DefaultStoryFileHeader implements StoryFileHeader {
     return (memory.readUnsigned16(0x10) & 1) > 0;
   }
 
+  /**
+   * Returns state of the force fixed font flag.
+   * @return true if force fixed font, false otherwise
+   */
   private boolean forceFixedFont() {
     return (memory.readUnsigned16(0x10) & 2) > 0;
   }
 
+  /**
+   * Sets the force fixed font flag.
+   * @param flag true if fixed font forced, false otherwise
+   */
   private void setForceFixedFont(final boolean flag) {
     char flags = memory.readUnsigned16(0x10);
     flags = (char) (flag ? (flags | 2) : (flags & 0xfd));
     memory.writeUnsigned16(0x10, (char) flags);
   }
 
+  /**
+   * Sets the timed input availability flag.
+   * @param flag true if timed input available, false otherwise
+   */
   private void setTimedInputAvailable(final boolean flag) {
     int flags = memory.readUnsigned8(0x01);
     flags = flag ? (flags | 128) : (flags & 0x7f);
     memory.writeUnsigned8(0x01, (char) flags);
   }
 
+  /**
+   * Determine whether this game is a "score" game or a "time" game.
+   * @return true if score game, false if time game
+   */
   private boolean isScoreGame() {
     return (memory.readUnsigned8(0x01) & 2) == 0;
   }
 
+  /**
+   * Sets the fixed font availability flag.
+   * @param flag true if fixed font available, false otherwise
+   */
   private void setFixedFontAvailable(final boolean flag) {
     int flags = memory.readUnsigned8(0x01);
     flags = flag ? (flags | 16) : (flags & 0xef);
     memory.writeUnsigned8(0x01, (char) flags);
   }
 
+  /**
+   * Sets the bold supported flag.
+   * @param flag true if bold supported, false otherwise
+   */
   private void setBoldFaceAvailable(final boolean flag) {
     int flags = memory.readUnsigned8(0x01);
     flags = flag ? (flags | 4) : (flags & 0xfb);
     memory.writeUnsigned8(0x01, (char) flags);
   }
 
+  /**
+   * Sets the italic supported flag.
+   * @param flag true if italic supported, false otherwise
+   */
   private void setItalicAvailable(final boolean flag) {
     int flags = memory.readUnsigned8(0x01);
     flags = flag ? (flags | 8) : (flags & 0xf7);
     memory.writeUnsigned8(0x01, (char) flags);
   }
 
+  /**
+   * Sets the screen splitting availability flag.
+   * @param flag true if splitting supported, false otherwise
+   */
   private void setScreenSplittingAvailable(final boolean flag) {
     int flags = memory.readUnsigned8(0x01);
     flags = flag ? (flags | 32) : (flags & 0xdf);
     memory.writeUnsigned8(0x01, (char) flags);
   }
 
+  /**
+   * Sets the flag whether a status line is available or not.
+   * @param flag true if status line available, false otherwise
+   */
   private void setStatusLineAvailable(final boolean flag) {
     int flags = memory.readUnsigned8(0x01);
     flags = flag ? (flags | 16) : (flags & 0xef);
     memory.writeUnsigned8(0x01, (char) flags);
   }
 
+  /**
+   * Sets the state whether the default font is variable or not.
+   * @param flag true if default font is variable, false otherwise
+   */
   private void setDefaultFontIsVariablePitch(final boolean flag) {
     int flags = memory.readUnsigned8(0x01);
     flags = flag ? (flags | 64) : (flags & 0xbf);
     memory.writeUnsigned8(0x01, (char) flags);
   }
 
+  /**
+   * Returns whether default font is variable pitch.
+   * @return true if variable pitch, false otherwise
+   */
   private boolean defaultFontIsVariablePitch() {
     return (memory.readUnsigned8(0x01) & 64) > 0;
   }
 
+  /**
+   * Returns the status of the supports color flag.
+   * @param flag state of supports color flag
+   */
   private void setSupportsColours(final boolean flag) {
     int flags = memory.readUnsigned8(0x01);
     flags = flag ? (flags | 1) : (flags & 0xfe);
     memory.writeUnsigned8(0x01, (char) flags);
   }
 
+  /**
+   * Returns the status of the use mouse flag.
+   * @return the use mouse flag
+   */
   private boolean useMouse() {
     return (memory.readUnsigned8(0x10) & 32) > 0;
   }

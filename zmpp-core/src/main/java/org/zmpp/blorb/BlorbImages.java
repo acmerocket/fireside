@@ -47,7 +47,7 @@ public class BlorbImages extends BlorbMediaCollection<BlorbImage> {
 
   /**
    * Constructor.
-   *
+   * @param imageFactory the NativeImageFactory object
    * @param formchunk the form chunk
    */
   public BlorbImages(NativeImageFactory imageFactory, FormChunk formchunk) {
@@ -96,6 +96,12 @@ public class BlorbImages extends BlorbMediaCollection<BlorbImage> {
     return true;
   }
 
+  /**
+   * Handles a placeholder image.
+   * @param chunk the Chunk object
+   * @param resnum the resource number
+   * @return true if successful, false otherwise
+   */
   private boolean handlePlaceholder(final Chunk chunk, final int resnum) {
     if ("Rect".equals(chunk.getId())) {
       // Place holder
@@ -109,8 +115,13 @@ public class BlorbImages extends BlorbMediaCollection<BlorbImage> {
     return false;
   }
 
+  /**
+   * Processes the picture contained in the specified chunk.
+   * @param chunk the Chunk
+   * @param resnum the resource number
+   * @return true if successful, false otherwise
+   */
   private boolean handlePicture(final Chunk chunk, final int resnum) {
-
     final InputStream is = new MemoryInputStream(chunk.getMemory(),
         Chunk.CHUNK_HEADER_LENGTH, chunk.getSize() + Chunk.CHUNK_HEADER_LENGTH);
     try {
@@ -123,15 +134,20 @@ public class BlorbImages extends BlorbMediaCollection<BlorbImage> {
     return false;
   }
 
+  /**
+   * Process the Reso chunk.
+   */
   private void handleResoChunk() {
-
     Chunk resochunk = getFormChunk().getSubChunk("Reso");
     if (resochunk != null) {
-
       adjustResolution(resochunk);
     }
   }
 
+  /**
+   * Adjusts the resolution of the image.
+   * @param resochunk the Reso chunk
+   */
   private void adjustResolution(Chunk resochunk) {
     Memory memory = resochunk.getMemory();
     int offset = Chunk.CHUNK_ID_LENGTH;

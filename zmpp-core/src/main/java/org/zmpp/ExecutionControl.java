@@ -230,6 +230,10 @@ public class ExecutionControl {
     return machine.convertToZscii(input.toLowerCase()) + "\r";
   }
 
+  /**
+   * Returns the IZsciiEncoding object.
+   * @return IZsciiEncoding object
+   */
   public IZsciiEncoding getZsciiEncoding() { return machine; }
 
   /**

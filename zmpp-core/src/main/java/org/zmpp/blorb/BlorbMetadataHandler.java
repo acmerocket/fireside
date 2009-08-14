@@ -44,14 +44,26 @@ public class BlorbMetadataHandler extends DefaultHandler {
   private StringBuilder buffer;
   private boolean processAux;
 
+  /**
+   * Constructor.
+   * @param formchunk a FORM chunk
+   */
   public BlorbMetadataHandler(FormChunk formchunk) {
     extractMetadata(formchunk);
   }
 
+  /**
+   * Returns the meta data object.
+   * @return meta data object
+   */
   public InformMetadata getMetadata() {
     return (story == null) ? null : new InformMetadata(story);
   }
 
+  /**
+   * Extracts inform meta data from the specified FORM chunk.
+   * @param formchunk the FORM chunk
+   */
   private void extractMetadata(final FormChunk formchunk) {
     final Chunk chunk = formchunk.getSubChunk("IFmd");
     if (chunk != null) {
@@ -61,12 +73,9 @@ public class BlorbMetadataHandler extends DefaultHandler {
           chunk.getSize() + Chunk.CHUNK_HEADER_LENGTH);
 
       try {
-
         final SAXParser parser = SAXParserFactory.newInstance().newSAXParser();
         parser.parse(meminput, this);
-
       } catch (Exception ex) {
-
         ex.printStackTrace();
       }
     }
@@ -76,10 +85,10 @@ public class BlorbMetadataHandler extends DefaultHandler {
   // **** Parsing meta data
   // *********************************
 
+  /** {@inheritDoc} */
   @Override
   public void startElement(final String uri, final String localName,
       final String qname, final Attributes attributes) {
-
     if ("story".equals(qname)) {
       story = new StoryMetadata();
     }
@@ -112,6 +121,7 @@ public class BlorbMetadataHandler extends DefaultHandler {
     }
   }
 
+  /** {@inheritDoc} */
   @Override
   public void endElement(final String uri, final String localName,
       final String qname) {
@@ -148,18 +158,16 @@ public class BlorbMetadataHandler extends DefaultHandler {
       processAux = false;
     }
     if ("br".equals(qname) && buffer != null) {
-
       buffer.append("\n");
     }
   }
 
+  /** {@inheritDoc} */
   @Override
   public void characters(final char[] ch, final int start, final int length) {
     if (buffer != null) {
-
       final StringBuilder partbuilder = new StringBuilder();
       for (int i = start; i < start + length; i++) {
-
         partbuilder.append(ch[i]);
       }
       buffer.append(partbuilder.toString().trim());

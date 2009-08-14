@@ -427,7 +427,8 @@ implements ScreenModelListener {
   private void viewCursor(final boolean flag) {
     runInUIThread(new Runnable() {
       public void run() {
-        //System.out.println("ACTIVE WINDOW IN READ: " + screenModel.getActiveWindow());
+        //System.out.println("ACTIVE WINDOW IN READ: " +
+        // screenModel.getActiveWindow());
         if (screenModel.getActiveWindow() == ScreenModel.WINDOW_BOTTOM) {
           viewCursorLower(flag);
         } else if (screenModel.getActiveWindow() ==ScreenModel.WINDOW_TOP) {

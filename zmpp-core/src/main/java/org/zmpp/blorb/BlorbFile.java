@@ -31,10 +31,18 @@ public class BlorbFile {
 
   private FormChunk formChunk;
 
+  /**
+   * Constructor.
+   * @param formchunk the FORM chunk
+   */
   public BlorbFile(final FormChunk formchunk) {
     this.formChunk = formchunk;
   }
 
+  /**
+   * Returns the story data contained in the Blorb.
+   * @return the story data
+   */
   public byte[] getStoryData() {
     final Chunk chunk = formChunk.getSubChunk("ZCOD");
     final int size = chunk.getSize();
