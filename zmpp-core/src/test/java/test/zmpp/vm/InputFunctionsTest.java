@@ -99,41 +99,80 @@ public class InputFunctionsTest {
       one (machine).writeUnsigned8(textbuffer, (char) 0);
     }});
     int textpointer = 6;
-    inputFunctions.checkTermination(ZsciiEncoding.NULL, textbuffer, textpointer);
+    inputFunctions.checkTermination(ZsciiEncoding.NULL, textbuffer,
+                                    textpointer);
+  }
+
+  @Test
+  public void testTokenize() {
+    final int parsebuffer = 123;
+    final int dictionaryAddress = 456;
+    final boolean tokenize = true;
+    context.checking(new Expectations() {{
+      one (machine).getVersion(); will(returnValue(3));
+      // reading input
+      one (machine).readUnsigned8(textbuffer); will(returnValue((char) 4));
+      one (machine).readUnsigned8(textbuffer + 1); will(returnValue('w'));
+      one (machine).readUnsigned8(textbuffer + 2); will(returnValue('a'));
+      one (machine).readUnsigned8(textbuffer + 3); will(returnValue('i'));
+      one (machine).readUnsigned8(textbuffer + 4); will(returnValue('t'));
+      one (machine).getDictionaryDelimiters(); will(returnValue(", \t\n"));
+      // filling parse buffer
+      one (machine).readUnsigned8(parsebuffer); will(returnValue((char) 10));
+      one (machine).writeUnsigned8(parsebuffer + 1, (char) 1);
+      // lookup
+      one (machine).lookupToken(dictionaryAddress, "wait");
+      will(returnValue(987));
+      // write parse buffer
+      one (machine).writeUnsigned16(parsebuffer + 2, (char) 987);
+      one (machine).writeUnsigned8(parsebuffer + 4, (char) 4);
+      one (machine).writeUnsigned8(parsebuffer + 5, (char) 1);
+    }});
+    inputFunctions.tokenize(textbuffer, parsebuffer, dictionaryAddress,
+                            tokenize);
   }
 
   /**
    * Terminated with newline, so 0 is appended to the input.
    */
-  /*
+  @Test
   public void testCheckTerminationV4Newline() {
-    int textpointer = 6;
-    mockMachine.expects(atLeastOnce()).method("getVersion").will(returnValue(4));
-    mockMachine.expects(once()).method("writeByte").with(eq(textbuffer + textpointer), eq((byte) 0));    
-    inputFunctions.checkTermination(ZsciiEncoding.NEWLINE, textbuffer, textpointer);
-  }*/
+    final int textpointer = 6;
+    context.checking(new Expectations() {{
+      one (machine).getVersion(); will(returnValue(4));
+      one (machine).writeUnsigned8(textbuffer + textpointer, (char) 0);
+    }});
+    inputFunctions.checkTermination(ZsciiEncoding.NEWLINE, textbuffer,
+                                    textpointer);
+  }
 
   /**
-   * Version 5 and the last character is null, print 0 to the beginning of the text buffer.
+   * Version 5 and the last character is null, print 0 to the beginning of the
+   * text buffer.
    */
-  /*
+  @Test
   public void testCheckTerminationV5Null() {
-    mockMachine.expects(atLeastOnce()).method("getVersion").will(returnValue(5));
-    mockMachine.expects(once()).method("writeUnsignedByte").with(eq(textbuffer + 1), eq((short) 0));
-    
-    int textpointer = 6;
-    inputFunctions.checkTermination(ZsciiEncoding.NULL, textbuffer, textpointer);
-  }*/
+    final int textpointer = 6;
+    context.checking(new Expectations() {{
+      one (machine).getVersion(); will(returnValue(5));
+      one (machine).writeUnsigned8(textbuffer + 1, (char) 0);
+    }});
+    inputFunctions.checkTermination(ZsciiEncoding.NULL, textbuffer,
+                                    textpointer);
+  }
 
   /**
-   * Version 5 and the last character is newline, print 5 to byte 1 of the text buffer.
+   * Version 5 and the last character is newline, print 5 to byte 1 of the
+   * text buffer.
    */
-  /*
+  @Test
   public void testCheckTerminationV5Newline() {
-    int textpointer = 6;
-    mockMachine.expects(atLeastOnce()).method("getVersion").will(returnValue(5));
-    mockMachine.expects(once()).method("writeUnsignedByte").with(eq(textbuffer + 1),
-        eq((short) (textpointer - 2)));
-    inputFunctions.checkTermination(ZsciiEncoding.NEWLINE, textbuffer, textpointer);
-  }*/
+    final int textpointer = 6;
+    context.checking(new Expectations() {{
+      one (machine).getVersion(); will(returnValue(5));
+      one (machine).writeUnsigned8(textbuffer + 1, (char) (textpointer - 2));
+    }});
+    inputFunctions.checkTermination(ZsciiEncoding.NEWLINE, textbuffer,
+                                    textpointer);
+  }
 }

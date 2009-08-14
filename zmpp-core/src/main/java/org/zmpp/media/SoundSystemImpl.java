@@ -100,9 +100,7 @@ public class SoundSystemImpl implements SoundSystem {
       sound = sounds.getResource(number);
     }
     if (sound == null) {
-      // TODO: Beep ?
-      //Toolkit.getDefaultToolkit().beep();
-      System.out.println("*BEEP*");
+      System.out.println("*BEEP* (playing non-sound)");
     } else {
       if (effect == SoundSystem.EFFECT_START) {
         startSound(number, sound, volume, repeats, routine);

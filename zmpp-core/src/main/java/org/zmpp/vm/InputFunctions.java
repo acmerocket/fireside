@@ -60,7 +60,7 @@ public class InputFunctions {
    * By delegating responsibility for timed input to the user interface,
    * reading input is strongly simplified.
    * @param textbuffer
-   * @return
+   * @return terminator character
    */
   public char readLine(final int textbuffer) {
     String inputLine = machine.getSelectedInputStream().readLine();
@@ -178,37 +178,29 @@ public class InputFunctions {
     final int version = machine.getVersion();
     final int bufferlen = machine.readUnsigned8(textbuffer);
     final int textbufferstart = determineTextBufferStart(version);
-    final int charsTyped = (version >= 5) ?
-                      machine.readUnsigned8(textbuffer + 1) :
-                      0;
+    final int charsTyped =
+      version >= 5 ? machine.readUnsigned8(textbuffer + 1) : 0;
 
     // from version 5, text starts at position 2
     final String input = bufferToZscii(textbuffer + textbufferstart, bufferlen,
                                        charsTyped);
     final List<String> tokens = tokenize(input);
     final Map<String, Integer> parsedTokens = new HashMap<String, Integer>();
-
-    // Write the number of tokens in byte 1 of the parse buffer
-    final int maxwords = machine.readUnsigned8(parsebuffer);
-
-    // Do not go beyond the limit of maxwords
-    final int numParsedTokens = Math.min(maxwords, tokens.size());
+    final int maxTokens = machine.readUnsigned8(parsebuffer);
+    final int numTokens = Math.min(maxTokens, tokens.size());
 
     // Write the number of parsed tokens into byte 1 of the parse buffer
-    machine.writeUnsigned8(parsebuffer + 1, (char) numParsedTokens);
+    machine.writeUnsigned8(parsebuffer + 1, (char) numTokens);
 
     int parseaddr = parsebuffer + 2;
 
-    for (int i = 0; i < numParsedTokens; i++) {
-
+    for (int i = 0; i < numTokens; i++) {
       final String token = tokens.get(i);
       final int entryAddress = machine.lookupToken(dictionaryAddress, token);
       int startIndex = 0;
       if (parsedTokens.containsKey(token)) {
-
         final int timesContained = parsedTokens.get(token);
         parsedTokens.put(token, timesContained + 1);
-
         for (int j = 0; j < timesContained; j++) {
           final int found = input.indexOf(token, startIndex);
           startIndex = found + token.length();
@@ -216,9 +208,7 @@ public class InputFunctions {
       } else {
         parsedTokens.put(token, 1);
       }
-
       int tokenIndex = input.indexOf(token, startIndex);
-
       tokenIndex++; // adjust by the buffer length byte
 
       if (version >= 5) {
@@ -230,7 +220,6 @@ public class InputFunctions {
       // parse buffer, if it is set then, only write the token position
       // if the token was recognized
       if (!flag || flag && entryAddress > 0) {
-
         // This is one slot
         machine.writeUnsigned16(parseaddr, toUnsigned16(entryAddress));
         machine.writeUnsigned8(parseaddr + 2, (char) token.length());

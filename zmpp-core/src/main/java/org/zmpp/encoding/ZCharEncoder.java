@@ -42,21 +42,12 @@ import org.zmpp.encoding.AlphabetTable.Alphabet;
  */
 public class ZCharEncoder {
 
-  /**
-   * The alphabet table.
-   */
-  private ZCharTranslator translator;
-
-  /**
-   * The maximum entry length.
-   */
   private static final int MAX_ENTRY_LENGTH = 9;
-
   private static final int NUM_TARGET_BYTES = 6;
   private static final int TARGET_LAST_WORD = 4;
+  private ZCharTranslator translator;
 
   static class EncodingState {
-
     public Memory memory;
     public int source;
     public int target;
@@ -69,9 +60,8 @@ public class ZCharEncoder {
    * Constructor.
    * @param translator ZCharTranslator object
    */
-  public ZCharEncoder(final ZCharTranslator translator) {
-    super();
-    this.translator = translator;
+  public ZCharEncoder(final ZCharTranslator aTranslator) {
+    this.translator = aTranslator;
   }
 
   /**
