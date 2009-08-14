@@ -56,8 +56,9 @@ public class ExecutionControl {
 
   /**
    * Constructor.
-   * @param machine
-   * @param view
+   * @param initStruct initialization data
+   * @throws IOException if i/o error occurred
+   * @throws InvalidStoryException invalid story file
    */
   public ExecutionControl(MachineInitStruct initStruct)
       throws IOException, InvalidStoryException {
@@ -81,7 +82,6 @@ public class ExecutionControl {
     }
     if (version >= 5) {
       enableHeaderFlag(Attribute.SUPPORTS_COLOURS);
-
     }
     int defaultForeground = getDefaultForeground();
     int defaultBackground = getDefaultBackground();
@@ -91,15 +91,37 @@ public class ExecutionControl {
     machine.getScreen().setForeground(defaultForeground, -1);
   }
 
+  /**
+   * Enables the specified header flag.
+   * @param attr the header attribute to enable
+   */
   private void enableHeaderFlag(Attribute attr) {
     getFileHeader().setEnabled(attr, true);
   }
 
+  /**
+   * Returns the machine object.
+   * @return the machine object
+   */
   public Machine getMachine() { return machine; }
+
+  /**
+   * Returns the file header.
+   * @return the file header
+   */
   public StoryFileHeader getFileHeader() { return machine.getFileHeader(); }
 
+  /**
+   * Returns the story version.
+   * @return story version
+   */
   public int getVersion() { return machine.getVersion(); }
 
+  /**
+   * Sets default colors.
+   * @param defaultBackground default foreground color
+   * @param defaultForeground default background color
+   */
   public void setDefaultColors(int defaultBackground, int defaultForeground) {
     setDefaultBackground(defaultBackground);
     setDefaultForeground(defaultForeground);
@@ -109,21 +131,43 @@ public class ExecutionControl {
     machine.getScreen().setForeground(defaultForeground, -1);
   }
 
+  /**
+   * Returns the default background color.
+   * @return default background color
+   */
   public int getDefaultBackground() {
     return machine.readUnsigned8(StoryFileHeader.DEFAULT_BACKGROUND);
   }
+
+  /**
+   * Returns the default foreground color.
+   * @return default foreground color
+   */
   public int getDefaultForeground() {
     return machine.readUnsigned8(StoryFileHeader.DEFAULT_FOREGROUND);
   }
+
+  /**
+   * Sets the default background color.
+   * @param color a color
+   */
   private void setDefaultBackground(final int color) {
     machine.writeUnsigned8(StoryFileHeader.DEFAULT_BACKGROUND, (char) color);
   }
+
+  /**
+   * Sets the default foreground color.
+   * @param color a color
+   */
   private void setDefaultForeground(final int color) {
     machine.writeUnsigned8(StoryFileHeader.DEFAULT_FOREGROUND, (char) color);
   }
 
-
-
+  /**
+   * Updates the screen size.
+   * @param numRows number of rows
+   * @param numCharsPerRow numbers of characters per row
+   */
   public void resizeScreen(int numRows, int numCharsPerRow) {
     if (getVersion() >= 4) {
       machine.writeUnsigned8(StoryFileHeader.SCREEN_HEIGHT, (char) numRows);
@@ -210,7 +254,6 @@ public class ExecutionControl {
 
   /**
    * Indicates if the last interrupt routine performed any output.
-   *
    * @return true if the routine performed output, false otherwise
    */
   public boolean interruptDidOutput() { return interruptDidOutput; }
@@ -220,11 +263,10 @@ public class ExecutionControl {
    */
   private boolean interruptDidOutput;
 
- /**
+  /**
    * Calls the specified interrupt routine.
-   *
    * @param routineAddress the routine address
-   * @return the return value
+   * @return the return value of the called routine
    */
   public char callInterrupt(final char routineAddress) {
     interruptDidOutput = false;

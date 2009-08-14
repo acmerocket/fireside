@@ -245,7 +245,8 @@ implements ScreenModelListener {
     currentTimer = new Timer(runState.getTime() * 100,
       new ActionListener() {
         public void actionPerformed(ActionEvent e) {
-          System.out.println("TIMED METHOD, active window: " + screenModel.getActiveWindow());
+          System.out.println("TIMED METHOD, active window: " +
+                             screenModel.getActiveWindow());
           String currentInput = getCurrentInput();
           if (currentInput != null) {
             executionControl.setTextToInputBuffer(currentInput);
@@ -405,7 +406,8 @@ implements ScreenModelListener {
     } else if (window == ScreenModel.WINDOW_TOP) {
       clearUpper();
     } else {
-      throw new UnsupportedOperationException("No support for erasing window: " + window);
+      throw new UnsupportedOperationException(
+          "No support for erasing window: " + window);
     }
   }
 

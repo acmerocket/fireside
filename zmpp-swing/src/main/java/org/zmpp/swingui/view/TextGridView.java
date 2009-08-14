@@ -102,7 +102,8 @@ public class TextGridView extends JComponent {
       }
     }
     // The rest of the lines is transparent
-    for (int row = getScreenModel().getNumRowsUpper(); row < grid.length; row++) {
+    for (int row = getScreenModel().getNumRowsUpper(); row < grid.length;
+         row++) {
       for (int col = 0; col < grid[row].length; col++) {
         grid[row][col] = null;
       }

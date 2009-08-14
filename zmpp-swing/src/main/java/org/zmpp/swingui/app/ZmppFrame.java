@@ -57,7 +57,7 @@ import org.zmpp.windowing.ScreenModel;
 public class ZmppFrame extends JFrame
   implements GameLifeCycleListener, IOSystem {
   private static final long serialVersionUID = -776528959779547763L;
-  //private static final Font STD_FONT = new Font("Baskerville", Font.PLAIN, 16);
+  //private static final Font STD_FONT =new Font("Baskerville", Font.PLAIN, 16);
   //private static final String STD_FONT_NAME = "American Typewriter";
   //private static final String FIXED_FONT_NAME = "Monaco";
   public static final String STD_FONT_NAME = "Times";
@@ -128,8 +128,8 @@ public class ZmppFrame extends JFrame
   public void gameInitialized() {
     StoryMetadata storyinfo = getStoryInfo();
     if (storyinfo != null) {
-      setTitle(getMessage("app.name") + " - " + storyinfo.getTitle()
-          + " (" + storyinfo.getAuthor() + ")");
+      setTitle(getMessage("app.name") + " - " + storyinfo.getTitle() +
+               " (" + storyinfo.getAuthor() + ")");
     }
     aboutGameItem.setEnabled(storyinfo != null);
   }
@@ -175,7 +175,8 @@ public class ZmppFrame extends JFrame
     editMenu.setMnemonic(getMessage("menu.edit.mnemonic").charAt(0));
     JMenuItem preferencesItem =
             new JMenuItem(getMessage("menu.edit.prefs.name"));
-    preferencesItem.setMnemonic(getMessage("menu.edit.prefs.mnemonic").charAt(0));
+    preferencesItem.setMnemonic(getMessage("menu.edit.prefs.mnemonic")
+        .charAt(0));
     editMenu.add(preferencesItem);
     preferencesItem.addActionListener(new ActionListener() {
       /** {@inheritDoc} */
@@ -320,7 +321,8 @@ public class ZmppFrame extends JFrame
             JFileChooser fileChooser =
                 new JFileChooser(System.getProperty("user.home"));
             fileChooser.setDialogTitle(getMessage("dialog.open.msg"));
-            if (fileChooser.showOpenDialog(null) == JFileChooser.APPROVE_OPTION) {
+            if (fileChooser.showOpenDialog(null) ==
+                JFileChooser.APPROVE_OPTION) {
               final File storyfile = fileChooser.getSelectedFile();
               SwingUtilities.invokeLater(new Runnable() {
                 public void run() {

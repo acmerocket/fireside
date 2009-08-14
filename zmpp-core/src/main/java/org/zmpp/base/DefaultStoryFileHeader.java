@@ -218,12 +218,20 @@ public class DefaultStoryFileHeader implements StoryFileHeader {
     return builder.toString();
   }
 
+  /**
+   * Sets the state of the transcript stream.
+   * @param flag new transcript state
+   */
   private void setTranscripting(final boolean flag) {
     char flags = memory.readUnsigned16(0x10);
     flags = (char) (flag ? (flags | 1) : (flags & 0xfe));
     memory.writeUnsigned16(0x10, (char) flags);
   }
 
+  /**
+   * Returns the state of the transcript stream.
+   * @return transcript state
+   */
   private boolean isTranscriptingOn() {
     return (memory.readUnsigned16(0x10) & 1) > 0;
   }
