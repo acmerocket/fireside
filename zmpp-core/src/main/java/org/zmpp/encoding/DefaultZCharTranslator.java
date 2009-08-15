@@ -130,7 +130,7 @@ public class DefaultZCharTranslator implements Cloneable, ZCharTranslator {
   public AlphabetElement getAlphabetElementFor(final char zsciiChar) {
     // Special handling for newline !!
     if (zsciiChar == '\n') {
-      return new AlphabetElement(Alphabet.A2, (short) 7);
+      return new AlphabetElement(Alphabet.A2, (char) 7);
     }
 
     Alphabet alphabet = null;
@@ -156,7 +156,7 @@ public class DefaultZCharTranslator implements Cloneable, ZCharTranslator {
       zcharCode = zsciiChar;
     }
 
-    return new AlphabetElement(alphabet, (short) zcharCode);
+    return new AlphabetElement(alphabet, (char) zcharCode);
   }
 
   /**

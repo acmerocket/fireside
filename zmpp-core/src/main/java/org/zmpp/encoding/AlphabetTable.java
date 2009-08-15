@@ -78,7 +78,7 @@ public interface AlphabetTable {
    * @param zsciiChar a ZSCII chararacter
    * @return the index of the character in this alphabet or -1
    */
-  byte getA0CharCode(char zsciiChar);
+  int getA0CharCode(char zsciiChar);
 
   /**
    * Returns the index of the specified ZSCII character in alphabet 2.
@@ -86,7 +86,7 @@ public interface AlphabetTable {
    * @param zsciiChar a ZSCII chararacter
    * @return the index of the character in this alphabet or -1
    */
-  byte getA1CharCode(char zsciiChar);
+  int getA1CharCode(char zsciiChar);
 
   /**
    * Returns the index of the specified ZSCII character in alphabet 2.
@@ -94,7 +94,7 @@ public interface AlphabetTable {
    * @param zsciiChar a ZSCII chararacter
    * @return the index of the character in this alphabet or -1
    */
-  byte getA2CharCode(char zsciiChar);
+  int getA2CharCode(char zsciiChar);
 
   /**
    * Determines if the specified character marks a abbreviation.

@@ -74,7 +74,7 @@ public class AlphabetTableV1 extends AlphabetTableV2 {
   /**
    * {@inheritDoc}
    */
-  public final byte getA2CharCode(final char zsciiChar) {
+  public final int getA2CharCode(final char zsciiChar) {
     return getCharCodeFor(A2CHARS, zsciiChar);
   }
 

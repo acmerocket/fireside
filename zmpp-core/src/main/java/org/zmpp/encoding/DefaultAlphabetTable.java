@@ -34,10 +34,7 @@ public class DefaultAlphabetTable implements AlphabetTable {
    * {@inheritDoc}
    */
   public char getA0Char(final byte zchar) {
-
-    if (zchar == 0) {
-      return ' ';
-    }
+    if (zchar == 0) return ' ';
     return A0CHARS.charAt(zchar - ALPHABET_START);
   }
 
@@ -45,10 +42,7 @@ public class DefaultAlphabetTable implements AlphabetTable {
    * {@inheritDoc}
    */
   public char getA1Char(final byte zchar) {
-
-    if (zchar == 0) {
-      return ' ';
-    }
+    if (zchar == 0) return ' ';
     return A1CHARS.charAt(zchar - ALPHABET_START);
   }
 
@@ -56,86 +50,75 @@ public class DefaultAlphabetTable implements AlphabetTable {
    * {@inheritDoc}
    */
   public char getA2Char(final byte zchar) {
-
-    if (zchar == 0) {
-      return ' ';
-    }
+    if (zchar == 0) return ' ';
     return A2CHARS.charAt(zchar - ALPHABET_START);
   }
 
   /**
    * {@inheritDoc}
    */
-  public final byte getA0CharCode(final char zsciiChar) {
-
+  public final int getA0CharCode(final char zsciiChar) {
     return getCharCodeFor(A0CHARS, zsciiChar);
   }
 
   /**
    * {@inheritDoc}
    */
-  public final byte getA1CharCode(final char zsciiChar) {
-
+  public final int getA1CharCode(final char zsciiChar) {
     return getCharCodeFor(A1CHARS, zsciiChar);
   }
 
   /**
    * {@inheritDoc}
    */
-  public byte getA2CharCode(final char zsciiChar) {
-
+  public int getA2CharCode(final char zsciiChar) {
     return getCharCodeFor(A2CHARS, zsciiChar);
   }
 
-  protected static byte getCharCodeFor(final String chars,
+  /**
+   * Returns the character code for the specified ZSCII character by searching
+   * the index in the specified chars string.
+   * @param chars the search string
+   * @param zsciiChar the ZSCII character
+   * @return the character code, which is the index of the character in chars
+   *         or -1 if not found
+   */
+  protected static int getCharCodeFor(final String chars,
       final char zsciiChar) {
-
     int index = chars.indexOf(zsciiChar);
     if (index >= 0) {
-
       index += ALPHABET_START;
     }
-    return (byte) index;
+    return index;
   }
 
 
   /**
    * {@inheritDoc}
    */
-  public boolean isShift1(final char zchar) {
-
-    return zchar == SHIFT_4;
-  }
+  public boolean isShift1(final char zchar) { return zchar == SHIFT_4; }
 
   /**
    * {@inheritDoc}
    */
-  public boolean isShift2(final char zchar) {
-
-    return zchar == SHIFT_5;
-  }
+  public boolean isShift2(final char zchar) { return zchar == SHIFT_5; }
 
   /**
    * {@inheritDoc}
    */
   public boolean isShift(final char zchar) {
-
     return isShift1(zchar) || isShift2(zchar);
   }
 
   /**
    * {@inheritDoc}
    */
-  public boolean isShiftLock(final char zchar) {
-
-    return false;
-  }
+  public boolean isShiftLock(final char zchar) { return false; }
 
   /**
    * {@inheritDoc}
    */
   public boolean isAbbreviation(final char zchar) {
-
     return 1 <= zchar && zchar <= 3;
   }
 }

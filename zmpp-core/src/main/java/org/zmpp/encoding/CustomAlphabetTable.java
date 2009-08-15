@@ -84,10 +84,10 @@ public class CustomAlphabetTable implements AlphabetTable {
   /**
    * {@inheritDoc}
    */
-  public final byte getA0CharCode(final char zsciiChar) {
+  public final int getA0CharCode(final char zsciiChar) {
     for (int i = ALPHABET_START; i < ALPHABET_START + ALPHABET_SIZE; i++) {
       if (getA0Char((byte) i) == zsciiChar) {
-        return (byte) i;
+        return i;
       }
     }
     return -1;
@@ -96,11 +96,11 @@ public class CustomAlphabetTable implements AlphabetTable {
   /**
    * {@inheritDoc}
    */
-  public final byte getA1CharCode(final char zsciiChar) {
+  public final int getA1CharCode(final char zsciiChar) {
     for (int i = ALPHABET_START; i < ALPHABET_START + ALPHABET_SIZE; i++) {
 
       if (getA1Char((byte) i) == zsciiChar) {
-        return (byte) i;
+        return i;
       }
     }
     return -1;
@@ -109,11 +109,11 @@ public class CustomAlphabetTable implements AlphabetTable {
   /**
    * {@inheritDoc}
    */
-  public byte getA2CharCode(final char zsciiChar) {
+  public final int getA2CharCode(final char zsciiChar) {
     for (int i = ALPHABET_START; i < ALPHABET_START + ALPHABET_SIZE; i++) {
 
       if (getA2Char((byte) i) == zsciiChar) {
-        return (byte) i;
+        return i;
       }
     }
     return -1;

@@ -33,7 +33,7 @@ public class AlphabetElement {
    * The zchar code or the ZSCII code, if alphabet
    * is null.
    */
-  private short zcharCode;
+  private char zcharCode;
 
   /**
    * The alphabet or null, if index is a ZSCII code.
@@ -46,7 +46,7 @@ public class AlphabetElement {
    * @param alphabet the alphabet (can be null)
    * @param zcharCode the zcharCode in the alphabet or the ZSCII code
    */
-  public AlphabetElement(Alphabet alphabet, short zcharCode) {
+  public AlphabetElement(Alphabet alphabet, char zcharCode) {
 
     this.alphabet = alphabet;
     this.zcharCode = zcharCode;
@@ -67,5 +67,5 @@ public class AlphabetElement {
    *
    * @return the z char code in the specified alphabet or the ZSCII code
    */
-  public short getZCharCode() { return zcharCode; }
+  public char getZCharCode() { return zcharCode; }
 }
