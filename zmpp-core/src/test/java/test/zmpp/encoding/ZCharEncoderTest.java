@@ -293,5 +293,178 @@ public class ZCharEncoderTest {
     
     // not long enough, pad it out
     assertEquals(0x94a5, realmem.readUnsigned16(targetAddress + 4));
+  }
+
+  // **********************************************************************
+  // ***** encode() with source String
+  // **********************************************************************
+
+  @Test
+  public void testEncodeStringSingleCharacter() {
+    // we expect to have an end word, padded out with shift 5's
+    encoder.encode("a", realmem, targetAddress);
+    
+    // 'a' + 2 pad
+    assertEquals(0x18a5, realmem.readUnsigned16(targetAddress));
+    
+    // Test that the rest is padded and marked with the end bit
+    assertEquals(0x14a5, realmem.readUnsigned16(targetAddress + 2));
+    assertEquals(0x94a5, realmem.readUnsigned16(targetAddress + 4));
+  }
+
+  @Test
+  public void testEncodeStringTwoCharacters() {
+    
+    encoder.encode("ab", realmem, targetAddress);
+    
+    // 'ab' + pad
+    assertEquals(0x18e5, realmem.readUnsigned16(targetAddress));
+
+    // Test that the rest is padded and marked with the end bit
+    assertEquals(0x14a5, realmem.readUnsigned16(targetAddress + 2));
+    assertEquals(0x94a5, realmem.readUnsigned16(targetAddress + 4));
+  }
+
+  @Test
+  public void testEncodeString4Characters() {    
+    encoder.encode("abcd", realmem, targetAddress);
+    
+    // 'abc'
+    assertEquals(0x18e8, realmem.readUnsigned16(targetAddress));
+    
+    // 'd' + 2 pads
+    assertEquals(0x24a5, realmem.readUnsigned16(targetAddress + 2));
+
+    // Test that the rest is padded and marked with the end bit
+    assertEquals(0x94a5, realmem.readUnsigned16(targetAddress + 4));    
+  }
+
+  // Test with a different alphabet
+  @Test
+  public void testEncodeStringAlphabet1() {
+    encoder.encode("A", realmem, targetAddress);
+    
+    // Shift-4 + 'a' + Pad
+    assertEquals(0x10c5, realmem.readUnsigned16(targetAddress));
+
+    // Test that the rest is padded and marked with the end bit
+    assertEquals(0x14a5, realmem.readUnsigned16(targetAddress + 2));
+    assertEquals(0x94a5, realmem.readUnsigned16(targetAddress + 4));
+  }
+  
+  @Test
+  public void testEncodeStringAlphabet1SpanWordBound() {
+    encoder.encode("abC", realmem, targetAddress);
+    
+    // 'ab' + Shift 4
+    assertEquals(0x18e4, realmem.readUnsigned16(targetAddress));
+    
+    // 'c'
+    assertEquals(0x20a5, realmem.readUnsigned16(targetAddress + 2));
+
+    // Test that the rest is padded and marked with the end bit
+    assertEquals(0x94a5, realmem.readUnsigned16(targetAddress + 4));
+  }
+
+  @Test
+  public void testEncodeStringAlphabet2SpanWordBound() {
+    encoder.encode("ab3", realmem, targetAddress);
+    
+    // 'ab' + Shift 5
+    assertEquals(0x18e5, realmem.readUnsigned16(targetAddress));
+    
+    // '3'
+    assertEquals(0x2ca5, realmem.readUnsigned16(targetAddress + 2));
+
+    // Test that the rest is padded and marked with the end bit
+    assertEquals(0x94a5, realmem.readUnsigned16(targetAddress + 4));
+  }
+  
+  // Encoding of special characters in the unicode has to work.
+  // We test this on our favorite character: '@'
+  // Do not forget the testing across word boundaries
+  @Test
+  public void testEncodeStringEscapeA2() {    
+    encoder.encode("@", realmem, targetAddress);
+    
+    // Tricky, tricky (and memory-inefficient)
+    // Shift-5 + 6 + '@' (64), encoded in 10 bit, the upper half contains 2
+    assertEquals(0x14c2, realmem.readUnsigned16(targetAddress));
+    
+    // the lower half contains 0 + 2 pads
+    assertEquals(0x00a5, realmem.readUnsigned16(targetAddress + 2));    
+
+    // Test that the rest is padded and marked with the end bit
+    assertEquals(0x94a5, realmem.readUnsigned16(targetAddress + 4));
+  }
+
+  // For triangulation, we use another character (126)
+  @Test
+  public void testEncodeStringEscapeA2Tilde() {
+    encoder.encode("~", realmem, targetAddress);
+    
+    // Tricky, tricky (and memory-inefficient)
+    // Shift-5 + 6 + '~' (126), encoded in 10 bit, the upper half contains 3
+    assertEquals(0x14c3, realmem.readUnsigned16(targetAddress));
+    
+    // the lower half contains 30 + 2 pads
+    assertEquals(0x78a5, realmem.readUnsigned16(targetAddress + 2));    
+
+    // Test that the rest is padded and marked with the end bit
+    assertEquals(0x94a5, realmem.readUnsigned16(targetAddress + 4));
   }  
+
+  @Test
+  public void testEncodeStringEscapeA2TildeSpansWord() {
+    encoder.encode("a~", realmem, targetAddress);
+    
+    // Tricky, tricky (and memory-inefficient)
+    // 'a' + Shift-5 + 6
+    assertEquals(0x18a6, realmem.readUnsigned16(targetAddress));
+    
+    // both halfs of '~' + 1 pad
+    assertEquals(0x0fc5, realmem.readUnsigned16(targetAddress + 2));    
+
+    // Test that the rest is padded and marked with the end bit
+    assertEquals(0x94a5, realmem.readUnsigned16(targetAddress + 4));
+  }
+  
+  // We test a situation where the 6 bytes are exceeded by the 9 source
+  // characters. In practice, this happens, when there are characters
+  // in the source buffer that need to be escaped, since they take the
+  // space of 4 lower case characters, which means that one special character
+  // can be combined with 5 lower case characters
+  @Test
+  public void testEncodeStringCharExceedsTargetBuffer() {
+    // Situation 1: there are lower case letters at the end, we need
+    // to ensure that the dictionary is cropped and the characters
+    // that exceed the buffer are ommitted
+    encoder.encode("@abcdef", realmem, targetAddress);
+    
+    // Shift-5 + 6 + '@' (64), encoded in 10 bit, the upper half contains 2
+    assertEquals(0x14c2, realmem.readUnsigned16(targetAddress));
+    
+    // the lower half contains 0, 'ab'
+    assertEquals(0x00c7, realmem.readUnsigned16(targetAddress + 2));
+    
+    // 'cde' + end bit
+    assertEquals(0xa12a, realmem.readUnsigned16(targetAddress + 4));    
+  }
+  
+  @Test
+  public void testEncodeStringCharExceedsTargetBufferEscapeAtEnd() {
+    // Situation 2: in this case the escaped character is at the end,
+    // so we need to ommit that escape sequence completely, padding
+    // out the rest of the string
+    encoder.encode("abcdef@", realmem, targetAddress);
+    
+    // 'abc'
+    assertEquals(0x18e8, realmem.readUnsigned16(targetAddress));
+    
+    // 'def'
+    assertEquals(0x254b, realmem.readUnsigned16(targetAddress + 2));
+    
+    // not long enough, pad it out
+    assertEquals(0x94a5, realmem.readUnsigned16(targetAddress + 4));
+  }
 }

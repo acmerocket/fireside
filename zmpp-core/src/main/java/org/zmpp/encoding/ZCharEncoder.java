@@ -36,6 +36,7 @@ import org.zmpp.encoding.AlphabetTable.Alphabet;
  * The target string is restricted to 6 bytes and 9 characters, which is
  * the length of dictionary entries and no abbreviations need to be taken
  * into consideration.
+ * TODO: We need pre-version 4 encodings as well !!!
  *
  * @author Wei-ju Wu
  * @version 1.5
@@ -61,6 +62,13 @@ public class ZCharEncoder {
     encode(state, translator);
   }
 
+  public void encode(final String str, final Memory memory,
+                     final int targetAddress) {
+    final StringEncodingState state = new StringEncodingState();
+    state.init(str, memory, targetAddress);
+    encode(state, translator);
+  }
+
   /**
    * Encodes the string at the specified address and writes it to the target
    * address.
@@ -78,14 +86,12 @@ public class ZCharEncoder {
       for (int i = state.wordPosition; i < 3; i++) {
         resultword = writeByteToWord(resultword, (char) 5, i);
       }
-      state.memory.writeUnsigned16(state.target, toUnsigned16(resultword));
-      state.target += 2;
+      state.writeUnsigned16(toUnsigned16(resultword));
     }
 
     // If we did not encode 3 shorts, fill the rest with 0x14a5's
-    final int targetOffset = state.getTargetOffset();
-    for (int i = targetOffset; i < NUM_TARGET_BYTES; i+= 2) {
-      state.memory.writeUnsigned16(state.targetStart + i, toUnsigned16(0x14a5));
+    while (state.getTargetOffset() < NUM_TARGET_BYTES) {
+      state.writeUnsigned16(toUnsigned16(0x14a5));
     }
 
     // Always mark the last word as such, the last word is always
@@ -160,9 +166,7 @@ public class ZCharEncoder {
   private static void writeWordIfNeeded(final EncodingState state) {
     if (state.wordPosition > 2 && state.target <= (state.targetStart + 4)) {
       // Write the result and increment the target position
-      state.memory.writeUnsigned16(state.target,
-                                   toUnsigned16(state.currentWord));
-      state.target += 2;
+      state.writeUnsigned16(toUnsigned16(state.currentWord));
       state.currentWord = 0;
       state.wordPosition = 0;
     }
@@ -208,8 +212,8 @@ public class ZCharEncoder {
  */
 class EncodingState {
   private static final int TARGET_LAST_WORD = 4;
-  public Memory memory;
-  private int source;
+  private Memory memory;
+  protected int source;
   private int sourceStart;
   public int target;
   public int targetStart;
@@ -232,7 +236,20 @@ class EncodingState {
     memory.writeUnsigned16(targetStart + TARGET_LAST_WORD,
                            toUnsigned16(lastword | 0x8000));
   }
+  public void writeUnsigned16(char value) {
+    memory.writeUnsigned16(target, value);
+    target += 2;
+  }
   public boolean hasMoreInput() {
     return source < sourceStart + maxLength;
+  }  
+}
+
+class StringEncodingState extends EncodingState {
+  private String input;
+  public void init(String inputStr, Memory mem, int trgt) {
+    super.init(mem, 0, trgt, inputStr.length());
+    input = inputStr;
   }
+  public char nextChar() { return input.charAt(source++); }
 }
