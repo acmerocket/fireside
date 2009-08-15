@@ -64,10 +64,25 @@ public class CustomAccentTableTest {
       will(returnValue((char) 80));
       // reference character
       one (memory).readUnsigned16(ADDRESS + 2 * 6 + 1); will(returnValue('B'));
-      
+
       one (memory).readUnsigned16(ADDRESS + 1); will(returnValue('a'));
       one (memory).readUnsigned16(ADDRESS + 2 + 1); will(returnValue('b'));
     }});
     assertEquals(1, accentTable.getIndexOfLowerCase(6));
+  }
+
+  @Test
+  public void testGetIndexOfLowerCaseNotFound() {
+    context.checking(new Expectations() {{
+      // length
+      atLeast(1) .of(memory).readUnsigned8(ADDRESS);
+      will(returnValue((char) 2));
+      // reference character
+      atLeast (1).of (memory).readUnsigned16(ADDRESS + 2 * 1 + 1);
+      will(returnValue('^'));
+
+      one (memory).readUnsigned16(ADDRESS + 1); will(returnValue('a'));
+    }});
+    assertEquals(1, accentTable.getIndexOfLowerCase(1));
   }
 }
