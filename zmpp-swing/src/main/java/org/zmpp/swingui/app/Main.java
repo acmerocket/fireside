@@ -28,13 +28,17 @@ import java.util.PropertyResourceBundle;
 import java.util.logging.Level;
 import java.util.logging.LogManager;
 import java.util.logging.Logger;
+
 import javax.imageio.ImageIO;
 import javax.sound.sampled.AudioFileFormat;
 import javax.sound.sampled.AudioInputStream;
 import javax.sound.sampled.AudioSystem;
 import javax.sound.sampled.Clip;
+import javax.sound.sampled.LineUnavailableException;
+import javax.sound.sampled.UnsupportedAudioFileException;
 import javax.swing.JOptionPane;
 import javax.swing.UIManager;
+
 import org.zmpp.blorb.MemoryInputStream;
 import org.zmpp.blorb.NativeImage;
 import org.zmpp.blorb.NativeImageFactory;
@@ -64,6 +68,9 @@ public final class Main {
    */
   public static final boolean DEBUG = true;
 
+  /**
+   * Image class.
+   */
   static class AwtImage implements NativeImage {
 
     private BufferedImage image;
@@ -73,12 +80,18 @@ public final class Main {
     public int getHeight() { return image.getHeight(); }
   }
 
+  /**
+   * Image factory.
+   */
   static class AwtImageFactory implements NativeImageFactory {
     public NativeImage createImage(InputStream inputStream) throws IOException {
       return new AwtImage(ImageIO.read(inputStream));
     }
   }
 
+  /**
+   * Sound effect factory.
+   */
   static class DefaultSoundEffectFactory implements SoundEffectFactory {
     public SoundEffect createSoundEffect(Chunk aiffChunk)
         throws IOException {
@@ -86,14 +99,16 @@ public final class Main {
         new  MemoryInputStream(aiffChunk.getMemory(), 0,
           aiffChunk.getSize() + Chunk.CHUNK_HEADER_LENGTH);
       try {
-      final AudioFileFormat aiffFormat =
-        AudioSystem.getAudioFileFormat(aiffStream);
-      final AudioInputStream stream = new AudioInputStream(aiffStream,
-        aiffFormat.getFormat(), (long) aiffChunk.getSize());
-      final Clip clip = AudioSystem.getClip();
-      clip.open(stream);
-      return new DefaultSoundEffect(clip);
-      } catch (Exception ex) {
+        final AudioFileFormat aiffFormat =
+          AudioSystem.getAudioFileFormat(aiffStream);
+        final AudioInputStream stream = new AudioInputStream(aiffStream,
+            aiffFormat.getFormat(), (long) aiffChunk.getSize());
+        final Clip clip = AudioSystem.getClip();
+        clip.open(stream);
+        return new DefaultSoundEffect(clip);
+      } catch (UnsupportedAudioFileException ex) {
+        throw new IOException("could not read sound effect");
+      } catch (LineUnavailableException ex) {
         throw new IOException("could not read sound effect");
       }
     }
@@ -113,6 +128,10 @@ public final class Main {
     return MESSAGE_BUNDLE.getString(property);
   }
 
+  /**
+   * main() method.
+   * @param args command line arguments
+   */
   public static void main(String[] args) {
     setMacOsXProperties();
     try {
@@ -134,10 +153,17 @@ public final class Main {
     }
   }
 
+  /**
+   * Determines whether this is a Mac OS X application.
+   * @return true if Mac OS X application, false otherwise
+   */
   public static boolean isMacOsX() {
     return System.getProperty("mrj.version") != null;
   }
 
+  /**
+   * Sets properties to start as Mac OS X application.
+   */
   private static void setMacOsXProperties() {
     if (isMacOsX()) {
       System.setProperty("apple.laf.useScreenMenuBar", "true");
@@ -148,6 +174,10 @@ public final class Main {
     }
   }
 
+  /**
+   * Runs ZMPP with command line arguments.
+   * @param args the command line arguments
+   */
   private static void runWithParameters(String[] args)
   {
     if (isFile(args[0])) {
@@ -165,11 +195,21 @@ public final class Main {
     }
   }
 
+  /**
+   * Determines whether the specified string is a file.
+   * @param str input string
+   * @return true if input string is a file, false otherwise
+   */
   private static boolean isFile(String str) {
     File file = new File(str);
     return file.exists() && file.isFile();
   }
 
+  /**
+   * Determines whether the specified string is a valid URL.
+   * @param str input string
+   * @return true if url, false otherwise
+   */
   private static boolean isUrl(String str) {
     try {
       new URL(str);
