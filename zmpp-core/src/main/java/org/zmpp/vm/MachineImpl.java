@@ -149,8 +149,10 @@ public class MachineImpl implements Machine, DrawingArea {
     fileheader = new DefaultStoryFileHeader(memory);
     checksum = calculateChecksum();
 
+    final DictionarySizes dictionarySizes = (fileheader.getVersion() <= 3) ?
+        new DictionarySizesV1ToV3() : new DictionarySizesV4ToV8();
     // Install the whole character code system here
-    initEncodingSystem();
+    initEncodingSystem(dictionarySizes);
 
     // The object tree and dictionaries depend on the code system
     if (fileheader.getVersion() <= 3) {
@@ -160,13 +162,19 @@ public class MachineImpl implements Machine, DrawingArea {
       objectTree = new ModernObjectTree(memory,
           memory.readUnsigned16(StoryFileHeader.OBJECT_TABLE));
     }
-    final DictionarySizes sizes = (fileheader.getVersion() <= 3) ?
-        new DictionarySizesV1ToV3() : new DictionarySizesV4ToV8();
+    // CAUTION: the current implementation of DefaultDictionary reads in all
+    // entries into a hash table, so it will break when moving this statement
+    // to a different position
     dictionary = new DefaultDictionary(memory,
-        memory.readUnsigned16(StoryFileHeader.DICTIONARY), decoder, sizes);
+        memory.readUnsigned16(StoryFileHeader.DICTIONARY), decoder,
+                              dictionarySizes);
   }
 
-  private void initEncodingSystem() {
+  /**
+   * Initializes the encoding system.
+   * @param dictionarySizes the DictionarySizes
+   */
+  private void initEncodingSystem(DictionarySizes dictionarySizes) {
     final AccentTable accentTable = (fileheader.getCustomAccentTable() == 0) ?
         new DefaultAccentTable() :
         new CustomAccentTable(memory, fileheader.getCustomAccentTable());
@@ -193,7 +201,7 @@ public class MachineImpl implements Machine, DrawingArea {
     final Abbreviations abbreviations = new Abbreviations(memory,
         memory.readUnsigned16(StoryFileHeader.ABBREVIATIONS));
     decoder = new DefaultZCharDecoder(encoding, translator, abbreviations);
-    encoder = new ZCharEncoder(translator);
+    encoder = new ZCharEncoder(translator, dictionarySizes);
   }
 
   /**
