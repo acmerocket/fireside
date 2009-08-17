@@ -18,11 +18,9 @@
  */
 package org.zmpp.vm;
 
-import java.util.HashMap;
-import java.util.Map;
-
 import org.zmpp.base.Memory;
 import org.zmpp.encoding.ZCharDecoder;
+import org.zmpp.encoding.ZCharEncoder;
 
 /**
  * This class implements a view on the dictionary within a memory map.
@@ -32,9 +30,6 @@ import org.zmpp.encoding.ZCharDecoder;
  * @version 1.5
  */
 public class DefaultDictionary extends AbstractDictionary {
-
-  /** The lookup map. */
-  private Map<String, Integer> lookupMap;
 
   /** The maximum entry size. */
   private int maxEntrySize;
@@ -47,48 +42,43 @@ public class DefaultDictionary extends AbstractDictionary {
    * @param sizes a sizes object
    */
   public DefaultDictionary(Memory memory, int address,
-                           ZCharDecoder decoder, DictionarySizes sizes) {
-    super(memory, address, decoder, sizes);
-    createLookupMap();
+                           ZCharDecoder decoder,
+                           ZCharEncoder encoder,
+                           DictionarySizes sizes) {
+    super(memory, address, decoder, encoder, sizes);
   }
 
   /**
    * {@inheritDoc}
    */
   public int lookup(final String token) {
-    final String lookupToken = truncateToken(token);
-    //System.out.printf("DefaultDictionary.lookup('%s'), truncated: '%s'\n",
-    //                  token, lookupToken);
-    if (lookupMap.containsKey(lookupToken)) {
-      return lookupMap.get(lookupToken);
+    return lookupBinary(truncateTokenToBytes(token), 0,
+                        getNumberOfEntries() - 1);
+  }
+
+  /**
+   * Recursive binary search to find an input word in the dictionary.
+   * @param tokenBytes the byte array containing the input word
+   * @param left the left index
+   * @param right the right index
+   * @return the entry address
+   */
+  private int lookupBinary(byte[] tokenBytes, int left, int right) {
+    if (left > right) return 0;
+    int middle = left + (right - left) / 2;
+    int entryAddress = getEntryAddress(middle);
+    int res = tokenMatch(tokenBytes, entryAddress);
+    if (res < 0) {
+      return lookupBinary(tokenBytes, left, middle - 1);
+    } else if (res > 0) {
+      return lookupBinary(tokenBytes, middle + 1, right);
+    } else {
+      return entryAddress;
     }
-    return 0;
   }
 
   /**
    * {@inheritDoc}
    */
   protected int getMaxEntrySize() { return maxEntrySize; }
-
-  /**
-   * Create the dictionary lookup map. The standards document suggests to
-   * convert the tokens into ZSCII strings and look them up in the dictionary
-   * by a binary search algorithm, which results in a O(log n) search algorithm,
-   * instead I convert the dictionary strings into Java strings and put them
-   * into a (entry - address) map, which is easier to handle and is O(1).
-   * Generating it once at initialization is safe because the dictionary is in
-   * static memory and does not change at runtime.
-   */
-  private void createLookupMap() {
-    lookupMap = new HashMap<String, Integer>();
-    int entryAddress;
-
-    for (int i = 0, n = getNumberOfEntries(); i < n; i++) {
-      entryAddress = getEntryAddress(i);
-      final String str = getDecoder().decode2Zscii(getMemory(),
-          entryAddress, getSizes().getNumEntryBytes());
-      maxEntrySize = Math.max(str.length(), maxEntrySize);
-      lookupMap.put(str, entryAddress);
-    }
-  }
 }

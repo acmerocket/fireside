@@ -18,9 +18,12 @@
  */
 package org.zmpp.vm;
 
+import static org.zmpp.base.MemoryUtil.unsignedToSigned16;
+
+import org.zmpp.base.DefaultMemory;
 import org.zmpp.base.Memory;
 import org.zmpp.encoding.ZCharDecoder;
-import static org.zmpp.base.MemoryUtil.unsignedToSigned16;
+import org.zmpp.encoding.ZCharEncoder;
 
 /**
  * Abstract super class of dictionaries.
@@ -29,14 +32,12 @@ import static org.zmpp.base.MemoryUtil.unsignedToSigned16;
  */
 public abstract class AbstractDictionary implements Dictionary {
 
-  /** The memory map. */
   private Memory memory;
 
   /** The dictionary start address. */
   private int address;
-
-  /** A Z char decoder. */
   private ZCharDecoder decoder;
+  private ZCharEncoder encoder;
 
   /** A sizes object. */
   private DictionarySizes sizes;
@@ -45,15 +46,18 @@ public abstract class AbstractDictionary implements Dictionary {
    * Constructor.
    * @param memory the memory object
    * @param address the start address of the dictionary
-   * @param converter a Z char decoder object
+   * @param decoder a ZCharDecoder object
+   * @param encoder a ZCharEncoder object
    * @param an object specifying the sizes of the dictionary entries
    */
   public AbstractDictionary(final Memory memory, final int address,
                             final ZCharDecoder decoder,
+                            final ZCharEncoder encoder,
                             final DictionarySizes sizes) {
     this.memory = memory;
     this.address = address;
     this.decoder = decoder;
+    this.encoder = encoder;
     this.sizes = sizes;
   }
 
@@ -116,6 +120,37 @@ public abstract class AbstractDictionary implements Dictionary {
   protected String truncateToken(final String token) {
     return token.length() > sizes.getMaxEntryChars() ?
         token.substring(0, sizes.getMaxEntryChars()) : token;
+  }
+
+  /**
+   * Truncates the specified token and returns a dictionary encoded byte array.
+   * @param token the token
+   * @return the truncated token as a byte array
+   */
+  protected byte[] truncateTokenToBytes(final String token) {
+    byte[] result = new byte[sizes.getNumEntryBytes()];
+    Memory buffer = new DefaultMemory(result);
+    encoder.encode(token, buffer, 0);
+    return result;
+  }
+
+  /**
+   * Lexicographical comparison of the input word and the dictionary entry
+   * at the specified address.
+   * @param tokenBytes input word bytes
+   * @param entryAddress dictionary entry address
+   * @return comparison value, 0 if match, &lt; 0 if lexicographical smaller,
+   *         &lt; 0 if lexicographical greater
+   */
+  protected int tokenMatch(byte[] tokenBytes, int entryAddress) {
+    for (int i = 0; i < tokenBytes.length; i++) {
+      int tokenByte = tokenBytes[i] & 0xff;
+      int c = (getMemory().readUnsigned8(entryAddress + i) & 0xff);
+      if (tokenByte != c) {
+        return tokenByte - c;
+      }
+    }
+    return 0;
   }
 
   /**

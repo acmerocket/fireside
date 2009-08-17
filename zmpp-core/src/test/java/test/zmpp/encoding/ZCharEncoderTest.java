@@ -29,7 +29,6 @@ import org.zmpp.encoding.DefaultAlphabetTable;
 import org.zmpp.encoding.DefaultZCharTranslator;
 import org.zmpp.encoding.ZCharEncoder;
 import org.zmpp.encoding.ZCharTranslator;
-import org.zmpp.vm.DictionarySizesV1ToV3;
 import org.zmpp.vm.DictionarySizesV4ToV8;
 
 /**
@@ -44,7 +43,8 @@ import org.zmpp.vm.DictionarySizesV4ToV8;
  */
 public class ZCharEncoderTest {
 
-  private ZCharEncoder encoderV1, encoderV4;
+  //private ZCharEncoder encoderV1;
+  private ZCharEncoder encoderV4;
   private int sourceAddress = 100;
   private int targetAddress = 199;
   private byte[] data = new byte[206];
@@ -54,7 +54,7 @@ public class ZCharEncoderTest {
   public void setUp() throws Exception {
     AlphabetTable alphabetTable = new DefaultAlphabetTable();
     ZCharTranslator translator = new DefaultZCharTranslator(alphabetTable);
-    encoderV1 = new ZCharEncoder(translator, new DictionarySizesV1ToV3());
+    //encoderV1 = new ZCharEncoder(translator, new DictionarySizesV1ToV3());
     encoderV4 = new ZCharEncoder(translator, new DictionarySizesV4ToV8());
     realmem = new DefaultMemory(data);
   }

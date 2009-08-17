@@ -77,8 +77,7 @@ public class ZCharEncoder {
   public void encode(final String str, final Memory memory,
                      final int targetAddress) {
     final StringEncodingState state = new StringEncodingState();
-    state.init(str.toLowerCase(), memory, targetAddress,
-               dictionarySizes.getNumEntryBytes());
+    state.init(str.toLowerCase(), memory, targetAddress, dictionarySizes);
     encode(state, translator);
   }
 
@@ -274,13 +273,15 @@ class EncodingState {
   }
   public boolean hasMoreInput() {
     return source < sourceStart + maxLength;
-  }  
+  }
 }
 
 class StringEncodingState extends EncodingState {
   private String input;
-  public void init(String inputStr, Memory mem, int trgt, int maxEntryBytes) {
-    super.init(mem, 0, trgt, maxEntryBytes, inputStr.length());
+  public void init(String inputStr, Memory mem, int trgt,
+                   DictionarySizes dictionarySizes) {
+    super.init(mem, 0, trgt, dictionarySizes.getNumEntryBytes(),
+               Math.min(inputStr.length(), dictionarySizes.getMaxEntryChars()));
     input = inputStr;
   }
   public char nextChar() { return input.charAt(source++); }

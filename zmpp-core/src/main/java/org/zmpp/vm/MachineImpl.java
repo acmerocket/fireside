@@ -166,7 +166,7 @@ public class MachineImpl implements Machine, DrawingArea {
     // entries into a hash table, so it will break when moving this statement
     // to a different position
     dictionary = new DefaultDictionary(memory,
-        memory.readUnsigned16(StoryFileHeader.DICTIONARY), decoder,
+        memory.readUnsigned16(StoryFileHeader.DICTIONARY), decoder, encoder,
                               dictionarySizes);
   }
 
@@ -354,7 +354,7 @@ public class MachineImpl implements Machine, DrawingArea {
       return getDictionary().lookup(token);
     }
     return new UserDictionary(getMemory(), dictionaryAddress,
-                              getZCharDecoder()).lookup(token);
+                              getZCharDecoder(), encoder).lookup(token);
   }
   /** {@inheritDoc} */
   public String getDictionaryDelimiters() {

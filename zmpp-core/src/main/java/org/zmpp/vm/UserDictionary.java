@@ -20,6 +20,7 @@ package org.zmpp.vm;
 
 import org.zmpp.base.Memory;
 import org.zmpp.encoding.ZCharDecoder;
+import org.zmpp.encoding.ZCharEncoder;
 
 /**
  * This class implements a user dictionary. The specification suggests that
@@ -33,27 +34,24 @@ public class UserDictionary extends AbstractDictionary {
 
   /**
    * Constructor.
-   * @param memory the Memary object
+   * @param memory the Memory object
    * @param address the start address of the dictionary
-   * @param converter a Z char decoder object
-   * @param sizes a sizes object
+   * @param decoder a ZCharDecoder object
+   * @param encoder a ZCharEncoder object
    */
   public UserDictionary(Memory memory, int address,
-                        ZCharDecoder decoder) {
-    super(memory, address, decoder, new DictionarySizesV4ToV8());
+                        ZCharDecoder decoder, ZCharEncoder encoder) {
+    super(memory, address, decoder, encoder, new DictionarySizesV4ToV8());
   }
 
   /** {@inheritDoc} */
   public int lookup(final String token) {
-    // We only implement linear search for the moment
+    // We only implement linear search for user dictionaries
     final int n = Math.abs(getNumberOfEntries());
-    final String lookupToken = truncateToken(token);
+    final byte tokenBytes[] = truncateTokenToBytes(token);
     for (int i = 0; i < n; i++) {
       final int entryAddress = getEntryAddress(i);
-      final String entry = getDecoder().decode2Zscii(getMemory(),
-                                                     entryAddress,
-                                                     getEntryLength());
-      if (lookupToken.equals(entry)) { return entryAddress; }
+      if (tokenMatch(tokenBytes, entryAddress) == 0) { return entryAddress; }
     }
     return 0;
   }
