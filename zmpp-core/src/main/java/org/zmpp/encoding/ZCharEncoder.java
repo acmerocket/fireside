@@ -77,7 +77,7 @@ public class ZCharEncoder {
   public void encode(final String str, final Memory memory,
                      final int targetAddress) {
     final StringEncodingState state = new StringEncodingState();
-    state.init(str.toLowerCase(), memory, targetAddress, dictionarySizes);
+    state.init(str, memory, targetAddress, dictionarySizes);
     encode(state, translator);
   }
 
@@ -121,6 +121,7 @@ public class ZCharEncoder {
   private static void processChar(ZCharTranslator translator,
                                   final EncodingState state) {
     final char zsciiChar = state.nextChar();
+    //System.out.printf("processChar, char = %c (%d)\n", zsciiChar, (int) zsciiChar);
     final AlphabetElement element = translator.getAlphabetElementFor(zsciiChar);
     if (element.getAlphabet() == null) {
       final char zcharCode = element.getZCharCode();

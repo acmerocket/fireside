@@ -195,7 +195,7 @@ public class InputFunctions {
     int parseaddr = parsebuffer + 2;
 
     for (int i = 0; i < numTokens; i++) {
-      final String token = tokens.get(i);
+      String token = tokens.get(i);
       final int entryAddress = machine.lookupToken(dictionaryAddress, token);
       int startIndex = 0;
       if (parsedTokens.containsKey(token)) {
@@ -269,7 +269,8 @@ public class InputFunctions {
     final List<String> result = new ArrayList<String>();
     // The tokenizer will also return the delimiters
     final String delim = machine.getDictionaryDelimiters();
-    final StringTokenizer tok = new StringTokenizer(input, delim);
+    // include dictionary delimiters as tokens
+    final StringTokenizer tok = new StringTokenizer(input, delim, true);
     while (tok.hasMoreTokens()) {
       final String token = tok.nextToken();
       if (!Character.isWhitespace(token.charAt(0))) {

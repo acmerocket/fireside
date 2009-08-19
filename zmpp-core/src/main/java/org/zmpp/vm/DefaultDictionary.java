@@ -46,12 +46,37 @@ public class DefaultDictionary extends AbstractDictionary {
                            ZCharEncoder encoder,
                            DictionarySizes sizes) {
     super(memory, address, decoder, encoder, sizes);
+    /*
+    for (int i = 0; i < this.getNumberOfEntries(); i++) {
+      int entryAddress = getEntryAddress(i);
+      String str = decoder.decode2Zscii(memory, entryAddress, sizes.getNumEntryBytes());
+      System.out.printf("%d: '%s' { 0x%02x, 0x%02x, 0x%02x, 0x%02x, 0x%02x, 0x%02x } " + 
+          "{ 0x%02x, 0x%02x, 0x%02x, ... }\n",
+          i, str, (int) memory.readUnsigned8(entryAddress),
+          (int) memory.readUnsigned8(entryAddress + 1),
+          (int) memory.readUnsigned8(entryAddress + 2),
+          (int) memory.readUnsigned8(entryAddress + 3),
+          (int) memory.readUnsigned8(entryAddress + 4),
+          (int) memory.readUnsigned8(entryAddress + 5),
+          (int) str.charAt(0),
+          (int) (str.length() > 1 ? str.charAt(1) : 0),
+          (int) (str.length() > 2 ? str.charAt(2) : 0)
+          );
+    }*/
   }
 
   /**
    * {@inheritDoc}
    */
   public int lookup(final String token) {
+    // debug
+    /*
+    byte[] tokenBytes = truncateTokenToBytes(token);
+    System.out.printf("token = %s tb = { 0x%02x, 0x%02x, 0x%02x, 0x%02x, 0x%02x, 0x%02x }\n",
+        token,
+        (int) tokenBytes[0], (int) tokenBytes[1], (int) tokenBytes[2], (int) tokenBytes[3],
+        (int) tokenBytes[4], (int) tokenBytes[5]);
+        */
     return lookupBinary(truncateTokenToBytes(token), 0,
                         getNumberOfEntries() - 1);
   }

@@ -65,24 +65,44 @@ public final class DefaultZCharDecoder implements ZCharDecoder {
     char zchar;
     int i = 0, newpos;
 
+/*    // DEBUG
+    StringBuilder zbstr = new StringBuilder();
+    zbstr.append("ZBYTES: { ");
+    for (char zb : zbytes) {
+      zbstr.append(String.format("0x%02x ", (int) zb));
+    }
+    zbstr.append("} [");
+    // DEBUG END*/
+
     while (i < zbytes.length) {
       boolean decoded = false;
       zchar = zbytes[i];
       newpos = handleAbbreviation(builder, memory, zbytes, i);
       decoded = (newpos > i);
+      //if (decoded) zbstr.append("<abbr> "); // remove me
       i = newpos;
 
       if (!decoded) {
         newpos = handleEscapeA2(builder, zbytes, i);
         decoded = newpos > i;
         i = newpos;
+        //if (decoded) zbstr.append("<esc-a2> "); // remove me
       }
 
       if (!decoded) {
-        decodeZchar(builder, zchar);
+        char c = decodeZchar(builder, zchar);
+        /*
+        if (c != 0 && ZsciiEncoding.isAccent(zchar)) {
+          zbstr.append(String.format("0x%04x(accent) ", (int) zchar)); // remove me
+        }
+        if (c != 0 && !ZsciiEncoding.isAccent(zchar)) {
+          zbstr.append(String.format("%c(0x%02x) ", encoding.getUnicodeChar(c), (int) c)); // remove me
+        }*/
         i++;
       }
     }
+    
+    //System.out.println(zbstr.toString() + "]"); // remove me
     return builder.toString();
   }
 
@@ -172,12 +192,13 @@ public final class DefaultZCharDecoder implements ZCharDecoder {
    * @param builder a ZsciiStringBuilder object
    * @param zchar the encoded character to decode and add
    */
-  private void decodeZchar(final StringBuilder builder,
+  private char decodeZchar(final StringBuilder builder,
       final char zchar) {
     final char c = decodeZChar(zchar);
     if (c != 0) {
       builder.append(c);
     }
+    return c;
   }
 
   /** {@inheritDoc} */
