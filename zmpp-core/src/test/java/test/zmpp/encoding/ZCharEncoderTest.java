@@ -345,7 +345,7 @@ public class ZCharEncoderTest {
   // Test with a different alphabet
   @Test
   public void testEncodeStringAlphabet1() {
-    encoderV4.encode("A", realmem, targetAddress);
+    encoderV4.encode("a", realmem, targetAddress);
     
     // 'a' + Pad
     assertEquals(0x18a5, realmem.readUnsigned16(targetAddress));
@@ -357,7 +357,7 @@ public class ZCharEncoderTest {
   
   @Test
   public void testEncodeStringAlphabet1SpanWordBound() {
-    encoderV4.encode("abC", realmem, targetAddress);
+    encoderV4.encode("abc", realmem, targetAddress);
     
     // 'abc'
     assertEquals(0x18e8, realmem.readUnsigned16(targetAddress));
