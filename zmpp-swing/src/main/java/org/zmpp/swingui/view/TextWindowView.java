@@ -20,11 +20,13 @@ package org.zmpp.swingui.view;
 
 import java.awt.Color;
 import java.awt.Font;
+
 import javax.swing.JTextPane;
 import javax.swing.text.BadLocationException;
 import javax.swing.text.Document;
 import javax.swing.text.MutableAttributeSet;
 import javax.swing.text.StyleConstants;
+
 import org.zmpp.windowing.AnnotatedText;
 import org.zmpp.windowing.ScreenModel;
 import org.zmpp.windowing.TextAnnotation;

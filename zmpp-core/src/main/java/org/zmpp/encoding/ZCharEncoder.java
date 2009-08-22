@@ -121,7 +121,6 @@ public class ZCharEncoder {
   private static void processChar(ZCharTranslator translator,
                                   final EncodingState state) {
     final char zsciiChar = state.nextChar();
-    //System.out.printf("processChar, char = %c (%d)\n", zsciiChar, (int) zsciiChar);
     final AlphabetElement element = translator.getAlphabetElementFor(zsciiChar);
     if (element.getAlphabet() == null) {
       final char zcharCode = element.getZCharCode();
