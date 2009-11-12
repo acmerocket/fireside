@@ -73,14 +73,14 @@ public class ZmppFrame extends JFrame
   private JMenuItem aboutGameItem;
   private ScreenModelView screenModelView;
   private DisplaySettings displaySettings;
-  private Preferences preferences;
+  private static Preferences preferences =
+    Preferences.userNodeForPackage(ZmppFrame.class);
 
   /**
    * Constructor.
    */
   public ZmppFrame() {
     super(Main.APP_NAME);
-    preferences = Preferences.userNodeForPackage(ZmppFrame.class);
     this.displaySettings = createDisplaySettings();
     setDefaultCloseOperation(JFrame.EXIT_ON_CLOSE);
     setupUI();
@@ -310,7 +310,7 @@ public class ZmppFrame extends JFrame
   }
   public static void openStoryFile() { openStoryFile(null); }
   public static void openStoryFile(File storyfile) {
-      openStoryFile(null, storyfile);
+    openStoryFile(null, storyfile);
   }
   private static void openStoryFile(ZmppFrame frame, final File file) {
     if (frame != null) { frame.dispose(); }
@@ -318,21 +318,21 @@ public class ZmppFrame extends JFrame
       runInEventDispatchThread(new Runnable() {
         public void run() {
           if (file == null || !file.exists()) {
-            JFileChooser fileChooser =
-                new JFileChooser(System.getProperty("user.home"));
+            String currentDir = preferences.get("currentdir",
+                System.getProperty("user.home"));
+            JFileChooser fileChooser = new JFileChooser(currentDir);
             fileChooser.setDialogTitle(getMessage("dialog.open.msg"));
             if (fileChooser.showOpenDialog(null) ==
                 JFileChooser.APPROVE_OPTION) {
               final File storyfile = fileChooser.getSelectedFile();
+              if (storyfile.isFile()) {
+                preferences.put("currentdir", storyfile.getParent());
+              }
               SwingUtilities.invokeLater(new Runnable() {
-                public void run() {
-                  runStoryFile(storyfile);
-                }
+                public void run() { runStoryFile(storyfile); }
               });
             }
-          } else {
-              runStoryFile(file);
-          }
+          } else { runStoryFile(file); }
         }
       });
     } catch (Exception ignore) {

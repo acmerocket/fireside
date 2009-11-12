@@ -133,6 +133,7 @@ public final class Main {
    * @param args command line arguments
    */
   public static void main(String[] args) {
+    System.setProperty("swing.aatext", "true");
     setMacOsXProperties();
     try {
       UIManager.setLookAndFeel(UIManager.getSystemLookAndFeelClassName());

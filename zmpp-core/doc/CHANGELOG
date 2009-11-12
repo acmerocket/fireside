@@ -2,19 +2,34 @@ Changelog
 
 Version 1.5
 -----------
+
+Bug fixes:
+- crash when exceeding undo limit
+- error in Unicode to ZSCII encoding algorithm
+
+Features/changes:
+- standard directory lookup
 - core execution is now a pause-resume
 - timed input is now controlled by user interface
 - New screen model based on standard Swing components
 - Spanish user interface translation by Pichuneke
+- Swedish user interface translation by Fredrik Ramsberg
 - All tests are using JUnit 4 and JMock 2.5
 - Memory, stack and variables are now all unsigned 16 or 8 bit values
-- better NetBeans integration
+- Maven 2 based builds
+- String encoding works internally with ZSCII in the core
 - replaced ZsciiString and ZsciiStringBuilder and ZsciiStringTokenizer with
-  the J2SE versions
+  the J2SE versions based on String class
 - changed decoding scheme to resemble the one from the Erlang implementation
 - Open function added
+- remembers last current directory
 - Standard and fixed fonts can be specified
-- broken V6 support for this version
+
+known issues:
+
+- broken V6 support for this version, please use 1.0x if you want limited
+  V6 support. Later versions will provide improved V6 support, but I can not
+  say when that will happen
 
 
 Version 1.01

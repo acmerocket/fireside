@@ -94,6 +94,8 @@ public class ZmppApplet extends JApplet implements IOSystem {
 
   private void setSystemLookAndFeel() {
     try {
+      // Enables antialiased text
+      System.setProperty("swing.aatext", "true");
       UIManager.setLookAndFeel(UIManager.getSystemLookAndFeelClassName());
     } catch (Exception ex) {
       ex.printStackTrace();

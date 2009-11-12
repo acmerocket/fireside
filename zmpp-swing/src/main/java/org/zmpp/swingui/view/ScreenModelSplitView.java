@@ -245,9 +245,9 @@ implements ScreenModelListener {
     currentTimer = new Timer(runState.getTime() * 100,
       new ActionListener() {
         public void actionPerformed(ActionEvent e) {
-          System.out.println("TIMED METHOD, active window: " +
-                             screenModel.getActiveWindow());
           String currentInput = getCurrentInput();
+          System.out.printf("TIMED METHOD, active window: %d, current input: " +
+              "[%s]\n", screenModel.getActiveWindow(), currentInput);
           if (currentInput != null) {
             executionControl.setTextToInputBuffer(currentInput);
           }
@@ -261,6 +261,10 @@ implements ScreenModelListener {
             currentTimer.stop();
             // TODO: Clear input and print
             //executionControl.resumeWithInput("\u0000");
+            // This is strange, this is exactly the reason why ZMPP
+            // prints the line break here. If we do not, ZMPP just hangs and
+            // waits for - something. Investigate what it is looking for
+            // THIS IS DEFINITELY THE PLACE !!!!
             pressEnterKey();
           } else if (result == Instruction.FALSE) {
             // carry on
