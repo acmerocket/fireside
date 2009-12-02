@@ -6,45 +6,37 @@
   <modelVersion>4.0.0</modelVersion>
   <groupId>org.zmpp</groupId>
   <version>1.5-SNAPSHOT</version>
-  <artifactId>zmpp</artifactId>
-  <name>Z-Machine Preservation Project</name>
-  <description>The Z-Machine Preservation Project</description>
+  <artifactId>zmpp-core</artifactId>
+  <name>zmpp-core</name>
+  <description>ZMPP core</description>
   <inceptionYear>2005</inceptionYear>
   <licenses>
     <license>
-      <name>GPL V3</name>
-      <url>http://www.gnu.org/licenses/gpl-3.0.txt</url>
-      <distribution>repo</distribution>
-      <comments>Free as in Freedom</comments>
+      <name>BSD License</name>
     </license>
   </licenses>
   <organization>
     <name>Box of Rats LLC</name>
     <url>http://www.boxofrats.com/</url>
   </organization>
-  <packaging>pom</packaging>
-  <modules>
-    <module>zmpp-core</module>
-    <module>zmpp-swing</module>
-  </modules>
-  <ciManagement>
-    <system>Hudson</system>
-    <url>http://localhost:8080/hudson</url>
-  </ciManagement>
+  
+	<packaging>jar</packaging>
+	
   <developers>
     <developer>
       <id>weiju</id>
       <name>Wei-ju Wu</name>
-      <email>weiju.wu@gmail.com</email>
+      <email>Weiju.Wu@gmail.com</email>
       <url>http://codingnaked.wordpress.com</url>
       <organization>Box of Rats LLC</organization>
       <roles>
         <role>Software Developer</role>
       </roles>
       <timezone>-8</timezone>
+      <properties>
+      </properties>
     </developer>
   </developers>
-  
   <distributionManagement>
     <snapshotRepository>
       <id>boxofrats-snapshots</id>
@@ -56,6 +48,92 @@
     <project.build.sourceEncoding>UTF-8</project.build.sourceEncoding>
     <project.report.sourceEncoding>UTF-8</project.report.sourceEncoding>
   </properties>
+  
+  <!-- Plugin Repository -->
+  <pluginRepositories>
+    <pluginRepository>
+      <id>codehaus-plugins</id>
+      <url>http://dist.codehaus.org/</url>
+      <snapshots>
+        <enabled>true</enabled>
+      </snapshots>
+      <releases>
+        <enabled>true</enabled>
+      </releases>
+    </pluginRepository>
+    <pluginRepository>
+      <id>codehaus-plugins-legacy</id>
+      <url>http://dist.codehaus.org/</url>
+      <layout>legacy</layout>
+      <snapshots>
+        <enabled>true</enabled>
+      </snapshots>
+      <releases>
+        <enabled>true</enabled>
+      </releases>
+    </pluginRepository>
+  </pluginRepositories>
+  <build>
+    <pluginManagement>
+      <plugins>
+        <plugin>
+          <artifactId>maven-compiler-plugin</artifactId>
+          <configuration>
+            <showDeprecation>false</showDeprecation>
+            <source>1.5</source>
+            <target>1.5</target>
+          </configuration>
+        </plugin>
+      	<plugin>
+			    <artifactId>maven-assembly-plugin</artifactId>
+				  <configuration>
+				    <descriptors>
+						  <descriptor>assembly.xml</descriptor>
+					  </descriptors>
+				  </configuration>
+			  </plugin>
+      </plugins>
+    </pluginManagement>
+  </build>
+  <dependencies>
+    <!--  Apache Commons -->
+    <dependency>
+      <groupId>log4j</groupId>
+      <artifactId>log4j</artifactId>
+      <version>1.2.8</version>
+    </dependency>
+    <dependency>
+      <groupId>junit</groupId>
+      <artifactId>junit</artifactId>
+      <version>4.5</version>
+      <scope>test</scope>
+    </dependency>
+    <dependency>
+      <groupId>org.jmock</groupId>
+      <artifactId>jmock</artifactId>
+      <version>2.5.1</version>
+      <scope>test</scope>
+    </dependency>
+    <dependency>
+      <groupId>org.jmock</groupId>
+      <artifactId>jmock-junit4</artifactId>
+      <version>2.5.1</version>
+      <scope>test</scope>
+    </dependency>
+    <dependency>
+      <groupId>org.jmock</groupId>
+      <artifactId>jmock-legacy</artifactId>
+      <version>2.5.1</version>
+      <scope>test</scope>
+    </dependency>
+    <dependency>
+      <groupId>org.hamcrest</groupId>
+      <artifactId>hamcrest-core</artifactId>
+      <version>1.1</version>
+      <scope>test</scope>
+    </dependency>
+  </dependencies>
+
   <reporting>
     <plugins>
       <plugin>
@@ -78,15 +156,15 @@
         <artifactId>jdepend-maven-plugin</artifactId>
       </plugin>
       <plugin>
-	<groupId>org.apache.maven.plugins</groupId>
-	<artifactId>maven-pmd-plugin</artifactId>
-	<version>2.4</version>
-	<configuration>
-	  <linkXref>true</linkXref>
-	  <sourceEncoding>utf-8</sourceEncoding>
-	  <minimumTokens>100</minimumTokens>
-	  <targetJdk>1.5</targetJdk>
-	</configuration>
+        <groupId>org.apache.maven.plugins</groupId>
+        <artifactId>maven-pmd-plugin</artifactId>
+        <version>2.4</version>
+        <configuration>
+          <linkXref>true</linkXref>
+          <sourceEncoding>utf-8</sourceEncoding>
+          <minimumTokens>100</minimumTokens>
+          <targetJdk>1.5</targetJdk>
+        </configuration>
       </plugin>
       <plugin>
         <groupId>org.codehaus.mojo</groupId>
@@ -96,6 +174,20 @@
           <xmlOutput>true</xmlOutput>
           <findbugsXmlOutput>true</findbugsXmlOutput>
           <excludeFilterFile>findbugs-exclude.xml</excludeFilterFile>
+        </configuration>
+      </plugin>
+      <!--
+          <plugin>
+          <artifactId>maven-surefire-report-plugin</artifactId>
+          </plugin>
+      -->
+      <plugin>
+        <groupId>org.codehaus.mojo</groupId>
+        <artifactId>cobertura-maven-plugin</artifactId>
+        <configuration>
+          <formats>
+            <format>xml</format>
+          </formats>
         </configuration>
       </plugin>
     </plugins>
