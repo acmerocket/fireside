@@ -18,12 +18,14 @@
  */
 package org.zmpp.vm;
 
-import org.zmpp.base.StoryFileHeader;
+import static org.zmpp.base.MemoryUtil.toUnsigned16;
+
+import java.io.Serializable;
 import java.util.ArrayList;
 import java.util.List;
 
 import org.zmpp.base.Memory;
-import static org.zmpp.base.MemoryUtil.toUnsigned16;
+import org.zmpp.base.StoryFileHeader;
 import org.zmpp.iff.Chunk;
 import org.zmpp.iff.DefaultChunk;
 import org.zmpp.iff.FormChunk;
@@ -36,7 +38,9 @@ import org.zmpp.iff.WritableFormChunk;
  * @author Wei-ju Wu
  * @version 1.5
  */
-public class PortableGameState {
+public class PortableGameState implements Serializable {
+
+  private static final long serialVersionUID = -9131764506887529659L;
 
   /** The return variable value for discard result. */
   public static final char DISCARD_RESULT = 0xffff;
@@ -44,7 +48,9 @@ public class PortableGameState {
   /**
    * This class represents a stack frame in the portable game state model.
    */
-  public static class StackFrame {
+  public static class StackFrame implements Serializable {
+
+    private static final long serialVersionUID = 3880452419775034120L;
 
     /** The return program counter. */
     int pc;
