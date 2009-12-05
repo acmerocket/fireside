@@ -40,58 +40,33 @@ package org.zmpp.encoding;
  */
 public class AlphabetTableV1 extends AlphabetTableV2 {
 
-  /**
-   * V1 Alphabet 2 has a slightly different structure.
-   */
+  /** V1 Alphabet 2 has a slightly different structure. */
   private static final String A2CHARS = " 0123456789.,!?_#'\"/\\<-:()";
 
-  /**
-   * {@inheritDoc}
-   */
+  /** {@inheritDoc} */
   public char getA0Char(final byte zchar) {
-
-    if (zchar == 1) {
-      return '\n';
-    }
+    if (zchar == 1) return '\n';
     return super.getA0Char(zchar);
   }
 
-  /**
-   * {@inheritDoc}
-   */
+  /** {@inheritDoc} */
   public char getA1Char(final byte zchar) {
-
-    if (zchar == 1) {
-      return '\n';
-    }
+    if (zchar == 1) return '\n';
     return super.getA1Char(zchar);
   }
 
-  /**
-   * {@inheritDoc}
-   */
+  /** {@inheritDoc} */
   public char getA2Char(final byte zchar) {
-
-    if (zchar == 0) {
-      return ' ';
-    }
-    if (zchar == 1) {
-      return '\n';
-    }
+    if (zchar == 0) return ' ';
+    if (zchar == 1) return '\n';
     return A2CHARS.charAt(zchar - ALPHABET_START);
   }
 
-  /**
-   * {@inheritDoc}
-   */
+  /** {@inheritDoc} */
   public final int getA2CharCode(final char zsciiChar) {
     return getCharCodeFor(A2CHARS, zsciiChar);
   }
 
-  /**
-   * {@inheritDoc}
-   */
-  public boolean isAbbreviation(final char zchar) {
-    return false;
-  }
+  /** {@inheritDoc} */
+  public boolean isAbbreviation(final char zchar) { return false; }
 }

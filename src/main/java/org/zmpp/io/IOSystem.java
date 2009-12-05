@@ -41,14 +41,12 @@ public interface IOSystem {
 
   /**
    * Returns the transcript output writer.
-   *
    * @return the transcript writer
    */
   Writer getTranscriptWriter();
 
   /**
    * Returns the reader for input stream 2.
-   *
    * @return the input stream reader
    */
   Reader getInputStreamReader();

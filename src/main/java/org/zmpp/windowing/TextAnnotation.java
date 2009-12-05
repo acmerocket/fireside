@@ -28,13 +28,17 @@
  */
 package org.zmpp.windowing;
 
+import java.io.Serializable;
+
 
 /**
  * An annotation to indicate how a sequence of characters should be printed.
  * @author Wei-ju Wu
  * @version 1.5
  */
-public class TextAnnotation {
+public class TextAnnotation implements Serializable {
+
+  private static final long serialVersionUID = 343600790510649067L;
 
   // Font flags have the same bit layout as in the ScreenModel interface so
   // so the flags are compatible

@@ -88,26 +88,16 @@ public class ZsciiEncoding implements IZsciiEncoding {
    * @return the unicode representation
    */
   public char getUnicodeChar(final char zchar) {
-    if (isAscii(zchar)) {
-      return (char) zchar;
-    }
+    if (isAscii(zchar)) return zchar;
     if (isAccent(zchar)) {
-
       final int index = zchar - ACCENT_START;
       if (index < accentTable.getLength()) {
-
         return (char) accentTable.getAccent(index);
       }
     }
-    if (zchar == NULL) {
-      return '\0';
-    }
-    if (zchar == NEWLINE || zchar == NEWLINE_10) {
-      return '\n';
-    }
-    if (isUnicodeCharacter(zchar)) {
-      return (char) zchar;
-    }
+    if (zchar == NULL) return '\0';
+    if (zchar == NEWLINE || zchar == NEWLINE_10) return '\n';
+    if (isUnicodeCharacter(zchar)) return zchar;
     return '?';
   }
 
@@ -143,18 +133,14 @@ public class ZsciiEncoding implements IZsciiEncoding {
 
   private boolean isInTranslationTable(final char c) {
     for (int i = 0; i < accentTable.getLength(); i++) {
-      if (accentTable.getAccent(i) == c) {
-        return true;
-      }
+      if (accentTable.getAccent(i) == c) return true;
     }
     return false;
   }
 
   private int getIndexInTranslationTable(final char c) {
     for (int i = 0; i < accentTable.getLength(); i++) {
-      if (accentTable.getAccent(i) == c) {
-        return i;
-      }
+      if (accentTable.getAccent(i) == c) return i;
     }
     return -1;
   }

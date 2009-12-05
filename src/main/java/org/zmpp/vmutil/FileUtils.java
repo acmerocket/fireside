@@ -60,9 +60,7 @@ public final class FileUtils {
 
   private static final Logger LOG = Logger.getLogger("org.zmpp");
 
-  /**
-   * This class only contains static methods.
-   */
+  /** This class only contains static methods. */
   private FileUtils() { }
 
   /**

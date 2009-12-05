@@ -45,7 +45,6 @@ public interface MediaCollection<T> {
 
   /**
    * Accesses the resource.
-   *
    * @param number the number of the resource
    * @return the resource
    */
@@ -54,7 +53,6 @@ public interface MediaCollection<T> {
   /**
    * Loads a resource into the internal cache if this collection supports
    * caching.
-   *
    * @param number the number of the resource
    */
   void loadResource(int number);
@@ -62,14 +60,12 @@ public interface MediaCollection<T> {
   /**
    * Throws the resource out of the internal cache if this collection
    * supports caching.
-   *
    * @param number the number of the resource
    */
   void unloadResource(int number);
 
   /**
    * Returns the number of resources.
-   *
    * @return the number of resources
    */
   int getNumResources();

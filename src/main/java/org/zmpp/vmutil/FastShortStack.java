@@ -60,9 +60,7 @@ public final class FastShortStack {
    * Pushes a value on the stack and increases the stack pointer.
    * @param value the value
    */
-  public void push(final char value) {
-    values[stackpointer++] = value;
-  }
+  public void push(final char value) { values[stackpointer++] = value; }
 
   /**
    * Returns the top value of the stack without modifying the stack pointer.

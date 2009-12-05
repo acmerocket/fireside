@@ -39,9 +39,7 @@ package org.zmpp.encoding;
  */
 public interface AlphabetTable {
 
-  /**
-   * Defines the possible alphabets here.
-   */
+  /** Defines the possible alphabets here. */
   enum Alphabet {  A0, A1, A2 }
 
   int ALPHABET_START  = 6;
@@ -52,15 +50,11 @@ public interface AlphabetTable {
   char SHIFT_4 = 0x04; // Shift lock 1
   char SHIFT_5 = 0x05; // Shift lock 2
 
-  /**
-   * This character code, used from A2, denotes that a 10 bit value
-   * follows.
-   */
+  /** This character code, used from A2, denotes that a 10 bit value follows. */
   char A2_ESCAPE = 0x06; // escape character
 
   /**
    * Returns the ZSCII character from alphabet 0 at the specified index.
-   *
    * @param zchar a Z encoded character
    * @return the specified character from alphabet 0
    */
@@ -68,7 +62,6 @@ public interface AlphabetTable {
 
   /**
    * Returns the ZSCII character from alphabet 1 at the specified index.
-   *
    * @param zchar a Z encoded character
    * @return the specified character from alphabet 1
    */
@@ -76,7 +69,6 @@ public interface AlphabetTable {
 
   /**
    * Returns the ZSCII character from alphabet 2 at the specified index.
-   *
    * @param zchar a Z encoded character
    * @return the specified character from alphabet 2
    */
@@ -84,7 +76,6 @@ public interface AlphabetTable {
 
   /**
    * Returns the index of the specified ZSCII character in alphabet 0.
-   *
    * @param zsciiChar a ZSCII chararacter
    * @return the index of the character in this alphabet or -1
    */
@@ -92,7 +83,6 @@ public interface AlphabetTable {
 
   /**
    * Returns the index of the specified ZSCII character in alphabet 2.
-   *
    * @param zsciiChar a ZSCII chararacter
    * @return the index of the character in this alphabet or -1
    */
@@ -100,7 +90,6 @@ public interface AlphabetTable {
 
   /**
    * Returns the index of the specified ZSCII character in alphabet 2.
-   *
    * @param zsciiChar a ZSCII chararacter
    * @return the index of the character in this alphabet or -1
    */
@@ -108,7 +97,6 @@ public interface AlphabetTable {
 
   /**
    * Determines if the specified character marks a abbreviation.
-   *
    * @param zchar the zchar
    * @return true if abbreviation, false, otherwise
    */
@@ -116,7 +104,6 @@ public interface AlphabetTable {
 
   /**
    * Returns true if the specified character is a shift level 1 character.
-   *
    * @param zchar a Z encoded character
    * @return true if shift, false, otherwise
    */
@@ -124,7 +111,6 @@ public interface AlphabetTable {
 
   /**
    * Returns true if the specified character is a shift level 2 character.
-   *
    * @param zchar a Z encoded character
    * @return true if shift, false, otherwise
    */
@@ -132,7 +118,6 @@ public interface AlphabetTable {
 
   /**
    * Returns true if the specified character is a shift lock character.
-   *
    * @param zchar a Z encoded character
    * @return true if shift lock, false otherwise
    */
@@ -141,7 +126,6 @@ public interface AlphabetTable {
   /**
    * Returns true if the specified character is a shift character. Includes
    * shift lock.
-   *
    * @param zchar a Z encoded character
    * @return true if either shift or shift lock
    */

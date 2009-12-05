@@ -52,33 +52,23 @@ public class DefaultAccentTable implements AccentTable {
     '\u00a3', '\u0153', '\u0152', '\u00a1', '\u00bf'
   };
 
-  /**
-   * {@inheritDoc}
-   */
+  /** {@inheritDoc} */
   public int getLength() {
     return STANDARD_TRANSLATION_TABLE.length;
   }
 
-  /**
-   * {@inheritDoc}
-   */
+  /** {@inheritDoc} */
   public char getAccent(final int index) {
     return STANDARD_TRANSLATION_TABLE[index];
   }
 
-  /**
-   * {@inheritDoc}
-   */
+  /** {@inheritDoc} */
   public int getIndexOfLowerCase(final int index) {
-
     final char c = (char) getAccent(index);
     final char lower = Character.toLowerCase(c);
     final int length = getLength();
     for (int i = 0; i < length; i++) {
-
-      if (getAccent(i) == lower) {
-        return i;
-      }
+      if (getAccent(i) == lower) return i;
     }
     return index;
   }

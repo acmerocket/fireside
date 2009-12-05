@@ -123,9 +123,7 @@ public class RingBuffer<T> {
     return (bufferstart + index) % elements.length;
   }
 
-  /**
-   * {@inheritDoc}
-   */
+  /** {@inheritDoc} */
   @Override
   public String toString() {
     final StringBuilder buffer =  new StringBuilder("{ ");

@@ -50,49 +50,36 @@ public class BlorbSounds extends BlorbMediaCollection<SoundEffect> {
 
   /**
    * Constructor.
-   *
    * @param formchunk the form chunk
    */
   public BlorbSounds(SoundEffectFactory factory, FormChunk formchunk) {
     super(null, factory, formchunk);
   }
 
-  /**
-   * {@inheritDoc}
-   */
+  /** {@inheritDoc} */
   @Override
   public void clear() {
     super.clear();
     sounds.clear();
   }
 
-  /**
-   * {@inheritDoc}
-   */
+  /** {@inheritDoc} */
   protected void initDatabase() {
-
     sounds = new HashMap<Integer, SoundEffect>();
   }
 
-  /**
-   * {@inheritDoc}
-   */
+  /** {@inheritDoc} */
   protected boolean isHandledResource(final byte[] usageId) {
-
     return usageId[0] == 'S' && usageId[1] == 'n' && usageId[2] == 'd'
            && usageId[3] == ' ';
   }
 
-  /**
-   * {@inheritDoc}
-   */
+  /** {@inheritDoc} */
   public SoundEffect getResource(final int resourcenumber) {
     return sounds.get(resourcenumber);
   }
 
-  /**
-   * {@inheritDoc}
-   */
+  /** {@inheritDoc} */
   protected boolean putToDatabase(final Chunk aiffChunk, final int resnum) {
     try {
       sounds.put(resnum, soundEffectFactory.createSoundEffect(aiffChunk));

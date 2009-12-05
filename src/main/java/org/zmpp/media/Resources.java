@@ -38,7 +38,6 @@ public interface Resources {
 
   /**
    * The release number of the resource file.
-   *
    * @return the release number
    */
   int getRelease();
@@ -51,28 +50,24 @@ public interface Resources {
 
   /**
    * Returns the sounds of this file.
-   *
    * @return the sounds
    */
   MediaCollection<SoundEffect> getSounds();
 
   /**
    * Returns the number of the cover art picture.
-   *
    * @return the number of the cover art picture
    */
   int getCoverArtNum();
 
   /**
    * Returns the inform meta data if available.
-   *
    * @return the meta data
    */
   InformMetadata getMetadata();
 
   /**
    * Returns true if the resource file has information.
-   *
    * @return true if information, false, otherwise
    */
   boolean hasInfo();

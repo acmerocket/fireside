@@ -38,19 +38,13 @@ import org.zmpp.base.Memory;
  */
 public interface Chunk {
 
-  /**
-   * The length of an IFF chunk id in bytes.
-   */
+  /** The length of an IFF chunk id in bytes. */
   int CHUNK_ID_LENGTH = 4;
 
-  /**
-   * The length of an IFF chunk size word in bytes.
-   */
+  /** The length of an IFF chunk size word in bytes. */
   int CHUNK_SIZEWORD_LENGTH = 4;
 
-  /**
-   * The chunk header size.
-   */
+  /** The chunk header size. */
   int CHUNK_HEADER_LENGTH = CHUNK_ID_LENGTH + CHUNK_SIZEWORD_LENGTH;
 
   /**

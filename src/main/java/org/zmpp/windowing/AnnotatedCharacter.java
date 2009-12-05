@@ -28,13 +28,16 @@
  */
 package org.zmpp.windowing;
 
+import java.io.Serializable;
+
 /**
  * An annotated character for the text grid. This is supposed to save a little
  * memory as opposed to AnnotatedText.
  * @author Wei-ju Wu
  * @version 1.5
  */
-public class AnnotatedCharacter {
+public class AnnotatedCharacter implements Serializable {
+  private static final long serialVersionUID = -7854843402820516485L;
   private char character;
   private TextAnnotation annotation;
 

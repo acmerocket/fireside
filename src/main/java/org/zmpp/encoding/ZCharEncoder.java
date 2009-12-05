@@ -105,7 +105,6 @@ public class ZCharEncoder {
     // Padding
     // This pads the incomplete currently encoded word
     if (!state.currentWordWasProcessed() && !state.atLastWord16()) {
-      //System.out.println("pad incomplete");
       int resultword = state.currentWord;
       for (int i = state.wordPosition; i < SLOTS_PER_WORD16; i++) {
         resultword = writeZcharToWord(resultword, PAD_CHAR, i);

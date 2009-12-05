@@ -54,21 +54,16 @@ public class TranscriptOutputStream implements OutputStream {
 
   /**
    * Constructor.
-   *
    * @param iosys the I/O system
    */
   public TranscriptOutputStream(final IOSystem iosys,
-      final IZsciiEncoding encoding) {
-
-    super();
+                                final IZsciiEncoding encoding) {
     this.iosys = iosys;
     this.encoding = encoding;
     linebuffer = new StringBuilder();
   }
 
-  /**
-   * {@inheritDoc}
-   */
+  /** {@inheritDoc} */
   private void initFile() {
     if (!initialized && transcriptWriter == null) {
       transcriptWriter = iosys.getTranscriptWriter();
@@ -79,9 +74,7 @@ public class TranscriptOutputStream implements OutputStream {
     }
   }
 
-  /**
-   * {@inheritDoc}
-   */
+  /** {@inheritDoc} */
   public void print(final char zsciiChar) {
     initFile();
     if (output != null) {
@@ -96,19 +89,13 @@ public class TranscriptOutputStream implements OutputStream {
     }
   }
 
-  /**
-   * {@inheritDoc}
-   */
+  /** {@inheritDoc} */
   public void select(final boolean flag) { enabled = flag; }
 
-  /**
-   * {@inheritDoc}
-   */
+  /** {@inheritDoc} */
   public boolean isSelected() { return enabled; }
 
-  /**
-   * {@inheritDoc}
-   */
+  /** {@inheritDoc} */
   public void flush() {
     try {
       if (output != null) {
@@ -120,9 +107,7 @@ public class TranscriptOutputStream implements OutputStream {
     }
   }
 
-  /**
-   * {@inheritDoc}
-   */
+  /** {@inheritDoc} */
   public void close() {
     if (output != null) {
       try {

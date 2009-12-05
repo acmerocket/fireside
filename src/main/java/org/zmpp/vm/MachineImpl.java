@@ -79,6 +79,8 @@ import org.zmpp.vmutil.UnpredictableRandomGenerator;
  */
 public class MachineImpl implements Machine, DrawingArea {
 
+  private static final long serialVersionUID = -8497998738628466785L;
+
   private static final Logger LOG = Logger.getLogger("org.zmpp");
 
   /** Number of undo steps. */

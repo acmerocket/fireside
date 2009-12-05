@@ -29,6 +29,7 @@
 package org.zmpp;
 
 import java.io.IOException;
+import java.io.Serializable;
 import java.util.logging.Logger;
 
 import org.zmpp.base.StoryFileHeader;
@@ -53,8 +54,9 @@ import org.zmpp.vm.MachineFactory.MachineInitStruct;
  * @author Wei-ju Wu
  * @version 1.5
  */
-public class ExecutionControl {
+public class ExecutionControl implements Serializable {
 
+  private static final long serialVersionUID = 7354983950243255037L;
   private static final Logger LOG = Logger.getLogger("org.zmpp.control");
   private Machine machine;
   private InstructionDecoder instructionDecoder =
@@ -64,6 +66,7 @@ public class ExecutionControl {
   public static final boolean DEBUG = false;
   public static final boolean DEBUG_INTERRUPT = false;
 
+  public int getStep() { return step; }
   /**
    * Constructor.
    * @param initStruct initialization data

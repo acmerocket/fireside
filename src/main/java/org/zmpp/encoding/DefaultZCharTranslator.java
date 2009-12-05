@@ -52,9 +52,7 @@ public class DefaultZCharTranslator implements Cloneable, ZCharTranslator {
     reset();
   }
 
-  /**
-   * {@inheritDoc}
-   */
+  /** {@inheritDoc} */
   public final void reset() {
     currentAlphabet = Alphabet.A0;
     lockAlphabet = null;
@@ -70,9 +68,7 @@ public class DefaultZCharTranslator implements Cloneable, ZCharTranslator {
     }
   }
 
-  /**
-   * {@inheritDoc}
-   */
+  /** {@inheritDoc} */
   public Object clone() throws CloneNotSupportedException {
     DefaultZCharTranslator clone = null;
     clone = (DefaultZCharTranslator) super.clone();
@@ -80,24 +76,15 @@ public class DefaultZCharTranslator implements Cloneable, ZCharTranslator {
     return clone;
   }
 
-  /**
-   * {@inheritDoc}
-   */
-  public Alphabet getCurrentAlphabet() {
-    return currentAlphabet;
-  }
+  /** {@inheritDoc} */
+  public Alphabet getCurrentAlphabet() { return currentAlphabet; }
 
-  /**
-   * {@inheritDoc}
-   */
+  /** {@inheritDoc} */
   public char translate(final char zchar) {
-    if (shift(zchar)) {
-      return '\0';
-    }
+    if (shift(zchar)) return '\0';
 
     char result;
     if (isInAlphabetRange(zchar)) {
-
       switch (currentAlphabet) {
         case A0:
           result = (char) alphabetTable.getA0Char((byte) zchar);
@@ -114,29 +101,21 @@ public class DefaultZCharTranslator implements Cloneable, ZCharTranslator {
       result = '?';
     }
     // Only reset if the shift lock flag is not set
-    if (!shiftLock) {
-      resetToLastAlphabet();
-    }
+    if (!shiftLock) resetToLastAlphabet();
     return result;
   }
 
-  /**
-   * {@inheritDoc}
-   */
+  /** {@inheritDoc} */
   public boolean willEscapeA2(final char zchar) {
     return currentAlphabet == Alphabet.A2 && zchar == AlphabetTable.A2_ESCAPE;
   }
 
-  /**
-   * {@inheritDoc}
-   */
+  /** {@inheritDoc} */
   public boolean isAbbreviation(final char zchar) {
     return alphabetTable.isAbbreviation(zchar);
   }
 
-  /**
-   * {@inheritDoc}
-   */
+  /** {@inheritDoc} */
   public AlphabetElement getAlphabetElementFor(final char zsciiChar) {
     // Special handling for newline !!
     if (zsciiChar == '\n') {
@@ -165,7 +144,6 @@ public class DefaultZCharTranslator implements Cloneable, ZCharTranslator {
       // number for the moment
       zcharCode = zsciiChar;
     }
-
     return new AlphabetElement(alphabet, (char) zcharCode);
   }
 
@@ -184,7 +162,6 @@ public class DefaultZCharTranslator implements Cloneable, ZCharTranslator {
    * @return true if a shift was performed, false, otherwise
    */
   private boolean shift(final char zchar) {
-
     if (alphabetTable.isShift(zchar)) {
       currentAlphabet = shiftFrom(currentAlphabet, zchar);
 

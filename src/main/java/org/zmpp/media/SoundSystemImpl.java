@@ -44,29 +44,20 @@ import org.zmpp.base.Interruptable;
  */
 public class SoundSystemImpl implements SoundSystem {
 
-  /**
-   * The resource database.
-   */
+  /** The resource database. */
   private MediaCollection<SoundEffect> sounds;
 
-  /**
-   * The executor service.
-   */
+  /** The executor service. */
   private ExecutorService executor;
 
-  /**
-   * The interruptable.
-   */
+  /** The interruptable. */
   private Interruptable interruptable;
 
-  /**
-   * The current sound task.
-   */
+  /** The current sound task. */
   protected PlaySoundTask currentTask;
 
   /**
    * Constructor.
-   *
    * @param sounds the sound resources
    */
   public SoundSystemImpl(final MediaCollection<SoundEffect> sounds) {
@@ -86,16 +77,12 @@ public class SoundSystemImpl implements SoundSystem {
     currentTask.stop();
   }
 
-  /**
-   * {@inheritDoc}
-   */
+  /** {@inheritDoc} */
   public void reset() {
     // no resetting supported
   }
 
-  /**
-   * {@inheritDoc}
-   */
+  /** {@inheritDoc} */
   public void play(final int number, final int effect, final int volume,
       final int repeats, final int routine) {
     SoundEffect sound = null;
@@ -146,7 +133,6 @@ public class SoundSystemImpl implements SoundSystem {
 
   /**
    * Stops the sound with the given number.
-   *
    * @param number the number
    */
   private void stopSound(final int number) {

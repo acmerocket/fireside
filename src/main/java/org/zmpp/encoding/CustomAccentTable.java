@@ -39,14 +39,10 @@ import org.zmpp.base.Memory;
  */
 public class CustomAccentTable implements AccentTable {
 
-  /**
-   * The Memory object.
-   */
+  /** The Memory object. */
   private Memory memory;
 
-  /**
-   * The table adddress.
-   */
+  /** The table adddress. */
   private int tableAddress;
 
   /**
@@ -59,9 +55,7 @@ public class CustomAccentTable implements AccentTable {
     this.tableAddress = address;
   }
 
-  /**
-   * {@inheritDoc}
-   */
+  /** {@inheritDoc} */
   public int getLength() {
     int result = 0;
     if (tableAddress > 0) {
@@ -70,9 +64,7 @@ public class CustomAccentTable implements AccentTable {
     return result;
   }
 
-  /**
-   * {@inheritDoc}
-   */
+  /** {@inheritDoc} */
   public char getAccent(final int index) {
     char result = '?';
     if (tableAddress > 0) {
@@ -81,18 +73,14 @@ public class CustomAccentTable implements AccentTable {
     return result;
   }
 
-  /**
-   * {@inheritDoc}
-   */
+  /** {@inheritDoc} */
   public int getIndexOfLowerCase(final int index) {
     final char c = (char) getAccent(index);
     final char lower = Character.toLowerCase(c);
     final int length = getLength();
 
     for (int i = 0; i < length; i++) {
-      if (getAccent(i) == lower) {
-        return i;
-      }
+      if (getAccent(i) == lower) return i;
     }
     return index;
   }

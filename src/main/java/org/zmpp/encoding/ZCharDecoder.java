@@ -51,7 +51,6 @@ public interface ZCharDecoder {
    * table in memory, this will be used for decoding if needed.
    */
   public interface AbbreviationsTable {
-
     int getWordAddress(int entryNum);
   }
 
@@ -62,7 +61,6 @@ public interface ZCharDecoder {
    * leaving the string in a state, that can not be decoded properly
    * otherwise. If the provided length is 0, the semantics are
    * equal to the method without the length parameter.
-   *
    * @param memory a Memory object
    * @param address the address of the string
    * @param length the maximum length in bytes
@@ -81,14 +79,12 @@ public interface ZCharDecoder {
   /**
    * Decodes the given byte value to the specified buffer using the working
    * alphabet.
-   *
    * @param zchar a z encoded character, needs to be a non-shift character
    */
   char decodeZChar(char zchar);
 
   /**
    * Returns the ZStringTranslator.
-   *
    * @return the translator
    */
   ZCharTranslator getTranslator();

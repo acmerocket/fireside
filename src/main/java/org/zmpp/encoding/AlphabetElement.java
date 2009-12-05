@@ -39,25 +39,18 @@ import org.zmpp.encoding.AlphabetTable.Alphabet;
  */
 public class AlphabetElement {
 
-  /**
-   * The zchar code or the ZSCII code, if alphabet
-   * is null.
-   */
+  /** The zchar code or the ZSCII code, if alphabet is null. */
   private char zcharCode;
 
-  /**
-   * The alphabet or null, if index is a ZSCII code.
-   */
+  /** The alphabet or null, if index is a ZSCII code. */
   private Alphabet alphabet;
 
   /**
    * Constructor.
-   *
    * @param alphabet the alphabet (can be null)
    * @param zcharCode the zcharCode in the alphabet or the ZSCII code
    */
   public AlphabetElement(Alphabet alphabet, char zcharCode) {
-
     this.alphabet = alphabet;
     this.zcharCode = zcharCode;
   }
@@ -65,7 +58,6 @@ public class AlphabetElement {
   /**
    * Returns the alphabet. Can be null, in that case index represents the
    * ZSCII code.
-   *
    * @return the alphabet
    */
   public Alphabet getAlphabet() { return alphabet; }
@@ -74,7 +66,6 @@ public class AlphabetElement {
    * Returns the index to the table. If the alphabet is null, this is the
    * plain ZSCII code and should be turned into a 10-bit code by the
    * encoder.
-   *
    * @return the z char code in the specified alphabet or the ZSCII code
    */
   public char getZCharCode() { return zcharCode; }

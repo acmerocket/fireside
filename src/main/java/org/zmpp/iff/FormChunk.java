@@ -40,21 +40,18 @@ public interface FormChunk extends Chunk {
 
   /**
    * Returns the sub id.
-   *
    * @return the sub id
    */
   String getSubId();
 
   /**
    * Returns an iterator of chunks contained in this form chunk.
-   *
    * @return the enumeration of sub chunks
    */
   Iterator<Chunk> getSubChunks();
 
   /**
    * Returns the chunk with the specified id.
-   *
    * @param id the id
    * @return the chunk with the specified id or null if it does not exist
    */
@@ -63,7 +60,6 @@ public interface FormChunk extends Chunk {
   /**
    * Returns the sub chunk at the specified address or null if it does
    * not exist.
-   *
    * @param address the address of the chunk
    * @return the chunk or null if it does not exist
    */

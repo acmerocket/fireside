@@ -50,7 +50,6 @@ public class MemorySection implements Memory {
    * @param length the length of the section
    */
   public MemorySection(final Memory memory, final int start, final int length) {
-    super();
     this.memory = memory;
     this.start = start;
     this.length = length;

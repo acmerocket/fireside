@@ -30,15 +30,12 @@ package org.zmpp.base;
 
 /**
  * This class is the default implementation for MemoryAccess.
- *
  * @author Wei-ju Wu
  * @version 1.5
  */
 public class DefaultMemory implements Memory {
 
-  /**
-   * The data array containing the story file.
-   */
+  /** The data array containing the story file. */
   private byte[] data;
 
   /**
@@ -46,7 +43,6 @@ public class DefaultMemory implements Memory {
    * @param data the story file data
    */
   public DefaultMemory(final byte[] data) {
-    super();
     this.data = data;
   }
 

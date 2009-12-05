@@ -51,7 +51,6 @@ public class FileInputStream implements InputStream {
 
   /**
    * Constructor.
-   *
    * @param iosys an IOSystem object
    * @param encoding a ZSCII encoding object
    */
@@ -60,9 +59,7 @@ public class FileInputStream implements InputStream {
     this.encoding = encoding;
   }
 
-  /**
-   * {@inheritDoc}
-   */
+  /** {@inheritDoc} */
   public String readLine() {
     checkForReader();
     if (input != null) {
@@ -83,9 +80,7 @@ public class FileInputStream implements InputStream {
     return null;
   }
 
-  /**
-   * {@inheritDoc}
-   */
+  /** {@inheritDoc} */
   public void close() {
     if (input != null) {
       try {

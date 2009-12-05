@@ -38,6 +38,7 @@ public interface SoundStopListener {
 
   /**
    * The sound has stopped.
+   * @param sound the stopped sound
    */
   void soundStopped(SoundEffect sound);
 }

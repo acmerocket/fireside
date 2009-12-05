@@ -64,9 +64,7 @@ public final class DefaultZCharDecoder implements ZCharDecoder {
     this.encoding = encoding;
   }
 
-  /**
-   * {@inheritDoc}
-   */
+  /** {@inheritDoc} */
   public String decode2Zscii(final Memory memory,
       final int address, final int length) {
     final StringBuilder builder = new StringBuilder();
@@ -87,7 +85,6 @@ public final class DefaultZCharDecoder implements ZCharDecoder {
         decoded = newpos > i;
         i = newpos;
       }
-
       if (!decoded) {
         decodeZchar(builder, zchar);
         i++;
@@ -166,9 +163,7 @@ public final class DefaultZCharDecoder implements ZCharDecoder {
     return position;
   }
 
-  /**
-   * {@inheritDoc}
-   */
+  /** {@inheritDoc} */
   public char decodeZChar(final char zchar) {
     if (ZsciiEncoding.isAscii(zchar) || ZsciiEncoding.isAccent(zchar)) {
       return zchar;
@@ -182,12 +177,9 @@ public final class DefaultZCharDecoder implements ZCharDecoder {
    * @param builder a ZsciiStringBuilder object
    * @param zchar the encoded character to decode and add
    */
-  private char decodeZchar(final StringBuilder builder,
-      final char zchar) {
+  private char decodeZchar(final StringBuilder builder, final char zchar) {
     final char c = decodeZChar(zchar);
-    if (c != 0) {
-      builder.append(c);
-    }
+    if (c != 0) builder.append(c);
     return c;
   }
 
@@ -238,9 +230,7 @@ public final class DefaultZCharDecoder implements ZCharDecoder {
     final char[] result = new char[byteList.size() * 3];
     int i = 0;
     for (char[] triplet : byteList) {
-      for (char b : triplet) {
-        result[i++] = (char) b;
-      }
+      for (char b : triplet) result[i++] = (char) b;
     }
     return result;
   }

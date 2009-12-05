@@ -52,7 +52,6 @@ public class WritableFormChunk implements FormChunk {
    * @param subId the sub id
    */
   public WritableFormChunk(final byte[] subId) {
-    super();
     this.subId = subId;
     this.subChunks = new ArrayList<Chunk>();
   }
@@ -62,7 +61,6 @@ public class WritableFormChunk implements FormChunk {
    * @param chunk the sub chunk to add
    */
   public void addChunk(final Chunk chunk) {
-
     subChunks.add(chunk);
   }
 
@@ -79,9 +77,7 @@ public class WritableFormChunk implements FormChunk {
   /** {@inheritDoc} */
   public Chunk getSubChunk(final String id) {
     for (Chunk chunk : subChunks) {
-      if (chunk.getId().equals(id)) {
-        return chunk;
-      }
+      if (chunk.getId().equals(id)) return chunk;
     }
     return null;
   }
@@ -113,9 +109,7 @@ public class WritableFormChunk implements FormChunk {
   public boolean isValid() { return true; }
 
   /** {@inheritDoc} */
-  public Memory getMemory() {
-    return new DefaultMemory(getBytes());
-  }
+  public Memory getMemory() { return new DefaultMemory(getBytes()); }
 
   /**
    * Returns the data of this chunk.

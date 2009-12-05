@@ -40,47 +40,35 @@ public class DefaultAlphabetTable implements AlphabetTable {
   private static final String A1CHARS = "ABCDEFGHIJKLMNOPQRSTUVWXYZ";
   private static final String A2CHARS = " \n0123456789.,!?_#'\"/\\-:()";
 
-  /**
-   * {@inheritDoc}
-   */
+  /** {@inheritDoc} */
   public char getA0Char(final byte zchar) {
     if (zchar == 0) return ' ';
     return A0CHARS.charAt(zchar - ALPHABET_START);
   }
 
-  /**
-   * {@inheritDoc}
-   */
+  /** {@inheritDoc} */
   public char getA1Char(final byte zchar) {
     if (zchar == 0) return ' ';
     return A1CHARS.charAt(zchar - ALPHABET_START);
   }
 
-  /**
-   * {@inheritDoc}
-   */
+  /** {@inheritDoc} */
   public char getA2Char(final byte zchar) {
     if (zchar == 0) return ' ';
     return A2CHARS.charAt(zchar - ALPHABET_START);
   }
 
-  /**
-   * {@inheritDoc}
-   */
+  /** {@inheritDoc} */
   public final int getA0CharCode(final char zsciiChar) {
     return getCharCodeFor(A0CHARS, zsciiChar);
   }
 
-  /**
-   * {@inheritDoc}
-   */
+  /** {@inheritDoc} */
   public final int getA1CharCode(final char zsciiChar) {
     return getCharCodeFor(A1CHARS, zsciiChar);
   }
 
-  /**
-   * {@inheritDoc}
-   */
+  /** {@inheritDoc} */
   public int getA2CharCode(final char zsciiChar) {
     return getCharCodeFor(A2CHARS, zsciiChar);
   }
@@ -94,40 +82,28 @@ public class DefaultAlphabetTable implements AlphabetTable {
    *         or -1 if not found
    */
   protected static int getCharCodeFor(final String chars,
-      final char zsciiChar) {
+                                      final char zsciiChar) {
     int index = chars.indexOf(zsciiChar);
-    if (index >= 0) {
-      index += ALPHABET_START;
-    }
+    if (index >= 0) index += ALPHABET_START;
     return index;
   }
 
 
-  /**
-   * {@inheritDoc}
-   */
+  /** {@inheritDoc} */
   public boolean isShift1(final char zchar) { return zchar == SHIFT_4; }
 
-  /**
-   * {@inheritDoc}
-   */
+  /** {@inheritDoc} */
   public boolean isShift2(final char zchar) { return zchar == SHIFT_5; }
 
-  /**
-   * {@inheritDoc}
-   */
+  /** {@inheritDoc} */
   public boolean isShift(final char zchar) {
     return isShift1(zchar) || isShift2(zchar);
   }
 
-  /**
-   * {@inheritDoc}
-   */
+  /** {@inheritDoc} */
   public boolean isShiftLock(final char zchar) { return false; }
 
-  /**
-   * {@inheritDoc}
-   */
+  /** {@inheritDoc} */
   public boolean isAbbreviation(final char zchar) {
     return 1 <= zchar && zchar <= 3;
   }

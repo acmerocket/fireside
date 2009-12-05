@@ -43,24 +43,45 @@ import org.zmpp.media.ZmppImage;
 public class BlorbImage implements ZmppImage {
 
   /**
-   * This class represents a ratio.
+   * This class represents a rational number.
    */
-  protected static class Ratio {
+  public static class Ratio {
 
     private int numerator;
     private int denominator;
 
+    /**
+     * Constructor.
+     * @param numerator the numerator
+     * @param denominator the denominator
+     */
     public Ratio(int numerator, int denominator) {
       this.numerator = numerator;
       this.denominator = denominator;
     }
-
+    /**
+     * Returns the numerator.
+     * @return numerator
+     */
     public int getNumerator() { return numerator; }
+    /**
+     * Returns the denominator.
+     * @return the denominator
+     */
     public int getDenominator() { return denominator; }
+    /**
+     * Returns the calculated value as a float value.
+     * @return calculated value
+     */
     public float getValue() { return (float) numerator / denominator; }
+    /**
+     * Determines whether this value specifies valid value.
+     * @return true if defined, false if undefined
+     */
     public boolean isDefined() {
       return !(numerator == 0 && denominator == 0);
     }
+    /** {@inheritDoc} */
     @Override
     public String toString() { return numerator + "/" + denominator; }
   }
@@ -74,20 +95,44 @@ public class BlorbImage implements ZmppImage {
     private Resolution minimum;
     private Resolution maximum;
 
+    /**
+     * Constructor.
+     * @param std standard resolution
+     * @param min minimum resolution
+     * @param max maximum resolution
+     */
     public ResolutionInfo(Resolution std, Resolution min, Resolution max) {
       standard = std;
       minimum = min;
       maximum = max;
     }
-
+    /**
+     * Returns the standard resolution.
+     * @return standard resolution
+     */
     public Resolution getStandard() { return standard; }
+    /**
+     * Returns the minimum resolution.
+     * @return minimum resolution
+     */
     public Resolution getMinimum() { return minimum; }
+    /**
+     * Returns the maximum resolution.
+     * @return maximum resolution
+     */
     public Resolution getMaximum() { return maximum; }
+    /**
+     * Calculates the ERF ("Elbow Room Factor").
+     * @param screenwidth width of the display
+     * @param screenheight height of the display
+     * @return elbow room factor
+     */
     public float computeERF(int screenwidth, int screenheight) {
       return Math.min(screenwidth / standard.getWidth(),
           screenheight / standard.getHeight());
     }
 
+    /** {@inheritDoc} */
     @Override
     public String toString() {
       return "Std: " + standard.toString() + " Min: " + minimum.toString() +
@@ -95,6 +140,9 @@ public class BlorbImage implements ZmppImage {
     }
   }
 
+  /**
+   * Representation of scaling information.
+   */
   protected static class ScaleInfo {
 
     private ResolutionInfo resolutionInfo;
@@ -102,8 +150,14 @@ public class BlorbImage implements ZmppImage {
     private Ratio minimum;
     private Ratio maximum;
 
+    /**
+     * Constructor.
+     * @param resinfo resolution information
+     * @param std standard ratio
+     * @param min minimum ratio
+     * @param max maximum ratio
+     */
     public ScaleInfo(ResolutionInfo resinfo, Ratio std, Ratio min, Ratio max) {
-
       this.resolutionInfo = resinfo;
       this.standard = std;
       this.minimum = min;
@@ -113,22 +167,26 @@ public class BlorbImage implements ZmppImage {
     public Ratio getStdRatio() { return standard; }
     public Ratio getMinRatio() { return minimum; }
     public Ratio getMaxRatio() { return maximum; }
+    /**
+     * Computes the scaling ratio depending on the specified screen dimensions.
+     * @param screenwidth width
+     * @param screenheight height
+     * @return scaling ratio
+     */
     public float computeScaleRatio(int screenwidth, int screenheight) {
-
       float value = resolutionInfo.computeERF(screenwidth, screenheight)
         * standard.getValue();
 
       if (minimum.isDefined() && value < minimum.getValue()) {
-
         value = minimum.getValue();
       }
       if (maximum.isDefined() && value > maximum.getValue()) {
-
         value = maximum.getValue();
       }
       return value;
     }
 
+    /** {@inheritDoc} */
     @Override
     public String toString() {
       return String.format("std: %s, min: %s, max: %s\n",
@@ -140,15 +198,30 @@ public class BlorbImage implements ZmppImage {
   private Resolution resolution;
   private ScaleInfo scaleinfo;
 
-  public BlorbImage(NativeImage image) {
-    this.image = image;
-  }
+  /**
+   * Constructor.
+   * @param image NativeImage to wrap
+   */
+  public BlorbImage(NativeImage image) { this.image = image; }
 
+  /**
+   * Constructor.
+   * @param width width
+   * @param height height
+   */
   public BlorbImage(int width, int height) {
     resolution = new Resolution(width, height);
   }
 
+  /**
+   * Returns the wrapped NativeImage.
+   * @return NativeImage
+   */
   public NativeImage getImage() { return image; }
+  /**
+   * Returns the scaling information.
+   * @return scaling information
+   */
   public ScaleInfo getScaleInfo() { return scaleinfo; }
 
   /**
@@ -173,12 +246,15 @@ public class BlorbImage implements ZmppImage {
       if (image != null) {
         return new Resolution(image.getWidth(), image.getHeight());
       } else {
-
         return new Resolution(resolution.getWidth(), resolution.getHeight());
       }
     }
   }
 
+  /**
+   * Sets the ScaleInfo.
+   * @param aScaleinfo ScaleInfo object
+   */
   protected void setScaleInfo(ScaleInfo aScaleinfo) {
     this.scaleinfo = aScaleinfo;
   }

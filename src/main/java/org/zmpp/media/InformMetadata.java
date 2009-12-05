@@ -39,7 +39,6 @@ public class InformMetadata {
   private StoryMetadata storyinfo;
 
   public InformMetadata(StoryMetadata storyinfo) {
-
     this.storyinfo = storyinfo;
   }
 

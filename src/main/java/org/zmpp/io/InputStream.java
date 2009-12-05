@@ -44,8 +44,6 @@ public interface InputStream {
    */
   String readLine();
 
-  /**
-   * Release underlying resources.
-   */
+  /** Release underlying resources. */
   void close();
 }

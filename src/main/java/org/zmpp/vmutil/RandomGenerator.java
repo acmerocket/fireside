@@ -37,9 +37,7 @@ package org.zmpp.vmutil;
  */
 public interface RandomGenerator {
 
-  /**
-   * The maximum generated value.
-   */
+  /** The maximum generated value. */
   int MAX_VALUE = 32767;
 
   /**

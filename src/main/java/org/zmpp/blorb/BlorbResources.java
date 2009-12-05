@@ -44,34 +44,23 @@ import org.zmpp.media.ZmppImage;
  */
 public class BlorbResources implements Resources {
 
-  /**
-   * The file's images.
-   */
+  /** The file's images. */
   private MediaCollection<BlorbImage> images;
 
-  /**
-   * The file's sounds.
-   */
+  /** The file's sounds. */
   private MediaCollection<SoundEffect> sounds;
 
-  /**
-   * The cover art.
-   */
+  /** The cover art. */
   private BlorbCoverArt coverart;
 
-  /**
-   * The meta data.
-   */
+  /** The meta data. */
   private BlorbMetadataHandler metadata;
 
-  /**
-   * The release number.
-   */
+  /** The release number. */
   private int release;
 
   /**
    * Constructor.
-   *
    * @param imageFactory a NativeImageFactory
    * @param formchunk a form chunk in Blorb format
    */

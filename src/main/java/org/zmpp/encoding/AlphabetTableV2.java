@@ -39,30 +39,20 @@ package org.zmpp.encoding;
  */
 public class AlphabetTableV2 extends DefaultAlphabetTable {
 
-  /**
-   * {@inheritDoc}
-   */
-  public boolean isAbbreviation(final char zchar) {
-    return zchar == 1;
-  }
+  /** {@inheritDoc} */
+  public boolean isAbbreviation(final char zchar) { return zchar == 1; }
 
-  /**
-   * {@inheritDoc}
-   */
+  /** {@inheritDoc} */
   public boolean isShift1(final char zchar) {
     return zchar == SHIFT_2 || zchar == SHIFT_4;
   }
 
-  /**
-   * {@inheritDoc}
-   */
+  /** {@inheritDoc} */
   public boolean isShift2(final char zchar) {
     return zchar == SHIFT_3 || zchar == SHIFT_5;
   }
 
-  /**
-   * {@inheritDoc}
-   */
+  /** {@inheritDoc} */
   public boolean isShiftLock(final char zchar) {
     return zchar == SHIFT_4 || zchar == SHIFT_5;
   }

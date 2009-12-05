@@ -36,6 +36,14 @@ package org.zmpp.blorb;
  * @version 1.5
  */
 public interface NativeImage {
+  /**
+   * Returns the width.
+   * @return width
+   */
   int getWidth();
+  /**
+   * Returns the height.
+   * @return height
+   */
   int getHeight();
 }

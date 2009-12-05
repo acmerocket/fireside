@@ -41,28 +41,20 @@ import java.util.Queue;
  */
 public class LineBufferInputStream implements InputStream {
 
-  /**
-   * The queue holding input lines.
-   */
+  /** The queue holding input lines. */
   private Queue<String> inputLines = new LinkedList<String>();
 
   /**
    * Adds an input line to the end of the buffer.
    * @param line the new input line
    */
-  public void addInputLine(String line) {
-    inputLines.add(line);
-  }
+  public void addInputLine(String line) { inputLines.add(line); }
 
-  /**
-   * {@inheritDoc}
-   */
+  /** {@inheritDoc} */
   public String readLine() {
     return inputLines.remove();
   }
 
-  /**
-   * {@inheritDoc}
-   */
+  /** {@inheritDoc} */
   public void close() { }
 }

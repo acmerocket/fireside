@@ -38,7 +38,6 @@ public interface PictureManager {
   /**
    * Returns the size of the specified picture or null if the picture does not
    * exist.
-   *
    * @param picturenum the number of the picture
    * @return the size
    */
@@ -47,7 +46,6 @@ public interface PictureManager {
   /**
    * Returns the data of the specified picture. If it is not available, this
    * method returns null.
-   *
    * @param picturenum the picture number
    * @return the data
    */
@@ -55,27 +53,22 @@ public interface PictureManager {
 
   /**
    * Returns the number of pictures.
-   *
    * @return the number of pictures
    */
   int getNumPictures();
 
   /**
    * Preloads the specified picture numbers.
-   *
    * @param picnumbers the picture numbers to preload
    */
   void preload(int[] picnumbers);
 
   /**
    * Returns the release number of the picture file.
-   *
    * @return the release number
    */
   int getRelease();
 
-  /**
-   * Resets the picture manager.
-   */
+  /** Resets the picture manager. */
   void reset();
 }

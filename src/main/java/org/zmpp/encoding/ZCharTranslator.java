@@ -75,7 +75,6 @@ public interface ZCharTranslator extends Cloneable {
 
   /**
    * Clones this object. Needed, since this object has a modifiable state.
-   *
    * @return a copy of this object
    * @throws CloneNotSupportedException should not happen
    */
@@ -83,14 +82,12 @@ public interface ZCharTranslator extends Cloneable {
 
   /**
    * Returns the current alphabet this object works in.
-   *
    * @return the current alphabet
    */
   Alphabet getCurrentAlphabet();
 
   /**
    * Translates the given zchar to a Unicode character.
-   *
    * @param zchar a z encoded character
    * @return a Unicode character
    */
@@ -99,7 +96,6 @@ public interface ZCharTranslator extends Cloneable {
   /**
    * If this object is in alphabet A2 now, this function determines if the
    * given character is an A2 escape.
-   *
    * @param zchar the character
    * @return true if A2 escape, false otherwise
    */
@@ -108,7 +104,6 @@ public interface ZCharTranslator extends Cloneable {
   /**
    * Return true if this the specified character is an abbreviation in the
    * current alphabet table.
-   *
    * @param zchar a Z encoded character
    * @return true if abbreviation, false otherwise
    */
@@ -118,7 +113,6 @@ public interface ZCharTranslator extends Cloneable {
    * Provides a reverse translation. Given a ZSCII character, determine
    * the alphabet and the index to this alphabet. If alphabet in the
    * result is null, this is a plain ZSCII character.
-   *
    * @param zsciiChar a ZSCII character
    * @return the reverse translation
    */

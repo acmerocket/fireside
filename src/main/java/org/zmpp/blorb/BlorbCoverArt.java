@@ -44,7 +44,6 @@ public class BlorbCoverArt {
 
   /**
    * Constructor.
-   *
    * @param formchunk the form chunk
    */
   public BlorbCoverArt(FormChunk formchunk) {
@@ -65,7 +64,6 @@ public class BlorbCoverArt {
 
   /**
    * Returns the number of the cover art.
-   *
    * @return the cover art
    */
   public int getCoverArtNum() { return coverartnum; }

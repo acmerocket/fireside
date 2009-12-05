@@ -41,58 +41,40 @@ import org.zmpp.base.Memory;
  */
 public class MemoryInputStream extends InputStream {
 
-  /**
-   * The memory object this stream is based on.
-   */
+  /** The memory object this stream is based on. */
   private Memory memory;
 
-  /**
-   * The position in the stream.
-   */
+  /** The position in the stream. */
   private int position;
 
-  /**
-   * Supports a mark.
-   */
+  /** Supports a mark. */
   private int mark;
 
-  /**
-   * The size of the memory.
-   */
+  /** The size of the memory. */
   private int size;
 
   /**
    * Constructor.
-   *
    * @param memory a memory object
    * @param offset the byte offset
    * @param size the memory size
    */
-  public MemoryInputStream(final Memory memory,
-      final int offset, final int size) {
-    super();
+  public MemoryInputStream(final Memory memory, final int offset,
+                           final int size) {
     this.memory = memory;
     position += offset;
     this.size = size;
   }
 
-  /**
-   * {@inheritDoc}
-   */
+  /** {@inheritDoc} */
   public int read() throws IOException {
-    if (position >= size) {
-      return -1;
-    }
+    if (position >= size) return -1;
     return memory.readUnsigned8(position++);
   }
 
-  /**
-   * {@inheritDoc}
-   */
+  /** {@inheritDoc} */
   public void mark(final int readLimit) { mark = position; }
 
-  /**
-   * {@inheritDoc}
-   */
+  /** {@inheritDoc} */
   public void reset() { position = mark; }
 }

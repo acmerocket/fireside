@@ -41,17 +41,11 @@ public class UnpredictableRandomGenerator implements RandomGenerator {
 
   private Random rand;
 
-  /**
-   * Constructor.
-   */
+  /** Constructor. */
   public UnpredictableRandomGenerator() {
     rand = new Random(System.currentTimeMillis());
   }
 
-  /**
-   * {@inheritDoc}
-   */
-  public int next() {
-    return rand.nextInt(MAX_VALUE - 1) + 1;
-  }
+  /** {@inheritDoc} */
+  public int next() { return rand.nextInt(MAX_VALUE - 1) + 1; }
 }

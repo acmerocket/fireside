@@ -39,27 +39,22 @@ public interface SoundEffect {
 
   /**
    * Plays a sound the specified number of times.
-   *
    * @param number the number of times to play
    * @param volume the volume at which the sound should be played
    */
   void play(int number, int volume);
 
-  /**
-   * Stops a sound.
-   */
+  /** Stops a sound. */
   void stop();
 
   /**
    * Adds a listener to listen for the sound stop event.
-   *
    * @param l the listener
    */
   void addSoundStopListener(SoundStopListener l);
 
   /**
    * Removes a SoundStopListener.
-   *
    * @param l the listener
    */
   void removeSoundStopListener(SoundStopListener l);

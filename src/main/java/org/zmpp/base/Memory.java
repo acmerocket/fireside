@@ -44,7 +44,6 @@ public interface Memory {
   // *****************************
   /**
    * Reads the unsigned 16 bit word at the specified address.
-   *
    * @param address the address
    * @return the 16 bit unsigned value as int
    */
@@ -52,7 +51,6 @@ public interface Memory {
 
   /**
    * Returns the unsigned 8 bit value at the specified address.
-   *
    * @param address the address
    * @return the 8 bit unsigned value
    */
@@ -65,7 +63,6 @@ public interface Memory {
   // *****************************
   /**
    * Writes an unsigned 16 bit value to the specified address.
-   *
    * @param address the address to write to
    * @param value the value to write
    */
@@ -73,7 +70,6 @@ public interface Memory {
 
   /**
    * Writes an unsigned byte value to the specified address.
-   *
    * @param address the address to write to
    * @param value the value to write
    */

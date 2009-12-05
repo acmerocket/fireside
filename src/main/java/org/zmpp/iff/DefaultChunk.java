@@ -59,7 +59,6 @@ public class DefaultChunk implements Chunk {
    * @param address the address within the form chunk
    */
   public DefaultChunk(final Memory memory, final int address) {
-    super();
     this.memory = memory;
     this.address = address;
     id = new byte[CHUNK_ID_LENGTH];

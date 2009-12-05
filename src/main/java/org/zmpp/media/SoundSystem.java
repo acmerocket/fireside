@@ -37,49 +37,31 @@ package org.zmpp.media;
  */
 public interface SoundSystem {
 
-  /**
-   * High pitched bleep.
-   */
+  /** High pitched bleep. */
   int BLEEP_HIGH  = 1;
 
-  /**
-   * Low pitched bleep.
-   */
+  /** Low pitched bleep. */
   int BLEEP_LOW   = 2;
 
-  /**
-   * Prepares a sound.
-   */
+  /** Prepares a sound. */
   int EFFECT_PREPARE  = 1;
 
-  /**
-   * Starts a sound.
-   */
+  /** Starts a sound. */
   int EFFECT_START    = 2;
 
-  /**
-   * Stops a sound.
-   */
+  /** Stops a sound. */
   int EFFECT_STOP     = 3;
 
-  /**
-   * Finishes a sound.
-   */
+  /** Finishes a sound. */
   int EFFECT_FINISH   = 4;
 
-  /**
-   * The maximum value for volume.
-   */
+  /** The maximum value for volume. */
   int VOLUME_MAX = 0;
 
-  /**
-   * The minimum value for volume.
-   */
+  /** The minimum value for volume. */
   int VOLUME_MIN = 255;
 
-  /**
-   * Sets the volume to default.
-   */
+  /** Sets the volume to default. */
   int VOLUME_DEFAULT = -1;
 
   /**
@@ -93,8 +75,6 @@ public interface SoundSystem {
    */
   void play(int number, int effect, int volume, int repeats, int routine);
 
-  /**
-   * Resets the sound system.
-   */
+  /** Resets the sound system. */
   void reset();
 }

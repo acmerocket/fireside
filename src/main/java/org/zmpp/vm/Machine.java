@@ -28,15 +28,17 @@
  */
 package org.zmpp.vm;
 
-import org.zmpp.base.StoryFileHeader;
-import org.zmpp.windowing.StatusLine;
-import org.zmpp.windowing.ScreenModel6;
-import org.zmpp.windowing.ScreenModel;
+import java.io.Serializable;
+
 import org.zmpp.base.Memory;
+import org.zmpp.base.StoryFileHeader;
 import org.zmpp.encoding.IZsciiEncoding;
 import org.zmpp.media.PictureManager;
 import org.zmpp.media.Resources;
 import org.zmpp.media.SoundSystem;
+import org.zmpp.windowing.ScreenModel;
+import org.zmpp.windowing.ScreenModel6;
+import org.zmpp.windowing.StatusLine;
 
 /**
  * This interface acts as a central access point to the Z-Machine's components.
@@ -47,7 +49,7 @@ import org.zmpp.media.SoundSystem;
  * @version 1.5
  */
 public interface Machine
-extends ObjectTree, Input, Output, Cpu, Memory, IZsciiEncoding {
+extends ObjectTree, Input, Output, Cpu, Memory, IZsciiEncoding, Serializable {
 
   /**
    * Initialization function.

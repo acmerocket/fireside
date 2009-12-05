@@ -50,10 +50,6 @@ public class PredictableRandomGenerator implements RandomGenerator {
     rand = new Random(seed);
   }
 
-  /**
-   * {@inheritDoc}
-   */
-  public int next() {
-    return rand.nextInt(MAX_VALUE - 1) + 1;
-  }
+  /** {@inheritDoc} */
+  public int next() { return rand.nextInt(MAX_VALUE - 1) + 1; }
 }

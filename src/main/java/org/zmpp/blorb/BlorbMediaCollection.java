@@ -142,9 +142,7 @@ public abstract class BlorbMediaCollection<T> implements MediaCollection<T> {
     return formchunk;
   }
 
-  /**
-   * Initialize the database.
-   */
+  /** Initialize the database. */
   protected abstract void initDatabase();
 
   /**

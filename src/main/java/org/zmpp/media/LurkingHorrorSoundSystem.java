@@ -40,19 +40,14 @@ public class LurkingHorrorSoundSystem extends SoundSystemImpl {
 
   /**
    * Constructor.
-   *
    * @param sounds the sound resources
    */
   public LurkingHorrorSoundSystem(MediaCollection<SoundEffect> sounds) {
-
     super(sounds);
   }
 
-  /**
-   * {@inheritDoc}
-   */
+  /** {@inheritDoc} */
   protected void handlePreviousNotFinished() {
-
     currentTask.waitUntilDone();
   }
 }

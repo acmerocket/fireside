@@ -39,14 +39,12 @@ public interface AccentTable {
 
   /**
    * Returns the length of the table.
-   *
    * @return the length of the table
    */
   int getLength();
 
   /**
    * Returns the accent at the specified index.
-   *
    * @param index the index
    * @return the accent
    */
@@ -55,7 +53,6 @@ public interface AccentTable {
   /**
    * Converts the accent at the specified index to lower case and returns
    * the index of that character.
-   *
    * @param index the character
    * @return the index of the corresponding lower case
    */

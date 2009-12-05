@@ -34,6 +34,7 @@ package org.zmpp.base;
  * @version 1.5
  */
 public final class MemoryUtil {
+
   /** Private constructor. */
   private MemoryUtil() { }
   /**

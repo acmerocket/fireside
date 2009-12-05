@@ -57,7 +57,6 @@ public class PlaySoundTask implements Runnable, SoundStopListener {
    */
   public PlaySoundTask(int resourceNum, SoundEffect sound, int volume,
                        int repeats) {
-
     this(resourceNum, sound, volume, repeats, null, 0);
   }
 
@@ -73,7 +72,6 @@ public class PlaySoundTask implements Runnable, SoundStopListener {
    */
   public PlaySoundTask(int resourceNum, SoundEffect sound, int volume,
       int repeats, Interruptable interruptable, int routine) {
-
     this.resourceNum = resourceNum;
     this.sound = sound;
     this.repeats = repeats;
@@ -84,17 +82,11 @@ public class PlaySoundTask implements Runnable, SoundStopListener {
 
   /**
    * Returns the resource number.
-   *
    * @return the resource number
    */
-  public int getResourceNumber() {
+  public int getResourceNumber() { return resourceNum; }
 
-    return resourceNum;
-  }
-
-  /**
-   * {@inheritDoc}
-   */
+  /** {@inheritDoc} */
   public void run() {
     sound.addSoundStopListener(this);
     sound.play(repeats, volume);
@@ -114,14 +106,12 @@ public class PlaySoundTask implements Runnable, SoundStopListener {
 
   /**
    * Returns the status of the played flag.
-   *
    * @return the played flag
    */
   public synchronized boolean wasPlayed() { return played; }
 
   /**
    * Sets the status of the played flag and notifies waiting threads.
-   *
    * @param flag the played flag
    */
   private synchronized void setPlayed(final boolean flag) {
@@ -131,16 +121,12 @@ public class PlaySoundTask implements Runnable, SoundStopListener {
 
   /**
    * Returns the status of the stopped flag.
-   *
    * @return the stopped flag
    */
-  private synchronized boolean wasStopped() {
-    return stopped;
-  }
+  private synchronized boolean wasStopped() { return stopped; }
 
   /**
    * Sets the stopped flag and notifies waiting threads.
-   *
    * @param flag
    */
   private synchronized void setStopped(final boolean flag) {
@@ -148,9 +134,7 @@ public class PlaySoundTask implements Runnable, SoundStopListener {
     notifyAll();
   }
 
-  /**
-   * Stops the sound.
-   */
+  /** Stops the sound. */
   public synchronized void stop() {
     if (!wasPlayed()) {
       setStopped(true);
@@ -158,9 +142,7 @@ public class PlaySoundTask implements Runnable, SoundStopListener {
     }
   }
 
-  /**
-   * This method waits until the sound was completely played or stopped.
-   */
+  /** This method waits until the sound was completely played or stopped. */
   public synchronized void waitUntilDone() {
     while (!wasPlayed()) {
       try { wait(); } catch (Exception ex) {
@@ -169,10 +151,6 @@ public class PlaySoundTask implements Runnable, SoundStopListener {
     }
   }
 
-  /**
-   * {@inheritDoc}
-   */
-  public void soundStopped(final SoundEffect aSound) {
-    setPlayed(true);
-  }
+  /** {@inheritDoc} */
+  public void soundStopped(final SoundEffect aSound) { setPlayed(true); }
 }
