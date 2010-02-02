@@ -1,6 +1,6 @@
 /*
  * Created on 2008/04/26
- * Copyright (c) 2005-2009, Wei-ju Wu.
+ * Copyright (c) 2005-2010, Wei-ju Wu.
  * All rights reserved.
  *
  * Redistribution and use in source and binary forms, with or without
@@ -28,13 +28,16 @@
  */
 package org.zmpp.windowing;
 
+import java.io.Serializable;
+
 /**
  * An annotated text.
  * @author Wei-ju Wu
  * @version 1.5
  */
-public class AnnotatedText {
+public class AnnotatedText implements Serializable {
 
+  private static final long serialVersionUID = -1118683514461169397L;
   private TextAnnotation annotation;
   private String text;
 
