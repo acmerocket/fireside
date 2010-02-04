@@ -43,6 +43,9 @@ public class TopWindow implements TextCursor {
     new TextAnnotation(ScreenModel.FONT_FIXED, ScreenModel.TEXTSTYLE_ROMAN,
                        ScreenModel.COLOR_BLACK, ScreenModel.COLOR_WHITE);
 
+  /**
+   * Default constructor.
+   */
   public TopWindow() {
     resetCursor();
   }
@@ -149,39 +152,41 @@ public class TopWindow implements TextCursor {
     }
   }
 
+  /**
+   * Notifies the ScreenModelListeners.
+   * @param l listener
+   * @param c character
+   */
   public void notifyChange(ScreenModelListener l, char c) {
     l.topWindowUpdated(cursorx, cursory, annotateCharacter(c));
   }
 
+  /**
+   * Determines whether the specified position is outside the upper window's
+   * bounds.
+   * @param line line number
+   * @param column column number
+   * @return true if out of bounds, false otherwise
+   */
   private boolean outOfUpperBounds(int line, int column) {
     if (line < 1 || line > numRows) return true;
     if (column < 1 || column > numCharsPerRow) return true;
     return false;
   }
 
-  /**
-   * {@inheritDoc}
-   */
+  /** {@inheritDoc} */
   public int getLine() { return cursory; }
 
-  /**
-   * {@inheritDoc}
-   */
+  /** {@inheritDoc} */
   public int getColumn() { return cursorx; }
 
-  /**
-   * {@inheritDoc}
-   */
+  /** {@inheritDoc} */
   public void setLine(int line) { cursory = line; }
 
-  /**
-   * {@inheritDoc}
-   */
+  /** {@inheritDoc} */
   public void setColumn(int column) { cursorx = column; }
 
-  /**
-   * {@inheritDoc}
-   */
+  /** {@inheritDoc} */
   public void setPosition(int line, int column) {
     cursorx = column;
     cursory = line;

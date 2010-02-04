@@ -66,6 +66,7 @@ public final class FileUtils {
   /**
    * Creates a resources object from a Blorb file.
    * @param imageFactory the NativeImageFactory
+   * @param soundEffectFactory the SoundEffectFactory
    * @param blorbfile the file
    * @return the resources object or null (on failure)
    */

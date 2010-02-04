@@ -41,6 +41,7 @@ package org.zmpp.media;
  */
 public interface MediaCollection<T> {
 
+  /** Clears the collection. */
   void clear();
 
   /**

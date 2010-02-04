@@ -36,6 +36,7 @@ package org.zmpp.vmutil;
  *
  * @author Wei-ju Wu
  * @version 1.5
+ * @param <T> type of contained objects
  */
 public class RingBuffer<T> {
 

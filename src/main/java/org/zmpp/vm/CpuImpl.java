@@ -101,6 +101,10 @@ public class CpuImpl implements Cpu {
   /** {@inheritDoc} */
   public void setPC(final int address) { programCounter = address; }
 
+  /**
+   * Increments the program counter.
+   * @param offset the increment value.
+   */
   public void incrementPC(final int offset) { programCounter += offset; }
 
   /** {@inheritDoc} */
@@ -156,9 +160,7 @@ public class CpuImpl implements Cpu {
     }
   }
 
-  /**
-   * {@inheritDoc}
-   */
+  /** {@inheritDoc} */
   public void doBranch(short branchOffset, int instructionLength) {
     if (branchOffset >= 2 || branchOffset < 0) {
       setPC(computeBranchTarget(branchOffset, instructionLength));
@@ -169,6 +171,12 @@ public class CpuImpl implements Cpu {
     }
   }
 
+  /**
+   * Computes the branch target.
+   * @param offset offset value
+   * @param instructionLength instruction length
+   * @return branch target value
+   */
   private int computeBranchTarget(final short offset,
       final int instructionLength) {
     return getPC() + instructionLength + offset - 2;
@@ -213,7 +221,11 @@ public class CpuImpl implements Cpu {
       popUserStack(userstackAddress);
   }
 
-  /** {@inheritDoc} */
+  /**
+   * Pops the user stack.
+   * @param userstackAddress address of user stack
+   * @return popped value
+   */
   private char popUserStack(char userstackAddress) {
     int numFreeSlots = machine.readUnsigned16(userstackAddress);
     numFreeSlots++;
@@ -231,6 +243,12 @@ public class CpuImpl implements Cpu {
     }
   }
 
+  /**
+   * Push user stack.
+   * @param userstackAddress address of user stack
+   * @param value value to push
+   * @return true if successful, false on overflow
+   */
   private boolean pushUserStack(char userstackAddress, char value) {
     int numFreeSlots = machine.readUnsigned16(userstackAddress);
     if (numFreeSlots > 0) {

@@ -41,13 +41,23 @@ public interface ScreenModelListener {
   void screenModelUpdated(ScreenModel screenModel);
 
   /**
-   *
-   * @param cursorx
-   * @param cursory
-   * @param c
+   * Called when the top window was changed.
+   * @param cursorx cursor x-position
+   * @param cursory cursor y-position
+   * @param c character
    */
   void topWindowUpdated(int cursorx, int cursory, AnnotatedCharacter c);
+
+  /**
+   * Called when the screen split value changed.
+   * @param linesUpperWindow lines in upper window
+   */
   void screenSplit(int linesUpperWindow);
+
+  /**
+   * Called when a window is erased.
+   * @param window the erased window
+   */
   void windowErased(int window);
   /**
    * Called before the cursor positions is updated.

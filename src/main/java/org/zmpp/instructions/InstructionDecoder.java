@@ -69,7 +69,7 @@ public class InstructionDecoder {
 
   /**
    * Initialize decoder with a valid machine object.
-   * @param machine the Machine
+   * @param aMachine a Machine object
    */
   public void initialize(Machine aMachine) {
     this.machine = aMachine;
@@ -106,7 +106,7 @@ public class InstructionDecoder {
 
   /**
    * Decodes an instruction in short form.
-   * @param instrAddr the instruction address
+   * @param instrAddress the instruction address
    * @param byte1 the first instruction byte
    * @return the decoded instruction
    */
@@ -214,8 +214,7 @@ public class InstructionDecoder {
   /**
    * Decodes an instruction in extended form. Is really just a variation of
    * variable form and delegates to decodeVarInstruction.
-   * @param instrAddress
-   * @param byte1 the first opcode byte
+   * @param instrAddress instruction address
    * @return the decoded instruction
    */
   private Instruction decodeExtended(int instrAddress) {
@@ -249,6 +248,7 @@ public class InstructionDecoder {
    * The generic part of instruction decoding, extracting store variable
    * and branch offset is always the same for all instruction forms.
    * @param opCount the OperandCount
+   * @param instrAddress the instruction address
    * @param opcodeNum the opcode number
    * @param addrAfterOperands the address after the operands
    * @param numOperandBytes the number of operand bytes

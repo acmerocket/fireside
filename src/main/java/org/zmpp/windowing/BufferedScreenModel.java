@@ -64,13 +64,26 @@ public class BufferedScreenModel implements ScreenModel, StatusLine,
   private StoryFileHeader fileheader;
 
   public interface StatusLineListener {
+    /**
+     * Update the status line.
+     * @param objectDescription object description
+     * @param status status text
+     */
     void statusLineUpdated(String objectDescription, String status);
   }
 
+  /**
+   * Adds a ScreenModelListener.
+   * @param l the listener to add
+   */
   public void addScreenModelListener(ScreenModelListener l) {
     screenModelListeners.add(l);
   }
 
+  /**
+   * Adds a StatusLineListener.
+   * @param l the listener to add
+   */
   public void addStatusLineListener(StatusLineListener l) {
     statusLineListeners.add(l);
   }
@@ -78,8 +91,8 @@ public class BufferedScreenModel implements ScreenModel, StatusLine,
   /**
    * Initialize the model, an Encoding object is needed to retrieve
    * Unicode characters.
-   * @param memory a Memory object
-   * @param encoding the ZsciiEncoding object
+   * @param aMemory a Memory object
+   * @param anEncoding the ZsciiEncoding object
    */
   public void init(Memory aMemory, IZsciiEncoding anEncoding) {
     this.memory = aMemory;
@@ -105,12 +118,19 @@ public class BufferedScreenModel implements ScreenModel, StatusLine,
     topWindow.setNumCharsPerRow(num);
   }
 
+  /**
+   * Resets the screen model.
+   */
   public void reset() {
     topWindow.resetCursor();
     bottomWindow.reset();
     current = WINDOW_BOTTOM;
   }
 
+  /**
+   * Splits the window.
+   * @param linesUpperWindow number of lines in upper window
+   */
   public void splitWindow(int linesUpperWindow) {
     LOG.info("SPLIT_WINDOW: " + linesUpperWindow);
     topWindow.setNumRows(linesUpperWindow);
@@ -129,12 +149,14 @@ public class BufferedScreenModel implements ScreenModel, StatusLine,
   /** {@inheritDoc} */
   public int getActiveWindow() { return current; }
 
+  /** {@inheritDoc} */
   public void setTextStyle(int style) {
     LOG.info("SET_TEXT_STYLE: " + style);
     topWindow.setCurrentTextStyle(style);
     bottomWindow.setCurrentTextStyle(style);
   }
 
+  /** {@inheritDoc} */
   public void setBufferMode(boolean flag) {
     LOG.info("SET_BUFFER_MODE: " + flag);
     if (current == ScreenModel.WINDOW_BOTTOM) {
@@ -142,11 +164,13 @@ public class BufferedScreenModel implements ScreenModel, StatusLine,
     }
   }
 
+  /** {@inheritDoc} */
   public void eraseLine(int value) {
     LOG.info("ERASE_LINE: " + value);
     throw new UnsupportedOperationException("Not supported yet.");
   }
 
+  /** {@inheritDoc} */
   public void eraseWindow(int window) {
     LOG.info("ERASE_WINDOW: " + window);
     for (ScreenModelListener l : screenModelListeners) {
@@ -165,6 +189,7 @@ public class BufferedScreenModel implements ScreenModel, StatusLine,
     }
   }
 
+  /** {@inheritDoc} */
   public void setTextCursor(int line, int column, int window) {
     int targetWindow = getTargetWindow(window);
     //LOG.info(String.format("SET_TEXT_CURSOR, line: %d, column: %d, " +
@@ -177,10 +202,16 @@ public class BufferedScreenModel implements ScreenModel, StatusLine,
     }
   }
 
+  /**
+   * Returns the window number for the specified parameter.
+   * @param window the window number
+   * @return current window or specified
+   */
   private int getTargetWindow(int window) {
     return window == ScreenModel.CURRENT_WINDOW ? current : window;
   }
 
+  /** {@inheritDoc} */
   public TextCursor getTextCursor() {
     if (this.current != ScreenModel.WINDOW_TOP) {
       throw new UnsupportedOperationException("Not supported yet.");
@@ -188,6 +219,7 @@ public class BufferedScreenModel implements ScreenModel, StatusLine,
     return topWindow;
   }
 
+  /** {@inheritDoc} */
   public char setFont(char fontnumber) {
     if (fontnumber != ScreenModel.FONT_FIXED &&
         fontnumber != ScreenModel.FONT_NORMAL) {
@@ -205,12 +237,14 @@ public class BufferedScreenModel implements ScreenModel, StatusLine,
     }
   }
 
+  /** {@inheritDoc} */
   public void setBackground(int colornumber, int window) {
     LOG.info("setBackground, color: " + colornumber);
     topWindow.setBackground(colornumber);
     bottomWindow.setBackground(colornumber);
   }
 
+  /** {@inheritDoc} */
   public void setForeground(int colornumber, int window) {
     LOG.info("setForeground, color: " + colornumber);
     topWindow.setForeground(colornumber);
@@ -265,19 +299,23 @@ public class BufferedScreenModel implements ScreenModel, StatusLine,
     }
   }
 
+  /** {@inheritDoc} */
   public void select(boolean flag) { selected = flag; }
 
+  /** {@inheritDoc} */
   public boolean isSelected() { return selected; }
 
   // ***********************************************************************
   // ***** StatusLine implementation
   // ***************************************
+  /** {@inheritDoc} */
   public void updateStatusScore(String objectName, int score, int steps) {
     for (StatusLineListener l : statusLineListeners) {
       l.statusLineUpdated(objectName, score + "/" + steps);
     }
   }
 
+  /** {@inheritDoc} */
   public void updateStatusTime(String objectName, int hours, int minutes) {
     for (StatusLineListener l : statusLineListeners) {
       l.statusLineUpdated(objectName, hours + ":" + minutes);

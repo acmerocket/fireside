@@ -43,11 +43,21 @@ import org.zmpp.windowing.Window6;
  * @version 1.5
  */
 public abstract class AbstractInstruction implements Instruction {
+  /**
+   * Branch information.
+   */
   public static class BranchInfo {
     public boolean branchOnTrue;
     public int numOffsetBytes;
     public int addressAfterBranchData;
     public short branchOffset;
+    /**
+     * Constructor.
+     * @param branchOnTrue branch on true flag
+     * @param numOffsetBytes number of offset bytes
+     * @param addressAfterBranchData address after branch data
+     * @param branchOffset branch offset
+     */
     public BranchInfo(boolean branchOnTrue, int numOffsetBytes,
                       int addressAfterBranchData, short branchOffset) {
       this.branchOnTrue = branchOnTrue;
@@ -64,6 +74,15 @@ public abstract class AbstractInstruction implements Instruction {
   private BranchInfo branchInfo;
   private int opcodeLength;
 
+  /**
+   * Constructor.
+   * @param machine Machine object
+   * @param opcodeNum opcode number
+   * @param operands operands
+   * @param storeVar store variable
+   * @param branchInfo branch information
+   * @param opcodeLength opcode length
+   */
   public AbstractInstruction(Machine machine, int opcodeNum,
                              Operand[] operands,
                              char storeVar,
@@ -83,7 +102,15 @@ public abstract class AbstractInstruction implements Instruction {
    */
   protected Machine getMachine() { return machine; }
 
+  /**
+   * Returns the story version.
+   * @return story version
+   */
   protected int getStoryVersion() { return machine.getVersion(); }
+  /**
+   * Returns the operand count.
+   * @return operand count
+   */
   protected abstract OperandCount getOperandCount();
   /**
    * The opcode length is a crucial attribute for program control, expose it
@@ -98,6 +125,10 @@ public abstract class AbstractInstruction implements Instruction {
    */
   protected int getOpcodeNum() { return opcodeNum; }
 
+  /**
+   * Determines whether this instruction stores a result.
+   * @return true if stores result, false otherwise
+   */
   protected boolean storesResult() {
     return InstructionInfoDb.getInstance().getInfo(getOperandCount(),
             opcodeNum, machine.getVersion()).isStore();
@@ -212,7 +243,6 @@ public abstract class AbstractInstruction implements Instruction {
   /**
    * Applies a jump by applying the branch formula on the pc given the specified
    * offset.
-   * @param offset the offset
    */
   private void applyBranch() {
     machine.doBranch(branchInfo.branchOffset, opcodeLength);
@@ -231,7 +261,6 @@ public abstract class AbstractInstruction implements Instruction {
    * Calls in the Z-machine are all very similar and only differ in the
    * number of arguments.
    * @param numArgs the number of arguments
-   * @param discardResult whether to discard the result
    */
   protected void call(final int numArgs) {
     final char packedAddress = getUnsignedValue(0);
@@ -242,6 +271,11 @@ public abstract class AbstractInstruction implements Instruction {
     call(packedAddress, args);
   }
 
+  /**
+   * Perform a call to a packed address.
+   * @param packedRoutineAddress routine address
+   * @param args arguments
+   */
   protected void call(final char packedRoutineAddress, final char[] args) {
     if (packedRoutineAddress == 0) {
       if (storesResult()) {
@@ -266,6 +300,10 @@ public abstract class AbstractInstruction implements Instruction {
         " opcode: " + opcodeNum);
   }
 
+  /**
+   * Save game state to persistent storage.
+   * @param pc current pc
+   */
   protected void saveToStorage(final int pc) {
     // This is a little tricky: In version 3, the program counter needs to
     // point to the branch offset, and not to an instruction position
@@ -285,6 +323,9 @@ public abstract class AbstractInstruction implements Instruction {
     }
   }
 
+  /**
+   * Restore game from persistent storage.
+   */
   protected void restoreFromStorage() {
     final PortableGameState gamestate = getMachine().restore();
     if (machine.getVersion() <= 3) {
@@ -318,7 +359,7 @@ public abstract class AbstractInstruction implements Instruction {
 
   /**
    * Helper function
-   * @return
+   * @return true if output, false otherwise
    */
   public boolean isOutput() {
     return InstructionInfoDb.getInstance().getInfo(getOperandCount(), opcodeNum,
@@ -340,6 +381,11 @@ public abstract class AbstractInstruction implements Instruction {
     return buffer.toString();
   }
 
+  /**
+   * Returns the string representation of the specified variable.
+   * @param varnum variable number
+   * @return variable name
+   */
   private String getVarName(final int varnum) {
     if (varnum == 0) {
       return "(SP)";
@@ -350,6 +396,11 @@ public abstract class AbstractInstruction implements Instruction {
     }
   }
 
+  /**
+   * Returns the value of the specified variable.
+   * @param varnum the variable number
+   * @return value of the specified variable
+   */
   private String getVarValue(final char varnum) {
     char value = 0;
     if (varnum == 0) {
@@ -360,6 +411,10 @@ public abstract class AbstractInstruction implements Instruction {
     return String.format("$%04x", (int) value);
   }
 
+  /**
+   * Returns the string representation of the operands.
+   * @return string representation of operands
+   */
   protected String getOperandString() {
     final StringBuilder buffer = new StringBuilder();
     for (int i = 0; i < getNumOperands(); i++) {

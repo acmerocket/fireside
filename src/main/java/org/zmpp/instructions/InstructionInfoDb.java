@@ -289,7 +289,7 @@ public final class InstructionInfoDb {
 
   /**
    * Creates the hash key for the specified instruction information.
-   * @param form the form
+   * @param opCount the operand count
    * @param opcodeNum the opcode number
    * @param version the story version
    * @return the key
@@ -300,7 +300,7 @@ public final class InstructionInfoDb {
 
   /**
    * Returns the information struct for the specified instruction.
-   * @param form the instruction form
+   * @param opCount the operand count
    * @param opcodeNum the opcode number
    * @param version the story version
    * @return the instruction info struct
@@ -314,7 +314,7 @@ public final class InstructionInfoDb {
 
   /**
    * Determines if the specified operation is valid.
-   * @param form the instruction form
+   * @param opCount the operand count
    * @param opcodeNum the opcode number
    * @param version the story version
    * @return true if valid, false otherwise
@@ -324,6 +324,9 @@ public final class InstructionInfoDb {
     return infoMap.containsKey(createKey(opCount, opcodeNum, version));
   }
 
+  /**
+   * Prints the keys in the info map.
+   */
   public void printKeys() {
     System.out.println("INFO MAP KEYS: ");
     for (String key : infoMap.keySet()) {

@@ -40,7 +40,7 @@ import org.zmpp.media.SoundEffect;
 public interface SoundEffectFactory {
   /**
    * Creates a SoundEffect from an InputStream.
-   * @param inputStream the input stream
+   * @param aiffChunk the AIFF chunk containing data
    * @return the SoundEffect
    * @throws IOException if read error occurred
    */

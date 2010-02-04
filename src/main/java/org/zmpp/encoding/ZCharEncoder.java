@@ -52,7 +52,8 @@ public class ZCharEncoder {
 
   /**
    * Constructor.
-   * @param translator ZCharTranslator object
+   * @param aTranslator ZCharTranslator object
+   * @param dictSizes DictionarySizes object
    */
   public ZCharEncoder(final ZCharTranslator aTranslator,
                       final DictionarySizes dictSizes) {
@@ -96,7 +97,6 @@ public class ZCharEncoder {
    * address.
    * @param state EncodingState
    * @param translator ZCharTranslator
-   * @param numEntryBytes number of entry bytes
    */
   private static void encode(EncodingState state, ZCharTranslator translator) {
     while (state.hasMoreInput()) {
@@ -252,6 +252,15 @@ class EncodingState {
   public int currentWord;
   // The current slot position within currentWord, can be 0, 1 or 2
   public int wordPosition;
+
+  /**
+   * Initialization.
+   * @param mem memory object
+   * @param src source position
+   * @param trgt target position
+   * @param maxEntryBytes maximum entry bytes
+   * @param maxEntryChars maximum entrry characters
+   */
   public void init(Memory mem, int src, int trgt, int maxEntryBytes,
                    int maxEntryChars) {
     memory = mem;
@@ -262,36 +271,89 @@ class EncodingState {
     numEntryBytes = maxEntryBytes;
     maxLength = maxEntryChars;
   }
+  /**
+   * Indicates whether the current word was already processed.
+   * @return true if word was processed
+   */
   public boolean currentWordWasProcessed() { return wordPosition > 2; }
+
+  /**
+   * Returns the target offset.
+   * @return target offset
+   */
   public int getTargetOffset() { return target - targetStart; }
+
+  /**
+   * Returns the number of entry bytes.
+   * @return number of entry bytes
+   */
   public int getNumEntryBytes() { return numEntryBytes; }
+
+  /**
+   * Determines whether we are already at the last 16-bit word.
+   * @return true if at the end, false else
+   */
   public boolean atLastWord16() {
     return target > targetStart + getLastWord16Offset();
   }
+  /**
+   * Returns the offset of the last 16 bit word.
+   * @return offset of the last 16 bit word
+   */
   private int getLastWord16Offset() { return numEntryBytes - 2; }
+  /**
+   * Returns the next character.
+   * @return next character
+   */
   public char nextChar() { return memory.readUnsigned8(source++); }
+  /**
+   * Marks the last word.
+   */
   public void markLastWord() {
     final int lastword =
       memory.readUnsigned16(targetStart + getLastWord16Offset());
     memory.writeUnsigned16(targetStart + getLastWord16Offset(),
                            toUnsigned16(lastword | 0x8000));
   }
+  /**
+   * Writes the specified 16 bit value to the current memory address.
+   * @param value the value to write
+   */
   public void writeUnsigned16(char value) {
     memory.writeUnsigned16(target, value);
     target += 2;
   }
+  /**
+   * Determines whether there is more input.
+   * @return true if more input, false otherwise
+   */
   public boolean hasMoreInput() {
     return source < sourceStart + maxLength;
   }
 }
 
+/**
+ * Representation of StringEncodingState.
+ */
 class StringEncodingState extends EncodingState {
   private String input;
+  /**
+   * Initialization.
+   * @param inputStr input string
+   * @param mem memory object
+   * @param trgt target position
+   * @param dictionarySizes DictionarySizes object
+   */
   public void init(String inputStr, Memory mem, int trgt,
                    DictionarySizes dictionarySizes) {
     super.init(mem, 0, trgt, dictionarySizes.getNumEntryBytes(),
                Math.min(inputStr.length(), dictionarySizes.getMaxEntryChars()));
     input = inputStr;
   }
+  /**
+   * Retrieve to next character.
+   * @return next character
+   */
   public char nextChar() { return input.charAt(source++); }
 }
+

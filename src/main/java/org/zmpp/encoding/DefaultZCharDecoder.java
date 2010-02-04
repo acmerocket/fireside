@@ -93,6 +93,14 @@ public final class DefaultZCharDecoder implements ZCharDecoder {
     return builder.toString();
   }
 
+  /**
+   * Process the abbreviation at the specified memory position.
+   * @param builder StringBuilder
+   * @param memory memory object
+   * @param data byte data
+   * @param pos original position
+   * @return new position
+   */
   private int handleAbbreviation(final StringBuilder builder,
       final Memory memory, final char[] data, final int pos) {
     int position = pos;
@@ -120,6 +128,10 @@ public final class DefaultZCharDecoder implements ZCharDecoder {
     return position;
   }
 
+  /**
+   * Creates the abbreviation decoder if it does not exist.
+   * TODO: How can we do this in a more elegant way ?
+   */
   private void createAbbreviationDecoderIfNotExists() {
     if (abbreviationDecoder == null) {
 
@@ -136,6 +148,13 @@ public final class DefaultZCharDecoder implements ZCharDecoder {
     }
   }
 
+  /**
+   * Appends the abbreviation at the specified memory address to the
+   * StringBuilder.
+   * @param memory Memory object
+   * @param entryAddress entry address
+   * @param builder StringBuilder to append to
+   */
   private void appendAbbreviationAtAddress(Memory memory, int entryAddress,
           StringBuilder builder) {
     if (abbreviationDecoder != null) {
@@ -145,6 +164,14 @@ public final class DefaultZCharDecoder implements ZCharDecoder {
     }
   }
 
+  /**
+   * Handles the escape character from alphabet 2 and appends the result
+   * to the StringBuidler.
+   * @param builder a StringBuilder to append to
+   * @param data byte data
+   * @param pos old position
+   * @return new position
+   */
   private int handleEscapeA2(final StringBuilder builder,
       final char[] data, final int pos) {
     int position = pos;
@@ -176,6 +203,7 @@ public final class DefaultZCharDecoder implements ZCharDecoder {
    * Decodes an encoded character and adds it to the specified builder object.
    * @param builder a ZsciiStringBuilder object
    * @param zchar the encoded character to decode and add
+   * @return decoded character
    */
   private char decodeZchar(final StringBuilder builder, final char zchar) {
     final char c = decodeZChar(zchar);

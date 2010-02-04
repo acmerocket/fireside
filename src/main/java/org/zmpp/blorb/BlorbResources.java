@@ -62,6 +62,7 @@ public class BlorbResources implements Resources {
   /**
    * Constructor.
    * @param imageFactory a NativeImageFactory
+   * @param soundEffectFactory a SoundEffectFactory
    * @param formchunk a form chunk in Blorb format
    */
   public BlorbResources(NativeImageFactory imageFactory,

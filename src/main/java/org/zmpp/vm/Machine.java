@@ -135,8 +135,7 @@ extends ObjectTree, Input, Output, Cpu, Memory, IZsciiEncoding, Serializable {
 
   /**
    * Outputs a warning message.
-   *
-   * @param msg
+   * @param msg the message
    */
   void warn(String msg);
 

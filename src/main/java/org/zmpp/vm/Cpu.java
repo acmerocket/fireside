@@ -56,7 +56,8 @@ public interface Cpu {
 
   /**
    * Computes a branch target from an offset.
-   * @return the resulting branch target
+   * @param offset the offset
+   * @param instructionLength the instruction length
    */
   void doBranch(short offset, int instructionLength);
 

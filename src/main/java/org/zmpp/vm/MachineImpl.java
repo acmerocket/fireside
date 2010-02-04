@@ -218,7 +218,6 @@ public class MachineImpl implements Machine, DrawingArea {
 
   /**
    * Calculates the checksum of the file.
-   * @param fileheader the file header
    * @return the check sum
    */
   private int calculateChecksum() {
@@ -460,7 +459,7 @@ public class MachineImpl implements Machine, DrawingArea {
   // ********************************************************************
   /**
    * Sets an input stream to the specified number.
-   * @param streamnumber the input stream number
+   * @param streamNumber the input stream number
    * @param stream the input stream to set
    */
   public void setInputStream(int streamNumber, InputStream stream) {

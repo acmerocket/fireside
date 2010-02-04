@@ -105,7 +105,7 @@ public interface Window6 {
    * - 3: reverse the bits supplied
    *
    * @param styleflags the style flags
-   * @param op the operations
+   * @param operation the operation
    */
   void setStyle(int styleflags, int operation);
 

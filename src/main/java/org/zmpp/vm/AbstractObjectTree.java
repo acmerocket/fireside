@@ -230,6 +230,11 @@ public abstract class AbstractObjectTree implements ObjectTree {
     }
   }
 
+  /**
+   * Reports the non-availability of a property.
+   * @param objectNum object number
+   * @param property property number
+   */
   private void reportPropertyNotAvailable(int objectNum, int property) {
     throw new IllegalArgumentException("Property " + property +
               " of object " + objectNum + " is not available.");
@@ -273,7 +278,7 @@ public abstract class AbstractObjectTree implements ObjectTree {
 
   /**
    * Returns the property number at the specified table index.
-   * @param index the property address
+   * @param propertyAddress the property address
    * @return the property number
    */
   protected abstract int getPropertyNum(int propertyAddress);

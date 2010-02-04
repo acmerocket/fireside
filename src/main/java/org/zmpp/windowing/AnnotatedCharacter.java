@@ -41,11 +41,25 @@ public class AnnotatedCharacter implements Serializable {
   private char character;
   private TextAnnotation annotation;
 
+  /**
+   * Constructor.
+   * @param annotation the annotation
+   * @param c the character
+   */
   public AnnotatedCharacter(TextAnnotation annotation, char c) {
     this.annotation = annotation;
     this.character = c;
   }
 
+  /**
+   * Returns the annotation.
+   * @return annotation
+   */
   public TextAnnotation getAnnotation() { return annotation; }
+
+  /**
+   * Returns the character.
+   * @return character
+   */
   public char getCharacter() { return character; }
 }

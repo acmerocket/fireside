@@ -101,6 +101,7 @@ public class FileInputStream implements InputStream {
     }
   }
 
+  /** Creates the reader object if necessary. */
   private void checkForReader() {
     if (filereader == null) {
       filereader = iosys.getInputStreamReader();

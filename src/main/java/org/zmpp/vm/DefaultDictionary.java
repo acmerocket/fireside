@@ -48,7 +48,8 @@ public class DefaultDictionary extends AbstractDictionary {
    * Constructor.
    * @param memory the memory object
    * @param address the start address of the dictionary
-   * @param converter a Z char decoder object
+   * @param decoder ZCharDecoder object
+   * @param encoder ZCharEncoder object
    * @param sizes a sizes object
    */
   public DefaultDictionary(Memory memory, int address,

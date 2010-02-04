@@ -55,6 +55,7 @@ public final class MachineRunState {
    * @param time the interrupt routine time interval
    * @param routine the packed interrupt routine address
    * @param numLeftOverChars the number of characters indicated as left over
+   * @param textbuffer text buffer address
    */
   private MachineRunState(ReadMode readMode, int time, char routine,
     int numLeftOverChars, char textbuffer) {

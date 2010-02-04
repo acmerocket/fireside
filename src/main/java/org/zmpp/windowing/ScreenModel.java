@@ -120,14 +120,12 @@ public interface ScreenModel {
 
   /**
    * Sets the text style.
-   *
    * @param style the text style
    */
   void setTextStyle(int style);
 
   /**
    * Sets the buffer mode.
-   *
    * @param flag true if should be buffered, false otherwise
    */
   void setBufferMode(boolean flag);
@@ -155,7 +153,7 @@ public interface ScreenModel {
    *
    * @param line the line
    * @param column the column
-   * @param the window
+   * @param window the window
    */
   void setTextCursor(int line, int column, int window);
 
@@ -177,7 +175,7 @@ public interface ScreenModel {
    * Sets the font in the current window.
    *
    * @param fontnumber the font number
-   * @boolean the previous font number
+   * @return the previous font number
    */
   char setFont(char fontnumber);
 

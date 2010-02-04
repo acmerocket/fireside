@@ -127,7 +127,7 @@ public class PlaySoundTask implements Runnable, SoundStopListener {
 
   /**
    * Sets the stopped flag and notifies waiting threads.
-   * @param flag
+   * @param flag true to stop, false otherwise
    */
   private synchronized void setStopped(final boolean flag) {
     stopped = flag;

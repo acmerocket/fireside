@@ -59,6 +59,9 @@ public class DefaultZCharTranslator implements Cloneable, ZCharTranslator {
     shiftLock = false;
   }
 
+  /**
+   * Reset the translation to use the last alphabet used.
+   */
   public void resetToLastAlphabet() {
     if (lockAlphabet == null) {
       currentAlphabet = Alphabet.A0;

@@ -37,6 +37,16 @@ import org.zmpp.vm.Machine;
  */
 public class C0OpInstruction extends AbstractInstruction {
   private String str;
+  /**
+   * Constructor.
+   * @param machine Machine object
+   * @param opcodeNum opcode number
+   * @param operands operands
+   * @param str string object for print instructions
+   * @param storeVar store variable
+   * @param branchInfo branch information
+   * @param opcodeLength opcode length
+   */
   public C0OpInstruction(Machine machine, int opcodeNum,
                          Operand[] operands, String str, char storeVar,
                          BranchInfo branchInfo, int opcodeLength) {
@@ -44,8 +54,15 @@ public class C0OpInstruction extends AbstractInstruction {
     this.str = str;
   }
 
+  /**
+   * Returns the operand count.
+   * @return the operand count
+   */
   protected OperandCount getOperandCount() { return OperandCount.C0OP; }
 
+  /**
+   * Executes the instruction.
+   */
   public void execute() {
 
     switch (getOpcodeNum()) {
@@ -109,11 +126,19 @@ public class C0OpInstruction extends AbstractInstruction {
     }
   }
 
+  /**
+   * Determines whether this instruction is a print instruction.
+   * @return true if print instruction, false otherwise
+   */
   private boolean isPrint() {
     return InstructionInfoDb.getInstance().getInfo(getOperandCount(),
             getOpcodeNum(), getStoryVersion()).isPrint();
   }
 
+  /**
+   * Returns string representation of operands.
+   * @return string representation of operands
+   */
   @Override
   protected String getOperandString() {
     if (isPrint()) {
@@ -122,14 +147,21 @@ public class C0OpInstruction extends AbstractInstruction {
     return super.getOperandString();
   }
 
+  /**
+   * Pop instruction.
+   */
   private void pop() {
     getMachine().getVariable((char) 0);
     nextInstruction();
   }
 
+  /**
+   * Catch instruction.
+   */
   private void z_catch() {
     // Stores the index of the current stack frame
     storeUnsignedResult((char) (getMachine().getRoutineContexts().size() - 1));
     nextInstruction();
   }
 }
+

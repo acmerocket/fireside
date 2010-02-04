@@ -54,6 +54,11 @@ public class ModernObjectTree extends AbstractObjectTree {
    */
   private static final int PROPERTYDEFAULTS_SIZE = 63 * 2;
 
+  /**
+   * Constructor.
+   * @param memory Memory object
+   * @param address address of tree
+   */
   public ModernObjectTree(Memory memory, int address) {
     super(memory, address);
   }

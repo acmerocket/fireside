@@ -51,6 +51,11 @@ public interface ZCharDecoder {
    * table in memory, this will be used for decoding if needed.
    */
   public interface AbbreviationsTable {
+    /**
+     * Returns the word address of the specified entry.
+     * @param entryNum entry number
+     * @return word address
+     */
     int getWordAddress(int entryNum);
   }
 
@@ -80,6 +85,7 @@ public interface ZCharDecoder {
    * Decodes the given byte value to the specified buffer using the working
    * alphabet.
    * @param zchar a z encoded character, needs to be a non-shift character
+   * @return decoded character
    */
   char decodeZChar(char zchar);
 

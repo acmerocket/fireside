@@ -53,6 +53,7 @@ public class DefaultFormChunk extends DefaultChunk implements FormChunk {
   /**
    * Constructor.
    * @param memory a MemoryAccess object
+   * @throws IOException if i/o exception occurred
    */
   public DefaultFormChunk(final Memory memory) throws IOException {
     super(memory, 0);
@@ -62,6 +63,7 @@ public class DefaultFormChunk extends DefaultChunk implements FormChunk {
 
   /**
    * Initialize the id field.
+   * @throws IOException if i/o exception occurred
    */
   private void initBaseInfo() throws IOException {
     if (!"FORM".equals(getId())) {

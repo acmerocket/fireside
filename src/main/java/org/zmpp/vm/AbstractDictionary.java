@@ -58,7 +58,7 @@ public abstract class AbstractDictionary implements Dictionary {
    * @param address the start address of the dictionary
    * @param decoder a ZCharDecoder object
    * @param encoder a ZCharEncoder object
-   * @param an object specifying the sizes of the dictionary entries
+   * @param sizes an object specifying the sizes of the dictionary entries
    */
   public AbstractDictionary(final Memory memory, final int address,
                             final ZCharDecoder decoder,

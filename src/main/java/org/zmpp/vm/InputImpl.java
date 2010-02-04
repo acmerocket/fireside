@@ -48,6 +48,7 @@ public class InputImpl implements Input, Closeable {
    */
   private int selectedInputStreamIndex = 0;
 
+  /** {@inheritDoc} */
   public void close() {
     if (inputStream != null) {
       for (int i = 0; i < inputStream.length; i++) {

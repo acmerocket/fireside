@@ -131,13 +131,22 @@ public class ZsciiEncoding implements IZsciiEncoding {
     return 0;
   }
 
+  /**
+   * Determines whether the specified character is in the
+   * translation table.
+   * @param c character
+   * @return true if in translation table, false otherwise
+   */
   private boolean isInTranslationTable(final char c) {
-    for (int i = 0; i < accentTable.getLength(); i++) {
-      if (accentTable.getAccent(i) == c) return true;
-    }
-    return false;
+    return getIndexInTranslationTable(c) >= 0;
   }
 
+  /**
+   * Determines the index of character c in the translation
+   * table.
+   * @param c character
+   * @return index in translation table
+   */
   private int getIndexInTranslationTable(final char c) {
     for (int i = 0; i < accentTable.getLength(); i++) {
       if (accentTable.getAccent(i) == c) return i;

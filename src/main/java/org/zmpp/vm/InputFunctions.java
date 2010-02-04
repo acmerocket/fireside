@@ -69,7 +69,7 @@ public class InputFunctions {
   /**
    * By delegating responsibility for timed input to the user interface,
    * reading input is strongly simplified.
-   * @param textbuffer
+   * @param textbuffer text buffer address
    * @return terminator character
    */
   public char readLine(final int textbuffer) {
@@ -108,6 +108,11 @@ public class InputFunctions {
     }
   }
 
+  /**
+   * Process input.
+   * @param textbuffer text buffer address
+   * @param inputString input string
+   */
   private void processInput(final int textbuffer, String inputString) {
     int storeOffset = machine.getVersion() <= 4 ? 1 : 2;
     for (int i = 0; i < inputString.length(); i++) {

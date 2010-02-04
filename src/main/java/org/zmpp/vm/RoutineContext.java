@@ -61,7 +61,6 @@ public class RoutineContext {
 
   /**
    * Constructor.
-   * @param startAddress the routine's start address
    * @param numLocalVariables the number of local variables
    */
   public RoutineContext(int numLocalVariables) {

@@ -163,9 +163,25 @@ public class BlorbImage implements ZmppImage {
       this.minimum = min;
       this.maximum = max;
     }
+    /**
+     * Returns the resolution information.
+     * @return resolution information
+     */
     public ResolutionInfo getResolutionInfo() { return resolutionInfo; }
+    /**
+     * Returns the standard aspect ratio.
+     * @return standard aspect ratio
+     */
     public Ratio getStdRatio() { return standard; }
+    /**
+     * Returns the minimum aspect ratio.
+     * @return minimum aspect ratio
+     */
     public Ratio getMinRatio() { return minimum; }
+    /**
+     * Returns the maximum aspect ratio.
+     * @return maximum aspect ratio
+     */
     public Ratio getMaxRatio() { return maximum; }
     /**
      * Computes the scaling ratio depending on the specified screen dimensions.

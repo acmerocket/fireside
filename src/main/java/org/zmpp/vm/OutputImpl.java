@@ -47,6 +47,10 @@ public class OutputImpl implements Output, Closeable {
    */
   private OutputStream[] outputStream;
 
+  /**
+   * Constructor.
+   * @param machine Machine object
+   */
   public OutputImpl(final Machine machine) {
     super();
     this.machine = machine;
@@ -73,16 +77,12 @@ public class OutputImpl implements Output, Closeable {
   /**
    * {@inheritDoc}
    */
-  public void print(final String str) {
-    printZsciiChars(str);
-  }
+  public void print(final String str) { printZsciiChars(str); }
 
   /**
    * {@inheritDoc}
    */
-  public void newline() {
-    printZsciiChar(ZsciiEncoding.NEWLINE);
-  }
+  public void newline() { printZsciiChar(ZsciiEncoding.NEWLINE); }
 
   /**
    * {@inheritDoc}
@@ -114,13 +114,12 @@ public class OutputImpl implements Output, Closeable {
     }
   }
 
-  /**
-   * {@inheritDoc}
-   */
+  /** {@inheritDoc} */
   public void printNumber(final short number) {
     print(String.valueOf(number));
   }
 
+  /** Flushes the output. */
   public void flushOutput() {
     // At the moment flushing only makes sense for screen
     if (!outputStream[OUTPUTSTREAM_MEMORY - 1].isSelected()) {
@@ -144,9 +143,7 @@ public class OutputImpl implements Output, Closeable {
     }
   }
 
-  /**
-   * {@inheritDoc}
-   */
+  /** {@inheritDoc} */
   public void selectOutputStream(final int streamnumber, final boolean flag) {
     outputStream[streamnumber - 1].select(flag);
 
@@ -158,18 +155,14 @@ public class OutputImpl implements Output, Closeable {
     }
   }
 
-  /**
-   * {@inheritDoc}
-   */
+  /** {@inheritDoc} */
   public void selectOutputStream3(final int tableAddress,
       final int tableWidth) {
     ((MemoryOutputStream) outputStream[OUTPUTSTREAM_MEMORY - 1]).select(
         tableAddress, tableWidth);
   }
 
-  /**
-   * {@inheritDoc}
-   */
+  /** {@inheritDoc} */
   public void close() {
     if (outputStream != null) {
       for (int i = 0; i < outputStream.length; i++) {
@@ -181,9 +174,7 @@ public class OutputImpl implements Output, Closeable {
     }
   }
 
-  /**
-   * {@inheritDoc}
-   */
+  /** {@inheritDoc} */
   public void reset() {
     for (int i = 0; i < outputStream.length; i++) {
       if (outputStream[i] != null) {

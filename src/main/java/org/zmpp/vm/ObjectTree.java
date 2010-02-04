@@ -84,6 +84,7 @@ public interface ObjectTree {
 
   /**
    * Returns the number of this object's parent object.
+   * @param objectNum object number
    * @return the parent object's number
    */
   int getParent(int objectNum);

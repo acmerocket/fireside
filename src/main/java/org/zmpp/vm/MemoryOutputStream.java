@@ -49,24 +49,25 @@ public class MemoryOutputStream implements OutputStream {
    */
   private static final int MAX_NESTING_DEPTH = 16;
 
+  /**
+   * Table position representation.
+   */
   static class TablePosition {
-
     int tableAddress;
     int bytesWritten;
 
+    /**
+     * Constructor.
+     * @param tableAddress address of the table
+     */
     TablePosition(int tableAddress) {
       this.tableAddress = tableAddress;
     }
   }
 
-  /**
-   * The machine object.
-   */
   private Machine machine;
 
-  /**
-   * Support nested selections.
-   */
+  /** Support nested selections. */
   private List<TablePosition> tableStack;
 
   /**
@@ -78,9 +79,7 @@ public class MemoryOutputStream implements OutputStream {
     this.machine = machine;
   }
 
-  /**
-   * {@inheritDoc}
-   */
+  /** {@inheritDoc} */
   public void print(final char zsciiChar) {
     final TablePosition tablePos = tableStack.get(tableStack.size() - 1);
     final int position = tablePos.tableAddress + 2 + tablePos.bytesWritten;
@@ -88,9 +87,7 @@ public class MemoryOutputStream implements OutputStream {
     tablePos.bytesWritten++;
   }
 
-  /**
-   * {@inheritDoc}
-   */
+  /** {@inheritDoc} */
   public void flush() {
     // intentionally left empty
   }
@@ -119,6 +116,10 @@ public class MemoryOutputStream implements OutputStream {
     }
   }
 
+  /**
+   * Writes the text width in units.
+   * @param tablepos table position
+   */
   private void writeTextWidthInUnits(TablePosition tablepos) {
     int numwords = tablepos.bytesWritten;
     char[] data = new char[numwords];

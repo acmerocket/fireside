@@ -35,5 +35,11 @@ package org.zmpp.media;
  */
 public interface ZmppImage {
 
+  /**
+   * Returns the image resolution for the specified screen width and height.
+   * @param screenwidth screen width
+   * @param screenheight screen height
+   * @return resolution
+   */
   Resolution getSize(int screenwidth, int screenheight);
 }

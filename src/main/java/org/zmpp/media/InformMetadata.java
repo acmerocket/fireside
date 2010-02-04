@@ -38,9 +38,17 @@ public class InformMetadata {
 
   private StoryMetadata storyinfo;
 
+  /**
+   * Constructor.
+   * @param storyinfo StoryMetadata object
+   */
   public InformMetadata(StoryMetadata storyinfo) {
     this.storyinfo = storyinfo;
   }
 
+  /**
+   * Returns story meta data object.
+   * @return metadata object
+   */
   public StoryMetadata getStoryInfo() { return storyinfo; }
 }

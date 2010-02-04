@@ -50,6 +50,7 @@ public class BlorbSounds extends BlorbMediaCollection<SoundEffect> {
 
   /**
    * Constructor.
+   * @param factory the SoundEffectFactory
    * @param formchunk the form chunk
    */
   public BlorbSounds(SoundEffectFactory factory, FormChunk formchunk) {

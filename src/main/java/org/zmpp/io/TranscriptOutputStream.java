@@ -55,6 +55,7 @@ public class TranscriptOutputStream implements OutputStream {
   /**
    * Constructor.
    * @param iosys the I/O system
+   * @param encoding IZsciiEncoding object
    */
   public TranscriptOutputStream(final IOSystem iosys,
                                 final IZsciiEncoding encoding) {
@@ -63,7 +64,7 @@ public class TranscriptOutputStream implements OutputStream {
     linebuffer = new StringBuilder();
   }
 
-  /** {@inheritDoc} */
+  /** Initializes the output file. */
   private void initFile() {
     if (!initialized && transcriptWriter == null) {
       transcriptWriter = iosys.getTranscriptWriter();

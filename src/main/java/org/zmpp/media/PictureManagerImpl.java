@@ -39,6 +39,12 @@ public class PictureManagerImpl implements PictureManager {
   private MediaCollection<? extends ZmppImage> pictures;
   private DrawingArea drawingArea;
 
+  /**
+   * Constructor.
+   * @param release release number
+   * @param drawingArea DrawingArea object
+   * @param pictures pictures collection
+   */
   public PictureManagerImpl(int release, DrawingArea drawingArea,
                             MediaCollection<? extends ZmppImage> pictures) {
     this.release = release;

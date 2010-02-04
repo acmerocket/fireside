@@ -66,6 +66,10 @@ public class ExecutionControl implements Serializable {
   public static final boolean DEBUG = false;
   public static final boolean DEBUG_INTERRUPT = false;
 
+  /**
+   * Returns the current step number.
+   * @return current step number
+   */
   public int getStep() { return step; }
   /**
    * Constructor.
