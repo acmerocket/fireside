@@ -146,6 +146,12 @@ public class InstructionDecoder {
                              zsciiLength, operandTypes, operands, str);
   }
 
+  /**
+   * Decodes a long op count instruction.
+   * @param instrAddress instruction address
+   * @param byte1 first instruction byte
+   * @return instruction object
+   */
   private Instruction decodeLong(int instrAddress, char byte1) {
     char opcodeNum = (char) (byte1 & LOWER_5_BITS);
 
@@ -192,6 +198,12 @@ public class InstructionDecoder {
                                 opTypesOffset - 1, opTypesOffset, false);
   }
 
+  /**
+   * Determines whether the instruction is a CALL_VS2 or CALL_VN2.
+   * @param opCount operand count
+   * @param opcodeNum opcode number
+   * @return true if it CALL_VS2/CALL_VN2, false otherwise
+   */
   private boolean isVx2(OperandCount opCount, char opcodeNum) {
     return opCount == VAR &&
         (opcodeNum == VAR_CALL_VN2 || opcodeNum == VAR_CALL_VS2);
@@ -224,6 +236,17 @@ public class InstructionDecoder {
                             true);
   }
 
+  /**
+   * Decode VAR form instruction.
+   * @param instrAddress instruction address
+   * @param opCount operand count
+   * @param opcodeNum opcode number
+   * @param operandTypes operand types
+   * @param numOperandTypeBytes number of operand type bytes
+   * @param opTypesOffset operand types offset
+   * @param isExtended indicator of extended instruction
+   * @return instruction object
+   */
   private Instruction decodeVarInstruction(int instrAddress,
                                            OperandCount opCount,
                                            char opcodeNum,
@@ -316,6 +339,12 @@ public class InstructionDecoder {
     return null;
   }
 
+  /**
+   * Create operands objects.
+   * @param operandTypes operand types.
+   * @param operands operand values
+   * @return array of operand objects
+   */
   private Operand[] createOperands(int[] operandTypes, char[] operands) {
     Operand[] result = new Operand[operandTypes.length];
     for (int i = 0; i < operandTypes.length; i++) {
@@ -328,6 +357,12 @@ public class InstructionDecoder {
   // ***** Helper functions
   // ********************************
   private static final int NUM_OPERAND_TYPES_PER_BYTE = 4;
+
+  /**
+   * Extracts operand types.
+   * @param opTypeByte operand type byte
+   * @return operand types
+   */
   private int[] extractOperandTypes(char opTypeByte) {
     int[] opTypes = new int[NUM_OPERAND_TYPES_PER_BYTE];
     int numTypes;
@@ -343,6 +378,12 @@ public class InstructionDecoder {
     return result;
   }
 
+  /**
+   * Extract operands.
+   * @param operandAddr operand address
+   * @param operandTypes operand types
+   * @return operands
+   */
   private char[] extractOperands(int operandAddr, int[] operandTypes) {
     char[] result = new char[operandTypes.length];
     int currentAddr = operandAddr;
@@ -358,6 +399,11 @@ public class InstructionDecoder {
     return result;
   }
 
+  /**
+   * Returns total number of operand bytes.
+   * @param operandTypes operand types
+   * @return total operand bytes
+   */
   private int getNumOperandBytes(int[] operandTypes) {
     int result = 0;
     for (int i = 0; i < operandTypes.length; i++) {
@@ -423,6 +469,12 @@ public class InstructionDecoder {
       -(WORD_14_UNSIGNED_MAX - (value - 1)) : value);
   }
 
+  /**
+   * Returns the operand at the specified address.
+   * @param operandAddress operand address
+   * @param operandType operand type
+   * @return operand value
+   */
   private char getOperandAt(int operandAddress, int operandType) {
     return operandType == Operand.TYPENUM_LARGE_CONSTANT ?
       machine.readUnsigned16(operandAddress) :

@@ -61,6 +61,14 @@ public final class InstructionInfoDb {
   public static class InstructionInfo {
     private String name;
     private boolean isStore, isBranch, isPrint, isOutput;
+    /**
+     * Constructor.
+     * @param name name
+     * @param isBranch branch flag
+     * @param isStore store flag
+     * @param isPrint print flag
+     * @param isOutput output flag
+     */
     public InstructionInfo(String name, boolean isBranch, boolean isStore,
                            boolean isPrint, boolean isOutput) {
       this.name = name;
@@ -69,30 +77,79 @@ public final class InstructionInfoDb {
       this.isPrint = isPrint;
       this.isOutput = isOutput;
     }
+    /**
+     * Determine whether this InstructionInfo represents a store.
+     * @return true for store, false if not
+     */
     public boolean isStore() { return isStore; }
+    /**
+     * Determine whether this InstructionInfo represents a branch.
+     * @return true for branch, false if not
+     */
     public boolean isBranch() { return isBranch; }
+    /**
+     * Determine whether this InstructionInfo represents a print instruction.
+     * @return true for print, false if not
+     */
     public boolean isPrint() { return isPrint; }
+    /**
+     * Determine whether this InstructionInfo represents an output instruction.
+     * @return true for output, false if not
+     */
     public boolean isOutput() { return isOutput; }
+    /**
+     * Returns the opcode name.
+     * @return opcode name
+     */
     public String getName() { return name; }
   }
 
   // Factory methods to create the common InstructionInfo types
-
+  /**
+   * Creates standard InstructionInfo object.
+   * @param name name
+   * @return InstructionInfo object
+   */
   private InstructionInfo createInfo(String name) {
     return new InstructionInfo(name, false, false, false, false);
   }
+  /**
+   * Creates branch-and-store InstructionInfo object.
+   * @param name name
+   * @return InstructionInfo object
+   */
   private InstructionInfo createBranchAndStore(String name) {
     return new InstructionInfo(name, true, true, false, false);
   }
+  /**
+   * Creates store InstructionInfo object.
+   * @param name name
+   * @return InstructionInfo object
+   */
   private InstructionInfo createStore(String name) {
     return new InstructionInfo(name, false, true, false, false);
   }
+  /**
+   * Creates branch InstructionInfo object.
+   * @param name name
+   * @return InstructionInfo object
+   */
   private InstructionInfo createBranch(String name) {
     return new InstructionInfo(name, true, false, false, false);
   }
+  /**
+   * Creates print InstructionInfo object.
+   * @param name name
+   * @return InstructionInfo object
+   */
   private InstructionInfo createPrint(String name) {
     return new InstructionInfo(name, false, false, true, true);
   }
+  /**
+   * Creates output InstructionInfo object.
+   * @param name name
+   * @return InstructionInfo object
+   */
   private InstructionInfo createOutput(String name) {
     return new InstructionInfo(name, false, false, false, true);
   }

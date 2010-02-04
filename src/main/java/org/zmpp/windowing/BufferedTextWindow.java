@@ -45,18 +45,41 @@ public class BufferedTextWindow {
   private StringBuilder currentRun;
   private boolean isBuffered;
 
+  /**
+   * Constructor.
+   */
   public BufferedTextWindow() {
     reset();
   }
 
+  /**
+   * Reset the window state.
+   */
   public void reset() {
     textBuffer = new ArrayList<AnnotatedText>();
     currentRun = new StringBuilder();
     isBuffered = true;
   }
+  /**
+   * Retrieves the currently active annotation.
+   * @return active annotation
+   */
   public TextAnnotation getCurrentAnnotation() { return currentAnnotation; }
+  /**
+   * Determines whether this window is buffered.
+   * @return true if buffered, false otherwise
+   */
   public boolean isBuffered() { return isBuffered; }
+  /**
+   * Sets the buffered flag.
+   * @param flag true to set to buffered, false to unbuffered
+   */
   public void setBuffered(boolean flag) { isBuffered = flag; }
+  /**
+   * Sets the window's current font.
+   * @param font font number
+   * @return previous font number
+   */
   public char setCurrentFont(char font) {
     char previousFont = currentAnnotation.getFont();
     // no need to start a new run if the font is the same
@@ -65,32 +88,58 @@ public class BufferedTextWindow {
     }
     return previousFont;
   }
+  /**
+   * Sets the window's current text style.
+   * @param style text style number
+   */
   public void setCurrentTextStyle(int style) {
     startNewAnnotatedRun(currentAnnotation.deriveStyle(style));
   }
-
-  public void setBackground(int background) {
-    startNewAnnotatedRun(currentAnnotation.deriveBackground(background));
+  /**
+   * Sets this window's current background color.
+   * @param color color number
+   */
+  public void setBackground(int color) {
+    startNewAnnotatedRun(currentAnnotation.deriveBackground(color));
   }
-
-  public void setForeground(int foreground) {
-    startNewAnnotatedRun(currentAnnotation.deriveForeground(foreground));
+  /**
+   * Sets this window's current foreground color.
+   * @param color color number
+   */
+  public void setForeground(int color) {
+    startNewAnnotatedRun(currentAnnotation.deriveForeground(color));
   }
-
+  /**
+   * Retrieves this window's current background color.
+   * @return current background color
+   */
   public int getBackground() { return currentAnnotation.getBackground(); }
+  /**
+   * Retrieves this window's current foreground color.
+   * @return current foreground color
+   */
   public int getForeground() { return currentAnnotation.getForeground(); }
-
+  /**
+   * Begins a new text run with the specified annotation.
+   * @param annotation the annotation for the text run
+   */
   private void startNewAnnotatedRun(TextAnnotation annotation) {
     textBuffer.add(new AnnotatedText(currentAnnotation, currentRun.toString()));
     currentRun = new StringBuilder();
     currentAnnotation = annotation;
   }
-
+  /**
+   * Appends a character to the current text run.
+   * @param zchar character to print
+   */
   public void printChar(char zchar) {
     currentRun.append(zchar);
     if (!isBuffered) flush();
   }
-
+  /**
+   * Returns this window's buffer.
+   * @return buffer
+   */
   public List<AnnotatedText> getBuffer() {
     flush();
     List<AnnotatedText> result = textBuffer;
@@ -123,3 +172,4 @@ public class BufferedTextWindow {
     return builder.toString();
   }
 }
+

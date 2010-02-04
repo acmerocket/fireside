@@ -59,6 +59,13 @@ public class TextAnnotation implements Serializable {
   private int background;
   private int foreground;
 
+  /**
+   * Constructor.
+   * @param font font number
+   * @param style style number
+   * @param background background color
+   * @param foreground foreground color
+   */
   public TextAnnotation(char font, int style, int background, int foreground) {
     this.font = font;
     this.style = style;
@@ -66,15 +73,30 @@ public class TextAnnotation implements Serializable {
     this.foreground = foreground;
   }
 
+  /**
+   * Constructor.
+   * @param font font number
+   * @param style style number
+   */
   public TextAnnotation(char font, int style) {
     this(font, style, ScreenModel.COLOR_DEFAULT, ScreenModel.COLOR_DEFAULT);
   }
 
+  /**
+   * Derives an annotation with a modified font based on this object.
+   * @param newFont new font number
+   * @return TextAnnotation with changed font
+   */
   public TextAnnotation deriveFont(char newFont) {
     return new TextAnnotation(newFont, this.style, this.background,
                               this.foreground);
   }
 
+  /**
+   * Derives an annotation with a modified text style based on this object.
+   * @param newStyle new style number
+   * @return TextAnnotation with changed style
+   */
   public TextAnnotation deriveStyle(int newStyle) {
     int finalStyle = style;
     if (newStyle == TextAnnotation.TEXTSTYLE_ROMAN) {
@@ -86,35 +108,81 @@ public class TextAnnotation implements Serializable {
                               this.foreground);
   }
 
+  /**
+   * Derives an annotation with a modified background color based
+   * on this object.
+   * @param newBackground new background color
+   * @return TextAnnotation with changed foreground color
+   */
   public TextAnnotation deriveBackground(int newBackground) {
     return new TextAnnotation(this.font, this.style, newBackground,
                               this.foreground);
   }
 
+  /**
+   * Derives an annotation with a modified foreground color based
+   * on this object.
+   * @param newForeground new foreground color
+   * @return TextAnnotation with changed foreground color
+   */
   public TextAnnotation deriveForeground(int newForeground) {
     return new TextAnnotation(this.font, this.style, this.background,
                               newForeground);
   }
 
+  /**
+   * Returns the font.
+   * @return font number
+   */
   public char getFont() { return font; }
 
+  /**
+   * Determines whether this annotation has a fixed style font.
+   * @return true if fixed, false if variable font
+   */
   public boolean isFixed() {
     return font == FONT_FIXED || (style & TEXTSTYLE_FIXED) == TEXTSTYLE_FIXED;
   }
+  /**
+   * Determines whether this annotation has a roman font.
+   * @return true if roman, false otherwise
+   */
   public boolean isRoman() { return style == TEXTSTYLE_ROMAN; }
+  /**
+   * Determines whether this annotation has a bold font.
+   * @return true if bold, false otherwise
+   */
   public boolean isBold() {
     return (style & TEXTSTYLE_BOLD) == TEXTSTYLE_BOLD;
   }
+  /**
+   * Determines whether this annotation has an italic font.
+   * @return true if italic, false otherwise
+   */
   public boolean isItalic() {
     return (style & TEXTSTYLE_ITALIC) == TEXTSTYLE_ITALIC;
   }
+  /**
+   * Determines whether the text is displayed as reverse video.
+   * @return true if reverse video, false otherwise
+   */
   public boolean isReverseVideo() {
     return (style & TEXTSTYLE_REVERSE_VIDEO) == TEXTSTYLE_REVERSE_VIDEO;
   }
 
+  /**
+   * Returns the background color.
+   * @return background color
+   */
   public int getBackground() { return background; }
+
+  /**
+   * Returns the foreground color.
+   * @return foreground color
+   */
   public int getForeground() { return foreground; }
 
+  /** {@inheritDoc} */
   @Override
   public String toString() {
     return "TextAnnotation, fixed: " + isFixed() + " bold: " + isBold() +
@@ -122,3 +190,4 @@ public class TextAnnotation implements Serializable {
             " bg: " + background + " fg: " + foreground;
   }
 }
+

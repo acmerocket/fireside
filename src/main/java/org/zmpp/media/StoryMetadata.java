@@ -48,25 +48,90 @@ public class StoryMetadata {
   private int coverpicture;
   private String group;
 
+  /**
+   * Returns the story title.
+   * @return story title
+   */
   public String getTitle() { return title; }
+  /**
+   * Sets the story title.
+   * @param title story title
+   */
   public void setTitle(final String title) { this.title = title; }
+  /**
+   * Returns the headline.
+   * @return headline
+   */
   public String getHeadline() { return headline; }
+  /**
+   * Sets the headline.
+   * @param headline the headline
+   */
   public void setHeadline(final String headline) { this.headline = headline; }
+  /**
+   * Returns the author.
+   * @return author
+   */
   public String getAuthor() { return author; }
+  /**
+   * Sets the author.
+   * @param author author
+   */
   public void setAuthor(final String author) { this.author = author; }
+  /**
+   * Returns the genre.
+   * @return genre
+   */
   public String getGenre() { return genre; }
+  /**
+   * Sets the genre.
+   * @param genre genre
+   */
   public void setGenre(final String genre) { this.genre = genre; }
+  /**
+   * Returns the description.
+   * @return description
+   */
   public String getDescription() { return description; }
+  /**
+   * Sets the description.
+   * @param description description
+   */
   public void setDescription(final String description) {
     this.description = description;
   }
+  /**
+   * Returns the year.
+   * @return year
+   */
   public String getYear() { return year; }
+  /**
+   * Sets the year.
+   * @param year year
+   */
   public void setYear(final String year) { this.year = year; }
+  /**
+   * Returns the cover picture number.
+   * @return cover picture number
+   */
   public int getCoverPicture() { return coverpicture; }
+  /**
+   * Sets the cover picture number.
+   * @param picnum cover picture number
+   */
   public void setCoverPicture(final int picnum) { this.coverpicture = picnum; }
+  /**
+   * Returns the group.
+   * @return group
+   */
   public String getGroup() { return group; }
+  /**
+   * Sets the group.
+   * @param group group
+   */
   public void setGroup(final String group) { this.group = group; }
 
+  /** {@inheritDoc} */
   @Override
   public String toString() {
     final StringBuilder builder = new StringBuilder();

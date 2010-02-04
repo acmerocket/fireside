@@ -77,18 +77,57 @@ public class PortableGameState implements Serializable {
     /** The arguments. */
     char[] args;
 
+    /**
+     * Returns the program counter.
+     * @return program counter
+     */
     public int getProgramCounter() { return pc; }
+    /**
+     * Returns the return variable.
+     * @return return variable
+     */
     public char getReturnVariable() { return returnVariable; }
+    /**
+     * Returns the eval stack.
+     * @return eval stack
+     */
     public char[] getEvalStack() { return evalStack; }
+    /**
+     * Returns the local variables.
+     * @return local variables
+     */
     public char[] getLocals() { return locals; }
+    /**
+     * Returns the routine arguments.
+     * @return routine arguments
+     */
     public char[] getArgs() { return args; }
-
+    /**
+     * Sets the program counter.
+     * @param aPc new program counter
+     */
     public void setProgramCounter(final int aPc) { this.pc = aPc; }
+    /**
+     * Sets the return variable number.
+     * @param varnum variable number
+     */
     public void setReturnVariable(final char varnum) {
       this.returnVariable = varnum;
     }
+    /**
+     * Sets the eval stack.
+     * @param stack eval stack
+     */
     public void setEvalStack(final char[] stack) { this.evalStack = stack; }
+    /**
+     * Sets the local variables.
+     * @param locals local variables
+     */
     public void setLocals(final char[] locals) { this.locals = locals; }
+    /**
+     * Sets the routine arguments.
+     * @param args routine arguments
+     */
     public void setArgs(final char[] args) { this.args = args; }
   }
 
@@ -167,12 +206,32 @@ public class PortableGameState implements Serializable {
    * @return the dynamic memory dump
    */
   public byte[] getDynamicMemoryDump() { return dynamicMem; }
+  /**
+   * Sets the release number.
+   * @param release release number
+   */
   public void setRelease(final int release) { this.release = release; }
+  /**
+   * Sets the checksum.
+   * @param checksum checksum
+   */
   public void setChecksum(final int checksum) { this.checksum = checksum; }
+  /**
+   * Sets the serial number.
+   * @param serial serial number
+   */
   public void setSerialNumber(final String serial) {
     this.serialBytes = serial.getBytes();
   }
+  /**
+   * Sets the program counter.
+   * @param aPc program counter
+   */
   public void setProgramCounter(final int aPc) { this.pc = aPc; }
+  /**
+   * Sets the dynamic memory.
+   * @param memdata dynamic memory data
+   */
   public void setDynamicMem(final byte[] memdata) { this.dynamicMem = memdata; }
 
   // **********************************************************************
@@ -449,7 +508,6 @@ public class PortableGameState implements Serializable {
 
   /**
    * Exports the current object state to a FormChunk.
-   *
    * @return the state as a FormChunk
    */
   public WritableFormChunk exportToFormChunk() {
@@ -462,6 +520,10 @@ public class PortableGameState implements Serializable {
     return formChunk;
   }
 
+  /**
+   * Creates the IFhd chunk.
+   * @return IFhd chunk
+   */
   private Chunk createIfhdChunk() {
     final byte[] id = "IFhd".getBytes();
     final byte[] data = new byte[13];
@@ -481,11 +543,19 @@ public class PortableGameState implements Serializable {
     return chunk;
   }
 
+  /**
+   * Creates the UMem chunk.
+   * @return UMem chunk
+   */
   private Chunk createUMemChunk() {
     final byte[] id = "UMem".getBytes();
     return new DefaultChunk(id, dynamicMem);
   }
 
+  /**
+   * Creates the Stks chunk.
+   * @return Stks chunk
+   */
   private Chunk createStksChunk() {
     final byte[] id = "Stks".getBytes();
     final List<Byte> byteBuffer = new ArrayList<Byte>();
@@ -527,7 +597,7 @@ public class PortableGameState implements Serializable {
 
     // eval stack size
     final int stacksize = stackFrame.evalStack.length;
-    addUnsignedShortToByteBuffer(byteBuffer, stacksize);
+    addUnsigned16ToByteBuffer(byteBuffer, (char) stacksize);
 
     // local variables
     for (char local : stackFrame.locals) {
@@ -540,19 +610,23 @@ public class PortableGameState implements Serializable {
     }
   }
 
-  private void addUnsignedShortToByteBuffer(final List<Byte> buffer,
-      final int value) {
-    buffer.add((byte) ((value & 0xff00) >> 8));
-    buffer.add((byte) (value & 0xff));
-  }
-
+  /**
+   * Appends unsigned 16 bit value to the byte buffer.
+   * @param buffer byte buffer
+   * @param value unsigned 16 bit value
+   */
   private void addUnsigned16ToByteBuffer(final List<Byte> buffer,
       final char value) {
     buffer.add((byte) ((value & 0xff00) >>> 8));
     buffer.add((byte) (value & 0xff));
   }
 
-  private byte createArgSpecByte(final char[] args) {
+  /**
+   * Makes an arg spec byte from the arguments.
+   * @param args arguments
+   * @return arg spec byte
+   */
+  private static byte createArgSpecByte(final char[] args) {
     byte result = 0;
     for (int arg : args) { result |= (1 << arg); }
     return result;

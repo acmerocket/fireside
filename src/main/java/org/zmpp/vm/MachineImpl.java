@@ -252,6 +252,10 @@ public class MachineImpl implements Machine, DrawingArea {
   // **********************************************************************
   // ***** Memory interface functionality
   // **********************************************************************
+  /**
+   * Returns the memory object.
+   * @return memory object
+   */
   private Memory getMemory() { return memory; }
   /** {@inheritDoc} */
   public char readUnsigned16(int address) {
@@ -292,6 +296,10 @@ public class MachineImpl implements Machine, DrawingArea {
   // **********************************************************************
   // ***** Cpu interface functionality
   // **********************************************************************
+  /**
+   * Returns the Cpu object.
+   * @return cpu object
+   */
   private Cpu getCpu() { return cpu; }
   /** {@inheritDoc} */
   public char getVariable(char varnum) { return getCpu().getVariable(varnum); }
@@ -358,6 +366,10 @@ public class MachineImpl implements Machine, DrawingArea {
   // **********************************************************************
   private static final String WHITESPACE = " \n\t\r";
 
+  /**
+   * Returns the dictionary object.
+   * @return dictionary object
+   */
   private Dictionary getDictionary() { return dictionary; }
   /** {@inheritDoc} */
   public int lookupToken(int dictionaryAddress, String token) {
@@ -383,7 +395,15 @@ public class MachineImpl implements Machine, DrawingArea {
   // **********************************************************************
   // ***** Encoding functionality
   // **********************************************************************
+  /**
+   * Returns the decoder object.
+   * @return decoder object
+   */
   private ZCharDecoder getZCharDecoder() { return decoder; }
+  /**
+   * Returns the encoder object.
+   * @return encoder object
+   */
   private ZCharEncoder getZCharEncoder() { return encoder; }
   /** {@inheritDoc} */
   public String convertToZscii(String str) {
@@ -417,39 +437,39 @@ public class MachineImpl implements Machine, DrawingArea {
   public void setOutputStream(int streamnumber, OutputStream stream) {
     output.setOutputStream(streamnumber, stream);
   }
-
+  /** {@inheritDoc} */
   public void selectOutputStream(int streamnumber, boolean flag) {
     output.selectOutputStream(streamnumber, flag);
   }
-
+  /** {@inheritDoc} */
   public void selectOutputStream3(int tableAddress, int tableWidth) {
     output.selectOutputStream3(tableAddress, tableWidth);
   }
-
+  /** {@inheritDoc} */
   public void printZString(int stringAddress) {
     output.printZString(stringAddress);
   }
-
+  /** {@inheritDoc} */
   public void print(String str) {
     output.print(str);
   }
-
+  /** {@inheritDoc} */
   public void newline() {
     output.newline();
   }
-
+  /** {@inheritDoc} */
   public void printZsciiChar(char zchar) {
     output.printZsciiChar(zchar);
   }
-
+  /** {@inheritDoc} */
   public void printNumber(short num) {
     output.printNumber(num);
   }
-
+  /** {@inheritDoc} */
   public void flushOutput() {
     output.flushOutput();
   }
-
+  /** {@inheritDoc} */
   public void reset() {
     output.reset();
   }
@@ -624,7 +644,11 @@ public class MachineImpl implements Machine, DrawingArea {
   // ***********************************************************************
   // ***** Private methods
   // **************************************
-
+  /**
+   * Verifies the integrity of the save game.
+   * @param gamestate PortableGameState
+   * @return true if valid, false otherwise
+   */
   private boolean verifySaveGame(final PortableGameState gamestate) {
     // Verify the game according to the standard
     int saveGameChecksum = getChecksum();
@@ -636,6 +660,10 @@ public class MachineImpl implements Machine, DrawingArea {
       && gamestate.getSerialNumber().equals(getFileHeader().getSerialNumber());
   }
 
+  /**
+   * Returns the checksum.
+   * @return checksum
+   */
   private int getChecksum() {
     return memory.readUnsigned16(StoryFileHeader.CHECKSUM);
   }
@@ -665,11 +693,20 @@ public class MachineImpl implements Machine, DrawingArea {
     }
   }
 
+  /**
+   * Sets standard revision.
+   * @param major major revision number
+   * @param minor minor revision number
+   */
   private void setStandardRevision(int major, int minor) {
     memory.writeUnsigned8(StoryFileHeader.STD_REVISION_MAJOR, (char) major);
     memory.writeUnsigned8(StoryFileHeader.STD_REVISION_MINOR, (char) minor);
   }
 
+  /**
+   * Restarts the VM.
+   * @param resetScreenModel true if screen model should be reset
+   */
   private void restart(final boolean resetScreenModel) {
     // Transcripting and fixed font bits survive the restart
     final StoryFileHeader fileHeader = getFileHeader();
@@ -689,7 +726,10 @@ public class MachineImpl implements Machine, DrawingArea {
   // ***********************************************************************
   // ***** Object accesss
   // ************************************
-
+  /**
+   * Returns the object tree.
+   * @return object tree
+   */
   private ObjectTree getObjectTree() { return objectTree; }
   /** {@inheritDoc} */
   public void insertObject(int parentNum, int objectNum) {
@@ -764,3 +804,4 @@ public class MachineImpl implements Machine, DrawingArea {
     return getScreen6().getResolution();
   }
 }
+
