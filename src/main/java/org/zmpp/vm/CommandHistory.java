@@ -177,6 +177,13 @@ public class CommandHistory {
     }
   }
 
+  /**
+   * Retrieve previous history entry.
+   * @param inputbuffer input buffer
+   * @param textbuffer text buffer
+   * @param pointer memory pointer
+   * @return new memory pointer
+   */
   private int processHistoryUp(final List<Character> inputbuffer,
       final int textbuffer, final int pointer) {
     int newpointer = pointer;
@@ -188,6 +195,13 @@ public class CommandHistory {
     return newpointer;
   }
 
+  /**
+   * Retrieve next entry in the history.
+   * @param inputbuffer input buffer
+   * @param textbuffer text buffer
+   * @param pointer memory pointer
+   * @return new memory pointer
+   */
   private int processHistoryDown(final List<Character> inputbuffer,
       final int textbuffer, final int pointer) {
     int newpointer = pointer;
@@ -200,6 +214,13 @@ public class CommandHistory {
     return newpointer;
   }
 
+  /**
+   * Put history text into the input line.
+   * @param inputbuffer input buffer
+   * @param textbuffer text buffer
+   * @param pointer memory pointer
+   * @return new memory pointer
+   */
   private int fillInputLineFromHistory(final List<Character> inputbuffer,
       final int textbuffer, final int pointer) {
     int newpointer = deleteInputLine(inputbuffer, pointer);

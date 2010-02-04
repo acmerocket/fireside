@@ -71,13 +71,26 @@ extends ObjectTree, Input, Output, Cpu, Memory, IZsciiEncoding, Serializable {
    */
   int getRelease();
 
+  /**
+   * Checks the check sum.
+   * @return true if valid, false, otherwise
+   */
   boolean hasValidChecksum();
 
   // **********************************************************************
   // **** Main machine objects
   // *******************************
 
+  /**
+   * Returns the story file header.
+   * @return file header
+   */
   StoryFileHeader getFileHeader();
+
+  /**
+   * Returns story resources.
+   * @return story resources
+   */
   Resources getResources();
   // **********************************************************************
   // **** Tokenizing functions
@@ -85,15 +98,45 @@ extends ObjectTree, Input, Output, Cpu, Memory, IZsciiEncoding, Serializable {
   // **** instead of dictionary functionality
   // **********************************************************
 
+  /**
+   * Looks up token in dictionary.
+   * @param dictionaryAddress address of dictionary
+   * @param token token to look up
+   * @return index in dictionary
+   */
   int lookupToken(int dictionaryAddress, String token);
+
+  /**
+   * Returns the dictionary delimiters.
+   * @return dictionary delimiters
+   */
   String getDictionaryDelimiters();
 
   // **********************************************************************
   // **** Encoding functions
   // **********************************************************
 
+  /**
+   * Encode memory location to ZSCII.
+   * @param source source position
+   * @param length memory length in byte
+   * @param destination destination position
+   */
   void encode(int source, int length, int destination);
+
+  /**
+   * Decode memory address to ZSCII.
+   * @param address memory address
+   * @param length length in bytes
+   * @return ZSCII string
+   */
   String decode2Zscii(int address, int length);
+
+  /**
+   * Returns the number of Z-encoded bytes at the specified address.
+   * @param address the string address
+   * @return number of z-encoded bytes
+   */
   int getNumZEncodedBytes(int address);
 
   // ************************************************************************

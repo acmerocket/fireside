@@ -59,6 +59,7 @@ import org.zmpp.vmutil.FileUtils;
  */
 public class MachineFactory {
 
+  /** Initialization structure. */
   public static class MachineInitStruct {
     public java.io.InputStream storyFile, blorbFile;
     public URL storyURL, blorbURL;
@@ -84,8 +85,9 @@ public class MachineFactory {
 
   /**
    * This is the main creation function.
-   *
    * @return the machine
+   * @throws IOException if i/o error occurred
+   * @throws InvalidStoryException invalid story file
    */
   public Machine buildMachine() throws IOException, InvalidStoryException {
     final MachineImpl machine = new MachineImpl();
@@ -102,7 +104,6 @@ public class MachineFactory {
   // *****************************
   /**
    * Reads the story data.
-   *
    * @return the story data
    * @throws IOException if reading story file revealed an error
    */
@@ -115,7 +116,9 @@ public class MachineFactory {
   }
 
   /**
-   * {@inheritDoc}
+   * Reads the story file from the specified URL.
+   * @return byte data
+   * @throws IOException if i/o error occurred
    */
   private byte[] readStoryDataFromUrl() throws IOException {
     java.io.InputStream storyis = null, blorbis = null;
@@ -138,7 +141,9 @@ public class MachineFactory {
   }
 
   /**
-   * {@inheritDoc}
+   * Reads story data from file.
+   * @return byte data
+   * @throws IOException if i/o error occurred
    */
   private byte[] readStoryDataFromFile() throws IOException {
     if (initStruct.storyFile != null) {
@@ -161,6 +166,11 @@ public class MachineFactory {
     return null;
   }
 
+  /**
+   * Reads Blorb data from file.
+   * @return the data's form chunk
+   * @throws IOException if i/o error occurred
+   */
   private FormChunk readBlorbFromFile() throws IOException {
     if (blorbchunk == null) {
       byte[] data = FileUtils.readFileBytes(initStruct.blorbFile);
@@ -174,6 +184,11 @@ public class MachineFactory {
     return blorbchunk;
   }
 
+  /**
+   * Reads story resources from input blorb file.
+   * @return resources object
+   * @throws IOException if i/o error occurred
+   */
   private Resources readResourcesFromFile() throws IOException {
     FormChunk formchunk = readBlorbFromFile();
     return (formchunk != null) ?
@@ -181,6 +196,12 @@ public class MachineFactory {
                          initStruct.soundEffectFactory, formchunk) : null;
   }
 
+  /**
+   * Reads Blorb's form chunk from the specified input stream object.
+   * @param blorbis input stream
+   * @return the form chunk
+   * @throws IOException i/o error occurred
+   */
   private FormChunk readBlorb(java.io.InputStream blorbis) throws IOException {
     if (blorbchunk == null) {
       byte[] data = FileUtils.readFileBytes(blorbis);
@@ -191,6 +212,11 @@ public class MachineFactory {
     return blorbchunk;
   }
 
+  /**
+   * Reads story resources from URL.
+   * @return resources object
+   * @throws IOException i/o error occurred
+   */
   private Resources readResourcesFromUrl() throws IOException {
     FormChunk formchunk = readBlorb(initStruct.blorbURL.openStream());
     return (formchunk != null) ?
@@ -203,7 +229,6 @@ public class MachineFactory {
   // ********************************
   /**
    * Checks the story file version.
-   *
    * @param version the story file version
    * @return true if not supported
    */

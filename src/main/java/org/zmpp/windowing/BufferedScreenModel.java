@@ -63,6 +63,9 @@ public class BufferedScreenModel implements ScreenModel, StatusLine,
   private Memory memory;
   private StoryFileHeader fileheader;
 
+  /**
+   * Status line listener.
+   */
   public interface StatusLineListener {
     /**
      * Update the status line.
@@ -326,26 +329,52 @@ public class BufferedScreenModel implements ScreenModel, StatusLine,
   // ***** Additional public interface
   // ***************************************
 
+  /**
+   * Returns number of rows in upper window.
+   * @return number of rows
+   */
   public int getNumRowsUpper() { return topWindow.getNumRows(); }
 
+  /**
+   * Returns current background color.
+   * @return current background color
+   */
   public int getBackground() {
     int background = bottomWindow.getBackground();
     return background == COLOR_DEFAULT ?
       getDefaultBackground() : background;
   }
+
+  /**
+   * Returns current foreground color.
+   * @return current foreground color
+   */
   public int getForeground() {
     int foreground = bottomWindow.getForeground();
     return foreground == COLOR_DEFAULT ?
       getDefaultForeground() : foreground;
   }
+
+  /**
+   * Returns default background color.
+   * @return default background color
+   */
   private int getDefaultBackground() {
     return memory.readUnsigned8(StoryFileHeader.DEFAULT_BACKGROUND);
   }
 
+  /**
+   * Returns default foreground color.
+   * @return default foreground color
+   */
   private int getDefaultForeground() {
     return memory.readUnsigned8(StoryFileHeader.DEFAULT_FOREGROUND);
   }
 
+  /**
+   * Returns buffer to lower window.
+   * @return buffer to lower window
+   */
   public List<AnnotatedText> getLowerBuffer() {
     return bottomWindow.getBuffer();
   }
