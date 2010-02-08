@@ -37,14 +37,25 @@ import org.zmpp.vm.Machine;
  */
 public class C1OpInstruction extends AbstractInstruction {
 
+  /**
+   * Constructor.
+   * @param machine Machine object
+   * @param opcodeNum opcode number
+   * @param operands operands
+   * @param storeVar store variable number
+   * @param branchInfo branch information
+   * @param opcodeLength opcode length
+   */
   public C1OpInstruction(Machine machine, int opcodeNum,
                          Operand[] operands, char storeVar,
                          BranchInfo branchInfo, int opcodeLength) {
     super(machine, opcodeNum, operands, storeVar, branchInfo, opcodeLength);
   }
 
+  /** {@inheritDoc} */
   protected OperandCount getOperandCount() { return OperandCount.C1OP; }
 
+  /** {@inheritDoc} */
   public void execute() {
     switch (getOpcodeNum()) {
       case C1OP_JZ:
@@ -104,6 +115,7 @@ public class C1OpInstruction extends AbstractInstruction {
     }
   }
 
+  /** INC instruction. */
   private void inc() {
     final char varNum = getUnsignedValue(0);
     final short value = getSignedVarValue(varNum);
@@ -111,6 +123,7 @@ public class C1OpInstruction extends AbstractInstruction {
     nextInstruction();
   }
 
+  /** DEC instruction. */
   private void dec() {
     final char varNum = getUnsignedValue(0);
     final short value = getSignedVarValue(varNum);
@@ -118,16 +131,19 @@ public class C1OpInstruction extends AbstractInstruction {
     nextInstruction();
   }
 
+  /** NOT instruction. */
   private void not()  {
     final int notvalue = ~getUnsignedValue(0);
     storeUnsignedResult((char) (notvalue & 0xffff));
     nextInstruction();
   }
 
+  /** JUMP instruction. */
   private void jump() {
     getMachine().incrementPC(getSignedValue(0) + 1);
   }
 
+  /** LOAD instruction. */
   private void load() {
     final char varnum = getUnsignedValue(0);
     final char value = varnum == 0 ? getMachine().getStackTop() :
@@ -136,10 +152,12 @@ public class C1OpInstruction extends AbstractInstruction {
     nextInstruction();
   }
 
+  /** JZ instruction. */
   private void jz() {
     branchOnTest(getUnsignedValue(0) == 0);
   }
 
+  /** GET_PARENT instruction. */
   private void get_parent() {
     final int obj = getUnsignedValue(0);
     int parent = 0;
@@ -152,6 +170,7 @@ public class C1OpInstruction extends AbstractInstruction {
     nextInstruction();
   }
 
+  /** GET_SIBLING instruction. */
   private void get_sibling() {
     final int obj = getUnsignedValue(0);
     int sibling = 0;
@@ -164,6 +183,7 @@ public class C1OpInstruction extends AbstractInstruction {
     branchOnTest(sibling > 0);
   }
 
+  /** GET_SIBLING instruction. */
   private void get_child() {
     final int obj = getUnsignedValue(0);
     int child = 0;
@@ -176,21 +196,25 @@ public class C1OpInstruction extends AbstractInstruction {
     branchOnTest(child > 0);
   }
 
+  /** PRINT_ADDR instruction. */
   private void print_addr() {
     getMachine().printZString(getUnsignedValue(0));
     nextInstruction();
   }
 
+  /** PRINT_PADDR instruction. */
   private void print_paddr() {
     getMachine().printZString(
         getMachine().unpackStringAddress(getUnsignedValue(0)));
     nextInstruction();
   }
 
+  /** RET instruction. */
   private void ret() {
     returnFromRoutine(getUnsignedValue(0));
   }
 
+  /** PRINT_OBJ instruction. */
   private void print_obj() {
     final int obj = getUnsignedValue(0);
     if (obj > 0) {
@@ -202,6 +226,7 @@ public class C1OpInstruction extends AbstractInstruction {
     nextInstruction();
   }
 
+  /** REMOVE_OBJ instruction. */
   private void remove_obj() {
     final int obj = getUnsignedValue(0);
     if (obj > 0) {
@@ -210,6 +235,7 @@ public class C1OpInstruction extends AbstractInstruction {
     nextInstruction();
   }
 
+  /** GET_PROP_LEN instruction. */
   private void get_prop_len() {
     final int propertyAddress = getUnsignedValue(0);
     final char proplen = (char)
@@ -217,6 +243,10 @@ public class C1OpInstruction extends AbstractInstruction {
     storeUnsignedResult(proplen);
     nextInstruction();
   }
+
+  /** CALL_1S instruction. */
   private void call_1s() { call(0); }
+
+  /** CALL_1N instruction. */
   private void call_1n() { call(0); }
 }

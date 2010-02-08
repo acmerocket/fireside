@@ -38,18 +38,28 @@ import org.zmpp.windowing.ScreenModel;
  */
 public class C2OpInstruction extends AbstractInstruction {
 
+  /**
+   * Constructor.
+   * @param machine Machine object
+   * @param opcodeNum opcode number
+   * @param operands operands
+   * @param storeVar store variable number
+   * @param branchInfo branch information
+   * @param opcodeLength opcode length
+   */
   public C2OpInstruction(Machine machine, int opcodeNum,
                          Operand[] operands, char storeVar,
                          BranchInfo branchInfo, int opcodeLength) {
     super(machine, opcodeNum, operands, storeVar, branchInfo, opcodeLength);
   }
 
+  /** {@inheritDoc} */
   @Override
   protected OperandCount getOperandCount() { return OperandCount.C2OP; }
 
+  /** {@inheritDoc} */
   public void execute() {
     switch (getOpcodeNum()) {
-
       case C2OP_JE:
         je();
         break;
@@ -139,6 +149,7 @@ public class C2OpInstruction extends AbstractInstruction {
     }
   }
 
+  /** JE instruction. */
   private void je() {
     boolean equalsFollowing = false;
     final char op1 = getUnsignedValue(0);
@@ -157,6 +168,7 @@ public class C2OpInstruction extends AbstractInstruction {
     }
   }
 
+  /** JL instruction. */
   private void jl() {
     final short op1 = getSignedValue(0);
     final short op2 = getSignedValue(1);
@@ -164,12 +176,14 @@ public class C2OpInstruction extends AbstractInstruction {
     branchOnTest(op1 < op2);
   }
 
+  /** JG instruction. */
   private void jg() {
     final short op1 = getSignedValue(0);
     final short op2 = getSignedValue(1);
     branchOnTest(op1 > op2);
   }
 
+  /** JIN instruction. */
   private void jin() {
     final int obj1 = getUnsignedValue(0);
     final int obj2 = getUnsignedValue(1);
@@ -183,6 +197,7 @@ public class C2OpInstruction extends AbstractInstruction {
     branchOnTest(parentOfObj1 == obj2);
   }
 
+  /** DEC_CHK instruction. */
   private void dec_chk() {
     final char varnum = getUnsignedValue(0);
     final short value = getSignedValue(1);
@@ -191,6 +206,7 @@ public class C2OpInstruction extends AbstractInstruction {
     branchOnTest(varValue < value);
   }
 
+  /** INC_CHK instruction. */
   private void inc_chk() {
     final char varnum = getUnsignedValue(0);
     final short value = getSignedValue(1);
@@ -199,12 +215,14 @@ public class C2OpInstruction extends AbstractInstruction {
     branchOnTest(varValue > value);
   }
 
+  /** TEST instruction. */
   private void test() {
     final int op1 = getUnsignedValue(0);
     final int op2 = getUnsignedValue(1);
     branchOnTest((op1 & op2) == op2);
   }
 
+  /** OR instruction. */
   private void or() {
     final int op1 = getUnsignedValue(0);
     final int op2 = getUnsignedValue(1);
@@ -212,6 +230,7 @@ public class C2OpInstruction extends AbstractInstruction {
     nextInstruction();
   }
 
+  /** AND instruction. */
   private void and() {
     final int op1 = getUnsignedValue(0);
     final int op2 = getUnsignedValue(1);
@@ -219,6 +238,7 @@ public class C2OpInstruction extends AbstractInstruction {
     nextInstruction();
   }
 
+  /** ADD instruction. */
   private void add() {
     final short op1 = getSignedValue(0);
     final short op2 = getSignedValue(1);
@@ -226,6 +246,7 @@ public class C2OpInstruction extends AbstractInstruction {
     nextInstruction();
   }
 
+  /** SUB instruction. */
   private void sub() {
     final short op1 = getSignedValue(0);
     final short op2 = getSignedValue(1);
@@ -233,6 +254,7 @@ public class C2OpInstruction extends AbstractInstruction {
     nextInstruction();
   }
 
+  /** MUL instruction. */
   private void mul() {
     final short op1 = getSignedValue(0);
     final short op2 = getSignedValue(1);
@@ -240,6 +262,7 @@ public class C2OpInstruction extends AbstractInstruction {
     nextInstruction();
   }
 
+  /** DIV instruction. */
   private void div() {
     final short op1 = getSignedValue(0);
     final short op2 = getSignedValue(1);
@@ -251,6 +274,7 @@ public class C2OpInstruction extends AbstractInstruction {
     }
   }
 
+  /** MOD instruction. */
   private void mod() {
     final short op1 = getSignedValue(0);
     final short op2 = getSignedValue(1);
@@ -262,6 +286,7 @@ public class C2OpInstruction extends AbstractInstruction {
     }
   }
 
+  /** TEST_ATTR instruction. */
   private void test_attr() {
     final int obj = getUnsignedValue(0);
     final int attr = getUnsignedValue(1);
@@ -273,6 +298,7 @@ public class C2OpInstruction extends AbstractInstruction {
     }
   }
 
+  /** SET_ATTR instruction. */
   private void set_attr() {
     final int obj = getUnsignedValue(0);
     final int attr = getUnsignedValue(1);
@@ -285,6 +311,7 @@ public class C2OpInstruction extends AbstractInstruction {
     nextInstruction();
   }
 
+  /** CLEAR_ATTR instruction. */
   private void clear_attr() {
     final int obj = getUnsignedValue(0);
     final int attr = getUnsignedValue(1);
@@ -297,6 +324,7 @@ public class C2OpInstruction extends AbstractInstruction {
     nextInstruction();
   }
 
+  /** STORE instruction. */
   private void store() {
     final char varnum = getUnsignedValue(0);
     final char value = getUnsignedValue(1);
@@ -309,6 +337,7 @@ public class C2OpInstruction extends AbstractInstruction {
     nextInstruction();
   }
 
+  /** INSERT_OBJ instruction. */
   private void insert_obj() {
     final int obj = getUnsignedValue(0);
     final int dest = getUnsignedValue(1);
@@ -321,6 +350,7 @@ public class C2OpInstruction extends AbstractInstruction {
     nextInstruction();
   }
 
+  /** LOADB instruction. */
   private void loadb() {
     final int arrayAddress = getUnsignedValue(0);
     final int index = getUnsignedValue(1);
@@ -329,6 +359,7 @@ public class C2OpInstruction extends AbstractInstruction {
     nextInstruction();
   }
 
+  /** LOADW instruction. */
   private void loadw() {
     final int arrayAddress = getUnsignedValue(0);
     final int index = getUnsignedValue(1);
@@ -336,6 +367,7 @@ public class C2OpInstruction extends AbstractInstruction {
     nextInstruction();
   }
 
+  /** GET_PROP instruction. */
   private void get_prop() {
     final int obj = getUnsignedValue(0);
     final int property = getUnsignedValue(1);
@@ -349,6 +381,7 @@ public class C2OpInstruction extends AbstractInstruction {
     nextInstruction();
   }
 
+  /** GET_PROP_ADDR instruction. */
   private void get_prop_addr() {
     final int obj = getUnsignedValue(0);
     final int property = getUnsignedValue(1);
@@ -362,6 +395,7 @@ public class C2OpInstruction extends AbstractInstruction {
     nextInstruction();
   }
 
+  /** GET_NEXT_PROP instruction. */
   private void get_next_prop() {
     final int obj = getUnsignedValue(0);
     final int property = getUnsignedValue(1);
@@ -377,6 +411,7 @@ public class C2OpInstruction extends AbstractInstruction {
     }
   }
 
+  /** SET_COLOUR instruction. */
   private void set_colour() {
     int window = ScreenModel.CURRENT_WINDOW;
     if (getNumOperands() == 3) {
@@ -387,6 +422,7 @@ public class C2OpInstruction extends AbstractInstruction {
     nextInstruction();
   }
 
+  /** THROW instruction. */
   private void z_throw() {
     final char returnValue = getUnsignedValue(0);
     final int stackFrame = getUnsignedValue(1);
@@ -409,6 +445,11 @@ public class C2OpInstruction extends AbstractInstruction {
     }
   }
 
+  /**
+   * Checks if the specified attribute is valid
+   * @param attribute attribute number
+   * @return true if valid, false otherwise
+   */
   private boolean isValidAttribute(final int attribute) {
     final int numAttr = getStoryVersion() <= 3 ? 32 : 48;
     return attribute >= 0 && attribute < numAttr;

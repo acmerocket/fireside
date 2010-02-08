@@ -44,15 +44,27 @@ import org.zmpp.windowing.TextCursor;
 public class VarInstruction extends AbstractInstruction {
 
   private static final Logger LOG = Logger.getLogger("org.zmpp");
+
+  /**
+   * Constructor.
+   * @param machine Machine object
+   * @param opcodeNum opcode number
+   * @param operands operands
+   * @param storeVar store variable
+   * @param branchInfo branch information
+   * @param opcodeLength opcode length
+   */
   public VarInstruction(Machine machine, int opcodeNum,
                          Operand[] operands, char storeVar,
                          BranchInfo branchInfo, int opcodeLength) {
     super(machine, opcodeNum, operands, storeVar, branchInfo, opcodeLength);
   }
 
+  /** {@inheritDoc} */
   @Override
   protected OperandCount getOperandCount() { return OperandCount.VAR; }
 
+  /** {@inheritDoc} */
   public void execute() {
     switch (getOpcodeNum()) {
       case VAR_CALL:
@@ -154,10 +166,12 @@ public class VarInstruction extends AbstractInstruction {
     }
   }
 
+  /** CALL instruction. */
   private void call() {
     call(getNumOperands() - 1);
   }
 
+  /** STOREW instruction. */
   private void storew() {
     final int array = getUnsignedValue(0);
     final int wordIndex = getUnsignedValue(1);
@@ -166,6 +180,7 @@ public class VarInstruction extends AbstractInstruction {
     nextInstruction();
   }
 
+  /** STOREB instruction. */
   private void storeb() {
     final int array = getUnsignedValue(0);
     final int byteIndex = getUnsignedValue(1);
@@ -174,6 +189,7 @@ public class VarInstruction extends AbstractInstruction {
     nextInstruction();
   }
 
+  /** PUT_PROP instruction. */
   private void put_prop() {
     final int obj = getUnsignedValue(0);
     final int property = getUnsignedValue(1);
@@ -189,24 +205,28 @@ public class VarInstruction extends AbstractInstruction {
     }
   }
 
+  /** PRINT_CHAR instruction. */
   private void print_char() {
     final char zchar = (char) getUnsignedValue(0);
     getMachine().printZsciiChar(zchar);
     nextInstruction();
   }
 
+  /** PRINT_NUM instruction. */
   private void print_num() {
     final short number = getSignedValue(0);
     getMachine().printNumber(number);
     nextInstruction();
   }
 
+  /** PUSH instruction. */
   private void push() {
     final char value = getUnsignedValue(0);
     getMachine().setVariable((char) 0, value);
     nextInstruction();
   }
 
+  /** PULL instruction. */
   private void pull() {
     if (getStoryVersion() == 6) {
       pull_v6();
@@ -216,6 +236,7 @@ public class VarInstruction extends AbstractInstruction {
     nextInstruction();
   }
 
+  /** PULL instruction for version 6 stories. */
   private void pull_v6() {
     char stack = 0;
     if (getNumOperands() == 1) {
@@ -224,6 +245,7 @@ public class VarInstruction extends AbstractInstruction {
     storeUnsignedResult(getMachine().popStack(stack));
   }
 
+  /** PULL instruction for stories except V6. */
   private void pull_std() {
     final char varnum = getUnsignedValue(0);
     final char value = getMachine().getVariable((char) 0);
@@ -236,6 +258,7 @@ public class VarInstruction extends AbstractInstruction {
     }
   }
 
+  /** OUTPUT_STREAM instruction. */
   private void output_stream() {
     // Stream number should be a signed byte
     final short streamnumber = getSignedValue(0);
@@ -259,17 +282,20 @@ public class VarInstruction extends AbstractInstruction {
     nextInstruction();
   }
 
+  /** INPUT_STREAM instruction. */
   private void input_stream() {
     getMachine().selectInputStream(getUnsignedValue(0));
     nextInstruction();
   }
 
+  /** RANDOM instruction. */
   private void random() {
     final short range = getSignedValue(0);
     storeUnsignedResult(getMachine().random(range));
     nextInstruction();
   }
 
+  /** SREAD instruction. */
   private void sread() {
     if (getMachine().getRunState() == MachineRunState.RUNNING) {
       sreadStage1();
@@ -278,6 +304,7 @@ public class VarInstruction extends AbstractInstruction {
     }
   }
 
+  /** First stage of SREAD. */
   private void sreadStage1() {
     char textbuffer = getUnsignedValue(0);
     getMachine().setRunState(MachineRunState.createReadLine(
@@ -285,19 +312,36 @@ public class VarInstruction extends AbstractInstruction {
             getNumLeftOverChars(textbuffer), textbuffer));
   }
 
+  /**
+   * Returns the read interrupt time.
+   * @return read interrupt time
+   */
   private int getReadInterruptTime() {
     return getNumOperands() >= 3 ? getUnsignedValue(2) : 0;
   }
 
+  /**
+   * Returns the read interrupt routine address.
+   * @return interrup routine address
+   */
   private char getReadInterruptRoutine() {
     return getNumOperands() >= 4 ? getUnsignedValue(3) : 0;
   }
 
+  /**
+   * Returns the number of characters left in the text buffer when timed
+   * input interrupt occurs.
+   * @param textbuffer text buffer address
+   * @return number of left over characters
+   */
   private int getNumLeftOverChars(char textbuffer) {
     return getStoryVersion() >= 5 ?
       getMachine().readUnsigned8(textbuffer + 1) : 0;
   }
 
+  /**
+   * Second stage of SREAD.
+   */
   private void sreadStage2() {
     getMachine().setRunState(MachineRunState.RUNNING);
 
@@ -325,9 +369,7 @@ public class VarInstruction extends AbstractInstruction {
     nextInstruction();
   }
 
-  /**
-   * Implements the sound_effect instruction.
-   */
+  /** SOUND_EFFECT instruction. */
   private void sound_effect() {
     // Choose some default values
     int soundnum = SoundSystem.BLEEP_HIGH;
@@ -371,6 +413,7 @@ public class VarInstruction extends AbstractInstruction {
     nextInstruction();
   }
 
+  /** SPLIT_WINDOW instruction. */
   private void split_window() {
     final ScreenModel screenModel = getMachine().getScreen();
     if (screenModel != null) {
@@ -379,6 +422,7 @@ public class VarInstruction extends AbstractInstruction {
     nextInstruction();
   }
 
+  /** SET_WINDOW instruction. */
   private void set_window() {
     final ScreenModel screenModel = getMachine().getScreen();
     if (screenModel != null) {
@@ -387,24 +431,25 @@ public class VarInstruction extends AbstractInstruction {
     nextInstruction();
   }
 
+  /** SET_TEXT_STYLE instruction. */
   private void set_text_style() {
     final ScreenModel screenModel = getMachine().getScreen();
     if (screenModel != null) {
-
       screenModel.setTextStyle(getUnsignedValue(0));
     }
     nextInstruction();
   }
 
+  /** BUFFER_MODE instruction. */
   private void buffer_mode() {
     final ScreenModel screenModel = getMachine().getScreen();
     if (screenModel != null) {
-
       screenModel.setBufferMode(getUnsignedValue(0) > 0);
     }
     nextInstruction();
   }
 
+  /** ERASE_WINDOW instruction. */
   private void erase_window() {
     final ScreenModel screenModel = getMachine().getScreen();
     if (screenModel != null) {
@@ -413,6 +458,7 @@ public class VarInstruction extends AbstractInstruction {
     nextInstruction();
   }
 
+  /** ERASE_LINE instruction. */
   private void erase_line() {
     final ScreenModel screenModel = getMachine().getScreen();
     if (screenModel != null) {
@@ -421,8 +467,8 @@ public class VarInstruction extends AbstractInstruction {
     nextInstruction();
   }
 
+  /** SET_CURSOR instruction. */
   private void set_cursor() {
-
     final ScreenModel screenModel = getMachine().getScreen();
     if (screenModel != null) {
 
@@ -443,6 +489,7 @@ public class VarInstruction extends AbstractInstruction {
     nextInstruction();
   }
 
+  /** GET_CURSOR instruction. */
   private void get_cursor() {
     final ScreenModel screenModel = getMachine().getScreen();
     if (screenModel != null) {
@@ -454,6 +501,7 @@ public class VarInstruction extends AbstractInstruction {
     nextInstruction();
   }
 
+  /** SCAN_TABLE instruction. */
   private void scan_table() {
     int x = getUnsignedValue(0);
     final char table = getUnsignedValue(1);
@@ -490,7 +538,7 @@ public class VarInstruction extends AbstractInstruction {
     branchOnTest(found);
   }
 
-  // TODO: split in resumable command
+  /** READ_CHAR instruction. */
   private void read_char() {
     if (getMachine().getRunState() == MachineRunState.RUNNING) {
       readCharStage1();
@@ -499,19 +547,33 @@ public class VarInstruction extends AbstractInstruction {
     }
   }
 
+  /**
+   * First stage of READ_CHAR.
+   */
   private void readCharStage1() {
     getMachine().setRunState(MachineRunState.createReadChar(
       getReadCharInterruptTime(), getReadCharInterruptRoutine()));
   }
 
+  /**
+   * Returns the interrupt time for READ_CHAR timed input.
+   * @return interrupt time
+   */
   private int getReadCharInterruptTime() {
     return getNumOperands() >= 2 ? getUnsignedValue(1) : 0;
   }
 
+  /**
+   * Returns the address of the interrupt routine for READ_CHAR timed input.
+   * @return interrupt routine address
+   */
   private char getReadCharInterruptRoutine() {
     return getNumOperands() >= 3 ? getUnsignedValue(2) : 0;
   }
 
+  /**
+   * Second stage of READ_CHAR.
+   */
   private void readCharStage2() {
     getMachine().setRunState(MachineRunState.RUNNING);
     storeUnsignedResult(getMachine().readChar());
@@ -528,6 +590,7 @@ public class VarInstruction extends AbstractInstruction {
     nextInstruction();
   }
 
+  /** TOKENISE instruction. */
   private void tokenise() {
     final int textbuffer = getUnsignedValue(0);
     final int parsebuffer = getUnsignedValue(1);
@@ -543,6 +606,7 @@ public class VarInstruction extends AbstractInstruction {
     nextInstruction();
   }
 
+  /** CHECK_ARG_COUNT instruction. */
   private void check_arg_count() {
     final int argumentNumber = getUnsignedValue(0);
     final int currentNumArgs =
@@ -550,6 +614,7 @@ public class VarInstruction extends AbstractInstruction {
     branchOnTest(argumentNumber <= currentNumArgs);
   }
 
+  /** COPY_TABLE instruction. */
   private void copy_table() {
     final int first = getUnsignedValue(0);
     final int second = getUnsignedValue(1);
@@ -603,6 +668,7 @@ public class VarInstruction extends AbstractInstruction {
     nextInstruction();
   }
 
+  /** ENCODE_TEXT instruction. */
   private void encode_text() {
     final int zsciiText = getUnsignedValue(0);
     final int length = getUnsignedValue(1);

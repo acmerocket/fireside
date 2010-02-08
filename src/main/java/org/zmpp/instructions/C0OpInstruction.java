@@ -54,19 +54,12 @@ public class C0OpInstruction extends AbstractInstruction {
     this.str = str;
   }
 
-  /**
-   * Returns the operand count.
-   * @return the operand count
-   */
+  /** {@inheritDoc} */
   protected OperandCount getOperandCount() { return OperandCount.C0OP; }
 
-  /**
-   * Executes the instruction.
-   */
+  /** {@inheritDoc} */
   public void execute() {
-
     switch (getOpcodeNum()) {
-
       case C0OP_RTRUE:
         returnFromRoutine(TRUE);
         break;
@@ -147,17 +140,13 @@ public class C0OpInstruction extends AbstractInstruction {
     return super.getOperandString();
   }
 
-  /**
-   * Pop instruction.
-   */
+  /** Pop instruction. */
   private void pop() {
     getMachine().getVariable((char) 0);
     nextInstruction();
   }
 
-  /**
-   * Catch instruction.
-   */
+  /** Catch instruction. */
   private void z_catch() {
     // Stores the index of the current stack frame
     storeUnsignedResult((char) (getMachine().getRoutineContexts().size() - 1));
