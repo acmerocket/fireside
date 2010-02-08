@@ -32,6 +32,7 @@ import static org.zmpp.base.MemoryUtil.unsignedToSigned16;
 
 import org.zmpp.base.DefaultMemory;
 import org.zmpp.base.Memory;
+import org.zmpp.encoding.DictionarySizes;
 import org.zmpp.encoding.ZCharDecoder;
 import org.zmpp.encoding.ZCharEncoder;
 

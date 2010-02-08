@@ -32,7 +32,6 @@ import static org.zmpp.base.MemoryUtil.toUnsigned16;
 
 import org.zmpp.base.Memory;
 import org.zmpp.encoding.AlphabetTable.Alphabet;
-import org.zmpp.vm.DictionarySizes;
 
 /**
  * This class encodes ZSCII strings into dictionary encoded strings.

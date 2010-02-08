@@ -48,6 +48,7 @@ import org.zmpp.encoding.DefaultAccentTable;
 import org.zmpp.encoding.DefaultAlphabetTable;
 import org.zmpp.encoding.DefaultZCharDecoder;
 import org.zmpp.encoding.DefaultZCharTranslator;
+import org.zmpp.encoding.DictionarySizes;
 import org.zmpp.encoding.ZCharDecoder;
 import org.zmpp.encoding.ZCharEncoder;
 import org.zmpp.encoding.ZCharTranslator;

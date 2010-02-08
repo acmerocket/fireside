@@ -29,7 +29,7 @@
 package test.zmpp.vm;
 
 import org.junit.Test;
-import org.zmpp.vm.DictionarySizes;
+import org.zmpp.encoding.DictionarySizes;
 import org.zmpp.vm.DictionarySizesV1ToV3;
 import org.zmpp.vm.DictionarySizesV4ToV8;
 import static org.junit.Assert.*;

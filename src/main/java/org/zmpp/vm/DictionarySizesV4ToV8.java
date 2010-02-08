@@ -28,6 +28,8 @@
  */
 package org.zmpp.vm;
 
+import org.zmpp.encoding.DictionarySizes;
+
 /**
  * The dictionary size definitions for the story file versions 4-8.
  *

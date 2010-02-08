@@ -26,7 +26,7 @@
  * ARISING IN ANY WAY OUT OF THE USE OF THIS SOFTWARE, EVEN IF ADVISED OF THE
  * POSSIBILITY OF SUCH DAMAGE.
  */
-package org.zmpp.vm;
+package org.zmpp.encoding;
 
 /**
  * Z-code compilers seem to truncate dictionary string pretty
