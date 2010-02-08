@@ -30,6 +30,7 @@ package org.zmpp.io;
 
 import java.util.LinkedList;
 import java.util.Queue;
+import java.io.Serializable;
 
 /**
  * The LineBufferInputStream is the default implementation for the keyboard
@@ -39,8 +40,9 @@ import java.util.Queue;
  * @author Wei-ju Wu
  * @version 1.5
  */
-public class LineBufferInputStream implements InputStream {
+public class LineBufferInputStream implements InputStream, Serializable {
 
+  private static final long serialVersionUID = 1L;
   /** The queue holding input lines. */
   private Queue<String> inputLines = new LinkedList<String>();
 

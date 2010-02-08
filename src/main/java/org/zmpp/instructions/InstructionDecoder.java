@@ -28,6 +28,8 @@
  */
 package org.zmpp.instructions;
 
+import java.io.Serializable;
+
 import static org.zmpp.vm.Instruction.*;
 import static org.zmpp.vm.Instruction.InstructionForm.*;
 import static org.zmpp.vm.Instruction.OperandCount.*;
@@ -44,7 +46,7 @@ import org.zmpp.vm.Machine;
  * @author Wei-ju Wu
  * @version 1.5
  */
-public class InstructionDecoder {
+public class InstructionDecoder implements Serializable {
   private static final char EXTENDED_MASK     = 0xbe;
   private static final char VAR_MASK          = 0xc0; // 2#11000000
   private static final char SHORT_MASK        = 0x80; // 2#10000000

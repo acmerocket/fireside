@@ -31,6 +31,7 @@ package org.zmpp;
 import java.io.IOException;
 import java.io.Serializable;
 import java.util.logging.Logger;
+import java.util.Locale;
 
 import org.zmpp.base.StoryFileHeader;
 import org.zmpp.base.StoryFileHeader.Attribute;
@@ -244,7 +245,8 @@ public class ExecutionControl implements Serializable {
    * @return the converted input string
    */
   private String convertToZsciiInputLine(String input) {
-    return machine.convertToZscii(input.toLowerCase()) + "\r";
+    return machine.convertToZscii(input.toLowerCase(Locale.getDefault())) +
+                                  "\r";
   }
 
   /**
