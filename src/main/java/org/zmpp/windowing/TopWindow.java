@@ -158,7 +158,13 @@ public class TopWindow implements TextCursor {
    * @param c character
    */
   public void notifyChange(ScreenModelListener l, char c) {
-    l.topWindowUpdated(cursorx, cursory, annotateCharacter(c));
+    if (c == '\n') {
+      // handle newline differently
+      cursorx = 0;
+      cursory++;
+    } else {
+      l.topWindowUpdated(cursorx, cursory, annotateCharacter(c));
+    }
   }
 
   /**
