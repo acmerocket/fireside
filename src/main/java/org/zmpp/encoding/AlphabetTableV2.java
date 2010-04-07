@@ -39,6 +39,8 @@ package org.zmpp.encoding;
  */
 public class AlphabetTableV2 extends DefaultAlphabetTable {
 
+  private static final long serialVersionUID = 1L;
+
   /** {@inheritDoc} */
   public boolean isAbbreviation(final char zchar) { return zchar == 1; }
 

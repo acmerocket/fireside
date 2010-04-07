@@ -40,6 +40,8 @@ package org.zmpp.encoding;
  */
 public class AlphabetTableV1 extends AlphabetTableV2 {
 
+  private static final long serialVersionUID = 1L;
+
   /** V1 Alphabet 2 has a slightly different structure. */
   private static final String A2CHARS = " 0123456789.,!?_#'\"/\\<-:()";
 

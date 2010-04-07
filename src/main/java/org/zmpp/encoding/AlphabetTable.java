@@ -28,6 +28,8 @@
  */
 package org.zmpp.encoding;
 
+import java.io.Serializable;
+
 
 /**
  * The alphabet table is a central part of the Z encoding system. It stores
@@ -37,7 +39,7 @@ package org.zmpp.encoding;
  * @author Wei-ju Wu
  * @version 1.5
  */
-public interface AlphabetTable {
+public interface AlphabetTable extends Serializable {
 
   /** Defines the possible alphabets here. */
   enum Alphabet {  A0, A1, A2 }

@@ -134,7 +134,6 @@ public class BufferedTextWindow {
    */
   public void printChar(char zchar) {
     currentRun.append(zchar);
-    if (!isBuffered) flush();
   }
   /**
    * Returns this window's buffer.

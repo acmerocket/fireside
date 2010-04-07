@@ -39,6 +39,7 @@ import org.zmpp.base.Memory;
  */
 public class CustomAlphabetTable implements AlphabetTable {
 
+  private static final long serialVersionUID = 1L;
   private static final int ALPHABET_SIZE = 26;
   private Memory memory;
   private int tableAddress;

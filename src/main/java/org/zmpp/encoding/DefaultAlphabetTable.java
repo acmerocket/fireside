@@ -36,6 +36,7 @@ package org.zmpp.encoding;
  */
 public class DefaultAlphabetTable implements AlphabetTable {
 
+  private static final long serialVersionUID = 1L;
   private static final String A0CHARS = "abcdefghijklmnopqrstuvwxyz";
   private static final String A1CHARS = "ABCDEFGHIJKLMNOPQRSTUVWXYZ";
   private static final String A2CHARS = " \n0123456789.,!?_#'\"/\\-:()";
