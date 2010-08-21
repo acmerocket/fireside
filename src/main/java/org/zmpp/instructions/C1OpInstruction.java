@@ -183,7 +183,7 @@ public class C1OpInstruction extends AbstractInstruction {
     branchOnTest(sibling > 0);
   }
 
-  /** GET_SIBLING instruction. */
+  /** GET_CHILD instruction. */
   private void get_child() {
     final int obj = getUnsignedValue(0);
     int child = 0;

@@ -258,7 +258,7 @@ class EncodingState {
    * @param src source position
    * @param trgt target position
    * @param maxEntryBytes maximum entry bytes
-   * @param maxEntryChars maximum entrry characters
+   * @param maxEntryChars maximum entry characters
    */
   public void init(Memory mem, int src, int trgt, int maxEntryBytes,
                    int maxEntryChars) {
