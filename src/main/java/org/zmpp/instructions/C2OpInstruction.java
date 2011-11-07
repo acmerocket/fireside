@@ -353,7 +353,7 @@ public class C2OpInstruction extends AbstractInstruction {
   /** LOADB instruction. */
   private void loadb() {
     final int arrayAddress = getUnsignedValue(0);
-    final int index = getSignedValue(1);
+    final int index = getUnsignedValue(1);
     storeUnsignedResult((char) getMachine()
         .readUnsigned8(arrayAddress + index));
     nextInstruction();
@@ -362,7 +362,7 @@ public class C2OpInstruction extends AbstractInstruction {
   /** LOADW instruction. */
   private void loadw() {
     final int arrayAddress = getUnsignedValue(0);
-    final int index = getSignedValue(1);
+    final int index = getUnsignedValue(1);
     storeUnsignedResult(getMachine().readUnsigned16(arrayAddress + 2 * index));
     nextInstruction();
   }
