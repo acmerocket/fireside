@@ -153,4 +153,3 @@ public class C0OpInstruction extends AbstractInstruction {
     nextInstruction();
   }
 }
-

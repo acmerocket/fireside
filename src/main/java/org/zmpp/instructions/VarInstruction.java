@@ -175,8 +175,9 @@ public class VarInstruction extends AbstractInstruction {
   private void storew() {
     final int array = getUnsignedValue(0);
     final int wordIndex = getSignedValue(1);
+    final int memAddress = (array + 2 * wordIndex) & 0xffff;
     final char value = getUnsignedValue(2);
-    getMachine().writeUnsigned16(array + wordIndex * 2, value);
+    getMachine().writeUnsigned16(memAddress, value);
     nextInstruction();
   }
 
@@ -184,8 +185,9 @@ public class VarInstruction extends AbstractInstruction {
   private void storeb() {
     final int array = getUnsignedValue(0);
     final int byteIndex = getSignedValue(1);
+    final int memAddress = (array + byteIndex) & 0xffff;
     final int value = getUnsignedValue(2);
-    getMachine().writeUnsigned8(array + byteIndex, (char) (value & 0xff));
+    getMachine().writeUnsigned8(memAddress, (char) (value & 0xff));
     nextInstruction();
   }
 
