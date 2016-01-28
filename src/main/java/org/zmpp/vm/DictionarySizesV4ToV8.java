@@ -37,8 +37,13 @@ import org.zmpp.encoding.DictionarySizes;
  * @version 1.5
  */
 public class DictionarySizesV4ToV8 implements DictionarySizes {
-  /** {@inheritDoc} */
-  public int getNumEntryBytes() { return 6; }
-  /** {@inheritDoc} */
-  public int getMaxEntryChars() { return 9; }
+	/** {@inheritDoc} */
+	public int getNumEntryBytes() {
+		return 6;
+	}
+
+	/** {@inheritDoc} */
+	public int getMaxEntryChars() {
+		return 9;
+	}
 }

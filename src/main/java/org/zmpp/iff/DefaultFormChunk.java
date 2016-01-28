@@ -44,91 +44,97 @@ import org.zmpp.base.MemorySection;
  */
 public class DefaultFormChunk extends DefaultChunk implements FormChunk {
 
-  /** The sub type id. */
-  private byte[] subId;
+	/** The sub type id. */
+	private byte[] subId;
 
-  /** The list of sub chunks. */
-  private List<Chunk> subChunks;
+	/** The list of sub chunks. */
+	private List<Chunk> subChunks;
 
-  /**
-   * Constructor.
-   * @param memory a MemoryAccess object
-   * @throws IOException if i/o exception occurred
-   */
-  public DefaultFormChunk(final Memory memory) throws IOException {
-    super(memory, 0);
-    initBaseInfo();
-    readSubChunks();
-  }
+	/**
+	 * Constructor.
+	 * 
+	 * @param memory
+	 *            a MemoryAccess object
+	 * @throws IOException
+	 *             if i/o exception occurred
+	 */
+	public DefaultFormChunk(final Memory memory) throws IOException {
+		super(memory, 0);
+		initBaseInfo();
+		readSubChunks();
+	}
 
-  /**
-   * Initialize the id field.
-   * @throws IOException if i/o exception occurred
-   */
-  private void initBaseInfo() throws IOException {
-    if (!"FORM".equals(getId())) {
-      throw new IOException("not a valid IFF format");
-    }
-    // Determine the sub id
-    subId = new byte[CHUNK_ID_LENGTH];
-    memory.copyBytesToArray(subId, 0, CHUNK_HEADER_LENGTH,
-                            Chunk.CHUNK_ID_LENGTH);
-  }
+	/**
+	 * Initialize the id field.
+	 * 
+	 * @throws IOException
+	 *             if i/o exception occurred
+	 */
+	private void initBaseInfo() throws IOException {
+		if (!"FORM".equals(getId())) {
+			throw new IOException("not a valid IFF format");
+		}
+		// Determine the sub id
+		subId = new byte[CHUNK_ID_LENGTH];
+		memory.copyBytesToArray(subId, 0, CHUNK_HEADER_LENGTH, Chunk.CHUNK_ID_LENGTH);
+	}
 
-  /**
-   * Read this form chunk's sub chunks.
-   */
-  private void readSubChunks() {
-    subChunks = new ArrayList<Chunk>();
+	/**
+	 * Read this form chunk's sub chunks.
+	 */
+	private void readSubChunks() {
+		subChunks = new ArrayList<Chunk>();
 
-    // skip the identifying information
-    final int length = getSize();
-    int offset = CHUNK_HEADER_LENGTH + CHUNK_ID_LENGTH;
-    int chunkTotalSize = 0;
+		// skip the identifying information
+		final int length = getSize();
+		int offset = CHUNK_HEADER_LENGTH + CHUNK_ID_LENGTH;
+		int chunkTotalSize = 0;
 
-    while (offset < length) {
-      final Memory memarray = new MemorySection(memory, offset,
-                                                      length - offset);
-      final Chunk subchunk = new DefaultChunk(memarray, offset);
-      subChunks.add(subchunk);
-      chunkTotalSize = subchunk.getSize() + CHUNK_HEADER_LENGTH;
+		while (offset < length) {
+			final Memory memarray = new MemorySection(memory, offset, length - offset);
+			final Chunk subchunk = new DefaultChunk(memarray, offset);
+			subChunks.add(subchunk);
+			chunkTotalSize = subchunk.getSize() + CHUNK_HEADER_LENGTH;
 
-      // Determine if padding is necessary
-      chunkTotalSize = (chunkTotalSize % 2) == 0 ? chunkTotalSize :
-                                                   chunkTotalSize + 1;
-      offset += chunkTotalSize;
-    }
-  }
+			// Determine if padding is necessary
+			chunkTotalSize = (chunkTotalSize % 2) == 0 ? chunkTotalSize : chunkTotalSize + 1;
+			offset += chunkTotalSize;
+		}
+	}
 
-  /** {@inheritDoc} */
-  @Override
-  public boolean isValid() { return "FORM".equals(getId()); }
+	/** {@inheritDoc} */
+	@Override
+	public boolean isValid() {
+		return "FORM".equals(getId());
+	}
 
-  /** {@inheritDoc} */
-  public String getSubId() { return new String(subId); }
+	/** {@inheritDoc} */
+	public String getSubId() {
+		return new String(subId);
+	}
 
-  /** {@inheritDoc} */
-  public Iterator<Chunk> getSubChunks() {
-    return subChunks.iterator();
-  }
+	/** {@inheritDoc} */
+	public Iterator<Chunk> getSubChunks() {
+		return subChunks.iterator();
+	}
 
-  /** {@inheritDoc} */
-  public Chunk getSubChunk(final String id) {
-    for (Chunk chunk : subChunks) {
-      if (chunk.getId().equals(id)) {
-        return chunk;
-      }
-    }
-    return null;
-  }
+	/** {@inheritDoc} */
+	public Chunk getSubChunk(final String id) {
+		for (Chunk chunk : subChunks) {
+			if (chunk.getId().equals(id)) {
+				return chunk;
+			}
+		}
+		return null;
+	}
 
-  /** {@inheritDoc} */
-  public Chunk getSubChunk(final int address) {
-    for (Chunk chunk : subChunks) {
-      if (chunk.getAddress() == address) {
-        return chunk;
-      }
-    }
-    return null;
-  }
+	/** {@inheritDoc} */
+	public Chunk getSubChunk(final int address) {
+		for (Chunk chunk : subChunks) {
+			if (chunk.getAddress() == address) {
+				return chunk;
+			}
+		}
+		return null;
+	}
 }

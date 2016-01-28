@@ -53,92 +53,99 @@ import org.zmpp.vm.DictionarySizesV1ToV3;
  */
 @RunWith(JMock.class)
 public class DictionaryTest {
-  private Mockery context = new JUnit4Mockery() {{
-    setImposteriser(ClassImposteriser.INSTANCE);
-  }};
-  private Memory memory;
-  private Dictionary dictionary;
-  private ZCharDecoder decoder;
-  private ZCharEncoder encoder;
+	private Mockery context = new JUnit4Mockery() {
+		{
+			setImposteriser(ClassImposteriser.INSTANCE);
+		}
+	};
+	private Memory memory;
+	private Dictionary dictionary;
+	private ZCharDecoder decoder;
+	private ZCharEncoder encoder;
 
-  @Before
-  public void setUp() throws Exception {
-    memory = context.mock(Memory.class);
-    decoder = context.mock(ZCharDecoder.class);
-    encoder = context.mock(ZCharEncoder.class);
+	@Before
+	public void setUp() throws Exception {
+		memory = context.mock(Memory.class);
+		decoder = context.mock(ZCharDecoder.class);
+		encoder = context.mock(ZCharEncoder.class);
 
-    // num separators
-    context.checking(new Expectations() {{
-      // num separators
-      atLeast(0) .of(memory).readUnsigned8(1000); will(returnValue((char) 3));
-      // num entries
-      atLeast(0) .of(memory).readUnsigned16(1005); will(returnValue((char) 2));
-      // entry size
-      atLeast(0) .of (memory).readUnsigned8(1004); will(returnValue((char) 4));
-    }});
-    dictionary = new DefaultDictionary(memory, 1000, decoder, encoder,
-          new DictionarySizesV1ToV3());
-  }
-  
-  @Test
-  public void testGetNumSeparators() {
-    assertEquals(3, dictionary.getNumberOfSeparators());
-  }
+		// num separators
+		context.checking(new Expectations() {
+			{
+				// num separators
+				atLeast(0).of(memory).readUnsigned8(1000);
+				will(returnValue((char) 3));
+				// num entries
+				atLeast(0).of(memory).readUnsigned16(1005);
+				will(returnValue((char) 2));
+				// entry size
+				atLeast(0).of(memory).readUnsigned8(1004);
+				will(returnValue((char) 4));
+			}
+		});
+		dictionary = new DefaultDictionary(memory, 1000, decoder, encoder, new DictionarySizesV1ToV3());
+	}
 
-  @Test
-  public void testGetNumEntries() {
-    assertEquals(2, dictionary.getNumberOfEntries());
-  }
-  
-  @Test
-  public void testGetEntryLength() {
-    assertEquals(4, dictionary.getEntryLength());
-  }
+	@Test
+	public void testGetNumSeparators() {
+		assertEquals(3, dictionary.getNumberOfSeparators());
+	}
 
-  @Test
-  public void testGetEntryAddress() {
-    assertEquals(1011, dictionary.getEntryAddress(1));
-  }
-  
-  @Test
-  public void testGetSeparator() {
-    context.checking(new Expectations() {{
-      one (memory).readUnsigned8(1001); will(returnValue('.'));
-    }});
-    assertEquals('.', dictionary.getSeparator(0));
-  }
+	@Test
+	public void testGetNumEntries() {
+		assertEquals(2, dictionary.getNumberOfEntries());
+	}
 
-  @Test
-  public void testLookup() {
-    final byte[] get = new byte[] {0x31, 0x59, (byte) 0x94, (byte) 0xa5};
-    final byte[] look = new byte[] {
-        0x46, (byte) 0x94, (byte) 0xc0, (byte) 0xa5
-    };
-    final byte[] oops = new byte[] {
-        0x52, (byte) 0x95, (byte) 0xe0, (byte) 0xa5
-    };
-    dictionary = new DefaultDictionary(memory, 1000, decoder, encoder,
-        new DictionarySizesV1ToV3()) {
-      /** {@inheritDoc} */
-      @Override
-      protected byte[] truncateTokenToBytes(String token) {
-        // just two words are used, 'get' and 'nonsense'
-        if ("get".equals(token)) return get;
-        return oops;
-      }
-    };
+	@Test
+	public void testGetEntryLength() {
+		assertEquals(4, dictionary.getEntryLength());
+	}
 
-    context.checking(new Expectations() {{
-      for (int i = 0; i < 4; i++) {
-        // 'get'
-        atLeast (0).of (memory).readUnsigned8(1007 + i);
-        will(returnValue((char)  get[i]));
-        // 'look'
-        atLeast (0).of (memory).readUnsigned8(1011 + i);
-        will(returnValue((char) look[i]));
-      }
-    }});
-    assertEquals(1007, dictionary.lookup("get"));
-    assertEquals(0, dictionary.lookup("oops"));
-  }
+	@Test
+	public void testGetEntryAddress() {
+		assertEquals(1011, dictionary.getEntryAddress(1));
+	}
+
+	@Test
+	public void testGetSeparator() {
+		context.checking(new Expectations() {
+			{
+				one(memory).readUnsigned8(1001);
+				will(returnValue('.'));
+			}
+		});
+		assertEquals('.', dictionary.getSeparator(0));
+	}
+
+	@Test
+	public void testLookup() {
+		final byte[] get = new byte[] { 0x31, 0x59, (byte) 0x94, (byte) 0xa5 };
+		final byte[] look = new byte[] { 0x46, (byte) 0x94, (byte) 0xc0, (byte) 0xa5 };
+		final byte[] oops = new byte[] { 0x52, (byte) 0x95, (byte) 0xe0, (byte) 0xa5 };
+		dictionary = new DefaultDictionary(memory, 1000, decoder, encoder, new DictionarySizesV1ToV3()) {
+			/** {@inheritDoc} */
+			@Override
+			protected byte[] truncateTokenToBytes(String token) {
+				// just two words are used, 'get' and 'nonsense'
+				if ("get".equals(token))
+					return get;
+				return oops;
+			}
+		};
+
+		context.checking(new Expectations() {
+			{
+				for (int i = 0; i < 4; i++) {
+					// 'get'
+					atLeast(0).of(memory).readUnsigned8(1007 + i);
+					will(returnValue((char) get[i]));
+					// 'look'
+					atLeast(0).of(memory).readUnsigned8(1011 + i);
+					will(returnValue((char) look[i]));
+				}
+			}
+		});
+		assertEquals(1007, dictionary.lookup("get"));
+		assertEquals(0, dictionary.lookup("oops"));
+	}
 }

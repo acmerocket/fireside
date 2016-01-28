@@ -28,7 +28,6 @@
  */
 package test.zmpp.instructions;
 
-
 import org.junit.Test;
 import static org.junit.Assert.*;
 import org.zmpp.instructions.Operand;
@@ -36,26 +35,27 @@ import org.zmpp.instructions.Operand.OperandType;
 
 /**
  * Test class for Operand.
+ * 
  * @author Wei-ju Wu
  * @version 1.5
  */
 public class OperandTest {
 
-  @Test
-  public void testCreateOperand() {
-    Operand operand1 = new Operand(Operand.TYPENUM_SMALL_CONSTANT, (char) 5);
-    Operand operand2 = new Operand(Operand.TYPENUM_LARGE_CONSTANT, (char) 6);
-    Operand operand3 = new Operand(Operand.TYPENUM_VARIABLE, (char) 11);
-    Operand operand4 = new Operand(Operand.TYPENUM_OMITTED, (char) 13);
-    
-    assertEquals(5, operand1.getValue());
-    assertEquals(6, operand2.getValue());
-    assertEquals(11, operand3.getValue());
-    assertEquals(13, operand4.getValue());
-    
-    assertEquals(operand1.getType(), OperandType.SMALL_CONSTANT);
-    assertEquals(operand2.getType(), OperandType.LARGE_CONSTANT);
-    assertEquals(operand3.getType(), OperandType.VARIABLE);
-    assertEquals(operand4.getType(), OperandType.OMITTED);
-  }
+	@Test
+	public void testCreateOperand() {
+		Operand operand1 = new Operand(Operand.TYPENUM_SMALL_CONSTANT, (char) 5);
+		Operand operand2 = new Operand(Operand.TYPENUM_LARGE_CONSTANT, (char) 6);
+		Operand operand3 = new Operand(Operand.TYPENUM_VARIABLE, (char) 11);
+		Operand operand4 = new Operand(Operand.TYPENUM_OMITTED, (char) 13);
+
+		assertEquals(5, operand1.getValue());
+		assertEquals(6, operand2.getValue());
+		assertEquals(11, operand3.getValue());
+		assertEquals(13, operand4.getValue());
+
+		assertEquals(operand1.getType(), OperandType.SMALL_CONSTANT);
+		assertEquals(operand2.getType(), OperandType.LARGE_CONSTANT);
+		assertEquals(operand3.getType(), OperandType.VARIABLE);
+		assertEquals(operand4.getType(), OperandType.OMITTED);
+	}
 }

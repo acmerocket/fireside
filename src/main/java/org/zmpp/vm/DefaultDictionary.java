@@ -34,63 +34,73 @@ import org.zmpp.encoding.ZCharDecoder;
 import org.zmpp.encoding.ZCharEncoder;
 
 /**
- * This class implements a view on the dictionary within a memory map.
- * Since it takes the implementations of getN
+ * This class implements a view on the dictionary within a memory map. Since it
+ * takes the implementations of getN
  *
  * @author Wei-ju Wu
  * @version 1.5
  */
 public class DefaultDictionary extends AbstractDictionary {
 
-  /** The maximum entry size. */
-  private int maxEntrySize;
+	/** The maximum entry size. */
+	private int maxEntrySize;
 
-  /**
-   * Constructor.
-   * @param memory the memory object
-   * @param address the start address of the dictionary
-   * @param decoder ZCharDecoder object
-   * @param encoder ZCharEncoder object
-   * @param sizes a sizes object
-   */
-  public DefaultDictionary(Memory memory, int address,
-                           ZCharDecoder decoder,
-                           ZCharEncoder encoder,
-                           DictionarySizes sizes) {
-    super(memory, address, decoder, encoder, sizes);
-  }
+	/**
+	 * Constructor.
+	 * 
+	 * @param memory
+	 *            the memory object
+	 * @param address
+	 *            the start address of the dictionary
+	 * @param decoder
+	 *            ZCharDecoder object
+	 * @param encoder
+	 *            ZCharEncoder object
+	 * @param sizes
+	 *            a sizes object
+	 */
+	public DefaultDictionary(Memory memory, int address, ZCharDecoder decoder, ZCharEncoder encoder,
+			DictionarySizes sizes) {
+		super(memory, address, decoder, encoder, sizes);
+	}
 
-  /**
-   * {@inheritDoc}
-   */
-  public int lookup(final String token) {
-    return lookupBinary(truncateTokenToBytes(token), 0,
-                        getNumberOfEntries() - 1);
-  }
+	/**
+	 * {@inheritDoc}
+	 */
+	public int lookup(final String token) {
+		return lookupBinary(truncateTokenToBytes(token), 0, getNumberOfEntries() - 1);
+	}
 
-  /**
-   * Recursive binary search to find an input word in the dictionary.
-   * @param tokenBytes the byte array containing the input word
-   * @param left the left index
-   * @param right the right index
-   * @return the entry address
-   */
-  private int lookupBinary(byte[] tokenBytes, int left, int right) {
-    if (left > right) return 0;
-    int middle = left + (right - left) / 2;
-    int entryAddress = getEntryAddress(middle);
-    int res = tokenMatch(tokenBytes, entryAddress);
-    if (res < 0) {
-      return lookupBinary(tokenBytes, left, middle - 1);
-    } else if (res > 0) {
-      return lookupBinary(tokenBytes, middle + 1, right);
-    } else {
-      return entryAddress;
-    }
-  }
+	/**
+	 * Recursive binary search to find an input word in the dictionary.
+	 * 
+	 * @param tokenBytes
+	 *            the byte array containing the input word
+	 * @param left
+	 *            the left index
+	 * @param right
+	 *            the right index
+	 * @return the entry address
+	 */
+	private int lookupBinary(byte[] tokenBytes, int left, int right) {
+		if (left > right)
+			return 0;
+		int middle = left + (right - left) / 2;
+		int entryAddress = getEntryAddress(middle);
+		int res = tokenMatch(tokenBytes, entryAddress);
+		if (res < 0) {
+			return lookupBinary(tokenBytes, left, middle - 1);
+		} else if (res > 0) {
+			return lookupBinary(tokenBytes, middle + 1, right);
+		} else {
+			return entryAddress;
+		}
+	}
 
-  /**
-   * {@inheritDoc}
-   */
-  protected int getMaxEntrySize() { return maxEntrySize; }
+	/**
+	 * {@inheritDoc}
+	 */
+	protected int getMaxEntrySize() {
+		return maxEntrySize;
+	}
 }

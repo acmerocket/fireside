@@ -30,9 +30,10 @@ package org.zmpp.vm;
 
 /**
  * A simple exception to report an invalid story file
+ * 
  * @author Wei-ju Wu
  * @version 1.5
  */
 public class InvalidStoryException extends Exception {
-  private static final long serialVersionUID = -1238988006329747571L;
+	private static final long serialVersionUID = -1238988006329747571L;
 }

@@ -50,158 +50,169 @@ import org.zmpp.media.Resolution;
  */
 public class BlorbImages extends BlorbMediaCollection<BlorbImage> {
 
-  /**
-   * This map implements the image database.
-   */
-  private Map<Integer, BlorbImage> images;
+	/**
+	 * This map implements the image database.
+	 */
+	private Map<Integer, BlorbImage> images;
 
-  /**
-   * Constructor.
-   * @param imageFactory the NativeImageFactory object
-   * @param formchunk the form chunk
-   */
-  public BlorbImages(NativeImageFactory imageFactory, FormChunk formchunk) {
-    super(imageFactory, null, formchunk);
-    handleResoChunk();
-  }
+	/**
+	 * Constructor.
+	 * 
+	 * @param imageFactory
+	 *            the NativeImageFactory object
+	 * @param formchunk
+	 *            the form chunk
+	 */
+	public BlorbImages(NativeImageFactory imageFactory, FormChunk formchunk) {
+		super(imageFactory, null, formchunk);
+		handleResoChunk();
+	}
 
-  /**
-   * {@inheritDoc}
-   */
-  @Override
-  public void clear() {
-    super.clear();
-    images.clear();
-  }
+	/**
+	 * {@inheritDoc}
+	 */
+	@Override
+	public void clear() {
+		super.clear();
+		images.clear();
+	}
 
-  /**
-   * {@inheritDoc}
-   */
-  protected void initDatabase() {
-    images = new HashMap<Integer, BlorbImage>();
-  }
+	/**
+	 * {@inheritDoc}
+	 */
+	protected void initDatabase() {
+		images = new HashMap<Integer, BlorbImage>();
+	}
 
-  /**
-   * {@inheritDoc}
-   */
-  protected boolean isHandledResource(final byte[] usageId) {
-    return usageId[0] == 'P' && usageId[1] == 'i' && usageId[2] == 'c'
-           && usageId[3] == 't';
-  }
+	/**
+	 * {@inheritDoc}
+	 */
+	protected boolean isHandledResource(final byte[] usageId) {
+		return usageId[0] == 'P' && usageId[1] == 'i' && usageId[2] == 'c' && usageId[3] == 't';
+	}
 
-  /**
-   * {@inheritDoc}
-   */
-  public BlorbImage getResource(final int resourcenumber) {
-    return images.get(resourcenumber);
-  }
+	/**
+	 * {@inheritDoc}
+	 */
+	public BlorbImage getResource(final int resourcenumber) {
+		return images.get(resourcenumber);
+	}
 
-  /**
-   * {@inheritDoc}
-   */
-  protected boolean putToDatabase(final Chunk chunk, final int resnum) {
-    if (!handlePlaceholder(chunk, resnum)) {
-      return handlePicture(chunk, resnum);
-    }
-    return true;
-  }
+	/**
+	 * {@inheritDoc}
+	 */
+	protected boolean putToDatabase(final Chunk chunk, final int resnum) {
+		if (!handlePlaceholder(chunk, resnum)) {
+			return handlePicture(chunk, resnum);
+		}
+		return true;
+	}
 
-  /**
-   * Handles a placeholder image.
-   * @param chunk the Chunk object
-   * @param resnum the resource number
-   * @return true if successful, false otherwise
-   */
-  private boolean handlePlaceholder(final Chunk chunk, final int resnum) {
-    if ("Rect".equals(chunk.getId())) {
-      // Place holder
-      Memory memory = chunk.getMemory();
-      int width = (int) readUnsigned32(memory, Chunk.CHUNK_HEADER_LENGTH);
-      int height = (int) readUnsigned32(memory, Chunk.CHUNK_HEADER_LENGTH + 4);
-      images.put(resnum, new BlorbImage(width, height));
+	/**
+	 * Handles a placeholder image.
+	 * 
+	 * @param chunk
+	 *            the Chunk object
+	 * @param resnum
+	 *            the resource number
+	 * @return true if successful, false otherwise
+	 */
+	private boolean handlePlaceholder(final Chunk chunk, final int resnum) {
+		if ("Rect".equals(chunk.getId())) {
+			// Place holder
+			Memory memory = chunk.getMemory();
+			int width = (int) readUnsigned32(memory, Chunk.CHUNK_HEADER_LENGTH);
+			int height = (int) readUnsigned32(memory, Chunk.CHUNK_HEADER_LENGTH + 4);
+			images.put(resnum, new BlorbImage(width, height));
 
-      return true;
-    }
-    return false;
-  }
+			return true;
+		}
+		return false;
+	}
 
-  /**
-   * Processes the picture contained in the specified chunk.
-   * @param chunk the Chunk
-   * @param resnum the resource number
-   * @return true if successful, false otherwise
-   */
-  private boolean handlePicture(final Chunk chunk, final int resnum) {
-    final InputStream is = new MemoryInputStream(chunk.getMemory(),
-        Chunk.CHUNK_HEADER_LENGTH, chunk.getSize() + Chunk.CHUNK_HEADER_LENGTH);
-    try {
-      images.put(resnum, new BlorbImage(imageFactory.createImage(is)));
-      return true;
-    } catch (IOException ex) {
+	/**
+	 * Processes the picture contained in the specified chunk.
+	 * 
+	 * @param chunk
+	 *            the Chunk
+	 * @param resnum
+	 *            the resource number
+	 * @return true if successful, false otherwise
+	 */
+	private boolean handlePicture(final Chunk chunk, final int resnum) {
+		final InputStream is = new MemoryInputStream(chunk.getMemory(), Chunk.CHUNK_HEADER_LENGTH,
+				chunk.getSize() + Chunk.CHUNK_HEADER_LENGTH);
+		try {
+			images.put(resnum, new BlorbImage(imageFactory.createImage(is)));
+			return true;
+		} catch (IOException ex) {
 
-      ex.printStackTrace();
-    }
-    return false;
-  }
+			ex.printStackTrace();
+		}
+		return false;
+	}
 
-  /**
-   * Process the Reso chunk.
-   */
-  private void handleResoChunk() {
-    Chunk resochunk = getFormChunk().getSubChunk("Reso");
-    if (resochunk != null) {
-      adjustResolution(resochunk);
-    }
-  }
+	/**
+	 * Process the Reso chunk.
+	 */
+	private void handleResoChunk() {
+		Chunk resochunk = getFormChunk().getSubChunk("Reso");
+		if (resochunk != null) {
+			adjustResolution(resochunk);
+		}
+	}
 
-  /**
-   * Adjusts the resolution of the image.
-   * @param resochunk the Reso chunk
-   */
-  private void adjustResolution(Chunk resochunk) {
-    Memory memory = resochunk.getMemory();
-    int offset = Chunk.CHUNK_ID_LENGTH;
-    int size = (int) readUnsigned32(memory, offset);
-    offset += Chunk.CHUNK_SIZEWORD_LENGTH;
-    int px = (int) readUnsigned32(memory, offset);
-    offset += 4;
-    int py = (int) readUnsigned32(memory, offset);
-    offset += 4;
-    int minx = (int) readUnsigned32(memory, offset);
-    offset += 4;
-    int miny = (int) readUnsigned32(memory, offset);
-    offset += 4;
-    int maxx = (int) readUnsigned32(memory, offset);
-    offset += 4;
-    int maxy = (int) readUnsigned32(memory, offset);
-    offset += 4;
+	/**
+	 * Adjusts the resolution of the image.
+	 * 
+	 * @param resochunk
+	 *            the Reso chunk
+	 */
+	private void adjustResolution(Chunk resochunk) {
+		Memory memory = resochunk.getMemory();
+		int offset = Chunk.CHUNK_ID_LENGTH;
+		int size = (int) readUnsigned32(memory, offset);
+		offset += Chunk.CHUNK_SIZEWORD_LENGTH;
+		int px = (int) readUnsigned32(memory, offset);
+		offset += 4;
+		int py = (int) readUnsigned32(memory, offset);
+		offset += 4;
+		int minx = (int) readUnsigned32(memory, offset);
+		offset += 4;
+		int miny = (int) readUnsigned32(memory, offset);
+		offset += 4;
+		int maxx = (int) readUnsigned32(memory, offset);
+		offset += 4;
+		int maxy = (int) readUnsigned32(memory, offset);
+		offset += 4;
 
-    ResolutionInfo resinfo = new ResolutionInfo(new Resolution(px, py),
-        new Resolution(minx, miny), new Resolution(maxx, maxy));
+		ResolutionInfo resinfo = new ResolutionInfo(new Resolution(px, py), new Resolution(minx, miny),
+				new Resolution(maxx, maxy));
 
-    for (int i = 0; i < getNumResources(); i++) {
-      if (offset >= size) break;
-      int imgnum = (int) readUnsigned32(memory, offset);
-      offset += 4;
-      int ratnum = (int) readUnsigned32(memory, offset);
-      offset += 4;
-      int ratden = (int) readUnsigned32(memory, offset);
-      offset += 4;
-      int minnum = (int) readUnsigned32(memory, offset);
-      offset += 4;
-      int minden = (int) readUnsigned32(memory, offset);
-      offset += 4;
-      int maxnum = (int) readUnsigned32(memory, offset);
-      offset += 4;
-      int maxden = (int) readUnsigned32(memory, offset);
-      offset += 4;
-      ScaleInfo scaleinfo = new ScaleInfo(resinfo, new Ratio(ratnum, ratden),
-          new Ratio(minnum, minden), new Ratio(maxnum, maxden));
-      BlorbImage img = images.get(imgnum);
+		for (int i = 0; i < getNumResources(); i++) {
+			if (offset >= size)
+				break;
+			int imgnum = (int) readUnsigned32(memory, offset);
+			offset += 4;
+			int ratnum = (int) readUnsigned32(memory, offset);
+			offset += 4;
+			int ratden = (int) readUnsigned32(memory, offset);
+			offset += 4;
+			int minnum = (int) readUnsigned32(memory, offset);
+			offset += 4;
+			int minden = (int) readUnsigned32(memory, offset);
+			offset += 4;
+			int maxnum = (int) readUnsigned32(memory, offset);
+			offset += 4;
+			int maxden = (int) readUnsigned32(memory, offset);
+			offset += 4;
+			ScaleInfo scaleinfo = new ScaleInfo(resinfo, new Ratio(ratnum, ratden), new Ratio(minnum, minden),
+					new Ratio(maxnum, maxden));
+			BlorbImage img = images.get(imgnum);
 
-      if (img != null) {
-        img.setScaleInfo(scaleinfo);
-      }
-    }
-  }
+			if (img != null) {
+				img.setScaleInfo(scaleinfo);
+			}
+		}
+	}
 }

@@ -36,72 +36,85 @@ import org.zmpp.media.SoundEffect;
 import org.zmpp.media.ZmppImage;
 
 /**
- * This class encapsulates a Blorb file and offers access to the sound
- * and graphics media collections.
+ * This class encapsulates a Blorb file and offers access to the sound and
+ * graphics media collections.
  *
  * @author Wei-ju Wu
  * @version 1.5
  */
 public class BlorbResources implements Resources {
 
-  /** The file's images. */
-  private MediaCollection<BlorbImage> images;
+	/** The file's images. */
+	private MediaCollection<BlorbImage> images;
 
-  /** The file's sounds. */
-  private MediaCollection<SoundEffect> sounds;
+	/** The file's sounds. */
+	private MediaCollection<SoundEffect> sounds;
 
-  /** The cover art. */
-  private BlorbCoverArt coverart;
+	/** The cover art. */
+	private BlorbCoverArt coverart;
 
-  /** The meta data. */
-  private BlorbMetadataHandler metadata;
+	/** The meta data. */
+	private BlorbMetadataHandler metadata;
 
-  /** The release number. */
-  private int release;
+	/** The release number. */
+	private int release;
 
-  /**
-   * Constructor.
-   * @param imageFactory a NativeImageFactory
-   * @param soundEffectFactory a SoundEffectFactory
-   * @param formchunk a form chunk in Blorb format
-   */
-  public BlorbResources(NativeImageFactory imageFactory,
-      SoundEffectFactory soundEffectFactory,
-      FormChunk formchunk) {
-    images = new BlorbImages(imageFactory, formchunk);
-    sounds = new BlorbSounds(soundEffectFactory, formchunk);
-    coverart = new BlorbCoverArt(formchunk);
-    metadata = new BlorbMetadataHandler(formchunk);
-  }
+	/**
+	 * Constructor.
+	 * 
+	 * @param imageFactory
+	 *            a NativeImageFactory
+	 * @param soundEffectFactory
+	 *            a SoundEffectFactory
+	 * @param formchunk
+	 *            a form chunk in Blorb format
+	 */
+	public BlorbResources(NativeImageFactory imageFactory, SoundEffectFactory soundEffectFactory, FormChunk formchunk) {
+		images = new BlorbImages(imageFactory, formchunk);
+		sounds = new BlorbSounds(soundEffectFactory, formchunk);
+		coverart = new BlorbCoverArt(formchunk);
+		metadata = new BlorbMetadataHandler(formchunk);
+	}
 
-  /**
-   * {@inheritDoc}
-   */
-  public MediaCollection<? extends ZmppImage> getImages() { return images; }
+	/**
+	 * {@inheritDoc}
+	 */
+	public MediaCollection<? extends ZmppImage> getImages() {
+		return images;
+	}
 
-  /**
-   * {@inheritDoc}
-   */
-  public MediaCollection<SoundEffect> getSounds() { return sounds; }
+	/**
+	 * {@inheritDoc}
+	 */
+	public MediaCollection<SoundEffect> getSounds() {
+		return sounds;
+	}
 
-  /**
-   * {@inheritDoc}
-   */
-  public int getCoverArtNum() { return coverart.getCoverArtNum(); }
+	/**
+	 * {@inheritDoc}
+	 */
+	public int getCoverArtNum() {
+		return coverart.getCoverArtNum();
+	}
 
+	/**
+	 * {@inheritDoc}
+	 */
+	public InformMetadata getMetadata() {
+		return metadata.getMetadata();
+	}
 
-  /**
-   * {@inheritDoc}
-   */
-  public InformMetadata getMetadata() { return metadata.getMetadata(); }
+	/**
+	 * {@inheritDoc}
+	 */
+	public int getRelease() {
+		return release;
+	}
 
-  /**
-   * {@inheritDoc}
-   */
-  public int getRelease() { return release; }
-
-  /**
-   * {@inheritDoc}
-   */
-  public boolean hasInfo() { return metadata.getMetadata() != null; }
+	/**
+	 * {@inheritDoc}
+	 */
+	public boolean hasInfo() {
+		return metadata.getMetadata() != null;
+	}
 }

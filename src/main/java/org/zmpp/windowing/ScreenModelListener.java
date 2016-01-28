@@ -30,40 +30,54 @@ package org.zmpp.windowing;
 
 /**
  * The ScreenModelListener interface.
+ * 
  * @author Wei-ju Wu
  * @version 1.5
  */
 public interface ScreenModelListener {
-  /**
-   * Notifies the listener that the screen model was updated.
-   * @param screenModel the updated screen model
-   */
-  void screenModelUpdated(ScreenModel screenModel);
+	/**
+	 * Notifies the listener that the screen model was updated.
+	 * 
+	 * @param screenModel
+	 *            the updated screen model
+	 */
+	void screenModelUpdated(ScreenModel screenModel);
 
-  /**
-   * Called when the top window was changed.
-   * @param cursorx cursor x-position
-   * @param cursory cursor y-position
-   * @param c character
-   */
-  void topWindowUpdated(int cursorx, int cursory, AnnotatedCharacter c);
+	/**
+	 * Called when the top window was changed.
+	 * 
+	 * @param cursorx
+	 *            cursor x-position
+	 * @param cursory
+	 *            cursor y-position
+	 * @param c
+	 *            character
+	 */
+	void topWindowUpdated(int cursorx, int cursory, AnnotatedCharacter c);
 
-  /**
-   * Called when the screen split value changed.
-   * @param linesUpperWindow lines in upper window
-   */
-  void screenSplit(int linesUpperWindow);
+	/**
+	 * Called when the screen split value changed.
+	 * 
+	 * @param linesUpperWindow
+	 *            lines in upper window
+	 */
+	void screenSplit(int linesUpperWindow);
 
-  /**
-   * Called when a window is erased.
-   * @param window the erased window
-   */
-  void windowErased(int window);
-  /**
-   * Called before the cursor positions is updated.
-   * @param line the target line
-   * @param column the target column
-   */
-  void topWindowCursorMoving(int line, int column);
+	/**
+	 * Called when a window is erased.
+	 * 
+	 * @param window
+	 *            the erased window
+	 */
+	void windowErased(int window);
+
+	/**
+	 * Called before the cursor positions is updated.
+	 * 
+	 * @param line
+	 *            the target line
+	 * @param column
+	 *            the target column
+	 */
+	void topWindowCursorMoving(int line, int column);
 }
-

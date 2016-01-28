@@ -36,24 +36,28 @@ import org.zmpp.vm.Machine;
 
 /**
  * Super class for Instruction tests.
+ * 
  * @author Wei-ju Wu
  * @version 1.5
  */
 public abstract class InstructionTestBase {
-  protected Mockery context = new JUnit4Mockery();
+	protected Mockery context = new JUnit4Mockery();
 	protected Machine machine;
 	protected OutputStream outputStream;
 	protected Dictionary dictionary;
 
-	protected void setUp() throws Exception { 
+	protected void setUp() throws Exception {
 		machine = context.mock(Machine.class);
 		outputStream = context.mock(OutputStream.class);
 		dictionary = context.mock(Dictionary.class);
 	}
 
-  protected void expectStoryVersion(final int version) {
-    context.checking(new Expectations() {{
-      atLeast(1).of (machine).getVersion(); will(returnValue(version));
-    }});
-  }
+	protected void expectStoryVersion(final int version) {
+		context.checking(new Expectations() {
+			{
+				atLeast(1).of(machine).getVersion();
+				will(returnValue(version));
+			}
+		});
+	}
 }

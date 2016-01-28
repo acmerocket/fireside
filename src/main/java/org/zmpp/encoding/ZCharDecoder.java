@@ -31,67 +31,77 @@ package org.zmpp.encoding;
 import org.zmpp.base.Memory;
 
 /**
- * This interface provides decoding for the Z character encoding into
- * the Java character system. It is important to point out that there
- * is a difference between Z characters and the ZCSII encoding. Where
- * ZSCII is a character set that is similar to ASCII/iso-8859-1, the
- * Z characters are a encoded form of characters in memory that provide
- * some degree of compression and encryption.
+ * This interface provides decoding for the Z character encoding into the Java
+ * character system. It is important to point out that there is a difference
+ * between Z characters and the ZCSII encoding. Where ZSCII is a character set
+ * that is similar to ASCII/iso-8859-1, the Z characters are a encoded form of
+ * characters in memory that provide some degree of compression and encryption.
  *
- * ZCharConverter uses the alphabet tables specified in the Z machine
- * standards document 1.0, section 3.
+ * ZCharConverter uses the alphabet tables specified in the Z machine standards
+ * document 1.0, section 3.
  *
  * @author Wei-ju Wu
  * @version 1.5
  */
 public interface ZCharDecoder {
 
-  /**
-   * This interface defines the abstract access to an abbreviations
-   * table in memory, this will be used for decoding if needed.
-   */
-  public interface AbbreviationsTable {
-    /**
-     * Returns the word address of the specified entry.
-     * @param entryNum entry number
-     * @return word address
-     */
-    int getWordAddress(int entryNum);
-  }
+	/**
+	 * This interface defines the abstract access to an abbreviations table in
+	 * memory, this will be used for decoding if needed.
+	 */
+	public interface AbbreviationsTable {
+		/**
+		 * Returns the word address of the specified entry.
+		 * 
+		 * @param entryNum
+		 *            entry number
+		 * @return word address
+		 */
+		int getWordAddress(int entryNum);
+	}
 
-  /**
-   * Performs a ZSCII decoding at the specified position of
-   * the given memory object, this method is exclusively designed to
-   * deal with the problems of dictionary entries. These can be cropped,
-   * leaving the string in a state, that can not be decoded properly
-   * otherwise. If the provided length is 0, the semantics are
-   * equal to the method without the length parameter.
-   * @param memory a Memory object
-   * @param address the address of the string
-   * @param length the maximum length in bytes
-   * @return the decoded string
-   */
-  String decode2Zscii(Memory memory, int address, int length);
+	/**
+	 * Performs a ZSCII decoding at the specified position of the given memory
+	 * object, this method is exclusively designed to deal with the problems of
+	 * dictionary entries. These can be cropped, leaving the string in a state,
+	 * that can not be decoded properly otherwise. If the provided length is 0,
+	 * the semantics are equal to the method without the length parameter.
+	 * 
+	 * @param memory
+	 *            a Memory object
+	 * @param address
+	 *            the address of the string
+	 * @param length
+	 *            the maximum length in bytes
+	 * @return the decoded string
+	 */
+	String decode2Zscii(Memory memory, int address, int length);
 
-  /**
-   * Returns the number of Z encoded bytes at the specified position.
-   * @param memory the Memory object
-   * @param address the string address
-   * @return the number Z encoded bytes
-   */
-  int getNumZEncodedBytes(Memory memory, int address);
+	/**
+	 * Returns the number of Z encoded bytes at the specified position.
+	 * 
+	 * @param memory
+	 *            the Memory object
+	 * @param address
+	 *            the string address
+	 * @return the number Z encoded bytes
+	 */
+	int getNumZEncodedBytes(Memory memory, int address);
 
-  /**
-   * Decodes the given byte value to the specified buffer using the working
-   * alphabet.
-   * @param zchar a z encoded character, needs to be a non-shift character
-   * @return decoded character
-   */
-  char decodeZChar(char zchar);
+	/**
+	 * Decodes the given byte value to the specified buffer using the working
+	 * alphabet.
+	 * 
+	 * @param zchar
+	 *            a z encoded character, needs to be a non-shift character
+	 * @return decoded character
+	 */
+	char decodeZChar(char zchar);
 
-  /**
-   * Returns the ZStringTranslator.
-   * @return the translator
-   */
-  ZCharTranslator getTranslator();
+	/**
+	 * Returns the ZStringTranslator.
+	 * 
+	 * @return the translator
+	 */
+	ZCharTranslator getTranslator();
 }

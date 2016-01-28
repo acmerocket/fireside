@@ -32,42 +32,46 @@ import org.zmpp.base.Memory;
 import org.zmpp.encoding.ZCharDecoder.AbbreviationsTable;
 
 /**
- * This class represents a view to the abbreviations table. The table
- * starts at the predefined address within the header and contains pointers
- * to ZSCII strings in the memory map. These pointers are word addresses
- * as opposed to all other addresses in the memory map, therefore the
- * actual value has to multiplied by two to get the real address.
+ * This class represents a view to the abbreviations table. The table starts at
+ * the predefined address within the header and contains pointers to ZSCII
+ * strings in the memory map. These pointers are word addresses as opposed to
+ * all other addresses in the memory map, therefore the actual value has to
+ * multiplied by two to get the real address.
  *
  * @author Wei-ju Wu
  * @version 1.5
  */
 public class Abbreviations implements AbbreviationsTable {
 
-  /** The memory object. */
-  private Memory memory;
+	/** The memory object. */
+	private Memory memory;
 
-  /** The start address of the abbreviations table. */
-  private int address;
+	/** The start address of the abbreviations table. */
+	private int address;
 
-  /**
-   * Constructor.
-   * @param memory the memory map
-   * @param address the start address of the abbreviations table
-   */
-  public Abbreviations(final Memory memory, final int address) {
-    super();
-    this.memory = memory;
-    this.address = address;
-  }
+	/**
+	 * Constructor.
+	 * 
+	 * @param memory
+	 *            the memory map
+	 * @param address
+	 *            the start address of the abbreviations table
+	 */
+	public Abbreviations(final Memory memory, final int address) {
+		super();
+		this.memory = memory;
+		this.address = address;
+	}
 
-  /**
-   * The abbreviation table contains word addresses, so read out the pointer
-   * and multiply by two
-   *
-   * @param entryNum the entry index in the abbreviations table
-   * @return the word address
-   */
-  public int getWordAddress(final int entryNum) {
-    return memory.readUnsigned16(address + entryNum * 2) * 2;
-  }
+	/**
+	 * The abbreviation table contains word addresses, so read out the pointer
+	 * and multiply by two
+	 *
+	 * @param entryNum
+	 *            the entry index in the abbreviations table
+	 * @return the word address
+	 */
+	public int getWordAddress(final int entryNum) {
+		return memory.readUnsigned16(address + entryNum * 2) * 2;
+	}
 }

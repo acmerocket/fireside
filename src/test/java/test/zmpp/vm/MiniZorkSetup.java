@@ -28,7 +28,6 @@
  */
 package test.zmpp.vm;
 
-
 import org.zmpp.base.Memory;
 import org.zmpp.base.StoryFileHeader;
 import org.zmpp.encoding.AlphabetTable;
@@ -45,30 +44,29 @@ import org.zmpp.vm.MachineImpl;
 import test.zmpp.testutil.TestUtil;
 
 /**
- * This class acts as a base test class and sets up some integrated
- * testing objects for the minizork game.
+ * This class acts as a base test class and sets up some integrated testing
+ * objects for the minizork game.
  *
  * @author Wei-ju Wu
  * @version 1.5
  */
 public abstract class MiniZorkSetup {
 
-  protected Memory minizorkmap;
-  protected ZCharDecoder converter;
-  protected StoryFileHeader fileheader;
-  protected Abbreviations abbreviations;
-  protected MachineImpl machine;
+	protected Memory minizorkmap;
+	protected ZCharDecoder converter;
+	protected StoryFileHeader fileheader;
+	protected Abbreviations abbreviations;
+	protected MachineImpl machine;
 
-  protected void setUp() throws Exception {
-    machine = MachineTestUtil.createMachine(TestUtil.loadResource("minizork.z3"));
-    minizorkmap = machine;
-    fileheader = machine.getFileHeader();
-    
-    abbreviations = new Abbreviations(minizorkmap,
-        machine.readUnsigned16(StoryFileHeader.ABBREVIATIONS));
-    ZsciiEncoding encoding = new ZsciiEncoding(new DefaultAccentTable());
-    AlphabetTable alphabetTable = new DefaultAlphabetTable();
-    ZCharTranslator translator = new DefaultZCharTranslator(alphabetTable);
-    converter = new DefaultZCharDecoder(encoding, translator, abbreviations); 
-  }
+	protected void setUp() throws Exception {
+		machine = MachineTestUtil.createMachine(TestUtil.loadResource("minizork.z3"));
+		minizorkmap = machine;
+		fileheader = machine.getFileHeader();
+
+		abbreviations = new Abbreviations(minizorkmap, machine.readUnsigned16(StoryFileHeader.ABBREVIATIONS));
+		ZsciiEncoding encoding = new ZsciiEncoding(new DefaultAccentTable());
+		AlphabetTable alphabetTable = new DefaultAlphabetTable();
+		ZCharTranslator translator = new DefaultZCharTranslator(alphabetTable);
+		converter = new DefaultZCharDecoder(encoding, translator, abbreviations);
+	}
 }

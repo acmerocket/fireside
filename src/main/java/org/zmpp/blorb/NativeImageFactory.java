@@ -32,17 +32,21 @@ import java.io.IOException;
 import java.io.InputStream;
 
 /**
- * User interface specific factory to generate NativeImage instance from
- * a block of data.
+ * User interface specific factory to generate NativeImage instance from a block
+ * of data.
+ * 
  * @author Wei-ju Wu
  * @version 1.5
  */
 public interface NativeImageFactory {
-  /**
-   * Creates a NativeImage from an InputStream.
-   * @param inputStream the input stream
-   * @return the NativeImage
-   * @throws IOException if read error occurred
-   */
-  NativeImage createImage(InputStream inputStream) throws IOException;
+	/**
+	 * Creates a NativeImage from an InputStream.
+	 * 
+	 * @param inputStream
+	 *            the input stream
+	 * @return the NativeImage
+	 * @throws IOException
+	 *             if read error occurred
+	 */
+	NativeImage createImage(InputStream inputStream) throws IOException;
 }

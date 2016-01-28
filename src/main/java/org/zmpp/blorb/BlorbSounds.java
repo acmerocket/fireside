@@ -43,51 +43,53 @@ import org.zmpp.media.SoundEffect;
  */
 public class BlorbSounds extends BlorbMediaCollection<SoundEffect> {
 
-  /**
-   * This map implements the database.
-   */
-  private Map<Integer, SoundEffect> sounds;
+	/**
+	 * This map implements the database.
+	 */
+	private Map<Integer, SoundEffect> sounds;
 
-  /**
-   * Constructor.
-   * @param factory the SoundEffectFactory
-   * @param formchunk the form chunk
-   */
-  public BlorbSounds(SoundEffectFactory factory, FormChunk formchunk) {
-    super(null, factory, formchunk);
-  }
+	/**
+	 * Constructor.
+	 * 
+	 * @param factory
+	 *            the SoundEffectFactory
+	 * @param formchunk
+	 *            the form chunk
+	 */
+	public BlorbSounds(SoundEffectFactory factory, FormChunk formchunk) {
+		super(null, factory, formchunk);
+	}
 
-  /** {@inheritDoc} */
-  @Override
-  public void clear() {
-    super.clear();
-    sounds.clear();
-  }
+	/** {@inheritDoc} */
+	@Override
+	public void clear() {
+		super.clear();
+		sounds.clear();
+	}
 
-  /** {@inheritDoc} */
-  protected void initDatabase() {
-    sounds = new HashMap<Integer, SoundEffect>();
-  }
+	/** {@inheritDoc} */
+	protected void initDatabase() {
+		sounds = new HashMap<Integer, SoundEffect>();
+	}
 
-  /** {@inheritDoc} */
-  protected boolean isHandledResource(final byte[] usageId) {
-    return usageId[0] == 'S' && usageId[1] == 'n' && usageId[2] == 'd'
-           && usageId[3] == ' ';
-  }
+	/** {@inheritDoc} */
+	protected boolean isHandledResource(final byte[] usageId) {
+		return usageId[0] == 'S' && usageId[1] == 'n' && usageId[2] == 'd' && usageId[3] == ' ';
+	}
 
-  /** {@inheritDoc} */
-  public SoundEffect getResource(final int resourcenumber) {
-    return sounds.get(resourcenumber);
-  }
+	/** {@inheritDoc} */
+	public SoundEffect getResource(final int resourcenumber) {
+		return sounds.get(resourcenumber);
+	}
 
-  /** {@inheritDoc} */
-  protected boolean putToDatabase(final Chunk aiffChunk, final int resnum) {
-    try {
-      sounds.put(resnum, soundEffectFactory.createSoundEffect(aiffChunk));
-      return true;
-    } catch (Exception ex) {
-      ex.printStackTrace();
-    }
-    return false;
-  }
+	/** {@inheritDoc} */
+	protected boolean putToDatabase(final Chunk aiffChunk, final int resnum) {
+		try {
+			sounds.put(resnum, soundEffectFactory.createSoundEffect(aiffChunk));
+			return true;
+		} catch (Exception ex) {
+			ex.printStackTrace();
+		}
+		return false;
+	}
 }

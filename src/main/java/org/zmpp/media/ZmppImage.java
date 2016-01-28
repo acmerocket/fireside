@@ -30,16 +30,20 @@ package org.zmpp.media;
 
 /**
  * An abstract ZmppImage interface.
+ * 
  * @author Wei-ju Wu
  * @version 1.5
  */
 public interface ZmppImage {
 
-  /**
-   * Returns the image resolution for the specified screen width and height.
-   * @param screenwidth screen width
-   * @param screenheight screen height
-   * @return resolution
-   */
-  Resolution getSize(int screenwidth, int screenheight);
+	/**
+	 * Returns the image resolution for the specified screen width and height.
+	 * 
+	 * @param screenwidth
+	 *            screen width
+	 * @param screenheight
+	 *            screen height
+	 * @return resolution
+	 */
+	Resolution getSize(int screenwidth, int screenheight);
 }

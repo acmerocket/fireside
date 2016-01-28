@@ -32,39 +32,44 @@ import org.zmpp.io.InputStream;
 
 /**
  * Input interface.
+ * 
  * @author Wei-ju Wu
  * @version 1.5
  */
 public interface Input {
 
-  /**
-   * The input stream number for the keyboard.
-   */
-  int INPUTSTREAM_KEYBOARD = 0;
+	/**
+	 * The input stream number for the keyboard.
+	 */
+	int INPUTSTREAM_KEYBOARD = 0;
 
-  /**
-   * The input stream number for file input.
-   */
-  int INPUTSTREAM_FILE = 1;
+	/**
+	 * The input stream number for file input.
+	 */
+	int INPUTSTREAM_FILE = 1;
 
-  /**
-   * Sets an input stream to the specified number.
-   * @param streamnumber the input stream number
-   * @param stream the input stream to set
-   */
-  //void setInputStream(int streamnumber, InputStream stream);
+	/**
+	 * Sets an input stream to the specified number.
+	 * 
+	 * @param streamnumber
+	 *            the input stream number
+	 * @param stream
+	 *            the input stream to set
+	 */
+	// void setInputStream(int streamnumber, InputStream stream);
 
-  /**
-   * Selects an input stream.
-   *
-   * @param streamnumber the input stream number to select
-   */
-  void selectInputStream(int streamnumber);
+	/**
+	 * Selects an input stream.
+	 *
+	 * @param streamnumber
+	 *            the input stream number to select
+	 */
+	void selectInputStream(int streamnumber);
 
-  /**
-   * Returns the selected input stream.
-   *
-   * @return the selected input stream
-   */
-  InputStream getSelectedInputStream();
+	/**
+	 * Returns the selected input stream.
+	 *
+	 * @return the selected input stream
+	 */
+	InputStream getSelectedInputStream();
 }

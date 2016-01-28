@@ -36,39 +36,45 @@ package org.zmpp.media;
  */
 public interface Resources {
 
-  /**
-   * The release number of the resource file.
-   * @return the release number
-   */
-  int getRelease();
+	/**
+	 * The release number of the resource file.
+	 * 
+	 * @return the release number
+	 */
+	int getRelease();
 
-  /**
-   * Returns the images of this file.
-   * @return the images
-   */
-  MediaCollection<? extends ZmppImage> getImages();
+	/**
+	 * Returns the images of this file.
+	 * 
+	 * @return the images
+	 */
+	MediaCollection<? extends ZmppImage> getImages();
 
-  /**
-   * Returns the sounds of this file.
-   * @return the sounds
-   */
-  MediaCollection<SoundEffect> getSounds();
+	/**
+	 * Returns the sounds of this file.
+	 * 
+	 * @return the sounds
+	 */
+	MediaCollection<SoundEffect> getSounds();
 
-  /**
-   * Returns the number of the cover art picture.
-   * @return the number of the cover art picture
-   */
-  int getCoverArtNum();
+	/**
+	 * Returns the number of the cover art picture.
+	 * 
+	 * @return the number of the cover art picture
+	 */
+	int getCoverArtNum();
 
-  /**
-   * Returns the inform meta data if available.
-   * @return the meta data
-   */
-  InformMetadata getMetadata();
+	/**
+	 * Returns the inform meta data if available.
+	 * 
+	 * @return the meta data
+	 */
+	InformMetadata getMetadata();
 
-  /**
-   * Returns true if the resource file has information.
-   * @return true if information, false, otherwise
-   */
-  boolean hasInfo();
+	/**
+	 * Returns true if the resource file has information.
+	 * 
+	 * @return true if information, false, otherwise
+	 */
+	boolean hasInfo();
 }

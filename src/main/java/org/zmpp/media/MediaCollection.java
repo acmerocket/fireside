@@ -29,45 +29,52 @@
 package org.zmpp.media;
 
 /**
- * This interfaces defines the common functions of a media resource
- * collection. A MediaCollection manages one specific type of media,
- * e.g. sound effects or pictures.
- * Resources might be loaded lazily and cached in an internal cache.
+ * This interfaces defines the common functions of a media resource collection.
+ * A MediaCollection manages one specific type of media, e.g. sound effects or
+ * pictures. Resources might be loaded lazily and cached in an internal cache.
  *
  * @author Wei-ju Wu
  * @version 1.5
  *
- * @param <T> the media type this collection manages
+ * @param <T>
+ *            the media type this collection manages
  */
 public interface MediaCollection<T> {
 
-  /** Clears the collection. */
-  void clear();
+	/** Clears the collection. */
+	void clear();
 
-  /**
-   * Accesses the resource.
-   * @param number the number of the resource
-   * @return the resource
-   */
-  T getResource(int number);
+	/**
+	 * Accesses the resource.
+	 * 
+	 * @param number
+	 *            the number of the resource
+	 * @return the resource
+	 */
+	T getResource(int number);
 
-  /**
-   * Loads a resource into the internal cache if this collection supports
-   * caching.
-   * @param number the number of the resource
-   */
-  void loadResource(int number);
+	/**
+	 * Loads a resource into the internal cache if this collection supports
+	 * caching.
+	 * 
+	 * @param number
+	 *            the number of the resource
+	 */
+	void loadResource(int number);
 
-  /**
-   * Throws the resource out of the internal cache if this collection
-   * supports caching.
-   * @param number the number of the resource
-   */
-  void unloadResource(int number);
+	/**
+	 * Throws the resource out of the internal cache if this collection supports
+	 * caching.
+	 * 
+	 * @param number
+	 *            the number of the resource
+	 */
+	void unloadResource(int number);
 
-  /**
-   * Returns the number of resources.
-   * @return the number of resources
-   */
-  int getNumResources();
+	/**
+	 * Returns the number of resources.
+	 * 
+	 * @return the number of resources
+	 */
+	int getNumResources();
 }

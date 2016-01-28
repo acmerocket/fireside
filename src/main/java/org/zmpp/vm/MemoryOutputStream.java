@@ -35,120 +35,127 @@ import org.zmpp.io.OutputStream;
 import static org.zmpp.base.MemoryUtil.toUnsigned16;
 
 /**
- * This class implements output stream 3. This stream writes to dynamic
- * memory. The stream contains a table address stack in order to
- * support nested selections.
+ * This class implements output stream 3. This stream writes to dynamic memory.
+ * The stream contains a table address stack in order to support nested
+ * selections.
  *
  * @author Wei-ju Wu
  * @version 1.5
  */
 public class MemoryOutputStream implements OutputStream {
 
-  /**
-   * Maximum nesting depth for this stream.
-   */
-  private static final int MAX_NESTING_DEPTH = 16;
+	/**
+	 * Maximum nesting depth for this stream.
+	 */
+	private static final int MAX_NESTING_DEPTH = 16;
 
-  /**
-   * Table position representation.
-   */
-  static class TablePosition {
-    int tableAddress;
-    int bytesWritten;
+	/**
+	 * Table position representation.
+	 */
+	static class TablePosition {
+		int tableAddress;
+		int bytesWritten;
 
-    /**
-     * Constructor.
-     * @param tableAddress address of the table
-     */
-    TablePosition(int tableAddress) {
-      this.tableAddress = tableAddress;
-    }
-  }
+		/**
+		 * Constructor.
+		 * 
+		 * @param tableAddress
+		 *            address of the table
+		 */
+		TablePosition(int tableAddress) {
+			this.tableAddress = tableAddress;
+		}
+	}
 
-  private Machine machine;
+	private Machine machine;
 
-  /** Support nested selections. */
-  private List<TablePosition> tableStack;
+	/** Support nested selections. */
+	private List<TablePosition> tableStack;
 
-  /**
-   * Constructor.
-   * @param machine the machine object
-   */
-  public MemoryOutputStream(Machine machine) {
-    tableStack = new ArrayList<TablePosition>();
-    this.machine = machine;
-  }
+	/**
+	 * Constructor.
+	 * 
+	 * @param machine
+	 *            the machine object
+	 */
+	public MemoryOutputStream(Machine machine) {
+		tableStack = new ArrayList<TablePosition>();
+		this.machine = machine;
+	}
 
-  /** {@inheritDoc} */
-  public void print(final char zsciiChar) {
-    final TablePosition tablePos = tableStack.get(tableStack.size() - 1);
-    final int position = tablePos.tableAddress + 2 + tablePos.bytesWritten;
-    machine.writeUnsigned8(position, zsciiChar);
-    tablePos.bytesWritten++;
-  }
+	/** {@inheritDoc} */
+	public void print(final char zsciiChar) {
+		final TablePosition tablePos = tableStack.get(tableStack.size() - 1);
+		final int position = tablePos.tableAddress + 2 + tablePos.bytesWritten;
+		machine.writeUnsigned8(position, zsciiChar);
+		tablePos.bytesWritten++;
+	}
 
-  /** {@inheritDoc} */
-  public void flush() {
-    // intentionally left empty
-  }
+	/** {@inheritDoc} */
+	public void flush() {
+		// intentionally left empty
+	}
 
-  /**
-   * {@inheritDoc}
-   */
-  public void close() {
-    // intentionally left empty
-  }
+	/**
+	 * {@inheritDoc}
+	 */
+	public void close() {
+		// intentionally left empty
+	}
 
-  /**
-   * {@inheritDoc}
-   */
-  public void select(final boolean flag) {
-    if (!flag && tableStack.size() > 0) {
-      // Write the total number of written bytes to the first word
-      // of the table
-      final TablePosition tablePos = tableStack.remove(tableStack.size() - 1);
-      machine.writeUnsigned16(tablePos.tableAddress,
-                              toUnsigned16(tablePos.bytesWritten));
+	/**
+	 * {@inheritDoc}
+	 */
+	public void select(final boolean flag) {
+		if (!flag && tableStack.size() > 0) {
+			// Write the total number of written bytes to the first word
+			// of the table
+			final TablePosition tablePos = tableStack.remove(tableStack.size() - 1);
+			machine.writeUnsigned16(tablePos.tableAddress, toUnsigned16(tablePos.bytesWritten));
 
-      if (machine.getVersion() == 6) {
-        writeTextWidthInUnits(tablePos);
-      }
-    }
-  }
+			if (machine.getVersion() == 6) {
+				writeTextWidthInUnits(tablePos);
+			}
+		}
+	}
 
-  /**
-   * Writes the text width in units.
-   * @param tablepos table position
-   */
-  private void writeTextWidthInUnits(TablePosition tablepos) {
-    int numwords = tablepos.bytesWritten;
-    char[] data = new char[numwords];
+	/**
+	 * Writes the text width in units.
+	 * 
+	 * @param tablepos
+	 *            table position
+	 */
+	private void writeTextWidthInUnits(TablePosition tablepos) {
+		int numwords = tablepos.bytesWritten;
+		char[] data = new char[numwords];
 
-    for (int i = 0; i < numwords; i++) {
-      data[i] = (char) machine.readUnsigned8(tablepos.tableAddress + i + 2);
-    }
-    machine.getScreen6().setTextWidthInUnits(data);
-  }
+		for (int i = 0; i < numwords; i++) {
+			data[i] = (char) machine.readUnsigned8(tablepos.tableAddress + i + 2);
+		}
+		machine.getScreen6().setTextWidthInUnits(data);
+	}
 
-  /**
-   * Selects this memory stream.
-   *
-   * @param tableAddress the table address
-   * @param tableWidth the table width
-   */
-  public void select(final int tableAddress, final int tableWidth) {
-    //this.tableWidth = tableWidth;
-    if (tableStack.size() < MAX_NESTING_DEPTH) {
-      tableStack.add(new TablePosition(tableAddress));
-    } else {
-      machine.halt("maximum nesting depth (16) for stream 3 exceeded");
-    }
-  }
+	/**
+	 * Selects this memory stream.
+	 *
+	 * @param tableAddress
+	 *            the table address
+	 * @param tableWidth
+	 *            the table width
+	 */
+	public void select(final int tableAddress, final int tableWidth) {
+		// this.tableWidth = tableWidth;
+		if (tableStack.size() < MAX_NESTING_DEPTH) {
+			tableStack.add(new TablePosition(tableAddress));
+		} else {
+			machine.halt("maximum nesting depth (16) for stream 3 exceeded");
+		}
+	}
 
-  /**
-   * {@inheritDoc}
-   */
-  public boolean isSelected() {
-    return !tableStack.isEmpty();
-  }
+	/**
+	 * {@inheritDoc}
+	 */
+	public boolean isSelected() {
+		return !tableStack.isEmpty();
+	}
 }

@@ -40,31 +40,37 @@ import static org.zmpp.base.MemoryUtil.readUnsigned32;
  */
 public class BlorbCoverArt {
 
-  private int coverartnum;
+	private int coverartnum;
 
-  /**
-   * Constructor.
-   * @param formchunk the form chunk
-   */
-  public BlorbCoverArt(FormChunk formchunk) {
-    readFrontispiece(formchunk);
-  }
+	/**
+	 * Constructor.
+	 * 
+	 * @param formchunk
+	 *            the form chunk
+	 */
+	public BlorbCoverArt(FormChunk formchunk) {
+		readFrontispiece(formchunk);
+	}
 
-  /**
-   * Reads the frontiscpiece image from the specified FORM chunk.
-   * @param formchunk the FORM chunk
-   */
-  private void readFrontispiece(final FormChunk formchunk) {
-    final Chunk fspcchunk = formchunk.getSubChunk("Fspc");
-    if (fspcchunk != null) {
-      coverartnum = (int)  readUnsigned32(fspcchunk.getMemory(),
-                                          Chunk.CHUNK_HEADER_LENGTH);
-    }
-  }
+	/**
+	 * Reads the frontiscpiece image from the specified FORM chunk.
+	 * 
+	 * @param formchunk
+	 *            the FORM chunk
+	 */
+	private void readFrontispiece(final FormChunk formchunk) {
+		final Chunk fspcchunk = formchunk.getSubChunk("Fspc");
+		if (fspcchunk != null) {
+			coverartnum = (int) readUnsigned32(fspcchunk.getMemory(), Chunk.CHUNK_HEADER_LENGTH);
+		}
+	}
 
-  /**
-   * Returns the number of the cover art.
-   * @return the cover art
-   */
-  public int getCoverArtNum() { return coverartnum; }
+	/**
+	 * Returns the number of the cover art.
+	 * 
+	 * @return the cover art
+	 */
+	public int getCoverArtNum() {
+		return coverartnum;
+	}
 }

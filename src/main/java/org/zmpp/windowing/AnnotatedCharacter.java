@@ -33,33 +33,43 @@ import java.io.Serializable;
 /**
  * An annotated character for the text grid. This is supposed to save a little
  * memory as opposed to AnnotatedText.
+ * 
  * @author Wei-ju Wu
  * @version 1.5
  */
 public class AnnotatedCharacter implements Serializable {
-  private static final long serialVersionUID = -7854843402820516485L;
-  private char character;
-  private TextAnnotation annotation;
+	private static final long serialVersionUID = -7854843402820516485L;
+	private char character;
+	private TextAnnotation annotation;
 
-  /**
-   * Constructor.
-   * @param annotation the annotation
-   * @param c the character
-   */
-  public AnnotatedCharacter(TextAnnotation annotation, char c) {
-    this.annotation = annotation;
-    this.character = c;
-  }
+	/**
+	 * Constructor.
+	 * 
+	 * @param annotation
+	 *            the annotation
+	 * @param c
+	 *            the character
+	 */
+	public AnnotatedCharacter(TextAnnotation annotation, char c) {
+		this.annotation = annotation;
+		this.character = c;
+	}
 
-  /**
-   * Returns the annotation.
-   * @return annotation
-   */
-  public TextAnnotation getAnnotation() { return annotation; }
+	/**
+	 * Returns the annotation.
+	 * 
+	 * @return annotation
+	 */
+	public TextAnnotation getAnnotation() {
+		return annotation;
+	}
 
-  /**
-   * Returns the character.
-   * @return character
-   */
-  public char getCharacter() { return character; }
+	/**
+	 * Returns the character.
+	 * 
+	 * @return character
+	 */
+	public char getCharacter() {
+		return character;
+	}
 }

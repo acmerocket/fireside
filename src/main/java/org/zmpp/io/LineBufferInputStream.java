@@ -34,29 +34,35 @@ import java.io.Serializable;
 
 /**
  * The LineBufferInputStream is the default implementation for the keyboard
- * input stream. It is simply a queue holding a number of input lines.
- * Normally this is only one, but it could be used for testing by simply
- * storing more lines and running the core on it.
+ * input stream. It is simply a queue holding a number of input lines. Normally
+ * this is only one, but it could be used for testing by simply storing more
+ * lines and running the core on it.
+ * 
  * @author Wei-ju Wu
  * @version 1.5
  */
 public class LineBufferInputStream implements InputStream, Serializable {
 
-  private static final long serialVersionUID = 1L;
-  /** The queue holding input lines. */
-  private Queue<String> inputLines = new LinkedList<String>();
+	private static final long serialVersionUID = 1L;
+	/** The queue holding input lines. */
+	private Queue<String> inputLines = new LinkedList<String>();
 
-  /**
-   * Adds an input line to the end of the buffer.
-   * @param line the new input line
-   */
-  public void addInputLine(String line) { inputLines.add(line); }
+	/**
+	 * Adds an input line to the end of the buffer.
+	 * 
+	 * @param line
+	 *            the new input line
+	 */
+	public void addInputLine(String line) {
+		inputLines.add(line);
+	}
 
-  /** {@inheritDoc} */
-  public String readLine() {
-    return inputLines.remove();
-  }
+	/** {@inheritDoc} */
+	public String readLine() {
+		return inputLines.remove();
+	}
 
-  /** {@inheritDoc} */
-  public void close() { }
+	/** {@inheritDoc} */
+	public void close() {
+	}
 }

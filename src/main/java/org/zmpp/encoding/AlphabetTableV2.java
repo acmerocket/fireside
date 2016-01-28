@@ -30,32 +30,34 @@ package org.zmpp.encoding;
 
 /**
  * An alphabet table in a V2 story file behaves "almost like" the default
- * alphabet table, in that they have the same characters in the alphabets.
- * There are however two differences: It only supports one abbreviation code
- * and it supports shift-lock.
+ * alphabet table, in that they have the same characters in the alphabets. There
+ * are however two differences: It only supports one abbreviation code and it
+ * supports shift-lock.
  *
  * @author Wei-ju Wu
  * @version 1.5
  */
 public class AlphabetTableV2 extends DefaultAlphabetTable {
 
-  private static final long serialVersionUID = 1L;
+	private static final long serialVersionUID = 1L;
 
-  /** {@inheritDoc} */
-  public boolean isAbbreviation(final char zchar) { return zchar == 1; }
+	/** {@inheritDoc} */
+	public boolean isAbbreviation(final char zchar) {
+		return zchar == 1;
+	}
 
-  /** {@inheritDoc} */
-  public boolean isShift1(final char zchar) {
-    return zchar == SHIFT_2 || zchar == SHIFT_4;
-  }
+	/** {@inheritDoc} */
+	public boolean isShift1(final char zchar) {
+		return zchar == SHIFT_2 || zchar == SHIFT_4;
+	}
 
-  /** {@inheritDoc} */
-  public boolean isShift2(final char zchar) {
-    return zchar == SHIFT_3 || zchar == SHIFT_5;
-  }
+	/** {@inheritDoc} */
+	public boolean isShift2(final char zchar) {
+		return zchar == SHIFT_3 || zchar == SHIFT_5;
+	}
 
-  /** {@inheritDoc} */
-  public boolean isShiftLock(final char zchar) {
-    return zchar == SHIFT_4 || zchar == SHIFT_5;
-  }
+	/** {@inheritDoc} */
+	public boolean isShiftLock(final char zchar) {
+		return zchar == SHIFT_4 || zchar == SHIFT_5;
+	}
 }

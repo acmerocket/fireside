@@ -50,230 +50,255 @@ import org.zmpp.vmutil.FileUtils;
 /**
  * Constructing a Machine object is a very complex task, the building process
  * deals with creating the game objects, the UI and the I/O system.
- * Initialization was changed so it is not necessary to create a subclass
- * of MachineFactory. Instead, an init struct and a init callback object
- * should be provided.
+ * Initialization was changed so it is not necessary to create a subclass of
+ * MachineFactory. Instead, an init struct and a init callback object should be
+ * provided.
  *
  * @author Wei-ju Wu
  * @version 1.5
  */
 public class MachineFactory {
 
-  /** Initialization structure. */
-  public static class MachineInitStruct {
-    public java.io.InputStream storyFile, blorbFile;
-    public URL storyURL, blorbURL;
-    public InputStream keyboardInputStream;
-    public StatusLine statusLine;
-    public ScreenModel screenModel;
-    public IOSystem ioSystem;
-    public SaveGameDataStore saveGameDataStore;
-    public NativeImageFactory nativeImageFactory;
-    public SoundEffectFactory soundEffectFactory;
-  }
+	/** Initialization structure. */
+	public static class MachineInitStruct {
+		public java.io.InputStream storyFile, blorbFile;
+		public URL storyURL, blorbURL;
+		public InputStream keyboardInputStream;
+		public StatusLine statusLine;
+		public ScreenModel screenModel;
+		public IOSystem ioSystem;
+		public SaveGameDataStore saveGameDataStore;
+		public NativeImageFactory nativeImageFactory;
+		public SoundEffectFactory soundEffectFactory;
+	}
 
-  private MachineInitStruct initStruct;
-  private FormChunk blorbchunk;
+	private MachineInitStruct initStruct;
+	private FormChunk blorbchunk;
 
-  /**
-   * Constructor.
-   * @param initStruct an initialization structure
-   */
-  public MachineFactory(MachineInitStruct initStruct) {
-    this.initStruct = initStruct;
-  }
+	/**
+	 * Constructor.
+	 * 
+	 * @param initStruct
+	 *            an initialization structure
+	 */
+	public MachineFactory(MachineInitStruct initStruct) {
+		this.initStruct = initStruct;
+	}
 
-  /**
-   * This is the main creation function.
-   * @return the machine
-   * @throws IOException if i/o error occurred
-   * @throws InvalidStoryException invalid story file
-   */
-  public Machine buildMachine() throws IOException, InvalidStoryException {
-    final MachineImpl machine = new MachineImpl();
-    machine.initialize(readStoryData(), readResources());
-    if (isInvalidStory(machine.getVersion())) {
-      throw new InvalidStoryException();
-    }
-    initIOSystem(machine);
-    return machine;
-  }
+	/**
+	 * This is the main creation function.
+	 * 
+	 * @return the machine
+	 * @throws IOException
+	 *             if i/o error occurred
+	 * @throws InvalidStoryException
+	 *             invalid story file
+	 */
+	public Machine buildMachine() throws IOException, InvalidStoryException {
+		final MachineImpl machine = new MachineImpl();
+		machine.initialize(readStoryData(), readResources());
+		if (isInvalidStory(machine.getVersion())) {
+			throw new InvalidStoryException();
+		}
+		initIOSystem(machine);
+		return machine;
+	}
 
-  // ***********************************************************************
-  // ****** Helpers
-  // *****************************
-  /**
-   * Reads the story data.
-   * @return the story data
-   * @throws IOException if reading story file revealed an error
-   */
-  private byte[] readStoryData() throws IOException {
-    if (initStruct.storyFile != null || initStruct.blorbFile != null)
-      return readStoryDataFromFile();
-    if (initStruct.storyURL != null || initStruct.blorbURL != null)
-      return readStoryDataFromUrl();
-    return null;
-  }
+	// ***********************************************************************
+	// ****** Helpers
+	// *****************************
+	/**
+	 * Reads the story data.
+	 * 
+	 * @return the story data
+	 * @throws IOException
+	 *             if reading story file revealed an error
+	 */
+	private byte[] readStoryData() throws IOException {
+		if (initStruct.storyFile != null || initStruct.blorbFile != null)
+			return readStoryDataFromFile();
+		if (initStruct.storyURL != null || initStruct.blorbURL != null)
+			return readStoryDataFromUrl();
+		return null;
+	}
 
-  /**
-   * Reads the story file from the specified URL.
-   * @return byte data
-   * @throws IOException if i/o error occurred
-   */
-  private byte[] readStoryDataFromUrl() throws IOException {
-    java.io.InputStream storyis = null, blorbis = null;
-    try {
-      if (initStruct.storyURL != null) {
-        storyis = initStruct.storyURL.openStream();
-      }
-      if (initStruct.blorbURL != null) {
-        blorbis = initStruct.blorbURL.openStream();
-      }
-    } catch (Exception ex) {
-      ex.printStackTrace();
-    }
+	/**
+	 * Reads the story file from the specified URL.
+	 * 
+	 * @return byte data
+	 * @throws IOException
+	 *             if i/o error occurred
+	 */
+	private byte[] readStoryDataFromUrl() throws IOException {
+		java.io.InputStream storyis = null, blorbis = null;
+		try {
+			if (initStruct.storyURL != null) {
+				storyis = initStruct.storyURL.openStream();
+			}
+			if (initStruct.blorbURL != null) {
+				blorbis = initStruct.blorbURL.openStream();
+			}
+		} catch (Exception ex) {
+			ex.printStackTrace();
+		}
 
-    if (storyis != null) {
-      return FileUtils.readFileBytes(storyis);
-    } else {
-      return new BlorbFile(readBlorb(blorbis)).getStoryData();
-    }
-  }
+		if (storyis != null) {
+			return FileUtils.readFileBytes(storyis);
+		} else {
+			return new BlorbFile(readBlorb(blorbis)).getStoryData();
+		}
+	}
 
-  /**
-   * Reads story data from file.
-   * @return byte data
-   * @throws IOException if i/o error occurred
-   */
-  private byte[] readStoryDataFromFile() throws IOException {
-    if (initStruct.storyFile != null) {
-      return FileUtils.readFileBytes(initStruct.storyFile);
-    } else {
-      // Read from Z BLORB
-      FormChunk formchunk = readBlorbFromFile();
-      return formchunk != null ? new BlorbFile(formchunk).getStoryData() : null;
-    }
-  }
+	/**
+	 * Reads story data from file.
+	 * 
+	 * @return byte data
+	 * @throws IOException
+	 *             if i/o error occurred
+	 */
+	private byte[] readStoryDataFromFile() throws IOException {
+		if (initStruct.storyFile != null) {
+			return FileUtils.readFileBytes(initStruct.storyFile);
+		} else {
+			// Read from Z BLORB
+			FormChunk formchunk = readBlorbFromFile();
+			return formchunk != null ? new BlorbFile(formchunk).getStoryData() : null;
+		}
+	}
 
-  /**
-   * Reads the resource data.
-   * @return the resource data
-   * @throws IOException if reading resources revealed an error
-   */
-  protected Resources readResources() throws IOException {
-    if (initStruct.blorbFile != null) return readResourcesFromFile();
-    if (initStruct.blorbURL != null) return readResourcesFromUrl();
-    return null;
-  }
+	/**
+	 * Reads the resource data.
+	 * 
+	 * @return the resource data
+	 * @throws IOException
+	 *             if reading resources revealed an error
+	 */
+	protected Resources readResources() throws IOException {
+		if (initStruct.blorbFile != null)
+			return readResourcesFromFile();
+		if (initStruct.blorbURL != null)
+			return readResourcesFromUrl();
+		return null;
+	}
 
-  /**
-   * Reads Blorb data from file.
-   * @return the data's form chunk
-   * @throws IOException if i/o error occurred
-   */
-  private FormChunk readBlorbFromFile() throws IOException {
-    if (blorbchunk == null) {
-      byte[] data = FileUtils.readFileBytes(initStruct.blorbFile);
-      if (data != null) {
-        blorbchunk = new DefaultFormChunk(new DefaultMemory(data));
-        if (!"IFRS".equals(blorbchunk.getSubId())) {
-          throw new IOException("not a valid Blorb file");
-        }
-      }
-    }
-    return blorbchunk;
-  }
+	/**
+	 * Reads Blorb data from file.
+	 * 
+	 * @return the data's form chunk
+	 * @throws IOException
+	 *             if i/o error occurred
+	 */
+	private FormChunk readBlorbFromFile() throws IOException {
+		if (blorbchunk == null) {
+			byte[] data = FileUtils.readFileBytes(initStruct.blorbFile);
+			if (data != null) {
+				blorbchunk = new DefaultFormChunk(new DefaultMemory(data));
+				if (!"IFRS".equals(blorbchunk.getSubId())) {
+					throw new IOException("not a valid Blorb file");
+				}
+			}
+		}
+		return blorbchunk;
+	}
 
-  /**
-   * Reads story resources from input blorb file.
-   * @return resources object
-   * @throws IOException if i/o error occurred
-   */
-  private Resources readResourcesFromFile() throws IOException {
-    FormChunk formchunk = readBlorbFromFile();
-    return (formchunk != null) ?
-      new BlorbResources(initStruct.nativeImageFactory,
-                         initStruct.soundEffectFactory, formchunk) : null;
-  }
+	/**
+	 * Reads story resources from input blorb file.
+	 * 
+	 * @return resources object
+	 * @throws IOException
+	 *             if i/o error occurred
+	 */
+	private Resources readResourcesFromFile() throws IOException {
+		FormChunk formchunk = readBlorbFromFile();
+		return (formchunk != null)
+				? new BlorbResources(initStruct.nativeImageFactory, initStruct.soundEffectFactory, formchunk) : null;
+	}
 
-  /**
-   * Reads Blorb's form chunk from the specified input stream object.
-   * @param blorbis input stream
-   * @return the form chunk
-   * @throws IOException i/o error occurred
-   */
-  private FormChunk readBlorb(java.io.InputStream blorbis) throws IOException {
-    if (blorbchunk == null) {
-      byte[] data = FileUtils.readFileBytes(blorbis);
-      if (data != null) {
-        blorbchunk = new DefaultFormChunk(new DefaultMemory(data));
-      }
-    }
-    return blorbchunk;
-  }
+	/**
+	 * Reads Blorb's form chunk from the specified input stream object.
+	 * 
+	 * @param blorbis
+	 *            input stream
+	 * @return the form chunk
+	 * @throws IOException
+	 *             i/o error occurred
+	 */
+	private FormChunk readBlorb(java.io.InputStream blorbis) throws IOException {
+		if (blorbchunk == null) {
+			byte[] data = FileUtils.readFileBytes(blorbis);
+			if (data != null) {
+				blorbchunk = new DefaultFormChunk(new DefaultMemory(data));
+			}
+		}
+		return blorbchunk;
+	}
 
-  /**
-   * Reads story resources from URL.
-   * @return resources object
-   * @throws IOException i/o error occurred
-   */
-  private Resources readResourcesFromUrl() throws IOException {
-    FormChunk formchunk = readBlorb(initStruct.blorbURL.openStream());
-    return (formchunk != null) ?
-      new BlorbResources(initStruct.nativeImageFactory,
-                         initStruct.soundEffectFactory, formchunk) : null;
-  }
+	/**
+	 * Reads story resources from URL.
+	 * 
+	 * @return resources object
+	 * @throws IOException
+	 *             i/o error occurred
+	 */
+	private Resources readResourcesFromUrl() throws IOException {
+		FormChunk formchunk = readBlorb(initStruct.blorbURL.openStream());
+		return (formchunk != null)
+				? new BlorbResources(initStruct.nativeImageFactory, initStruct.soundEffectFactory, formchunk) : null;
+	}
 
-  // ************************************************************************
-  // ****** Private methods
-  // ********************************
-  /**
-   * Checks the story file version.
-   * @param version the story file version
-   * @return true if not supported
-   */
-  private boolean isInvalidStory(final int version) {
+	// ************************************************************************
+	// ****** Private methods
+	// ********************************
+	/**
+	 * Checks the story file version.
+	 * 
+	 * @param version
+	 *            the story file version
+	 * @return true if not supported
+	 */
+	private boolean isInvalidStory(final int version) {
 
-    return version < 1 || version > 8;
-  }
+		return version < 1 || version > 8;
+	}
 
-  /**
-   * Initializes the I/O system.
-   *
-   * @param machine the machine object
-   */
-  private void initIOSystem(final MachineImpl machine) {
-    initInputStreams(machine);
-    initOutputStreams(machine);
-    machine.setStatusLine(initStruct.statusLine);
-    machine.setScreen(initStruct.screenModel);
-    machine.setSaveGameDataStore(initStruct.saveGameDataStore);
-  }
+	/**
+	 * Initializes the I/O system.
+	 *
+	 * @param machine
+	 *            the machine object
+	 */
+	private void initIOSystem(final MachineImpl machine) {
+		initInputStreams(machine);
+		initOutputStreams(machine);
+		machine.setStatusLine(initStruct.statusLine);
+		machine.setScreen(initStruct.screenModel);
+		machine.setSaveGameDataStore(initStruct.saveGameDataStore);
+	}
 
-  /**
-   * Initializes the input streams.
-   *
-   * @param machine the machine object
-   */
-  private void initInputStreams(final MachineImpl machine) {
+	/**
+	 * Initializes the input streams.
+	 *
+	 * @param machine
+	 *            the machine object
+	 */
+	private void initInputStreams(final MachineImpl machine) {
 
-    machine.setInputStream(0, initStruct.keyboardInputStream);
-    machine.setInputStream(1, new FileInputStream(initStruct.ioSystem,
-        machine));
-  }
+		machine.setInputStream(0, initStruct.keyboardInputStream);
+		machine.setInputStream(1, new FileInputStream(initStruct.ioSystem, machine));
+	}
 
-  /**
-   * Initializes the output streams.
-   *
-   * @param machine the machine object
-   */
-  private void initOutputStreams(final MachineImpl machine) {
-    machine.setOutputStream(1, initStruct.screenModel.getOutputStream());
-    machine.selectOutputStream(1, true);
-    machine.setOutputStream(2, new TranscriptOutputStream(
-        initStruct.ioSystem, machine));
-    machine.selectOutputStream(2, false);
-    machine.setOutputStream(3, new MemoryOutputStream(machine));
-    machine.selectOutputStream(3, false);
-  }
+	/**
+	 * Initializes the output streams.
+	 *
+	 * @param machine
+	 *            the machine object
+	 */
+	private void initOutputStreams(final MachineImpl machine) {
+		machine.setOutputStream(1, initStruct.screenModel.getOutputStream());
+		machine.selectOutputStream(1, true);
+		machine.setOutputStream(2, new TranscriptOutputStream(initStruct.ioSystem, machine));
+		machine.selectOutputStream(2, false);
+		machine.setOutputStream(3, new MemoryOutputStream(machine));
+		machine.selectOutputStream(3, false);
+	}
 }

@@ -37,78 +37,79 @@ import static org.junit.Assert.*;
 
 /**
  * Test for alphabet table behaviour
+ * 
  * @author Wei-ju Wu
  * @version 1.5
  */
 public class AlphabetTableTest {
 
-  private AlphabetTable v1Table = new AlphabetTableV1();
-  private AlphabetTable v2Table = new AlphabetTableV2();
-  private AlphabetTable defaultTable = new DefaultAlphabetTable();
-  
-  @Test
-  public void testChar0IsSpace() {
-    
-    assertEquals(' ', v1Table.getA0Char((byte) 0));
-    assertEquals(' ', v1Table.getA1Char((byte) 0));
-    assertEquals(' ', v1Table.getA2Char((byte) 0));
+	private AlphabetTable v1Table = new AlphabetTableV1();
+	private AlphabetTable v2Table = new AlphabetTableV2();
+	private AlphabetTable defaultTable = new DefaultAlphabetTable();
 
-    assertEquals(' ', v2Table.getA0Char((byte) 0));
-    assertEquals(' ', v2Table.getA1Char((byte) 0));
-    assertEquals(' ', v2Table.getA2Char((byte) 0));
+	@Test
+	public void testChar0IsSpace() {
 
-    assertEquals(' ', defaultTable.getA0Char((byte) 0));
-    assertEquals(' ', defaultTable.getA1Char((byte) 0));
-    assertEquals(' ', defaultTable.getA2Char((byte) 0));
-  }
+		assertEquals(' ', v1Table.getA0Char((byte) 0));
+		assertEquals(' ', v1Table.getA1Char((byte) 0));
+		assertEquals(' ', v1Table.getA2Char((byte) 0));
 
-  @Test
-  public void testChar1IsNewLineInV1() {
-    
-    assertEquals('\n', v1Table.getA0Char((byte) 1));
-    assertEquals('\n', v1Table.getA1Char((byte) 1));
-    assertEquals('\n', v1Table.getA2Char((byte) 1));
-  }
-  
-  @Test
-  public void testIsAbbreviation() {
-    assertFalse(v1Table.isAbbreviation((char) 1));
-    assertFalse(v1Table.isAbbreviation((char) 2));
-    assertFalse(v1Table.isAbbreviation((char) 3));
+		assertEquals(' ', v2Table.getA0Char((byte) 0));
+		assertEquals(' ', v2Table.getA1Char((byte) 0));
+		assertEquals(' ', v2Table.getA2Char((byte) 0));
 
-    assertTrue(v2Table.isAbbreviation((char)  1));
-    assertFalse(v2Table.isAbbreviation((char) 2));
-    assertFalse(v2Table.isAbbreviation((char) 3));
-  }
+		assertEquals(' ', defaultTable.getA0Char((byte) 0));
+		assertEquals(' ', defaultTable.getA1Char((byte) 0));
+		assertEquals(' ', defaultTable.getA2Char((byte) 0));
+	}
 
-  @Test
-  public void testShiftChars() {
-    
-    assertTrue(v1Table.isShift((char) AlphabetTable.SHIFT_2));
-    assertTrue(v1Table.isShift((char) AlphabetTable.SHIFT_3));
-    assertTrue(v2Table.isShift((char) AlphabetTable.SHIFT_2));
-    assertTrue(v2Table.isShift((char) AlphabetTable.SHIFT_3));
-    assertFalse(v1Table.isShiftLock((char) AlphabetTable.SHIFT_2));
-    assertFalse(v1Table.isShiftLock((char) AlphabetTable.SHIFT_3));
-    assertFalse(v2Table.isShiftLock((char) AlphabetTable.SHIFT_2));
-    assertFalse(v2Table.isShiftLock((char) AlphabetTable.SHIFT_3));
+	@Test
+	public void testChar1IsNewLineInV1() {
 
-    assertFalse(v1Table.isShiftLock((char) AlphabetTable.SHIFT_2));
-    assertFalse(v1Table.isShiftLock((char) AlphabetTable.SHIFT_3));
-    assertFalse(v2Table.isShiftLock((char) AlphabetTable.SHIFT_2));
-    assertFalse(v2Table.isShiftLock((char) AlphabetTable.SHIFT_3));
-    assertTrue(v1Table.isShiftLock((char) AlphabetTable.SHIFT_4));
-    assertTrue(v1Table.isShiftLock((char) AlphabetTable.SHIFT_5));
-    assertTrue(v2Table.isShiftLock((char) AlphabetTable.SHIFT_4));
-    assertTrue(v2Table.isShiftLock((char) AlphabetTable.SHIFT_5));
-    
-    assertFalse(defaultTable.isShift((char) AlphabetTable.SHIFT_2));
-    assertFalse(defaultTable.isShift((char) AlphabetTable.SHIFT_3));
-    assertTrue(defaultTable.isShift((char) AlphabetTable.SHIFT_4));
-    assertTrue(defaultTable.isShift((char) AlphabetTable.SHIFT_5));
-    assertFalse(defaultTable.isShiftLock((char) AlphabetTable.SHIFT_2));
-    assertFalse(defaultTable.isShiftLock((char) AlphabetTable.SHIFT_3));
-    assertFalse(defaultTable.isShiftLock((char) AlphabetTable.SHIFT_4));
-    assertFalse(defaultTable.isShiftLock((char) AlphabetTable.SHIFT_5));
-  }
+		assertEquals('\n', v1Table.getA0Char((byte) 1));
+		assertEquals('\n', v1Table.getA1Char((byte) 1));
+		assertEquals('\n', v1Table.getA2Char((byte) 1));
+	}
+
+	@Test
+	public void testIsAbbreviation() {
+		assertFalse(v1Table.isAbbreviation((char) 1));
+		assertFalse(v1Table.isAbbreviation((char) 2));
+		assertFalse(v1Table.isAbbreviation((char) 3));
+
+		assertTrue(v2Table.isAbbreviation((char) 1));
+		assertFalse(v2Table.isAbbreviation((char) 2));
+		assertFalse(v2Table.isAbbreviation((char) 3));
+	}
+
+	@Test
+	public void testShiftChars() {
+
+		assertTrue(v1Table.isShift((char) AlphabetTable.SHIFT_2));
+		assertTrue(v1Table.isShift((char) AlphabetTable.SHIFT_3));
+		assertTrue(v2Table.isShift((char) AlphabetTable.SHIFT_2));
+		assertTrue(v2Table.isShift((char) AlphabetTable.SHIFT_3));
+		assertFalse(v1Table.isShiftLock((char) AlphabetTable.SHIFT_2));
+		assertFalse(v1Table.isShiftLock((char) AlphabetTable.SHIFT_3));
+		assertFalse(v2Table.isShiftLock((char) AlphabetTable.SHIFT_2));
+		assertFalse(v2Table.isShiftLock((char) AlphabetTable.SHIFT_3));
+
+		assertFalse(v1Table.isShiftLock((char) AlphabetTable.SHIFT_2));
+		assertFalse(v1Table.isShiftLock((char) AlphabetTable.SHIFT_3));
+		assertFalse(v2Table.isShiftLock((char) AlphabetTable.SHIFT_2));
+		assertFalse(v2Table.isShiftLock((char) AlphabetTable.SHIFT_3));
+		assertTrue(v1Table.isShiftLock((char) AlphabetTable.SHIFT_4));
+		assertTrue(v1Table.isShiftLock((char) AlphabetTable.SHIFT_5));
+		assertTrue(v2Table.isShiftLock((char) AlphabetTable.SHIFT_4));
+		assertTrue(v2Table.isShiftLock((char) AlphabetTable.SHIFT_5));
+
+		assertFalse(defaultTable.isShift((char) AlphabetTable.SHIFT_2));
+		assertFalse(defaultTable.isShift((char) AlphabetTable.SHIFT_3));
+		assertTrue(defaultTable.isShift((char) AlphabetTable.SHIFT_4));
+		assertTrue(defaultTable.isShift((char) AlphabetTable.SHIFT_5));
+		assertFalse(defaultTable.isShiftLock((char) AlphabetTable.SHIFT_2));
+		assertFalse(defaultTable.isShiftLock((char) AlphabetTable.SHIFT_3));
+		assertFalse(defaultTable.isShiftLock((char) AlphabetTable.SHIFT_4));
+		assertFalse(defaultTable.isShiftLock((char) AlphabetTable.SHIFT_5));
+	}
 }

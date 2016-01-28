@@ -36,76 +36,87 @@ package org.zmpp.encoding;
  */
 public class DefaultAlphabetTable implements AlphabetTable {
 
-  private static final long serialVersionUID = 1L;
-  private static final String A0CHARS = "abcdefghijklmnopqrstuvwxyz";
-  private static final String A1CHARS = "ABCDEFGHIJKLMNOPQRSTUVWXYZ";
-  private static final String A2CHARS = " \n0123456789.,!?_#'\"/\\-:()";
+	private static final long serialVersionUID = 1L;
+	private static final String A0CHARS = "abcdefghijklmnopqrstuvwxyz";
+	private static final String A1CHARS = "ABCDEFGHIJKLMNOPQRSTUVWXYZ";
+	private static final String A2CHARS = " \n0123456789.,!?_#'\"/\\-:()";
 
-  /** {@inheritDoc} */
-  public char getA0Char(final byte zchar) {
-    if (zchar == 0) return ' ';
-    return A0CHARS.charAt(zchar - ALPHABET_START);
-  }
+	/** {@inheritDoc} */
+	public char getA0Char(final byte zchar) {
+		if (zchar == 0)
+			return ' ';
+		return A0CHARS.charAt(zchar - ALPHABET_START);
+	}
 
-  /** {@inheritDoc} */
-  public char getA1Char(final byte zchar) {
-    if (zchar == 0) return ' ';
-    return A1CHARS.charAt(zchar - ALPHABET_START);
-  }
+	/** {@inheritDoc} */
+	public char getA1Char(final byte zchar) {
+		if (zchar == 0)
+			return ' ';
+		return A1CHARS.charAt(zchar - ALPHABET_START);
+	}
 
-  /** {@inheritDoc} */
-  public char getA2Char(final byte zchar) {
-    if (zchar == 0) return ' ';
-    return A2CHARS.charAt(zchar - ALPHABET_START);
-  }
+	/** {@inheritDoc} */
+	public char getA2Char(final byte zchar) {
+		if (zchar == 0)
+			return ' ';
+		return A2CHARS.charAt(zchar - ALPHABET_START);
+	}
 
-  /** {@inheritDoc} */
-  public final int getA0CharCode(final char zsciiChar) {
-    return getCharCodeFor(A0CHARS, zsciiChar);
-  }
+	/** {@inheritDoc} */
+	public final int getA0CharCode(final char zsciiChar) {
+		return getCharCodeFor(A0CHARS, zsciiChar);
+	}
 
-  /** {@inheritDoc} */
-  public final int getA1CharCode(final char zsciiChar) {
-    return getCharCodeFor(A1CHARS, zsciiChar);
-  }
+	/** {@inheritDoc} */
+	public final int getA1CharCode(final char zsciiChar) {
+		return getCharCodeFor(A1CHARS, zsciiChar);
+	}
 
-  /** {@inheritDoc} */
-  public int getA2CharCode(final char zsciiChar) {
-    return getCharCodeFor(A2CHARS, zsciiChar);
-  }
+	/** {@inheritDoc} */
+	public int getA2CharCode(final char zsciiChar) {
+		return getCharCodeFor(A2CHARS, zsciiChar);
+	}
 
-  /**
-   * Returns the character code for the specified ZSCII character by searching
-   * the index in the specified chars string.
-   * @param chars the search string
-   * @param zsciiChar the ZSCII character
-   * @return the character code, which is the index of the character in chars
-   *         or -1 if not found
-   */
-  protected static int getCharCodeFor(final String chars,
-                                      final char zsciiChar) {
-    int index = chars.indexOf(zsciiChar);
-    if (index >= 0) index += ALPHABET_START;
-    return index;
-  }
+	/**
+	 * Returns the character code for the specified ZSCII character by searching
+	 * the index in the specified chars string.
+	 * 
+	 * @param chars
+	 *            the search string
+	 * @param zsciiChar
+	 *            the ZSCII character
+	 * @return the character code, which is the index of the character in chars
+	 *         or -1 if not found
+	 */
+	protected static int getCharCodeFor(final String chars, final char zsciiChar) {
+		int index = chars.indexOf(zsciiChar);
+		if (index >= 0)
+			index += ALPHABET_START;
+		return index;
+	}
 
+	/** {@inheritDoc} */
+	public boolean isShift1(final char zchar) {
+		return zchar == SHIFT_4;
+	}
 
-  /** {@inheritDoc} */
-  public boolean isShift1(final char zchar) { return zchar == SHIFT_4; }
+	/** {@inheritDoc} */
+	public boolean isShift2(final char zchar) {
+		return zchar == SHIFT_5;
+	}
 
-  /** {@inheritDoc} */
-  public boolean isShift2(final char zchar) { return zchar == SHIFT_5; }
+	/** {@inheritDoc} */
+	public boolean isShift(final char zchar) {
+		return isShift1(zchar) || isShift2(zchar);
+	}
 
-  /** {@inheritDoc} */
-  public boolean isShift(final char zchar) {
-    return isShift1(zchar) || isShift2(zchar);
-  }
+	/** {@inheritDoc} */
+	public boolean isShiftLock(final char zchar) {
+		return false;
+	}
 
-  /** {@inheritDoc} */
-  public boolean isShiftLock(final char zchar) { return false; }
-
-  /** {@inheritDoc} */
-  public boolean isAbbreviation(final char zchar) {
-    return 1 <= zchar && zchar <= 3;
-  }
+	/** {@inheritDoc} */
+	public boolean isAbbreviation(final char zchar) {
+		return 1 <= zchar && zchar <= 3;
+	}
 }

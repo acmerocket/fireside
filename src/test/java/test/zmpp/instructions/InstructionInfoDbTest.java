@@ -36,15 +36,16 @@ import static org.zmpp.vm.Instruction.OperandCount.*;
 
 /**
  * A test class for InstructionInfoDb.
+ * 
  * @author Wei-ju Wu
  * @version 1.5
  */
 public class InstructionInfoDbTest {
 
-  private static InstructionInfoDb infoDb = InstructionInfoDb.getInstance();
-  
-  @Test
-  public void testInvalid() {
-    assertFalse(infoDb.isValid(C0OP, C0OP_SHOW_STATUS, 4));
-  }
+	private static InstructionInfoDb infoDb = InstructionInfoDb.getInstance();
+
+	@Test
+	public void testInvalid() {
+		assertFalse(infoDb.isValid(C0OP, C0OP_SHOW_STATUS, 4));
+	}
 }

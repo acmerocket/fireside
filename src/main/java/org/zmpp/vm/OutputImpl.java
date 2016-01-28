@@ -35,151 +35,159 @@ import org.zmpp.base.StoryFileHeader.Attribute;
 
 /**
  * Output implementation.
+ * 
  * @author Wei-ju Wu
  * @version 1.5
  */
 public class OutputImpl implements Output, Closeable {
 
-  private Machine machine;
+	private Machine machine;
 
-  /**
-   * This is the array of output streams.
-   */
-  private OutputStream[] outputStream;
+	/**
+	 * This is the array of output streams.
+	 */
+	private OutputStream[] outputStream;
 
-  /**
-   * Constructor.
-   * @param machine Machine object
-   */
-  public OutputImpl(final Machine machine) {
-    super();
-    this.machine = machine;
-    outputStream = new OutputStream[3];
-  }
+	/**
+	 * Constructor.
+	 * 
+	 * @param machine
+	 *            Machine object
+	 */
+	public OutputImpl(final Machine machine) {
+		super();
+		this.machine = machine;
+		outputStream = new OutputStream[3];
+	}
 
-  /**
-   * Sets the output stream to the specified number.
-   * @param streamnumber the stream number
-   * @param stream the output stream
-   */
-  public void setOutputStream(final int streamnumber,
-      final OutputStream stream) {
-    outputStream[streamnumber - 1] = stream;
-  }
+	/**
+	 * Sets the output stream to the specified number.
+	 * 
+	 * @param streamnumber
+	 *            the stream number
+	 * @param stream
+	 *            the output stream
+	 */
+	public void setOutputStream(final int streamnumber, final OutputStream stream) {
+		outputStream[streamnumber - 1] = stream;
+	}
 
-  /**
-   * {@inheritDoc}
-   */
-  public void printZString(final int address) {
-    print(machine.decode2Zscii(address, 0));
-  }
+	/**
+	 * {@inheritDoc}
+	 */
+	public void printZString(final int address) {
+		print(machine.decode2Zscii(address, 0));
+	}
 
-  /**
-   * {@inheritDoc}
-   */
-  public void print(final String str) { printZsciiChars(str); }
+	/**
+	 * {@inheritDoc}
+	 */
+	public void print(final String str) {
+		printZsciiChars(str);
+	}
 
-  /**
-   * {@inheritDoc}
-   */
-  public void newline() { printZsciiChar(ZsciiEncoding.NEWLINE); }
+	/**
+	 * {@inheritDoc}
+	 */
+	public void newline() {
+		printZsciiChar(ZsciiEncoding.NEWLINE);
+	}
 
-  /**
-   * {@inheritDoc}
-   */
-  public void printZsciiChar(final char zchar) {
-    printZsciiChars(String.valueOf(zchar));
-  }
+	/**
+	 * {@inheritDoc}
+	 */
+	public void printZsciiChar(final char zchar) {
+		printZsciiChars(String.valueOf(zchar));
+	}
 
-  /**
-   * Prints the specified array of ZSCII characters. This is the only function
-   * that communicates with the output streams directly.
-   *
-   * @param zsciiString the array of ZSCII characters.
-   */
-  private void printZsciiChars(final String zsciiString) {
-    checkTranscriptFlag();
-    if (outputStream[OUTPUTSTREAM_MEMORY - 1].isSelected()) {
-      for (int i = 0, n = zsciiString.length(); i < n; i++) {
-        outputStream[OUTPUTSTREAM_MEMORY - 1].print(zsciiString.charAt(i));
-      }
-    } else {
-      for (int i = 0; i < outputStream.length; i++) {
-        if (outputStream[i] != null && outputStream[i].isSelected()) {
-          for (int j = 0, n = zsciiString.length(); j < n; j++) {
-            outputStream[i].print(zsciiString.charAt(j));
-          }
-        }
-      }
-    }
-  }
+	/**
+	 * Prints the specified array of ZSCII characters. This is the only function
+	 * that communicates with the output streams directly.
+	 *
+	 * @param zsciiString
+	 *            the array of ZSCII characters.
+	 */
+	private void printZsciiChars(final String zsciiString) {
+		checkTranscriptFlag();
+		if (outputStream[OUTPUTSTREAM_MEMORY - 1].isSelected()) {
+			for (int i = 0, n = zsciiString.length(); i < n; i++) {
+				outputStream[OUTPUTSTREAM_MEMORY - 1].print(zsciiString.charAt(i));
+			}
+		} else {
+			for (int i = 0; i < outputStream.length; i++) {
+				if (outputStream[i] != null && outputStream[i].isSelected()) {
+					for (int j = 0, n = zsciiString.length(); j < n; j++) {
+						outputStream[i].print(zsciiString.charAt(j));
+					}
+				}
+			}
+		}
+	}
 
-  /** {@inheritDoc} */
-  public void printNumber(final short number) {
-    print(String.valueOf(number));
-  }
+	/** {@inheritDoc} */
+	public void printNumber(final short number) {
+		print(String.valueOf(number));
+	}
 
-  /** Flushes the output. */
-  public void flushOutput() {
-    // At the moment flushing only makes sense for screen
-    if (!outputStream[OUTPUTSTREAM_MEMORY - 1].isSelected()) {
-      for (int i = 0; i < outputStream.length; i++) {
-        if (outputStream[i] != null && outputStream[i].isSelected()) {
-          outputStream[i].flush();
-        }
-      }
-    }
-  }
+	/** Flushes the output. */
+	public void flushOutput() {
+		// At the moment flushing only makes sense for screen
+		if (!outputStream[OUTPUTSTREAM_MEMORY - 1].isSelected()) {
+			for (int i = 0; i < outputStream.length; i++) {
+				if (outputStream[i] != null && outputStream[i].isSelected()) {
+					outputStream[i].flush();
+				}
+			}
+		}
+	}
 
-  /**
-   * Checks the fileheader if the transcript flag was set by the game
-   * bypassing output_stream, e.g. with a storeb to the fileheader flags
-   * address. Enable the transcript depending on the status of that flag.
-   */
-  private void checkTranscriptFlag() {
-    if (outputStream[OUTPUTSTREAM_TRANSCRIPT - 1] != null) {
-      outputStream[OUTPUTSTREAM_TRANSCRIPT - 1].select(
-          machine.getFileHeader().isEnabled(Attribute.TRANSCRIPTING));
-    }
-  }
+	/**
+	 * Checks the fileheader if the transcript flag was set by the game
+	 * bypassing output_stream, e.g. with a storeb to the fileheader flags
+	 * address. Enable the transcript depending on the status of that flag.
+	 */
+	private void checkTranscriptFlag() {
+		if (outputStream[OUTPUTSTREAM_TRANSCRIPT - 1] != null) {
+			outputStream[OUTPUTSTREAM_TRANSCRIPT - 1]
+					.select(machine.getFileHeader().isEnabled(Attribute.TRANSCRIPTING));
+		}
+	}
 
-  /** {@inheritDoc} */
-  public void selectOutputStream(final int streamnumber, final boolean flag) {
-    outputStream[streamnumber - 1].select(flag);
+	/** {@inheritDoc} */
+	public void selectOutputStream(final int streamnumber, final boolean flag) {
+		outputStream[streamnumber - 1].select(flag);
 
-    // Sets the tranxdQscript flag if the transcipt is specified
-    if (streamnumber == OUTPUTSTREAM_TRANSCRIPT) {
-      machine.getFileHeader().setEnabled(Attribute.TRANSCRIPTING, flag);
-    } else if (streamnumber == OUTPUTSTREAM_MEMORY && flag) {
-      machine.halt("invalid selection of memory stream");
-    }
-  }
+		// Sets the tranxdQscript flag if the transcipt is specified
+		if (streamnumber == OUTPUTSTREAM_TRANSCRIPT) {
+			machine.getFileHeader().setEnabled(Attribute.TRANSCRIPTING, flag);
+		} else if (streamnumber == OUTPUTSTREAM_MEMORY && flag) {
+			machine.halt("invalid selection of memory stream");
+		}
+	}
 
-  /** {@inheritDoc} */
-  public void selectOutputStream3(final int tableAddress,
-      final int tableWidth) {
-    ((MemoryOutputStream) outputStream[OUTPUTSTREAM_MEMORY - 1]).select(
-        tableAddress, tableWidth);
-  }
+	/** {@inheritDoc} */
+	public void selectOutputStream3(final int tableAddress, final int tableWidth) {
+		((MemoryOutputStream) outputStream[OUTPUTSTREAM_MEMORY - 1]).select(tableAddress, tableWidth);
+	}
 
-  /** {@inheritDoc} */
-  public void close() {
-    if (outputStream != null) {
-      for (int i = 0; i < outputStream.length; i++) {
-        if (outputStream[i] != null) {
-          outputStream[i].flush();
-          outputStream[i].close();
-        }
-      }
-    }
-  }
+	/** {@inheritDoc} */
+	public void close() {
+		if (outputStream != null) {
+			for (int i = 0; i < outputStream.length; i++) {
+				if (outputStream[i] != null) {
+					outputStream[i].flush();
+					outputStream[i].close();
+				}
+			}
+		}
+	}
 
-  /** {@inheritDoc} */
-  public void reset() {
-    for (int i = 0; i < outputStream.length; i++) {
-      if (outputStream[i] != null) {
-        outputStream[i].flush();
-      }
-    }
-  }
+	/** {@inheritDoc} */
+	public void reset() {
+		for (int i = 0; i < outputStream.length; i++) {
+			if (outputStream[i] != null) {
+				outputStream[i].flush();
+			}
+		}
+	}
 }

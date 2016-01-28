@@ -38,150 +38,152 @@ import org.zmpp.base.Memory;
  */
 public class ClassicObjectTree extends AbstractObjectTree {
 
-  private static final int OFFSET_PARENT        = 4;
-  private static final int OFFSET_SIBLING       = 5;
-  private static final int OFFSET_CHILD         = 6;
-  private static final int OFFSET_PROPERTYTABLE = 7;
+	private static final int OFFSET_PARENT = 4;
+	private static final int OFFSET_SIBLING = 5;
+	private static final int OFFSET_CHILD = 6;
+	private static final int OFFSET_PROPERTYTABLE = 7;
 
-  /**
-   * Object entries in version <= 3 have a size of 9 bytes.
-   */
-  private static final int OBJECTENTRY_SIZE = 9;
+	/**
+	 * Object entries in version <= 3 have a size of 9 bytes.
+	 */
+	private static final int OBJECTENTRY_SIZE = 9;
 
-  /**
-   * Property defaults entries in versions <= 3 have a size of 31 words.
-   */
-  private static final int PROPERTYDEFAULTS_SIZE = 31 * 2;
+	/**
+	 * Property defaults entries in versions <= 3 have a size of 31 words.
+	 */
+	private static final int PROPERTYDEFAULTS_SIZE = 31 * 2;
 
-  /**
-   * Constructor.
-   * @param memory the Memory object
-   * @param address the address
-   */
-  public ClassicObjectTree(Memory memory, int address) {
-    super(memory, address);
-  }
+	/**
+	 * Constructor.
+	 * 
+	 * @param memory
+	 *            the Memory object
+	 * @param address
+	 *            the address
+	 */
+	public ClassicObjectTree(Memory memory, int address) {
+		super(memory, address);
+	}
 
-  /**
-   * {@inheritDoc}
-   */
-  protected int getObjectAddress(int objectNum) {
-    return getObjectTreeStart() + (objectNum - 1) * getObjectEntrySize();
-  }
+	/**
+	 * {@inheritDoc}
+	 */
+	protected int getObjectAddress(int objectNum) {
+		return getObjectTreeStart() + (objectNum - 1) * getObjectEntrySize();
+	}
 
-  /**
-   * {@inheritDoc}
-   */
-  protected int getPropertyDefaultsSize() { return PROPERTYDEFAULTS_SIZE; }
+	/**
+	 * {@inheritDoc}
+	 */
+	protected int getPropertyDefaultsSize() {
+		return PROPERTYDEFAULTS_SIZE;
+	}
 
-  /**
-   * {@inheritDoc}
-   */
-  protected int getObjectEntrySize() { return OBJECTENTRY_SIZE; }
+	/**
+	 * {@inheritDoc}
+	 */
+	protected int getObjectEntrySize() {
+		return OBJECTENTRY_SIZE;
+	}
 
-  /**
-   * {@inheritDoc}
-   */
-  public int getPropertyLength(final int propertyAddress) {
-    return getPropertyLengthAtData(getMemory(), propertyAddress);
-  }
+	/**
+	 * {@inheritDoc}
+	 */
+	public int getPropertyLength(final int propertyAddress) {
+		return getPropertyLengthAtData(getMemory(), propertyAddress);
+	}
 
-  /**
-   * {@inheritDoc}
-   */
-  public int getChild(final int objectNum) {
-  return getMemory().readUnsigned8(getObjectAddress(objectNum) +
-                                OFFSET_CHILD);
-  }
+	/**
+	 * {@inheritDoc}
+	 */
+	public int getChild(final int objectNum) {
+		return getMemory().readUnsigned8(getObjectAddress(objectNum) + OFFSET_CHILD);
+	}
 
-  /**
-   * {@inheritDoc}
-   */
-  public void setChild(final int objectNum, final int child) {
-  getMemory().writeUnsigned8(getObjectAddress(objectNum) + OFFSET_CHILD,
-      (char) (child & 0xff));
-  }
+	/**
+	 * {@inheritDoc}
+	 */
+	public void setChild(final int objectNum, final int child) {
+		getMemory().writeUnsigned8(getObjectAddress(objectNum) + OFFSET_CHILD, (char) (child & 0xff));
+	}
 
-  /**
-   * {@inheritDoc}
-   */
-  public int getParent(final int objectNum) {
-  return getMemory().readUnsigned8(getObjectAddress(objectNum) +
-                                  OFFSET_PARENT);
-  }
+	/**
+	 * {@inheritDoc}
+	 */
+	public int getParent(final int objectNum) {
+		return getMemory().readUnsigned8(getObjectAddress(objectNum) + OFFSET_PARENT);
+	}
 
-  /**
-   * {@inheritDoc}
-   */
-  public void setParent(final int objectNum, final int parent) {
-  getMemory().writeUnsigned8(getObjectAddress(objectNum) + OFFSET_PARENT,
-      (char) (parent & 0xff));
-  }
+	/**
+	 * {@inheritDoc}
+	 */
+	public void setParent(final int objectNum, final int parent) {
+		getMemory().writeUnsigned8(getObjectAddress(objectNum) + OFFSET_PARENT, (char) (parent & 0xff));
+	}
 
-  /**
-   * {@inheritDoc}
-   */
-  public int getSibling(final int objectNum) {
-  return getMemory().readUnsigned8(getObjectAddress(objectNum) +
-                    OFFSET_SIBLING);
-  }
+	/**
+	 * {@inheritDoc}
+	 */
+	public int getSibling(final int objectNum) {
+		return getMemory().readUnsigned8(getObjectAddress(objectNum) + OFFSET_SIBLING);
+	}
 
-  /**
-   * {@inheritDoc}
-   */
-  public void setSibling(final int objectNum, final int sibling) {
-  getMemory().writeUnsigned8(getObjectAddress(objectNum) + OFFSET_SIBLING,
-      (char) (sibling & 0xff));
-  }
+	/**
+	 * {@inheritDoc}
+	 */
+	public void setSibling(final int objectNum, final int sibling) {
+		getMemory().writeUnsigned8(getObjectAddress(objectNum) + OFFSET_SIBLING, (char) (sibling & 0xff));
+	}
 
-  /**
-   * {@inheritDoc}
-   */
-  protected int getPropertyTableAddress(final int objectNum) {
-    return getMemory().readUnsigned16(getObjectAddress(objectNum) +
-                                     OFFSET_PROPERTYTABLE);
-  }
+	/**
+	 * {@inheritDoc}
+	 */
+	protected int getPropertyTableAddress(final int objectNum) {
+		return getMemory().readUnsigned16(getObjectAddress(objectNum) + OFFSET_PROPERTYTABLE);
+	}
 
-  /**
-   * {@inheritDoc}
-   */
-  protected int getNumPropertySizeBytes(final int propertyDataAddress) {
-    return 1;
-  }
-  /**
-   * {@inheritDoc}
-   */
-  protected int getNumPropSizeBytesAtData(int propertyDataAddress) {
-    return 1;
-  }
+	/**
+	 * {@inheritDoc}
+	 */
+	protected int getNumPropertySizeBytes(final int propertyDataAddress) {
+		return 1;
+	}
 
-  /**
-   * {@inheritDoc}
-   */
-  protected int getPropertyNum(final int propertyAddress) {
-    final int sizeByte = getMemory().readUnsigned8(propertyAddress);
-    return sizeByte - 32 * (getPropertyLength(propertyAddress + 1) - 1);
-  }
+	/**
+	 * {@inheritDoc}
+	 */
+	protected int getNumPropSizeBytesAtData(int propertyDataAddress) {
+		return 1;
+	}
 
-  /**
-   * This function represents the universal formula to calculate the length
-   * of a property given the address of its data (as opposed to the address
-   * of the property itself).
-   * @param memaccess the memory access object
-   * @param addressOfPropertyData the address of the property data
-   * @return the length of the property
-   */
-  private static int getPropertyLengthAtData(final Memory memaccess,
-                                             final int addressOfPropertyData) {
-    if (addressOfPropertyData == 0) {
-      return 0; // see standard 1.1
-    }
+	/**
+	 * {@inheritDoc}
+	 */
+	protected int getPropertyNum(final int propertyAddress) {
+		final int sizeByte = getMemory().readUnsigned8(propertyAddress);
+		return sizeByte - 32 * (getPropertyLength(propertyAddress + 1) - 1);
+	}
 
-    // The size byte is always the byte before the property data in any
-    // version, so this is consistent
-    final char sizebyte =
-      memaccess.readUnsigned8(addressOfPropertyData - 1);
+	/**
+	 * This function represents the universal formula to calculate the length of
+	 * a property given the address of its data (as opposed to the address of
+	 * the property itself).
+	 * 
+	 * @param memaccess
+	 *            the memory access object
+	 * @param addressOfPropertyData
+	 *            the address of the property data
+	 * @return the length of the property
+	 */
+	private static int getPropertyLengthAtData(final Memory memaccess, final int addressOfPropertyData) {
+		if (addressOfPropertyData == 0) {
+			return 0; // see standard 1.1
+		}
 
-    return sizebyte / 32 + 1;
-  }
+		// The size byte is always the byte before the property data in any
+		// version, so this is consistent
+		final char sizebyte = memaccess.readUnsigned8(addressOfPropertyData - 1);
+
+		return sizebyte / 32 + 1;
+	}
 }

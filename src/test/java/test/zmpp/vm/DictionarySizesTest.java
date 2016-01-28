@@ -36,20 +36,22 @@ import static org.junit.Assert.*;
 
 /**
  * Test class for DictionarySizes.
+ * 
  * @author Wei-ju Wu
  * @version 1.5
  */
 public class DictionarySizesTest {
-  @Test
-  public void testDictionarySizesV4ToV8() {
-    DictionarySizes sizes = new DictionarySizesV4ToV8();
-    assertEquals(6, sizes.getNumEntryBytes());
-    assertEquals(9, sizes.getMaxEntryChars());
-  }
-  @Test
-  public void testDictionarySizesV1ToV3() {
-    DictionarySizes sizes = new DictionarySizesV1ToV3();
-    assertEquals(4, sizes.getNumEntryBytes());
-    assertEquals(6, sizes.getMaxEntryChars());
-  }
+	@Test
+	public void testDictionarySizesV4ToV8() {
+		DictionarySizes sizes = new DictionarySizesV4ToV8();
+		assertEquals(6, sizes.getNumEntryBytes());
+		assertEquals(9, sizes.getMaxEntryChars());
+	}
+
+	@Test
+	public void testDictionarySizesV1ToV3() {
+		DictionarySizes sizes = new DictionarySizesV1ToV3();
+		assertEquals(4, sizes.getNumEntryBytes());
+		assertEquals(6, sizes.getMaxEntryChars());
+	}
 }

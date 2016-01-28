@@ -36,19 +36,27 @@ package org.zmpp.windowing;
  */
 public interface StatusLine {
 
-  /**
-   * Updates the status of a score game.
-   * @param objectName the object name
-   * @param score the score
-   * @param steps the number of steps
-   */
-  void updateStatusScore(String objectName, int score, int steps);
+	/**
+	 * Updates the status of a score game.
+	 * 
+	 * @param objectName
+	 *            the object name
+	 * @param score
+	 *            the score
+	 * @param steps
+	 *            the number of steps
+	 */
+	void updateStatusScore(String objectName, int score, int steps);
 
-  /**
-   * Updates the status of a time game.
-   * @param objectName the object name
-   * @param hours the hours
-   * @param minutes the minutes
-   */
-  void updateStatusTime(String objectName, int hours, int minutes);
+	/**
+	 * Updates the status of a time game.
+	 * 
+	 * @param objectName
+	 *            the object name
+	 * @param hours
+	 *            the hours
+	 * @param minutes
+	 *            the minutes
+	 */
+	void updateStatusTime(String objectName, int hours, int minutes);
 }

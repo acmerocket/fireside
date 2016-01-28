@@ -31,57 +31,61 @@ package org.zmpp.encoding;
 import org.zmpp.base.Memory;
 
 /**
- * This accent table is used in case that there is an extension header
- * that specifies that accent table.
+ * This accent table is used in case that there is an extension header that
+ * specifies that accent table.
  *
  * @author Wei-ju Wu
  * @version 1.5
  */
 public class CustomAccentTable implements AccentTable {
 
-  /** The Memory object. */
-  private Memory memory;
+	/** The Memory object. */
+	private Memory memory;
 
-  /** The table adddress. */
-  private int tableAddress;
+	/** The table adddress. */
+	private int tableAddress;
 
-  /**
-   * Constructor.
-   * @param memory a Memory object
-   * @param address the table address
-   */
-  public CustomAccentTable(final Memory memory, final int address) {
-    this.memory = memory;
-    this.tableAddress = address;
-  }
+	/**
+	 * Constructor.
+	 * 
+	 * @param memory
+	 *            a Memory object
+	 * @param address
+	 *            the table address
+	 */
+	public CustomAccentTable(final Memory memory, final int address) {
+		this.memory = memory;
+		this.tableAddress = address;
+	}
 
-  /** {@inheritDoc} */
-  public int getLength() {
-    int result = 0;
-    if (tableAddress > 0) {
-      result = memory.readUnsigned8(tableAddress);
-    }
-    return result;
-  }
+	/** {@inheritDoc} */
+	public int getLength() {
+		int result = 0;
+		if (tableAddress > 0) {
+			result = memory.readUnsigned8(tableAddress);
+		}
+		return result;
+	}
 
-  /** {@inheritDoc} */
-  public char getAccent(final int index) {
-    char result = '?';
-    if (tableAddress > 0) {
-      result = memory.readUnsigned16(tableAddress + (index * 2) + 1);
-    }
-    return result;
-  }
+	/** {@inheritDoc} */
+	public char getAccent(final int index) {
+		char result = '?';
+		if (tableAddress > 0) {
+			result = memory.readUnsigned16(tableAddress + (index * 2) + 1);
+		}
+		return result;
+	}
 
-  /** {@inheritDoc} */
-  public int getIndexOfLowerCase(final int index) {
-    final char c = (char) getAccent(index);
-    final char lower = Character.toLowerCase(c);
-    final int length = getLength();
+	/** {@inheritDoc} */
+	public int getIndexOfLowerCase(final int index) {
+		final char c = (char) getAccent(index);
+		final char lower = Character.toLowerCase(c);
+		final int length = getLength();
 
-    for (int i = 0; i < length; i++) {
-      if (getAccent(i) == lower) return i;
-    }
-    return index;
-  }
+		for (int i = 0; i < length; i++) {
+			if (getAccent(i) == lower)
+				return i;
+		}
+		return index;
+	}
 }

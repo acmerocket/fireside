@@ -30,13 +30,15 @@ package org.zmpp.media;
 
 /**
  * An interface to a DrawingArea.
+ * 
  * @author Wei-ju Wu
  * @version 1.5
  */
 public interface DrawingArea {
-  /**
-   * Returns the resolution of the DrawingArea.
-   * @return the resolution of the DrawingArea
-   */
-  Resolution getResolution();
+	/**
+	 * Returns the resolution of the DrawingArea.
+	 * 
+	 * @return the resolution of the DrawingArea
+	 */
+	Resolution getResolution();
 }

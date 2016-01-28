@@ -32,43 +32,54 @@ import java.io.Serializable;
 
 /**
  * An annotated text.
+ * 
  * @author Wei-ju Wu
  * @version 1.5
  */
 public class AnnotatedText implements Serializable {
 
-  private static final long serialVersionUID = -1118683514461169397L;
-  private TextAnnotation annotation;
-  private String text;
+	private static final long serialVersionUID = -1118683514461169397L;
+	private TextAnnotation annotation;
+	private String text;
 
-  /**
-   * Constructor.
-   * @param annotation the annotation
-   * @param text the text
-   */
-  public AnnotatedText(TextAnnotation annotation, String text) {
-    this.annotation = annotation;
-    this.text = text;
-  }
+	/**
+	 * Constructor.
+	 * 
+	 * @param annotation
+	 *            the annotation
+	 * @param text
+	 *            the text
+	 */
+	public AnnotatedText(TextAnnotation annotation, String text) {
+		this.annotation = annotation;
+		this.text = text;
+	}
 
-  /**
-   * Constructor.
-   * @param text text
-   */
-  public AnnotatedText(String text) {
-    this(new TextAnnotation(TextAnnotation.FONT_NORMAL,
-                            TextAnnotation.TEXTSTYLE_ROMAN), text);
-  }
+	/**
+	 * Constructor.
+	 * 
+	 * @param text
+	 *            text
+	 */
+	public AnnotatedText(String text) {
+		this(new TextAnnotation(TextAnnotation.FONT_NORMAL, TextAnnotation.TEXTSTYLE_ROMAN), text);
+	}
 
-  /**
-   * Returns the annotation.
-   * @return annotation
-   */
-  public TextAnnotation getAnnotation() { return annotation; }
+	/**
+	 * Returns the annotation.
+	 * 
+	 * @return annotation
+	 */
+	public TextAnnotation getAnnotation() {
+		return annotation;
+	}
 
-  /**
-   * Returns the text.
-   * @return the text
-   */
-  public String getText() { return text; }
+	/**
+	 * Returns the text.
+	 * 
+	 * @return the text
+	 */
+	public String getText() {
+		return text;
+	}
 }

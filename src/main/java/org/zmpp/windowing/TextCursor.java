@@ -36,40 +36,44 @@ package org.zmpp.windowing;
  */
 public interface TextCursor {
 
-  /**
-   * Returns the current line.
-   *
-   * @return the current line
-   */
-  int getLine();
+	/**
+	 * Returns the current line.
+	 *
+	 * @return the current line
+	 */
+	int getLine();
 
-  /**
-   * Returns the current column.
-   *
-   * @return the current column
-   */
-  int getColumn();
+	/**
+	 * Returns the current column.
+	 *
+	 * @return the current column
+	 */
+	int getColumn();
 
-  /**
-   * Sets the current line. A value <= 0 will set the line to 1.
-   *
-   * @param line the new current line
-   */
-  void setLine(int line);
+	/**
+	 * Sets the current line. A value <= 0 will set the line to 1.
+	 *
+	 * @param line
+	 *            the new current line
+	 */
+	void setLine(int line);
 
-  /**
-   * Sets the current column. A value <= 0 will set the column to 1.
-   *
-   * @param column the new current column
-   */
-  void setColumn(int column);
+	/**
+	 * Sets the current column. A value <= 0 will set the column to 1.
+	 *
+	 * @param column
+	 *            the new current column
+	 */
+	void setColumn(int column);
 
-  /**
-   * Sets the new position. Values <= 0 will set the corresponding values
-   * to 1.
-   *
-   * @param line the new line
-   * @param column the new column
-   */
-  void setPosition(int line, int column);
+	/**
+	 * Sets the new position. Values <= 0 will set the corresponding values to
+	 * 1.
+	 *
+	 * @param line
+	 *            the new line
+	 * @param column
+	 *            the new column
+	 */
+	void setPosition(int line, int column);
 }

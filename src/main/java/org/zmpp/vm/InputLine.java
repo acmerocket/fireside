@@ -38,24 +38,29 @@ import java.util.List;
  */
 public interface InputLine {
 
-  /**
-   * Deletes the previous character in the input line.
-   *
-   * @param inputbuffer the input buffer
-   * @param pointer the pointer
-   * @return the new pointer after delete
-   */
-  int deletePreviousChar(List<Character> inputbuffer, int pointer);
+	/**
+	 * Deletes the previous character in the input line.
+	 *
+	 * @param inputbuffer
+	 *            the input buffer
+	 * @param pointer
+	 *            the pointer
+	 * @return the new pointer after delete
+	 */
+	int deletePreviousChar(List<Character> inputbuffer, int pointer);
 
-  /**
-   * Adds a character to the current input line.
-   *
-   * @param inputbuffer the input buffer
-   * @param textbuffer the textbuffer address
-   * @param pointer the pointer address
-   * @param zsciiChar the character to add
-   * @return the new pointer
-   */
-  int addChar(List<Character> inputbuffer, int textbuffer, int pointer,
-              char zsciiChar);
+	/**
+	 * Adds a character to the current input line.
+	 *
+	 * @param inputbuffer
+	 *            the input buffer
+	 * @param textbuffer
+	 *            the textbuffer address
+	 * @param pointer
+	 *            the pointer address
+	 * @param zsciiChar
+	 *            the character to add
+	 * @return the new pointer
+	 */
+	int addChar(List<Character> inputbuffer, int textbuffer, int pointer, char zsciiChar);
 }

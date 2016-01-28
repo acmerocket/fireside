@@ -33,54 +33,58 @@ import org.zmpp.io.InputStream;
 
 /**
  * Input interface implementation.
+ * 
  * @author Wei-ju Wu
  * @version 1.5
  */
 public class InputImpl implements Input, Closeable {
 
-  /**
-   * This is the array of input streams.
-   */
-  private InputStream[] inputStream = new InputStream[2];
+	/**
+	 * This is the array of input streams.
+	 */
+	private InputStream[] inputStream = new InputStream[2];
 
-  /**
-   * The selected input stream.
-   */
-  private int selectedInputStreamIndex = 0;
+	/**
+	 * The selected input stream.
+	 */
+	private int selectedInputStreamIndex = 0;
 
-  /** {@inheritDoc} */
-  public void close() {
-    if (inputStream != null) {
-      for (int i = 0; i < inputStream.length; i++) {
-        if (inputStream[i] != null) {
-          inputStream[i].close();
-        }
-      }
-    }
-  }
+	/** {@inheritDoc} */
+	public void close() {
+		if (inputStream != null) {
+			for (int i = 0; i < inputStream.length; i++) {
+				if (inputStream[i] != null) {
+					inputStream[i].close();
+				}
+			}
+		}
+	}
 
-  /**
-   * Sets an input stream to the specified number.
-   * @param streamnumber the input stream number
-   * @param stream the input stream to set
-   */
-  public void setInputStream(final int streamnumber, final InputStream stream) {
-    inputStream[streamnumber] = stream;
-  }
+	/**
+	 * Sets an input stream to the specified number.
+	 * 
+	 * @param streamnumber
+	 *            the input stream number
+	 * @param stream
+	 *            the input stream to set
+	 */
+	public void setInputStream(final int streamnumber, final InputStream stream) {
+		inputStream[streamnumber] = stream;
+	}
 
-  /**
-   * {@inheritDoc}
-   */
-  public void selectInputStream(final int streamnumber) {
-    selectedInputStreamIndex = streamnumber;
-  }
+	/**
+	 * {@inheritDoc}
+	 */
+	public void selectInputStream(final int streamnumber) {
+		selectedInputStreamIndex = streamnumber;
+	}
 
-  /**
-   * {@inheritDoc}
-   */
-  public InputStream getSelectedInputStream() {
+	/**
+	 * {@inheritDoc}
+	 */
+	public InputStream getSelectedInputStream() {
 
-    return inputStream[selectedInputStreamIndex];
-  }
+		return inputStream[selectedInputStreamIndex];
+	}
 
 }

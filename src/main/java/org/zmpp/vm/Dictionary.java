@@ -36,44 +36,53 @@ package org.zmpp.vm;
  */
 public interface Dictionary {
 
-  /**
-   * Returns the number of separators.
-   * @return the number of separators
-   */
-  int getNumberOfSeparators();
+	/**
+	 * Returns the number of separators.
+	 * 
+	 * @return the number of separators
+	 */
+	int getNumberOfSeparators();
 
-  /**
-   * Returns the separator at position i as a ZSCII character.
-   * @param i the separator number, zero-based
-   * @return the separator
-   */
-  byte getSeparator(int i);
+	/**
+	 * Returns the separator at position i as a ZSCII character.
+	 * 
+	 * @param i
+	 *            the separator number, zero-based
+	 * @return the separator
+	 */
+	byte getSeparator(int i);
 
-  /**
-   * Returns the length of a dictionary entry.
-   * @return the entry length
-   */
-  int getEntryLength();
+	/**
+	 * Returns the length of a dictionary entry.
+	 * 
+	 * @return the entry length
+	 */
+	int getEntryLength();
 
-  /**
-   * Returns the number of dictionary entries.
-   * @return the number of entries
-   */
-  short getNumberOfEntries();
+	/**
+	 * Returns the number of dictionary entries.
+	 * 
+	 * @return the number of entries
+	 */
+	short getNumberOfEntries();
 
-  /**
-   * Returns the entry address at the specified position.
-   * @param entryNum entry number between (0 - getNumberOfEntries() - 1)
-   * @return the entry address
-   */
-  int getEntryAddress(int entryNum);
+	/**
+	 * Returns the entry address at the specified position.
+	 * 
+	 * @param entryNum
+	 *            entry number between (0 - getNumberOfEntries() - 1)
+	 * @return the entry address
+	 */
+	int getEntryAddress(int entryNum);
 
-  /**
-   * Looks up a string in the dictionary. The word will be truncated to
-   * the maximum word length and looked up. The result is the address
-   * of the entry or 0 if it is not found.
-   * @param token a token in ZSCII encoding
-   * @return the address of the token or 0
-   */
-  int lookup(String token);
+	/**
+	 * Looks up a string in the dictionary. The word will be truncated to the
+	 * maximum word length and looked up. The result is the address of the entry
+	 * or 0 if it is not found.
+	 * 
+	 * @param token
+	 *            a token in ZSCII encoding
+	 * @return the address of the token or 0
+	 */
+	int lookup(String token);
 }

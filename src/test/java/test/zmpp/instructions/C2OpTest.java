@@ -54,784 +54,810 @@ import static org.zmpp.vm.Instruction.OperandCount.*;
 @RunWith(JMock.class)
 public class C2OpTest extends InstructionTestBase {
 
-  @Override
+	@Override
 	@Before
-  public void setUp() throws Exception {
-    super.setUp();
-  }
+	public void setUp() throws Exception {
+		super.setUp();
+	}
 
 	@Test
-  public void testIsBranch() {
-    InstructionInfoDb infoDb = InstructionInfoDb.getInstance();
-    assertTrue(infoDb.getInfo(C2OP, C2OP_JE, 3).isBranch());
-    assertTrue(infoDb.getInfo(C2OP, C2OP_JL, 3).isBranch());
-    assertTrue(infoDb.getInfo(C2OP, C2OP_JG, 3).isBranch());
-    assertTrue(infoDb.getInfo(C2OP, C2OP_DEC_CHK, 3).isBranch());
-    assertTrue(infoDb.getInfo(C2OP, C2OP_INC_CHK, 3).isBranch());
-    assertTrue(infoDb.getInfo(C2OP, C2OP_JIN, 3).isBranch());
-    assertTrue(infoDb.getInfo(C2OP, C2OP_TEST, 3).isBranch());
-    assertTrue(infoDb.getInfo(C2OP, C2OP_TEST_ATTR, 3).isBranch());
-    assertFalse(infoDb.getInfo(C2OP, C2OP_ADD, 3).isBranch());
-  }
+	public void testIsBranch() {
+		InstructionInfoDb infoDb = InstructionInfoDb.getInstance();
+		assertTrue(infoDb.getInfo(C2OP, C2OP_JE, 3).isBranch());
+		assertTrue(infoDb.getInfo(C2OP, C2OP_JL, 3).isBranch());
+		assertTrue(infoDb.getInfo(C2OP, C2OP_JG, 3).isBranch());
+		assertTrue(infoDb.getInfo(C2OP, C2OP_DEC_CHK, 3).isBranch());
+		assertTrue(infoDb.getInfo(C2OP, C2OP_INC_CHK, 3).isBranch());
+		assertTrue(infoDb.getInfo(C2OP, C2OP_JIN, 3).isBranch());
+		assertTrue(infoDb.getInfo(C2OP, C2OP_TEST, 3).isBranch());
+		assertTrue(infoDb.getInfo(C2OP, C2OP_TEST_ATTR, 3).isBranch());
+		assertFalse(infoDb.getInfo(C2OP, C2OP_ADD, 3).isBranch());
+	}
 
 	@Test
-  public void testCall2SIllegalInVersion3() {
-    InstructionInfoDb infoDb = InstructionInfoDb.getInstance();
-    assertFalse(infoDb.isValid(C2OP, C2OP_CALL_2S, 3));
-  }
-
-  @Test	
-  public void testStoresResultV4() {
-    InstructionInfoDb infoDb = InstructionInfoDb.getInstance();
-    assertTrue(infoDb.getInfo(C2OP, C2OP_OR, 4).isStore());
-    assertTrue(infoDb.getInfo(C2OP, C2OP_AND, 4).isStore());
-    assertTrue(infoDb.getInfo(C2OP, C2OP_LOADW, 4).isStore());
-    assertTrue(infoDb.getInfo(C2OP, C2OP_LOADB, 4).isStore());
-    assertTrue(infoDb.getInfo(C2OP, C2OP_GET_PROP, 4).isStore());
-    assertTrue(infoDb.getInfo(C2OP, C2OP_GET_PROP_ADDR, 4).isStore());
-    assertTrue(infoDb.getInfo(C2OP, C2OP_GET_NEXT_PROP, 4).isStore());
-    assertTrue(infoDb.getInfo(C2OP, C2OP_ADD, 4).isStore());
-    assertTrue(infoDb.getInfo(C2OP, C2OP_SUB, 4).isStore());
-    assertTrue(infoDb.getInfo(C2OP, C2OP_MUL, 4).isStore());
-    assertTrue(infoDb.getInfo(C2OP, C2OP_MOD, 4).isStore());
-    assertTrue(infoDb.getInfo(C2OP, C2OP_MUL, 4).isStore());
-    assertTrue(infoDb.getInfo(C2OP, C2OP_CALL_2S, 4).isStore());
-    assertFalse(infoDb.getInfo(C2OP, C2OP_JG, 4).isStore()); 
-  }
-
-  @Test
-  public void testCall2nIllegalInVersion4() {
-    InstructionInfoDb infoDb = InstructionInfoDb.getInstance();
-    assertFalse(infoDb.isValid(C2OP, C2OP_CALL_2N, 4));
-  }  
+	public void testCall2SIllegalInVersion3() {
+		InstructionInfoDb infoDb = InstructionInfoDb.getInstance();
+		assertFalse(infoDb.isValid(C2OP, C2OP_CALL_2S, 3));
+	}
 
 	@Test
-  public void testStoresResultV5() {
-    InstructionInfoDb infoDb = InstructionInfoDb.getInstance();
-    assertTrue(infoDb.getInfo(C2OP, C2OP_CALL_2S, 5).isStore());
-  }
-
-  // ***********************************************************************
-  // ********* JE
-  // ******************************************
-
-  // According to Z-machine standard 1.1, one operand is not allowed
-	@Test
-  public void testJe1Operand() {
-    context.checking(new Expectations() {{
-      oneOf (machine).halt("je expects at least two operands, only one provided");
-    }});
-    Operand operand1 = new Operand(Operand.TYPENUM_SMALL_CONSTANT, (char) 0x01);
-    C2OpMock je1 = createInstructionMock(C2OP_JE, new Operand[] {operand1});
-    je1.execute();
-    context.assertIsSatisfied();
-  }
+	public void testStoresResultV4() {
+		InstructionInfoDb infoDb = InstructionInfoDb.getInstance();
+		assertTrue(infoDb.getInfo(C2OP, C2OP_OR, 4).isStore());
+		assertTrue(infoDb.getInfo(C2OP, C2OP_AND, 4).isStore());
+		assertTrue(infoDb.getInfo(C2OP, C2OP_LOADW, 4).isStore());
+		assertTrue(infoDb.getInfo(C2OP, C2OP_LOADB, 4).isStore());
+		assertTrue(infoDb.getInfo(C2OP, C2OP_GET_PROP, 4).isStore());
+		assertTrue(infoDb.getInfo(C2OP, C2OP_GET_PROP_ADDR, 4).isStore());
+		assertTrue(infoDb.getInfo(C2OP, C2OP_GET_NEXT_PROP, 4).isStore());
+		assertTrue(infoDb.getInfo(C2OP, C2OP_ADD, 4).isStore());
+		assertTrue(infoDb.getInfo(C2OP, C2OP_SUB, 4).isStore());
+		assertTrue(infoDb.getInfo(C2OP, C2OP_MUL, 4).isStore());
+		assertTrue(infoDb.getInfo(C2OP, C2OP_MOD, 4).isStore());
+		assertTrue(infoDb.getInfo(C2OP, C2OP_MUL, 4).isStore());
+		assertTrue(infoDb.getInfo(C2OP, C2OP_CALL_2S, 4).isStore());
+		assertFalse(infoDb.getInfo(C2OP, C2OP_JG, 4).isStore());
+	}
 
 	@Test
-  public void testJe3Operands() {
-    context.checking(new Expectations() {{
-      oneOf (machine).getVariable((char) 0x11); will(returnValue((char) 1));
-    }});
-    Operand op1 = new Operand(Operand.TYPENUM_SMALL_CONSTANT, (char) 0x01);
-    Operand op2 = new Operand(Operand.TYPENUM_LARGE_CONSTANT, (char) 0x04);
-    Operand op3 = new Operand(Operand.TYPENUM_VARIABLE, (char) 0x11);
-    C2OpMock je3 = createInstructionMock(C2OP_JE, new Operand[] {op1, op2, op3});
-    je3.execute();    
-    assertTrue(je3.branchOnTestCalled);
-    assertTrue(je3.branchOnTestCondition);
-    context.assertIsSatisfied();
-  }
-  
-	@Test
-  public void testJe2() {
-    C2OpMock je_nobranch = createInstructionMock(C2OP_JE,
-        Operand.TYPENUM_SMALL_CONSTANT, (char) 2,
-        Operand.TYPENUM_SMALL_CONSTANT, (char) 3);    
-    je_nobranch.execute();
-    assertTrue(je_nobranch.branchOnTestCalled);
-    assertFalse(je_nobranch.branchOnTestCondition);
-    
-    C2OpMock je_branch = createInstructionMock(C2OP_JE,
-        Operand.TYPENUM_SMALL_CONSTANT, (char) 3,
-        Operand.TYPENUM_SMALL_CONSTANT, (char) 3);
-    je_branch.execute();
-    assertTrue(je_branch.branchOnTestCalled);
-    assertTrue(je_branch.branchOnTestCondition);
-  }
-
-  // ***********************************************************************
-  // ********* JL
-  // ******************************************
-  
-	@Test
-  public void testJl() {
-    C2OpMock jl_nobranch = createInstructionMock(C2OP_JL,
-        Operand.TYPENUM_SMALL_CONSTANT, (char) 5,
-        Operand.TYPENUM_SMALL_CONSTANT, (char) 3);    
-    jl_nobranch.execute();
-    assertTrue(jl_nobranch.branchOnTestCalled);
-    assertFalse(jl_nobranch.branchOnTestCondition);
-    
-    C2OpMock jl_branch = createInstructionMock(C2OP_JL,
-        Operand.TYPENUM_SMALL_CONSTANT, (char) 2,
-        Operand.TYPENUM_SMALL_CONSTANT, (char) 3);
-    jl_branch.execute();
-    assertTrue(jl_branch.branchOnTestCalled);
-    assertTrue(jl_branch.branchOnTestCondition);
-  }
-  
-  // ***********************************************************************
-  // ********* JG
-  // ******************************************
-  
-	@Test
-  public void testJg() {
-    C2OpMock jg_nobranch = createInstructionMock(C2OP_JG,
-        Operand.TYPENUM_SMALL_CONSTANT, (char) 3,
-        Operand.TYPENUM_SMALL_CONSTANT, (char) 5);
-    jg_nobranch.execute();
-    assertTrue(jg_nobranch.branchOnTestCalled);
-    assertFalse(jg_nobranch.branchOnTestCondition);
-    
-    C2OpMock jg_branch = createInstructionMock(C2OP_JG,
-        Operand.TYPENUM_SMALL_CONSTANT, (char) 3,
-        Operand.TYPENUM_SMALL_CONSTANT, (char) 2);
-    jg_branch.execute();
-    assertTrue(jg_branch.branchOnTestCalled);
-    assertTrue(jg_branch.branchOnTestCondition);
-  }
-
-  // ***********************************************************************
-  // ********* JIN
-  // ******************************************
-  
-	@Test
-  public void testJinNotIn() {
-    context.checking(new Expectations() {{
-      oneOf (machine).getParent(1); will(returnValue(12));
-    }});
-    C2OpMock jin_nobranch = createInstructionMock(C2OP_JIN,
-        Operand.TYPENUM_SMALL_CONSTANT, (char) 1,
-        Operand.TYPENUM_SMALL_CONSTANT, (char) 5);
-    jin_nobranch.execute();
-    assertTrue(jin_nobranch.branchOnTestCalled);
-    assertFalse(jin_nobranch.branchOnTestCondition);
-    context.assertIsSatisfied();
-  }
-  
-	@Test
-  public void testJinIn() {
-    context.checking(new Expectations() {{
-      oneOf (machine).getParent(1); will(returnValue(36));
-    }});
-    C2OpMock jin_branch = createInstructionMock(C2OP_JIN,
-        Operand.TYPENUM_SMALL_CONSTANT, (char) 1,
-        Operand.TYPENUM_SMALL_CONSTANT, (char) 36);
-    jin_branch.execute();
-    assertTrue(jin_branch.branchOnTestCalled);
-    assertTrue(jin_branch.branchOnTestCondition);
-    context.assertIsSatisfied();
-  }
-  
-  // ***********************************************************************
-  // ********* DEC_CHK
-  // ******************************************
-  
-	@Test
-  public void testDecChkNoBranch() {
-    context.checking(new Expectations() {{
-      oneOf (machine).getVariable((char) 0x11); will(returnValue((char) 6));
-      oneOf (machine).setVariable((char) 0x11, (char) 5);
-    }});
-    C2OpMock dec_chk_nobranch = createInstructionMock(
-        C2OP_DEC_CHK,
-        Operand.TYPENUM_SMALL_CONSTANT, (char) 0x11,
-        Operand.TYPENUM_SMALL_CONSTANT, (char) 5);
-    dec_chk_nobranch.execute();
-    assertTrue(dec_chk_nobranch.branchOnTestCalled);
-    assertFalse(dec_chk_nobranch.branchOnTestCondition);
-    context.assertIsSatisfied();
-  }  
-  
-	@Test
-  public void testDecChkBranch() {
-    context.checking(new Expectations() {{
-      oneOf (machine).getVariable((char) 0x11); will(returnValue((char) 5));
-      oneOf (machine).setVariable((char) 0x11, (char) 4);
-    }});
-    C2OpMock dec_chk_branch = createInstructionMock(
-        C2OP_DEC_CHK,
-        Operand.TYPENUM_SMALL_CONSTANT, (char) 0x11,
-        Operand.TYPENUM_SMALL_CONSTANT, (char) 5);
-    dec_chk_branch.execute();
-    assertTrue(dec_chk_branch.branchOnTestCalled);
-    assertTrue(dec_chk_branch.branchOnTestCondition);
-    context.assertIsSatisfied();
-  }
-
-  // ***********************************************************************
-  // ********* INC_CHK
-  // ******************************************
-  
-	@Test
-  public void testIncChkNoBranch() {
-    context.checking(new Expectations() {{
-      oneOf (machine).getVariable((char) 0x11); will(returnValue((char) 6));
-      oneOf (machine).setVariable((char) 0x11, (char) 7);
-    }});
-    C2OpMock inc_chk_nobranch = createInstructionMock(
-        C2OP_INC_CHK,
-        Operand.TYPENUM_SMALL_CONSTANT, (char) 0x11,
-        Operand.TYPENUM_SMALL_CONSTANT, (char) 7);
-    inc_chk_nobranch.execute();
-    assertTrue(inc_chk_nobranch.branchOnTestCalled);
-    assertFalse(inc_chk_nobranch.branchOnTestCondition);
-    context.assertIsSatisfied();
-  }  
-  
-	@Test
-  public void testIncChkBranch() {
-    context.checking(new Expectations() {{
-      oneOf (machine).getVariable((char) 0x11); will(returnValue((char) 5));
-      oneOf (machine).setVariable((char) 0x11, (char) 6);
-    }});
-    C2OpMock inc_chk_branch = createInstructionMock(
-        C2OP_INC_CHK,
-        Operand.TYPENUM_SMALL_CONSTANT, (char) 0x11,
-        Operand.TYPENUM_SMALL_CONSTANT, (char) 5);
-    inc_chk_branch.execute();
-    assertTrue(inc_chk_branch.branchOnTestCalled);
-    assertTrue(inc_chk_branch.branchOnTestCondition);
-    context.assertIsSatisfied();
-  }
-
-  // ***********************************************************************
-  // ********* TEST
-  // ******************************************
-  
-	@Test
-  public void testTestNoBranch() {
-    C2OpMock test_nobranch = createInstructionMock(C2OP_TEST,
-        Operand.TYPENUM_LARGE_CONSTANT, (char) 0x7c,
-        Operand.TYPENUM_LARGE_CONSTANT, (char) 0x03);
-    test_nobranch.execute();
-    assertTrue(test_nobranch.branchOnTestCalled);
-    assertFalse(test_nobranch.branchOnTestCondition);
-    context.assertIsSatisfied();
-  }
-  
-	@Test
-  public void testTestBranch() {
-    C2OpMock test_branch = createInstructionMock(C2OP_TEST,
-        Operand.TYPENUM_LARGE_CONSTANT, (char) 0x7c,
-        Operand.TYPENUM_LARGE_CONSTANT, (char) 0x14);
-    test_branch.execute();
-    assertTrue(test_branch.branchOnTestCalled);
-    assertTrue(test_branch.branchOnTestCondition);
-    context.assertIsSatisfied();
-  }
-  
-  // ***********************************************************************
-  // ********* OR
-  // ******************************************
-  
-	@Test
-  public void testOr() {
-    context.checking(new Expectations() {{
-      oneOf (machine).setVariable((char) 0x12, (char) 0xffff);
-    }});
-    char storevar = 0x12;
-    C2OpMock or = createInstructionMock(C2OP_OR,
-        Operand.TYPENUM_LARGE_CONSTANT, (char) 0x00ff,
-        Operand.TYPENUM_LARGE_CONSTANT, (char) 0xff00, storevar);
-    or.execute();
-    assertTrue(or.nextInstructionCalled);
-    context.assertIsSatisfied();
-  }
-
-  // ***********************************************************************
-  // ********* AND
-  // ******************************************
-  
-	@Test
-  public void testAnd() {
-    context.checking(new Expectations() {{
-      oneOf (machine).setVariable((char) 0x12, (char) 0x0000);
-    }});
-    char storevar = 0x12;
-    C2OpMock and = createInstructionMock(C2OP_AND,
-        Operand.TYPENUM_LARGE_CONSTANT, (char) 0x00ff,
-        Operand.TYPENUM_LARGE_CONSTANT, (char) 0xff00, storevar);
-    and.execute();
-    assertTrue(and.nextInstructionCalled);    
-    context.assertIsSatisfied();
-  }
-
-  // ***********************************************************************
-  // ********* ADD
-  // ******************************************
-  
-	@Test
-  public void testAdd() {
-    context.checking(new Expectations() {{
-      oneOf (machine).setVariable((char) 0x12, (char) 0x0002);
-    }});
-    char storevar = 0x12;
-    C2OpMock add = createInstructionMock(C2OP_ADD,
-        Operand.TYPENUM_LARGE_CONSTANT, signedToUnsigned16((short) -1),
-        Operand.TYPENUM_LARGE_CONSTANT, (char) 3, storevar);
-    add.execute();
-    assertTrue(add.nextInstructionCalled);
-    context.assertIsSatisfied();
-  }
-  
-  // ***********************************************************************
-  // ********* SUB
-  // ******************************************
-  
-	@Test
-  public void testSub() {
-    context.checking(new Expectations() {{
-      oneOf (machine).setVariable((char) 0x12, signedToUnsigned16((short) -4));
-    }});
-    char storevar = 0x12;
-    C2OpMock sub = createInstructionMock(C2OP_SUB,
-        Operand.TYPENUM_LARGE_CONSTANT, signedToUnsigned16((short) -1),
-        Operand.TYPENUM_LARGE_CONSTANT, (char) 3, storevar);
-    sub.execute();
-    assertTrue(sub.nextInstructionCalled);
-    context.assertIsSatisfied();
-  }
-  
-  // ***********************************************************************
-  // ********* MUL
-  // ******************************************
-  
-	@Test
-  public void testMul() {
-    context.checking(new Expectations() {{
-      oneOf (machine).setVariable((char) 0x12, signedToUnsigned16((short) -12));
-    }});
-    char storevar = 0x12;
-    C2OpMock mul = createInstructionMock(C2OP_MUL,
-        Operand.TYPENUM_LARGE_CONSTANT, signedToUnsigned16((short) -4),
-        Operand.TYPENUM_LARGE_CONSTANT, (char) 3, storevar);
-    mul.execute();
-    assertTrue(mul.nextInstructionCalled);
-    context.assertIsSatisfied();
-  }
-  
-  // ***********************************************************************
-  // ********* DIV
-  // ******************************************
-  
-	@Test
-  public void testDiv() {
-    context.checking(new Expectations() {{
-      oneOf (machine).setVariable((char) 0x12, signedToUnsigned16((short) -2));
-    }});
-    char storevar = 0x12;
-    C2OpMock div = createInstructionMock(C2OP_DIV,
-      Operand.TYPENUM_LARGE_CONSTANT, signedToUnsigned16((short) -7),
-      Operand.TYPENUM_LARGE_CONSTANT, (char) 3, storevar);
-    div.execute();
-    assertTrue(div.nextInstructionCalled);
-    context.assertIsSatisfied();
-  }
+	public void testCall2nIllegalInVersion4() {
+		InstructionInfoDb infoDb = InstructionInfoDb.getInstance();
+		assertFalse(infoDb.isValid(C2OP, C2OP_CALL_2N, 4));
+	}
 
 	@Test
-  public void testDivBy0() {
-    context.checking(new Expectations() {{
-      oneOf (machine).halt("@div division by zero");
-    }});
-    char storevar = 0x12;
-    C2OpMock div0 = createInstructionMock(C2OP_DIV,
-        Operand.TYPENUM_LARGE_CONSTANT, (char) 7,
-        Operand.TYPENUM_LARGE_CONSTANT, (char) 0, storevar);
-    div0.execute();
-    context.assertIsSatisfied();
-  }
-  
-  // ***********************************************************************
-  // ********* MOD
-  // ******************************************
-  
+	public void testStoresResultV5() {
+		InstructionInfoDb infoDb = InstructionInfoDb.getInstance();
+		assertTrue(infoDb.getInfo(C2OP, C2OP_CALL_2S, 5).isStore());
+	}
+
+	// ***********************************************************************
+	// ********* JE
+	// ******************************************
+
+	// According to Z-machine standard 1.1, one operand is not allowed
 	@Test
-  public void testMod() {
-    context.checking(new Expectations() {{
-      oneOf (machine).setVariable((char) 0x12, signedToUnsigned16((short) -1));
-    }});
-    char storevar = 0x12;
-    C2OpMock mod = createInstructionMock(C2OP_MOD,
-        Operand.TYPENUM_LARGE_CONSTANT, signedToUnsigned16((short) -7),
-        Operand.TYPENUM_LARGE_CONSTANT, (char) 3, storevar);
-    mod.execute();
-    assertTrue(mod.nextInstructionCalled);
-    context.assertIsSatisfied();
-  }
+	public void testJe1Operand() {
+		context.checking(new Expectations() {
+			{
+				oneOf(machine).halt("je expects at least two operands, only one provided");
+			}
+		});
+		Operand operand1 = new Operand(Operand.TYPENUM_SMALL_CONSTANT, (char) 0x01);
+		C2OpMock je1 = createInstructionMock(C2OP_JE, new Operand[] { operand1 });
+		je1.execute();
+		context.assertIsSatisfied();
+	}
 
 	@Test
-  public void testModBy0() {
-    context.checking(new Expectations() {{
-      oneOf (machine).halt("@mod division by zero");
-    }});
-    char storevar = 0x12;
-    C2OpMock mod0 = createInstructionMock(C2OP_MOD,
-        Operand.TYPENUM_LARGE_CONSTANT, (char) 7,
-        Operand.TYPENUM_LARGE_CONSTANT, (char) 0, storevar);
-    mod0.execute();
-    context.assertIsSatisfied();
-  }
-  
-  // ***********************************************************************
-  // ********* TEST_ATTR
-  // ******************************************
-  
-	@Test
-  public void testTestAttributeNoBranchV3() {
-    expectStoryVersion(3);
-    context.checking(new Expectations() {{
-      oneOf (machine).isAttributeSet(1, 2); will(returnValue(false));
-    }});
-    C2OpMock test_attr_nobranch = createInstructionMock(
-        C2OP_TEST_ATTR,
-        Operand.TYPENUM_LARGE_CONSTANT, (char) 1,
-        Operand.TYPENUM_SMALL_CONSTANT, (char) 2);
-    test_attr_nobranch.execute();
-    assertTrue(test_attr_nobranch.branchOnTestCalled);
-    assertFalse(test_attr_nobranch.branchOnTestCondition);
-    context.assertIsSatisfied();
-  }
+	public void testJe3Operands() {
+		context.checking(new Expectations() {
+			{
+				oneOf(machine).getVariable((char) 0x11);
+				will(returnValue((char) 1));
+			}
+		});
+		Operand op1 = new Operand(Operand.TYPENUM_SMALL_CONSTANT, (char) 0x01);
+		Operand op2 = new Operand(Operand.TYPENUM_LARGE_CONSTANT, (char) 0x04);
+		Operand op3 = new Operand(Operand.TYPENUM_VARIABLE, (char) 0x11);
+		C2OpMock je3 = createInstructionMock(C2OP_JE, new Operand[] { op1, op2, op3 });
+		je3.execute();
+		assertTrue(je3.branchOnTestCalled);
+		assertTrue(je3.branchOnTestCondition);
+		context.assertIsSatisfied();
+	}
 
 	@Test
-  public void testTestAttributeBranchV3() {
-    expectStoryVersion(3);
-    context.checking(new Expectations() {{
-      oneOf (machine).isAttributeSet(1, 2); will(returnValue(true));
-    }});
-    C2OpMock test_attr_branch = createInstructionMock(
-        C2OP_TEST_ATTR,
-        Operand.TYPENUM_LARGE_CONSTANT, (char) 1,
-        Operand.TYPENUM_SMALL_CONSTANT, (char) 2);
-    test_attr_branch.execute();
-    assertTrue(test_attr_branch.branchOnTestCalled);
-    assertTrue(test_attr_branch.branchOnTestCondition);
-    context.assertIsSatisfied();
-  }
+	public void testJe2() {
+		C2OpMock je_nobranch = createInstructionMock(C2OP_JE, Operand.TYPENUM_SMALL_CONSTANT, (char) 2,
+				Operand.TYPENUM_SMALL_CONSTANT, (char) 3);
+		je_nobranch.execute();
+		assertTrue(je_nobranch.branchOnTestCalled);
+		assertFalse(je_nobranch.branchOnTestCondition);
 
-  // ***********************************************************************
-  // ********* SET_ATTR
-  // ******************************************
-  
+		C2OpMock je_branch = createInstructionMock(C2OP_JE, Operand.TYPENUM_SMALL_CONSTANT, (char) 3,
+				Operand.TYPENUM_SMALL_CONSTANT, (char) 3);
+		je_branch.execute();
+		assertTrue(je_branch.branchOnTestCalled);
+		assertTrue(je_branch.branchOnTestCondition);
+	}
+
+	// ***********************************************************************
+	// ********* JL
+	// ******************************************
+
 	@Test
-  public void testSetAttrV3() {
-    expectStoryVersion(3);
-    context.checking(new Expectations() {{
-      oneOf (machine).setAttribute(1, 2);
-    }});
-    C2OpMock set_attr = createInstructionMock(
-        C2OP_SET_ATTR,
-        Operand.TYPENUM_LARGE_CONSTANT, (char) 1,
-        Operand.TYPENUM_SMALL_CONSTANT, (char) 2);
-    set_attr.execute();    
-    assertTrue(set_attr.nextInstructionCalled);
-    context.assertIsSatisfied();
-  }
+	public void testJl() {
+		C2OpMock jl_nobranch = createInstructionMock(C2OP_JL, Operand.TYPENUM_SMALL_CONSTANT, (char) 5,
+				Operand.TYPENUM_SMALL_CONSTANT, (char) 3);
+		jl_nobranch.execute();
+		assertTrue(jl_nobranch.branchOnTestCalled);
+		assertFalse(jl_nobranch.branchOnTestCondition);
 
-  // ***********************************************************************
-  // ********* CLEAR_ATTR
-  // ******************************************
-  
+		C2OpMock jl_branch = createInstructionMock(C2OP_JL, Operand.TYPENUM_SMALL_CONSTANT, (char) 2,
+				Operand.TYPENUM_SMALL_CONSTANT, (char) 3);
+		jl_branch.execute();
+		assertTrue(jl_branch.branchOnTestCalled);
+		assertTrue(jl_branch.branchOnTestCondition);
+	}
+
+	// ***********************************************************************
+	// ********* JG
+	// ******************************************
+
 	@Test
-  public void testClearAttrV3() {
-    expectStoryVersion(3);
-    context.checking(new Expectations() {{
-      oneOf (machine).clearAttribute(1, 2);
-    }});
-    C2OpMock clear_attr = createInstructionMock(
-        C2OP_CLEAR_ATTR,
-        Operand.TYPENUM_LARGE_CONSTANT, (char) 1,
-        Operand.TYPENUM_SMALL_CONSTANT, (char) 2);
-    clear_attr.execute();
-    assertTrue(clear_attr.nextInstructionCalled);
-    context.assertIsSatisfied();
-  }
+	public void testJg() {
+		C2OpMock jg_nobranch = createInstructionMock(C2OP_JG, Operand.TYPENUM_SMALL_CONSTANT, (char) 3,
+				Operand.TYPENUM_SMALL_CONSTANT, (char) 5);
+		jg_nobranch.execute();
+		assertTrue(jg_nobranch.branchOnTestCalled);
+		assertFalse(jg_nobranch.branchOnTestCondition);
 
-  // ***********************************************************************
-  // ********* STORE
-  // ******************************************
-  
+		C2OpMock jg_branch = createInstructionMock(C2OP_JG, Operand.TYPENUM_SMALL_CONSTANT, (char) 3,
+				Operand.TYPENUM_SMALL_CONSTANT, (char) 2);
+		jg_branch.execute();
+		assertTrue(jg_branch.branchOnTestCalled);
+		assertTrue(jg_branch.branchOnTestCondition);
+	}
+
+	// ***********************************************************************
+	// ********* JIN
+	// ******************************************
+
 	@Test
-  public void testStore() {
-    context.checking(new Expectations() {{
-      oneOf (machine).setVariable((char) 0x11, (char) 42);
-    }});
-    C2OpMock store = createInstructionMock(C2OP_STORE,
-        Operand.TYPENUM_SMALL_CONSTANT, (char) 0x11,
-        Operand.TYPENUM_SMALL_CONSTANT, (char) 42);
-    store.execute();
-    assertTrue(store.nextInstructionCalled);
-    context.assertIsSatisfied();
-  }
-  
-  // see standard 1.1
+	public void testJinNotIn() {
+		context.checking(new Expectations() {
+			{
+				oneOf(machine).getParent(1);
+				will(returnValue(12));
+			}
+		});
+		C2OpMock jin_nobranch = createInstructionMock(C2OP_JIN, Operand.TYPENUM_SMALL_CONSTANT, (char) 1,
+				Operand.TYPENUM_SMALL_CONSTANT, (char) 5);
+		jin_nobranch.execute();
+		assertTrue(jin_nobranch.branchOnTestCalled);
+		assertFalse(jin_nobranch.branchOnTestCondition);
+		context.assertIsSatisfied();
+	}
+
 	@Test
-  public void testStoreOnStack() {
-    context.checking(new Expectations() {{
-      oneOf (machine).setStackTop((char) 42);
-    }});
-    C2OpMock store = createInstructionMock(C2OP_STORE,
-        Operand.TYPENUM_SMALL_CONSTANT, (char) 0x00,
-        Operand.TYPENUM_SMALL_CONSTANT, (char) 42);
-    store.execute();
-    assertTrue(store.nextInstructionCalled);
-    context.assertIsSatisfied();
-  }
-  
-  // ***********************************************************************
-  // ********* LOADW
-  // ******************************************
-  
+	public void testJinIn() {
+		context.checking(new Expectations() {
+			{
+				oneOf(machine).getParent(1);
+				will(returnValue(36));
+			}
+		});
+		C2OpMock jin_branch = createInstructionMock(C2OP_JIN, Operand.TYPENUM_SMALL_CONSTANT, (char) 1,
+				Operand.TYPENUM_SMALL_CONSTANT, (char) 36);
+		jin_branch.execute();
+		assertTrue(jin_branch.branchOnTestCalled);
+		assertTrue(jin_branch.branchOnTestCondition);
+		context.assertIsSatisfied();
+	}
+
+	// ***********************************************************************
+	// ********* DEC_CHK
+	// ******************************************
+
 	@Test
-  public void testLoadw() {
-    context.checking(new Expectations() {{
-      oneOf (machine).readUnsigned16(0x0010 + 2); will(returnValue((char) 123));
-      oneOf (machine).setVariable((char) 0x11, (char) 123);
-    }});
-    char storevar = 0x11;
-    C2OpMock loadw = createInstructionMock(C2OP_LOADW,
-        Operand.TYPENUM_LARGE_CONSTANT, (char) 0x0010,
-        Operand.TYPENUM_SMALL_CONSTANT, (char) 1, storevar);
-    loadw.execute();
-    assertTrue(loadw.nextInstructionCalled);
-    context.assertIsSatisfied();
-  }
+	public void testDecChkNoBranch() {
+		context.checking(new Expectations() {
+			{
+				oneOf(machine).getVariable((char) 0x11);
+				will(returnValue((char) 6));
+				oneOf(machine).setVariable((char) 0x11, (char) 5);
+			}
+		});
+		C2OpMock dec_chk_nobranch = createInstructionMock(C2OP_DEC_CHK, Operand.TYPENUM_SMALL_CONSTANT, (char) 0x11,
+				Operand.TYPENUM_SMALL_CONSTANT, (char) 5);
+		dec_chk_nobranch.execute();
+		assertTrue(dec_chk_nobranch.branchOnTestCalled);
+		assertFalse(dec_chk_nobranch.branchOnTestCondition);
+		context.assertIsSatisfied();
+	}
 
-  // ***********************************************************************
-  // ********* LOADB
-  // ******************************************
-  
-  // TODO: To be clarified: read unsigned or signed ? 
 	@Test
-  public void testLoadbV3() {
-    context.checking(new Expectations() {{
-      oneOf (machine).readUnsigned8(0x0010 + 1); will(returnValue((char) 42));
-      oneOf (machine).setVariable((char) 0x11, (char) 42);
-    }});
-    char storevar = 0x11;
-    C2OpMock loadb = createInstructionMock(C2OP_LOADB,
-        Operand.TYPENUM_LARGE_CONSTANT, (char) 0x0010,
-        Operand.TYPENUM_SMALL_CONSTANT, (char) 1, storevar);
-    loadb.execute();
-    assertTrue(loadb.nextInstructionCalled);
-    context.assertIsSatisfied();
-  }
+	public void testDecChkBranch() {
+		context.checking(new Expectations() {
+			{
+				oneOf(machine).getVariable((char) 0x11);
+				will(returnValue((char) 5));
+				oneOf(machine).setVariable((char) 0x11, (char) 4);
+			}
+		});
+		C2OpMock dec_chk_branch = createInstructionMock(C2OP_DEC_CHK, Operand.TYPENUM_SMALL_CONSTANT, (char) 0x11,
+				Operand.TYPENUM_SMALL_CONSTANT, (char) 5);
+		dec_chk_branch.execute();
+		assertTrue(dec_chk_branch.branchOnTestCalled);
+		assertTrue(dec_chk_branch.branchOnTestCondition);
+		context.assertIsSatisfied();
+	}
 
-  // ***********************************************************************
-  // ********* GET_PROP
-  // ******************************************
-  
+	// ***********************************************************************
+	// ********* INC_CHK
+	// ******************************************
+
 	@Test
-  public void testGetProp() {
-    context.checking(new Expectations() {{
-      oneOf (machine).getProperty(1, 18); will(returnValue((char) 0x01ee));
-      oneOf (machine).setVariable((char) 0x12, (char) 494);
-    }});
-    char storevar = 0x12;
-    // Two-byte property, Object 1, property 18
-    C2OpMock get_prop_two = createInstructionMock(
-        C2OP_GET_PROP,
-        Operand.TYPENUM_SMALL_CONSTANT, (char) 1,
-        Operand.TYPENUM_SMALL_CONSTANT, (char) 18, storevar);
-    get_prop_two.execute();
-    context.assertIsSatisfied();
-  }
+	public void testIncChkNoBranch() {
+		context.checking(new Expectations() {
+			{
+				oneOf(machine).getVariable((char) 0x11);
+				will(returnValue((char) 6));
+				oneOf(machine).setVariable((char) 0x11, (char) 7);
+			}
+		});
+		C2OpMock inc_chk_nobranch = createInstructionMock(C2OP_INC_CHK, Operand.TYPENUM_SMALL_CONSTANT, (char) 0x11,
+				Operand.TYPENUM_SMALL_CONSTANT, (char) 7);
+		inc_chk_nobranch.execute();
+		assertTrue(inc_chk_nobranch.branchOnTestCalled);
+		assertFalse(inc_chk_nobranch.branchOnTestCondition);
+		context.assertIsSatisfied();
+	}
 
-  // ***********************************************************************
-  // ********* INSERT_OBJ
-  // ******************************************
-  
 	@Test
-  public void testInsertObj() {
-    context.checking(new Expectations() {{
-      oneOf (machine).insertObject(2, 7);
-    }});
-    // Make Object 7 a child of Object 2
-    C2OpMock insert_obj = createInstructionMock(
-        C2OP_INSERT_OBJ,
-        Operand.TYPENUM_SMALL_CONSTANT, (char) 7,
-        Operand.TYPENUM_SMALL_CONSTANT, (char) 2);
-    insert_obj.execute();
-    assertTrue(insert_obj.nextInstructionCalled);
-    context.assertIsSatisfied();
-  }
-  
-  // ***********************************************************************
-  // ********* GET_PROP_ADDR
-  // ******************************************
-  
+	public void testIncChkBranch() {
+		context.checking(new Expectations() {
+			{
+				oneOf(machine).getVariable((char) 0x11);
+				will(returnValue((char) 5));
+				oneOf(machine).setVariable((char) 0x11, (char) 6);
+			}
+		});
+		C2OpMock inc_chk_branch = createInstructionMock(C2OP_INC_CHK, Operand.TYPENUM_SMALL_CONSTANT, (char) 0x11,
+				Operand.TYPENUM_SMALL_CONSTANT, (char) 5);
+		inc_chk_branch.execute();
+		assertTrue(inc_chk_branch.branchOnTestCalled);
+		assertTrue(inc_chk_branch.branchOnTestCondition);
+		context.assertIsSatisfied();
+	}
+
+	// ***********************************************************************
+	// ********* TEST
+	// ******************************************
+
 	@Test
-  public void testGetPropAddr() {
-    context.checking(new Expectations() {{
-      oneOf (machine).getPropertyAddress(1, 18); will(returnValue(0x0a55));
-      oneOf (machine).setVariable((char) 0x12, (char) 0x0a55);
-    }});
-    char storevar = 0x12;
-    C2OpMock get_prop_addr_exists = createInstructionMock(
-        C2OP_GET_PROP_ADDR,
-        Operand.TYPENUM_SMALL_CONSTANT, (char) 1,
-        Operand.TYPENUM_SMALL_CONSTANT, (char) 18, storevar);
-    get_prop_addr_exists.execute();
-    context.assertIsSatisfied();
-  }
-  
-  // ***********************************************************************
-  // ********* GET_NEXT_PROP
-  // ******************************************
-  
+	public void testTestNoBranch() {
+		C2OpMock test_nobranch = createInstructionMock(C2OP_TEST, Operand.TYPENUM_LARGE_CONSTANT, (char) 0x7c,
+				Operand.TYPENUM_LARGE_CONSTANT, (char) 0x03);
+		test_nobranch.execute();
+		assertTrue(test_nobranch.branchOnTestCalled);
+		assertFalse(test_nobranch.branchOnTestCondition);
+		context.assertIsSatisfied();
+	}
+
 	@Test
-  public void testGetNextProp() {
-    context.checking(new Expectations() {{
-      oneOf (machine).getNextProperty(1, 12); will(returnValue(15));
-      oneOf (machine).setVariable((char) 0x11, (char) 15);
-    }});
-    char storevar = 0x11;
-    C2OpMock get_next_prop = createInstructionMock(
-        C2OP_GET_NEXT_PROP,
-        Operand.TYPENUM_SMALL_CONSTANT, (char) 1,
-        Operand.TYPENUM_SMALL_CONSTANT, (char) 12, storevar);
-    get_next_prop.execute();
-    
-    assertTrue(get_next_prop.nextInstructionCalled);
-    context.assertIsSatisfied();
-  }
+	public void testTestBranch() {
+		C2OpMock test_branch = createInstructionMock(C2OP_TEST, Operand.TYPENUM_LARGE_CONSTANT, (char) 0x7c,
+				Operand.TYPENUM_LARGE_CONSTANT, (char) 0x14);
+		test_branch.execute();
+		assertTrue(test_branch.branchOnTestCalled);
+		assertTrue(test_branch.branchOnTestCondition);
+		context.assertIsSatisfied();
+	}
 
-  // ***********************************************************************
-  // ********* Version 4
-  // ******************************************
-  @Test
-  public void testCall2s() {
-    expectStoryVersion(4);
-    final char[] args = { 2 };
-    final char returnvalue = 0;
-    context.checking(new Expectations() {{
-      oneOf (machine).getPC(); will(returnValue(4611));
-      oneOf (machine).call((char) 1, (char) 4616, args, returnvalue);
-    }});
-    C2OpMock call2s = createInstructionMock(C2OP_CALL_2S,
-        Operand.TYPENUM_SMALL_CONSTANT, (char) 1 ,
-        Operand.TYPENUM_SMALL_CONSTANT, (char) 2);
-    call2s.execute();
-    context.assertIsSatisfied();
-  }
+	// ***********************************************************************
+	// ********* OR
+	// ******************************************
 
-  // ***********************************************************************
-  // ********* Version 5
-  // ******************************************
-  /**
-   * We simulate the situation that the current stack is smaller than
-   * it could be handled by throw, we should halt the machine, since it
-   * is not specified how the machine should behave in this case.
-   */
-  @Test
-  public void testThrowInvalid() {
-    final List<RoutineContext> contexts = new ArrayList<RoutineContext>();
-    contexts.add(new RoutineContext(1));
-    contexts.add(new RoutineContext(2));
-    context.checking(new Expectations() {{
-      oneOf (machine).getRoutineContexts(); will(returnValue(contexts));
-      oneOf (machine).halt("@throw from an invalid stack frame state");
-    }});
-    C2OpMock z_throw = createInstructionMock(
-        C2OP_THROW,
-        Operand.TYPENUM_SMALL_CONSTANT, (char) 42,
-        Operand.TYPENUM_SMALL_CONSTANT, (char) 2);
-    z_throw.execute();
-    context.assertIsSatisfied();
-  }
+	@Test
+	public void testOr() {
+		context.checking(new Expectations() {
+			{
+				oneOf(machine).setVariable((char) 0x12, (char) 0xffff);
+			}
+		});
+		char storevar = 0x12;
+		C2OpMock or = createInstructionMock(C2OP_OR, Operand.TYPENUM_LARGE_CONSTANT, (char) 0x00ff,
+				Operand.TYPENUM_LARGE_CONSTANT, (char) 0xff00, storevar);
+		or.execute();
+		assertTrue(or.nextInstructionCalled);
+		context.assertIsSatisfied();
+	}
 
-  /**
-   * This is the expected situation, in this case we expect that the
-   * pop routine context is called as many times until the specified
-   * stack frame number is reached and than the function returns with
-   * the specified return value.
-   */
-  @Test
-  public void testThrowUnwind() {
-    final List<RoutineContext> contexts = new ArrayList<RoutineContext>();
-    contexts.add(new RoutineContext(1));
-    contexts.add(new RoutineContext(2));
-    contexts.add(new RoutineContext(3));
-    contexts.add(new RoutineContext(4));
-    contexts.add(new RoutineContext(5));
-    context.checking(new Expectations() {{
-      oneOf (machine).getRoutineContexts(); will(returnValue(contexts));
-      exactly(2).of (machine).returnWith(with(any(char.class)));
-    }});
-    C2OpMock z_throw = createInstructionMock(
-        C2OP_THROW,
-        Operand.TYPENUM_SMALL_CONSTANT, (char) 42,
-        Operand.TYPENUM_SMALL_CONSTANT, (char) 2);
-    z_throw.execute();
-    assertTrue(z_throw.returned);
-    assertEquals((short) 42, z_throw.returnValue);
-    context.assertIsSatisfied();
-  }  
+	// ***********************************************************************
+	// ********* AND
+	// ******************************************
 
+	@Test
+	public void testAnd() {
+		context.checking(new Expectations() {
+			{
+				oneOf(machine).setVariable((char) 0x12, (char) 0x0000);
+			}
+		});
+		char storevar = 0x12;
+		C2OpMock and = createInstructionMock(C2OP_AND, Operand.TYPENUM_LARGE_CONSTANT, (char) 0x00ff,
+				Operand.TYPENUM_LARGE_CONSTANT, (char) 0xff00, storevar);
+		and.execute();
+		assertTrue(and.nextInstructionCalled);
+		context.assertIsSatisfied();
+	}
 
-  // **********************************************************************
-  // ******* Private
-  // *******************************
-  static class C2OpMock extends C2OpInstruction {
-    public boolean nextInstructionCalled;
-    public boolean returned;
-    public char returnValue;
-    public boolean branchOnTestCalled;
-    public boolean branchOnTestCondition;
-    
-    public C2OpMock(Machine machine, int opcode, Operand[] operands, char storeVar) {
-      super(machine, opcode, operands, storeVar, null, 5);
-    }
-    
-    @Override
-    protected void nextInstruction() {
-      nextInstructionCalled = true;
-    }
-    
-    @Override
-    protected void returnFromRoutine(char retval) {
-      returned = true;
-      returnValue = retval;
-    }
-    @Override
-    protected void branchOnTest(boolean flag) {
-      branchOnTestCalled = true;
-      branchOnTestCondition = flag;
-    }
-  }
-    
-  static C2OpMock createInstructionMock(Machine machine,
-  		int opcode, Operand[] operands, char storevar) {
-    C2OpMock result = new C2OpMock(machine, opcode, operands, storevar);
-    return result;
-  }
+	// ***********************************************************************
+	// ********* ADD
+	// ******************************************
 
-  private C2OpMock createInstructionMock(int opcode, int typenum1,
-  		char value1, int typenum2, char value2) {
-    Operand operand1 = new Operand(typenum1, value1);
-    Operand operand2 = new Operand(typenum2, value2);
-  	return createInstructionMock(machine, opcode,
-            new Operand[] {operand1, operand2}, (char) 0);
-  }
-  private C2OpMock createInstructionMock(int opcode, int typenum1,
-  		char value1, int typenum2, char value2, char storevar) {
-    Operand operand1 = new Operand(typenum1, value1);
-    Operand operand2 = new Operand(typenum2, value2);
-  	return createInstructionMock(machine, opcode,
-            new Operand[] {operand1, operand2}, storevar);
-  }
+	@Test
+	public void testAdd() {
+		context.checking(new Expectations() {
+			{
+				oneOf(machine).setVariable((char) 0x12, (char) 0x0002);
+			}
+		});
+		char storevar = 0x12;
+		C2OpMock add = createInstructionMock(C2OP_ADD, Operand.TYPENUM_LARGE_CONSTANT, signedToUnsigned16((short) -1),
+				Operand.TYPENUM_LARGE_CONSTANT, (char) 3, storevar);
+		add.execute();
+		assertTrue(add.nextInstructionCalled);
+		context.assertIsSatisfied();
+	}
 
-  private C2OpMock createInstructionMock(int opcode, Operand[] operands) {
-  	return createInstructionMock(machine, opcode, operands, (char) 0);
-  }
+	// ***********************************************************************
+	// ********* SUB
+	// ******************************************
+
+	@Test
+	public void testSub() {
+		context.checking(new Expectations() {
+			{
+				oneOf(machine).setVariable((char) 0x12, signedToUnsigned16((short) -4));
+			}
+		});
+		char storevar = 0x12;
+		C2OpMock sub = createInstructionMock(C2OP_SUB, Operand.TYPENUM_LARGE_CONSTANT, signedToUnsigned16((short) -1),
+				Operand.TYPENUM_LARGE_CONSTANT, (char) 3, storevar);
+		sub.execute();
+		assertTrue(sub.nextInstructionCalled);
+		context.assertIsSatisfied();
+	}
+
+	// ***********************************************************************
+	// ********* MUL
+	// ******************************************
+
+	@Test
+	public void testMul() {
+		context.checking(new Expectations() {
+			{
+				oneOf(machine).setVariable((char) 0x12, signedToUnsigned16((short) -12));
+			}
+		});
+		char storevar = 0x12;
+		C2OpMock mul = createInstructionMock(C2OP_MUL, Operand.TYPENUM_LARGE_CONSTANT, signedToUnsigned16((short) -4),
+				Operand.TYPENUM_LARGE_CONSTANT, (char) 3, storevar);
+		mul.execute();
+		assertTrue(mul.nextInstructionCalled);
+		context.assertIsSatisfied();
+	}
+
+	// ***********************************************************************
+	// ********* DIV
+	// ******************************************
+
+	@Test
+	public void testDiv() {
+		context.checking(new Expectations() {
+			{
+				oneOf(machine).setVariable((char) 0x12, signedToUnsigned16((short) -2));
+			}
+		});
+		char storevar = 0x12;
+		C2OpMock div = createInstructionMock(C2OP_DIV, Operand.TYPENUM_LARGE_CONSTANT, signedToUnsigned16((short) -7),
+				Operand.TYPENUM_LARGE_CONSTANT, (char) 3, storevar);
+		div.execute();
+		assertTrue(div.nextInstructionCalled);
+		context.assertIsSatisfied();
+	}
+
+	@Test
+	public void testDivBy0() {
+		context.checking(new Expectations() {
+			{
+				oneOf(machine).halt("@div division by zero");
+			}
+		});
+		char storevar = 0x12;
+		C2OpMock div0 = createInstructionMock(C2OP_DIV, Operand.TYPENUM_LARGE_CONSTANT, (char) 7,
+				Operand.TYPENUM_LARGE_CONSTANT, (char) 0, storevar);
+		div0.execute();
+		context.assertIsSatisfied();
+	}
+
+	// ***********************************************************************
+	// ********* MOD
+	// ******************************************
+
+	@Test
+	public void testMod() {
+		context.checking(new Expectations() {
+			{
+				oneOf(machine).setVariable((char) 0x12, signedToUnsigned16((short) -1));
+			}
+		});
+		char storevar = 0x12;
+		C2OpMock mod = createInstructionMock(C2OP_MOD, Operand.TYPENUM_LARGE_CONSTANT, signedToUnsigned16((short) -7),
+				Operand.TYPENUM_LARGE_CONSTANT, (char) 3, storevar);
+		mod.execute();
+		assertTrue(mod.nextInstructionCalled);
+		context.assertIsSatisfied();
+	}
+
+	@Test
+	public void testModBy0() {
+		context.checking(new Expectations() {
+			{
+				oneOf(machine).halt("@mod division by zero");
+			}
+		});
+		char storevar = 0x12;
+		C2OpMock mod0 = createInstructionMock(C2OP_MOD, Operand.TYPENUM_LARGE_CONSTANT, (char) 7,
+				Operand.TYPENUM_LARGE_CONSTANT, (char) 0, storevar);
+		mod0.execute();
+		context.assertIsSatisfied();
+	}
+
+	// ***********************************************************************
+	// ********* TEST_ATTR
+	// ******************************************
+
+	@Test
+	public void testTestAttributeNoBranchV3() {
+		expectStoryVersion(3);
+		context.checking(new Expectations() {
+			{
+				oneOf(machine).isAttributeSet(1, 2);
+				will(returnValue(false));
+			}
+		});
+		C2OpMock test_attr_nobranch = createInstructionMock(C2OP_TEST_ATTR, Operand.TYPENUM_LARGE_CONSTANT, (char) 1,
+				Operand.TYPENUM_SMALL_CONSTANT, (char) 2);
+		test_attr_nobranch.execute();
+		assertTrue(test_attr_nobranch.branchOnTestCalled);
+		assertFalse(test_attr_nobranch.branchOnTestCondition);
+		context.assertIsSatisfied();
+	}
+
+	@Test
+	public void testTestAttributeBranchV3() {
+		expectStoryVersion(3);
+		context.checking(new Expectations() {
+			{
+				oneOf(machine).isAttributeSet(1, 2);
+				will(returnValue(true));
+			}
+		});
+		C2OpMock test_attr_branch = createInstructionMock(C2OP_TEST_ATTR, Operand.TYPENUM_LARGE_CONSTANT, (char) 1,
+				Operand.TYPENUM_SMALL_CONSTANT, (char) 2);
+		test_attr_branch.execute();
+		assertTrue(test_attr_branch.branchOnTestCalled);
+		assertTrue(test_attr_branch.branchOnTestCondition);
+		context.assertIsSatisfied();
+	}
+
+	// ***********************************************************************
+	// ********* SET_ATTR
+	// ******************************************
+
+	@Test
+	public void testSetAttrV3() {
+		expectStoryVersion(3);
+		context.checking(new Expectations() {
+			{
+				oneOf(machine).setAttribute(1, 2);
+			}
+		});
+		C2OpMock set_attr = createInstructionMock(C2OP_SET_ATTR, Operand.TYPENUM_LARGE_CONSTANT, (char) 1,
+				Operand.TYPENUM_SMALL_CONSTANT, (char) 2);
+		set_attr.execute();
+		assertTrue(set_attr.nextInstructionCalled);
+		context.assertIsSatisfied();
+	}
+
+	// ***********************************************************************
+	// ********* CLEAR_ATTR
+	// ******************************************
+
+	@Test
+	public void testClearAttrV3() {
+		expectStoryVersion(3);
+		context.checking(new Expectations() {
+			{
+				oneOf(machine).clearAttribute(1, 2);
+			}
+		});
+		C2OpMock clear_attr = createInstructionMock(C2OP_CLEAR_ATTR, Operand.TYPENUM_LARGE_CONSTANT, (char) 1,
+				Operand.TYPENUM_SMALL_CONSTANT, (char) 2);
+		clear_attr.execute();
+		assertTrue(clear_attr.nextInstructionCalled);
+		context.assertIsSatisfied();
+	}
+
+	// ***********************************************************************
+	// ********* STORE
+	// ******************************************
+
+	@Test
+	public void testStore() {
+		context.checking(new Expectations() {
+			{
+				oneOf(machine).setVariable((char) 0x11, (char) 42);
+			}
+		});
+		C2OpMock store = createInstructionMock(C2OP_STORE, Operand.TYPENUM_SMALL_CONSTANT, (char) 0x11,
+				Operand.TYPENUM_SMALL_CONSTANT, (char) 42);
+		store.execute();
+		assertTrue(store.nextInstructionCalled);
+		context.assertIsSatisfied();
+	}
+
+	// see standard 1.1
+	@Test
+	public void testStoreOnStack() {
+		context.checking(new Expectations() {
+			{
+				oneOf(machine).setStackTop((char) 42);
+			}
+		});
+		C2OpMock store = createInstructionMock(C2OP_STORE, Operand.TYPENUM_SMALL_CONSTANT, (char) 0x00,
+				Operand.TYPENUM_SMALL_CONSTANT, (char) 42);
+		store.execute();
+		assertTrue(store.nextInstructionCalled);
+		context.assertIsSatisfied();
+	}
+
+	// ***********************************************************************
+	// ********* LOADW
+	// ******************************************
+
+	@Test
+	public void testLoadw() {
+		context.checking(new Expectations() {
+			{
+				oneOf(machine).readUnsigned16(0x0010 + 2);
+				will(returnValue((char) 123));
+				oneOf(machine).setVariable((char) 0x11, (char) 123);
+			}
+		});
+		char storevar = 0x11;
+		C2OpMock loadw = createInstructionMock(C2OP_LOADW, Operand.TYPENUM_LARGE_CONSTANT, (char) 0x0010,
+				Operand.TYPENUM_SMALL_CONSTANT, (char) 1, storevar);
+		loadw.execute();
+		assertTrue(loadw.nextInstructionCalled);
+		context.assertIsSatisfied();
+	}
+
+	// ***********************************************************************
+	// ********* LOADB
+	// ******************************************
+
+	// TODO: To be clarified: read unsigned or signed ?
+	@Test
+	public void testLoadbV3() {
+		context.checking(new Expectations() {
+			{
+				oneOf(machine).readUnsigned8(0x0010 + 1);
+				will(returnValue((char) 42));
+				oneOf(machine).setVariable((char) 0x11, (char) 42);
+			}
+		});
+		char storevar = 0x11;
+		C2OpMock loadb = createInstructionMock(C2OP_LOADB, Operand.TYPENUM_LARGE_CONSTANT, (char) 0x0010,
+				Operand.TYPENUM_SMALL_CONSTANT, (char) 1, storevar);
+		loadb.execute();
+		assertTrue(loadb.nextInstructionCalled);
+		context.assertIsSatisfied();
+	}
+
+	// ***********************************************************************
+	// ********* GET_PROP
+	// ******************************************
+
+	@Test
+	public void testGetProp() {
+		context.checking(new Expectations() {
+			{
+				oneOf(machine).getProperty(1, 18);
+				will(returnValue((char) 0x01ee));
+				oneOf(machine).setVariable((char) 0x12, (char) 494);
+			}
+		});
+		char storevar = 0x12;
+		// Two-byte property, Object 1, property 18
+		C2OpMock get_prop_two = createInstructionMock(C2OP_GET_PROP, Operand.TYPENUM_SMALL_CONSTANT, (char) 1,
+				Operand.TYPENUM_SMALL_CONSTANT, (char) 18, storevar);
+		get_prop_two.execute();
+		context.assertIsSatisfied();
+	}
+
+	// ***********************************************************************
+	// ********* INSERT_OBJ
+	// ******************************************
+
+	@Test
+	public void testInsertObj() {
+		context.checking(new Expectations() {
+			{
+				oneOf(machine).insertObject(2, 7);
+			}
+		});
+		// Make Object 7 a child of Object 2
+		C2OpMock insert_obj = createInstructionMock(C2OP_INSERT_OBJ, Operand.TYPENUM_SMALL_CONSTANT, (char) 7,
+				Operand.TYPENUM_SMALL_CONSTANT, (char) 2);
+		insert_obj.execute();
+		assertTrue(insert_obj.nextInstructionCalled);
+		context.assertIsSatisfied();
+	}
+
+	// ***********************************************************************
+	// ********* GET_PROP_ADDR
+	// ******************************************
+
+	@Test
+	public void testGetPropAddr() {
+		context.checking(new Expectations() {
+			{
+				oneOf(machine).getPropertyAddress(1, 18);
+				will(returnValue(0x0a55));
+				oneOf(machine).setVariable((char) 0x12, (char) 0x0a55);
+			}
+		});
+		char storevar = 0x12;
+		C2OpMock get_prop_addr_exists = createInstructionMock(C2OP_GET_PROP_ADDR, Operand.TYPENUM_SMALL_CONSTANT,
+				(char) 1, Operand.TYPENUM_SMALL_CONSTANT, (char) 18, storevar);
+		get_prop_addr_exists.execute();
+		context.assertIsSatisfied();
+	}
+
+	// ***********************************************************************
+	// ********* GET_NEXT_PROP
+	// ******************************************
+
+	@Test
+	public void testGetNextProp() {
+		context.checking(new Expectations() {
+			{
+				oneOf(machine).getNextProperty(1, 12);
+				will(returnValue(15));
+				oneOf(machine).setVariable((char) 0x11, (char) 15);
+			}
+		});
+		char storevar = 0x11;
+		C2OpMock get_next_prop = createInstructionMock(C2OP_GET_NEXT_PROP, Operand.TYPENUM_SMALL_CONSTANT, (char) 1,
+				Operand.TYPENUM_SMALL_CONSTANT, (char) 12, storevar);
+		get_next_prop.execute();
+
+		assertTrue(get_next_prop.nextInstructionCalled);
+		context.assertIsSatisfied();
+	}
+
+	// ***********************************************************************
+	// ********* Version 4
+	// ******************************************
+	@Test
+	public void testCall2s() {
+		expectStoryVersion(4);
+		final char[] args = { 2 };
+		final char returnvalue = 0;
+		context.checking(new Expectations() {
+			{
+				oneOf(machine).getPC();
+				will(returnValue(4611));
+				oneOf(machine).call((char) 1, (char) 4616, args, returnvalue);
+			}
+		});
+		C2OpMock call2s = createInstructionMock(C2OP_CALL_2S, Operand.TYPENUM_SMALL_CONSTANT, (char) 1,
+				Operand.TYPENUM_SMALL_CONSTANT, (char) 2);
+		call2s.execute();
+		context.assertIsSatisfied();
+	}
+
+	// ***********************************************************************
+	// ********* Version 5
+	// ******************************************
+	/**
+	 * We simulate the situation that the current stack is smaller than it could
+	 * be handled by throw, we should halt the machine, since it is not
+	 * specified how the machine should behave in this case.
+	 */
+	@Test
+	public void testThrowInvalid() {
+		final List<RoutineContext> contexts = new ArrayList<RoutineContext>();
+		contexts.add(new RoutineContext(1));
+		contexts.add(new RoutineContext(2));
+		context.checking(new Expectations() {
+			{
+				oneOf(machine).getRoutineContexts();
+				will(returnValue(contexts));
+				oneOf(machine).halt("@throw from an invalid stack frame state");
+			}
+		});
+		C2OpMock z_throw = createInstructionMock(C2OP_THROW, Operand.TYPENUM_SMALL_CONSTANT, (char) 42,
+				Operand.TYPENUM_SMALL_CONSTANT, (char) 2);
+		z_throw.execute();
+		context.assertIsSatisfied();
+	}
+
+	/**
+	 * This is the expected situation, in this case we expect that the pop
+	 * routine context is called as many times until the specified stack frame
+	 * number is reached and than the function returns with the specified return
+	 * value.
+	 */
+	@Test
+	public void testThrowUnwind() {
+		final List<RoutineContext> contexts = new ArrayList<RoutineContext>();
+		contexts.add(new RoutineContext(1));
+		contexts.add(new RoutineContext(2));
+		contexts.add(new RoutineContext(3));
+		contexts.add(new RoutineContext(4));
+		contexts.add(new RoutineContext(5));
+		context.checking(new Expectations() {
+			{
+				oneOf(machine).getRoutineContexts();
+				will(returnValue(contexts));
+				exactly(2).of(machine).returnWith(with(any(char.class)));
+			}
+		});
+		C2OpMock z_throw = createInstructionMock(C2OP_THROW, Operand.TYPENUM_SMALL_CONSTANT, (char) 42,
+				Operand.TYPENUM_SMALL_CONSTANT, (char) 2);
+		z_throw.execute();
+		assertTrue(z_throw.returned);
+		assertEquals((short) 42, z_throw.returnValue);
+		context.assertIsSatisfied();
+	}
+
+	// **********************************************************************
+	// ******* Private
+	// *******************************
+	static class C2OpMock extends C2OpInstruction {
+		public boolean nextInstructionCalled;
+		public boolean returned;
+		public char returnValue;
+		public boolean branchOnTestCalled;
+		public boolean branchOnTestCondition;
+
+		public C2OpMock(Machine machine, int opcode, Operand[] operands, char storeVar) {
+			super(machine, opcode, operands, storeVar, null, 5);
+		}
+
+		@Override
+		protected void nextInstruction() {
+			nextInstructionCalled = true;
+		}
+
+		@Override
+		protected void returnFromRoutine(char retval) {
+			returned = true;
+			returnValue = retval;
+		}
+
+		@Override
+		protected void branchOnTest(boolean flag) {
+			branchOnTestCalled = true;
+			branchOnTestCondition = flag;
+		}
+	}
+
+	static C2OpMock createInstructionMock(Machine machine, int opcode, Operand[] operands, char storevar) {
+		C2OpMock result = new C2OpMock(machine, opcode, operands, storevar);
+		return result;
+	}
+
+	private C2OpMock createInstructionMock(int opcode, int typenum1, char value1, int typenum2, char value2) {
+		Operand operand1 = new Operand(typenum1, value1);
+		Operand operand2 = new Operand(typenum2, value2);
+		return createInstructionMock(machine, opcode, new Operand[] { operand1, operand2 }, (char) 0);
+	}
+
+	private C2OpMock createInstructionMock(int opcode, int typenum1, char value1, int typenum2, char value2,
+			char storevar) {
+		Operand operand1 = new Operand(typenum1, value1);
+		Operand operand2 = new Operand(typenum2, value2);
+		return createInstructionMock(machine, opcode, new Operand[] { operand1, operand2 }, storevar);
+	}
+
+	private C2OpMock createInstructionMock(int opcode, Operand[] operands) {
+		return createInstructionMock(machine, opcode, operands, (char) 0);
+	}
 }

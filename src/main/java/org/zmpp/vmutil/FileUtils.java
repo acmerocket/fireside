@@ -50,135 +50,146 @@ import org.zmpp.media.Resources;
 
 /**
  * This utility class was introduced to avoid a code smell in data
- * initialization.
- * It offers methods to read data from streams and files.
+ * initialization. It offers methods to read data from streams and files.
  *
  * @author Wei-ju Wu
  * @version 1.5
  */
 public final class FileUtils {
 
-  private static final Logger LOG = Logger.getLogger("org.zmpp");
+	private static final Logger LOG = Logger.getLogger("org.zmpp");
 
-  /** This class only contains static methods. */
-  private FileUtils() { }
+	/** This class only contains static methods. */
+	private FileUtils() {
+	}
 
-  /**
-   * Creates a resources object from a Blorb file.
-   * @param imageFactory the NativeImageFactory
-   * @param soundEffectFactory the SoundEffectFactory
-   * @param blorbfile the file
-   * @return the resources object or null (on failure)
-   */
-  public static Resources createResources(NativeImageFactory imageFactory,
-    SoundEffectFactory soundEffectFactory,
-    final File blorbfile) {
-    RandomAccessFile raf = null;
-    try {
-      raf = new RandomAccessFile(blorbfile, "r");
-      final byte[] data = new byte[(int) raf.length()];
-      raf.readFully(data);
-      final Memory memory = new DefaultMemory(data);
-      final FormChunk formchunk = new DefaultFormChunk(memory);
-      return new BlorbResources(imageFactory, soundEffectFactory, formchunk);
-    } catch (IOException ex) {
-      ex.printStackTrace();
-    } finally {
-      if (raf != null) {
-        try { raf.close(); } catch (Exception ex) {
-          LOG.throwing("FileUtils", "createResources", ex);
-        }
-      }
-    }
-    return null;
-  }
+	/**
+	 * Creates a resources object from a Blorb file.
+	 * 
+	 * @param imageFactory
+	 *            the NativeImageFactory
+	 * @param soundEffectFactory
+	 *            the SoundEffectFactory
+	 * @param blorbfile
+	 *            the file
+	 * @return the resources object or null (on failure)
+	 */
+	public static Resources createResources(NativeImageFactory imageFactory, SoundEffectFactory soundEffectFactory,
+			final File blorbfile) {
+		RandomAccessFile raf = null;
+		try {
+			raf = new RandomAccessFile(blorbfile, "r");
+			final byte[] data = new byte[(int) raf.length()];
+			raf.readFully(data);
+			final Memory memory = new DefaultMemory(data);
+			final FormChunk formchunk = new DefaultFormChunk(memory);
+			return new BlorbResources(imageFactory, soundEffectFactory, formchunk);
+		} catch (IOException ex) {
+			ex.printStackTrace();
+		} finally {
+			if (raf != null) {
+				try {
+					raf.close();
+				} catch (Exception ex) {
+					LOG.throwing("FileUtils", "createResources", ex);
+				}
+			}
+		}
+		return null;
+	}
 
-  /**
-   * Reads an array of bytes from the given input stream.
-   * @param inputstream the input stream
-   * @return the bytes or null if the inputstream is null
-   */
-  public static byte[] readFileBytes(final InputStream inputstream) {
-    if (inputstream == null) return null;
+	/**
+	 * Reads an array of bytes from the given input stream.
+	 * 
+	 * @param inputstream
+	 *            the input stream
+	 * @return the bytes or null if the inputstream is null
+	 */
+	public static byte[] readFileBytes(final InputStream inputstream) {
+		if (inputstream == null)
+			return null;
 
-    // Start with a buffer size between 1K and 1M based on available memory.
-    final int minBufferSize = (int)
-      Math.max(1024,
-               Math.min(Runtime.getRuntime().freeMemory()/10, 1024 * 1024));
+		// Start with a buffer size between 1K and 1M based on available memory.
+		final int minBufferSize = (int) Math.max(1024, Math.min(Runtime.getRuntime().freeMemory() / 10, 1024 * 1024));
 
-    List<ByteBuffer> buffers = new ArrayList<ByteBuffer>();
-    int totalBytesRead = 0;
+		List<ByteBuffer> buffers = new ArrayList<ByteBuffer>();
+		int totalBytesRead = 0;
 
-    // Fill buffer lists
-    try {
-      final ReadableByteChannel rbc = Channels.newChannel(inputstream);
-      ByteBuffer bb = ByteBuffer.allocate(minBufferSize);
-      buffers.add(bb);
+		// Fill buffer lists
+		try {
+			final ReadableByteChannel rbc = Channels.newChannel(inputstream);
+			ByteBuffer bb = ByteBuffer.allocate(minBufferSize);
+			buffers.add(bb);
 
-      int bytesRead;
-      while ((bytesRead = rbc.read(bb)) != -1) {
-        totalBytesRead += bytesRead;
-        // if this buffer is mostly full, create another one and avoid small
-        // read iterations
-        if (bb.remaining() < 16) {
-          bb.flip();
-          bb = ByteBuffer.allocate(Math.max(minBufferSize, totalBytesRead/2));
-          buffers.add(bb);
-        }
-      }
-      bb.flip();
-    } catch (IOException ex) {
-      LOG.throwing("FileUtils", "readFileBytes", ex);
-      throw new RuntimeException("Unable to read file bytes", ex);
-    }
+			int bytesRead;
+			while ((bytesRead = rbc.read(bb)) != -1) {
+				totalBytesRead += bytesRead;
+				// if this buffer is mostly full, create another one and avoid
+				// small
+				// read iterations
+				if (bb.remaining() < 16) {
+					bb.flip();
+					bb = ByteBuffer.allocate(Math.max(minBufferSize, totalBytesRead / 2));
+					buffers.add(bb);
+				}
+			}
+			bb.flip();
+		} catch (IOException ex) {
+			LOG.throwing("FileUtils", "readFileBytes", ex);
+			throw new RuntimeException("Unable to read file bytes", ex);
+		}
 
-    // merge the buffers so we can convert to a byte array.
-    final ByteBuffer data =  ByteBuffer.allocate(totalBytesRead);
-    for (final ByteBuffer buf : buffers) {
-      data.put(buf);
-    }
-    data.flip();
+		// merge the buffers so we can convert to a byte array.
+		final ByteBuffer data = ByteBuffer.allocate(totalBytesRead);
+		for (final ByteBuffer buf : buffers) {
+			data.put(buf);
+		}
+		data.flip();
 
-    // allow intermeditate buffers to be collected before we create a
-    // possibly big array
-    buffers = null;
+		// allow intermeditate buffers to be collected before we create a
+		// possibly big array
+		buffers = null;
 
-    // is the data buffer backed by a byte array?
-    if (data.hasArray()) {
-      // just use the buffer's backing array since it's no longer needed
-      // and avoid the copy.
-      return data.array();
-    } else {
-      // we need to copy the bytes into a byte array.
-      final byte[] bytes = new byte[data.remaining()];
-      data.get(bytes);
-      return bytes;
-    }
-  }
+		// is the data buffer backed by a byte array?
+		if (data.hasArray()) {
+			// just use the buffer's backing array since it's no longer needed
+			// and avoid the copy.
+			return data.array();
+		} else {
+			// we need to copy the bytes into a byte array.
+			final byte[] bytes = new byte[data.remaining()];
+			data.get(bytes);
+			return bytes;
+		}
+	}
 
-  /**
-   * Reads the bytes from the given file if it is a file and it exists.
-   * @param file the file object
-   * @return a byte array
-   */
-  public static byte[] readFileBytes(final File file) {
-    byte[] data = null;
-    if (file != null && file.exists() && file.isFile()) {
-      RandomAccessFile raf = null;
-      try {
-        raf = new RandomAccessFile(file, "r");
-        data = new byte[(int) raf.length()];
-        raf.readFully(data);
-      } catch (IOException ex) {
-        ex.printStackTrace();
-      } finally {
-        if (raf != null) {
-          try { raf.close(); } catch (Exception ex) {
-            LOG.throwing("FileUtils", "readFileBytes", ex);
-          }
-        }
-      }
-    }
-    return data;
-  }
+	/**
+	 * Reads the bytes from the given file if it is a file and it exists.
+	 * 
+	 * @param file
+	 *            the file object
+	 * @return a byte array
+	 */
+	public static byte[] readFileBytes(final File file) {
+		byte[] data = null;
+		if (file != null && file.exists() && file.isFile()) {
+			RandomAccessFile raf = null;
+			try {
+				raf = new RandomAccessFile(file, "r");
+				data = new byte[(int) raf.length()];
+				raf.readFully(data);
+			} catch (IOException ex) {
+				ex.printStackTrace();
+			} finally {
+				if (raf != null) {
+					try {
+						raf.close();
+					} catch (Exception ex) {
+						LOG.throwing("FileUtils", "readFileBytes", ex);
+					}
+				}
+			}
+		}
+		return data;
+	}
 }

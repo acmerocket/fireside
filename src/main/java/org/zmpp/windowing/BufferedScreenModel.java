@@ -39,343 +39,372 @@ import org.zmpp.encoding.IZsciiEncoding;
 import org.zmpp.io.OutputStream;
 
 /**
- * BufferedScreenModel is the attempt to provide a reusable screen model
- * that will be part of the core in later versions. It is mainly a
- * configurable virtual window management model, providing virtual windows
- * that the machine writes to. It is intended to provide interfaces to
- * both Glk and Z-machine and to combine the abilities of both.
+ * BufferedScreenModel is the attempt to provide a reusable screen model that
+ * will be part of the core in later versions. It is mainly a configurable
+ * virtual window management model, providing virtual windows that the machine
+ * writes to. It is intended to provide interfaces to both Glk and Z-machine and
+ * to combine the abilities of both.
  *
  * @author Wei-ju Wu
  * @version 1.5
  */
-public class BufferedScreenModel implements ScreenModel, StatusLine,
-  OutputStream {
-  private static final Logger LOG = Logger.getLogger("org.zmpp.screen");
+public class BufferedScreenModel implements ScreenModel, StatusLine, OutputStream {
+	private static final Logger LOG = Logger.getLogger("org.zmpp.screen");
 
-  private int current = WINDOW_BOTTOM;
-  private BufferedTextWindow bottomWindow = new BufferedTextWindow();
-  private TopWindow topWindow = new TopWindow();
-  private List<ScreenModelListener> screenModelListeners =
-    new ArrayList<ScreenModelListener>();
-  private List<StatusLineListener> statusLineListeners =
-    new ArrayList<StatusLineListener>();
-  private IZsciiEncoding encoding;
-  private Memory memory;
-  private StoryFileHeader fileheader;
+	private int current = WINDOW_BOTTOM;
+	private BufferedTextWindow bottomWindow = new BufferedTextWindow();
+	private TopWindow topWindow = new TopWindow();
+	private List<ScreenModelListener> screenModelListeners = new ArrayList<ScreenModelListener>();
+	private List<StatusLineListener> statusLineListeners = new ArrayList<StatusLineListener>();
+	private IZsciiEncoding encoding;
+	private Memory memory;
+	private StoryFileHeader fileheader;
 
-  /**
-   * Status line listener.
-   */
-  public interface StatusLineListener {
-    /**
-     * Update the status line.
-     * @param objectDescription object description
-     * @param status status text
-     */
-    void statusLineUpdated(String objectDescription, String status);
-  }
+	/**
+	 * Status line listener.
+	 */
+	public interface StatusLineListener {
+		/**
+		 * Update the status line.
+		 * 
+		 * @param objectDescription
+		 *            object description
+		 * @param status
+		 *            status text
+		 */
+		void statusLineUpdated(String objectDescription, String status);
+	}
 
-  /**
-   * Adds a ScreenModelListener.
-   * @param l the listener to add
-   */
-  public void addScreenModelListener(ScreenModelListener l) {
-    screenModelListeners.add(l);
-  }
+	/**
+	 * Adds a ScreenModelListener.
+	 * 
+	 * @param l
+	 *            the listener to add
+	 */
+	public void addScreenModelListener(ScreenModelListener l) {
+		screenModelListeners.add(l);
+	}
 
-  /**
-   * Adds a StatusLineListener.
-   * @param l the listener to add
-   */
-  public void addStatusLineListener(StatusLineListener l) {
-    statusLineListeners.add(l);
-  }
+	/**
+	 * Adds a StatusLineListener.
+	 * 
+	 * @param l
+	 *            the listener to add
+	 */
+	public void addStatusLineListener(StatusLineListener l) {
+		statusLineListeners.add(l);
+	}
 
-  /**
-   * Initialize the model, an Encoding object is needed to retrieve
-   * Unicode characters.
-   * @param aMemory a Memory object
-   * @param anEncoding the ZsciiEncoding object
-   */
-  public void init(Memory aMemory, IZsciiEncoding anEncoding) {
-    this.memory = aMemory;
-    this.fileheader = new DefaultStoryFileHeader(memory);
-    this.encoding = anEncoding;
-  }
+	/**
+	 * Initialize the model, an Encoding object is needed to retrieve Unicode
+	 * characters.
+	 * 
+	 * @param aMemory
+	 *            a Memory object
+	 * @param anEncoding
+	 *            the ZsciiEncoding object
+	 */
+	public void init(Memory aMemory, IZsciiEncoding anEncoding) {
+		this.memory = aMemory;
+		this.fileheader = new DefaultStoryFileHeader(memory);
+		this.encoding = anEncoding;
+	}
 
-  /** {@inheritDoc} */
-  public TextAnnotation getTopAnnotation() {
-    return topWindow.getCurrentAnnotation();
-  }
-  /** {@inheritDoc} */
-  public TextAnnotation getBottomAnnotation() {
-    return bottomWindow.getCurrentAnnotation();
-  }
+	/** {@inheritDoc} */
+	public TextAnnotation getTopAnnotation() {
+		return topWindow.getCurrentAnnotation();
+	}
 
-  /**
-   * Sets the number of charactes per row, should be called if the size of
-   * the output area or the size of the font changes.
-   * @param num the number of characters in a row
-   */
-  public void setNumCharsPerRow(int num) {
-    topWindow.setNumCharsPerRow(num);
-  }
+	/** {@inheritDoc} */
+	public TextAnnotation getBottomAnnotation() {
+		return bottomWindow.getCurrentAnnotation();
+	}
 
-  /**
-   * Resets the screen model.
-   */
-  public void reset() {
-    topWindow.resetCursor();
-    bottomWindow.reset();
-    current = WINDOW_BOTTOM;
-  }
+	/**
+	 * Sets the number of charactes per row, should be called if the size of the
+	 * output area or the size of the font changes.
+	 * 
+	 * @param num
+	 *            the number of characters in a row
+	 */
+	public void setNumCharsPerRow(int num) {
+		topWindow.setNumCharsPerRow(num);
+	}
 
-  /**
-   * Splits the window.
-   * @param linesUpperWindow number of lines in upper window
-   */
-  public void splitWindow(int linesUpperWindow) {
-    LOG.info("SPLIT_WINDOW: " + linesUpperWindow);
-    topWindow.setNumRows(linesUpperWindow);
-    for (ScreenModelListener l : screenModelListeners) {
-      l.screenSplit(linesUpperWindow);
-    }
-  }
-  /** {@inheritDoc} */
-  public void setWindow(int window) {
-    LOG.info("SET_WINDOW: " + window);
-    current = window;
-    if (current == ScreenModel.WINDOW_TOP) {
-      topWindow.resetCursor();
-    }
-  }
-  /** {@inheritDoc} */
-  public int getActiveWindow() { return current; }
+	/**
+	 * Resets the screen model.
+	 */
+	public void reset() {
+		topWindow.resetCursor();
+		bottomWindow.reset();
+		current = WINDOW_BOTTOM;
+	}
 
-  /** {@inheritDoc} */
-  public void setTextStyle(int style) {
-    LOG.info("SET_TEXT_STYLE: " + style);
-    topWindow.setCurrentTextStyle(style);
-    bottomWindow.setCurrentTextStyle(style);
-  }
+	/**
+	 * Splits the window.
+	 * 
+	 * @param linesUpperWindow
+	 *            number of lines in upper window
+	 */
+	public void splitWindow(int linesUpperWindow) {
+		LOG.info("SPLIT_WINDOW: " + linesUpperWindow);
+		topWindow.setNumRows(linesUpperWindow);
+		for (ScreenModelListener l : screenModelListeners) {
+			l.screenSplit(linesUpperWindow);
+		}
+	}
 
-  /** {@inheritDoc} */
-  public void setBufferMode(boolean flag) {
-    LOG.info("SET_BUFFER_MODE: " + flag);
-    if (current == ScreenModel.WINDOW_BOTTOM) {
-      bottomWindow.setBuffered(flag);
-    }
-  }
+	/** {@inheritDoc} */
+	public void setWindow(int window) {
+		LOG.info("SET_WINDOW: " + window);
+		current = window;
+		if (current == ScreenModel.WINDOW_TOP) {
+			topWindow.resetCursor();
+		}
+	}
 
-  /** {@inheritDoc} */
-  public void eraseLine(int value) {
-    LOG.info("ERASE_LINE: " + value);
-    throw new UnsupportedOperationException("Not supported yet.");
-  }
+	/** {@inheritDoc} */
+	public int getActiveWindow() {
+		return current;
+	}
 
-  /** {@inheritDoc} */
-  public void eraseWindow(int window) {
-    LOG.info("ERASE_WINDOW: " + window);
-    for (ScreenModelListener l : screenModelListeners) {
-      l.windowErased(window);
-    }
-    if (window == -1) {
-      splitWindow(0);
-      setWindow(ScreenModel.WINDOW_BOTTOM);
-      topWindow.resetCursor();
-    }
-    if (window == ScreenModel.WINDOW_TOP) {
-      for (ScreenModelListener l : screenModelListeners) {
-        l.windowErased(ScreenModel.WINDOW_TOP);
-      }
-      topWindow.resetCursor();
-    }
-  }
+	/** {@inheritDoc} */
+	public void setTextStyle(int style) {
+		LOG.info("SET_TEXT_STYLE: " + style);
+		topWindow.setCurrentTextStyle(style);
+		bottomWindow.setCurrentTextStyle(style);
+	}
 
-  /** {@inheritDoc} */
-  public void setTextCursor(int line, int column, int window) {
-    int targetWindow = getTargetWindow(window);
-    //LOG.info(String.format("SET_TEXT_CURSOR, line: %d, column: %d, " +
-    //                       "window: %d\n", line, column, targetWindow));
-    if (targetWindow == WINDOW_TOP) {
-      for (ScreenModelListener l : screenModelListeners) {
-        l.topWindowCursorMoving(line, column);
-      }
-      topWindow.setTextCursor(line, column);
-    }
-  }
+	/** {@inheritDoc} */
+	public void setBufferMode(boolean flag) {
+		LOG.info("SET_BUFFER_MODE: " + flag);
+		if (current == ScreenModel.WINDOW_BOTTOM) {
+			bottomWindow.setBuffered(flag);
+		}
+	}
 
-  /**
-   * Returns the window number for the specified parameter.
-   * @param window the window number
-   * @return current window or specified
-   */
-  private int getTargetWindow(int window) {
-    return window == ScreenModel.CURRENT_WINDOW ? current : window;
-  }
+	/** {@inheritDoc} */
+	public void eraseLine(int value) {
+		LOG.info("ERASE_LINE: " + value);
+		throw new UnsupportedOperationException("Not supported yet.");
+	}
 
-  /** {@inheritDoc} */
-  public TextCursor getTextCursor() {
-    if (this.current != ScreenModel.WINDOW_TOP) {
-      throw new UnsupportedOperationException("Not supported yet.");
-    }
-    return topWindow;
-  }
+	/** {@inheritDoc} */
+	public void eraseWindow(int window) {
+		LOG.info("ERASE_WINDOW: " + window);
+		for (ScreenModelListener l : screenModelListeners) {
+			l.windowErased(window);
+		}
+		if (window == -1) {
+			splitWindow(0);
+			setWindow(ScreenModel.WINDOW_BOTTOM);
+			topWindow.resetCursor();
+		}
+		if (window == ScreenModel.WINDOW_TOP) {
+			for (ScreenModelListener l : screenModelListeners) {
+				l.windowErased(ScreenModel.WINDOW_TOP);
+			}
+			topWindow.resetCursor();
+		}
+	}
 
-  /** {@inheritDoc} */
-  public char setFont(char fontnumber) {
-    if (fontnumber != ScreenModel.FONT_FIXED &&
-        fontnumber != ScreenModel.FONT_NORMAL) {
-      setFont(ScreenModel.FONT_FIXED); // call yourself again with the fixed
-      return 0;
-    }
-    if (current == WINDOW_TOP) {
-      // For the top window, the normal font should not be used, instead,
-      // we always assume the fixed font as the top window normal font
-      // The character graphics font is a fixed font, so we want to set that
-      return fontnumber == ScreenModel.FONT_NORMAL ? ScreenModel.FONT_FIXED :
-              topWindow.setFont(fontnumber);
-    } else {
-      return bottomWindow.setCurrentFont(fontnumber);
-    }
-  }
+	/** {@inheritDoc} */
+	public void setTextCursor(int line, int column, int window) {
+		int targetWindow = getTargetWindow(window);
+		// LOG.info(String.format("SET_TEXT_CURSOR, line: %d, column: %d, " +
+		// "window: %d\n", line, column, targetWindow));
+		if (targetWindow == WINDOW_TOP) {
+			for (ScreenModelListener l : screenModelListeners) {
+				l.topWindowCursorMoving(line, column);
+			}
+			topWindow.setTextCursor(line, column);
+		}
+	}
 
-  /** {@inheritDoc} */
-  public void setBackground(int colornumber, int window) {
-    LOG.info("setBackground, color: " + colornumber);
-    topWindow.setBackground(colornumber);
-    bottomWindow.setBackground(colornumber);
-  }
+	/**
+	 * Returns the window number for the specified parameter.
+	 * 
+	 * @param window
+	 *            the window number
+	 * @return current window or specified
+	 */
+	private int getTargetWindow(int window) {
+		return window == ScreenModel.CURRENT_WINDOW ? current : window;
+	}
 
-  /** {@inheritDoc} */
-  public void setForeground(int colornumber, int window) {
-    LOG.info("setForeground, color: " + colornumber);
-    topWindow.setForeground(colornumber);
-    bottomWindow.setForeground(colornumber);
-  }
+	/** {@inheritDoc} */
+	public TextCursor getTextCursor() {
+		if (this.current != ScreenModel.WINDOW_TOP) {
+			throw new UnsupportedOperationException("Not supported yet.");
+		}
+		return topWindow;
+	}
 
-  /** {@inheritDoc} */
-  public OutputStream getOutputStream() { return this; }
+	/** {@inheritDoc} */
+	public char setFont(char fontnumber) {
+		if (fontnumber != ScreenModel.FONT_FIXED && fontnumber != ScreenModel.FONT_NORMAL) {
+			setFont(ScreenModel.FONT_FIXED); // call yourself again with the
+												// fixed
+			return 0;
+		}
+		if (current == WINDOW_TOP) {
+			// For the top window, the normal font should not be used, instead,
+			// we always assume the fixed font as the top window normal font
+			// The character graphics font is a fixed font, so we want to set
+			// that
+			return fontnumber == ScreenModel.FONT_NORMAL ? ScreenModel.FONT_FIXED : topWindow.setFont(fontnumber);
+		} else {
+			return bottomWindow.setCurrentFont(fontnumber);
+		}
+	}
 
-  // OutputStream
-  private boolean selected;
+	/** {@inheritDoc} */
+	public void setBackground(int colornumber, int window) {
+		LOG.info("setBackground, color: " + colornumber);
+		topWindow.setBackground(colornumber);
+		bottomWindow.setBackground(colornumber);
+	}
 
-  /**
-   * This checks the fixed font flag and adjust the font if necessary.
-   */
-  private void checkFixedFontFlag() {
-    if (fileheader.isEnabled(Attribute.FORCE_FIXED_FONT) &&
-        current == WINDOW_BOTTOM) {
-      bottomWindow.setCurrentFont(ScreenModel.FONT_FIXED);
-    } else if (!fileheader.isEnabled(Attribute.FORCE_FIXED_FONT) &&
-               current == WINDOW_BOTTOM) {
-      bottomWindow.setCurrentFont(ScreenModel.FONT_NORMAL);
-    }
-  }
+	/** {@inheritDoc} */
+	public void setForeground(int colornumber, int window) {
+		LOG.info("setForeground, color: " + colornumber);
+		topWindow.setForeground(colornumber);
+		bottomWindow.setForeground(colornumber);
+	}
 
-  /** {@inheritDoc} */
-  public void print(char zsciiChar) {
-    checkFixedFontFlag();
-    char unicodeChar = encoding.getUnicodeChar(zsciiChar);
-    if (current == WINDOW_BOTTOM) {
-      bottomWindow.printChar(unicodeChar);
-      if (!bottomWindow.isBuffered()) {
-        flush();
-      }
-    } else if (current == WINDOW_TOP) {
-      for (ScreenModelListener l : screenModelListeners) {
-        topWindow.notifyChange(l, unicodeChar);
-        topWindow.incrementCursorXPos();
-      }
-    }
-  }
+	/** {@inheritDoc} */
+	public OutputStream getOutputStream() {
+		return this;
+	}
 
-  /** {@inheritDoc} */
-  public void close() { }
+	// OutputStream
+	private boolean selected;
 
-  /**
-   * Notify listeners that the screen has changed.
-   */
-  public void flush() {
-    for (ScreenModelListener l : screenModelListeners) {
-      l.screenModelUpdated(this);
-    }
-  }
+	/**
+	 * This checks the fixed font flag and adjust the font if necessary.
+	 */
+	private void checkFixedFontFlag() {
+		if (fileheader.isEnabled(Attribute.FORCE_FIXED_FONT) && current == WINDOW_BOTTOM) {
+			bottomWindow.setCurrentFont(ScreenModel.FONT_FIXED);
+		} else if (!fileheader.isEnabled(Attribute.FORCE_FIXED_FONT) && current == WINDOW_BOTTOM) {
+			bottomWindow.setCurrentFont(ScreenModel.FONT_NORMAL);
+		}
+	}
 
-  /** {@inheritDoc} */
-  public void select(boolean flag) { selected = flag; }
+	/** {@inheritDoc} */
+	public void print(char zsciiChar) {
+		checkFixedFontFlag();
+		char unicodeChar = encoding.getUnicodeChar(zsciiChar);
+		if (current == WINDOW_BOTTOM) {
+			bottomWindow.printChar(unicodeChar);
+			if (!bottomWindow.isBuffered()) {
+				flush();
+			}
+		} else if (current == WINDOW_TOP) {
+			for (ScreenModelListener l : screenModelListeners) {
+				topWindow.notifyChange(l, unicodeChar);
+				topWindow.incrementCursorXPos();
+			}
+		}
+	}
 
-  /** {@inheritDoc} */
-  public boolean isSelected() { return selected; }
+	/** {@inheritDoc} */
+	public void close() {
+	}
 
-  // ***********************************************************************
-  // ***** StatusLine implementation
-  // ***************************************
-  /** {@inheritDoc} */
-  public void updateStatusScore(String objectName, int score, int steps) {
-    for (StatusLineListener l : statusLineListeners) {
-      l.statusLineUpdated(objectName, score + "/" + steps);
-    }
-  }
+	/**
+	 * Notify listeners that the screen has changed.
+	 */
+	public void flush() {
+		for (ScreenModelListener l : screenModelListeners) {
+			l.screenModelUpdated(this);
+		}
+	}
 
-  /** {@inheritDoc} */
-  public void updateStatusTime(String objectName, int hours, int minutes) {
-    for (StatusLineListener l : statusLineListeners) {
-      l.statusLineUpdated(objectName, hours + ":" + minutes);
-    }
-  }
+	/** {@inheritDoc} */
+	public void select(boolean flag) {
+		selected = flag;
+	}
 
-  // ***********************************************************************
-  // ***** Additional public interface
-  // ***************************************
+	/** {@inheritDoc} */
+	public boolean isSelected() {
+		return selected;
+	}
 
-  /**
-   * Returns number of rows in upper window.
-   * @return number of rows
-   */
-  public int getNumRowsUpper() { return topWindow.getNumRows(); }
+	// ***********************************************************************
+	// ***** StatusLine implementation
+	// ***************************************
+	/** {@inheritDoc} */
+	public void updateStatusScore(String objectName, int score, int steps) {
+		for (StatusLineListener l : statusLineListeners) {
+			l.statusLineUpdated(objectName, score + "/" + steps);
+		}
+	}
 
-  /**
-   * Returns current background color.
-   * @return current background color
-   */
-  public int getBackground() {
-    int background = bottomWindow.getBackground();
-    return background == COLOR_DEFAULT ?
-      getDefaultBackground() : background;
-  }
+	/** {@inheritDoc} */
+	public void updateStatusTime(String objectName, int hours, int minutes) {
+		for (StatusLineListener l : statusLineListeners) {
+			l.statusLineUpdated(objectName, hours + ":" + minutes);
+		}
+	}
 
-  /**
-   * Returns current foreground color.
-   * @return current foreground color
-   */
-  public int getForeground() {
-    int foreground = bottomWindow.getForeground();
-    return foreground == COLOR_DEFAULT ?
-      getDefaultForeground() : foreground;
-  }
+	// ***********************************************************************
+	// ***** Additional public interface
+	// ***************************************
 
-  /**
-   * Returns default background color.
-   * @return default background color
-   */
-  private int getDefaultBackground() {
-    return memory.readUnsigned8(StoryFileHeader.DEFAULT_BACKGROUND);
-  }
+	/**
+	 * Returns number of rows in upper window.
+	 * 
+	 * @return number of rows
+	 */
+	public int getNumRowsUpper() {
+		return topWindow.getNumRows();
+	}
 
-  /**
-   * Returns default foreground color.
-   * @return default foreground color
-   */
-  private int getDefaultForeground() {
-    return memory.readUnsigned8(StoryFileHeader.DEFAULT_FOREGROUND);
-  }
+	/**
+	 * Returns current background color.
+	 * 
+	 * @return current background color
+	 */
+	public int getBackground() {
+		int background = bottomWindow.getBackground();
+		return background == COLOR_DEFAULT ? getDefaultBackground() : background;
+	}
 
-  /**
-   * Returns buffer to lower window.
-   * @return buffer to lower window
-   */
-  public List<AnnotatedText> getLowerBuffer() {
-    return bottomWindow.getBuffer();
-  }
+	/**
+	 * Returns current foreground color.
+	 * 
+	 * @return current foreground color
+	 */
+	public int getForeground() {
+		int foreground = bottomWindow.getForeground();
+		return foreground == COLOR_DEFAULT ? getDefaultForeground() : foreground;
+	}
+
+	/**
+	 * Returns default background color.
+	 * 
+	 * @return default background color
+	 */
+	private int getDefaultBackground() {
+		return memory.readUnsigned8(StoryFileHeader.DEFAULT_BACKGROUND);
+	}
+
+	/**
+	 * Returns default foreground color.
+	 * 
+	 * @return default foreground color
+	 */
+	private int getDefaultForeground() {
+		return memory.readUnsigned8(StoryFileHeader.DEFAULT_FOREGROUND);
+	}
+
+	/**
+	 * Returns buffer to lower window.
+	 * 
+	 * @return buffer to lower window
+	 */
+	public List<AnnotatedText> getLowerBuffer() {
+		return bottomWindow.getBuffer();
+	}
 }

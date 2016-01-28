@@ -48,37 +48,41 @@ import test.zmpp.testutil.TestUtil;
 
 /**
  * Test class for FileOutputStream.
+ * 
  * @author Wei-ju Wu
  * @version 1.5
  */
 @RunWith(JMock.class)
 public class FileOutputStreamTest {
-  Mockery context = new JUnit4Mockery();
-  private IOSystem iosys;
-  private TranscriptOutputStream outstream;
-  private Writer outputwriter;
-  
-  @Before
-  public void setUp() throws Exception {
-    iosys = context.mock(IOSystem.class);
-    outstream = new TranscriptOutputStream(iosys, new ZsciiEncoding(new DefaultAccentTable()));
-    outputwriter = new FileWriter(TestUtil.loadResource("streamoutput.txt"));
-  }
+	Mockery context = new JUnit4Mockery();
+	private IOSystem iosys;
+	private TranscriptOutputStream outstream;
+	private Writer outputwriter;
 
-  @After
-  public void tearDown() throws Exception {
-    outstream.close();
-  }
+	@Before
+	public void setUp() throws Exception {
+		iosys = context.mock(IOSystem.class);
+		outstream = new TranscriptOutputStream(iosys, new ZsciiEncoding(new DefaultAccentTable()));
+		outputwriter = new FileWriter(TestUtil.loadResource("streamoutput.txt"));
+	}
 
-  @Test
-  public void testPrintFirstTime() {
-    context.checking(new Expectations() {{
-      one (iosys).getTranscriptWriter(); will(returnValue(outputwriter));
-    }});
-    //mockIo.expects(once()).method("getTranscriptWriter").will(returnValue(outputwriter));
-    outstream.print('a');
-    outstream.print(ZsciiEncoding.NEWLINE);
-    outstream.print('b');
-    outstream.print(ZsciiEncoding.NEWLINE);
-  }
+	@After
+	public void tearDown() throws Exception {
+		outstream.close();
+	}
+
+	@Test
+	public void testPrintFirstTime() {
+		context.checking(new Expectations() {
+			{
+				one(iosys).getTranscriptWriter();
+				will(returnValue(outputwriter));
+			}
+		});
+		// mockIo.expects(once()).method("getTranscriptWriter").will(returnValue(outputwriter));
+		outstream.print('a');
+		outstream.print(ZsciiEncoding.NEWLINE);
+		outstream.print('b');
+		outstream.print(ZsciiEncoding.NEWLINE);
+	}
 }

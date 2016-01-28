@@ -29,46 +29,51 @@
 package org.zmpp.encoding;
 
 /**
- * An alphabet table in V1 story files behaves like an alphabet table in
- * V2, except that it has a different A2 alphabet and does not support
- * abbreviations.
- * Furthermore, character 1 returns '\n'. This is a thing that leads
- * to the extension of the getAnChar() methods, handling index -5.
+ * An alphabet table in V1 story files behaves like an alphabet table in V2,
+ * except that it has a different A2 alphabet and does not support
+ * abbreviations. Furthermore, character 1 returns '\n'. This is a thing that
+ * leads to the extension of the getAnChar() methods, handling index -5.
  *
  * @author Wei-ju Wu
  * @version 1.5
  */
 public class AlphabetTableV1 extends AlphabetTableV2 {
 
-  private static final long serialVersionUID = 1L;
+	private static final long serialVersionUID = 1L;
 
-  /** V1 Alphabet 2 has a slightly different structure. */
-  private static final String A2CHARS = " 0123456789.,!?_#'\"/\\<-:()";
+	/** V1 Alphabet 2 has a slightly different structure. */
+	private static final String A2CHARS = " 0123456789.,!?_#'\"/\\<-:()";
 
-  /** {@inheritDoc} */
-  public char getA0Char(final byte zchar) {
-    if (zchar == 1) return '\n';
-    return super.getA0Char(zchar);
-  }
+	/** {@inheritDoc} */
+	public char getA0Char(final byte zchar) {
+		if (zchar == 1)
+			return '\n';
+		return super.getA0Char(zchar);
+	}
 
-  /** {@inheritDoc} */
-  public char getA1Char(final byte zchar) {
-    if (zchar == 1) return '\n';
-    return super.getA1Char(zchar);
-  }
+	/** {@inheritDoc} */
+	public char getA1Char(final byte zchar) {
+		if (zchar == 1)
+			return '\n';
+		return super.getA1Char(zchar);
+	}
 
-  /** {@inheritDoc} */
-  public char getA2Char(final byte zchar) {
-    if (zchar == 0) return ' ';
-    if (zchar == 1) return '\n';
-    return A2CHARS.charAt(zchar - ALPHABET_START);
-  }
+	/** {@inheritDoc} */
+	public char getA2Char(final byte zchar) {
+		if (zchar == 0)
+			return ' ';
+		if (zchar == 1)
+			return '\n';
+		return A2CHARS.charAt(zchar - ALPHABET_START);
+	}
 
-  /** {@inheritDoc} */
-  public final int getA2CharCode(final char zsciiChar) {
-    return getCharCodeFor(A2CHARS, zsciiChar);
-  }
+	/** {@inheritDoc} */
+	public final int getA2CharCode(final char zsciiChar) {
+		return getCharCodeFor(A2CHARS, zsciiChar);
+	}
 
-  /** {@inheritDoc} */
-  public boolean isAbbreviation(final char zchar) { return false; }
+	/** {@inheritDoc} */
+	public boolean isAbbreviation(final char zchar) {
+		return false;
+	}
 }

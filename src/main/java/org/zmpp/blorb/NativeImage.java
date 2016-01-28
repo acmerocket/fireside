@@ -32,18 +32,22 @@ package org.zmpp.blorb;
  * An interface that should be implemented using system-specific classes.
  * Android does not use the java.awt packages, so hide it behind a NativeImage
  * interface.
+ * 
  * @author Wei-ju Wu
  * @version 1.5
  */
 public interface NativeImage {
-  /**
-   * Returns the width.
-   * @return width
-   */
-  int getWidth();
-  /**
-   * Returns the height.
-   * @return height
-   */
-  int getHeight();
+	/**
+	 * Returns the width.
+	 * 
+	 * @return width
+	 */
+	int getWidth();
+
+	/**
+	 * Returns the height.
+	 * 
+	 * @return height
+	 */
+	int getHeight();
 }

@@ -28,7 +28,6 @@
  */
 package org.zmpp.io;
 
-
 /**
  * This interface defines a Z-machine input stream.
  *
@@ -37,13 +36,14 @@ package org.zmpp.io;
  */
 public interface InputStream {
 
-  /**
-   * Reads the next available line of ZSCII characters from the stream.
-   * This is somewhat immediate.
-   * @return the next line of available ZSCII characters
-   */
-  String readLine();
+	/**
+	 * Reads the next available line of ZSCII characters from the stream. This
+	 * is somewhat immediate.
+	 * 
+	 * @return the next line of available ZSCII characters
+	 */
+	String readLine();
 
-  /** Release underlying resources. */
-  void close();
+	/** Release underlying resources. */
+	void close();
 }

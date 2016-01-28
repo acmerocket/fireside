@@ -36,9 +36,11 @@ package org.zmpp.media;
  */
 public interface SoundStopListener {
 
-  /**
-   * The sound has stopped.
-   * @param sound the stopped sound
-   */
-  void soundStopped(SoundEffect sound);
+	/**
+	 * The sound has stopped.
+	 * 
+	 * @param sound
+	 *            the stopped sound
+	 */
+	void soundStopped(SoundEffect sound);
 }

@@ -35,6 +35,7 @@ import java.nio.file.Paths;
 
 /**
  * Usefule utility methods for testing ZMPP.
+ * 
  * @author Wei-ju Wu
  * @version 1.5
  */
@@ -43,8 +44,7 @@ public class TestUtil {
 		URL url = TestUtil.class.getClassLoader().getResource(name);
 		try {
 			return Paths.get(url.toURI()).toFile();
-		} 
-		catch (URISyntaxException e) {
+		} catch (URISyntaxException e) {
 			// FIXME error logging
 			throw new RuntimeException(e);
 		}

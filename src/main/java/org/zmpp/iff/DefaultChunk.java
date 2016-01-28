@@ -41,63 +41,76 @@ import static org.zmpp.base.MemoryUtil.writeUnsigned32;
  */
 public class DefaultChunk implements Chunk {
 
-  /** The memory access object. */
-  protected Memory memory;
+	/** The memory access object. */
+	protected Memory memory;
 
-  /** The chunk id. */
-  private byte[] id;
+	/** The chunk id. */
+	private byte[] id;
 
-  /** The chunk size. */
-  private int chunkSize;
+	/** The chunk size. */
+	private int chunkSize;
 
-  /** The start address within the form chunk. */
-  private int address;
+	/** The start address within the form chunk. */
+	private int address;
 
-  /**
-   * Constructor. Used for reading files.
-   * @param memory a Memory object to the chunk data
-   * @param address the address within the form chunk
-   */
-  public DefaultChunk(final Memory memory, final int address) {
-    this.memory = memory;
-    this.address = address;
-    id = new byte[CHUNK_ID_LENGTH];
-    memory.copyBytesToArray(id, 0, 0, CHUNK_ID_LENGTH);
-    chunkSize = (int) readUnsigned32(memory, CHUNK_ID_LENGTH);
-  }
+	/**
+	 * Constructor. Used for reading files.
+	 * 
+	 * @param memory
+	 *            a Memory object to the chunk data
+	 * @param address
+	 *            the address within the form chunk
+	 */
+	public DefaultChunk(final Memory memory, final int address) {
+		this.memory = memory;
+		this.address = address;
+		id = new byte[CHUNK_ID_LENGTH];
+		memory.copyBytesToArray(id, 0, 0, CHUNK_ID_LENGTH);
+		chunkSize = (int) readUnsigned32(memory, CHUNK_ID_LENGTH);
+	}
 
-  /**
-   * Constructor. Initialize from byte data. This constructor is used
-   * when writing a file, in that case chunks really are separate
-   * memory areas.
-   * @param id the id
-   * @param chunkdata the data without header information, number of bytes
-   * needs to be even
-   */
-  public DefaultChunk(final byte[] id, final byte[] chunkdata) {
-    this.id = id;
-    this.chunkSize = chunkdata.length;
-    final byte[] chunkDataWithHeader =
-      new byte[chunkSize + Chunk.CHUNK_HEADER_LENGTH];
-    this.memory = new DefaultMemory(chunkDataWithHeader);
-    memory.copyBytesFromArray(id, 0, 0, id.length);
-    writeUnsigned32(memory, id.length, chunkSize);
-    memory.copyBytesFromArray(chunkdata, 0, id.length + 4,
-                              chunkdata.length);
-  }
+	/**
+	 * Constructor. Initialize from byte data. This constructor is used when
+	 * writing a file, in that case chunks really are separate memory areas.
+	 * 
+	 * @param id
+	 *            the id
+	 * @param chunkdata
+	 *            the data without header information, number of bytes needs to
+	 *            be even
+	 */
+	public DefaultChunk(final byte[] id, final byte[] chunkdata) {
+		this.id = id;
+		this.chunkSize = chunkdata.length;
+		final byte[] chunkDataWithHeader = new byte[chunkSize + Chunk.CHUNK_HEADER_LENGTH];
+		this.memory = new DefaultMemory(chunkDataWithHeader);
+		memory.copyBytesFromArray(id, 0, 0, id.length);
+		writeUnsigned32(memory, id.length, chunkSize);
+		memory.copyBytesFromArray(chunkdata, 0, id.length + 4, chunkdata.length);
+	}
 
-  /** {@inheritDoc} */
-  public boolean isValid() { return true; }
+	/** {@inheritDoc} */
+	public boolean isValid() {
+		return true;
+	}
 
-  /** {@inheritDoc} */
-  public String getId() { return new String(id); }
+	/** {@inheritDoc} */
+	public String getId() {
+		return new String(id);
+	}
 
-  /** {@inheritDoc} */
-  public int getSize() { return chunkSize; }
+	/** {@inheritDoc} */
+	public int getSize() {
+		return chunkSize;
+	}
 
-  /** {@inheritDoc} */
-  public Memory getMemory() { return memory; }
+	/** {@inheritDoc} */
+	public Memory getMemory() {
+		return memory;
+	}
 
-  /** {@inheritDoc} */
-  public int getAddress() { return address; }
+	/** {@inheritDoc} */
+	public int getAddress() {
+		return address;
+	}
 }

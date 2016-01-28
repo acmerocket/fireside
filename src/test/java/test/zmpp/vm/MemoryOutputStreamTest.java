@@ -41,53 +41,59 @@ import org.zmpp.vm.MemoryOutputStream;
 
 /**
  * Test class for MemoryOutputStream.
+ * 
  * @author Wei-ju Wu
  * @version 1.5
  */
 @RunWith(JMock.class)
 public class MemoryOutputStreamTest {
-  Mockery context = new JUnit4Mockery();
-  private Machine machine;
-  private MemoryOutputStream output;
+	Mockery context = new JUnit4Mockery();
+	private Machine machine;
+	private MemoryOutputStream output;
 
-  @Before
-  public void setUp() throws Exception {
-    machine = context.mock(Machine.class);
-    output = new MemoryOutputStream(machine);
-  }
-  
-  @Test
-  public void testPrintVersion5() {
-    context.checking(new Expectations() {{
-      one (machine).getVersion(); will(returnValue(5));
-      one (machine).writeUnsigned8(4713, (char) 65);
-      one (machine).writeUnsigned16(4711, (char) 1);
-    }});
-    // Selection has to be performed prior to printing - ALWAYS !!!
-    output.select(4711, 0);    
-    output.print((char) 65);
-    output.select(false);
-  }
-  
-  @Test
-  public void testIsSelected() {
-    output.select(4711, 0);
-    assertTrue(output.isSelected());
-  }
-  
-  @Test
-  public void testUnusedMethods() {
-    output.flush();
-    output.close();
-  }
-  
-  @Test
-  public void testSelectMaxNesting() {
-    context.checking(new Expectations() {{
-      one (machine).halt("maximum nesting depth (16) for stream 3 exceeded");
-    }});
-    for (int i = 0; i < 17; i++) {
-      output.select(4710 + 10 * i, 0);
-    }
-  }  
+	@Before
+	public void setUp() throws Exception {
+		machine = context.mock(Machine.class);
+		output = new MemoryOutputStream(machine);
+	}
+
+	@Test
+	public void testPrintVersion5() {
+		context.checking(new Expectations() {
+			{
+				one(machine).getVersion();
+				will(returnValue(5));
+				one(machine).writeUnsigned8(4713, (char) 65);
+				one(machine).writeUnsigned16(4711, (char) 1);
+			}
+		});
+		// Selection has to be performed prior to printing - ALWAYS !!!
+		output.select(4711, 0);
+		output.print((char) 65);
+		output.select(false);
+	}
+
+	@Test
+	public void testIsSelected() {
+		output.select(4711, 0);
+		assertTrue(output.isSelected());
+	}
+
+	@Test
+	public void testUnusedMethods() {
+		output.flush();
+		output.close();
+	}
+
+	@Test
+	public void testSelectMaxNesting() {
+		context.checking(new Expectations() {
+			{
+				one(machine).halt("maximum nesting depth (16) for stream 3 exceeded");
+			}
+		});
+		for (int i = 0; i < 17; i++) {
+			output.select(4710 + 10 * i, 0);
+		}
+	}
 }

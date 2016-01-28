@@ -33,124 +33,155 @@ import org.zmpp.base.Interruptable;
 
 /**
  * Class to play sounds.
+ * 
  * @author Wei-ju Wu
  * @version 1.5
  */
 public class PlaySoundTask implements Runnable, SoundStopListener {
 
-  private static final Logger LOG = Logger.getLogger("org.zmpp");
-  private int resourceNum;
-  private SoundEffect sound;
-  private int repeats;
-  private int volume;
-  private boolean played;
-  private Interruptable interruptable;
-  private int routine;
-  private boolean stopped;
+	private static final Logger LOG = Logger.getLogger("org.zmpp");
+	private int resourceNum;
+	private SoundEffect sound;
+	private int repeats;
+	private int volume;
+	private boolean played;
+	private Interruptable interruptable;
+	private int routine;
+	private boolean stopped;
 
-  /**
-   * Constructor.
-   * @param resourceNum resource number
-   * @param sound sound object
-   * @param volume volume
-   * @param repeats number of repeats
-   */
-  public PlaySoundTask(int resourceNum, SoundEffect sound, int volume,
-                       int repeats) {
-    this(resourceNum, sound, volume, repeats, null, 0);
-  }
+	/**
+	 * Constructor.
+	 * 
+	 * @param resourceNum
+	 *            resource number
+	 * @param sound
+	 *            sound object
+	 * @param volume
+	 *            volume
+	 * @param repeats
+	 *            number of repeats
+	 */
+	public PlaySoundTask(int resourceNum, SoundEffect sound, int volume, int repeats) {
+		this(resourceNum, sound, volume, repeats, null, 0);
+	}
 
-  /**
-   * Constructor.
-   * @param resourceNum resource number
-   * @param sound sound object
-   * @param volume playback volume
-   * @param repeats number of repeats
-   * @param interruptable interruptable object (should not be used anymore)
-   * @param routine the interrupt routine
-   * @deprecated interrupts should be implemented differently
-   */
-  public PlaySoundTask(int resourceNum, SoundEffect sound, int volume,
-      int repeats, Interruptable interruptable, int routine) {
-    this.resourceNum = resourceNum;
-    this.sound = sound;
-    this.repeats = repeats;
-    this.volume = volume;
-    this.interruptable = interruptable;
-    this.routine = routine;
-  }
+	/**
+	 * Constructor.
+	 * 
+	 * @param resourceNum
+	 *            resource number
+	 * @param sound
+	 *            sound object
+	 * @param volume
+	 *            playback volume
+	 * @param repeats
+	 *            number of repeats
+	 * @param interruptable
+	 *            interruptable object (should not be used anymore)
+	 * @param routine
+	 *            the interrupt routine
+	 * @deprecated interrupts should be implemented differently
+	 */
+	public PlaySoundTask(int resourceNum, SoundEffect sound, int volume, int repeats, Interruptable interruptable,
+			int routine) {
+		this.resourceNum = resourceNum;
+		this.sound = sound;
+		this.repeats = repeats;
+		this.volume = volume;
+		this.interruptable = interruptable;
+		this.routine = routine;
+	}
 
-  /**
-   * Returns the resource number.
-   * @return the resource number
-   */
-  public int getResourceNumber() { return resourceNum; }
+	/**
+	 * Returns the resource number.
+	 * 
+	 * @return the resource number
+	 */
+	public int getResourceNumber() {
+		return resourceNum;
+	}
 
-  /** {@inheritDoc} */
-  public void run() {
-    sound.addSoundStopListener(this);
-    sound.play(repeats, volume);
+	/** {@inheritDoc} */
+	public void run() {
+		sound.addSoundStopListener(this);
+		sound.play(repeats, volume);
 
-    synchronized (this) {
-      while (!wasPlayed()) {
-        try { wait(); } catch (Exception ex) {
-          LOG.throwing("PlaySoundTask", "run", ex);
-        }
-      }
-    }
-    sound.removeSoundStopListener(this);
-    if (!wasStopped() && interruptable != null && routine > 0) {
-      interruptable.setInterruptRoutine(routine);
-    }
-  }
+		synchronized (this) {
+			while (!wasPlayed()) {
+				try {
+					wait();
+				} catch (Exception ex) {
+					LOG.throwing("PlaySoundTask", "run", ex);
+				}
+			}
+		}
+		sound.removeSoundStopListener(this);
+		if (!wasStopped() && interruptable != null && routine > 0) {
+			interruptable.setInterruptRoutine(routine);
+		}
+	}
 
-  /**
-   * Returns the status of the played flag.
-   * @return the played flag
-   */
-  public synchronized boolean wasPlayed() { return played; }
+	/**
+	 * Returns the status of the played flag.
+	 * 
+	 * @return the played flag
+	 */
+	public synchronized boolean wasPlayed() {
+		return played;
+	}
 
-  /**
-   * Sets the status of the played flag and notifies waiting threads.
-   * @param flag the played flag
-   */
-  private synchronized void setPlayed(final boolean flag) {
-    played = flag;
-    notifyAll();
-  }
+	/**
+	 * Sets the status of the played flag and notifies waiting threads.
+	 * 
+	 * @param flag
+	 *            the played flag
+	 */
+	private synchronized void setPlayed(final boolean flag) {
+		played = flag;
+		notifyAll();
+	}
 
-  /**
-   * Returns the status of the stopped flag.
-   * @return the stopped flag
-   */
-  private synchronized boolean wasStopped() { return stopped; }
+	/**
+	 * Returns the status of the stopped flag.
+	 * 
+	 * @return the stopped flag
+	 */
+	private synchronized boolean wasStopped() {
+		return stopped;
+	}
 
-  /**
-   * Sets the stopped flag and notifies waiting threads.
-   * @param flag true to stop, false otherwise
-   */
-  private synchronized void setStopped(final boolean flag) {
-    stopped = flag;
-    notifyAll();
-  }
+	/**
+	 * Sets the stopped flag and notifies waiting threads.
+	 * 
+	 * @param flag
+	 *            true to stop, false otherwise
+	 */
+	private synchronized void setStopped(final boolean flag) {
+		stopped = flag;
+		notifyAll();
+	}
 
-  /** Stops the sound. */
-  public synchronized void stop() {
-    if (!wasPlayed()) {
-      setStopped(true);
-      sound.stop();
-    }
-  }
+	/** Stops the sound. */
+	public synchronized void stop() {
+		if (!wasPlayed()) {
+			setStopped(true);
+			sound.stop();
+		}
+	}
 
-  /** This method waits until the sound was completely played or stopped. */
-  public synchronized void waitUntilDone() {
-    while (!wasPlayed()) {
-      try { wait(); } catch (Exception ex) {
-        LOG.throwing("PlaySoundTask", "waitUntilDone", ex);
-      }
-    }
-  }
+	/** This method waits until the sound was completely played or stopped. */
+	public synchronized void waitUntilDone() {
+		while (!wasPlayed()) {
+			try {
+				wait();
+			} catch (Exception ex) {
+				LOG.throwing("PlaySoundTask", "waitUntilDone", ex);
+			}
+		}
+	}
 
-  /** {@inheritDoc} */
-  public void soundStopped(final SoundEffect aSound) { setPlayed(true); }
+	/** {@inheritDoc} */
+	public void soundStopped(final SoundEffect aSound) {
+		setPlayed(true);
+	}
 }

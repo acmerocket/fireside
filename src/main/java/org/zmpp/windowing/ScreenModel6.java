@@ -32,45 +32,50 @@ import org.zmpp.media.DrawingArea;
 
 /**
  * Screen model 6 interface.
+ * 
  * @author Wei-ju Wu
  * @version 1.5
  */
 public interface ScreenModel6 extends ScreenModel, DrawingArea {
 
-  /**
-   * Restricts the mouse pointer to the specified window.
-   *
-   * @param window the window
-   */
-  void setMouseWindow(int window);
+	/**
+	 * Restricts the mouse pointer to the specified window.
+	 *
+	 * @param window
+	 *            the window
+	 */
+	void setMouseWindow(int window);
 
-  /**
-   * Returns the specified window.
-   *
-   * @param window the window
-   * @return the window
-   */
-  Window6 getWindow(int window);
+	/**
+	 * Returns the specified window.
+	 *
+	 * @param window
+	 *            the window
+	 * @return the window
+	 */
+	Window6 getWindow(int window);
 
-  /**
-   * Returns the currently selected window.
-   *
-   * @return the currently selected window
-   */
-  Window6 getSelectedWindow();
+	/**
+	 * Returns the currently selected window.
+	 *
+	 * @return the currently selected window
+	 */
+	Window6 getSelectedWindow();
 
-  /**
-   * Instructs the screen model to set the width of the current string
-   * to the header.
-   *
-   * @param zchars the z character array
-   */
-  void setTextWidthInUnits(char[] zchars);
+	/**
+	 * Instructs the screen model to set the width of the current string to the
+	 * header.
+	 *
+	 * @param zchars
+	 *            the z character array
+	 */
+	void setTextWidthInUnits(char[] zchars);
 
-  /**
-   * Reads the current mouse data into the specified array.
-   *
-   * @param array the array address
-   */
-  void readMouse(int array);
+	/**
+	 * Reads the current mouse data into the specified array.
+	 *
+	 * @param array
+	 *            the array address
+	 */
+	void readMouse(int array);
 }

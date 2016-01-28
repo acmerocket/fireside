@@ -35,16 +35,16 @@ import org.zmpp.windowing.TextAnnotation;
 
 /**
  * Test class for TextAnnotation.
+ * 
  * @author Wei-ju Wu
  * @version 1.5
  */
 public class TextAnnotationTest {
 
-  @Test
-  public void testCreateFull() {
-    TextAnnotation annot = new TextAnnotation(ScreenModel.FONT_NORMAL,
-            ScreenModel.TEXTSTYLE_ITALIC, ScreenModel.COLOR_BLUE,
-            ScreenModel.COLOR_YELLOW);
-    assertEquals(ScreenModel.FONT_NORMAL, annot.getFont());
-  }
+	@Test
+	public void testCreateFull() {
+		TextAnnotation annot = new TextAnnotation(ScreenModel.FONT_NORMAL, ScreenModel.TEXTSTYLE_ITALIC,
+				ScreenModel.COLOR_BLUE, ScreenModel.COLOR_YELLOW);
+		assertEquals(ScreenModel.FONT_NORMAL, annot.getFont());
+	}
 }

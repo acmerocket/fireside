@@ -31,21 +31,23 @@ package org.zmpp.vmutil;
 import java.util.Random;
 
 /**
- * This class implements the "random" random number generator mentioned
- * in the Z-machine standard document.
+ * This class implements the "random" random number generator mentioned in the
+ * Z-machine standard document.
  *
  * @author Wei-ju Wu
  * @version 1.5
  */
 public class UnpredictableRandomGenerator implements RandomGenerator {
 
-  private Random rand;
+	private Random rand;
 
-  /** Constructor. */
-  public UnpredictableRandomGenerator() {
-    rand = new Random(System.currentTimeMillis());
-  }
+	/** Constructor. */
+	public UnpredictableRandomGenerator() {
+		rand = new Random(System.currentTimeMillis());
+	}
 
-  /** {@inheritDoc} */
-  public int next() { return rand.nextInt(MAX_VALUE - 1) + 1; }
+	/** {@inheritDoc} */
+	public int next() {
+		return rand.nextInt(MAX_VALUE - 1) + 1;
+	}
 }

@@ -40,51 +40,51 @@ import org.zmpp.vm.InputLine;
 
 /**
  * Test class for CommandHistory.
+ * 
  * @author Wei-ju Wu
  * @version 1.5
  */
 public class CommandHistoryTest implements InputLine {
 
-  private CommandHistory history;
-  
-  @Before
-  public void setUp() throws Exception {
-    history = new CommandHistory(this);
-  }
+	private CommandHistory history;
 
-  // *********************************************************************
-  // ***** Input line functions
-  // **************************************
+	@Before
+	public void setUp() throws Exception {
+		history = new CommandHistory(this);
+	}
 
-  public int deletePreviousChar(List<Character> inputbuffer, int pointer) {
-    inputbuffer.remove(inputbuffer.size() - 1);
-    return pointer - 1;
-  }
-  
-  public int addChar(List<Character> inputbuffer,
-      int textbuffer, int pointer, char zchar) {
-    inputbuffer.add(zchar);
-    return pointer + 1;
-  }
-  
-  /**
-   * Test if the reset will set the index to size(), which is 0.
-   */
-  @Test
-  public void testResetInitial() {
-    history.reset();
-    assertEquals(0, history.getCurrentIndex());
-    List<Character> inputline = new ArrayList<Character>();
-    history.addInputLine(inputline);
-    history.reset();
-    assertEquals(1, history.getCurrentIndex());
-  }
-  
-  @Test
-  public void testIsHistoryChar() {
-    assertTrue(history.isHistoryChar(ZsciiEncoding.CURSOR_UP));
-    assertTrue(history.isHistoryChar(ZsciiEncoding.CURSOR_DOWN));
-    assertFalse(history.isHistoryChar(ZsciiEncoding.CURSOR_LEFT));
-    assertFalse(history.isHistoryChar('a'));
-  }
+	// *********************************************************************
+	// ***** Input line functions
+	// **************************************
+
+	public int deletePreviousChar(List<Character> inputbuffer, int pointer) {
+		inputbuffer.remove(inputbuffer.size() - 1);
+		return pointer - 1;
+	}
+
+	public int addChar(List<Character> inputbuffer, int textbuffer, int pointer, char zchar) {
+		inputbuffer.add(zchar);
+		return pointer + 1;
+	}
+
+	/**
+	 * Test if the reset will set the index to size(), which is 0.
+	 */
+	@Test
+	public void testResetInitial() {
+		history.reset();
+		assertEquals(0, history.getCurrentIndex());
+		List<Character> inputline = new ArrayList<Character>();
+		history.addInputLine(inputline);
+		history.reset();
+		assertEquals(1, history.getCurrentIndex());
+	}
+
+	@Test
+	public void testIsHistoryChar() {
+		assertTrue(history.isHistoryChar(ZsciiEncoding.CURSOR_UP));
+		assertTrue(history.isHistoryChar(ZsciiEncoding.CURSOR_DOWN));
+		assertFalse(history.isHistoryChar(ZsciiEncoding.CURSOR_LEFT));
+		assertFalse(history.isHistoryChar('a'));
+	}
 }

@@ -34,15 +34,19 @@ import org.zmpp.media.SoundEffect;
 
 /**
  * SoundEffectFactory interface.
+ * 
  * @author Wei-ju Wu <wei-ju at boxofrats.com>
  * @version 1.0
  */
 public interface SoundEffectFactory {
-  /**
-   * Creates a SoundEffect from an InputStream.
-   * @param aiffChunk the AIFF chunk containing data
-   * @return the SoundEffect
-   * @throws IOException if read error occurred
-   */
-  SoundEffect createSoundEffect(Chunk aiffChunk) throws IOException;
+	/**
+	 * Creates a SoundEffect from an InputStream.
+	 * 
+	 * @param aiffChunk
+	 *            the AIFF chunk containing data
+	 * @return the SoundEffect
+	 * @throws IOException
+	 *             if read error occurred
+	 */
+	SoundEffect createSoundEffect(Chunk aiffChunk) throws IOException;
 }

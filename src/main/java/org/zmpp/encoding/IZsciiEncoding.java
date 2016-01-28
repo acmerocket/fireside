@@ -30,44 +30,49 @@ package org.zmpp.encoding;
 
 /**
  * ZsciiEncoding interface.
+ * 
  * @author Wei-ju Wu
  * @version 1.5
  */
 public interface IZsciiEncoding {
 
-  char NULL          = 0;
-  char DELETE        = 8;
-  char NEWLINE_10    = 10;
-  char NEWLINE       = 13;
-  char ESCAPE        = 27;
-  char CURSOR_UP     = 129;
-  char CURSOR_DOWN   = 130;
-  char CURSOR_LEFT   = 131;
-  char CURSOR_RIGHT  = 132;
-  char ASCII_START   = 32;
-  char ASCII_END     = 126;
+	char NULL = 0;
+	char DELETE = 8;
+	char NEWLINE_10 = 10;
+	char NEWLINE = 13;
+	char ESCAPE = 27;
+	char CURSOR_UP = 129;
+	char CURSOR_DOWN = 130;
+	char CURSOR_LEFT = 131;
+	char CURSOR_RIGHT = 132;
+	char ASCII_START = 32;
+	char ASCII_END = 126;
 
-  /** The start of the accent range. */
-  char ACCENT_START = 155;
+	/** The start of the accent range. */
+	char ACCENT_START = 155;
 
-  /** End of the accent range. */
-  char ACCENT_END   = 251;
+	/** End of the accent range. */
+	char ACCENT_END = 251;
 
-  char MOUSE_DOUBLE_CLICK = 253;
-  char MOUSE_SINGLE_CLICK = 254;
+	char MOUSE_DOUBLE_CLICK = 253;
+	char MOUSE_SINGLE_CLICK = 254;
 
-  /**
-   * Converts the specified string into its ZSCII representation.
-   * @param str the input string
-   * @return the ZSCII representation
-   */
-  String convertToZscii(String str);
+	/**
+	 * Converts the specified string into its ZSCII representation.
+	 * 
+	 * @param str
+	 *            the input string
+	 * @return the ZSCII representation
+	 */
+	String convertToZscii(String str);
 
-  /**
-   * Converts a ZSCII character to a unicode character. Will return
-   * '?' if the given character is not known.
-   * @param zsciiChar a ZSCII character.
-   * @return the unicode representation
-   */
-  char getUnicodeChar(char zsciiChar);
+	/**
+	 * Converts a ZSCII character to a unicode character. Will return '?' if the
+	 * given character is not known.
+	 * 
+	 * @param zsciiChar
+	 *            a ZSCII character.
+	 * @return the unicode representation
+	 */
+	char getUnicodeChar(char zsciiChar);
 }

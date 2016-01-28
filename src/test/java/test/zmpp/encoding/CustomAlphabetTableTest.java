@@ -43,88 +43,108 @@ import org.zmpp.encoding.CustomAlphabetTable;
 
 /**
  * A test class for the CustomAlphabet class.
+ * 
  * @author Wei-ju Wu
  * @version 1.5
  */
 @RunWith(JMock.class)
 public class CustomAlphabetTableTest {
 
-  private Mockery context = new JUnit4Mockery();
-  private Memory memory;
-  private AlphabetTable alphabetTable;
-  
-  @Before
-  public void setUp() throws Exception {
-    memory = context.mock(Memory.class);
-    alphabetTable = new CustomAlphabetTable(memory, 1000);
-  }
-  
-  @Test
-  public void testGetA0Char() {
-    context.checking(new Expectations() {{
-      one (memory).readUnsigned8(1000); will(returnValue((char) 3)); 
-      one (memory).readUnsigned8(1006); will(returnValue((char) 2)); 
-    }});
-    assertEquals(3, alphabetTable.getA0Char((byte) 6));
-    assertEquals(2, alphabetTable.getA0Char((byte) 12));
-    assertEquals(' ', alphabetTable.getA0Char((byte) 0));
-  }
+	private Mockery context = new JUnit4Mockery();
+	private Memory memory;
+	private AlphabetTable alphabetTable;
 
-  @Test
-  public void testGetA1Char() {
-    context.checking(new Expectations() {{
-      one (memory).readUnsigned8(1026); will(returnValue((char) 3)); 
-      one (memory).readUnsigned8(1032); will(returnValue((char) 2)); 
-    }});
-    assertEquals(3, alphabetTable.getA1Char((byte) 6));
-    assertEquals(2, alphabetTable.getA1Char((byte) 12));
-    assertEquals(' ', alphabetTable.getA1Char((byte) 0));
-  }
+	@Before
+	public void setUp() throws Exception {
+		memory = context.mock(Memory.class);
+		alphabetTable = new CustomAlphabetTable(memory, 1000);
+	}
 
-  @Test
-  public void testGetA2Char() {
-    context.checking(new Expectations() {{
-      one (memory).readUnsigned8(1052); will(returnValue((char) 3)); 
-      one (memory).readUnsigned8(1058); will(returnValue((char) 2)); 
-    }});
-    assertEquals(3, alphabetTable.getA2Char((byte) 6));
-    assertEquals(2, alphabetTable.getA2Char((byte) 12));
-    assertEquals(' ', alphabetTable.getA2Char((byte) 0));
-    assertEquals('\n', alphabetTable.getA2Char((byte) 7));
-  }
-  
-  @Test
-  public void testA0IndexOfNotFound() {
-    context.checking(new Expectations() {{
-      for (int i = 0; i < 26; i++) {
-        one (memory).readUnsigned8(1000 + i);
-        will(returnValue('a' ));
-      }
-    }});
-    assertEquals(-1, alphabetTable.getA0CharCode('@'));
-  }
+	@Test
+	public void testGetA0Char() {
+		context.checking(new Expectations() {
+			{
+				one(memory).readUnsigned8(1000);
+				will(returnValue((char) 3));
+				one(memory).readUnsigned8(1006);
+				will(returnValue((char) 2));
+			}
+		});
+		assertEquals(3, alphabetTable.getA0Char((byte) 6));
+		assertEquals(2, alphabetTable.getA0Char((byte) 12));
+		assertEquals(' ', alphabetTable.getA0Char((byte) 0));
+	}
 
-  @Test
-  public void testA1IndexOfNotFound() {
-    context.checking(new Expectations() {{
-      for (int i = 0; i < 26; i++) {
-        one (memory).readUnsigned8(1026 + i);
-        will(returnValue('a' ));
-      }
-    }});
-    assertEquals(-1, alphabetTable.getA1CharCode('@'));
-  }
+	@Test
+	public void testGetA1Char() {
+		context.checking(new Expectations() {
+			{
+				one(memory).readUnsigned8(1026);
+				will(returnValue((char) 3));
+				one(memory).readUnsigned8(1032);
+				will(returnValue((char) 2));
+			}
+		});
+		assertEquals(3, alphabetTable.getA1Char((byte) 6));
+		assertEquals(2, alphabetTable.getA1Char((byte) 12));
+		assertEquals(' ', alphabetTable.getA1Char((byte) 0));
+	}
 
-  @Test
-  public void testA2IndexOfNotFound() {
-    context.checking(new Expectations() {{
-      // char 7 is directly returned !!
-      one (memory).readUnsigned8(1052); will(returnValue('a' ));
-      for (int i = 2; i < 26; i++) {
-        one (memory).readUnsigned8(1052 + i);
-        will(returnValue('a' ));
-      }
-    }});
-    assertEquals(-1, alphabetTable.getA2CharCode('@'));
-  }
+	@Test
+	public void testGetA2Char() {
+		context.checking(new Expectations() {
+			{
+				one(memory).readUnsigned8(1052);
+				will(returnValue((char) 3));
+				one(memory).readUnsigned8(1058);
+				will(returnValue((char) 2));
+			}
+		});
+		assertEquals(3, alphabetTable.getA2Char((byte) 6));
+		assertEquals(2, alphabetTable.getA2Char((byte) 12));
+		assertEquals(' ', alphabetTable.getA2Char((byte) 0));
+		assertEquals('\n', alphabetTable.getA2Char((byte) 7));
+	}
+
+	@Test
+	public void testA0IndexOfNotFound() {
+		context.checking(new Expectations() {
+			{
+				for (int i = 0; i < 26; i++) {
+					one(memory).readUnsigned8(1000 + i);
+					will(returnValue('a'));
+				}
+			}
+		});
+		assertEquals(-1, alphabetTable.getA0CharCode('@'));
+	}
+
+	@Test
+	public void testA1IndexOfNotFound() {
+		context.checking(new Expectations() {
+			{
+				for (int i = 0; i < 26; i++) {
+					one(memory).readUnsigned8(1026 + i);
+					will(returnValue('a'));
+				}
+			}
+		});
+		assertEquals(-1, alphabetTable.getA1CharCode('@'));
+	}
+
+	@Test
+	public void testA2IndexOfNotFound() {
+		context.checking(new Expectations() {
+			{
+				// char 7 is directly returned !!
+				one(memory).readUnsigned8(1052);
+				will(returnValue('a'));
+				for (int i = 2; i < 26; i++) {
+					one(memory).readUnsigned8(1052 + i);
+					will(returnValue('a'));
+				}
+			}
+		});
+		assertEquals(-1, alphabetTable.getA2CharCode('@'));
+	}
 }

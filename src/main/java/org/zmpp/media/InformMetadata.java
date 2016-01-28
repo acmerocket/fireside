@@ -36,19 +36,24 @@ package org.zmpp.media;
  */
 public class InformMetadata {
 
-  private StoryMetadata storyinfo;
+	private StoryMetadata storyinfo;
 
-  /**
-   * Constructor.
-   * @param storyinfo StoryMetadata object
-   */
-  public InformMetadata(StoryMetadata storyinfo) {
-    this.storyinfo = storyinfo;
-  }
+	/**
+	 * Constructor.
+	 * 
+	 * @param storyinfo
+	 *            StoryMetadata object
+	 */
+	public InformMetadata(StoryMetadata storyinfo) {
+		this.storyinfo = storyinfo;
+	}
 
-  /**
-   * Returns story meta data object.
-   * @return metadata object
-   */
-  public StoryMetadata getStoryInfo() { return storyinfo; }
+	/**
+	 * Returns story meta data object.
+	 * 
+	 * @return metadata object
+	 */
+	public StoryMetadata getStoryInfo() {
+		return storyinfo;
+	}
 }

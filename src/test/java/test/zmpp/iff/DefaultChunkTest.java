@@ -38,42 +38,40 @@ import org.zmpp.iff.DefaultChunk;
 
 /**
  * Test class for DefaultChunk.
+ * 
  * @author Wei-ju Wu
  * @version 1.5
  */
 public class DefaultChunkTest {
 
-  @Test
-  public void testCreateChunkForWriting() {
-    byte[] id = {(byte) 'F', (byte) 'O', (byte) 'R', (byte) 'M' };
-    byte[] chunkdata = { (byte) 0x01, (byte) 0x02, (byte) 0x03 };
-    Chunk chunk = new DefaultChunk(id, chunkdata);
-    assertEquals(3, chunk.getSize());
-    assertEquals("FORM", chunk.getId());
-    assertEquals(0, chunk.getAddress());
-    Memory mem = chunk.getMemory();
-    assertEquals('F', mem.readUnsigned8(0));
-    assertEquals('O', mem.readUnsigned8(1));
-    assertEquals('R', mem.readUnsigned8(2));
-    assertEquals('M', mem.readUnsigned8(3));
-    assertEquals(3, MemoryUtil.readUnsigned32(mem, 4));
-    assertEquals(0x01, mem.readUnsigned8(8));
-    assertEquals(0x02, mem.readUnsigned8(9));
-    assertEquals(0x03, mem.readUnsigned8(10));
-  }
-  
-  @Test
-  public void testCreateChunkForReading() {
-    byte[] data = {
-      (byte) 'F', (byte) 'O', (byte) 'R', (byte) 'M',
-      (byte) 0x00, (byte) 0x00, (byte) 0x00, (byte) 0x03,
-      (byte) 0x01, (byte) 0x02, (byte) 0x03
-    };
-    Memory mem = new DefaultMemory(data);
-    Chunk chunk = new DefaultChunk(mem, 1234);
-    assertEquals(1234, chunk.getAddress());
-    assertEquals("FORM", chunk.getId());
-    assertSame(mem, chunk.getMemory());
-    assertEquals(3, chunk.getSize());
-  }
+	@Test
+	public void testCreateChunkForWriting() {
+		byte[] id = { (byte) 'F', (byte) 'O', (byte) 'R', (byte) 'M' };
+		byte[] chunkdata = { (byte) 0x01, (byte) 0x02, (byte) 0x03 };
+		Chunk chunk = new DefaultChunk(id, chunkdata);
+		assertEquals(3, chunk.getSize());
+		assertEquals("FORM", chunk.getId());
+		assertEquals(0, chunk.getAddress());
+		Memory mem = chunk.getMemory();
+		assertEquals('F', mem.readUnsigned8(0));
+		assertEquals('O', mem.readUnsigned8(1));
+		assertEquals('R', mem.readUnsigned8(2));
+		assertEquals('M', mem.readUnsigned8(3));
+		assertEquals(3, MemoryUtil.readUnsigned32(mem, 4));
+		assertEquals(0x01, mem.readUnsigned8(8));
+		assertEquals(0x02, mem.readUnsigned8(9));
+		assertEquals(0x03, mem.readUnsigned8(10));
+	}
+
+	@Test
+	public void testCreateChunkForReading() {
+		byte[] data = { (byte) 'F', (byte) 'O', (byte) 'R', (byte) 'M', (byte) 0x00, (byte) 0x00, (byte) 0x00,
+				(byte) 0x03, (byte) 0x01, (byte) 0x02, (byte) 0x03 };
+		Memory mem = new DefaultMemory(data);
+		Chunk chunk = new DefaultChunk(mem, 1234);
+		assertEquals(1234, chunk.getAddress());
+		assertEquals("FORM", chunk.getId());
+		assertSame(mem, chunk.getMemory());
+		assertEquals(3, chunk.getSize());
+	}
 }

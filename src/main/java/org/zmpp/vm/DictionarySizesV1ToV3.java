@@ -32,12 +32,18 @@ import org.zmpp.encoding.DictionarySizes;
 
 /**
  * The dictionary size definitions for the story file versions 1-3.
+ * 
  * @author Wei-ju Wu
  * @version 1.5
  */
 public class DictionarySizesV1ToV3 implements DictionarySizes {
-  /** {@inheritDoc} */
-  public int getNumEntryBytes() { return 4; }
-  /** {@inheritDoc} */
-  public int getMaxEntryChars() { return 6; }
+	/** {@inheritDoc} */
+	public int getNumEntryBytes() {
+		return 4;
+	}
+
+	/** {@inheritDoc} */
+	public int getMaxEntryChars() {
+		return 6;
+	}
 }

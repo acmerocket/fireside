@@ -36,25 +36,25 @@ import org.zmpp.vmutil.FileUtils;
 
 /**
  * Test utility class for virtual machine package.
+ * 
  * @author Wei-ju Wu
  * @version 1.5
  */
 public class MachineTestUtil {
 
-  protected static MachineImpl createMachine(File file)
-    throws IOException {
-    MachineImpl machine = new MachineImpl();
-    machine.initialize(readData(file), null);
-    return machine;
-  }
+	protected static MachineImpl createMachine(File file) throws IOException {
+		MachineImpl machine = new MachineImpl();
+		machine.initialize(readData(file), null);
+		return machine;
+	}
 
-  protected static byte[] readData(File file) throws IOException {
-    FileInputStream fileInput = null;
-    try {
-      fileInput = new FileInputStream(file);
-      return FileUtils.readFileBytes(fileInput);
-    } finally {
-      fileInput.close();
-    }
-  }  
+	protected static byte[] readData(File file) throws IOException {
+		FileInputStream fileInput = null;
+		try {
+			fileInput = new FileInputStream(file);
+			return FileUtils.readFileBytes(fileInput);
+		} finally {
+			fileInput.close();
+		}
+	}
 }

@@ -40,37 +40,31 @@ import static org.junit.Assert.*;
  */
 public class AbbreviationsTest extends MiniZorkSetup {
 
-  private static String[] testdata = {
+	private static String[] testdata = {
 
-    "the ", "The ", "You ", ", ", "your ", "is ", "and ", "There ", "you ",
-    "of ", ". ", "with ", "to ", "are ", "large ", "This ", "cyclops ", "that ",
-    "from ", "have ", "through ", "here", "in ", "It's ", "which ", "small ",
-    "room ", "closed", "A ", "can't ", "You're ", "into ", "Room", "Your ",
-    "grating ", "already ", "Frigid ", "isn't ", "It ", "thief ", "be ",
-    "that", "for ", "water ", "leads ", "won't ", "narrow ", "cannot ", "but ",
-    "not ", "this ", "south ", "seems ", "ground", "about ", "passage ",
-    "appears ", "don't ", "southwest", "on ", "west ", "north ", "There's ",
-    "his ", "feet ", "east ", "door ", "cyclops", "can ", "white ", "That ",
-    "probably ", "Maze", "an ", "too ", "has ", "wooden ", "In ", "south",
-    "north", "How ", "would ", "With ", "sentence", "rainbow ", "lurking ",
-    "looking ", "leading ", "darkness", "candles ", "against ", "treasures ",
-    "staircase ", "northeast ", "one ", "now "
-  };
-  
-  @Before
-  @Override
-  public void setUp() throws Exception {
-    super.setUp();
-  }
-  
-  @Test
-  public void testGetWordAddress() {
-    // Test of the abbreviations in the minizorkmap
-    for (int i = 0; i < testdata.length; i++) {
-      
-      assertEquals(testdata[i], converter.decode2Zscii(minizorkmap,
-         abbreviations.getWordAddress(i), 0).toString());
-    }
-  }  
+			"the ", "The ", "You ", ", ", "your ", "is ", "and ", "There ", "you ", "of ", ". ", "with ", "to ", "are ",
+			"large ", "This ", "cyclops ", "that ", "from ", "have ", "through ", "here", "in ", "It's ", "which ",
+			"small ", "room ", "closed", "A ", "can't ", "You're ", "into ", "Room", "Your ", "grating ", "already ",
+			"Frigid ", "isn't ", "It ", "thief ", "be ", "that", "for ", "water ", "leads ", "won't ", "narrow ",
+			"cannot ", "but ", "not ", "this ", "south ", "seems ", "ground", "about ", "passage ", "appears ",
+			"don't ", "southwest", "on ", "west ", "north ", "There's ", "his ", "feet ", "east ", "door ", "cyclops",
+			"can ", "white ", "That ", "probably ", "Maze", "an ", "too ", "has ", "wooden ", "In ", "south", "north",
+			"How ", "would ", "With ", "sentence", "rainbow ", "lurking ", "looking ", "leading ", "darkness",
+			"candles ", "against ", "treasures ", "staircase ", "northeast ", "one ", "now " };
+
+	@Before
+	@Override
+	public void setUp() throws Exception {
+		super.setUp();
+	}
+
+	@Test
+	public void testGetWordAddress() {
+		// Test of the abbreviations in the minizorkmap
+		for (int i = 0; i < testdata.length; i++) {
+
+			assertEquals(testdata[i],
+					converter.decode2Zscii(minizorkmap, abbreviations.getWordAddress(i), 0).toString());
+		}
+	}
 }
-

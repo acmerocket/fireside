@@ -31,37 +31,49 @@ package org.zmpp.media;
 /**
  * An object similar to Dimension, but can be used in environments outside of
  * J2SE.
+ * 
  * @author Wei-ju Wu
  * @version 1.5
  */
 public class Resolution {
 
-  private int width;
-  private int height;
+	private int width;
+	private int height;
 
-  /**
-   * Constructor.
-   * @param width the width
-   * @param height the height
-   */
-  public Resolution(int width, int height) {
-    this.width = width;
-    this.height = height;
-  }
+	/**
+	 * Constructor.
+	 * 
+	 * @param width
+	 *            the width
+	 * @param height
+	 *            the height
+	 */
+	public Resolution(int width, int height) {
+		this.width = width;
+		this.height = height;
+	}
 
-  /**
-   * Returns the width attribute.
-   * @return the width attribute
-   */
-  public int getWidth() { return width; }
+	/**
+	 * Returns the width attribute.
+	 * 
+	 * @return the width attribute
+	 */
+	public int getWidth() {
+		return width;
+	}
 
-  /**
-   * Returns the height attribute.
-   * @return the height attribute
-   */
-  public int getHeight() { return height; }
+	/**
+	 * Returns the height attribute.
+	 * 
+	 * @return the height attribute
+	 */
+	public int getHeight() {
+		return height;
+	}
 
-  /** {@inheritDoc} */
-  @Override
-  public String toString() { return width + "x" + height; }
+	/** {@inheritDoc} */
+	@Override
+	public String toString() {
+		return width + "x" + height;
+	}
 }

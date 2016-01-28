@@ -51,40 +51,40 @@ import test.zmpp.testutil.TestUtil;
 
 /**
  * Set up the test with a Curses game.
+ * 
  * @author Wei-ju Wu
  * @version 1.5
  */
 public class CursesSetup {
 
-  protected Memory curses;
-  protected ZCharDecoder converter;
-  protected StoryFileHeader fileheader;
-  protected Abbreviations abbreviations;
-  protected Machine machine;
-  private static byte[] originalData;
+	protected Memory curses;
+	protected ZCharDecoder converter;
+	protected StoryFileHeader fileheader;
+	protected Abbreviations abbreviations;
+	protected Machine machine;
+	private static byte[] originalData;
 
-  @BeforeClass
-  public static void setupClass() throws Exception {
-  	File cursesFile = TestUtil.loadResource("curses.z5");
-  	FileInputStream fileInput = new FileInputStream(cursesFile);
-  	originalData = FileUtils.readFileBytes(fileInput);
-  	fileInput.close();
-  }
-  
-  protected void setUp() throws Exception {
-  	byte[] data = new byte[originalData.length];
-  	System.arraycopy(originalData, 0, data, 0, originalData.length);
-  	machine = new MachineImpl();
-  	machine.initialize(data, null);
-  	curses = machine;
-  	fileheader = machine.getFileHeader();
+	@BeforeClass
+	public static void setupClass() throws Exception {
+		File cursesFile = TestUtil.loadResource("curses.z5");
+		FileInputStream fileInput = new FileInputStream(cursesFile);
+		originalData = FileUtils.readFileBytes(fileInput);
+		fileInput.close();
+	}
 
-  	abbreviations = new Abbreviations(curses,
-  			machine.readUnsigned16(StoryFileHeader.ABBREVIATIONS));
-  	ZsciiEncoding encoding = new ZsciiEncoding(new DefaultAccentTable());
-  	AlphabetTable alphabetTable = new DefaultAlphabetTable();
-  	ZCharTranslator translator = new DefaultZCharTranslator(alphabetTable);
-  	converter = new DefaultZCharDecoder(encoding, translator, abbreviations);
+	protected void setUp() throws Exception {
+		byte[] data = new byte[originalData.length];
+		System.arraycopy(originalData, 0, data, 0, originalData.length);
+		machine = new MachineImpl();
+		machine.initialize(data, null);
+		curses = machine;
+		fileheader = machine.getFileHeader();
 
-  }
+		abbreviations = new Abbreviations(curses, machine.readUnsigned16(StoryFileHeader.ABBREVIATIONS));
+		ZsciiEncoding encoding = new ZsciiEncoding(new DefaultAccentTable());
+		AlphabetTable alphabetTable = new DefaultAlphabetTable();
+		ZCharTranslator translator = new DefaultZCharTranslator(alphabetTable);
+		converter = new DefaultZCharDecoder(encoding, translator, abbreviations);
+
+	}
 }

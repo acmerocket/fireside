@@ -36,76 +36,79 @@ import java.util.logging.Logger;
 import org.zmpp.encoding.IZsciiEncoding;
 
 /**
- * This class implements a Z-machine input stream that takes its input from
- * a file. It queries a screen model to provide the input file.
+ * This class implements a Z-machine input stream that takes its input from a
+ * file. It queries a screen model to provide the input file.
  *
  * @author Wei-ju Wu
  * @version 1.5
  */
 public class FileInputStream implements InputStream {
-  private static final Logger LOG = Logger.getLogger("org.zmpp");
-  private IOSystem iosys;
-  private IZsciiEncoding encoding;
-  private Reader filereader;
-  private BufferedReader input;
+	private static final Logger LOG = Logger.getLogger("org.zmpp");
+	private IOSystem iosys;
+	private IZsciiEncoding encoding;
+	private Reader filereader;
+	private BufferedReader input;
 
-  /**
-   * Constructor.
-   * @param iosys an IOSystem object
-   * @param encoding a ZSCII encoding object
-   */
-  public FileInputStream(IOSystem iosys, IZsciiEncoding encoding) {
-    this.iosys = iosys;
-    this.encoding = encoding;
-  }
+	/**
+	 * Constructor.
+	 * 
+	 * @param iosys
+	 *            an IOSystem object
+	 * @param encoding
+	 *            a ZSCII encoding object
+	 */
+	public FileInputStream(IOSystem iosys, IZsciiEncoding encoding) {
+		this.iosys = iosys;
+		this.encoding = encoding;
+	}
 
-  /** {@inheritDoc} */
-  public String readLine() {
-    checkForReader();
-    if (input != null) {
-      // Read from file
-      try {
-        if (input.ready()) {
-          String line = input.readLine();
-          /*
-          if (encoding.isConvertableToZscii(c)) {
-            return encoding.getZsciiChar(c);
-          }*/
-          return encoding.convertToZscii(line);
-        }
-      } catch (IOException ex) {
-        LOG.throwing("FileInputStream", "readLine", ex);
-      }
-    }
-    return null;
-  }
+	/** {@inheritDoc} */
+	public String readLine() {
+		checkForReader();
+		if (input != null) {
+			// Read from file
+			try {
+				if (input.ready()) {
+					String line = input.readLine();
+					/*
+					 * if (encoding.isConvertableToZscii(c)) { return
+					 * encoding.getZsciiChar(c); }
+					 */
+					return encoding.convertToZscii(line);
+				}
+			} catch (IOException ex) {
+				LOG.throwing("FileInputStream", "readLine", ex);
+			}
+		}
+		return null;
+	}
 
-  /** {@inheritDoc} */
-  public void close() {
-    if (input != null) {
-      try {
-        input.close();
-        input = null;
-      } catch (IOException ex) {
-        LOG.throwing("FileInputStream", "close", ex);
-      }
-    }
+	/** {@inheritDoc} */
+	public void close() {
+		if (input != null) {
+			try {
+				input.close();
+				input = null;
+			} catch (IOException ex) {
+				LOG.throwing("FileInputStream", "close", ex);
+			}
+		}
 
-    if (filereader != null) {
-      try {
-        filereader.close();
-        filereader = null;
-      } catch (IOException ex) {
-        LOG.throwing("FileInputStream", "readLine", ex);
-      }
-    }
-  }
+		if (filereader != null) {
+			try {
+				filereader.close();
+				filereader = null;
+			} catch (IOException ex) {
+				LOG.throwing("FileInputStream", "readLine", ex);
+			}
+		}
+	}
 
-  /** Creates the reader object if necessary. */
-  private void checkForReader() {
-    if (filereader == null) {
-      filereader = iosys.getInputStreamReader();
-      input = new BufferedReader(filereader);
-    }
-  }
+	/** Creates the reader object if necessary. */
+	private void checkForReader() {
+		if (filereader == null) {
+			filereader = iosys.getInputStreamReader();
+			input = new BufferedReader(filereader);
+		}
+	}
 }

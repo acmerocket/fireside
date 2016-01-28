@@ -36,24 +36,25 @@ import org.zmpp.iff.WritableFormChunk;
 
 /**
  * Test class for WritableFormChunk.
+ * 
  * @author Wei-ju Wu
  * @version 1.5
  */
 public class WritableFormChunkTest {
 
-  private WritableFormChunk formChunk;
-  
-  @Before
-  public void setUp() throws Exception {
-    formChunk = new WritableFormChunk("IFhd".getBytes());
-  }
+	private WritableFormChunk formChunk;
 
-  @Test
-  public void testIsValid() { 
-    assertTrue(formChunk.isValid());
-    assertNotNull(formChunk.getMemory());
-    assertNotNull(formChunk.getSubChunks());
-    assertNull(formChunk.getSubChunk(1234));
-    assertEquals(0, formChunk.getAddress());
-  }
+	@Before
+	public void setUp() throws Exception {
+		formChunk = new WritableFormChunk("IFhd".getBytes());
+	}
+
+	@Test
+	public void testIsValid() {
+		assertTrue(formChunk.isValid());
+		assertNotNull(formChunk.getMemory());
+		assertNotNull(formChunk.getSubChunks());
+		assertNull(formChunk.getSubChunk(1234));
+		assertEquals(0, formChunk.getAddress());
+	}
 }

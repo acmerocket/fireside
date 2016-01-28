@@ -41,86 +41,98 @@ import static org.junit.Assert.*;
 
 /**
  * Test of MemorySection class.
+ * 
  * @author Wei-ju Wu
  * @version 1.5
  */
 @RunWith(JMock.class)
 public class MemorySectionTest {
-  private static final int OFFSET = 36;
-  Mockery context = new JUnit4Mockery();  
-  private Memory memory;
-  private MemorySection section;
+	private static final int OFFSET = 36;
+	Mockery context = new JUnit4Mockery();
+	private Memory memory;
+	private MemorySection section;
 
-  @Before
-  public void setUp() throws Exception {
-    memory = context.mock(Memory.class);
-    section = new MemorySection(memory, OFFSET, 256);
-  }
+	@Before
+	public void setUp() throws Exception {
+		memory = context.mock(Memory.class);
+		section = new MemorySection(memory, OFFSET, 256);
+	}
 
-  @Test
-  public void testGetLength() {
-    assertEquals(256, section.getLength());
-  }
+	@Test
+	public void testGetLength() {
+		assertEquals(256, section.getLength());
+	}
 
-  @Test
-  public void testWriteUnsignedShort() {
-    context.checking(new Expectations() {{
-      one (memory).writeUnsigned16(12 + 36, (char) 512);
-    }});
-    section.writeUnsigned16(12, (char) 512);
-  }
+	@Test
+	public void testWriteUnsignedShort() {
+		context.checking(new Expectations() {
+			{
+				one(memory).writeUnsigned16(12 + 36, (char) 512);
+			}
+		});
+		section.writeUnsigned16(12, (char) 512);
+	}
 
-  @Test
-  public void testWriteUnsignedByte() {
-    context.checking(new Expectations() {{
-      one (memory).writeUnsigned8(12 + 36, (char) 120);
-    }});
-    section.writeUnsigned8(12, (char) 120);
-  }
-  
-  @Test
-  public void testCopyBytesToArray() {
-    final byte[] dstData = new byte[5];
-    final int dstOffset = 2;
-    final int srcOffset = 3;
-    final int numBytes = 23;
-    context.checking(new Expectations() {{
-      one (memory).copyBytesToArray(dstData, dstOffset, OFFSET + srcOffset, numBytes);
-    }});
-    section.copyBytesToArray(dstData, dstOffset, srcOffset, numBytes);
-  }
+	@Test
+	public void testWriteUnsignedByte() {
+		context.checking(new Expectations() {
+			{
+				one(memory).writeUnsigned8(12 + 36, (char) 120);
+			}
+		});
+		section.writeUnsigned8(12, (char) 120);
+	}
 
-  @Test
-  public void testCopyBytesFromArray() {
-    final byte[] srcData = new byte[5];
-    final int srcOffset = 2;
-    final int dstOffset = 3;
-    final int numBytes = 23;
-    context.checking(new Expectations() {{
-      one (memory).copyBytesFromArray(srcData, srcOffset, OFFSET + dstOffset, numBytes);
-    }});
-    section.copyBytesFromArray(srcData, srcOffset, dstOffset, numBytes);
-  }
+	@Test
+	public void testCopyBytesToArray() {
+		final byte[] dstData = new byte[5];
+		final int dstOffset = 2;
+		final int srcOffset = 3;
+		final int numBytes = 23;
+		context.checking(new Expectations() {
+			{
+				one(memory).copyBytesToArray(dstData, dstOffset, OFFSET + srcOffset, numBytes);
+			}
+		});
+		section.copyBytesToArray(dstData, dstOffset, srcOffset, numBytes);
+	}
 
-  @Test
-  public void testCopyBytesFromMemory() {
-    final Memory srcMem = context.mock(Memory.class, "srcMem");
-    final int srcOffset = 2;
-    final int dstOffset = 3;
-    final int numBytes = 5;
-    context.checking(new Expectations() {{
-      one (memory).copyBytesFromMemory(srcMem, srcOffset, OFFSET + dstOffset,
-                                       numBytes);
-    }});
-    section.copyBytesFromMemory(srcMem, srcOffset, dstOffset, numBytes);
-  }
+	@Test
+	public void testCopyBytesFromArray() {
+		final byte[] srcData = new byte[5];
+		final int srcOffset = 2;
+		final int dstOffset = 3;
+		final int numBytes = 23;
+		context.checking(new Expectations() {
+			{
+				one(memory).copyBytesFromArray(srcData, srcOffset, OFFSET + dstOffset, numBytes);
+			}
+		});
+		section.copyBytesFromArray(srcData, srcOffset, dstOffset, numBytes);
+	}
 
-  @Test
-  public void testCopyArea() {
-    final int src = 1, dst = 2, numBytes = 10;
-    context.checking(new Expectations() {{
-      one (memory).copyArea(OFFSET + src, OFFSET + dst, numBytes);
-    }});
-    section.copyArea(src, dst, numBytes);
-  }
+	@Test
+	public void testCopyBytesFromMemory() {
+		final Memory srcMem = context.mock(Memory.class, "srcMem");
+		final int srcOffset = 2;
+		final int dstOffset = 3;
+		final int numBytes = 5;
+		context.checking(new Expectations() {
+			{
+				one(memory).copyBytesFromMemory(srcMem, srcOffset, OFFSET + dstOffset, numBytes);
+			}
+		});
+		section.copyBytesFromMemory(srcMem, srcOffset, dstOffset, numBytes);
+	}
+
+	@Test
+	public void testCopyArea() {
+		final int src = 1, dst = 2, numBytes = 10;
+		context.checking(new Expectations() {
+			{
+				one(memory).copyArea(OFFSET + src, OFFSET + dst, numBytes);
+			}
+		});
+		section.copyArea(src, dst, numBytes);
+	}
 }

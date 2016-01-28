@@ -29,79 +29,92 @@
 package org.zmpp.instructions;
 
 /**
- * This is the definition of an instruction's operand. Each operand has
- * an operand type, and a value which is to be interpreted according to
- * the type.
+ * This is the definition of an instruction's operand. Each operand has an
+ * operand type, and a value which is to be interpreted according to the type.
  *
  * @author Wei-ju Wu
  * @version 1.5
  */
 public class Operand {
 
-  /** Type number for a large constant. */
-  public static final int TYPENUM_LARGE_CONSTANT = 0x00;
+	/** Type number for a large constant. */
+	public static final int TYPENUM_LARGE_CONSTANT = 0x00;
 
-  /** Type number for a small constant. */
-  public static final int TYPENUM_SMALL_CONSTANT = 0x01;
+	/** Type number for a small constant. */
+	public static final int TYPENUM_SMALL_CONSTANT = 0x01;
 
-  /** Type number for a variable. */
-  public static final int TYPENUM_VARIABLE       = 0x02;
+	/** Type number for a variable. */
+	public static final int TYPENUM_VARIABLE = 0x02;
 
-  /** Type number for omitted. */
-  public static final int TYPENUM_OMITTED        = 0x03;
+	/** Type number for omitted. */
+	public static final int TYPENUM_OMITTED = 0x03;
 
-  /**
-   * The available operand types.
-   */
-  public enum OperandType { SMALL_CONSTANT, LARGE_CONSTANT, VARIABLE, OMITTED }
+	/**
+	 * The available operand types.
+	 */
+	public enum OperandType {
+		SMALL_CONSTANT, LARGE_CONSTANT, VARIABLE, OMITTED
+	}
 
-  /**
-   * This operand's type.
-   */
-  private OperandType type;
+	/**
+	 * This operand's type.
+	 */
+	private OperandType type;
 
-  /**
-   * This operand's value.
-   */
-  private char value;
+	/**
+	 * This operand's value.
+	 */
+	private char value;
 
-  /**
-   * Constructor.
-   * @param typenum the type number, must be < 4
-   * @param value the operand value
-   */
-  public Operand(int typenum, char value) {
-    type = getOperandType(typenum);
-    this.value = value;
-  }
+	/**
+	 * Constructor.
+	 * 
+	 * @param typenum
+	 *            the type number, must be < 4
+	 * @param value
+	 *            the operand value
+	 */
+	public Operand(int typenum, char value) {
+		type = getOperandType(typenum);
+		this.value = value;
+	}
 
-  /**
-   * Determines the operand type from a two-bit value.
-   * @param typenum the type number
-   * @return the operand type
-   */
-  private static OperandType getOperandType(final int typenum) {
-    switch (typenum) {
-    case 0x00:
-      return OperandType.LARGE_CONSTANT;
-    case 0x01:
-      return OperandType.SMALL_CONSTANT;
-    case 0x02:
-      return OperandType.VARIABLE;
-    default:
-      return OperandType.OMITTED; // In fact, such a value should never exist..
-    }
-  }
+	/**
+	 * Determines the operand type from a two-bit value.
+	 * 
+	 * @param typenum
+	 *            the type number
+	 * @return the operand type
+	 */
+	private static OperandType getOperandType(final int typenum) {
+		switch (typenum) {
+		case 0x00:
+			return OperandType.LARGE_CONSTANT;
+		case 0x01:
+			return OperandType.SMALL_CONSTANT;
+		case 0x02:
+			return OperandType.VARIABLE;
+		default:
+			return OperandType.OMITTED; // In fact, such a value should never
+										// exist..
+		}
+	}
 
-  /**
-   * Returns this operand's type.
-   * @return the operand type
-   */
-  public OperandType getType() { return type; }
+	/**
+	 * Returns this operand's type.
+	 * 
+	 * @return the operand type
+	 */
+	public OperandType getType() {
+		return type;
+	}
 
-  /**
-   * The operand value.
-   * @return the value
-   */
-  public char getValue() { return value; }
+	/**
+	 * The operand value.
+	 * 
+	 * @return the value
+	 */
+	public char getValue() {
+		return value;
+	}
 }
