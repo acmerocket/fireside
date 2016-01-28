@@ -1,3 +1,0 @@
-<FindBugsFilter>
-  <Match><Class name="~.*\.server\.beans\..*" /></Match>
-</FindBugsFilter>

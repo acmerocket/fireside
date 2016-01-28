@@ -28,6 +28,11 @@
  */
 package test.zmpp.vm;
 
+import static org.junit.Assert.assertEquals;
+import static org.junit.Assert.assertFalse;
+import static org.junit.Assert.assertNotNull;
+import static org.junit.Assert.assertTrue;
+
 import java.io.File;
 import java.io.RandomAccessFile;
 import java.util.ArrayList;
@@ -41,19 +46,19 @@ import org.jmock.integration.junit4.JUnit4Mockery;
 import org.junit.Before;
 import org.junit.Test;
 import org.junit.runner.RunWith;
-import static org.junit.Assert.*;
 import org.zmpp.base.DefaultMemory;
 import org.zmpp.base.Memory;
+import org.zmpp.base.StoryFileHeader;
 import org.zmpp.iff.Chunk;
 import org.zmpp.iff.DefaultFormChunk;
 import org.zmpp.iff.FormChunk;
 import org.zmpp.iff.WritableFormChunk;
 import org.zmpp.vm.Machine;
 import org.zmpp.vm.PortableGameState;
-import org.zmpp.vm.RoutineContext;
-import org.zmpp.base.StoryFileHeader;
 import org.zmpp.vm.PortableGameState.StackFrame;
-import static test.zmpp.testutil.ZmppTestUtil.*;
+import org.zmpp.vm.RoutineContext;
+
+import test.zmpp.testutil.TestUtil;
 
 /**
  * This tests simply analyzes a given Quetzal file.
@@ -75,7 +80,7 @@ public class PortableGameStateTest {
     machine = context.mock(Machine.class);
     fileheader = context.mock(StoryFileHeader.class);
     
-    File testSaveFile = createLocalFile("testfiles/leathersave.ifzs");
+    File testSaveFile = TestUtil.loadResource("leathersave.ifzs");
     RandomAccessFile saveFile = new RandomAccessFile(testSaveFile, "r");
     int length = (int) saveFile.length();
     savedata = new byte[length];

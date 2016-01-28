@@ -33,6 +33,7 @@ import java.io.FileInputStream;
 
 import org.junit.BeforeClass;
 import org.zmpp.base.Memory;
+import org.zmpp.base.StoryFileHeader;
 import org.zmpp.encoding.AlphabetTable;
 import org.zmpp.encoding.DefaultAccentTable;
 import org.zmpp.encoding.DefaultAlphabetTable;
@@ -44,9 +45,9 @@ import org.zmpp.encoding.ZsciiEncoding;
 import org.zmpp.vm.Abbreviations;
 import org.zmpp.vm.Machine;
 import org.zmpp.vm.MachineImpl;
-import org.zmpp.base.StoryFileHeader;
 import org.zmpp.vmutil.FileUtils;
-import static test.zmpp.testutil.ZmppTestUtil.*;
+
+import test.zmpp.testutil.TestUtil;
 
 /**
  * Set up the test with a Curses game.
@@ -64,7 +65,7 @@ public class CursesSetup {
 
   @BeforeClass
   public static void setupClass() throws Exception {
-  	File cursesFile = createLocalFile("testfiles/curses.z5");
+  	File cursesFile = TestUtil.loadResource("curses.z5");
   	FileInputStream fileInput = new FileInputStream(cursesFile);
   	originalData = FileUtils.readFileBytes(fileInput);
   	fileInput.close();

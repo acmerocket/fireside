@@ -30,6 +30,7 @@ package test.zmpp.vm;
 
 
 import org.zmpp.base.Memory;
+import org.zmpp.base.StoryFileHeader;
 import org.zmpp.encoding.AlphabetTable;
 import org.zmpp.encoding.DefaultAccentTable;
 import org.zmpp.encoding.DefaultAlphabetTable;
@@ -40,8 +41,8 @@ import org.zmpp.encoding.ZCharTranslator;
 import org.zmpp.encoding.ZsciiEncoding;
 import org.zmpp.vm.Abbreviations;
 import org.zmpp.vm.MachineImpl;
-import org.zmpp.base.StoryFileHeader;
-import static test.zmpp.testutil.ZmppTestUtil.*;
+
+import test.zmpp.testutil.TestUtil;
 
 /**
  * This class acts as a base test class and sets up some integrated
@@ -59,7 +60,7 @@ public abstract class MiniZorkSetup {
   protected MachineImpl machine;
 
   protected void setUp() throws Exception {
-    machine = MachineTestUtil.createMachine(createLocalFile("testfiles/minizork.z3"));
+    machine = MachineTestUtil.createMachine(TestUtil.loadResource("minizork.z3"));
     minizorkmap = machine;
     fileheader = machine.getFileHeader();
     

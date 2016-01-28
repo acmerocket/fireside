@@ -39,12 +39,12 @@ import org.junit.After;
 import org.junit.Before;
 import org.junit.Test;
 import org.junit.runner.RunWith;
-
 import org.zmpp.encoding.DefaultAccentTable;
 import org.zmpp.encoding.ZsciiEncoding;
 import org.zmpp.io.IOSystem;
 import org.zmpp.io.TranscriptOutputStream;
-import static test.zmpp.testutil.ZmppTestUtil.*;
+
+import test.zmpp.testutil.TestUtil;
 
 /**
  * Test class for FileOutputStream.
@@ -62,7 +62,7 @@ public class FileOutputStreamTest {
   public void setUp() throws Exception {
     iosys = context.mock(IOSystem.class);
     outstream = new TranscriptOutputStream(iosys, new ZsciiEncoding(new DefaultAccentTable()));
-    outputwriter = new FileWriter(createLocalFile("testfiles/streamoutput.txt"));
+    outputwriter = new FileWriter(TestUtil.loadResource("streamoutput.txt"));
   }
 
   @After

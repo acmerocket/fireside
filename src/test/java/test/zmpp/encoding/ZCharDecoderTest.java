@@ -28,6 +28,10 @@
  */
 package test.zmpp.encoding;
 
+import static org.junit.Assert.assertEquals;
+import static org.junit.Assert.assertFalse;
+import static org.junit.Assert.assertTrue;
+
 import java.io.File;
 import java.io.RandomAccessFile;
 
@@ -38,10 +42,9 @@ import org.jmock.integration.junit4.JUnit4Mockery;
 import org.junit.Before;
 import org.junit.Test;
 import org.junit.runner.RunWith;
-import static org.junit.Assert.*;
-
 import org.zmpp.base.DefaultMemory;
 import org.zmpp.base.Memory;
+import org.zmpp.base.StoryFileHeader;
 import org.zmpp.encoding.AlphabetTable;
 import org.zmpp.encoding.AlphabetTableV1;
 import org.zmpp.encoding.DefaultAccentTable;
@@ -49,12 +52,12 @@ import org.zmpp.encoding.DefaultAlphabetTable;
 import org.zmpp.encoding.DefaultZCharDecoder;
 import org.zmpp.encoding.DefaultZCharTranslator;
 import org.zmpp.encoding.ZCharDecoder;
+import org.zmpp.encoding.ZCharDecoder.AbbreviationsTable;
 import org.zmpp.encoding.ZCharTranslator;
 import org.zmpp.encoding.ZsciiEncoding;
-import org.zmpp.encoding.ZCharDecoder.AbbreviationsTable;
 import org.zmpp.vm.Abbreviations;
-import org.zmpp.base.StoryFileHeader;
-import static test.zmpp.testutil.ZmppTestUtil.*;
+
+import test.zmpp.testutil.TestUtil;
 
 /**
  * This class tests the DefaultZCharDecoder class.
@@ -105,7 +108,7 @@ public class ZCharDecoderTest {
   
   @Test
   public void testMinizork() throws Exception {
-    File zork1 = createLocalFile("testfiles/minizork.z3");
+    File zork1 = TestUtil.loadResource("minizork.z3");
     RandomAccessFile file = new RandomAccessFile(zork1, "r");
     int fileSize = (int) file.length();
     byte[] zork1data = new byte[fileSize];    

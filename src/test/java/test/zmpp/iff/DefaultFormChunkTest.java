@@ -27,6 +27,12 @@
  */
 package test.zmpp.iff;
 
+import static org.junit.Assert.assertEquals;
+import static org.junit.Assert.assertNotNull;
+import static org.junit.Assert.assertNull;
+import static org.junit.Assert.assertTrue;
+import static org.junit.Assert.fail;
+
 import java.io.File;
 import java.io.IOException;
 import java.io.RandomAccessFile;
@@ -35,14 +41,14 @@ import java.util.Iterator;
 import java.util.List;
 
 import org.junit.BeforeClass;
-import static org.junit.Assert.*;
 import org.junit.Test;
 import org.zmpp.base.DefaultMemory;
 import org.zmpp.base.Memory;
 import org.zmpp.iff.Chunk;
 import org.zmpp.iff.DefaultFormChunk;
 import org.zmpp.iff.FormChunk;
-import static test.zmpp.testutil.ZmppTestUtil.*;
+
+import test.zmpp.testutil.TestUtil;
 
 /**
  * Test class for DefaultFormChunk.
@@ -56,7 +62,7 @@ public class DefaultFormChunkTest {
   
   @BeforeClass
   public static void setUpClass() throws Exception {
-    File testSaveFile = createLocalFile("testfiles/leathersave.ifzs");
+    File testSaveFile = TestUtil.loadResource("leathersave.ifzs");
     RandomAccessFile saveFile = new RandomAccessFile(testSaveFile, "r");
     byte[] data = new byte[(int) saveFile.length()];
     saveFile.readFully(data);
