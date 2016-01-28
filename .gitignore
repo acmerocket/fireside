@@ -1,4 +1,2 @@
 target
-bin
-cobertura.ser
-streamoutput.txt
+.settings
