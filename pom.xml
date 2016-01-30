@@ -40,6 +40,7 @@
       </properties>
         </developer>
     </developers>
+    
     <distributionManagement>
         <snapshotRepository>
             <id>boxofrats-snapshots</id>
@@ -47,11 +48,49 @@
             <url>file:///Users/weiju/tmp/maven-snapshots</url>
         </snapshotRepository>
     </distributionManagement>
+    
     <properties>
         <project.build.sourceEncoding>UTF-8</project.build.sourceEncoding>
         <project.report.sourceEncoding>UTF-8</project.report.sourceEncoding>
     </properties>
+    
     <build>
+        <plugins>
+        	<plugin>
+				<groupId>org.apache.maven.plugins</groupId>
+				<artifactId>maven-shade-plugin</artifactId>
+				<version>2.4.3</version>
+				<configuration>
+					<createDependencyReducedPom>false</createDependencyReducedPom>
+					<filters>
+						<filter>
+							<artifact>*:*</artifact>
+							<excludes>
+								<exclude>META-INF/*.SF</exclude>
+								<exclude>META-INF/*.DSA</exclude>
+								<exclude>META-INF/*.RSA</exclude>
+							</excludes>
+						</filter>
+					</filters>
+				</configuration>
+				<executions>
+					<execution>
+						<phase>package</phase>
+						<goals>
+							<goal>shade</goal>
+						</goals>
+						<configuration>
+							<transformers>
+								<transformer implementation="org.apache.maven.plugins.shade.resource.ServicesResourceTransformer" />
+								<transformer implementation="org.apache.maven.plugins.shade.resource.ManifestResourceTransformer">
+									<mainClass>org.zmpp.swingui.app.Main</mainClass>
+								</transformer>
+							</transformers>
+						</configuration>
+					</execution>
+				</executions>
+			</plugin>
+    	</plugins>
         <pluginManagement>
             <plugins>
                 <plugin>
@@ -59,8 +98,8 @@
                     <version>3.3</version>
                     <configuration>
                         <showDeprecation>false</showDeprecation>
-                        <source>1.5</source>
-                        <target>1.5</target>
+                        <source>1.7</source>
+                        <target>1.7</target>
                     </configuration>
                 </plugin>
                 <plugin>
@@ -75,6 +114,7 @@
             </plugins>
         </pluginManagement>
     </build>
+    
     <dependencies>
         <!--  Apache Commons -->
         <dependency>
