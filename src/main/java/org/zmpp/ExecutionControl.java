@@ -63,8 +63,6 @@ public class ExecutionControl implements Serializable {
 	private InstructionDecoder instructionDecoder = new InstructionDecoder();
 	private LineBufferInputStream inputStream = new LineBufferInputStream();
 	private int step = 1;
-	public static final boolean DEBUG = false;
-	public static final boolean DEBUG_INTERRUPT = false;
 
 	/**
 	 * Returns the current step number.
@@ -238,11 +236,6 @@ public class ExecutionControl implements Serializable {
 		while (machine.getRunState() != MachineRunState.STOPPED) {
 			int pc = machine.getPC();
 			Instruction instr = instructionDecoder.decodeInstruction(pc);
-			// if the print is executed after execute(), the result is different
-			// !!
-			if (DEBUG && machine.getRunState() == MachineRunState.RUNNING) {
-				System.out.println(String.format("%04d: $%05x %s", step, (int) pc, instr.toString()));
-			}
 			instr.execute();
 
 			// handle input situations here
@@ -339,9 +332,6 @@ public class ExecutionControl implements Serializable {
 
 		for (;;) {
 			final Instruction instr = instructionDecoder.decodeInstruction(machine.getPC());
-			if (DEBUG_INTERRUPT) {
-				System.out.println(String.format("%03d: $%04x %s", step, (int) machine.getPC(), instr.toString()));
-			}
 			instr.execute();
 			// check if something was printed
 			if (instr.isOutput()) {
